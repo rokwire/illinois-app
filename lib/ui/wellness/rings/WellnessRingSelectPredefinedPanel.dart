@@ -182,7 +182,7 @@ class _WellnessRingButtonState extends State<_WellnessRingButton>{
     GestureDetector(onTap: () => widget.onTapWidget(context), child:
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Expanded(child:
-      Container(decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors.surfaceAccent!, width: 1)), child:
+      Container(decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors.surfaceAccent, width: 1)), child:
       Padding(padding: EdgeInsets.only(right: 19, left: 16, top:13, bottom: 19), child:
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -199,7 +199,7 @@ class _WellnessRingButtonState extends State<_WellnessRingButton>{
           ])),
           Container(width: 7,),
           Container(
-            child: _buildRadioButton(color: Styles().colors.fillColorPrimary!),
+            child: _buildRadioButton(color: Styles().colors.fillColorPrimary),
           )
         ],),
       ),

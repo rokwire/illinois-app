@@ -796,7 +796,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (StringUtils.isNotEmpty(members)) {
       contentList.add(GestureDetector(onTap: () => { if (_isMember  && _canViewMembers) {_onTapMembers()} }, child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-          Container(decoration: (_isMember && _canViewMembers ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary!, width: 2))) : null), child:
+          Container(decoration: (_isMember && _canViewMembers ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 2))) : null), child:
             Text(members, style:  Styles().textStyles.getTextStyle('panel.group.detail.fat'))
           ),
         ),
@@ -1133,7 +1133,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
       rightIconKey: 'external-link',
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-      border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       onTap: _onWebsite
     );
     /*return RoundedButton(
@@ -1226,7 +1226,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildMembershipRequest() {
     if (Auth2().isOidcLoggedIn && _group!.currentUserCanJoin && (_group?.researchProject != true)) {
-      return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent!, width: 1))), child:
+      return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
         Padding(padding: EdgeInsets.all(16), child:
           RoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
@@ -1249,7 +1249,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       bool showConsent = StringUtils.isNotEmpty(_group?.researchConsentStatement) && CollectionUtils.isEmpty(_group?.questions);
       bool requestToJoinEnabled = CollectionUtils.isNotEmpty(_group?.questions) || StringUtils.isEmpty(_group?.researchConsentStatement) || _researchProjectConsent;
       return Padding(padding: EdgeInsets.only(top: 16), child:
-        Container(decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles().colors.surfaceAccent!, width: showConsent ? 1 : 0))), child:
+        Container(decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: showConsent ? 1 : 0))), child:
           Column(children: [
             Visibility(visible: showConsent, child:
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -1292,7 +1292,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildCancelMembershipRequest() {
     if (Auth2().isOidcLoggedIn && _group!.currentUserIsPendingMember) {
-      return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent!, width: 1))), child:
+      return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
         Padding(padding: EdgeInsets.all(16), child:
           RoundedButton(label: Localization().getStringEx("panel.group_detail.button.cancel_request.title",  'Cancel Request'),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
@@ -1548,7 +1548,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     showDialog(context: context, builder: (_) =>  InfoPopup(
       backColor: Color(0xfffffcdf), //Styles().colors.surface ?? Colors.white,
       padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
-      border: Border.all(color: Styles().colors.textSurface!, width: 1),
+      border: Border.all(color: Styles().colors.textSurface, width: 1),
       alignment: Alignment.center,
       infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
       infoTextStyle: Styles().textStyles.getTextStyle('widget.description.regular.thin"'),
@@ -1586,7 +1586,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       return;
     }
     Analytics().logSelect(target: "Take Attendance", attributes: _group?.analyticsAttributes);
-    FlutterBarcodeScanner.scanBarcode(UiColors.toHex(Styles().colors.fillColorSecondary!)!,
+    FlutterBarcodeScanner.scanBarcode(UiColors.toHex(Styles().colors.fillColorSecondary)!,
             Localization().getStringEx('panel.group_detail.attendance.scan.cancel.button.title', 'Cancel'), true, ScanMode.QR)
         .then((scanResult) {
       _onAttendanceScanFinished(scanResult);

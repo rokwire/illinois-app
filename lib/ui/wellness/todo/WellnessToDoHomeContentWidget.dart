@@ -207,7 +207,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
               child: Container(
                   height: 176,
                   decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(5), boxShadow: [
-                    BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
+                    BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
                   ]),
                   child: Stack(children: [
                     _buildCalendarVerticalDelimiters(),
@@ -753,7 +753,7 @@ class _TabButton extends StatelessWidget {
   }
 
   BoxBorder? get _border {
-    BorderSide borderSide = BorderSide(color: Styles().colors.surfaceAccent!, width: 2, style: BorderStyle.solid);
+    BorderSide borderSide = BorderSide(color: Styles().colors.surfaceAccent, width: 2, style: BorderStyle.solid);
     switch (position) {
       case _TabButtonPosition.first:
         return Border.fromBorderSide(borderSide);

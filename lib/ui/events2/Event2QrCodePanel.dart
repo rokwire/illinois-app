@@ -59,7 +59,7 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
         height: _imageSize.toDouble(),
         fontFamily: Styles().fontFamilies.bold,
         fontSize: 54,
-        textColor: Styles().colors.textSurface!,
+        textColor: Styles().colors.textSurface,
       );
       bool result = (updatedImageBytes != null);
       if (result) {

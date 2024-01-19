@@ -62,7 +62,7 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
         height: cardHeight,
         decoration: BoxDecoration(
             borderRadius: (widget.isSmall ? BorderRadius.circular(borderRadiusValue) : null),
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))]),
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))]),
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Column(children: [
             Expanded(

@@ -242,10 +242,10 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
         onImageEndLoading: _hideLoader,
         visibleOtherAspectRatios: true,
         squareBorderWidth: 2,
-        squareCircleColor: Styles().colors.fillColorPrimary!,
-        defaultTextColor: Styles().colors.fillColorPrimary!,
-        selectedTextColor: Styles().colors.fillColorSecondary!,
-        colorForWhiteSpace: Styles().colors.white!,
+        squareCircleColor: Styles().colors.fillColorPrimary,
+        defaultTextColor: Styles().colors.fillColorPrimary,
+        selectedTextColor: Styles().colors.fillColorSecondary,
+        colorForWhiteSpace: Styles().colors.white,
       );
     }
   }

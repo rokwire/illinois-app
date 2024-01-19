@@ -136,7 +136,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
 
     if (_loadingItems == true) {
       widgetsList.add(
-          _DailyIlliniLoadingWidget(progressColor: Styles().colors.white!, padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24)));
+          _DailyIlliniLoadingWidget(progressColor: Styles().colors.white, padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24)));
     }
 
     if (widgetsList.isEmpty) {
@@ -231,7 +231,7 @@ class _DailyIlliniListPanelState extends State<DailyIlliniListPanel> {
               height: 32,
               width: 32,
               child: CircularProgressIndicator(
-                  strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary!))));
+                  strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary))));
     } else {
       if (CollectionUtils.isNotEmpty(_illiniItems)) {
         int itemsCount = _illiniItems!.length;
@@ -305,7 +305,7 @@ class _DailyIlliniItemWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: Styles().colors.white,
                     boxShadow: [
-                      BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
+                      BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
                     ],
                     borderRadius: BorderRadius.all(Radius.circular(4))),
                 clipBehavior: Clip.hardEdge,

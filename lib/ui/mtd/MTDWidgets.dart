@@ -82,7 +82,7 @@ class MTDStopCard extends StatelessWidget {
     return Padding(padding: EdgeInsets.only(bottom: 4), child:
       InkWell(onTap: () => _onTapDetail(stop), child:
         Container(
-          decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),),
+          decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
           padding: EdgeInsets.only(left: 16,),
           child: Column(children: [
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -276,7 +276,7 @@ class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> implements No
       Semantics(label: title, child:
         Column(children: <Widget>[
           Container(height: 7, color: headerColor,),
-          Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent!, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
+          Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
             Column(children: [
               Padding(padding: EdgeInsets.all(16), child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -484,7 +484,7 @@ class MTDDepartureCard extends StatelessWidget {
         Container(width: circleSize, height: circleSize,
           decoration: BoxDecoration(
             color: departure.route?.color,
-            border: Border.all(color: Styles().colors.surfaceAccentTransparent15!, width: 1),
+            border: Border.all(color: Styles().colors.surfaceAccentTransparent15, width: 1),
             shape: BoxShape.circle),
           child: Center(child:
             Text(departure.route?.shortName ?? '', overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("widget.detail.large.thin")?.copyWith(color: departure.route?.textColor))

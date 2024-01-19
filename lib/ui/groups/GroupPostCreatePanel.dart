@@ -96,7 +96,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                         hintText: Localization().getStringEx('panel.group.detail.post.create.subject.field.hint', 'Write a Subject'),
                         border: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Styles().colors.mediumGray!,
+                              color: Styles().colors.mediumGray,
                               width: 0.0))),
                       style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"))),
                   PostInputField(
@@ -109,7 +109,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                     child: EnabledToggleButton(
                         label: "Also send to additional groups...",
                         borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+                        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                         enabled: CollectionUtils.isEmpty(_selectedMembers),
                         toggled: _allowSenPostToOtherGroups,
                         textStyle: CollectionUtils.isEmpty(_selectedMembers) ?
@@ -173,7 +173,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
               child: Container(
                   height: 48,
                   decoration: BoxDecoration(
-                      border: Border.all(color: Styles().colors.mediumGray!, width: 1),
+                      border: Border.all(color: Styles().colors.mediumGray, width: 1),
                       borderRadius: BorderRadius.all(Radius.circular(4))),
                   child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10),

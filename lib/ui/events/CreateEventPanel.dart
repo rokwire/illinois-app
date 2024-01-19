@@ -437,7 +437,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                     onTap: _onAllDayToggled,
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(4)),
-                                    border: Border.all(color: Styles().colors.fillColorPrimary!),
+                                    border: Border.all(color: Styles().colors.fillColorPrimary),
                                   )),
                                   Container(height: 8,),
                                   Semantics(label:Localization().getStringEx("panel.create_event.date_time.online","Make this an online event"),
@@ -447,7 +447,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                         label: Localization().getStringEx("panel.create_event.date_time.online","Make this an online event"),
                                         toggled: _isOnline,
                                         onTap: _onOnlineToggled,
-                                        border: Border.all(color: Styles().colors.fillColorPrimary!),
+                                        border: Border.all(color: Styles().colors.fillColorPrimary),
                                         borderRadius: BorderRadius.all(Radius.circular(4)),
                                       )),
                                   Container(height: 8,),
@@ -458,7 +458,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                         label: Localization().getStringEx("panel.create_event.date_time.in_person","Make this an in-person event"),
                                         toggled: _isInPerson,
                                         onTap: _onInPersonToggled,
-                                        border: Border.all(color: Styles().colors.fillColorPrimary!),
+                                        border: Border.all(color: Styles().colors.fillColorPrimary),
                                         borderRadius: BorderRadius.all(Radius.circular(4)),
                                       ))
                                 ])),
@@ -627,7 +627,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
               child: Container(
                 decoration: BoxDecoration(
                     border: Border.all(
-                        color: Styles().colors.surfaceAccent!,
+                        color: Styles().colors.surfaceAccent,
                         width: 1),
                     borderRadius:
                     BorderRadius.all(Radius.circular(4))),
@@ -690,7 +690,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                   padding: EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
                       border: Border.all(
-                          color: Styles().colors.fillColorPrimary!,
+                          color: Styles().colors.fillColorPrimary,
                           width: 1)),
                   constraints: BoxConstraints(
                     minHeight: 90,
@@ -757,7 +757,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                           decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                  color: Styles().colors.fillColorPrimary!,
+                                  color: Styles().colors.fillColorPrimary,
                                   width: 1)),
                           height: 120,
                           child: TextField(
@@ -815,7 +815,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                 child: Container(
                   decoration: BoxDecoration(
                       border: Border.all(
-                          color: Styles().colors.surfaceAccent!,
+                          color: Styles().colors.surfaceAccent,
                           width: 1),
                       borderRadius:
                       BorderRadius.all(Radius.circular(4))),
@@ -898,7 +898,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               decoration: BoxDecoration(
                                   color: Styles().colors.white,
                                   border: Border.all(
-                                      color: Styles().colors.fillColorPrimary!,
+                                      color: Styles().colors.fillColorPrimary,
                                       width: 1)),
                               height: 48,
                               child: TextField(
@@ -937,7 +937,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               decoration: BoxDecoration(
                                   color: Styles().colors.white,
                                   border: Border.all(
-                                      color: Styles().colors.fillColorPrimary!,
+                                      color: Styles().colors.fillColorPrimary,
                                       width: 1)),
                               height: 48,
                               child: TextField(
@@ -976,7 +976,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               decoration: BoxDecoration(
                                   color: Styles().colors.white,
                                   border: Border.all(
-                                      color: Styles().colors.fillColorPrimary!,
+                                      color: Styles().colors.fillColorPrimary,
                                       width: 1)),
                               height: 48,
                               child: TextField(
@@ -1026,7 +1026,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   border: Border.all(
-                                      color: Styles().colors.fillColorPrimary!,
+                                      color: Styles().colors.fillColorPrimary,
                                       width: 1)),
                               height: 48,
                               child: TextField(
@@ -1072,7 +1072,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   border: Border.all(
-                                      color: Styles().colors.fillColorPrimary!,
+                                      color: Styles().colors.fillColorPrimary,
                                       width: 1)),
                               height: 48,
                               child: TextField(
@@ -1124,7 +1124,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   decoration: BoxDecoration(
                                       color: Colors.white,
                                       border: Border.all(
-                                          color: Styles().colors.fillColorPrimary!,
+                                          color: Styles().colors.fillColorPrimary,
                                           width: 1)),
                                   height: 48,
                                   child: TextField(
@@ -1169,7 +1169,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
               label: Localization().getStringEx("panel.create_event.button.free.title","Is this event free?"),
               toggled: _isFree,
               onTap: _onFreeToggled,
-              border: Border.all(color: Styles().colors.fillColorPrimary!),
+              border: Border.all(color: Styles().colors.fillColorPrimary),
               borderRadius:
               BorderRadius.all(Radius.circular(4)),
             )),
@@ -1205,7 +1205,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                       decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(
-                              color: Styles().colors.fillColorPrimary!,
+                              color: Styles().colors.fillColorPrimary,
                               width: 1),
                           borderRadius:
                           BorderRadius.all(Radius.circular(4))),
@@ -1263,7 +1263,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                         decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(
-                                color: Styles().colors.fillColorPrimary!,
+                                color: Styles().colors.fillColorPrimary,
                                 width: 1),
                             borderRadius:
                             BorderRadius.all(Radius.circular(4))),
@@ -1984,7 +1984,7 @@ class _EventDateDisplayView extends StatelessWidget {
         height: 48,
 //        width: 142,
         decoration: BoxDecoration(
-            border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         padding: EdgeInsets.symmetric(horizontal: 12),
         child: Row(

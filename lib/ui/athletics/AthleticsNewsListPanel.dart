@@ -75,7 +75,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
                         children: <Widget> [
                           _buildFilterLabel(),
                           Expanded(
-                            child: Padding(padding: EdgeInsets.only(top: 2),child:_wrapWithBottomBorder(Styles().colors.fillColorSecondaryVariant!, FilterSelector(
+                            child: Padding(padding: EdgeInsets.only(top: 2),child:_wrapWithBottomBorder(Styles().colors.fillColorSecondaryVariant, FilterSelector(
                               title: _filters[_selectedFilterIndex],
                               active: _filterOptionsVisible,
                               expanded: true,
@@ -222,7 +222,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
   }
 
   Widget _buildFilterLabel(){
-    return _wrapWithBottomBorder(Styles().colors.surfaceAccent!,
+    return _wrapWithBottomBorder(Styles().colors.surfaceAccent,
         Padding(padding: EdgeInsets.only(top: 14),
         child:Text(Localization().getStringEx("panel.athletics_news_list.label.filter_by", "Filter by"),
           style: Styles().textStyles.getTextStyle("widget.item.regular.thin")),));

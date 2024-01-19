@@ -692,10 +692,10 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 1, color: Styles().colors.fillColorPrimaryTransparent015!),
-              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015!),
-              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015!),
-              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015!),
+              left: BorderSide(width: 1, color: Styles().colors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -743,10 +743,10 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015!),
-              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015!),
-              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015!),
-              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015!),
+              left: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -1007,10 +1007,10 @@ class _LiteContent extends StatelessWidget {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 1, color: Styles().colors.fillColorPrimaryTransparent015!),
-              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015!),
-              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015!),
-              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015!),
+              left: BorderSide(width: 1, color: Styles().colors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -1037,10 +1037,10 @@ class _LiteContent extends StatelessWidget {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015!),
-              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015!),
-              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015!),
-              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015!),
+              left: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -1154,10 +1154,10 @@ class _RichContent extends StatelessWidget {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 1, color: Styles().colors.fillColorPrimaryTransparent015!),
-              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015!),
-              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015!),
-              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015!),
+              left: BorderSide(width: 1, color: Styles().colors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -1213,10 +1213,10 @@ class _RichContent extends StatelessWidget {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015!),
-              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015!),
-              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015!),
-              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015!),
+              left: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -1392,10 +1392,10 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 1, color: Styles().colors.fillColorPrimaryTransparent015!),
-              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015!),
-              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015!),
-              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015!),
+              left: BorderSide(width: 1, color: Styles().colors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -1435,10 +1435,10 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015!),
-              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015!),
-              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015!),
-              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015!),
+              left: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -1480,7 +1480,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
         ? Container(
         decoration: new BoxDecoration(
             border: Border(
-              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015!),
+              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
             )),
         child: Padding(
           padding: EdgeInsets.only(top: 6, bottom: 6, left: 20, right: 20),
@@ -1630,7 +1630,7 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
         ? Container(
         decoration: new BoxDecoration(
             border: Border(
-              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015!),
+              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
             )),
         child: Padding(
           padding: EdgeInsets.only(top: 6, bottom: 6, left: 20, right: 20),

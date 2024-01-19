@@ -95,7 +95,7 @@ class Event2FilterCommandButton extends StatelessWidget {
 
   static BoxDecoration get defaultContentDecoration => BoxDecoration(
     color: Styles().colors.white,
-    border: Border.all(color: Styles().colors.disabledTextColor ?? Color(0xFF717273), width: 1),
+    border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
     borderRadius: BorderRadius.circular(16),
   );
 
@@ -331,7 +331,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   static Decoration get _listContentDecoration => BoxDecoration(
     color: Styles().colors.surface,
     borderRadius: _listContentBorderRadius,
-    border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]
   );
 
@@ -340,7 +340,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   static Decoration get _pageContentDecoration => BoxDecoration(
     color: Styles().colors.surface,
     borderRadius: _pageContentBorderRadius,
-    border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     boxShadow: _pageContentShadow
   );
 
@@ -353,9 +353,9 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     color: Styles().colors.surface,
     borderRadius: _pageContentBottomBorderRadius,
     border: Border(
-      left: BorderSide(color: Styles().colors.surfaceAccent!, width: 1),
-      right: BorderSide(color: Styles().colors.surfaceAccent!, width: 1),
-      bottom: BorderSide(color: Styles().colors.surfaceAccent!, width: 1),
+      left: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
+      right: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
+      bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
     ),
     boxShadow: _pageContentShadow
   );
@@ -372,7 +372,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   static Decoration get _linkContentDecoration => BoxDecoration(
     color: Styles().colors.white,
     borderRadius: _linkContentBorderRadius,
-    border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     boxShadow: _linkContentShadow
   );
 
@@ -380,9 +380,9 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     color: Styles().colors.surface,
     borderRadius: _linkContentBottomBorderRadius,
     border: Border(
-      left: BorderSide(color: Styles().colors.surfaceAccent!, width: 1),
-      right: BorderSide(color: Styles().colors.surfaceAccent!, width: 1),
-      bottom: BorderSide(color: Styles().colors.surfaceAccent!, width: 1),
+      left: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
+      right: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
+      bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
     ),
     boxShadow: _linkContentShadow
   );
@@ -406,7 +406,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   );
 
   Decoration get _imageHeadingDecoration => BoxDecoration(
-    border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent!, width: 1)),
+    border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
   );
 
   Widget get _eventHeadingWidget => Container(height: _eventHeadingHeight, color: widget.event.uiColor,);

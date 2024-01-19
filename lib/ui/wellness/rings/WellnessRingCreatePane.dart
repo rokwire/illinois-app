@@ -115,7 +115,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
                   style: Styles().textStyles.getTextStyle('widget.description.small.fat'))),
           Container(
               padding: EdgeInsets.symmetric(horizontal: 8),
-              decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray!, width: 1)),
+              decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
               child: TextField(
                   controller: _nameController,
                   decoration: InputDecoration(border: InputBorder.none),
@@ -183,7 +183,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
   Widget _buildColorPickerDialog() {
     return SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-          ColorPicker(pickerColor: Styles().colors.fillColorSecondary!, onColorChanged: _onColorChanged),
+          ColorPicker(pickerColor: Styles().colors.fillColorSecondary, onColorChanged: _onColorChanged),
           Padding(
               padding: EdgeInsets.only(top: 20),
               child: Center(
@@ -218,7 +218,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
                           style: Styles().textStyles.getTextStyle('widget.description.small.fat'))),
                   Container(
                       padding: EdgeInsets.symmetric(horizontal: 8),
-                      decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray!, width: 1)),
+                      decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
                       child: TextField(
                           controller: _quantityController,
                           decoration: InputDecoration(border: InputBorder.none),
@@ -234,7 +234,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
                             style: Styles().textStyles.getTextStyle('widget.description.small.fat'))),
                     Container(
                         padding: EdgeInsets.symmetric(horizontal: 8),
-                        decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray!, width: 1)),
+                        decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
                         child: TextField(
                             controller: _unitController,
                             decoration: InputDecoration(border: InputBorder.none),

@@ -119,8 +119,8 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Styles().colors.fillColorPrimaryVariant ?? Colors.transparent,
-            Styles().colors.gradientColorPrimary ?? Colors.transparent,
+            Styles().colors.fillColorPrimaryVariant,
+            Styles().colors.gradientColorPrimary,
           ]
         )
       ),

@@ -240,7 +240,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
             padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
             decoration: BoxDecoration(
               color: Styles().colors.white,
-              border: Border.all(color: Styles().colors.fillColorSecondary!, width: 2.0),
+              border: Border.all(color: Styles().colors.fillColorSecondary, width: 2.0),
               borderRadius: BorderRadius.circular(24.0),
             ),
             child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[

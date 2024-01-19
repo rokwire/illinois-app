@@ -140,8 +140,8 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Styles().colors.fillColorPrimaryVariant ?? Colors.transparent,
-            Styles().colors.gradientColorPrimary ?? Colors.transparent,
+            Styles().colors.fillColorPrimaryVariant,
+            Styles().colors.gradientColorPrimary,
           ]
         )
       ),

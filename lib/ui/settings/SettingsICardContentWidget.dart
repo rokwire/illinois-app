@@ -107,7 +107,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
                       child: ToggleRibbonButton(
                           label: Localization().getStringEx('panel.settings.icard.play_sound.button', 'Play sound when unlocking'),
                           toggled: _soundEnabled,
-                          border: Border.all(color: Styles().colors.blackTransparent018!, width: 1),
+                          border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
                           borderRadius: BorderRadius.all(Radius.circular(4)),
                           onTap: _onTapPlaySound)),
                   Padding(
@@ -115,7 +115,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
                       child: ToggleRibbonButton(
                           label: Localization().getStringEx('panel.settings.icard.vibrate.button', 'Vibrate when unlocking'),
                           toggled: _vibrationEnabled,
-                          border: Border.all(color: Styles().colors.blackTransparent018!, width: 1),
+                          border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
                           borderRadius: BorderRadius.all(Radius.circular(4)),
                           onTap: _onTapVibrate)),
                 ])),
@@ -182,7 +182,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
               child: Container(
                   decoration: BoxDecoration(
                       color: Styles().colors.white,
-                      border: Border.all(color: Styles().colors.blackTransparent018!, width: 1),
+                      border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
                       borderRadius: BorderRadius.all(Radius.circular(4))),
                   child: Padding(
                       padding: EdgeInsets.all(16),

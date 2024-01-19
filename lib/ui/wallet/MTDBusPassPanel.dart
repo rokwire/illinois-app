@@ -433,7 +433,7 @@ class _RotatingBorderState extends State<RotatingBorder>
             decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
-                  colors: [widget.activeColor!, widget.baseGradientColor ?? Styles().colors.fillColorSecondary!],
+                  colors: [widget.activeColor!, widget.baseGradientColor ?? Styles().colors.fillColorSecondary],
                   stops:  [0.0, 1.0],
                 )
             ),

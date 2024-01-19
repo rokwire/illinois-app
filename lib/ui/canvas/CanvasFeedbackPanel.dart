@@ -63,7 +63,7 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
                 child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     decoration: BoxDecoration(
-                        border: Border.all(color: Styles().colors.fillColorSecondary!, width: 1),
+                        border: Border.all(color: Styles().colors.fillColorSecondary, width: 1),
                         borderRadius: BorderRadius.all(Radius.circular(7))),
                     child: TextField(
                         controller: _subjectController,
@@ -80,7 +80,7 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
                 child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     decoration: BoxDecoration(
-                        border: Border.all(color: Styles().colors.fillColorSecondary!, width: 1),
+                        border: Border.all(color: Styles().colors.fillColorSecondary, width: 1),
                         borderRadius: BorderRadius.all(Radius.circular(7))),
                     child: TextField(
                         maxLines: 8,

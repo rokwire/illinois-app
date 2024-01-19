@@ -437,7 +437,7 @@ class _GuideFeatureButtonState extends State<GuideFeatureButton> {
         Container(
           decoration: BoxDecoration(
             color: Styles().colors.white,
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.all(Radius.circular(4)),
           ), child:
           Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 6), child:

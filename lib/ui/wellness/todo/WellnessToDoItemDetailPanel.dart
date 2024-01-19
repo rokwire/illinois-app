@@ -194,7 +194,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
               child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                   decoration:
-                      BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray!, width: 1)),
+                      BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                     Text(
                         StringUtils.ensureNotEmpty(_category?.name,
@@ -233,7 +233,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     } else {
       categoryName = category.name!;
     }
-    BorderSide borderSide = BorderSide(color: Styles().colors.fillColorPrimary!, width: 1);
+    BorderSide borderSide = BorderSide(color: Styles().colors.fillColorPrimary, width: 1);
     return GestureDetector(
         onTap: () => _onTapCategory(category),
         child: Container(
@@ -258,7 +258,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
               child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                   decoration:
-                      BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray!, width: 1)),
+                      BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                     Text(StringUtils.ensureNotEmpty(_formattedDueDate),
                         style: Styles().textStyles.getTextStyle("panel.wellness.todo.item_detail.title")),
@@ -282,7 +282,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                   child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                       decoration:
-                          BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray!, width: 1)),
+                          BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
                       child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                         Text(StringUtils.ensureNotEmpty(_formattedDueTime),
                             style: Styles().textStyles.getTextStyle("panel.wellness.todo.item_detail.title")),
@@ -304,7 +304,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
               child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                   decoration:
-                      BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray!, width: 1)),
+                      BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                     Text(StringUtils.ensureNotEmpty(selectedTypeLabel),
                         overflow: TextOverflow.ellipsis,
@@ -347,7 +347,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
 
   Widget _buildReminderTypeItem(ToDoReminderType type) {
     bool isSelected = (type == _selectedReminderType);
-    BorderSide borderSide = BorderSide(color: Styles().colors.fillColorPrimary!, width: 1);
+    BorderSide borderSide = BorderSide(color: Styles().colors.fillColorPrimary, width: 1);
     return GestureDetector(
         onTap: () => _onTapReminderType(type),
         child: Container(
@@ -373,7 +373,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
               child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: (CollectionUtils.isEmpty(_workDays) ? 24 : 12)),
                   decoration:
-                      BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray!, width: 1)),
+                      BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
                   child: Row(children: [
                     Expanded(
                         child: SingleChildScrollView(
@@ -443,7 +443,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   Widget _buildInputField({required TextEditingController controller}) {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 8),
-        decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray!, width: 1)),
+        decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
         child: TextField(
             controller: controller,
             decoration: InputDecoration(border: InputBorder.none),

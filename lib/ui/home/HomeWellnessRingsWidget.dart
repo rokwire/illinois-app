@@ -138,8 +138,8 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
 
   Widget _buildCreateRingButton(){
     bool enabled = WellnessRings().canAddRing;
-    final Color disabledTextColor = Styles().colors.textColorDisabled ?? Colors.white;
-    final Color disabledBackgroundColor = Styles().colors.textBackgroundVariant2 ?? Colors.white;
+    final Color disabledTextColor = Styles().colors.textColorDisabled;
+    final Color disabledBackgroundColor = Styles().colors.textBackgroundVariant2;
     String label = "Create New Ring";
     String description = "Maximum of 4 total";
     return Visibility(
@@ -150,7 +150,7 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
               // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                 child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Expanded(child:
-                  Container(decoration: BoxDecoration(color: enabled? Colors.white : disabledBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors.surfaceAccent!, width: 1)), child:
+                  Container(decoration: BoxDecoration(color: enabled? Colors.white : disabledBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors.surfaceAccent, width: 1)), child:
                   Padding(padding: EdgeInsets.only(left: 8 /*+10 from icon*/, top: 10, bottom: 10, right: 3/*+10 form icon*/), child:
                   Row( crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,

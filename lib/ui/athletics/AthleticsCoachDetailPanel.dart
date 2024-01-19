@@ -185,7 +185,7 @@ class _CoachDetailHeading extends StatelessWidget{
                     onTap: onTapPhoto,
                     child: Container(
                       margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
-                      decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary!,width: 2, style: BorderStyle.solid)),
+                      decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
                       child: (StringUtils.isNotEmpty(coach?.thumbPhotoUrl) ?
                       Image.network(coach!.thumbPhotoUrl!, semanticLabel: "coach", width: _photoWidth,fit: BoxFit.cover, alignment: Alignment.topCenter):
                       Container(height: 112, width: _photoWidth, color: Colors.white,)

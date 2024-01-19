@@ -284,7 +284,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
               backgroundColor: Styles().colors.white,
               borderRadius: BorderRadius.all(Radius.circular(5)),
-              border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                 rightIconKey: _statusValuesVisible ? 'chevron-up' : 'chevron-down',
                 label: _memberStatusToString(_selectedMemberStatus),
               onTap: _onTapRibbonButton))),
@@ -474,7 +474,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   Widget _buildStatusItem(GroupMemberStatus? status) {
     return RibbonButton(
         backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         rightIcon: null,
         label: _memberStatusToString(status),
@@ -585,7 +585,7 @@ class _PendingMemberCard extends StatelessWidget {
       decoration: BoxDecoration(
           color: Styles().colors.white,
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Styles().colors.surfaceAccent!, width: 1, style: BorderStyle.solid)
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid)
       ),
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
@@ -642,7 +642,7 @@ class _GroupMemberCard extends StatelessWidget {
         decoration: BoxDecoration(
             color: Styles().colors.white,
             borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Styles().colors.surfaceAccent!, width: 1, style: BorderStyle.solid)
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid)
         ),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(

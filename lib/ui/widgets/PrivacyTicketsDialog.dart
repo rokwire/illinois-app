@@ -209,9 +209,9 @@ class ShapesPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Offset thumbCenter = size.center(Offset(0, 0));
-    canvas.drawCircle(thumbCenter, 20, Paint()..color = Styles().colors.fillColorSecondaryVariant!);
-    canvas.drawCircle(thumbCenter, 18, Paint()..color = Styles().colors.white!);
-    canvas.drawCircle(thumbCenter, 15, Paint()..color = Styles().colors.fillColorPrimary!);
+    canvas.drawCircle(thumbCenter, 20, Paint()..color = Styles().colors.fillColorSecondaryVariant);
+    canvas.drawCircle(thumbCenter, 18, Paint()..color = Styles().colors.white);
+    canvas.drawCircle(thumbCenter, 15, Paint()..color = Styles().colors.fillColorPrimary);
   }
 
   @override

@@ -115,12 +115,12 @@ class _CanvasModuleDetailPanelState extends State<CanvasModuleDetailPanel> {
 
   Widget _buildItem(CanvasModuleItem item, {bool isFirst = false}) {
     double innerPadding = 10;
-    BorderSide borderSide = BorderSide(color: Styles().colors.blackTransparent06!, width: 1);
+    BorderSide borderSide = BorderSide(color: Styles().colors.blackTransparent06, width: 1);
     return GestureDetector(
         onTap: () => _onTapItem(item),
         child: Container(
             decoration: BoxDecoration(
-                color: Styles().colors.white!,
+                color: Styles().colors.white,
                 border: Border(left: borderSide, top: (isFirst ? borderSide : BorderSide.none), right: borderSide, bottom: borderSide)),
             padding: EdgeInsets.only(
                 left: ((item.indent ?? 0) * 20 + innerPadding), top: innerPadding, right: innerPadding, bottom: innerPadding),

@@ -87,7 +87,7 @@ class _DebugMobileAccessHomePanelState extends State<DebugMobileAccessHomePanel>
                 child: Container(
                     decoration: BoxDecoration(
                         color: Styles().colors.white,
-                        border: Border.all(color: Styles().colors.blackTransparent018!, width: 1),
+                        border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
                         borderRadius: BorderRadius.all(Radius.circular(4))),
                     child: Padding(
                         padding: EdgeInsets.all(16),

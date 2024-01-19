@@ -237,7 +237,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                             hintText: Localization().getStringEx("panel.group.detail.post.edit.hint", "Edit the post"),
                                             border: OutlineInputBorder(
                                                 borderSide: BorderSide(
-                                                    color: Styles().colors.mediumGray!,
+                                                    color: Styles().colors.mediumGray,
                                                     width: 0.0))),
                                         style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
                                        )),

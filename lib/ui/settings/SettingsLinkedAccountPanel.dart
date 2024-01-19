@@ -145,7 +145,7 @@ class LinkAccountContentWidget extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(border: Border.all(color: Styles().colors.lightGray!),borderRadius: BorderRadius.all(Radius.circular(4))),
+      decoration: BoxDecoration(border: Border.all(color: Styles().colors.lightGray),borderRadius: BorderRadius.all(Radius.circular(4))),
       child: Column(
         children: [
           Container(
@@ -168,7 +168,7 @@ class LinkAccountContentWidget extends StatelessWidget{
               ],
             ),
           ),
-          Container(height: 1, color: Styles().colors.lightGray!,),
+          Container(height: 1, color: Styles().colors.lightGray,),
           Container(
             color: Styles().colors.white,
             child: RibbonButton(

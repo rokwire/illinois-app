@@ -212,7 +212,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
                       customStylesBuilder: (element) => (element.localName == "a")
                           ? {
                               "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor),
-                              "text-decoration-color": ColorUtils.toHex(Styles().colors.fillColorSecondary ?? defaultStyleColor)
+                              "text-decoration-color": ColorUtils.toHex(Styles().colors.fillColorSecondary)
                             }
                           : null))
             ])));
@@ -246,7 +246,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
     setStateIfMounted(() {
       _scanning = true;
     });
-    FlutterBarcodeScanner.scanBarcode(UiColors.toHex(Styles().colors.fillColorSecondary!)!,
+    FlutterBarcodeScanner.scanBarcode(UiColors.toHex(Styles().colors.fillColorSecondary)!,
             Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel'), true, ScanMode.QR)
         .then((scanResult) {
       _onScanFinished(scanResult);
@@ -341,7 +341,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
                     customStylesBuilder: (element) => (element.localName == "a")
                         ? {
                             "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor),
-                            "text-decoration-color": ColorUtils.toHex(Styles().colors.fillColorSecondary ?? defaultStyleColor)
+                            "text-decoration-color": ColorUtils.toHex(Styles().colors.fillColorSecondary)
                           }
                         : null))
           ]),

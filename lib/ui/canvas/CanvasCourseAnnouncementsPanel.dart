@@ -140,7 +140,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
         padding: EdgeInsets.only(bottom: 16),
         child: Container(
             decoration: BoxDecoration(
-                color: Styles().colors.backgroundVariant!, border: Border.all(color: Styles().colors.blackTransparent06!, width: 1)),
+                color: Styles().colors.backgroundVariant, border: Border.all(color: Styles().colors.blackTransparent06, width: 1)),
             padding: EdgeInsets.all(10),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -158,11 +158,11 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
             onTap: () => _onTapAnnouncement(announcement),
             child: Container(
                 decoration: BoxDecoration(
-                    color: Styles().colors.white!,
+                    color: Styles().colors.white,
                     borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: Styles().colors.lightGray!, width: 1),
+                    border: Border.all(color: Styles().colors.lightGray, width: 1),
                     boxShadow: [
-                      BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))
+                      BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))
                     ]),
                 padding: EdgeInsets.all(10),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -209,7 +209,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
         height: height,
         decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Styles().colors.lightGray!, width: 1),
+            border: Border.all(color: Styles().colors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),

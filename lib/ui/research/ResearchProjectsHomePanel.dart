@@ -128,7 +128,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
         backgroundColor: Styles().colors.white,
         borderRadius: BorderRadius.all(Radius.circular(5)),
-        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: _contentTypesDropdownExpanded ? 'chevron-up' : 'chevron-down',
         label: _getContentTypeName(_selectedContentType),
         onTap: _onTapContentTypeDropdownButton
@@ -160,7 +160,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     if (_canCreateResearchProject) {
       contentList.add(RibbonButton(
         backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: Localization().getStringEx('panel.research_projects.home.dropdown.create.title', 'Create New Research Project'),
         onTap: _onTapCreate
@@ -168,7 +168,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     }
     contentList.add(RibbonButton(
       backgroundColor: Styles().colors.white,
-      border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
       label: Localization().getStringEx('panel.research_projects.home.dropdown.search.title', 'Search Research Projects'),
       onTap: _onTapSearch
@@ -183,7 +183,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   Widget _buildContentTypeDropdownItem(ResearchProjectsContentType contentType) {
     return RibbonButton(
         backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentTypeName(contentType),
         onTap: () => _onTapContentTypeDropdownItem(contentType));

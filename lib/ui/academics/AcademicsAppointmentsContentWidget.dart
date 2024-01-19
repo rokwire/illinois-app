@@ -129,7 +129,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
         backgroundColor: Styles().colors.white,
         borderRadius: BorderRadius.all(Radius.circular(5)),
-        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: _isProvidersExpanded ? 'chevron-up' : 'chevron-down',
         label: (_selectedProvider != null) ? (_selectedProvider?.name ?? '') : Localization().getStringEx('panel.academics.appointments.home.label.providers.all', 'All Providers'),
         onTap: _onProvidersDropdown
@@ -165,7 +165,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
     if (_providers != null) {
       items.add(RibbonButton(
         backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: Localization().getStringEx('panel.academics.appointments.home.label.providers.all', 'All Providers'),
         onTap: () => _onTapProvider(null)
@@ -174,7 +174,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
       for (AppointmentProvider provider in _providers!) {
         items.add(RibbonButton(
           backgroundColor: Styles().colors.white,
-          border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           rightIconKey: null,
           label: provider.name,
           onTap: () => _onTapProvider(provider)

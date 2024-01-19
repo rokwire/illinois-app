@@ -740,7 +740,7 @@ class _EventEntry extends StatelessWidget {
     String title = ((parentEvent?.isSuperEvent == true) ? event?.title : event?.displayDate) ?? '';
     String subTitle = ((parentEvent?.isSuperEvent == true) ? event?.displaySuperTime : event?.displayStartEndTime) ?? '';
     return GestureDetector(onTap: () => _onTapEvent(context), child: Container(
-      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent!, width: 1.0), borderRadius: BorderRadius.circular(4.0),
+      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1.0), borderRadius: BorderRadius.circular(4.0),
       ),
       child: Padding(padding: EdgeInsets.all(16), child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -159,7 +159,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
           child: Container(
             foregroundDecoration: BoxDecoration(
               border: Border.all(
-                color: Styles().colors.surfaceAccent!,
+                color: Styles().colors.surfaceAccent,
                 width: 1.0,
               ),
               borderRadius: BorderRadius.circular(15),
@@ -322,7 +322,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
           child: Container(
             foregroundDecoration: BoxDecoration(
               border: Border.all(
-                color: Styles().colors.surfaceAccent!,
+                color: Styles().colors.surfaceAccent,
                 width: 1.0,
               ),
               borderRadius: BorderRadius.circular(15),

@@ -138,7 +138,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
         backgroundColor: Styles().colors.white,
         borderRadius: BorderRadius.all(Radius.circular(5)),
-        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: _contentTypesDropdownExpanded ? 'chevron-up' : 'chevron-down',
         label: _getContentTypeName(_selectedContentType),
         onTap: _onTapContentTypeDropdownButton
@@ -166,7 +166,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     }
     contentList.add(RibbonButton(
       backgroundColor: Styles().colors.white,
-      border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       rightIconKey: null,
       label: Localization().getStringEx('panel.mtd_stops.home.dropdown.search.title', 'Search Bus Stops'),
       onTap: _onTapSearch
@@ -182,7 +182,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   Widget _buildContentTypeDropdownItem(MTDStopsContentType contentType) {
     return RibbonButton(
         backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentTypeName(contentType),
         onTap: () => _onTapContentTypeDropdownItem(contentType));

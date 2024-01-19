@@ -90,10 +90,10 @@ class _LaundryIssueContactInfoPanelState extends State<LaundryIssueContactInfoPa
     return Padding(
         padding: EdgeInsets.only(top: 10),
         child: Container(
-            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.disabledTextColor!, width: 2))),
+            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.disabledTextColor, width: 2))),
             child: TextField(
                 controller: controller,
-                cursorColor: Styles().colors.mediumGray2!,
+                cursorColor: Styles().colors.mediumGray2,
                 style: Styles().textStyles.getTextStyle("widget.input_field.dark.text.large"),
                 decoration: InputDecoration(
                     border: InputBorder.none,

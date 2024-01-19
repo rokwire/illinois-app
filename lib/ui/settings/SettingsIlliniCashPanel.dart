@@ -246,7 +246,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                   StringUtils.ensureNotEmpty(contentHtml),
                   onTapUrl : (url) {_onTapLink(context, url); return true;},
                   textStyle: Styles().textStyles.getTextStyle("widget.message.small"),
-                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondaryVariant ?? Colors.red)} : null
+                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondaryVariant)} : null
               )
             ),
             Row(
@@ -494,10 +494,10 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                color: backColor ?? Styles().colors.background,
                border: showBorder?
                Border.all(
-                   color: Styles().colors.surfaceAccent!,
+                   color: Styles().colors.surfaceAccent,
                    width: 1,
                    style: BorderStyle.solid) :
-               Border.all(color: backColor ?? Styles().colors.background!,width: 0)
+               Border.all(color: backColor ?? Styles().colors.background,width: 0)
              ),
               child: Padding(
                   padding: EdgeInsets.all(8),
@@ -540,8 +540,8 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
 
   Widget _buildPrivacyLevelIcon() {
     String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
-    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary!, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorSecondary!, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorSecondary, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
         Text(privacyLevel, style:  Styles().textStyles.getTextStyle("widget.title.medium.extra_fat"))
       ),
     );

@@ -731,7 +731,7 @@ class _PollsHomePanelFilterTab extends StatelessWidget {
           height: 48,
           decoration: BoxDecoration(
             color: selected ? Colors.white : Styles().colors.lightGray,
-            border: Border.all(color: Styles().colors.surfaceAccent!, width: 1.5, style: BorderStyle.solid),
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 1.5, style: BorderStyle.solid),
             borderRadius: _borderRadius,
           ),
           child:Center(child: Text(text!,style: selected ? Styles().textStyles.getTextStyle("widget.tab.selected") : Styles().textStyles.getTextStyle("widget.tab.not_selected") )),
@@ -986,7 +986,7 @@ class _PollCardState extends State<PollCard> {
             Container(padding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
               decoration: BoxDecoration(
                 color: Styles().colors.white,
-                border: Border.all(color: enabled? Styles().colors.fillColorSecondary! :Styles().colors.surfaceAccent!, width: 2.0),
+                border: Border.all(color: enabled? Styles().colors.fillColorSecondary :Styles().colors.surfaceAccent, width: 2.0),
                 borderRadius: BorderRadius.circular(24.0),
               ),
               child: Center(child:

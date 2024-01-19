@@ -94,12 +94,12 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget> implements N
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       buildMenSectionHeader(),
-      Container(decoration: BoxDecoration(border:Border.all(color: Styles().colors.surfaceAccent!, width: 1)), child:
+      Container(decoration: BoxDecoration(border:Border.all(color: Styles().colors.surfaceAccent, width: 1)), child:
         Column(children: buildSportList(_menSports),),
       ),
       Container(height: 20,),
       buildWomenSectionHeader(),
-      Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.surfaceAccent!, width: 1)), child:
+      Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.surfaceAccent, width: 1)), child:
         Column(children: buildSportList(_womenSports),),
       ),
     ],);

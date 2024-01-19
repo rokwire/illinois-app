@@ -158,7 +158,7 @@ class _Event2AttributeButton extends StatelessWidget {
     ]);
   }
 
-  Color get borderColor => Styles().colors.disabledTextColor ?? Color(0xFF717273);
+  Color get borderColor => Styles().colors.disabledTextColor;
 
   Decoration get headingDecoration => expanded ?
     BoxDecoration(

@@ -58,8 +58,8 @@ class SkillsSelfEvaluationOccupationDetails extends StatelessWidget {
       decoration: BoxDecoration(
           shape: BoxShape.rectangle,
           gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-            Styles().colors.fillColorPrimaryVariant ?? Colors.transparent,
-            Styles().colors.gradientColorPrimary ?? Colors.transparent,
+            Styles().colors.fillColorPrimaryVariant,
+            Styles().colors.gradientColorPrimary,
           ])),
       child: Column(
         children: [

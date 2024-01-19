@@ -90,7 +90,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                     // ])),
                     Container(
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                        color: Styles().colors.fillColorPrimary!,
+                        color: Styles().colors.fillColorPrimary,
                         child: Semantics(
                           label: Localization().getStringEx("panel.group.members.label.tap_to_follow_team.title", "Tap the checkmark to select members"),
                           hint: Localization().getStringEx("panel.group.members.label.tap_to_follow_team.hint", ""),
@@ -176,7 +176,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
         borderRadius: BorderRadius.circular(15),
         child: Container(
             foregroundDecoration: BoxDecoration(
-              border: Border.all(color: Styles().colors.surfaceAccent!, width: 1.0),
+              border: Border.all(color: Styles().colors.surfaceAccent, width: 1.0),
               borderRadius: BorderRadius.circular(15),
             ),
             child: Column(children: memberWidgets)));

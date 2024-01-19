@@ -739,7 +739,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
             ),
             Container(
               decoration: BoxDecoration(
-                  color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent!, width: 0), borderRadius: BorderRadius.all(Radius.circular(5))),
+                  color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 0), borderRadius: BorderRadius.all(Radius.circular(5))),
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[

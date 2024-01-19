@@ -69,7 +69,7 @@ class _SettingsVideoTutorialListPanelState extends State<SettingsVideoTutorialLi
                 decoration: BoxDecoration(
                     color: Styles().colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(5)),
-                    border: Border.all(color: Styles().colors.lightGray!, width: 1)),
+                    border: Border.all(color: Styles().colors.lightGray, width: 1)),
                 child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Expanded(
                       child: Padding(

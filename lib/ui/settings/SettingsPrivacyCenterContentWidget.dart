@@ -173,7 +173,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
                   width: 60,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                      border: Border.all(color: Styles().colors.fillColorPrimary!, width: 2),
+                      border: Border.all(color: Styles().colors.fillColorPrimary, width: 2),
                       color: Styles().colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(100))),
                   child: Container(
@@ -181,7 +181,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
                       width: 52,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                          border: Border.all(color: Styles().colors.fillColorSecondary!, width: 2),
+                          border: Border.all(color: Styles().colors.fillColorSecondary, width: 2),
                           color: Styles().colors.white,
                           borderRadius: BorderRadius.all(Radius.circular(100))),
                       child: Semantics(

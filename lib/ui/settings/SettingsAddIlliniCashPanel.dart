@@ -166,17 +166,17 @@ class _SettingsAddIlliniCashPanelState
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary!,
+                                                      color: Styles().colors.fillColorSecondary,
                                                       width: 1.0),
                                                 ),
                                                 enabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary!,
+                                                      color: Styles().colors.fillColorPrimary,
                                                       width: 1.0),
                                                 ),
                                                 disabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary!,
+                                                      color: Styles().colors.fillColorPrimary,
                                                       width: 1.0),
                                                 ),
                                               ),
@@ -213,17 +213,17 @@ class _SettingsAddIlliniCashPanelState
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary!,
+                                                      color: Styles().colors.fillColorSecondary,
                                                       width: 1.0),
                                                 ),
                                                 enabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary!,
+                                                      color: Styles().colors.fillColorPrimary,
                                                       width: 1.0),
                                                 ),
                                                 disabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary!,
+                                                      color: Styles().colors.fillColorPrimary,
                                                       width: 1.0),
                                                 ),
                                               ),
@@ -260,17 +260,17 @@ class _SettingsAddIlliniCashPanelState
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary!,
+                                                      color: Styles().colors.fillColorSecondary,
                                                       width: 1.0),
                                                 ),
                                                 enabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary!,
+                                                      color: Styles().colors.fillColorPrimary,
                                                       width: 1.0),
                                                 ),
                                                 disabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary!,
+                                                      color: Styles().colors.fillColorPrimary,
                                                       width: 1.0),
                                                 ),
                                               ),
@@ -306,17 +306,17 @@ class _SettingsAddIlliniCashPanelState
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary!,
+                                                      color: Styles().colors.fillColorSecondary,
                                                       width: 1.0),
                                                 ),
                                                 enabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary!,
+                                                      color: Styles().colors.fillColorPrimary,
                                                       width: 1.0),
                                                 ),
                                                 disabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary!,
+                                                      color: Styles().colors.fillColorPrimary,
                                                       width: 1.0),
                                                 ),
                                               ),
@@ -350,17 +350,17 @@ class _SettingsAddIlliniCashPanelState
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary!,
+                                                      color: Styles().colors.fillColorSecondary,
                                                       width: 1.0),
                                                 ),
                                                 enabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary!,
+                                                      color: Styles().colors.fillColorPrimary,
                                                       width: 1.0),
                                                 ),
                                                 disabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary!,
+                                                      color: Styles().colors.fillColorPrimary,
                                                       width: 1.0),
                                                 ),
                                               ),
@@ -398,17 +398,17 @@ class _SettingsAddIlliniCashPanelState
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary!,
+                                                      color: Styles().colors.fillColorSecondary,
                                                       width: 1.0),
                                                 ),
                                                 enabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary!,
+                                                      color: Styles().colors.fillColorPrimary,
                                                       width: 1.0),
                                                 ),
                                                 disabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary!,
+                                                      color: Styles().colors.fillColorPrimary,
                                                       width: 1.0),
                                                 ),
                                               ),
@@ -444,17 +444,17 @@ class _SettingsAddIlliniCashPanelState
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary!,
+                                                      color: Styles().colors.fillColorSecondary,
                                                       width: 1.0),
                                                 ),
                                                 enabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary!,
+                                                      color: Styles().colors.fillColorPrimary,
                                                       width: 1.0),
                                                 ),
                                                 disabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary!,
+                                                      color: Styles().colors.fillColorPrimary,
                                                       width: 1.0),
                                                 ),
                                               ),
@@ -492,12 +492,12 @@ class _SettingsAddIlliniCashPanelState
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary!,
+                                                      color: Styles().colors.fillColorSecondary,
                                                       width: 1.0),
                                                 ),
                                                 enabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary!,
+                                                      color: Styles().colors.fillColorPrimary,
                                                       width: 1.0),
                                                 ),
                                               ),
@@ -557,7 +557,7 @@ class _SettingsAddIlliniCashPanelState
                                               decoration: new BoxDecoration(
                                                   border: new Border(
                                                       bottom: BorderSide(
-                                                          color: Styles().colors.fillColorSecondary!))),
+                                                          color: Styles().colors.fillColorSecondary))),
                                               child: GestureDetector(
                                                 onTap: _onTermsAndConditionsTapped,
                                                 child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [

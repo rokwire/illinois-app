@@ -64,8 +64,8 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   final double _buildingAccessIconSize = 84;
 
   Color? _activeColor;
-  Color get _activeBorderColor{ return _activeColor ?? Styles().colors.fillColorSecondary!; }
-  Color get _activeHeadingColor{ return _activeColor ?? Styles().colors.fillColorPrimary!; }
+  Color get _activeBorderColor{ return _activeColor ?? Styles().colors.fillColorSecondary; }
+  Color get _activeHeadingColor{ return _activeColor ?? Styles().colors.fillColorPrimary; }
 
   MemoryImage? _photoImage;
   bool? _buildingAccess;
@@ -292,7 +292,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: LinearGradient(
-                        colors: [ Styles().colors.fillColorSecondary!, _activeBorderColor],
+                        colors: [ Styles().colors.fillColorSecondary, _activeBorderColor],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         stops: [0.0, 1.0],),

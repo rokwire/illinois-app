@@ -268,7 +268,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           children: <Widget>[
             _buildInfoHeader(title,null),
             Container(
-              decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary!, width: 1),color: Styles().colors.white),
+              decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
               child: Semantics(
                   label: fieldTitle,
                   hint: fieldHint,
@@ -303,7 +303,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               decoration: BoxDecoration(
                   color: Styles().colors.fillColorSecondaryVariant,
                   border: Border.all(
-                      color: Styles().colors.fillColorSecondary!,
+                      color: Styles().colors.fillColorSecondary,
                       width: 1),
                   borderRadius:
                   BorderRadius.all(Radius.circular(4))),
@@ -341,7 +341,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         children: <Widget>[
           _buildInfoHeader(title,fieldTitle),
           Container(
-            decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary!, width: 1),color: Styles().colors.white),
+            decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
             child: Semantics(
                 label: title,
                 hint: fieldHint,
@@ -398,7 +398,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                       decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(
-                              color: Styles().colors.fillColorPrimary!,
+                              color: Styles().colors.fillColorPrimary,
                               width: 1)),
                       child: TextField(
                         controller: _linkController,
@@ -658,7 +658,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           decoration: BoxDecoration(
               color: Styles().colors.white,
               border: Border.all(
-                  color: Styles().colors.surfaceAccent!,
+                  color: Styles().colors.surfaceAccent,
                   width: 1),
               borderRadius:
               BorderRadius.all(Radius.circular(4))),
@@ -752,7 +752,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           _buildInfoHeader(title, null, padding: EdgeInsets.only(bottom: 6, top: 12)),
-          Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary!, width: 1), color: Styles().colors.white), child:
+          Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white), child:
             Row(children: [
               Expanded(child:
                   Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, value: _researchConsentDetailsController.text, child:
@@ -789,7 +789,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         Visibility(visible: _researchRequiresConsentConfirmation, child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             _buildInfoHeader(title, null, padding: EdgeInsets.only(bottom: 6, top: 12)),
-            Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary!, width: 1), color: Styles().colors.white), child:
+            Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white), child:
               Row(children: [
                 Expanded(child:
                   Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, child:
@@ -876,7 +876,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 Container(
                     decoration: BoxDecoration(
                         color: Styles().colors.white,
-                        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+                        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                         borderRadius: BorderRadius.all(Radius.circular(4))),
                     padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -898,7 +898,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                         Padding(padding: EdgeInsets.only(top: 14), child: Text('*', style: Styles().textStyles.getTextStyle("widget.label.medium.fat")))
                       ]),
                       Container(
-                          decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary!, width: 1), color: Styles().colors.white!),
+                          decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white),
                           child: TextField(
                             onChanged: _onAuthManGroupNameChanged,
                             enabled: _canUpdate,
@@ -1124,7 +1124,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         child:  RibbonButton(
             label: Localization().getStringEx('panel.groups_settings..button.advanced_settings.title', 'Advanced Settings'), //Localize
             hint: Localization().getStringEx('panel.groups_settings..button.advanced_settings..hint', ''),
-            border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             borderRadius: BorderRadius.circular(4),
             onTap: (){
               Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAdvancedSettingsPanel(group: _group,))).then((_){
@@ -1144,7 +1144,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       EnabledToggleButton(
         label: Localization().getStringEx('panel.groups_settings.auto_join.project.enabled.label', 'Does not require my screening of potential participants'),
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         enabled: true,
         toggled: _group?.canJoinAutomatically == true,
         onTap: _onTapJoinAutomatically
@@ -1211,7 +1211,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         child: Container(
           decoration: BoxDecoration(
               color: Styles().colors.white,
-              border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
               borderRadius: BorderRadius.all(Radius.circular(4))),
           padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

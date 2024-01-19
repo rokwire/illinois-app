@@ -76,7 +76,7 @@ class _DeviceCalendarPromptState extends State<DeviceCalendarPrompt>{
                 Container(height: 16,),
                 ToggleRibbonButton(
                     label: Localization().getStringEx('panel.settings.home.calendar.settings.prompt.label', 'Prompt when saving events or appointments to calendar'),
-                    border: Border.all(color: Styles().colors.blackTransparent018!, width: 1),
+                    border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
                     borderRadius: BorderRadius.all(Radius.circular(4)),
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium"),
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),

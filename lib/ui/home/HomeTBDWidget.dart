@@ -21,7 +21,7 @@ class HomeTBDWidget extends StatelessWidget {
       //flatHeight: 0, slantHeight: 0, childPadding: EdgeInsets.all(16),
       child: Container(
         padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+        decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         child: Column(children: <Widget>[
           Row(children: <Widget>[
             Expanded(child:

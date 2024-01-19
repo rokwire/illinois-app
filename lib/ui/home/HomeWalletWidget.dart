@@ -618,7 +618,7 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
                             margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           ) :
                           Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 8), child:
-                            Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors.fillColorSecondary ?? Colors.transparent, width: 3))), child:
+                            Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors.fillColorSecondary, width: 3))), child:
                               Padding(padding: EdgeInsets.only(left: 10), child:
                                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                                   Container(height: 50, decoration: BoxDecoration(

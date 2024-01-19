@@ -144,7 +144,7 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
             "<div style=text-align:center> $emptyUpcommingContentHtml </div>",
             onTapUrl : (url) {_onTapMcKinleyUrl(url); return true;},
             textStyle:  Styles().textStyles.getTextStyle("widget.title.medium"),
-            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorPrimary ?? Colors.blue)} : null
+            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorPrimary)} : null
         )
     );
   }
@@ -199,7 +199,7 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
             "<div style=text-align:center> $descriptionHtml </div>",
             onTapUrl : (url) {_onTapMcKinleyUrl(url); return true;},
             textStyle: Styles().textStyles.getTextStyle("widget.description.regular"),
-            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorPrimary ?? Colors.blue)} : null
+            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorPrimary)} : null
         )
     );
   }
@@ -267,7 +267,7 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
                             rescheduleContentHtml,
                             onTapUrl : (url) {_onTapMcKinleyUrl(url); return true;},
                             textStyle:  Styles().textStyles.getTextStyle("widget.message.small"),
-                            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorPrimary ?? Colors.blue)} : null
+                            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorPrimary)} : null
                         )
                     )
                   ])

@@ -247,7 +247,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
           // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Expanded(child:
-              Container(decoration: BoxDecoration(color: enabled? Colors.white : disabledBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors.surfaceAccent!, width: 1)), child:
+              Container(decoration: BoxDecoration(color: enabled? Colors.white : disabledBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors.surfaceAccent, width: 1)), child:
               Padding(padding: EdgeInsets.only(left: 18, top: 16, bottom: 16, right: 16), child:
               Row( crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -383,7 +383,7 @@ class _TabButton extends StatelessWidget {
   }
 
   BoxBorder? get _border {
-    BorderSide borderSide = BorderSide(color: Styles().colors.surfaceAccent!, width: 2, style: BorderStyle.solid);
+    BorderSide borderSide = BorderSide(color: Styles().colors.surfaceAccent, width: 2, style: BorderStyle.solid);
     switch (position) {
       case _TabButtonPosition.first:
         return Border.fromBorderSide(borderSide);

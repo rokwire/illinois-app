@@ -46,7 +46,7 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                                 height: 12,
                                 decoration: BoxDecoration(
                                   color: Styles().colors.fillColorPrimaryVariant,
-                                  border: Border.all(color: Styles().colors.fillColorPrimaryVariant!, width: 1),
+                                  border: Border.all(color: Styles().colors.fillColorPrimaryVariant, width: 1),
                                   borderRadius: BorderRadius.circular(24.0),
                                 )),
                           )),

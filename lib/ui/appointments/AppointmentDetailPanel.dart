@@ -522,7 +522,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
         HtmlWidget(instructionsHtml,
           onTapUrl : (url) {_launchUrl(url); return true;},
           textStyle:  Styles().textStyles.getTextStyle("widget.info.regular"),
-          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.textSurface ?? Colors.blue)} : null
+          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.textSurface)} : null
         )
       );
     }
@@ -549,7 +549,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
         HtmlWidget(descriptionHtml,
           onTapUrl : (url) {_launchUrl(url); return true;},
           textStyle:  Styles().textStyles.getTextStyle("widget.info.regular"),
-          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.textSurface ?? Colors.blue)} : null
+          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.textSurface)} : null
         )
       );
     }

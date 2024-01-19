@@ -170,7 +170,7 @@ class _AppointmentPersonCard extends StatelessWidget {
     return InkWell(onTap: onTap, child:
       ClipRRect(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)), child:
         Stack(children: [
-          Container(decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.surfaceAccent!, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
+          Container(decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 //Text(person.speciality?.toUpperCase() ?? '', style: Styles().textStyles.getTextStyle('widget.item.small.semi_fat'),),

@@ -110,9 +110,9 @@ class _CanvasAccountNotificationsPanelState extends State<CanvasAccountNotificat
             onTap: () => _onTapNotification(notification),
             child: Container(
                 decoration: BoxDecoration(
-                    color: Styles().colors.white!,
+                    color: Styles().colors.white,
                     borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: Styles().colors.fillColorPrimary!, width: 1)),
+                    border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
                 padding: EdgeInsets.all(10),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [

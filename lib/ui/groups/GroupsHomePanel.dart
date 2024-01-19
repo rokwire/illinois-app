@@ -257,7 +257,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Widget _buildContentItem(rokwire.GroupsContentType contentType) {
     return RibbonButton(
         backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentType),
         onTap: () => _onTapContentType(contentType));
@@ -269,7 +269,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
       backgroundColor: Styles().colors.white,
       borderRadius: BorderRadius.all(Radius.circular(5)),
-      border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       rightIconKey: _contentTypesVisible ? 'chevron-up' : 'chevron-down',
       label: _getContentLabel(_selectedContentType),
       onTap: _canTapGroupsContentType ? _changeContentTypesVisibility : null
@@ -311,7 +311,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
               ],),
               /*Container(
                 decoration: BoxDecoration(border:
-                  Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary!, width: 1.5, ))
+                  Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1.5, ))
                 ),
                 child: Text(filtersTitle, style: TextStyle(
                   fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary,

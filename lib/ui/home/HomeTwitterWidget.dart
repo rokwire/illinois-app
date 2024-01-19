@@ -224,7 +224,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
     if (_loadingPage == true) {
       pages.add(_TweetLoadingWidget(
-        progressColor: Styles().colors.white!,
+        progressColor: Styles().colors.white,
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24)
       ));
     }
@@ -484,7 +484,7 @@ class _TwitterPanelState extends State<TwitterPanel> implements NotificationsLis
     if (_tweetsPages.isEmpty && _loadingPage == true) {
       return Center(child: 
         SizedBox(height: 32, width: 32, child:
-          CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary!), )
+          CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), )
         ),
       );
     }
@@ -516,7 +516,7 @@ class _TwitterPanelState extends State<TwitterPanel> implements NotificationsLis
         margin: (0 < index) ? EdgeInsets.symmetric(horizontal: 16) : EdgeInsets.only(left: 16, right: 16, top: 16)
       ) :
       _TweetLoadingWidget(
-        progressColor: Styles().colors.fillColorPrimary!,
+        progressColor: Styles().colors.fillColorPrimary,
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: _tweetsPages.isNotEmpty ? 48 : 192)
       );
   }
@@ -649,7 +649,7 @@ class _TweetWidget extends StatelessWidget {
       Container(
         decoration: BoxDecoration(
             color: Styles().colors.white,
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.all(Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
         ),
         clipBehavior: Clip.hardEdge,

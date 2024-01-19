@@ -322,7 +322,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
         height: 48,
         decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Styles().colors.lightGray!, width: 1),
+            border: Border.all(color: Styles().colors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),
@@ -355,7 +355,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
         height: 48,
         decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Styles().colors.lightGray!, width: 1),
+            border: Border.all(color: Styles().colors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),
@@ -385,7 +385,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
         height: 48,
         decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Styles().colors.lightGray!, width: 1),
+            border: Border.all(color: Styles().colors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),
@@ -420,7 +420,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
         height: height,
         decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Styles().colors.lightGray!, width: 1),
+            border: Border.all(color: Styles().colors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),
@@ -517,11 +517,11 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
     return BoxDecoration(
         color: (isToday ? Styles().colors.fillColorPrimary : null),
         shape: BoxShape.circle,
-        border: Border.all(color: (isSelectedDate ? Styles().colors.fillColorPrimary! : Colors.transparent), width: 2));
+        border: Border.all(color: (isSelectedDate ? Styles().colors.fillColorPrimary : Colors.transparent), width: 2));
   }
 
   Color _weekDayTextColor(DateTime date) {
-    return _isToday(date) ? Styles().colors.white! : Styles().colors.fillColorPrimary!;
+    return _isToday(date) ? Styles().colors.white : Styles().colors.fillColorPrimary;
   }
 
   bool _isToday(DateTime currentDate) {

@@ -239,12 +239,12 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                   decoration: BoxDecoration(
                     color: Styles().colors.white,
                     borderRadius: BorderRadius.circular(100),
-                    border: Border.all(width:2, color: Styles().colors.fillColorPrimary!,)),
+                    border: Border.all(width:2, color: Styles().colors.fillColorPrimary,)),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Styles().colors.white,
                       borderRadius: BorderRadius.circular(100),
-                      border: Border.all(width:2, color: Styles().colors.fillColorSecondary!,)
+                      border: Border.all(width:2, color: Styles().colors.fillColorSecondary,)
                     ),
                     child: Center(child:
                       Semantics(label: Localization().getStringEx("panel.settings.privacy.privacy.dialog.label.new_privacy", "Privacy Level: "), child:
@@ -483,7 +483,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                 width: 60,
                 alignment: Alignment.center,
                 decoration:  BoxDecoration(
-                  border: Border.all(color: Styles().colors.fillColorPrimary!,width: 2),
+                  border: Border.all(color: Styles().colors.fillColorPrimary,width: 2),
                   color: Styles().colors.white,
                   borderRadius: BorderRadius.all(Radius.circular(100)),
                 ),
@@ -492,7 +492,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                   width: 52,
                   alignment: Alignment.center,
                   decoration:  BoxDecoration(
-                    border: Border.all(color: Styles().colors.fillColorSecondary!, width: 2),
+                    border: Border.all(color: Styles().colors.fillColorSecondary, width: 2),
                     color: Styles().colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(100)),
                   ),
@@ -584,7 +584,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
                 Semantics(
                   button: true,
                   child: Container(
-                    decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Styles().colors.fillColorSecondary!))),
+                    decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Styles().colors.fillColorSecondary))),
                     child: GestureDetector(
                       onTap: _onTapExpandAll,
                       child: Text(
@@ -627,7 +627,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Container(
-        decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors.surfaceAccent!, width: 1)),
+        decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors.surfaceAccent, width: 1)),
         padding: EdgeInsets.symmetric(horizontal: 0),
         child: Theme(data: ThemeData(/*accentColor: Styles().colors.white,*/
             /*backgroundColor: Styles().colors.white,*/
@@ -817,7 +817,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.only(left: 8),
                 decoration: BoxDecoration(
-                    border: Border(left: BorderSide(width: 1, color: Styles().colors.fillColorSecondary!))
+                    border: Border(left: BorderSide(width: 1, color: Styles().colors.fillColorSecondary))
                 ),
                 child: Text(dataUsageInfo!,
                     style: isEnabled? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.disabled")),

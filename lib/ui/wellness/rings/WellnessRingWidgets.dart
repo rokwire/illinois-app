@@ -104,9 +104,9 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
         decoration: BoxDecoration(
             // color: Colors.red,
           borderRadius: BorderRadius.circular(360),
-          border: Border.all(width: 2, color: Styles().colors.surfaceAccent!),
+          border: Border.all(width: 2, color: Styles().colors.surfaceAccent),
           // shape: BoxShape.circle,
-          boxShadow:  [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+          boxShadow:  [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
         ),
       child: _buildRing(data: data)
     );
@@ -175,7 +175,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                         width: innerContentSize,
                         height: innerContentSize,
                         decoration: BoxDecoration(
-                            color: Styles().colors.surfaceAccent!,
+                            color: Styles().colors.surfaceAccent,
                             shape: BoxShape.circle
                         ),
                       )),
@@ -185,7 +185,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                         height: innerContentSize - widget.borderWidth,
                         decoration: BoxDecoration(
                             color: widget.backgroundColor ??
-                                Styles().colors.white!,
+                                Styles().colors.white,
                             shape: BoxShape.circle
                         ),
                         child: childWidget ??
@@ -370,7 +370,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
       // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Expanded(child:
-        Container(decoration: BoxDecoration(color: widget.color ?? Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors.surfaceAccent!, width: 1)), child:
+        Container(decoration: BoxDecoration(color: widget.color ?? Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors.surfaceAccent, width: 1)), child:
         Padding(padding: EdgeInsets.only(left: 8 /*+10 from icon*/, top: 8, bottom: 8, right: 8/*+10 form icon*/), child:
           Row( crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -445,7 +445,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
               Center(
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: Styles().images.getImage('plus-circle-white', excludeFromSemantics: true, color:  Styles().colors.white!),
+                  child: Styles().images.getImage('plus-circle-white', excludeFromSemantics: true, color:  Styles().colors.white),
                 ))
             ]
         ))
@@ -523,7 +523,7 @@ class _SmallWellnessRingButtonState extends State<SmallWellnessRingButton>{
       // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
         child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Expanded(child:
-          Container(decoration: BoxDecoration(color: widget.color ?? Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors.surfaceAccent!, width: 1)), child:
+          Container(decoration: BoxDecoration(color: widget.color ?? Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors.surfaceAccent, width: 1)), child:
           Padding(padding: EdgeInsets.only(left: 8 /*+10 from icon*/, top: 5, bottom: 5, right: 3/*+10 form icon*/), child:
           Row( crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -597,8 +597,8 @@ class _AccomplishmentCardState extends State<AccomplishmentCard>{
     return CollectionUtils.isEmpty(widget.accomplishments) ? Container() :
     Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-      decoration: BoxDecoration(color: Colors.white, border: Border.all(width: 0, color: Styles().colors.surfaceAccent!), borderRadius: BorderRadius.circular(5),
-        boxShadow:  [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+      decoration: BoxDecoration(color: Colors.white, border: Border.all(width: 0, color: Styles().colors.surfaceAccent), borderRadius: BorderRadius.circular(5),
+        boxShadow:  [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
       ),
       child: _buildAccomplishmentCard(widget.date??"", widget.accomplishments),
     );
@@ -647,7 +647,7 @@ class _AccomplishmentCardState extends State<AccomplishmentCard>{
             Container(
               constraints: BoxConstraints(minWidth: 60),
                padding: EdgeInsets.only(right: 20, top: 16, bottom: 16),
-                // decoration: BoxDecoration(color: Colors.white, border: Border(right: BorderSide(color: Styles().colors.surfaceAccent!,)),  ),
+                // decoration: BoxDecoration(color: Colors.white, border: Border(right: BorderSide(color: Styles().colors.surfaceAccent,)),  ),
                 child:Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -668,7 +668,7 @@ class _AccomplishmentCardState extends State<AccomplishmentCard>{
             Expanded(
               child: Container(
                   padding: EdgeInsets.only(left: 20, top: 16, bottom: 16),
-                  decoration: BoxDecoration(color: Colors.white, border: Border(left: BorderSide(color: Styles().colors.surfaceAccent!, )),  ),
+                  decoration: BoxDecoration(color: Colors.white, border: Border(left: BorderSide(color: Styles().colors.surfaceAccent, )),  ),
                 child:Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

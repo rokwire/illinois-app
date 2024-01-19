@@ -657,7 +657,7 @@ class _EventSmallCard extends StatelessWidget {
           width: _cardWidth,
           height: scaledHeight,
           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(
-              color: Styles().colors.surfaceAccent!, width: borderWidth)),
+              color: Styles().colors.surfaceAccent, width: borderWidth)),
           child: Column(children: <Widget>[
             Container(height: topBorderHeight, color: Styles().colors.fillColorSecondary),
             Padding(padding: EdgeInsets.all(internalPadding),

@@ -198,7 +198,7 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
     return Container(
         decoration: BoxDecoration(
             color: Styles().colors.white,
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(4))),
         child: Stack(children: [
           Semantics(button: true,

@@ -503,7 +503,7 @@ class HomeDragFeedback extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(width: MediaQuery.of(context).size.width, color: Styles().colors.accentColor3!.withOpacity(0.25), child:
+      Container(width: MediaQuery.of(context).size.width, color: Styles().colors.accentColor3.withOpacity(0.25), child:
         Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
 
           Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
@@ -513,7 +513,7 @@ class HomeDragFeedback extends StatelessWidget {
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
               Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat")?.copyWith(decoration: TextDecoration.none, shadows: <Shadow>[
-                Shadow(color: Styles().colors.fillColorPrimary!.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
+                Shadow(color: Styles().colors.fillColorPrimary.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
               ] ),),
             ),
           ),
@@ -543,7 +543,7 @@ class HomeCommandButton extends StatelessWidget {
     return Semantics(label: title, hint: description, button: true, child:
       InkWell(onTap: onTap, child: Container(
           padding: EdgeInsets.only(left: 16, bottom: 16),
-          decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+          decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Expanded(child:
@@ -591,7 +591,7 @@ class HomeMessageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
       Semantics(child:Container(padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+        decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         child: Column(children: <Widget>[
           StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
             Expanded(child:
@@ -634,7 +634,7 @@ class HomeMessageHtmlCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
       Container(padding: padding,
-        decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+        decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         child: Column(children: <Widget>[
           StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
             Expanded(child:
@@ -643,7 +643,7 @@ class HomeMessageHtmlCard extends StatelessWidget {
                     StringUtils.ensureNotEmpty(title),
                     onTapUrl : (url) { _onTapLink(url); return true; },
                     textStyle:  Styles().textStyles.getTextStyle("widget.card.title.medium.fat"),
-                    customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(linkColor ?? Styles().colors.fillColorSecondary ?? Colors.blue)} : null
+                    customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(linkColor ?? Styles().colors.fillColorSecondary)} : null
                 )
               ),
             )
@@ -654,7 +654,7 @@ class HomeMessageHtmlCard extends StatelessWidget {
                   StringUtils.ensureNotEmpty(message),
                   onTapUrl : (url) { _onTapLink(url); return true; },
                   textStyle:  Styles().textStyles.getTextStyle("widget.card.detail.regular"),
-                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(linkColor ?? Styles().colors.fillColorSecondary ?? Colors.blue)} : null
+                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(linkColor ?? Styles().colors.fillColorSecondary)} : null
                )
             )
           ]) : Container(),

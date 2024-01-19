@@ -243,7 +243,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
         value: selected ?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
         child: InkWell(onTap: () { _onAnswer(answer, question: question); AppSemantics.announceCheckBoxStateChange(context, !selected, title);}, child:
       Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
-        Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: selected ? Styles().colors.fillColorPrimary! : Styles().colors.white!, width: 1)), child:
+        Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: selected ? Styles().colors.fillColorPrimary : Styles().colors.white, width: 1)), child:
           Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
             Row(children: [
               Padding(padding: EdgeInsets.only(right: 12), child:

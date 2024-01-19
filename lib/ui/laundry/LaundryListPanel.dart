@@ -117,7 +117,7 @@ class LaundryRoomRibbonButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(onTap: onTap, child:
       Semantics(label: label, hint: Localization().getStringEx('panel.laundry_list.button.item.hint', ''), button: true, excludeSemantics: true, child:
-        Container(decoration: BoxDecoration(color: backgroundColor, border: Border.all(color: Styles().colors.surfaceAccent!, width: 1), borderRadius: borderRadius), child:
+        Container(decoration: BoxDecoration(color: backgroundColor, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: borderRadius), child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14), child:
             Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
               Expanded(child:

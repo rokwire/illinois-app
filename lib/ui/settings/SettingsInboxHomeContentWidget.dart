@@ -211,7 +211,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
         onTap: _onTapBanner,
         child:Container(
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-          color: Styles().colors.saferLocationWaitTimeColorYellow ?? Colors.amberAccent,
+          color: Styles().colors.saferLocationWaitTimeColorYellow,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -510,7 +510,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
                       ),
                       Semantics(label: "Close", button: true,  child:
                         GestureDetector(onTap: () => Navigator.pop(context), child:
-                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white!, width: 2), ), child:
+                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white, width: 2), ), child:
                             Center(child:
                               Text('\u00D7', style: Styles().textStyles.getTextStyle("widget.dialog.message.large.fat"), semanticsLabel: "",),
                             ),
@@ -924,7 +924,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
         decoration: BoxDecoration(
           color: Styles().colors.white,
           borderRadius: BorderRadius.all(Radius.circular(4)),
-          boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+          boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
         ),
         clipBehavior: Clip.none,
         child: Stack(children: [

@@ -143,7 +143,7 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
           decoration: BoxDecoration(
               color: Styles().colors.surface,
               borderRadius: BorderRadius.all(Radius.circular(4)),
-              boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
+              boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[

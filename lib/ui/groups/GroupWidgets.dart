@@ -152,7 +152,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton<T>>{
     return Container (
       decoration: widget.decoration ?? BoxDecoration(
         color: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         borderRadius: BorderRadius.all(Radius.circular(4))
       ),
       padding: widget.padding,
@@ -309,7 +309,7 @@ class GroupMembershipAddButton extends StatelessWidget {
     return GestureDetector(onTap: onTap,
       child: Container(height: height,
         decoration: BoxDecoration(color: Colors.white,
-          border: Border.all(color: enabled ? Styles().colors.fillColorSecondary! : Styles().colors.surfaceAccent!, width: 2),
+          border: Border.all(color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent, width: 2),
           borderRadius: BorderRadius.circular(height / 2),
         ),
         child: Padding(padding: EdgeInsets.only(left:16, right: 8, ),
@@ -429,7 +429,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
       child: Container(
         decoration: BoxDecoration(
             color: Styles().colors.white,
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
             borderRadius: BorderRadius.all(Radius.circular(8))
         ),
         child: _EventContent(event: event, group: widget.group),
@@ -891,7 +891,7 @@ class _GroupCardState extends State<GroupCard> {
   Widget build(BuildContext context) {
     return GestureDetector(onTap: () => _onTapCard(context), child:
       Padding(padding: widget.margin, child:
-        Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
+        Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
           Stack(children: [
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               _buildHeading(),
@@ -1210,8 +1210,8 @@ class _GroupCardState extends State<GroupCard> {
 
   Widget _buildPrivacyLevelWidget() {
     String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
-    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary!, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorSecondary!, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorSecondary, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
         Text(privacyLevel, style: Styles().textStyles.getTextStyle('widget.card.title.regular.extra_fat'))
       ),
     );
@@ -1266,7 +1266,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
           child: Container(
               decoration: BoxDecoration(
                   color: Styles().colors.white,
-                  boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+                  boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
                   borderRadius: BorderRadius.all(Radius.circular(8))),
               child: Padding(
                   padding: EdgeInsets.all(12),
@@ -1438,7 +1438,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
          child:Container(
         decoration: BoxDecoration(
             color: Styles().colors.white,
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
             borderRadius: BorderRadius.all(Radius.circular(8))),
         child: Padding(
             padding: EdgeInsets.all(12),
@@ -1484,7 +1484,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                                   StringUtils.ensureNotEmpty(bodyText),
                                   onTapUrl : (url) {_onLinkTap(url); return true;},
                                   textStyle:  Styles().textStyles.getTextStyle("widget.card.title.small"),
-                                  customStylesBuilder: (element) => (element.localName == "span") ? {"color": ColorUtils.toHex(Styles().colors.disabledTextColor ?? Colors.blue)}: null //Not able to use Transparent colour, it's not parsed correctly
+                                  customStylesBuilder: (element) => (element.localName == "span") ? {"color": ColorUtils.toHex(Styles().colors.disabledTextColor)}: null //Not able to use Transparent colour, it's not parsed correctly
                                   // customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.blackTransparent018 ?? Colors.blue)} : null
                               )
                               // Html(
@@ -1759,7 +1759,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                         hintText: _hint,
                         border: OutlineInputBorder(
                             borderSide: BorderSide(
-                                color: Styles().colors.mediumGray!,
+                                color: Styles().colors.mediumGray,
                                 width: 0.0))),
                     style: Styles().textStyles.getTextStyle(''))),
           ],
@@ -1877,7 +1877,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Styles().colors.mediumGray!, width: 0.0))),
+                              color: Styles().colors.mediumGray, width: 0.0))),
                   style: Styles().textStyles.getTextStyle('widget.input_field.text.regular'))),
           Padding(
               padding: EdgeInsets.only(top: 16),
@@ -1894,7 +1894,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Styles().colors.mediumGray!, width: 0.0))),
+                              color: Styles().colors.mediumGray, width: 0.0))),
                   style: Styles().textStyles.getTextStyle('widget.input_field.text.regular')))
         ]);
   }
@@ -1970,8 +1970,8 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
     return Container(
         height: 48,
         decoration: BoxDecoration(
-            color:  widget.enabled? Colors.white: Styles().colors.background!,
-            border: Border.all(color: Styles().colors.lightGray!, width: 1),
+            color:  widget.enabled? Colors.white: Styles().colors.background,
+            border: Border.all(color: Styles().colors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),
@@ -1982,7 +1982,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
                   child: DropdownButton2<GroupMemberSelectionData>(
                     isExpanded: true,
                     dropdownStyleData: DropdownStyleData(padding: EdgeInsets.zero,
-                      decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary!, width: 2, style: BorderStyle.solid),
+                      decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 2, style: BorderStyle.solid),
                           borderRadius: BorderRadius.only(bottomRight: Radius.circular(8), bottomLeft: Radius.circular(8))),
                     ),
                     iconStyleData: IconStyleData(icon: widget.enabled? Icon(Icons.arrow_drop_down): Container(),
@@ -2339,7 +2339,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
         decoration: BoxDecoration(
           color: Styles().colors.white,
           borderRadius: BorderRadius.all(Radius.circular(8)),
-          boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+          boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
         ),
         child: Padding(padding: EdgeInsets.only(left: 16, bottom: 16), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -2477,7 +2477,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
                   decoration: BoxDecoration(
                     color: Styles().colors.white,
                     border: Border.all(
-                        color: enabled? Styles().colors.fillColorSecondary! :Styles().colors.surfaceAccent!,
+                        color: enabled? Styles().colors.fillColorSecondary :Styles().colors.surfaceAccent,
                         width: 2.0),
                     borderRadius: BorderRadius.circular(24.0),
                   ),
@@ -3041,7 +3041,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
     preferenceWidgets.add(
         Container(
           padding: EdgeInsets.all(1),
-          decoration:  BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent!, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
+          decoration:  BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
           child: Column(
             children: [
               EnabledToggleButton(
@@ -3119,7 +3119,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
     //Post
     preferenceWidgets.add(Container(
         padding: EdgeInsets.all(1),
-        decoration:  BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent!, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
+        decoration:  BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
         child: Column(
             children: [
               EnabledToggleButton(

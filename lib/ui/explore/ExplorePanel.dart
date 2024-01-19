@@ -718,7 +718,7 @@ class ExplorePanelState extends State<ExplorePanel>
       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
       backgroundColor: Styles().colors.white,
       borderRadius: BorderRadius.all(Radius.circular(5)),
-      border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       rightIconKey: (_eventsDisplayDropDownValuesVisible ? 'chevron-up' : 'chevron-down'),
       label: _eventsDisplayTypeLabel(_selectedEventsDisplayType),
       onTap: _changeEventsDisplayDropDownValuesVisibility
@@ -757,7 +757,7 @@ class ExplorePanelState extends State<ExplorePanel>
   Widget _buildEventsDisplayTypeDropDownItem(EventsDisplayType displayType) {
     return RibbonButton(
         backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _eventsDisplayTypeLabel(displayType),
         onTap: () => _onTapEventsDisplayType(displayType));

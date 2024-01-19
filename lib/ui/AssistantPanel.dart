@@ -188,7 +188,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
         sourceLinks.add(Material(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: Styles().colors.fillColorSecondary ?? Colors.white, width: 1),
+            side: BorderSide(color: Styles().colors.fillColorSecondary, width: 1),
           ),
           color: Styles().colors.fillColorPrimaryVariant,
           child: InkWell(
@@ -229,7 +229,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                       } : null,
                       child: Container(
                         decoration: message.example ? BoxDecoration(borderRadius: BorderRadius.circular(16.0),
-                            border: Border.all(color: Styles().colors.fillColorPrimary ?? Colors.black)) : null,
+                            border: Border.all(color: Styles().colors.fillColorPrimary)) : null,
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
@@ -365,8 +365,8 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: TypingIndicator(
-              flashingCircleBrightColor: Styles().colors.surface ?? Colors.white,
-              flashingCircleDarkColor: Styles().colors.fillColorPrimary ?? Colors.black12),
+              flashingCircleBrightColor: Styles().colors.surface,
+              flashingCircleDarkColor: Styles().colors.fillColorPrimary),
           ),
         ),
       ),

@@ -147,7 +147,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
                               textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
                               backgroundColor: Styles().colors.white,
                               borderRadius: BorderRadius.all(Radius.circular(5)),
-                              border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+                              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                               rightIconKey: (_contentValuesVisible ? 'icon-up-orange' : 'icon-down-orange'),
                               label: _getContentLabel(_selectedContent),
                               onTap: _onTapContentDropdown)),
@@ -189,7 +189,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
   Widget _buildContentItem(ICardContent contentItem) {
     return RibbonButton(
         backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentItem),
         onTap: () => _onTapContentItem(contentItem));

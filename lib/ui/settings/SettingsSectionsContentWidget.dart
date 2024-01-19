@@ -60,7 +60,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
   static BorderRadius _bottomRounding = BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5));
   static BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5));
   static BorderRadius _allRounding = BorderRadius.all(Radius.circular(5));
-  static Border _allBorder = Border.all(color: Styles().colors.surfaceAccent!, width: 1);
+  static Border _allBorder = Border.all(color: Styles().colors.surfaceAccent, width: 1);
 
   String _versionName = "";
   bool _connectingNetId = false;
@@ -276,7 +276,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                 decoration: BoxDecoration(
                     color: Styles().colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(4)),
-                    border: Border.all(color: Styles().colors.fillColorPrimary!, width: 1)),
+                    border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList))));
   }
 
@@ -510,7 +510,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
           if (code == 'info') {
             contentList.add(Container(
                 width: double.infinity,
-                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors.surfaceAccent!, width: 1)),
+                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors.surfaceAccent, width: 1)),
                 child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     child: Column(
@@ -543,7 +543,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
           if (code == 'info') {
             contentList.add(GestureDetector(onTap: (){_onTapAlternatePhone(linked);}, child: Container(
                 width: double.infinity,
-                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors.surfaceAccent!, width: 1)),
+                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors.surfaceAccent, width: 1)),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -582,7 +582,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
           if (code == 'info') {
             contentList.add(GestureDetector(onTap: (){_onTapAlternateEmail(linked);}, child: Container(
                 width: double.infinity,
-                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors.surfaceAccent!, width: 1)),
+                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors.surfaceAccent, width: 1)),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -997,7 +997,7 @@ class _OptionsSection extends StatelessWidget {
           Stack(alignment: Alignment.topCenter, children: [
             Container(
               decoration: (showBox == false) ? null : BoxDecoration(
-                border: Border.all(color: Styles().colors.surfaceAccent!, width: 0.5),
+                border: Border.all(color: Styles().colors.surfaceAccent, width: 0.5),
                 borderRadius: BorderRadius.circular(5.0),
               ),
               child: Padding(padding: EdgeInsets.all(0), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets!)),

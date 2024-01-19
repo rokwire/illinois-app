@@ -102,7 +102,7 @@ class Onboarding2ToggleButton extends StatelessWidget{
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[ Expanded(
                 child: Container(
                   padding: padding,
-                  decoration: BoxDecoration(color: Styles().colors.background, border:Border(top: BorderSide(width: 2, color: Styles().colors.surfaceAccent!)),),
+                  decoration: BoxDecoration(color: Styles().colors.background, border:Border(top: BorderSide(width: 2, color: Styles().colors.surfaceAccent)),),
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 20),
                     child:  Row(
@@ -205,7 +205,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
                                   WidgetSpan(child: Onboarding2UnderlinedButton(title: Localization().getStringEx("panel.onboarding2.dialog.learn_more.button.privacy_policy.title", "Privacy notice "), onTap: () => _openPrivacyPolicy(context), padding: EdgeInsets.all(0), textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.underline"))),
                                   WidgetSpan(child: Container(
                                       decoration: BoxDecoration(
-                                          border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary!, width: 1, ),)
+                                          border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)
                                       ),
                                       padding: EdgeInsets.only(bottom: 2),
                                       child: Container(

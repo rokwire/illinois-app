@@ -173,7 +173,7 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
 
     return Container(
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent!, width: 1),),
+        border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1),),
       ),
       padding: EdgeInsets.all(24),
       child: Row(children: [

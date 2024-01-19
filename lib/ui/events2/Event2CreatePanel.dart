@@ -76,19 +76,19 @@ class Event2CreatePanel extends StatefulWidget {
   static TextStyle? get textEditStyle => Styles().textStyles.getTextStyle('widget.input_field.dark.text.regular.thin');
 
   static BoxDecoration get sectionDecoration => BoxDecoration(
-    border: Border.all(color: Styles().colors.mediumGray2!, width: 1),
+    border: Border.all(color: Styles().colors.mediumGray2, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(8))
   );
 
   static BoxDecoration get sectionSplitterDecoration => BoxDecoration(
-    border: Border(top: BorderSide(color: Styles().colors.mediumGray2!, width: 1))
+    border: Border(top: BorderSide(color: Styles().colors.mediumGray2, width: 1))
   );
 
   static InputDecoration textEditDecoration({EdgeInsetsGeometry? padding}) => InputDecoration(
     fillColor: Styles().colors.surface,
     filled: true,
     border: OutlineInputBorder(
-      borderSide: BorderSide(color: Styles().colors.surfaceAccent!, width: 1),
+      borderSide: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
       borderRadius: BorderRadius.circular(8)
     ),
     contentPadding: padding,
@@ -96,7 +96,7 @@ class Event2CreatePanel extends StatefulWidget {
 
   static BoxDecoration get dropdownButtonDecoration => BoxDecoration(
     color: Styles().colors.surface,
-    border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(4))
   );
 
@@ -421,7 +421,7 @@ class Event2CreatePanel extends StatefulWidget {
           Padding(padding: padding, child:
             Column(mainAxisSize: MainAxisSize.min, children: [
               Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.white!, width: 1.5, ))),
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.white, width: 1.5, ))),
                 child: Text(title ?? '',
                   style: Styles().textStyles.getTextStyle("widget.heading.regular.fat")
                 ),
@@ -919,7 +919,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     ));
 
   EdgeInsetsGeometry get _togglePadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 12);
-  BoxBorder get _toggleBorder => Border.all(color: Styles().colors.surfaceAccent!, width: 1);
+  BoxBorder get _toggleBorder => Border.all(color: Styles().colors.surfaceAccent, width: 1);
   BorderRadius get _toggleBorderRadius => BorderRadius.all(Radius.circular(4));
 
   void _onToggleDateAndTimeSection() {

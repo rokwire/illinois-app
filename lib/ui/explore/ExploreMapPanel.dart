@@ -426,7 +426,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   Widget _buildMapView() {
-    return Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.disabledTextColor ?? Color(0xFF717273), width: 1)), child:
+    return Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.disabledTextColor, width: 1)), child:
       GoogleMap(
         key: _mapKey,
         initialCameraPosition: _lastCameraPosition ?? _defaultCameraPosition,
@@ -567,7 +567,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     double top = wrapHeight - (progress * barHeight);
 
     return Positioned(top: top, left: 0, right: 0, child:
-      Container(key: _mapExploreBarKey, decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: exploreColor!, width: 2, style: BorderStyle.solid), bottom: BorderSide(color: Styles().colors.surfaceAccent!, width: 1, style: BorderStyle.solid),),), child:
+      Container(key: _mapExploreBarKey, decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: exploreColor, width: 2, style: BorderStyle.solid), bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid),),), child:
         Stack(children: [
           Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -1040,7 +1040,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
       backgroundColor: Styles().colors.white,
       borderRadius: BorderRadius.all(Radius.circular(5)),
-      border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       rightIconKey: (_itemsDropDownValuesVisible ? 'chevron-up' : 'chevron-down'),
       label: _exploreItemName(_selectedMapType),
       hint: _exploreItemHint(_selectedMapType),
@@ -1103,7 +1103,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   Widget _buildEventsDisplayTypeDropDownItem(EventsDisplayType displayType) {
     return RibbonButton(
         backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _eventsDisplayTypeName(displayType),
         onTap: () => _onEventsDisplayType(displayType));
@@ -1170,7 +1170,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   Widget _buildExploreDropDownItem(ExploreMapType exploreItem) {
     return RibbonButton(
         backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _exploreItemName(exploreItem),
         onTap: () => _onTapExploreType(exploreItem)

@@ -133,8 +133,8 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Styles().colors.fillColorPrimaryVariant ?? Colors.transparent,
-                Styles().colors.gradientColorPrimary ?? Colors.transparent,
+                Styles().colors.fillColorPrimaryVariant,
+                Styles().colors.gradientColorPrimary,
               ]
           )
       ),

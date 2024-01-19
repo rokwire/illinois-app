@@ -180,7 +180,7 @@ class _CoachItem extends StatelessWidget{
                         bottomEnd: Radius.circular(5),
                       ),
                       boxShadow: [
-                        BoxShadow(color: Styles().colors.fillColorPrimary!,blurRadius: 4,),
+                        BoxShadow(color: Styles().colors.fillColorPrimary,blurRadius: 4,),
                       ]
 
                   ),
@@ -219,7 +219,7 @@ class _CoachItem extends StatelessWidget{
                   alignment: Alignment.centerRight,
                   child: Container(
                     margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
-                    decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary!,width: 2, style: BorderStyle.solid)),
+                    decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
                     child: (StringUtils.isNotEmpty(coach.thumbPhotoUrl) ?
                     ModalImageHolder(url: coach.fullSizePhotoUrl, child: Image.network(coach.thumbPhotoUrl!, semanticLabel: "coach", width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,)):
                       Container(height: 96, width: 80, color: Colors.white,)),

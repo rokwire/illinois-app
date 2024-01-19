@@ -177,7 +177,7 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
   ),],),);
 
   Widget _buildAppontmentTypeDropdown() => Padding(padding: EdgeInsets.only(bottom: 8), child:
-    Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors.mediumGray!, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
+    Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         DropdownButtonHideUnderline(child:
           DropdownButton<AppointmentType>(

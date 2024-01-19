@@ -110,7 +110,7 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
       child: EnabledToggleButton(
           label:_isResearchProject? Localization().getStringEx('panel.groups_settings.auto_join.project.enabled.label', 'Does not require my screening of potential participants') : Localization().getStringEx("panel.groups_settings.auto_join.enabled.label", "Group can be joined automatically?"),
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           enabled: true,
           toggled: _settingCanJoinAutomatically,
           onTap: () {
@@ -131,7 +131,7 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
       child: EnabledToggleButton(
           label: Localization().getStringEx("panel.groups_settings.only_admins_create_polls.enabled.label", "Only admins can create Polls"),
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           enabled: true,
           toggled: _settingOnlyAdminCanCreatePolls,
           onTap: () {

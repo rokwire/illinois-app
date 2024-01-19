@@ -176,7 +176,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   }
 
   Widget _buildMapView() {
-    return Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.disabledTextColor ?? Color(0xFF717273), width: 1)), child:
+    return Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.disabledTextColor, width: 1)), child:
       GoogleMap(
         key: _mapKey,
         initialCameraPosition: _lastCameraPosition ?? _defaultCameraPosition,
@@ -312,7 +312,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     double top = wrapHeight - (progress * barHeight);
 
     return Positioned(top: top, left: 0, right: 0, child:
-      Container(key: _mapExploreBarKey, decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: exploreColor!, width: 2, style: BorderStyle.solid), bottom: BorderSide(color: Styles().colors.surfaceAccent!, width: 1, style: BorderStyle.solid),),), child:
+      Container(key: _mapExploreBarKey, decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: exploreColor, width: 2, style: BorderStyle.solid), bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid),),), child:
         SafeArea(child:
         Stack(children: [
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:

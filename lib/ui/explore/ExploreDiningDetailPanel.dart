@@ -1056,8 +1056,8 @@ class _StationItemState extends State<_StationItem>{
     return (widget.productItems.isNotEmpty && expanded) ?  Container(
         decoration: BoxDecoration(
           border: Border(
-            left: BorderSide(color: Styles().colors.surfaceAccent!),
-            right: BorderSide(color: Styles().colors.surfaceAccent!)
+            left: BorderSide(color: Styles().colors.surfaceAccent),
+            right: BorderSide(color: Styles().colors.surfaceAccent)
           )
         ),
         child: Column(
@@ -1112,7 +1112,7 @@ class _CircularButton extends StatelessWidget{
     return GestureDetector(onTap: onTap, child:
       Container(width: 40, height: 40,
         decoration: BoxDecoration(
-          border: Border.all(color: Styles().colors.fillColorSecondary!, width: 1),
+          border: Border.all(color: Styles().colors.fillColorSecondary, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
         child: image,
@@ -1170,7 +1170,7 @@ class _FeedbackBodyWidgetState extends State<_FeedbackBodyWidget> {
                     Semantics(label: Localization().getStringEx("dialog.close.title", "Close"), button: true, child:
                       InkWell(onTap: _onClose, child:
                         Padding(padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), child:
-                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white!, width: 2),), child:
+                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white, width: 2),), child:
                             Center(child:
                               Text('\u00D7', style: Styles().textStyles.getTextStyle("widget.dialog.message.large"),semanticsLabel: "", ),
                             ),

@@ -162,7 +162,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
         Container(height: 21,),
         ToggleRibbonButton(
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Styles().colors.fillColorPrimary!),
+          border: Border.all(color: Styles().colors.fillColorPrimary),
           label: Localization().getStringEx("panel.pending_member_detail.button.approve.text", "Approve "),
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           toggled: _approved,
@@ -175,7 +175,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
           }
         ),
         Container(height: 21,),
-        Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors.fillColorPrimary!),), child:
+        Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors.fillColorPrimary),), child:
           Column(children: [
             ToggleRibbonButton(
               label: Localization().getStringEx("panel.pending_member_detail.button.deny.text", "Deny"),
@@ -197,7 +197,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
             ),
             Container(height: 8,),
             Container(height: 114, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-              Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors.fillColorPrimary!), ), child:
+              Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors.fillColorPrimary), ), child:
                 Row(children: [
                   Expanded(child:
                     TextField(
@@ -310,7 +310,7 @@ class _MembershipAnswer extends StatelessWidget{
           padding: EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: Styles().colors.white,
-            border: Border.all(color: Styles().colors.fillColorPrimary!)
+            border: Border.all(color: Styles().colors.fillColorPrimary)
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

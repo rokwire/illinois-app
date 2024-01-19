@@ -173,7 +173,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
                             borderRadius: new BorderRadius.circular(15.0),
                             border: new Border.all(
                               width: 2.0,
-                              color: Styles().colors.fillColorSecondary!,
+                              color: Styles().colors.fillColorSecondary,
                             ),
                           ),
                           child: Center(

@@ -236,7 +236,7 @@ class StudentCourseCard extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               color: Styles().colors.surface,
-              border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
               borderRadius: BorderRadius.all(Radius.circular(4)),
             ),
             child:

@@ -111,7 +111,7 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
         contentList.add(ToggleRibbonButton(
             label: Localization().getStringEx('panel.settings.home.assessments.skills_self_evaluation.save_results.label', 'Save my results to compare to future results'),
             toggled: Storage().assessmentsSaveResultsMap?[name] ?? Auth2().privacyMatch(4),
-            border: Border.all(color: Styles().colors.blackTransparent018!, width: 1),
+            border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4)),
             onTap: () => _onSave(name)));
       } else if (code == 'save_progress') {

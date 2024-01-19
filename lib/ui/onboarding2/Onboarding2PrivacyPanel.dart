@@ -444,7 +444,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
           padding: EdgeInsets.symmetric(vertical: 19),
           child:Container(
             decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary!, width: 1, ),)
+                border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)
             ),
             padding: EdgeInsets.only(bottom: 2),
             child:

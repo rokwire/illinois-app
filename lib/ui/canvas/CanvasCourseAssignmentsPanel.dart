@@ -147,7 +147,7 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
         padding: EdgeInsets.only(top: 16, bottom: 10),
         child: Container(
             decoration: BoxDecoration(
-                color: Styles().colors.backgroundVariant!, border: Border.all(color: Styles().colors.blackTransparent06!, width: 1)),
+                color: Styles().colors.backgroundVariant, border: Border.all(color: Styles().colors.blackTransparent06, width: 1)),
             padding: EdgeInsets.all(10),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -163,7 +163,7 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
         padding: EdgeInsets.only(top: 16),
         child: Container(
             decoration: BoxDecoration(
-                color: Styles().colors.backgroundVariant!, border: Border.all(color: Styles().colors.blackTransparent06!, width: 1)),
+                color: Styles().colors.backgroundVariant, border: Border.all(color: Styles().colors.blackTransparent06, width: 1)),
             padding: EdgeInsets.all(10),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -177,12 +177,12 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
   Widget _buildAssignmentItem(CanvasAssignment assignment) {
     String displayDueDate = StringUtils.ensureNotEmpty(assignment.dueDisplayDateTime);
     String displaySubmittedDate = StringUtils.ensureNotEmpty(assignment.submittedDisplayDateTime);
-    BorderSide borderSide = BorderSide(color: Styles().colors.blackTransparent06!, width: 1);
+    BorderSide borderSide = BorderSide(color: Styles().colors.blackTransparent06, width: 1);
     return GestureDetector(
         onTap: () => _onTapAssignment(assignment),
         child: Container(
             decoration:
-                BoxDecoration(color: Styles().colors.white!, border: Border(left: borderSide, right: borderSide, bottom: borderSide)),
+                BoxDecoration(color: Styles().colors.white, border: Border(left: borderSide, right: borderSide, bottom: borderSide)),
             padding: EdgeInsets.only(left: 30, top: 10, right: 10, bottom: 10),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -236,7 +236,7 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
         height: height,
         decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Styles().colors.lightGray!, width: 1),
+            border: Border.all(color: Styles().colors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),

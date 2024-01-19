@@ -94,7 +94,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
       child: Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4.0), bottomRight: Radius.circular(4.0)),
-              boxShadow: [BoxShadow(color: Styles().colors.fillColorPrimaryTransparent015!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(0, 2))]),
+              boxShadow: [BoxShadow(color: Styles().colors.fillColorPrimaryTransparent015, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(0, 2))]),
           child: Container(
             color: Colors.white,
             child: Column(

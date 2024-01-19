@@ -108,7 +108,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
             borderRadius: BorderRadius.circular(15),
             child: Container(
                 foregroundDecoration: BoxDecoration(
-                  border: Border.all(color: Styles().colors.surfaceAccent!, width: 1.0),
+                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1.0),
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: Column(children: tagWidgets)));

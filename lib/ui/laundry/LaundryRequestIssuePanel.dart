@@ -36,7 +36,7 @@ class LaundryRequestIssuePanel extends StatefulWidget {
 }
 
 class _LaundryRequestIssuePanelState extends State<LaundryRequestIssuePanel> {
-  final Color _inputDecorationColor = Styles().colors.mediumGray2!;
+  final Color _inputDecorationColor = Styles().colors.mediumGray2;
 
   final int _machineIdSymbolsCount = 6;
   List<TextEditingController> _symbolsControllers = [];

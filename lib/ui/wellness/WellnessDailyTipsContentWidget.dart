@@ -94,7 +94,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
         StringUtils.ensureNotEmpty(Wellness().dailyTip),
           onTapUrl : (url) {_launchUrl(url); return true;},
           textStyle:  Styles().textStyles.getTextStyle("widget.title.light.medium_large.extra_fat"),
-          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(textColor ?? Colors.white)} : null
+          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(textColor)} : null
       )
     );
   }

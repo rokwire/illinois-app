@@ -210,7 +210,7 @@ class _ScheduleTabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BorderSide borderSide = BorderSide(color: Styles().colors.surfaceAccent!, width: 2, style: BorderStyle.solid);
+    BorderSide borderSide = BorderSide(color: Styles().colors.surfaceAccent, width: 2, style: BorderStyle.solid);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,

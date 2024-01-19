@@ -99,9 +99,9 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
       Localization().getStringEx('panel.onboarding2.email.button.sign_in.hint', '');
 
     InputDecoration textFeildDecoration = InputDecoration(
-      disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray!, width: 1.0),),
-      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray!, width: 1.0),),
-      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray!, width: 1.0),),
+      disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 1.0),),
+      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 1.0),),
+      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 1.0),),
     );
 
     return Scaffold(

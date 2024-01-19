@@ -167,7 +167,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           textField: true, excludeSemantics: true,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary!, width: 1)),
+            decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
 //          height: 48,
             child: TextField(
               controller: _nameController,
@@ -194,7 +194,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
             textField: true, excludeSemantics: true,
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary!, width: 1)),
+                decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
 //                height: 48,
                 child: TextField(
                   controller: _emailController,
@@ -226,7 +226,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           textField: true, excludeSemantics: true,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary!, width: 1)),
+            decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
 //          height: 48,
             child: TextField(
               controller: _nameController,
@@ -252,7 +252,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
             textField: true, excludeSemantics: true,
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary!, width: 1)),
+                decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
 //                height: 48,
                 child: TextField(
                   controller: _phoneController,
@@ -283,7 +283,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         Container(height: 4),
         ToggleRibbonButton(
           label: Localization().getStringEx('panel.settings.home.calendar.ada.toggle.title', 'Display ADA accessible building entrances for My Courses'),
-          border: Border.all(color: Styles().colors.surfaceAccent!),
+          border: Border.all(color: Styles().colors.surfaceAccent),
           borderRadius: BorderRadius.all(Radius.circular(4)),
           toggled: StudentCourses().requireAda,
           onTap: _onRequireAdaToggled)
@@ -304,14 +304,14 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         Container(height: 4),
         ToggleRibbonButton(
           label: Localization().getStringEx('panel.settings.home.calendar.research.toggle.title', 'Participate in research'),
-          border: Border.all(color: Styles().colors.surfaceAccent!),
+          border: Border.all(color: Styles().colors.surfaceAccent),
           borderRadius: BorderRadius.all(Radius.circular(4)),
           toggled: Questionnaires().participateInResearch == true,
           onTap: _onResearchQuestionnaireToggled
         ),
         Container(height: 4),
         RibbonButton(
-          border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(4)),
           label: Localization().getStringEx("panel.settings.home.calendar.research.questionnaire.title", "Research interest form"),
           textStyle:  (Questionnaires().participateInResearch == true) ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
@@ -372,7 +372,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           decoration: BoxDecoration(
             color: Styles().colors.white,
-            border: Border.all(color: Styles().colors.blackTransparent018!, width: 1),
+            border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Expanded(child:
@@ -633,7 +633,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         child: GestureDetector(
         onTap: onTap,
         child: Container(
-            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary!, width: 1))),
+            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1))),
             padding: EdgeInsets.only(bottom: 2),
             child: Text(title,
                 semanticsLabel: "",

@@ -116,7 +116,7 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
           backgroundColor: Styles().colors.white,
           borderRadius: BorderRadius.all(Radius.circular(5)),
-          border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           rightIconKey: _isProvidersExpanded ? 'chevron-up' : 'chevron-down',
           label: (_selectedProvider != null) ? (_selectedProvider?.name ?? '') : 'Select a provider',
           onTap: _onProvidersDropdown
@@ -154,7 +154,7 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
       for (AppointmentProvider provider in _providers!) {
         items.add(RibbonButton(
           backgroundColor: Styles().colors.white,
-          border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           rightIconKey: null,
           label: provider.name,
           onTap: () => _onTapProvider(provider)
@@ -327,7 +327,7 @@ class _AppointmentUnitCard extends StatelessWidget {
     return InkWell(onTap: onTap, child:
       ClipRRect(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)), child:
         Stack(children: [
-          Container(decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.surfaceAccent!, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
+          Container(decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(provider?.name?.toUpperCase() ?? '', style: Styles().textStyles.getTextStyle('widget.item.small.semi_fat'),),

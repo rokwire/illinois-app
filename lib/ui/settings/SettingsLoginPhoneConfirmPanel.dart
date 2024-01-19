@@ -76,9 +76,9 @@ class _SettingsLoginPhoneConfirmPanelState extends State<SettingsLoginPhoneConfi
                       keyboardType: TextInputType.phone,
                       style: Styles().textStyles.getTextStyle("widget.input_field.text.medium"),
                       decoration: InputDecoration(
-                        disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray!, width: 1.0),),
-                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray!, width: 1.0),),
-                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray!, width: 1.0),),
+                        disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 1.0),),
+                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 1.0),),
+                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 1.0),),
                       ),
                     ),
                   ),

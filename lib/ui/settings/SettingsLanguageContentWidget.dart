@@ -67,7 +67,7 @@ class _SettingsLanguageContentWidgetState extends State<SettingsLanguageContentW
 
   static BoxDecoration get _contentDecoration => BoxDecoration(
     color: Styles().colors.white,
-    border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(4))
   );
 

@@ -339,7 +339,7 @@ class _CheckListPageWidget extends StatelessWidget{
                       titleHtml ?? "",
                       onTapUrl : (url) {onTapLink!(url); return true;},
                       textStyle: Styles().textStyles.getTextStyle("widget.detail.extra_large.fat"),
-                      customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondaryVariant ?? Colors.red)} : null
+                      customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondaryVariant)} : null
                   )
               )
             ),),
@@ -355,7 +355,7 @@ class _CheckListPageWidget extends StatelessWidget{
                   textHtml ?? "",
                   onTapUrl : (url) {onTapLink!(url); return true;},
                   textStyle: Styles().textStyles.getTextStyle("widget.item.large"),
-                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondaryVariant ?? Colors.red)} : null
+                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondaryVariant)} : null
               )
           )
         ),
@@ -377,7 +377,7 @@ class _CheckListPageWidget extends StatelessWidget{
                         headingHtml ?? "",
                         onTapUrl : (url) {onTapLink!(url); return true;},
                         textStyle: Styles().textStyles.getTextStyle("widget.item.large"),
-                        customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondaryVariant ?? Colors.red)} : null
+                        customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondaryVariant)} : null
                     )
                 )
               ),
@@ -401,7 +401,7 @@ class _CheckListPageWidget extends StatelessWidget{
                             bulletEntry,
                             onTapUrl : (url) {onTapLink!(url); return true;},
                             textStyle: Styles().textStyles.getTextStyle("widget.item.large"),
-                            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondaryVariant ?? Colors.red)} : null
+                            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondaryVariant)} : null
                           )
                       )
                     ),
@@ -432,7 +432,7 @@ class _CheckListPageWidget extends StatelessWidget{
                               numberEntry,
                               onTapUrl : (url) {onTapLink!(url); return true;},
                               textStyle:  Styles().textStyles.getTextStyle("widget.item.large"),
-                              customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondaryVariant ?? Colors.red)} : null
+                              customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondaryVariant)} : null
                           )
                       )
                     ),
@@ -659,7 +659,7 @@ class _CheckListNotesWidgetState extends State<CheckListNotesWidget> {
                 Analytics().logAlert(text: "Things to Remember", selection: "Close");
                 Navigator.of(context).pop();
               }, child:
-              Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white!, width: 2),), child:
+              Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white, width: 2),), child:
               Center(child:
               Text('\u00D7', style: Styles().textStyles.getTextStyle("widget.dialog.message.large"),semanticsLabel: "", ),
               ),
@@ -883,7 +883,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
         child:Container(
           decoration: BoxDecoration(
               color: Styles().colors.white,
-              boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+              boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
               borderRadius: BorderRadius.all(Radius.circular(4))
           ),
             child:_CheckListPageWidget(contentKey: widget.contentKey, page: CheckList(widget.contentKey).getPage(id: tab!["page_id"]),

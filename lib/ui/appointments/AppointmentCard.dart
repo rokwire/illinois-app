@@ -84,7 +84,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
           Container(
             decoration: BoxDecoration(
               color: Styles().colors.surface,
-              border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
               borderRadius: BorderRadius.all(Radius.circular(4))
             ),
             child: Padding(padding: EdgeInsets.only(left: 16, bottom: 16), child:

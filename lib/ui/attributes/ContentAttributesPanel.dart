@@ -288,7 +288,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
         Container (
           decoration: BoxDecoration(
             color: Styles().colors.white,
-            border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))
           ),
           //padding: const EdgeInsets.only(left: 12, right: 8),
@@ -386,7 +386,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
             Column(mainAxisSize: MainAxisSize.min, children: [
               Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.white!, width: 1.5, ))),
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.white, width: 1.5, ))),
                 child: Text(title ?? '',
                   style: Styles().textStyles.getTextStyle("widget.heading.regular.fat"),
                   semanticsLabel: "",
@@ -480,7 +480,7 @@ class _AttributeRibbonButton extends StatelessWidget {
       Container (
         decoration: BoxDecoration(
           color: Styles().colors.white,
-          border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(4))
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:[

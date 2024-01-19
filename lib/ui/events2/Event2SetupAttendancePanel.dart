@@ -107,7 +107,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   //EdgeInsetsGeometry get _togglePadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 12);
   //EdgeInsetsGeometry get _toggleDescriptionPadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 5);
-  //BoxBorder get _toggleBorder => Border.all(color: Styles().colors.surfaceAccent!, width: 1);
+  //BoxBorder get _toggleBorder => Border.all(color: Styles().colors.surfaceAccent, width: 1);
   //BorderRadius get _toggleBorderRadius => BorderRadius.all(Radius.circular(4));
 
   // Scan

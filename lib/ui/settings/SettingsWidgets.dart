@@ -83,7 +83,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -113,7 +113,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
           ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(border:  Border.all(color: Styles().colors.fillColorPrimary!,width: 1), borderRadius: BorderRadius.only(bottomRight: Radius.circular(4), bottomLeft: Radius.circular(4))),
+            decoration: BoxDecoration(border:  Border.all(color: Styles().colors.fillColorPrimary,width: 1), borderRadius: BorderRadius.only(bottomRight: Radius.circular(4), bottomLeft: Radius.circular(4))),
             child:
               Column(children: <Widget>[
               Container(height: 16,),
@@ -195,7 +195,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
           decoration: BoxDecoration(
             color: (Styles().colors.white),
             border: Border.all(
-                color: Styles().colors.fillColorPrimary!,
+                color: Styles().colors.fillColorPrimary,
                 width: 1),
             borderRadius: BorderRadius.circular(25),
           ),
@@ -221,7 +221,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
                 decoration: BoxDecoration(
                   color: (_getIsContinueEnabled? Styles().colors.fillColorSecondaryVariant : Styles().colors.white),
                   border: Border.all(
-                      color: _getIsContinueEnabled? Styles().colors.fillColorSecondaryVariant!: Styles().colors.fillColorPrimary!,
+                      color: _getIsContinueEnabled? Styles().colors.fillColorSecondaryVariant: Styles().colors.fillColorPrimary,
                       width: 1),
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -316,7 +316,7 @@ class InfoButton extends StatelessWidget {
     InkWell(onTap: onTap, child:
     Container(
       padding: EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
       child: Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,

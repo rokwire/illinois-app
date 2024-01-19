@@ -6,12 +6,13 @@
     "fillColorPrimaryTransparent09"         :"#E6002855",
     "fillColorPrimaryTransparent015"        :"#26002855",
     "textColorPrimary"                      :"#FFFFFF",
-    "textColorDisabled"                      :"#5c5c5c",
+    "textColorPrimaryVariant"               :"#FFFFFF",
+    "textColorDisabled"                     :"#5c5c5c",
     "fillColorPrimaryVariant"               :"#0F2040",
     "fillColorSecondary"                    :"#E84A27",
     "fillColorSecondaryTransparent05"       :"#80E84A27",
-    "textColorSecondary"                    :"#FFFFFF",
     "fillColorSecondaryVariant"             :"#CF3C1B",
+    "textColorSecondary"                    :"#FFFFFF",
     "textColorSecondaryVariant"             :"#FFFFFF",
     "gradientColorPrimary"                  :"#244372",
 
@@ -34,10 +35,8 @@
     "accentColor4"                          :"#9318BB",
 
     "iconColor"                             :"#E84A27",
-
     "alert"                                 :"#ff0000",
-
-    "transparentWalletColor"                : "#ff0f2040",
+    "transparentWalletColor"                :"#ff0f2040",
 
     "eventColor"                            :"#E54B30",
     "diningColor"                           :"#F09842",
@@ -51,8 +50,8 @@
     "blackTransparent06"                    :"#99000000",
     "blackTransparent018"                   :"#30000000",
     "blackTransparent038"                   :"#61000000",
-    "redTransparent01"                        :"#F4FF4336",
-    "blueShade900"                              :"#0D47A1FF",
+    "redTransparent01"                      :"#F4FF4336",
+    "blueShade900"                          :"#0D47A1FF",
 
     "mediumGray"                            :"#717372",
     "mediumGray1"                           :"#535353",
@@ -64,7 +63,7 @@
     "dividerLineAccent"                     :"#DADADA",
 
     "mango"                                 :"#f29835",
-    "greenAccent"                       :"#69F0AE",
+    "greenAccent"                           :"#69F0AE",
 
     "saferLocationWaitTimeColorRed"        :"#ff0000",
     "saferLocationWaitTimeColorYellow"     :"#ffff00",

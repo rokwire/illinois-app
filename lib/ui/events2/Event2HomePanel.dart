@@ -164,7 +164,7 @@ class Event2HomePanel extends StatefulWidget {
     Color? borderColor = enabled ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimaryVariant;
     Decoration? applyDecoration = BoxDecoration(
       color: Styles().colors.white,
-      border: Border.all(color: borderColor ?? Colors.transparent, width: 1),
+      border: Border.all(color: borderColor, width: 1),
       borderRadius: BorderRadius.all(Radius.circular(16))
     );
     return InkWell(onTap: onTap, child:
@@ -480,7 +480,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   Decoration get _commandBarDecoration => BoxDecoration(
     color: Styles().colors.white,
-    border: Border.all(color: Styles().colors.disabledTextColor ?? Color(0xFF717273), width: 1)
+    border: Border.all(color: Styles().colors.disabledTextColor, width: 1)
   );
 
   Widget _buildCommandButtons() {
@@ -670,7 +670,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   Decoration get _contentDescriptionDecoration => BoxDecoration(
     color: Styles().colors.white,
-    border: Border(top: BorderSide(color: Styles().colors.disabledTextColor ?? Color(0xFF717273), width: 1))
+    border: Border(top: BorderSide(color: Styles().colors.disabledTextColor, width: 1))
   );
 
   Widget _buildEventsContent() {

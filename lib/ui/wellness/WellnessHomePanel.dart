@@ -133,7 +133,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
                   backgroundColor: Styles().colors.white,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
-                  border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                   rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
                   label: _getContentLabel(_selectedContent),
                   onTap: _changeSettingsContentValuesVisibility
@@ -196,7 +196,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
   Widget _buildContentItem(WellnessContent contentItem) {
     return RibbonButton(
         backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentItem),
         onTap: () => _onTapContentItem(contentItem));
