@@ -58,13 +58,13 @@ class _OnboardingErrorPanelState extends State<OnboardingErrorPanel> {
                 Container(height: 148 + 48 + MediaQuery.of(context).padding.top),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 30), child:
                   Align(alignment: Alignment.center, child:
-                    Text(_error?.title ?? '', textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold ?? "ProximaNovaBold", fontSize: 32, color: Styles().colors.fillColorPrimary),),
+                    Text(_error?.title ?? '', textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 32, color: Styles().colors.fillColorPrimary),),
                   ),
                 ),
                 Container(height: 48),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 40), child:
                   Align(alignment: Alignment.topCenter, child:
-                    Text(_error?.description ?? '', textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular ?? "ProximaNovaRegular", fontSize: 20, color: Styles().colors.fillColorPrimary),),
+                    Text(_error?.description ?? '', textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary),),
                   ),
                 ),
               ],)
@@ -82,7 +82,7 @@ class _OnboardingErrorPanelState extends State<OnboardingErrorPanel> {
                             Padding(padding: EdgeInsets.all(0), child:
                               Semantics( excludeSemantics: true, child:
                                 Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                                  Text(buttonTitle, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold ?? 'ProximaNovaBold', fontSize: 20, color: Colors.white,),),
+                                  Text(buttonTitle, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 20, color: Colors.white,),),
                                 ],),
                               ),
                             ),

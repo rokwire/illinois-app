@@ -278,7 +278,7 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
         theme: ThemeData(
           appBarTheme: AppBarTheme(backgroundColor: Styles().colors.fillColorPrimaryVariant),
           primaryColor: Styles().colors.fillColorPrimaryVariant,
-          fontFamily: Styles().fontFamilies.extraBold ?? 'ProximaNovaExtraBold'),
+          fontFamily: Styles().fontFamilies.extraBold),
         home: _homePanel,
       ),
     );
