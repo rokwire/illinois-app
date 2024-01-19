@@ -792,10 +792,10 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     Analytics().logSelect(target: "Publish");
     Events().postNewEvent(widget.event).then((String? eventId){
         if(eventId!=null){
-          AppToast.show("Event successfully created");
+          AppToast.showMessage("Event successfully created");
           Navigator.pop(context,true);
         }else {
-          AppToast.show("Unable to create Event");
+          AppToast.showMessage("Unable to create Event");
         }
     });
   }

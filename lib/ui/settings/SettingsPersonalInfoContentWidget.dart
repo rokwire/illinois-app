@@ -722,7 +722,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
                 if (result == true) {
                   Navigator.pop(context);
                 } else {
-                  AppToast.show("Unable to perform save");
+                  AppToast.showMessage("Unable to perform save");
                 }
               }
             });
@@ -734,7 +734,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         }
         else {
           setState(() { _isSaving = false; });
-          AppToast.show("Unable to perform save");
+          AppToast.showMessage("Unable to perform save");
         }
       }
     });

@@ -720,7 +720,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                     setState(() {
                       if(_currentlySelectedGroup!=null) {
                         Log.d("Selected group: $_currentlySelectedGroup");
-                        AppToast.show(
+                        AppToast.showMessage(
                             Localization().getStringEx('panel.groups_event_detail.label.link_result',  "Event has been linked to") + (_currentlySelectedGroup?.title ?? ""));
                         Groups().linkEventToGroup(groupId:_currentlySelectedGroup!.id,eventId: _event?.id);
                       }

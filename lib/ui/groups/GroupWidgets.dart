@@ -772,14 +772,14 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
     Analytics().logSelect(target: "Use Url");
     String url = _imageUrlController.value.text;
     if (url == "") {
-      AppToast.show(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url"));
+      AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url"));
       return;
     }
 
     bool isReadyUrl = url.endsWith(".webp");
     if (isReadyUrl) {
       //ready
-      AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
+      AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
       Navigator.pop(context, url);
     } else {
       //we need to process it
@@ -801,11 +801,11 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
           //do nothing
             break;
           case ImagesResultType.error:
-            AppToast.show(logicResult.errorMessage ?? ''); //TBD: localize error message
+            AppToast.showMessage(logicResult.errorMessage ?? ''); //TBD: localize error message
             break;
           case ImagesResultType.succeeded:
           //ready
-            AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
+            AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
             Navigator.pop(context, logicResult.data);
             break;
           default:
@@ -836,11 +836,11 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
         //do nothing
           break;
         case ImagesResultType.error:
-          AppToast.show(logicResult.errorMessage ?? ''); //TBD: localize error message
+          AppToast.showMessage(logicResult.errorMessage ?? ''); //TBD: localize error message
           break;
         case ImagesResultType.succeeded:
         //ready
-          AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
+          AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
           Navigator.pop(context, logicResult.data);
           break;
         default:

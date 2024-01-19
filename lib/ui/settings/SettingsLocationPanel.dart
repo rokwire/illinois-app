@@ -87,7 +87,7 @@ class _SettingsLocationPanelState extends State<SettingsLocationPanel> {
 
   _onTapLocationHistory(){
     //TBD
-    AppToast.show("TBD");
+    AppToast.showMessage("TBD");
   }
 
   bool get _locationEnabled {
