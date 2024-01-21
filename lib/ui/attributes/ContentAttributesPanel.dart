@@ -100,7 +100,10 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       Expanded(child:
         Container(padding: EdgeInsets.only(left: 16, right: 24, top: 8), child:
           SingleChildScrollView(child:
-            _buildAttributesContent(),
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              ..._buildAttributesContent(),
+              _buildClearAttributes(),
+            ]),
           ),
         ),
       ),
@@ -111,7 +114,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     ]) : Container();
   }
 
-  Widget _buildAttributesContent() {
+  List<Widget> _buildAttributesContent() {
     List<Widget> contentList = <Widget>[];
 
     Widget? descriptionWidget = _buildDescriptionWidget();
@@ -139,9 +142,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       }
     }
 
-    return Padding(padding: EdgeInsets.only(bottom: 24), child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,)
-    ); 
+    return contentList;
   }
 
   Widget? _buildDescriptionWidget() {
@@ -356,28 +357,30 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
   bool get _isSelectionValid => widget.contentAttributes?.isSelectionValid(_selection) ?? false;
 
+  bool get _isOnboardingMode => (widget.applyBuilder != null) || (widget.continueTitle != null);
+
+  bool get _canApply => (!DeepCollectionEquality().equals(_initialSelection, _selection) || (_initialContentAttributes != widget.contentAttributes)) && (widget.filtersMode || _isSelectionValid);
+
+  bool get _canClear =>  _isInitialSelectionNotEmpty && _isSelectionNotEmpty;
 
   List<Widget>? get _headerBarActions {
     List<Widget> actions = <Widget>[];
     if (!_isOnboardingMode) {
-      if ((!DeepCollectionEquality().equals(_initialSelection, _selection) || (_initialContentAttributes != widget.contentAttributes)) && (widget.filtersMode ? _isSelectionNotEmpty : _isSelectionValid)) {
+      if (_canApply) {
         actions.add(_buildHeaderBarButton(
           title:  Localization().getStringEx('dialog.apply.title', 'Apply'),
           onTap: _onTapApply,
         ));
       }
-      else if (_isInitialSelectionNotEmpty && _isSelectionNotEmpty) {
-        actions.add(_buildHeaderBarButton(
-          title:  Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
+      else if (_canClear) {
+        actions.add(RoundedButton(
+          label:  Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
           onTap: _onTapClear,
         ));
       }
     }
-    
     return actions;
   }
-
-  bool get _isOnboardingMode => (widget.applyBuilder != null) || (widget.continueTitle != null);
 
   Widget _buildHeaderBarButton({String? title, void Function()? onTap}) =>
     Semantics(label: title, button: true, child:
@@ -422,6 +425,26 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       ) : Container();
   }
 
+  Widget _buildClearAttributes() {
+    bool canClearAttributes = _isSelectionNotEmpty;
+    return Padding(padding: EdgeInsets.only(top: 16, bottom: 24), child:
+      Row(children: <Widget>[
+        Expanded(flex: 1, child: Container()),
+        Expanded(flex: 2, child: RoundedButton(
+          label: Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
+            textColor: canClearAttributes ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
+            borderColor: canClearAttributes ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+          backgroundColor: Styles().colors.white,
+          textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          enabled: canClearAttributes,
+          onTap: _onTapClearAttributes
+        )),
+        Expanded(flex: 1, child: Container()),
+      ],),
+    );
+  }
+
   Widget _buildApply() {
     bool canApply = (widget.filtersMode && _isSelectionNotEmpty) || (!widget.filtersMode && (widget.contentAttributes?.isSelectionValid(_selection) ?? false));
     return  (widget.applyBuilder != null) ? widget.applyBuilder!(context, canApply, _onTapApply) :
@@ -458,6 +481,13 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   void _onTapClear() {
     Analytics().logSelect(target: 'Clear');
     Navigator.of(context).pop(<String, dynamic>{});
+  }
+
+  void _onTapClearAttributes() {
+    Analytics().logSelect(target: 'Clear Attributes');
+    setState(() {
+      _selection.clear();
+    });
   }
 
   void _onTapContinue() {

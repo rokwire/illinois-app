@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Added Clear Attributes button in content attributes panel [#3828](https://github.com/rokwire/illinois-app/issues/3828).
+
 ## [5.1.11] - 2024-01-19
 ### Changed
 - Wrap long location details to multiple lines in Event2 detail panel [#3842](https://github.com/rokwire/illinois-app/issues/3842).
