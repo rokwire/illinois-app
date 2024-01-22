@@ -611,6 +611,8 @@
 	"panel.athletics.content.events.unknown_error.message": "發生未知錯誤",
 	"panel.athletics.content.events.empty.message": "沒有事件。",
 
+	"panel.athletics.content.my_teams.header.title": "我的十大團隊",
+
 	"panel.onboarding.button.continue.title":"继续",
 	"panel.onboarding.button.continue.hint":"",
 

@@ -612,6 +612,8 @@
     "panel.athletics.content.events.unknown_error.message": "Unknown Error Occurred",
     "panel.athletics.content.events.empty.message": "There are no events.",
 
+    "panel.athletics.content.my_teams.header.title": "My Big 10 Teams",
+
     "panel.onboarding.button.continue.title":"Continue",
     "panel.onboarding.button.continue.hint":"",
 

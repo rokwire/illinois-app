@@ -23,6 +23,7 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsEventCard.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsMyTeamsPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
@@ -179,7 +180,20 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
 
   void _onTapTeamsFilter() {
     Analytics().logSelect(target: 'Teams');
-    //TBD: DD - implement
+    MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
+    double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        isDismissible: true,
+        useRootNavigator: true,
+        clipBehavior: Clip.antiAlias,
+        backgroundColor: Styles().colors.background,
+        constraints: BoxConstraints(maxHeight: height, minHeight: height),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+        builder: (context) {
+          return AthleticsMyTeamsPanel();
+        });
   }
 
   void _onTapGame(Game game) {
