@@ -20,6 +20,8 @@ import android.content.Context;
 
 import com.hid.origo.OrigoKeysApiFactory;
 import com.hid.origo.api.OrigoApiConfiguration;
+import com.hid.origo.api.OrigoDeviceEligibility;
+import com.hid.origo.api.OrigoDeviceEligibilityException;
 import com.hid.origo.api.OrigoMobileKeys;
 import com.hid.origo.api.OrigoMobileKeysApi;
 import com.hid.origo.api.OrigoReaderConnectionController;
@@ -30,6 +32,9 @@ import com.hid.origo.api.ble.OrigoSeamlessOpeningTrigger;
 import com.hid.origo.api.ble.OrigoTapOpeningTrigger;
 import com.hid.origo.api.ble.OrigoTwistAndGoOpeningTrigger;
 import com.hid.origo.api.hce.OrigoNfcConfiguration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import edu.illinois.rokwire.BuildConfig;
 import edu.illinois.rokwire.Constants;
@@ -44,27 +49,26 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
     }
 
     private void initFactory(Context appContext) {
+        OrigoDeviceEligibility eligibility = getDeviceEligibility(appContext);
+
         if (mobileKeysApi == null) {
             mobileKeysApi = OrigoMobileKeysApi.getInstance();
         }
         if (!mobileKeysApi.isInitialized()) {
             String appId = BuildConfig.ORIGO_APP_ID;
             String appDescription = String.format("%s-%s", BuildConfig.ORIGO_APP_ID, BuildConfig.VERSION_NAME);
+            OrigoOpeningTrigger[] openingTriggers = getOpeningTriggers(appContext, eligibility);
             Integer[] lockServiceCodes = getStoredLockServiceCodes(appContext);
 
-            OrigoOpeningTrigger[] openingTriggers = isTwistAndGoEnabled(appContext) ?
-                    new OrigoOpeningTrigger[]{new OrigoTwistAndGoOpeningTrigger(appContext), new OrigoTapOpeningTrigger(appContext), new OrigoSeamlessOpeningTrigger()} :
-                    new OrigoOpeningTrigger[]{new OrigoTapOpeningTrigger(appContext), new OrigoSeamlessOpeningTrigger()};
+            OrigoApiConfiguration origoApiConfiguration = new OrigoApiConfiguration.Builder().setApplicationId(appId)
+                    .setApplicationDescription(appDescription)
+                    .setNfcParameters(new OrigoNfcConfiguration.Builder().build())
+                    .build();
 
             OrigoScanConfiguration origoScanConfiguration = new OrigoScanConfiguration.Builder(
                     openingTriggers, lockServiceCodes)
                     .setAllowBackgroundScanning(true)
                     .setBluetoothModeIfSupported(OrigoBluetoothMode.DUAL)
-                    .build();
-
-            OrigoApiConfiguration origoApiConfiguration = new OrigoApiConfiguration.Builder().setApplicationId(appId)
-                    .setApplicationDescription(appDescription)
-                    .setNfcParameters(new OrigoNfcConfiguration.Builder().build())
                     .build();
 
             mobileKeysApi.initialize(appContext, origoApiConfiguration, origoScanConfiguration, appId);
@@ -89,6 +93,35 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
     @Override
     public OrigoScanConfiguration getOrigoScanConfiguration() {
         return getReaderConnectionController().getScanConfiguration();
+    }
+
+    //endregion
+
+    //region Eligibility
+
+    private OrigoDeviceEligibility getDeviceEligibility(Context context) {
+        OrigoDeviceEligibility eligibility;
+        try {
+            eligibility = OrigoMobileKeysApi.checkEligibility(context);
+        } catch (OrigoDeviceEligibilityException e) {
+            // Failed to perform full eligibility check, using local device eligibility
+            eligibility = OrigoMobileKeysApi.defaultEligibility(context);
+        }
+        return eligibility;
+    }
+
+    private OrigoOpeningTrigger[] getOpeningTriggers(Context appContext, OrigoDeviceEligibility eligibility) {
+        List<OrigoOpeningTrigger> openingTriggerList = new ArrayList<>();
+        if (isTwistAndGoEnabled(appContext) && eligibility.supportsTwistAndGo()) {
+            openingTriggerList.add(new OrigoTwistAndGoOpeningTrigger(appContext));
+        }
+        if (eligibility.supportsTap()) {
+            openingTriggerList.add(new OrigoTapOpeningTrigger(appContext));
+        }
+        if (eligibility.supportsSeamless()) {
+            openingTriggerList.add(new OrigoSeamlessOpeningTrigger());
+        }
+        return openingTriggerList.toArray(new OrigoOpeningTrigger[0]);
     }
 
     //endregion
