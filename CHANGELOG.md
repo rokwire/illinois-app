@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Added Clear Attributes button in content attributes panel [#3828](https://github.com/rokwire/illinois-app/issues/3828).
+- Updated event2 start time query logic [#3839](https://github.com/rokwire/illinois-app/issues/3839).
 ### Fixed
 - Android: Crashes in HID Origo sdk [#3877](https://github.com/rokwire/illinois-app/issues/3877).
 
