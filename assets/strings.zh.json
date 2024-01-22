@@ -608,6 +608,9 @@
 	"panel.athletics.content.section.news.label": "訊息",
 	"panel.athletics.content.section.teams.label": "團隊",
 
+	"panel.athletics.content.events.unknown_error.message": "發生未知錯誤",
+	"panel.athletics.content.events.empty.message": "沒有事件。",
+
 	"panel.onboarding.button.continue.title":"继续",
 	"panel.onboarding.button.continue.hint":"",
 

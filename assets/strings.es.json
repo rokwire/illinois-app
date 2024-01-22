@@ -608,6 +608,9 @@
     "panel.athletics.content.section.news.label": "Noticias",
     "panel.athletics.content.section.teams.label": "Equipos",
 
+    "panel.athletics.content.events.unknown_error.message": "Se produjo un error desconocido",
+    "panel.athletics.content.events.empty.message": "No hay eventos.",
+
     "panel.onboarding.button.continue.title":"Continuar",
     "panel.onboarding.button.continue.hint":"",
 

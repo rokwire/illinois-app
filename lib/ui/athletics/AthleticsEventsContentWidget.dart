@@ -83,7 +83,9 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   Widget _buildContent() {
     if (_loadingEvents) {
       return _buildLoadingContent();
-    } else if (CollectionUtils.isEmpty(_events)) {
+    } else if (_events == null) {
+      return _buildErrorContent();
+    } else if (_events?.length == 0) {
       return _buildEmptyContent();
     } else {
       return _buildEventsContent();
@@ -143,17 +145,24 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   }
 
   Widget _buildLoadingContent() {
-    return Center(
-        child: Column(children: <Widget>[
-      Container(height: MediaQuery.of(context).size.height / 5),
-      CircularProgressIndicator(color: Styles().colors.fillColorSecondary),
-      Container(height: MediaQuery.of(context).size.height / 5 * 3)
-    ]));
+    return _buildCenteredWidget(CircularProgressIndicator(color: Styles().colors.fillColorSecondary));
   }
 
   Widget _buildEmptyContent() {
-    //TBD: DD - to be implemented
-    return Text('TBD: to be implemented');
+    return _buildCenteredWidget(Text(Localization().getStringEx('panel.athletics.content.events.empty.message', 'There are no events.'),
+        textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat')));
+  }
+
+  Widget _buildErrorContent() {
+    return _buildCenteredWidget(Text(
+        StringUtils.ensureNotEmpty(_eventsErrorText,
+            defaultValue: Localization().getStringEx('panel.athletics.content.events.unknown_error.message', 'Unknown Error Occurred.')),
+        textAlign: TextAlign.center,
+        style: Styles().textStyles.getTextStyle('widget.item.medium.fat')));
+  }
+
+  Widget _buildCenteredWidget(Widget child) {
+    return Center(child: Column(children: <Widget>[Container(height: _screenHeight / 5), child, Container(height: _screenHeight / 5 * 3)]));
   }
 
   Widget _buildExtendingWidget() {
@@ -248,7 +257,6 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
           _eventsErrorText = null;
         }
         else if (_events == null) {
-          // If there was events content, preserve it. Otherwise, show the error
           _eventsErrorText = errorTextResult;
         }
         if (totalCount != null) {
@@ -297,6 +305,8 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
         : Localization().getStringEx('key', 'None');
     return '$filterPrefix $teamsFilterDisplayString';
   }
+
+  double get _screenHeight => MediaQuery.of(context).size.height;
 
   // Notifications Listener
 
