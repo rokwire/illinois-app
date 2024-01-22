@@ -199,7 +199,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
     //Security - also required by Origo 1.7.7 and above
-    implementation "androidx.security:security-crypto:1.1.0-alpha03"
+    implementation "androidx.security:security-crypto:1.1.0-alpha06"
 
     // Support foldable devices
     implementation "androidx.window:window:1.0.0"
@@ -211,26 +211,15 @@ dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
     // Origo and mobile keys SDK
-    debugImplementation name: '../../libs/hid-origo/android/origo-sdk-debug', version: '1.9.1', ext: 'aar'
-    releaseImplementation name: '../../libs/hid-origo/android/origo-sdk-release', version: '1.9.1', ext: 'aar'
-    debugImplementation name: '../../libs/hid-origo/android/mobilekeys-android-sdk-debug', version: '8.0.6', ext: 'aar'
-    releaseImplementation name: '../../libs/hid-origo/android/mobilekeys-android-sdk-release', version: '8.0.6', ext: 'aar'
+    debugImplementation name: '../../libs/hid-origo/android/origo-sdk-debug', version: '1.10.0', ext: 'aar'
+    releaseImplementation name: '../../libs/hid-origo/android/origo-sdk-release', version: '1.10.0', ext: 'aar'
 
     // Origo transitive dependencies
     implementation 'org.bouncycastle:bcprov-jdk15on:1.68'
     implementation 'org.slf4j:slf4j-api:1.7.30'
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
     implementation 'com.mixpanel.android:mixpanel-android:5.8.5'
-
-    // Required from Origo-SDK v1.7.7
-    implementation('com.google.crypto.tink:tink-android') {
-        version {
-            strictly '1.4.0'
-        }
-    }
-
-    implementation 'androidx.preference:preference-ktx:1.2.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+    implementation 'androidx.preference:preference-ktx:1.2.1'
     // end Origo
 }
 
