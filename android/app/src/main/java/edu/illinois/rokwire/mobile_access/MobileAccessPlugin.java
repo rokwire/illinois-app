@@ -25,10 +25,8 @@ import com.hid.origo.api.ble.OrigoRssiSensitivity;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
-import edu.illinois.rokwire.BuildConfig;
 import edu.illinois.rokwire.Constants;
 import edu.illinois.rokwire.rokwire_plugin.Utils;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -52,9 +50,7 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
 
     public MobileAccessPlugin(Activity activity) {
         this.appContext = activity.getApplicationContext();
-        Integer[] lockServiceCodes = getStoredLockServiceCodes();
-        boolean twistAndGoEnabled = isTwistAndGoEnabled();
-        MobileAccessKeysApiFactory keysApiFactory = new MobileAccessKeysApiFactory(appContext, lockServiceCodes, twistAndGoEnabled);
+        MobileAccessKeysApiFactory keysApiFactory = new MobileAccessKeysApiFactory(appContext);
         this.apiFacade = new MobileAccessKeysApiFacade(activity, keysApiFactory);
     }
 
@@ -291,19 +287,6 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
 
     //region SharedPrefs helpers
 
-    private Integer[] getStoredLockServiceCodes() {
-        String storedLockServiceCodesValue = Utils.AppSecureSharedPrefs.getString(appContext, Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_PREFS_KEY, null);
-        if (!Utils.Str.isEmpty(storedLockServiceCodesValue)) {
-            String[] lockCodesStringArr = storedLockServiceCodesValue.split(Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_DELIMITER);
-            Integer[] lockCodes = new Integer[lockCodesStringArr.length];
-            for (int i = 0; i < lockCodesStringArr.length; i++) {
-                lockCodes[i] = Integer.parseInt(lockCodesStringArr[i]);
-            }
-            return lockCodes;
-        }
-        return new Integer[]{BuildConfig.ORIGO_LOCK_SERVICE_CODE}; // Default Lock Service Code
-    }
-
     private void saveLockServiceCodes(int[] lockServiceCodes) {
         String formattedLockServiceCodes = null;
         if ((lockServiceCodes != null) && (lockServiceCodes.length > 0)) {
@@ -314,10 +297,6 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
             formattedLockServiceCodes = sb.deleteCharAt(sb.length() - Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_DELIMITER.length()).toString(); // remove the last delimiter
         }
         Utils.AppSecureSharedPrefs.saveString(appContext, Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_PREFS_KEY, formattedLockServiceCodes);
-    }
-
-    private boolean isTwistAndGoEnabled() {
-        return Utils.AppSharedPrefs.getBool(appContext, Constants.MOBILE_ACCESS_TWIST_AND_GO_ENABLED_PREFS_KEY, false);
     }
 
     private void saveTwistAndGoEnabled(boolean enabled) {

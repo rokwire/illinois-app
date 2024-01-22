@@ -32,24 +32,27 @@ import com.hid.origo.api.ble.OrigoTwistAndGoOpeningTrigger;
 import com.hid.origo.api.hce.OrigoNfcConfiguration;
 
 import edu.illinois.rokwire.BuildConfig;
+import edu.illinois.rokwire.Constants;
+import edu.illinois.rokwire.rokwire_plugin.Utils;
 
 public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
 
     private OrigoMobileKeysApi mobileKeysApi;
 
-    public MobileAccessKeysApiFactory(Context appContext, Integer[] lockServiceCodes, boolean enableTwistAndGo) {
-        initFactory(appContext, lockServiceCodes, enableTwistAndGo);
+    public MobileAccessKeysApiFactory(Context appContext) {
+        initFactory(appContext);
     }
 
-    private void initFactory(Context appContext, Integer[] lockServiceCodes, boolean enableTwistAndGo) {
+    private void initFactory(Context appContext) {
         if (mobileKeysApi == null) {
             mobileKeysApi = OrigoMobileKeysApi.getInstance();
         }
         if (!mobileKeysApi.isInitialized()) {
             String appId = BuildConfig.ORIGO_APP_ID;
             String appDescription = String.format("%s-%s", BuildConfig.ORIGO_APP_ID, BuildConfig.VERSION_NAME);
+            Integer[] lockServiceCodes = getStoredLockServiceCodes(appContext);
 
-            OrigoOpeningTrigger[] openingTriggers = enableTwistAndGo ?
+            OrigoOpeningTrigger[] openingTriggers = isTwistAndGoEnabled(appContext) ?
                     new OrigoOpeningTrigger[]{new OrigoTwistAndGoOpeningTrigger(appContext), new OrigoTapOpeningTrigger(appContext), new OrigoSeamlessOpeningTrigger()} :
                     new OrigoOpeningTrigger[]{new OrigoTapOpeningTrigger(appContext), new OrigoSeamlessOpeningTrigger()};
 
@@ -86,6 +89,27 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
     @Override
     public OrigoScanConfiguration getOrigoScanConfiguration() {
         return getReaderConnectionController().getScanConfiguration();
+    }
+
+    //endregion
+
+    //region Shared prefs helpers
+
+    private boolean isTwistAndGoEnabled(Context appContext) {
+        return Utils.AppSharedPrefs.getBool(appContext, Constants.MOBILE_ACCESS_TWIST_AND_GO_ENABLED_PREFS_KEY, false);
+    }
+
+    private Integer[] getStoredLockServiceCodes(Context appContext) {
+        String storedLockServiceCodesValue = Utils.AppSecureSharedPrefs.getString(appContext, Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_PREFS_KEY, null);
+        if (!Utils.Str.isEmpty(storedLockServiceCodesValue)) {
+            String[] lockCodesStringArr = storedLockServiceCodesValue.split(Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_DELIMITER);
+            Integer[] lockCodes = new Integer[lockCodesStringArr.length];
+            for (int i = 0; i < lockCodesStringArr.length; i++) {
+                lockCodes[i] = Integer.parseInt(lockCodesStringArr[i]);
+            }
+            return lockCodes;
+        }
+        return new Integer[]{BuildConfig.ORIGO_LOCK_SERVICE_CODE}; // Default Lock Service Code
     }
 
     //endregion
