@@ -44,12 +44,18 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
 
     private OrigoMobileKeysApi mobileKeysApi;
 
+    public static boolean isVerified(Context appContext) {
+        OrigoDeviceEligibility eligibility = getDeviceEligibility(appContext);
+        boolean bleVerified = eligibility.bleVerified();
+        boolean nfcVerified = eligibility.nfcVerified();
+        return (bleVerified || nfcVerified);
+    }
+
     public MobileAccessKeysApiFactory(Context appContext) {
         initFactory(appContext);
     }
 
     private void initFactory(Context appContext) {
-        OrigoDeviceEligibility eligibility = getDeviceEligibility(appContext);
 
         if (mobileKeysApi == null) {
             mobileKeysApi = OrigoMobileKeysApi.getInstance();
@@ -57,6 +63,7 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
         if (!mobileKeysApi.isInitialized()) {
             String appId = BuildConfig.ORIGO_APP_ID;
             String appDescription = String.format("%s-%s", BuildConfig.ORIGO_APP_ID, BuildConfig.VERSION_NAME);
+            OrigoDeviceEligibility eligibility = getDeviceEligibility(appContext);
             OrigoOpeningTrigger[] openingTriggers = getOpeningTriggers(appContext, eligibility);
             Integer[] lockServiceCodes = getStoredLockServiceCodes(appContext);
 
@@ -99,7 +106,7 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
 
     //region Eligibility
 
-    private OrigoDeviceEligibility getDeviceEligibility(Context context) {
+    private static OrigoDeviceEligibility getDeviceEligibility(Context context) {
         OrigoDeviceEligibility eligibility;
         try {
             eligibility = OrigoMobileKeysApi.checkEligibility(context);
