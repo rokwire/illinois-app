@@ -25,10 +25,8 @@ import com.hid.origo.api.ble.OrigoRssiSensitivity;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
-import edu.illinois.rokwire.BuildConfig;
 import edu.illinois.rokwire.Constants;
 import edu.illinois.rokwire.rokwire_plugin.Utils;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -43,7 +41,7 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
 
     private static MethodChannel methodChannel;
 
-    private final MobileAccessKeysApiFacade apiFacade;
+    private MobileAccessKeysApiFacade apiFacade;
     private final Context appContext;
 
     //endregion
@@ -52,10 +50,10 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
 
     public MobileAccessPlugin(Activity activity) {
         this.appContext = activity.getApplicationContext();
-        Integer[] lockServiceCodes = getStoredLockServiceCodes();
-        boolean twistAndGoEnabled = isTwistAndGoEnabled();
-        MobileAccessKeysApiFactory keysApiFactory = new MobileAccessKeysApiFactory(appContext, lockServiceCodes, twistAndGoEnabled);
-        this.apiFacade = new MobileAccessKeysApiFacade(activity, keysApiFactory);
+        if (MobileAccessKeysApiFactory.isVerified(appContext)) {
+            MobileAccessKeysApiFactory keysApiFactory = new MobileAccessKeysApiFactory(appContext);
+            this.apiFacade = new MobileAccessKeysApiFacade(activity, keysApiFactory);
+        }
     }
 
     //endregion
@@ -63,15 +61,21 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
     //region Activity APIs
 
     public void onActivityCreate() {
-        apiFacade.onActivityCreate();
+        if (apiFacade != null) {
+            apiFacade.onActivityCreate();
+        }
     }
 
     public void onActivityStart() {
-        apiFacade.onApplicationStartup();
+        if (apiFacade != null) {
+            apiFacade.onApplicationStartup();
+        }
     }
 
     public void onActivityDestroy() {
-        apiFacade.onActivityDestroy();
+        if (apiFacade != null) {
+            apiFacade.onActivityDestroy();
+        }
     }
 
     //endregion
@@ -85,7 +89,7 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
             switch (method) {
                 case Constants.MOBILE_ACCESS_START_KEY:
                     result.success(true);
-                    if (apiFacade.isStarted()) {
+                    if ((apiFacade != null) && apiFacade.isStarted()) {
                         MobileAccessPlugin.invokeStartFinishedMethod(true);
                     }
                     break;
@@ -98,8 +102,8 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
                     result.success(endpointSetupInitiated);
                     break;
                 case Constants.MOBILE_ACCESS_UNREGISTER_ENDPOINT_KEY:
-                    handleMobileAccessUnregisterEndpoint();
-                    result.success(true);
+                    boolean unregistered = handleMobileAccessUnregisterEndpoint();
+                    result.success(unregistered);
                     break;
                 case Constants.MOBILE_ACCESS_IS_ENDPOINT_REGISTERED_KEY:
                     boolean isRegistered = handleMobileAccessIsEndpointRegistered();
@@ -142,8 +146,8 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
                     result.success(isUnlockSoundEnabled);
                     break;
                 case Constants.MOBILE_ACCESS_ALLOW_SCANNING_KEY:
-                    handleAllowScanning(call.arguments);
-                    result.success(true);
+                    boolean scanAvailable = handleAllowScanning(call.arguments);
+                    result.success(scanAvailable);
                     break;
                 default:
                     result.notImplemented();
@@ -162,10 +166,13 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
     //region Native methods implementation
 
     private List<HashMap<String, Object>> handleMobileAccessKeys() {
-        return apiFacade.getKeysDetails();
+        return (apiFacade != null) ? apiFacade.getKeysDetails() : null;
     }
 
     private boolean handleMobileAccessRegisterEndpoint(Object params) {
+        if (apiFacade == null) {
+            return false;
+        }
         String invitationCode = null;
         if (params instanceof String) {
             invitationCode = (String) params;
@@ -173,15 +180,23 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
         return apiFacade.setupEndpoint(invitationCode);
     }
 
-    private void handleMobileAccessUnregisterEndpoint() {
-        apiFacade.unregisterEndpoint();
+    private boolean handleMobileAccessUnregisterEndpoint() {
+        if (apiFacade != null) {
+            apiFacade.unregisterEndpoint();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private boolean handleMobileAccessIsEndpointRegistered() {
-        return apiFacade.isEndpointSetUpComplete();
+        return (apiFacade != null) && apiFacade.isEndpointSetUpComplete();
     }
 
     private boolean handleMobileAccessSetRssiSensitivity(Object arguments) {
+        if (apiFacade == null) {
+            return false;
+        }
         OrigoRssiSensitivity origoRssiSensitivity = null;
         if (arguments instanceof String) {
             String sensitivityValue = (String) arguments;
@@ -224,7 +239,7 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
             }
         }
         if (lockServiceCodes != null) {
-            boolean codesChanged = apiFacade.changeLockServiceCodes(lockServiceCodes);
+            boolean codesChanged = (apiFacade != null) && apiFacade.changeLockServiceCodes(lockServiceCodes);
             if (codesChanged) {
                 saveLockServiceCodes(lockServiceCodes);
             }
@@ -236,10 +251,13 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
     }
 
     private int[] handleGetLockServiceCodes() {
-        return apiFacade.getLockServiceCodes();
+        return (apiFacade != null) ? apiFacade.getLockServiceCodes() : null;
     }
 
     private boolean handleEnableTwistAndGo(Object arguments) {
+        if (apiFacade == null) {
+            return false;
+        }
         boolean enable = false;
         if (arguments instanceof Boolean) {
             enable = (Boolean) arguments;
@@ -252,10 +270,13 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
     }
 
     private boolean handleIsTwistAndGoEnabled() {
-        return apiFacade.isTwistAndGoOpeningEnabled();
+        return (apiFacade != null) && apiFacade.isTwistAndGoOpeningEnabled();
     }
 
     private boolean handleEnableUnlockVibration(Object arguments) {
+        if (apiFacade == null) {
+            return false;
+        }
         boolean enable = false;
         if (arguments instanceof Boolean) {
             enable = (Boolean) arguments;
@@ -264,10 +285,13 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
     }
 
     private boolean handleIsUnlockVibrationEnabled() {
-        return apiFacade.isUnlockVibrationEnabled();
+        return (apiFacade != null) && apiFacade.isUnlockVibrationEnabled();
     }
 
     private boolean handleEnableUnlockSound(Object arguments) {
+        if (apiFacade == null) {
+            return false;
+        }
         boolean enable = false;
         if (arguments instanceof Boolean) {
             enable = (Boolean) arguments;
@@ -276,33 +300,24 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
     }
 
     private boolean handleIsUnlockSoundEnabled() {
-        return apiFacade.isUnlockSoundEnabled();
+        return (apiFacade != null) && apiFacade.isUnlockSoundEnabled();
     }
 
-    private void handleAllowScanning(Object arguments) {
+    private boolean handleAllowScanning(Object arguments) {
+        if (apiFacade == null) {
+            return false;
+        }
         boolean allow = false;
         if (arguments instanceof Boolean) {
             allow = (Boolean) arguments;
         }
         apiFacade.allowScanning(allow);
+        return true;
     }
 
     //endregion
 
     //region SharedPrefs helpers
-
-    private Integer[] getStoredLockServiceCodes() {
-        String storedLockServiceCodesValue = Utils.AppSecureSharedPrefs.getString(appContext, Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_PREFS_KEY, null);
-        if (!Utils.Str.isEmpty(storedLockServiceCodesValue)) {
-            String[] lockCodesStringArr = storedLockServiceCodesValue.split(Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_DELIMITER);
-            Integer[] lockCodes = new Integer[lockCodesStringArr.length];
-            for (int i = 0; i < lockCodesStringArr.length; i++) {
-                lockCodes[i] = Integer.parseInt(lockCodesStringArr[i]);
-            }
-            return lockCodes;
-        }
-        return new Integer[]{BuildConfig.ORIGO_LOCK_SERVICE_CODE}; // Default Lock Service Code
-    }
 
     private void saveLockServiceCodes(int[] lockServiceCodes) {
         String formattedLockServiceCodes = null;
@@ -314,10 +329,6 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
             formattedLockServiceCodes = sb.deleteCharAt(sb.length() - Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_DELIMITER.length()).toString(); // remove the last delimiter
         }
         Utils.AppSecureSharedPrefs.saveString(appContext, Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_PREFS_KEY, formattedLockServiceCodes);
-    }
-
-    private boolean isTwistAndGoEnabled() {
-        return Utils.AppSharedPrefs.getBool(appContext, Constants.MOBILE_ACCESS_TWIST_AND_GO_ENABLED_PREFS_KEY, false);
     }
 
     private void saveTwistAndGoEnabled(boolean enabled) {
