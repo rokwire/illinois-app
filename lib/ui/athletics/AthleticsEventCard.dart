@@ -121,7 +121,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
               showImage
                   ? Container(
                       height: 72,
-                      color: Styles().colors!.fillColorSecondaryTransparent05,
+                      color: Styles().colors.fillColorSecondaryTransparent05,
                     )
                   : Container(height: 0)
             ]),
@@ -129,9 +129,9 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
                 ? Container(
                     height: 112,
                     width: double.infinity,
-                    child: Styles().images?.getImage('slant', fit: BoxFit.fill, excludeFromSemantics: true))
+                    child: Styles().images.getImage('slant', fit: BoxFit.fill, excludeFromSemantics: true))
                 : Container(),
-            showImage ? Container(height: 140, color: Styles().colors!.background) : Container()
+            showImage ? Container(height: 140, color: Styles().colors.background) : Container()
           ]),
           Padding(
               padding: widget.margin,
@@ -153,13 +153,13 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
                                         child: Padding(
                                             padding: EdgeInsets.only(top: 24),
                                             child: Container(
-                                                color: Styles().colors!.fillColorPrimary,
+                                                color: Styles().colors.fillColorPrimary,
                                                 child: Padding(
                                                     padding: EdgeInsets.all(5),
                                                     child: Text(sportName.toUpperCase(),
                                                         style: Styles()
                                                             .textStyles
-                                                            ?.getTextStyle('widget.colourful_button.title.regular.accent'))))))),
+                                                            .getTextStyle('widget.colourful_button.title.regular.accent'))))))),
                                 Expanded(child: Container()),
                                 Visibility(
                                     visible: Auth2().canFavorite,
@@ -177,12 +177,12 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
                                             excludeSemantics: true,
                                             child: Padding(
                                                 padding: EdgeInsets.only(right: 24, top: 24, left: 24, bottom: 8),
-                                                child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray',
+                                                child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray',
                                                     excludeFromSemantics: true)))))
                               ])),
                           Padding(
                               padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                              child: Text(widget.game.title, style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))),
+                              child: Text(widget.game.title, style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))),
                           _athleticsDetails(),
                           Visibility(
                               visible: showDescription,
@@ -190,19 +190,19 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
                                 _divider(),
                                 Padding(
                                     padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                                    child: Text(description ?? '', style: Styles().textStyles?.getTextStyle('widget.card.detail.medium')))
+                                    child: Text(description ?? '', style: Styles().textStyles.getTextStyle('widget.card.detail.medium')))
                               ])),
                           Visibility(
                               visible: showInterests,
                               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                                Container(height: 1, color: Styles().colors!.surfaceAccent),
+                                Container(height: 1, color: Styles().colors.surfaceAccent),
                                 Padding(
                                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                                       Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'),
-                                          style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny.fat')),
+                                          style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat')),
                                       Text(StringUtils.ensureNotEmpty(interestsLabelValue),
-                                          style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny.medium_fat'))
+                                          style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.medium_fat'))
                                     ]))
                               ])),
                           Visibility(
@@ -212,12 +212,12 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
                                   child: RoundedButton(
                                       label: Localization().getStringEx('widget.athletics_card.button.get_tickets.title', 'Get Tickets'),
                                       hint: Localization().getStringEx('widget.athletics_card.button.get_tickets.hint', ''),
-                                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
+                                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                                       backgroundColor: Colors.white,
-                                      borderColor: Styles().colors!.fillColorSecondary,
+                                      borderColor: Styles().colors.fillColorSecondary,
                                       onTap: _onTapGetTickets)))
                         ]))),
-                !showImage ? Container(height: 7, color: Styles().colors!.fillColorPrimary) : Container(),
+                !showImage ? Container(height: 7, color: Styles().colors.fillColorPrimary) : Container(),
               ]))
         ]));
   }
@@ -280,12 +280,12 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
         padding: _detailPadding,
         child:Semantics(label:displayTime, excludeSemantics: true ,child: Row(
           children: <Widget>[
-            Styles().images?.getImage('time', excludeFromSemantics: true) ?? Container(),
+            Styles().images.getImage('time', excludeFromSemantics: true) ?? Container(),
             Padding(
               padding: _iconPadding,
             ),
             Text(displayTime!,
-                style: Styles().textStyles?.getTextStyle('widget.card.detail.medium')),
+                style: Styles().textStyles.getTextStyle('widget.card.detail.medium')),
           ],
         )),
       );
@@ -302,7 +302,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
         child: Semantics(label:locationText, excludeSemantics: true ,child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Styles().images?.getImage('location', excludeFromSemantics: true) ?? Container(),
+            Styles().images.getImage('location', excludeFromSemantics: true) ?? Container(),
             Padding(
               padding: _iconPadding,
             ),
@@ -310,7 +310,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
                 child: Text(locationText,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
-                    style: Styles().textStyles?.getTextStyle('widget.card.detail.medium'))),
+                    style: Styles().textStyles.getTextStyle('widget.card.detail.medium'))),
           ],
         )),
       );
@@ -324,7 +324,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
       padding: EdgeInsets.symmetric(vertical: 0),
       child: Container(
         height: 1,
-        color: Styles().colors!.fillColorPrimaryTransparent015,
+        color: Styles().colors.fillColorPrimaryTransparent015,
       ),
     );
   }

@@ -93,7 +93,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   Widget _buildTeamsFilter() {
     return Column(children: [
       Container(
-          color: Styles().colors?.white,
+          color: Styles().colors.white,
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Row(children: [
@@ -102,26 +102,26 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
                     onTap: _onTapTeamsFilter,
                     child: Container(
                         decoration: BoxDecoration(
-                            border: Border.all(color: Styles().colors!.disabledTextColor!, width: 1), borderRadius: BorderRadius.circular(16)),
+                            border: Border.all(color: Styles().colors.disabledTextColor, width: 1), borderRadius: BorderRadius.circular(16)),
                         child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                             child: Row(children: [
-                              Styles().images?.getImage('filters') ?? Container(),
+                              Styles().images.getImage('filters') ?? Container(),
                               Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 5),
                                   child: Text(Localization().getStringEx('panel.athletics.content.common.filter.teams.label', 'Teams'),
-                                      style: Styles().textStyles?.getTextStyle('widget.button.title.small.fat'))),
-                              Styles().images?.getImage('chevron-right-gray') ?? Container()
+                                      style: Styles().textStyles.getTextStyle('widget.button.title.small.fat'))),
+                              Styles().images.getImage('chevron-right-gray') ?? Container()
                             ])))),
                 Expanded(child: Container())
               ]))),
-      Divider(thickness: 1, color: Styles().colors!.lightGray!, height: 1),
+      Divider(thickness: 1, color: Styles().colors.lightGray, height: 1),
       Container(
-          decoration: BoxDecoration(color: Styles().colors?.white, boxShadow: kElevationToShadow[2]),
+          decoration: BoxDecoration(color: Styles().colors.white, boxShadow: kElevationToShadow[2]),
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Row(children: [
-                Expanded(child: Text(_teamsFilterLabel, style: Styles().textStyles?.getTextStyle('widget.button.title.small')))
+                Expanded(child: Text(_teamsFilterLabel, style: Styles().textStyles.getTextStyle('widget.button.title.small')))
               ])))
     ]);
   }
@@ -146,7 +146,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
     return Center(
         child: Column(children: <Widget>[
       Container(height: MediaQuery.of(context).size.height / 5),
-      CircularProgressIndicator(color: Styles().colors?.fillColorSecondary),
+      CircularProgressIndicator(color: Styles().colors.fillColorSecondary),
       Container(height: MediaQuery.of(context).size.height / 5 * 3)
     ]));
   }
@@ -165,7 +165,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
                 width: 24,
                 height: 24,
                 child: CircularProgressIndicator(
-                    strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary)))));
+                    strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)))));
   }
 
   void _onTapTeamsFilter() {

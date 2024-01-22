@@ -103,16 +103,16 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
         appBar: _headerBar,
         body: Column(children: <Widget>[
           Container(
-              color: Styles().colors?.fillColorPrimary,
+              color: Styles().colors.fillColorPrimary,
               padding: EdgeInsets.all(16),
               child: Semantics(
                   hint: Localization().getStringEx("dropdown.hint", "DropDown"),
                   container: true,
                   child: RibbonButton(
-                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
-                      backgroundColor: Styles().colors!.white,
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+                      backgroundColor: Styles().colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(5)),
-                      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                       rightIconKey: (_contentValuesVisible ? 'icon-up-orange' : 'icon-down-orange'),
                       label: _getContentLabel(_selectedContent),
                       onTap: _changeSettingsContentValuesVisibility))),
@@ -122,7 +122,7 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
             _buildContentValuesContainer()
           ]))
         ]),
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         bottomNavigationBar: uiuc.TabBar());
   }
 
@@ -141,12 +141,12 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
                     _contentValuesVisible = false;
                   });
                 },
-                child: Container(color: Styles().colors!.blackTransparent06))));
+                child: Container(color: Styles().colors.blackTransparent06))));
   }
 
   Widget _buildContentValuesWidget() {
     List<Widget> sectionList = <Widget>[];
-    sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
+    sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
 
     if (CollectionUtils.isNotEmpty(_contentValues)) {
       for (AthleticsContent content in _contentValues!) {
@@ -160,8 +160,8 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
 
   Widget _buildContentItem(AthleticsContent contentItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors!.white,
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        backgroundColor: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentItem),
         onTap: () => _onTapContentItem(contentItem));
