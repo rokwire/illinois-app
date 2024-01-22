@@ -48,7 +48,7 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
         'panel.onboarding.notifications.button.dont_allow.title',
         'Not right now');
     return Scaffold(
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         body: SwipeDetector(
             onSwipeLeft: () => _goNext(context) ,
             onSwipeRight: () => _goBack(context),
@@ -59,7 +59,7 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Stack(children: <Widget>[
-                        Styles().images?.getImage(
+                        Styles().images.getImage(
                           'header-notifications',
                           fit: BoxFit.fitWidth,
                           width: MediaQuery.of(context).size.width,
@@ -85,9 +85,9 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                               titleText,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  fontFamily: Styles().fontFamilies!.bold,
+                                  fontFamily: Styles().fontFamilies.bold,
                                   fontSize: 32,
-                                  color: Styles().colors!.fillColorPrimary),
+                                  color: Styles().colors.fillColorPrimary),
                             ),
                           ))),
                       Container(height: 12,),
@@ -99,9 +99,9 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                           Localization().getStringEx('panel.onboarding.notifications.label.description', 'Get notified about your “starred” events.'),
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontFamily: Styles().fontFamilies!.regular,
+                              fontFamily: Styles().fontFamilies.regular,
                               fontSize: 20,
-                              color: Styles().colors!.fillColorPrimary),
+                              color: Styles().colors.fillColorPrimary),
                         )),
                       ),]),
               )),
@@ -113,10 +113,10 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                       RoundedButton(
                         label: Localization().getStringEx('panel.onboarding.notifications.button.allow.title', 'Receive Notifications'),
                         hint: Localization().getStringEx('panel.onboarding.notifications.button.allow.hint', ''),
-                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        borderColor: Styles().colors!.fillColorSecondary,
-                        backgroundColor: Styles().colors!.white,
+                        borderColor: Styles().colors.fillColorSecondary,
+                        backgroundColor: Styles().colors.white,
                         onTap: () => _onReceiveNotifications(context),
                       ),
                       GestureDetector(
@@ -134,11 +134,11 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                           child: Text(
                               notRightNow,
                               style: TextStyle(
-                                  fontFamily: Styles().fontFamilies!.medium,
+                                  fontFamily: Styles().fontFamilies.medium,
                                   fontSize: 16,
-                                  color: Styles().colors!.fillColorPrimary,
+                                  color: Styles().colors.fillColorPrimary,
                                   decoration: TextDecoration.underline,
-                                  decorationColor: Styles().colors!.fillColorSecondary,
+                                  decorationColor: Styles().colors.fillColorSecondary,
                                   decorationThickness: 1,
                                   decorationStyle: TextDecorationStyle.solid),
                             ))),
@@ -198,7 +198,7 @@ void _requestAuthorization(BuildContext context) async {
                 message ?? '',
                 textAlign: TextAlign.left,
                 style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.medium,
+                    fontFamily: Styles().fontFamilies.medium,
                     fontSize: 16,
                     color: Colors.black),
               ),

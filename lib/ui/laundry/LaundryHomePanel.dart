@@ -62,7 +62,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.laundry_home.heading.laundry', 'Laundry'),),
       body: _loading ? Center(child: CircularProgressIndicator(),) : _buildContentWidget(),
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -74,7 +74,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> {
         hint: Localization().getStringEx('headerbar.back.hint', ''),
         button: true,
         child: IconButton(
-          icon: Styles().images?.getImage('images/chevron-left-white.png', excludeFromSemantics: true),
+          icon: Styles().images.getImage('images/chevron-left-white.png', excludeFromSemantics: true),
           onPressed: _onTapBack)
         ),
       actions: <Widget>[
@@ -103,7 +103,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> {
         ]),
       ],
       title: Text(Localization().getStringEx('panel.laundry_home.heading.laundry', 'Laundry'),
-        style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16, color: Colors.white, letterSpacing: 1),
+        style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16, color: Colors.white, letterSpacing: 1),
       ),
       centerTitle: false,
     );
@@ -139,10 +139,10 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> {
   Widget _buildRoomsContentWidget() {
     return Column(children: <Widget>[
       Expanded(child:
-        Container(color: Styles().colors?.background, child:
+        Container(color: Styles().colors.background, child:
           Padding(padding: EdgeInsets.only(top: 16), child:
             SingleChildScrollView(scrollDirection: Axis.vertical, child:
-              Container(color: Styles().colors?.background, child:
+              Container(color: Styles().colors.background, child:
                 Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
                   Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 80), child:
                     ListView.separated(
@@ -165,7 +165,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> {
   Widget _buildEmptyContentWidget() {
     return Center(child:
       Padding(padding: EdgeInsets.all(32), child:
-        Text(Localization().getStringEx('panel.laundry_home.content.empty', 'No rooms available'), style: Styles().textStyles?.getTextStyle("widget.description.regular.fat")),
+        Text(Localization().getStringEx('panel.laundry_home.content.empty', 'No rooms available'), style: Styles().textStyles.getTextStyle("widget.description.regular.fat")),
       )
     );
   }

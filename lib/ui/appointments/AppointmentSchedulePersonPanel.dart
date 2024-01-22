@@ -60,7 +60,7 @@ class _AppointmentSchedulePersonPanelState extends State<AppointmentSchedulePers
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.appointment.schedule.person.header.title', 'Schedule Appointment')),
       body: _buildContent(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       //bottomNavigationBar: uiuc.TabBar()
     );
   }
@@ -112,7 +112,7 @@ class _AppointmentSchedulePersonPanelState extends State<AppointmentSchedulePers
   Widget _buildLoadingContent() {
     return Center(child:
       SizedBox(width: 32, height: 32, child:
-        CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,),
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
       )
     );
   }
@@ -120,7 +120,7 @@ class _AppointmentSchedulePersonPanelState extends State<AppointmentSchedulePers
   Widget _buildMessageContent(String message) {
     return Center(child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32), child:
-        Text(message, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
+        Text(message, style: Styles().textStyles.getTextStyle('widget.item.medium.fat'),)
       )
     );
   }
@@ -170,10 +170,10 @@ class _AppointmentPersonCard extends StatelessWidget {
     return InkWell(onTap: onTap, child:
       ClipRRect(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)), child:
         Stack(children: [
-          Container(decoration: BoxDecoration(color: Styles().colors!.surface, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
+          Container(decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                //Text(person.speciality?.toUpperCase() ?? '', style: Styles().textStyles?.getTextStyle('widget.item.small.semi_fat'),),
+                //Text(person.speciality?.toUpperCase() ?? '', style: Styles().textStyles.getTextStyle('widget.item.small.semi_fat'),),
                 Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Expanded(child:
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -181,7 +181,7 @@ class _AppointmentPersonCard extends StatelessWidget {
                       Padding(padding: EdgeInsets.only(top: 6, bottom: 2), child:
                         Row(children: [
                           Expanded(child:
-                            Text(person.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),),
+                            Text(person.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'),),
                           ),
                         ]),
                       ),
@@ -190,10 +190,10 @@ class _AppointmentPersonCard extends StatelessWidget {
                         Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
                           Row(children: [
                             Padding(padding: EdgeInsets.only(right: 4), child:
-                              Styles().images?.getImage('mail', excludeFromSemantics: true),
+                              Styles().images.getImage('mail', excludeFromSemantics: true),
                             ),
                             Expanded(child:
-                              Text(person.email ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular"))
+                              Text(person.email ?? '', style: Styles().textStyles.getTextStyle("widget.item.regular"))
                             ),
                           ],),
                         ),
@@ -203,10 +203,10 @@ class _AppointmentPersonCard extends StatelessWidget {
                         Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
                           Row(children: [
                             Padding(padding: EdgeInsets.only(right: 4), child:
-                              Styles().images?.getImage('phone', excludeFromSemantics: true),
+                              Styles().images.getImage('phone', excludeFromSemantics: true),
                             ),
                             Expanded(child:
-                              Text(person.phone ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular"))
+                              Text(person.phone ?? '', style: Styles().textStyles.getTextStyle("widget.item.regular"))
                             ),
                           ],),
                         ),
@@ -216,10 +216,10 @@ class _AppointmentPersonCard extends StatelessWidget {
                         Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
                           Row(children: [
                             Padding(padding: EdgeInsets.only(right: 4), child:
-                              Styles().images?.getImage('edit', excludeFromSemantics: true),
+                              Styles().images.getImage('edit', excludeFromSemantics: true),
                             ),
                             Expanded(child:
-                              Text(numberOfAvailableSlots ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular"))
+                              Text(numberOfAvailableSlots ?? '', style: Styles().textStyles.getTextStyle("widget.item.regular"))
                             ),
                           ],),
                         ),
@@ -229,12 +229,12 @@ class _AppointmentPersonCard extends StatelessWidget {
                         Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
                           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             Padding(padding: EdgeInsets.only(right: 6), child:
-                              Styles().images?.getImage('calendar', excludeFromSemantics: true),
+                              Styles().images.getImage('calendar', excludeFromSemantics: true),
                             ),
                             Expanded(child:
                               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                Text(Localization().getStringEx('panel.appointment.schedule.next_available_appointment.label', 'Next Available Appointment:'), style: Styles().textStyles?.getTextStyle("widget.item.regular")),
-                                Text(nextAvailableTime ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular.fat")),
+                                Text(Localization().getStringEx('panel.appointment.schedule.next_available_appointment.label', 'Next Available Appointment:'), style: Styles().textStyles.getTextStyle("widget.item.regular")),
+                                Text(nextAvailableTime ?? '', style: Styles().textStyles.getTextStyle("widget.item.regular.fat")),
                               ],)
                             ),
                           ],),
@@ -249,7 +249,7 @@ class _AppointmentPersonCard extends StatelessWidget {
                       SizedBox(width: 72, height: 72, child:
                         StringUtils.isNotEmpty(person.imageUrl) ?
                           Image.network(person.imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.cover,) :
-                          Styles().images?.getImage('profile-placeholder', excludeFromSemantics: true)
+                          Styles().images.getImage('profile-placeholder', excludeFromSemantics: true)
                       ),
                     ),
                   ),
@@ -258,7 +258,7 @@ class _AppointmentPersonCard extends StatelessWidget {
                 Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Expanded(child:
-                      Text(person.notes ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular"))
+                      Text(person.notes ?? '', style: Styles().textStyles.getTextStyle("widget.item.regular"))
                     ),
                   ],),
                 ),
@@ -266,7 +266,7 @@ class _AppointmentPersonCard extends StatelessWidget {
               ])
             )
           ),
-          Container(color: Styles().colors?.accentColor3, height: 4,)
+          Container(color: Styles().colors.accentColor3, height: 4,)
         ],)
       )
     );

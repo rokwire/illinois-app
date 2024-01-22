@@ -166,7 +166,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
           String? type = JsonUtils.stringValue(command['type']);
           if (type == 'regular') {
             if (widgetList.isNotEmpty) {
-              widgetList.add(Divider(color: Styles().colors!.surfaceAccent, height: 1,));
+              widgetList.add(Divider(color: Styles().colors.surfaceAccent, height: 1,));
             }
             String? id = JsonUtils.stringValue(command['id']);
             Favorite favorite = WellnessFavorite(id, category: widget.wellnessCategory);
@@ -181,7 +181,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
       }
     }
 
-    return Container(decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.circular(5)), child:
+    return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
       Column(children: widgetList)
     );
 
@@ -238,17 +238,17 @@ class WellnessLargeResourceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.circular(5)), child:
+    return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
       InkWell(onTap: onTap, child:
         Padding(padding: EdgeInsets.only(left: 16), child:
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Expanded(child:
               Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
-                Text(label ?? '', style: Styles().textStyles?.getTextStyle("panel.wellness.resource.button.title.large")),
+                Text(label ?? '', style: Styles().textStyles.getTextStyle("panel.wellness.resource.button.title.large")),
               ),
             ),
             hasExternalLink ? Padding(padding: EdgeInsets.only(left: 6, top: 18, bottom: 18), child:
-              Styles().images?.getImage('external-link', excludeFromSemantics: true)
+              Styles().images.getImage('external-link', excludeFromSemantics: true)
             ) : Container(),
             FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),)
           ]),
@@ -269,7 +269,7 @@ class WellnessRegularResourceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return hasBorder ? Container(decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.circular(5)), child:
+    return hasBorder ? Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
       _buildInterior()
     ) : _buildInterior();
   }
@@ -280,14 +280,14 @@ class WellnessRegularResourceButton extends StatelessWidget {
         FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16)),
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(vertical: 17), child:
-            Text(label ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))
+            Text(label ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))
           ),
         ),
         hasExternalLink ? Padding(padding: EdgeInsets.only(left: 8, top: 18, bottom: 18), child:
-          Styles().images?.getImage('external-link', excludeFromSemantics: true)
+          Styles().images.getImage('external-link', excludeFromSemantics: true)
         ) : Container(),
         Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 18, bottom: 18), child:
-          Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true)
+          Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true)
         ),
       ]),
     );

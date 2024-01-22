@@ -579,7 +579,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
           ),
         ]),
       ),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: null,
     );
   }

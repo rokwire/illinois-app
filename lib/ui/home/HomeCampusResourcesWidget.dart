@@ -436,13 +436,13 @@ class CampusResourceButton extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> contentList = <Widget>[];
     if (title != null) {
-      contentList.add(Text(title!, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.button.title.large.fat")));
+      contentList.add(Text(title!, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.button.title.large.fat")));
     } 
     if ((title != null) && (iconKey != null)) {
       contentList.add(Container(height: 26));
     } 
     if (iconKey != null) {
-      Widget? icon = Styles().images?.getImage(iconKey, excludeFromSemantics: true);
+      Widget? icon = Styles().images.getImage(iconKey, excludeFromSemantics: true);
       if (icon != null) {
         contentList.add(icon);
       }
@@ -451,13 +451,13 @@ class CampusResourceButton extends StatelessWidget {
     return InkWell(onTap: onTap, child:
       Semantics(label: title, hint: hint, button: true, excludeSemantics: true, child:
         Padding(padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6), child:
-          Container(decoration: BoxDecoration(color: Styles().colors?.white ?? const Color(0x00FFFFFF), borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors?.white ?? const Color(0x00FFFFFF), width: 2), boxShadow: [const BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
+          Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors.white, width: 2), boxShadow: [const BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
             Padding(padding: EdgeInsets.only(left: 16, bottom: 16), child: 
               Column(children: [
                 Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Expanded(child:
                     Padding(padding: EdgeInsets.only(top: 16), child: 
-                      Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.button.title.large.fat")),
+                      Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.button.title.large.fat")),
                     ),
                   ),
                   Opacity(opacity: _canFavorite ? 1 : 0, child:
@@ -470,7 +470,7 @@ class CampusResourceButton extends StatelessWidget {
                       Align(alignment: Alignment.centerRight, child:
                         SizedBox(width: 44, height: 44, child:
                           Align(alignment: Alignment.bottomRight, child:
-                            Styles().images?.getImage(iconKey)
+                            Styles().images.getImage(iconKey)
                           ),
                         )
                       )

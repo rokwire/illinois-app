@@ -82,14 +82,14 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Styles().colors!.fillColorPrimaryVariant,
+        backgroundColor: Styles().colors.fillColorPrimaryVariant,
         leading: widget.rootTabDisplay ? _buildHeaderHomeButton() : _buildHeaderBackButton(),
         title: _buildHeaderTitle(),
         actions: [_buildHeaderActions()],
 
       ),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child: _buildContentWidget()),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: widget.rootTabDisplay ? null : uiuc.TabBar(),
       );
   }
@@ -106,7 +106,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
             child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Container(
-              color: Styles().colors!.background,
+              color: Styles().colors.background,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -155,10 +155,10 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                 child: RoundedButton(
                                   label: Localization().getStringEx("panel.athletics.button.see_more_events.title", 'See More Events'),
                                   hint: Localization().getStringEx("panel.athletics.button.see_more_events.hint", ''),
-                                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                                   onTap: _onTapMoreUpcomingEvents,
-                                  backgroundColor: Styles().colors!.background,
-                                  borderColor: Styles().colors!.fillColorSecondary,
+                                  backgroundColor: Styles().colors.background,
+                                  borderColor: Styles().colors.fillColorSecondary,
                                 ),
                               ),
                               Expanded(flex: 1, child: Container())
@@ -170,7 +170,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                           alignment: Alignment.topCenter,
                           children: <Widget>[
                             Container(
-                              color: Styles().colors!.backgroundVariant,
+                              color: Styles().colors.backgroundVariant,
                               child: Padding(
                                 padding: EdgeInsets.fromLTRB(16, 16, 16, 40),
                                 child: Column(
@@ -180,7 +180,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                       padding: EdgeInsets.only(bottom: 10),
                                       child: Text(
                                         Localization().getStringEx("panel.athletics.label.all_sports.title",'All {{app_title}} Sports').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-                                        style: Styles().textStyles?.getTextStyle('panel.athletics.home.title.large'),
+                                        style: Styles().textStyles.getTextStyle('panel.athletics.home.title.large'),
                                       ),
                                     ),
                                     Semantics(
@@ -193,14 +193,14 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                         children: <Widget>[
                                           Text(
                                             Localization().getStringEx("panel.athletics.label.tap_the.title", "Tap the "),
-                                            style: Styles().textStyles?.getTextStyle('panel.athletics.home.detail.medium') ,
+                                            style: Styles().textStyles.getTextStyle('panel.athletics.home.detail.medium') ,
                                           ),
-                                          Styles().images?.getImage('check-circle-outline-gray', excludeFromSemantics: true) ?? Container(),
+                                          Styles().images.getImage('check-circle-outline-gray', excludeFromSemantics: true) ?? Container(),
                                           Expanded(
                                             child:Text(
                                               Localization().getStringEx("panel.athletics.label.follow_team.title", " to follow your favorite teams"),
                                               overflow: TextOverflow.ellipsis,
-                                              style: Styles().textStyles?.getTextStyle('panel.athletics.home.detail.medium'),
+                                              style: Styles().textStyles.getTextStyle('panel.athletics.home.detail.medium'),
                                             )
                                           )
                                         ],
@@ -228,13 +228,13 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                       Column(
                                         children: <Widget>[
                                           Container(
-                                            color: Styles().colors!.fillColorPrimary,
+                                            color: Styles().colors.fillColorPrimary,
                                             height: 40,
                                           ),
                                           Container(
                                             height: 112,
                                             width: double.infinity,
-                                            child: Styles().images?.getImage('slant-dark',
+                                            child: Styles().images.getImage('slant-dark',
                                               fit:BoxFit.fill,
                                               excludeFromSemantics: true
                                             ),
@@ -252,12 +252,12 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                                 Padding(
                                                   padding: EdgeInsets.only(
                                                       right: 16),
-                                                  child: Styles().images?.getImage('compass', excludeFromSemantics: true),
+                                                  child: Styles().images.getImage('compass', excludeFromSemantics: true),
                                                 ),
                                                 Expanded(child:
                                                   Text(
                                                     Localization().getStringEx("panel.athletics.label.explore_athletics.title", 'Explore Athletics'),
-                                                    style: Styles().textStyles?.getTextStyle('widget.heading.large'),
+                                                    style: Styles().textStyles.getTextStyle('widget.heading.large'),
                                                   )
                                                 )
                                               ],
@@ -343,24 +343,24 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
 
   Widget _buildHeaderHomeButton() {
     return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
-          IconButton(icon: Styles().images?.getImage('university-logo', excludeFromSemantics: true) ?? Container(), onPressed: _onTapHome,),);
+          IconButton(icon: Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container(), onPressed: _onTapHome,),);
   }
 
   Widget _buildHeaderBackButton() {
     return Semantics(label: Localization().getStringEx('headerbar.back.title', 'Back'), hint: Localization().getStringEx('headerbar.back.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images?.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(), onPressed: _onTapBack,));
+      IconButton(icon: Styles().images.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(), onPressed: _onTapBack,));
   }
 
   Widget _buildHeaderTitle() {
     return Semantics(label: Localization().getStringEx('panel.athletics.header.title', 'Athletics'), excludeSemantics: true, child:
-          Text(Localization().getStringEx('panel.athletics.header.title', 'Athletics'), style: Styles().textStyles?.getTextStyle('panel.athletics.home.heading.regular')),);
+          Text(Localization().getStringEx('panel.athletics.header.title', 'Athletics'), style: Styles().textStyles.getTextStyle('panel.athletics.home.heading.regular')),);
   }
 
   Widget _buildHeaderTeamsButton({double horizontalPadding = 16}) {
     return Semantics(label: Localization().getStringEx('headerbar.teams.title', 'Teams'), button: true, excludeSemantics: true, child: 
         InkWell(onTap: _onTapTeams, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 19), child:
-            Text(Localization().getStringEx('headerbar.teams.title', 'Teams'), style: Styles().textStyles?.getTextStyle('panel.athletics.home.button.underline'))
+            Text(Localization().getStringEx('headerbar.teams.title', 'Teams'), style: Styles().textStyles.getTextStyle('panel.athletics.home.button.underline'))
           ),
         ),
       );
@@ -368,7 +368,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
 
   Widget _buildHeaderSettingsButton() {
     return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images?.getImage('settings-white', excludeFromSemantics: true) ?? Container(), onPressed: _onTapSettings));
+      IconButton(icon: Styles().images.getImage('settings-white', excludeFromSemantics: true) ?? Container(), onPressed: _onTapSettings));
   }
 
   Widget _buildHeaderActions() {

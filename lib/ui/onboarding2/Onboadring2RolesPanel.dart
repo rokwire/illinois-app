@@ -53,12 +53,12 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       body: SafeArea(child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
         Container(
-          color: Styles().colors!.white,
+          color: Styles().colors.white,
           padding: EdgeInsets.only(top: 19, bottom: 19),
           child: Row(children: <Widget>[
             Onboarding2BackButton(padding: const EdgeInsets.only(left: 17,),
@@ -75,7 +75,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
                 hint: Localization().getStringEx('panel.onboarding2.roles.label.title.hint', 'Header 1').toLowerCase(),
                 excludeSemantics: true,
                 child: Text(Localization().getStringEx('panel.onboarding2.roles.label.title', 'Who Are You?'),
-                  style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat"),
+                  style: Styles().textStyles.getTextStyle("widget.title.extra_large.extra_fat"),
                 ),
               ),
             ],),),
@@ -87,7 +87,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
         Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Text(Localization().getStringEx('panel.onboarding2.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
             textAlign: TextAlign.start,
-            style: Styles().textStyles?.getTextStyle("panel.onboarding2.roles.description")
+            style: Styles().textStyles.getTextStyle("panel.onboarding2.roles.description")
           ),
         ),
 
@@ -95,7 +95,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
           padding: EdgeInsets.only(bottom:  10, left: 20, right: 20),
           child: Text(
               Localization().getStringEx('panel.onboarding2.roles.label.description2', 'I am a...'),
-              style: Styles().textStyles?.getTextStyle("widget.title.medium.extra_fat"),
+              style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat"),
             textAlign: TextAlign.start,
           ),
         ),
@@ -109,14 +109,14 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
             RoundedButton(
                 label: Localization().getStringEx('panel.onboarding2.roles.button.continue.title', 'Continue'),
                 hint: Localization().getStringEx('panel.onboarding2.roles.button.continue.hint', ''),
-                textStyle: _allowNext ? Styles().textStyles?.getTextStyle("widget.button.title.medium.fat") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.medium.fat.variant"),
+                textStyle: _allowNext ? Styles().textStyles.getTextStyle("widget.button.title.medium.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.medium.fat.variant"),
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 enabled: _allowNext,
                 progress: _updating,
-                backgroundColor: (Styles().colors!.white),
+                backgroundColor: (Styles().colors.white),
                 borderColor: (_allowNext
-                    ? Styles().colors!.fillColorSecondary
-                    : Styles().colors!.fillColorPrimaryTransparent03),
+                    ? Styles().colors.fillColorSecondary
+                    : Styles().colors.fillColorPrimaryTransparent03),
                 onTap: () => _onGoNext()),
         )
 

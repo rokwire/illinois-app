@@ -5,6 +5,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Added Clear Attributes button in content attributes panel [#3828](https://github.com/rokwire/illinois-app/issues/3828).
+
+## [5.1.11] - 2024-01-19
+### Changed
+- Wrap long location details to multiple lines in Event2 detail panel [#3842](https://github.com/rokwire/illinois-app/issues/3842).
+- Show in app notificatons as toast message [#2774](https://github.com/rokwire/illinois-app/issues/2774).
+- Make predefined Style colors and font families not nullable [#2774](https://github.com/rokwire/illinois-app/issues/2774).
+### Fixed
+- Voice Recording for ios [#3846](https://github.com/rokwire/illinois-app/issues/3846).
+
+## [5.1.10] - 2024-01-18
+### Fixed
+- Cleaned up DeviceCalendar service [#3868](https://github.com/rokwire/illinois-app/issues/3868).
+### Changed
+- Voice Recording upload/retrieve/delete updates [#3846](https://github.com/rokwire/illinois-app/issues/3846).
+
 ## [5.1.9] - 2024-01-16
 ### Fixed
 - Fixed content update check in ContentAttributesPanel [#3828](https://github.com/rokwire/illinois-app/issues/3828).

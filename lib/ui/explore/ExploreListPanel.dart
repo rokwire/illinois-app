@@ -93,7 +93,7 @@ class _ExploreListPanelState extends State<ExploreListPanel> implements Notifica
         title: Localization().getStringEx("panel.explore_list.header.title", "Explore"),
       ),
       body: _buildBody(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

@@ -68,7 +68,7 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
         title: Localization().getStringEx('panel.athletics_roster_list.header.title', 'Roster'),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -228,7 +228,7 @@ class _RosterListHeading extends StatelessWidget{
     return Row(children: <Widget>[
       Expanded(
         child: Container(
-          color: Styles().colors!.fillColorPrimaryVariant,
+          color: Styles().colors.fillColorPrimaryVariant,
           padding: EdgeInsets.only(left: 16, right: 16, top:12, bottom: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,18 +237,18 @@ class _RosterListHeading extends StatelessWidget{
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   StringUtils.isNotEmpty(sport?.iconPath) ?
-                    Styles().images?.getImage(sport!.iconPath!, width: 16, height: 16, excludeFromSemantics: true,) ?? Container() : Container(),
+                    Styles().images.getImage(sport!.iconPath!, width: 16, height: 16, excludeFromSemantics: true,) ?? Container() : Container(),
                   Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(sport!.name!,
-                      style: Styles().textStyles?.getTextStyle("panel.athletics.coach_detail.title.regular.accent")
+                      style: Styles().textStyles.getTextStyle("panel.athletics.coach_detail.title.regular.accent")
                     ),
                   ),
                 ],
               ),
               SizedBox(height: 10.0,),
               Text(Localization().getStringEx("panel.athletics_roster_list.label.heading.title", 'Full Roster') ,
-                style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat")
+                style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat")
               ),
             ],
           ),
@@ -269,9 +269,9 @@ class _HeadingItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(16),
-      color: Styles().colors!.backgroundVariant,
+      color: Styles().colors.backgroundVariant,
       child: Text(heading!,
-        style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")
+        style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat")
       ),
     );
   }
@@ -309,7 +309,7 @@ class _RosterItem extends StatelessWidget{
               children: <Widget>[
                 _buildGrayHeading(),
                 Container(
-                  color: Styles().colors!.fillColorPrimary,
+                  color: Styles().colors.fillColorPrimary,
                   height: _blueHeight,
                   margin: EdgeInsets.only(top: _photoMargin*2, left: _horizontalMargin, right: _horizontalMargin,),
                   child: Container(
@@ -323,11 +323,11 @@ class _RosterItem extends StatelessWidget{
                           children: <Widget>[
                             Expanded(
                               child: Text(roster.name!,
-                                style: Styles().textStyles?.getTextStyle("widget.title.light.large.fat")
+                                style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")
                               ),
                             ),
                             Text(StringUtils.ensureNotEmpty(roster.numberString),
-                              style: Styles().textStyles?.getTextStyle("widget.athletics.title.large.variant")
+                              style: Styles().textStyles.getTextStyle("widget.athletics.title.large.variant")
                             ),
                           ],
                         ),
@@ -345,7 +345,7 @@ class _RosterItem extends StatelessWidget{
                         bottomEnd: Radius.circular(5),
                       ),
                       boxShadow: [
-                        BoxShadow(color: Styles().colors!.fillColorPrimary!,blurRadius: 4,),
+                        BoxShadow(color: Styles().colors.fillColorPrimary,blurRadius: 4,),
                       ]
 
                   ),
@@ -365,7 +365,7 @@ class _RosterItem extends StatelessWidget{
                   alignment: Alignment.centerRight,
                   child: Container(
                     margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
-                    decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid)),
+                    decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
                     child: (StringUtils.isNotEmpty(roster.thumbPhotoUrl) ?
                       ModalImageHolder(url: roster.fullSizePhotoUrl, child: Image.network(roster.thumbPhotoUrl!, semanticLabel: "roster", width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,)) :
                       Container(height: 96, width: 80, color: Colors.white,)),
@@ -413,7 +413,7 @@ class _RosterItem extends StatelessWidget{
 
   Widget _buildGrayHeading(){
     return showTopGrey ? Container(
-        color: Styles().colors!.backgroundVariant,
+        color: Styles().colors.backgroundVariant,
         height: _photoMargin*2,
         margin: EdgeInsets.only(top: 0, left: 0, right: 0),
     ) : Container();
@@ -435,12 +435,12 @@ class _RosterInfoLine extends StatelessWidget{
           Container(
             width: 80,
             child: Text(name!,
-              style: Styles().textStyles?.getTextStyle("widget.item.small")
+              style: Styles().textStyles.getTextStyle("widget.item.small")
             ),
           ),
           Expanded(child:
             Text(value!,
-                style: Styles().textStyles?.getTextStyle("widget.item.small.fat")
+                style: Styles().textStyles.getTextStyle("widget.item.small.fat")
             ),
           )
         ],

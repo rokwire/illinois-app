@@ -45,13 +45,13 @@ class _SettingsAppointmentsContentWidgetState extends State<SettingsAppointments
                     .getStringEx(
                         'panel.settings.home.appointments.description.format', 'Display appointments in the {{app_title}} app for:')
                     .replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-                style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")))
+                style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")))
       ]),
       Container(height: 4),
       ToggleRibbonButton(
           label: Localization().getStringEx('panel.settings.home.appointments.mckinley.label', 'MyMcKinley'),
           toggled: Storage().appointmentsCanDisplay ?? false,
-          border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+          border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(4)),
           onTap: _onToggleMcKinley)
     ]));

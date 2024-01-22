@@ -57,9 +57,9 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
       Uint8List? updatedImageBytes = await ImageUtils.applyLabelOverImage(_qrCodeBytes, eventName,
         width: _imageSize.toDouble(),
         height: _imageSize.toDouble(),
-        fontFamily: Styles().fontFamilies!.bold,
+        fontFamily: Styles().fontFamilies.bold,
         fontSize: 54,
-        textColor: Styles().colors!.textSurface!,
+        textColor: Styles().colors.textSurface,
       );
       bool result = (updatedImageBytes != null);
       if (result) {
@@ -92,7 +92,7 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          color: Styles().colors!.background,
+          color: Styles().colors.background,
           child: Padding(
             padding: EdgeInsets.all(24),
             child: Column(
@@ -100,7 +100,7 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
               children: [
                 Text(
                     Localization().getStringEx('panel.event_qr_code.description.label', 'Invite others to view this event by sharing a link or the QR code after saving it to your photo library.'),
-                    style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")
+                    style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 24),
@@ -108,7 +108,7 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
                       ? Semantics(
                     label: Localization().getStringEx('panel.event_qr_code.code.hint', "QR code image"),
                     child: Container(
-                      decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(5))),
+                      decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
                       padding: EdgeInsets.all(5),
                       child: Image.memory(
                         _qrCodeBytes!,
@@ -123,7 +123,7 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
                     child: Align(
                       alignment: Alignment.center,
                       child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary),
+                        valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),
                         strokeWidth: 2,
                       ),
                     ),
@@ -134,9 +134,9 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
                   child: RoundedButton(
                     label: Localization().getStringEx('panel.event_qr_code.button.save.title', 'Save QR Code'),
                     hint: '',
-                    textStyle: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
-                    backgroundColor: Styles().colors!.background,
-                    borderColor: Styles().colors!.fillColorSecondary,
+                    textStyle: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
+                    backgroundColor: Styles().colors.background,
+                    borderColor: Styles().colors.fillColorSecondary,
                     onTap: _onTapSave,
                   ),
                 ),
@@ -145,11 +145,11 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
                   child: RoundedButton(
                     label: Localization().getStringEx('panel.event_qr_code.button.share.title', 'Share Link'),
                     hint: '',
-                    textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
-                    backgroundColor: Styles().colors!.background,
-                    borderColor: Styles().colors!.fillColorSecondary,
+                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+                    backgroundColor: Styles().colors.background,
+                    borderColor: Styles().colors.fillColorSecondary,
                     onTap: _onTapShare,
-                    rightIcon: Styles().images?.getImage('share-dark', excludeFromSemantics: true),
+                    rightIcon: Styles().images.getImage('share-dark', excludeFromSemantics: true),
                     rightIconPadding: EdgeInsets.only(right: 75),
                   ),
                 )
@@ -158,7 +158,7 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
           ),
         ),
       ),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
     );
   }
 

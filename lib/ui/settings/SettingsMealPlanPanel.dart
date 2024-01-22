@@ -126,7 +126,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildScaffoldBody(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: widget.scrollController == null
           ? uiuc.TabBar()
           : Container(height: 0,),
@@ -143,7 +143,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
         SliverHeaderBar(
           leadingIconKey: widget.scrollController == null ? 'chevron-left-white' : 'chevron-left-bold',
           title: Localization().getStringEx('panel.settings.meal_plan.label.title','University Housing Meal Plan'),
-          textStyle:  widget.scrollController == null ? Styles().textStyles?.getTextStyle("widget.heading.regular.extra_fat") : Styles().textStyles?.getTextStyle("widget.title.regular.extra_fat"),
+          textStyle:  widget.scrollController == null ? Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat") : Styles().textStyles.getTextStyle("widget.title.regular.extra_fat"),
         ),
         SliverList(
           delegate: SliverChildListDelegate([
@@ -198,7 +198,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
       header: true,
       excludeSemantics: true,
       child: Container(
-        color: Styles().colors!.fillColorPrimaryVariant,
+        color: Styles().colors.fillColorPrimaryVariant,
 //        height: 56,
         child: Align(
           alignment: Alignment.centerLeft,
@@ -206,14 +206,14 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: <Widget>[
-                Styles().images?.getImage(StringUtils.ensureNotEmpty(
+                Styles().images.getImage(StringUtils.ensureNotEmpty(
                     iconKey, defaultValue: 'settings')) ?? Container(),
                 Expanded(child:
                   Padding(
                     padding: EdgeInsets.only(left: 12),
                     child: Text(
                       StringUtils.ensureNotEmpty(title),
-                      style: Styles().textStyles?.getTextStyle("widget.heading.large"),
+                      style: Styles().textStyles.getTextStyle("widget.heading.large"),
                     ),
                   )
                 )
@@ -240,9 +240,9 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
         
         widgets.add(VerticalTitleValueSection(
           title: title,
-          titleTextStyle: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"),
+          titleTextStyle: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),
           value: status,
-          valueTextStyle: Styles().textStyles?.getTextStyle("widget.detail.medium"),
+          valueTextStyle: Styles().textStyles.getTextStyle("widget.detail.medium"),
         ));
       }
       else {
@@ -278,9 +278,9 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
           hint: Localization().getStringEx(
               'panel.settings.meal_plan.button.login_to_view_meal_plan.hint',
               ''),
-          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
-          backgroundColor: Styles().colors!.white,
-          borderColor: Styles().colors!.fillColorSecondary,
+          textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+          backgroundColor: Styles().colors.white,
+          borderColor: Styles().colors.fillColorSecondary,
           onTap: _onTapLogIn,
         ),
       ));
@@ -316,7 +316,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Text(
                 Localization().getStringEx("panel.settings.meal_plan.label.custom_period", "Custom Period"),
-                style: Styles().textStyles?.getTextStyle("widget.detail.regular")
+                style: Styles().textStyles.getTextStyle("widget.detail.regular")
             ),
           ),
           Padding(
@@ -345,9 +345,9 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
             Expanded(child: RoundedButton(
               label: Localization().getStringEx('panel.settings.meal_plan.button.view_history.title', 'View History'),
               hint: Localization().getStringEx('panel.settings.meal_plan.button.view_history.hint', ''),
-              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
               backgroundColor: Colors.white,
-              borderColor: Styles().colors!.fillColorSecondary,
+              borderColor: Styles().colors.fillColorSecondary,
               onTap: _onTapViewHistory,)),
           ],)
         ],),);
@@ -370,7 +370,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
             ''), excludeSemantics: true, child: Center(child: Padding(
           padding: EdgeInsets.only(left: 40, right: 40, bottom: 20),
           child: Text(text,
-            style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"),),),),);
+            style: Styles().textStyles.getTextStyle("widget.message.regular.fat"),),),),);
       }
       if (transactionList == null || transactionList.isEmpty) {
         String text = Localization().getStringEx(
@@ -382,7 +382,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
           padding: EdgeInsets.only(left: 40, right: 40, bottom: 20),
           child: Text(text,
             textAlign: TextAlign.center,
-            style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"),),),),);
+            style: Styles().textStyles.getTextStyle("widget.message.regular.fat"),),),),);
       }
       String dateHeader = Localization().getStringEx(
           'panel.settings.meal_plan.label.date', 'Date');
@@ -477,9 +477,9 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   }
 
   Widget _buildBalanceTableHeaderItem(String text){
-    return _buildBalanceTableItem(text: text, backColor: Styles().colors!.fillColorPrimaryVariant,
+    return _buildBalanceTableItem(text: text, backColor: Styles().colors.fillColorPrimaryVariant,
         showBorder: false,
-        textStyle: Styles().textStyles?.getTextStyle("widget.heading.medium_small"));
+        textStyle: Styles().textStyles.getTextStyle("widget.heading.medium_small"));
   }
 
   Widget _buildBalanceTableItem({required String text, bool showBorder = true, Color? backColor, TextStyle? textStyle, TextAlign textAlign = TextAlign.left}) {
@@ -489,13 +489,13 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
           height: 40,
           alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
-              color: backColor ?? Styles().colors!.background,
+              color: backColor ?? Styles().colors.background,
               border: showBorder?
               Border.all(
-                  color: Styles().colors!.surfaceAccent!,
+                  color: Styles().colors.surfaceAccent,
                   width: 1,
                   style: BorderStyle.solid) :
-              Border.all(color: backColor ?? Styles().colors!.background!, width: 0)
+              Border.all(color: backColor ?? Styles().colors.background, width: 0)
           ),
           child: Padding(
             padding: EdgeInsets.all(8),
@@ -506,7 +506,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
                   child: Text(text,
                     maxLines: 1,
                     textAlign: textAlign,
-                    style: textStyle!=null? textStyle: Styles().textStyles?.getTextStyle("widget.item.small.thin"),),
+                    style: textStyle!=null? textStyle: Styles().textStyles.getTextStyle("widget.item.small.thin"),),
                 ),
               ],
             ),
@@ -516,9 +516,9 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   }
 
   Widget _buildAmountView(String balance){
-    return _buildBalanceTableItem(text: balance, backColor: Styles().colors!.white,
+    return _buildBalanceTableItem(text: balance, backColor: Styles().colors.white,
         textAlign: TextAlign.right,
-        textStyle: Styles().textStyles?.getTextStyle("widget.item.small.fat"));
+        textStyle: Styles().textStyles.getTextStyle("widget.item.small.fat"));
   }
 
   Widget _buildPrivacyAlertMessage() {
@@ -531,7 +531,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
     return Container(
       padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
       child: RichText(text: TextSpan(
-        style: Styles().textStyles?.getTextStyle("panel.settings.heading.title.large"),
+        style: Styles().textStyles.getTextStyle("panel.settings.heading.title.large"),
         children: [
           TextSpan(text: privacyMsgStart),
           WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelIcon()),
@@ -541,9 +541,9 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
 
   Widget _buildPrivacyLevelIcon() {
     String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
-    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-        Text(privacyLevel, style: Styles().textStyles?.getTextStyle("widget.title.medium.extra_fat"))
+    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorSecondary, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+        Text(privacyLevel, style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat"))
       ),
     );
   }
@@ -713,8 +713,8 @@ class _DateLabel extends StatelessWidget {
     return Container(width: 70,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Text(label!, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),),
-        Container(height: 2, color: Styles().colors!.surfaceAccent,)
+        Text(label!, style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),),
+        Container(height: 2, color: Styles().colors.surfaceAccent,)
       ],),);
   }
 }
@@ -736,10 +736,10 @@ class _DateValue extends StatelessWidget {
           Expanded(child:
             Text(title!,
               overflow: TextOverflow.ellipsis,
-              style: Styles().textStyles?.getTextStyle("widget.item.regular.fat"),),
+              style: Styles().textStyles.getTextStyle("widget.item.regular.fat"),),
           ),
-          Styles().images?.getImage('chevron-down', excludeFromSemantics: true) ?? Container(),
-        ],), Container(height: 2, color: Styles().colors!.fillColorSecondary,)
+          Styles().images.getImage('chevron-down', excludeFromSemantics: true) ?? Container(),
+        ],), Container(height: 2, color: Styles().colors.fillColorSecondary,)
     ],),),);
   }
 }

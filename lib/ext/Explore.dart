@@ -246,7 +246,7 @@ extension ExploreExt on Explore {
     //else if (this is WellnessBuilding) {}
     //else if (this is Appointment) {}
     else {
-      return Styles().colors?.accentColor2;
+      return Styles().colors.accentColor2;
     }
   }
 
@@ -324,13 +324,13 @@ extension ExploreExt on Explore {
 extension ExploreMap on Explore {
 
   Color? get mapMarkerColor => uiColor ?? unknownMarkerColor;
-  static Color? get unknownMarkerColor => Styles().colors?.accentColor2;
+  static Color? get unknownMarkerColor => Styles().colors.accentColor2;
 
   Color? get mapMarkerBorderColor => unknownMarkerBorderColor;
-  static Color? get unknownMarkerBorderColor => Styles().colors?.fillColorPrimary;
+  static Color? get unknownMarkerBorderColor => Styles().colors.fillColorPrimary;
 
   Color? get mapMarkerTextColor => unknownMarkerTextColor;
-  static Color? get unknownMarkerTextColor => Styles().colors?.background;
+  static Color? get unknownMarkerTextColor => Styles().colors.background;
 
   String? get mapMarkerTitle {
     return exploreTitle;
@@ -586,5 +586,5 @@ extension ExploreLocationMap on ExploreLocation {
 }
 
 extension ExplorePOIExt on ExplorePOI {
-  Color? get uiColor => Styles().colors?.accentColor3;
+  Color? get uiColor => Styles().colors.accentColor3;
 }

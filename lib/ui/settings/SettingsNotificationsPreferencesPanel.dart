@@ -35,7 +35,7 @@ class SettingsNotificationsPreferencesPanel extends StatelessWidget{
         title: Localization().getStringEx("panel.settings.notification_prefferences.label.title", "Notifications Preferences"),
       ),
       body: SingleChildScrollView(child: _buildContent(context)),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

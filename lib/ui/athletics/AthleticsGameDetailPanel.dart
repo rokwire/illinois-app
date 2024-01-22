@@ -96,7 +96,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> imp
         onRefresh: _onPullToRefresh,
         child: _buildContent(),
       ),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -116,14 +116,14 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> imp
       slivers: <Widget>[
         SliverToutHeaderBar(
           flexImageUrl: game?.imageUrl,
-          flexBackColor: Styles().colors?.fillColorPrimary,
-          flexRightToLeftTriangleColor: Styles().colors!.fillColorPrimary,
-          flexLeftToRightTriangleColor: Styles().colors!.fillColorSecondaryTransparent05,
+          flexBackColor: Styles().colors.fillColorPrimary,
+          flexRightToLeftTriangleColor: Styles().colors.fillColorPrimary,
+          flexLeftToRightTriangleColor: Styles().colors.fillColorSecondaryTransparent05,
         ),
         SliverList(
           delegate: SliverChildListDelegate([
             Container(
-              color: Styles().colors!.background,
+              color: Styles().colors.background,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,13 +142,13 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> imp
                       Column(
                         children: <Widget>[
                           Container(
-                            color: Styles().colors!.fillColorPrimary,
+                            color: Styles().colors.fillColorPrimary,
                             height: 40,
                           ),
                           Container(
                             height: 112,
                             width: double.infinity,
-                            child: Styles().images?.getImage('slant-dark',
+                            child: Styles().images.getImage('slant-dark',
                               fit: BoxFit.fill,
                               excludeFromSemantics: true,
                             ),
@@ -163,12 +163,12 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> imp
                               children: <Widget>[
                                 Padding(
                                   padding: EdgeInsets.only(right: 16),
-                                  child: Styles().images?.getImage('athletics', excludeFromSemantics: true),
+                                  child: Styles().images.getImage('athletics', excludeFromSemantics: true),
                                 ),
                                 Expanded(child:
                                   Text(
                                     Localization().getStringEx("panel.athletics_game_detail.label.more.title", "More") + " " + "$sportName",
-                                    style: Styles().textStyles?.getTextStyle("widget.heading.large"),
+                                    style: Styles().textStyles.getTextStyle("widget.heading.large"),
                                   )
                                 ),
                               ],
@@ -257,7 +257,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> imp
         child: Text(
           game!.newsTitle!,
           textAlign: TextAlign.left,
-          style: Styles().textStyles?.getTextStyle("widget.item.large")
+          style: Styles().textStyles.getTextStyle("widget.item.large")
         ),
       ));
     }
@@ -271,13 +271,13 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> imp
               child: Text(
                 game!.newsContent!,
                 textAlign: TextAlign.left,
-                style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
+                style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
               ),
             ),
             Visibility(
                 visible: !_newsExpanded,
                 child: Container(
-                  color: Styles().colors!.fillColorSecondary,
+                  color: Styles().colors.fillColorSecondary,
                   height: 1,
                 )),
             GestureDetector(
@@ -291,11 +291,11 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> imp
                       (_newsExpanded
                           ? Localization().getStringEx("panel.athletics_game_detail.label.see_less.title", "See less")
                           : Localization().getStringEx("panel.athletics_game_detail.label.see_more.title", "See more")),
-                      style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")
+                      style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 8),
-                      child: Styles().images?.getImage(_newsExpanded ? 'chevron-up' : 'chevron-down', excludeFromSemantics: true,),
+                      child: Styles().images.getImage(_newsExpanded ? 'chevron-up' : 'chevron-down', excludeFromSemantics: true,),
                     )
                   ],
                 ),

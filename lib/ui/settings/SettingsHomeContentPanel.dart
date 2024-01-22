@@ -63,7 +63,7 @@ class SettingsHomeContentPanel extends StatefulWidget {
         useRootNavigator: true,
         routeSettings: RouteSettings(name: routeName),
         clipBehavior: Clip.antiAlias,
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         constraints: BoxConstraints(maxHeight: height, minHeight: height),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
         builder: (context) {
@@ -113,7 +113,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
         RootHeaderBar(title: Localization().getStringEx('panel.settings.home.header.settings.label', 'Settings'), onSettings: _onTapDebug,),
       ),
       body: _buildPage(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar()
     );
   }*/
@@ -121,33 +121,33 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   Widget _buildSheet(BuildContext context) {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
     return Column(children: [
-        Container(color: Styles().colors?.white, child:
+        Container(color: Styles().colors.white, child:
           Row(children: [
             Expanded(child:
               _DebugContainer(child:
                 Padding(padding: EdgeInsets.only(left: 16), child:
-                  Text(Localization().getStringEx('panel.settings.home.header.settings.label', 'Settings'), style: Styles().textStyles?.getTextStyle("widget.sheet.title.regular"))
+                  Text(Localization().getStringEx('panel.settings.home.header.settings.label', 'Settings'), style: Styles().textStyles.getTextStyle("widget.sheet.title.regular"))
                 )
               ),
             ),
             Visibility(visible: (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)), child:
               InkWell(onTap : _onTapDebug, child:
                 Container(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child: 
-                  Styles().images?.getImage('bug', excludeFromSemantics: true),
+                  Styles().images.getImage('bug', excludeFromSemantics: true),
                 ),
               ),
             ),
             Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
               InkWell(onTap : _onTapClose, child:
                 Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-                  Styles().images?.getImage('close', excludeFromSemantics: true),
+                  Styles().images.getImage('close', excludeFromSemantics: true),
                 ),
               ),
             ),
 
           ],),
         ),
-        Container(color: Styles().colors?.surfaceAccent, height: 1,),
+        Container(color: Styles().colors.surfaceAccent, height: 1,),
         Expanded(child:
           _buildPage(context),
         )
@@ -158,14 +158,14 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
     return Column(children: <Widget>[
       Expanded(child:
         SingleChildScrollView(physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null), child:
-          Container(color: Styles().colors!.background, child:
+          Container(color: Styles().colors.background, child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
                 RibbonButton(
-                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
-                  backgroundColor: Styles().colors!.white,
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+                  backgroundColor: Styles().colors.white,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
-                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                   rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
                   label: _getContentLabel(_selectedContent),
                   onTap: _onTapContentDropdown
@@ -208,7 +208,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
                   });
                 },
                 child: Container(
-                  color: Styles().colors!.blackTransparent06,
+                  color: Styles().colors.blackTransparent06,
                   height: MediaQuery.of(context).size.height,
                   
                 ))));
@@ -216,7 +216,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
 
   Widget _buildContentValuesWidget() {
     List<Widget> sectionList = <Widget>[];
-    sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
+    sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
     for (SettingsContent section in SettingsContent.values) {
       if ((_selectedContent != section)) {
         // Add i_card content only if icard mobile is available
@@ -230,8 +230,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
 
   Widget _buildContentItem(SettingsContent contentItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors!.white,
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        backgroundColor: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentItem),
         onTap: () => _onTapContentItem(contentItem));

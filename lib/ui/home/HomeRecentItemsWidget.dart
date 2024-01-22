@@ -277,7 +277,7 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
             ,),
           ),
         ],)),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
     );
   }
 
@@ -358,7 +358,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
       Localization().getStringEx('widget.card.button.favorite.off.hint', '') :
       Localization().getStringEx('widget.card.button.favorite.on.hint','');
 
-    Widget? favIcon = Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true);
+    Widget? favIcon = Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true);
 
     return Padding(padding: EdgeInsets.only(bottom: 8), child:
       Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), clipBehavior: Clip.none, child:
@@ -370,7 +370,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     Expanded(child:
                       Padding(padding: EdgeInsets.only(right: 24), child:
-                        Text(widget.recentItem.title ?? '', style: Styles().textStyles?.getTextStyle("widget.card.title.regular.extra_fat"))
+                        Text(widget.recentItem.title ?? '', style: Styles().textStyles.getTextStyle("widget.card.title.regular.extra_fat"))
                       ),
                     ),
                   ]),
@@ -423,9 +423,9 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
       String displayDate = Localization().getStringEx('widget.home_recent_item_card.label.date', 'Date');
       return Semantics(label: displayDate, excludeSemantics: true, child:
         Row(children: <Widget>[
-          Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
+          Styles().images.getImage('calendar', excludeFromSemantics: true) ?? Container(),
           Padding(padding: EdgeInsets.only(right: 5),),
-          Text(displayDate, style: Styles().textStyles?.getTextStyle("widget.card.detail.tiny.medium_fat")),
+          Text(displayDate, style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.medium_fat")),
         ],),
       );
     } else {
@@ -438,9 +438,9 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
     if ((displayTime != null) && displayTime.isNotEmpty) {
       return Semantics(label: displayTime, excludeSemantics: true, child:
         Row(children: <Widget>[
-          Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
+          Styles().images.getImage('calendar', excludeFromSemantics: true) ?? Container(),
             Padding(padding: EdgeInsets.only(right: 5),),
-            Text(displayTime, style: Styles().textStyles?.getTextStyle("widget.card.detail.tiny.medium_fat")),
+            Text(displayTime, style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.medium_fat")),
         ],),
       );
     } else {
@@ -450,12 +450,12 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
 
   Widget _descriptionDetail() {
     return Semantics(label: widget.recentItem.descripton ?? '', excludeSemantics: true, child:
-      Text(widget.recentItem.descripton ?? '', style: Styles().textStyles?.getTextStyle("widget.card.detail.small.medium")),
+      Text(widget.recentItem.descripton ?? '', style: Styles().textStyles.getTextStyle("widget.card.detail.small.medium")),
     );
   }
 
   Widget _topBorder() {
-    return Container(height: 7, color: widget.recentItem.headerColor ?? Styles().colors?.fillColorPrimary);
+    return Container(height: 7, color: widget.recentItem.headerColor ?? Styles().colors.fillColorPrimary);
   }
 
   void _onTapFavorite() {

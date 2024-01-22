@@ -61,7 +61,7 @@ class Event2FilterCommandButton extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> contentList = <Widget>[];
 
-    Widget? leftIconWidget = (leftIconKey != null) ? Styles().images?.getImage(leftIconKey) : null;
+    Widget? leftIconWidget = (leftIconKey != null) ? Styles().images.getImage(leftIconKey) : null;
     if (leftIconWidget != null) {
       contentList.add(
         Padding(padding: leftIconPadding, child: leftIconWidget,)
@@ -70,11 +70,11 @@ class Event2FilterCommandButton extends StatelessWidget {
 
     if (StringUtils.isNotEmpty(title)) {
       contentList.add(
-        Text(title ?? '', style: Styles().textStyles?.getTextStyle(titleTextStyleKey), semanticsLabel: "",)
+        Text(title ?? '', style: Styles().textStyles.getTextStyle(titleTextStyleKey), semanticsLabel: "",)
       );
     }
 
-    Widget? rightIconWidget = (rightIconKey != null) ? Styles().images?.getImage(rightIconKey) : null;
+    Widget? rightIconWidget = (rightIconKey != null) ? Styles().images.getImage(rightIconKey) : null;
     if (rightIconWidget != null) {
       contentList.add(
         Padding(padding: rightIconPadding, child: rightIconWidget,)
@@ -94,8 +94,8 @@ class Event2FilterCommandButton extends StatelessWidget {
   }
 
   static BoxDecoration get defaultContentDecoration => BoxDecoration(
-    color: Styles().colors?.white,
-    border: Border.all(color: Styles().colors?.disabledTextColor ?? Color(0xFF717273), width: 1),
+    color: Styles().colors.white,
+    border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
     borderRadius: BorderRadius.circular(16),
   );
 
@@ -122,7 +122,7 @@ class Event2ImageCommandButton extends StatelessWidget {
     Semantics(label: label, hint: hint, button: true, child:
       InkWell(onTap: onTap, child:
         Padding(padding: contentPadding, child:
-          Styles().images?.getImage(imageKey)
+          Styles().images.getImage(imageKey)
         )
       ),
     );
@@ -311,7 +311,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     else if (widget.linkType == Event2GroupingType.recurrence) {
       title = widget.event.shortDisplayDate;
     }
-    return Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"), maxLines: 2, overflow: TextOverflow.ellipsis,);
+    return Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.regular.fat"), maxLines: 2, overflow: TextOverflow.ellipsis,);
   }
 
   Widget get _linkDetailWidget {
@@ -322,25 +322,25 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     else if (widget.linkType == Event2GroupingType.recurrence) {
       detail = widget.event.shortDisplayTime;
     }
-    return Text(detail ?? '', style: Styles().textStyles?.getTextStyle("widget.item.small"), maxLines: 1, overflow: TextOverflow.ellipsis,);
+    return Text(detail ?? '', style: Styles().textStyles.getTextStyle("widget.item.small"), maxLines: 1, overflow: TextOverflow.ellipsis,);
   }
 
   String get _semanticsLabel => '';//'''TODO custom label if needed';
   String get _semanticsHint => '';//'''TODO custom hint if needed';
 
   static Decoration get _listContentDecoration => BoxDecoration(
-    color: Styles().colors?.surface,
+    color: Styles().colors.surface,
     borderRadius: _listContentBorderRadius,
-    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]
   );
 
   static BorderRadiusGeometry get _listContentBorderRadius => BorderRadius.all(Radius.circular(8));
 
   static Decoration get _pageContentDecoration => BoxDecoration(
-    color: Styles().colors?.surface,
+    color: Styles().colors.surface,
     borderRadius: _pageContentBorderRadius,
-    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     boxShadow: _pageContentShadow
   );
 
@@ -350,12 +350,12 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   );
 
   static Decoration get _pageBottomContentDecoration => BoxDecoration(
-    color: Styles().colors?.surface,
+    color: Styles().colors.surface,
     borderRadius: _pageContentBottomBorderRadius,
     border: Border(
-      left: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),
-      right: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),
-      bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),
+      left: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
+      right: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
+      bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
     ),
     boxShadow: _pageContentShadow
   );
@@ -370,19 +370,19 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   static BorderRadiusGeometry get _pageContentBottomBorderRadius => BorderRadius.vertical(bottom: _pageContentRadius);
 
   static Decoration get _linkContentDecoration => BoxDecoration(
-    color: Styles().colors?.white,
+    color: Styles().colors.white,
     borderRadius: _linkContentBorderRadius,
-    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     boxShadow: _linkContentShadow
   );
 
   static Decoration get _linkBottomContentDecoration => BoxDecoration(
-    color: Styles().colors?.surface,
+    color: Styles().colors.surface,
     borderRadius: _linkContentBottomBorderRadius,
     border: Border(
-      left: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),
-      right: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),
-      bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),
+      left: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
+      right: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
+      bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
     ),
     boxShadow: _linkContentShadow
   );
@@ -406,7 +406,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   );
 
   Decoration get _imageHeadingDecoration => BoxDecoration(
-    border: Border(bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1)),
+    border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
   );
 
   Widget get _eventHeadingWidget => Container(height: _eventHeadingHeight, color: widget.event.uiColor,);
@@ -423,7 +423,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     ]);
 
   Widget get _categoriesContentWidget =>
-    Text(widget.displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat"));
+    Text(widget.displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles.getTextStyle("widget.card.title.small.fat"));
 
   /*Widget get _groupingBadgeWidget {
     String? badgeLabel;
@@ -434,9 +434,9 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
       badgeLabel = Localization().getStringEx('widget.event2.card.recurring.abbreviation.label', 'REC');
     }
     return (badgeLabel != null) ? 
-      Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+      Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
         Semantics(label: badgeLabel, excludeSemantics: true, child:
-          Text(badgeLabel, style:  Styles().textStyles?.getTextStyle('widget.heading.small'),)
+          Text(badgeLabel, style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
     )) : Container();
   }*/
 
@@ -454,7 +454,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
           button: true,
           child: InkWell(onTap: _onFavorite,
             child: Padding(padding: EdgeInsets.all(16),
-              child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true,)
+              child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true,)
             )
           ),
         ),
@@ -470,7 +470,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     ],) : Container();
 
   Widget get _titleContentWidget =>
-    Text(widget.event.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), maxLines: 2, overflow: TextOverflow.ellipsis);
+    Text(widget.event.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'), maxLines: 2, overflow: TextOverflow.ellipsis);
 
   Widget get _detailsWidget {
     List<Widget> detailWidgets = <Widget>[
@@ -544,7 +544,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   }
 
   Widget _buildLocationTextDetailWidget(String text) =>
-    _buildDetailWidget(Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero);
+    _buildDetailWidget(Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero);
 
   Widget _buildTextDetailWidget(String text, String iconKey, {
     EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),
@@ -552,7 +552,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     bool iconVisible = true, int maxLines = 1,
   }) =>
     _buildDetailWidget(
-      Text(text, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'), maxLines: maxLines, overflow: TextOverflow.ellipsis,),
+      Text(text, style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular'), maxLines: maxLines, overflow: TextOverflow.ellipsis,),
       iconKey, contentPadding: contentPadding, iconPadding: iconPadding, iconVisible: iconVisible
     );
 
@@ -562,7 +562,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     bool iconVisible = true
   }) {
     List<Widget> contentList = <Widget>[];
-    Widget? iconWidget = Styles().images?.getImage(iconKey, excludeFromSemantics: true);
+    Widget? iconWidget = Styles().images.getImage(iconKey, excludeFromSemantics: true);
     if (iconWidget != null) {
       contentList.add(Padding(padding: iconPadding, child:
         Opacity(opacity: iconVisible ? 1 : 0, child:
@@ -581,7 +581,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   List<Widget> get _linkedEventsPagerWidget {
     Event2Grouping? linkedGroupingQuery = widget.event.linkedEventsGroupingQuery;
     return (linkedGroupingQuery != null) ? <Widget>[
-      Container(color: Styles().colors?.surfaceAccent, height: 1,),
+      Container(color: Styles().colors.surfaceAccent, height: 1,),
       Padding(padding: const EdgeInsets.symmetric(vertical: 16), child:
         LinkedEvents2Pager(linkedGroupingQuery, userLocation: widget.userLocation)
       )
@@ -723,7 +723,7 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
     Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
       Center(child:
         Container(width: 24, height: 24, child:
-          CircularProgressIndicator(strokeWidth: 3, color: Styles().colors?.fillColorSecondary),
+          CircularProgressIndicator(strokeWidth: 3, color: Styles().colors.fillColorSecondary),
         )
       ),
     );
@@ -734,13 +734,13 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
         StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
           Expanded(child:
             Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
-              Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.card.title.medium.fat"), textAlign: TextAlign.center,)
+              Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.card.title.medium.fat"), textAlign: TextAlign.center,)
             ),
           )
         ]) : Container(),
         StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
           Expanded(child:
-            Text(message ?? '', style: Styles().textStyles?.getTextStyle("widget.card.detail.regular"), textAlign: TextAlign.center)
+            Text(message ?? '', style: Styles().textStyles.getTextStyle("widget.card.detail.regular"), textAlign: TextAlign.center)
           )
         ]) : Container(),
       ]),
@@ -838,15 +838,15 @@ class Event2Popup {
   static Future<void> showMessage(BuildContext context, { String? title, String? message}) =>
     showDialog(context: context, builder: (BuildContext context) => AlertDialog(
       content: Column(mainAxisSize: MainAxisSize.min, children: [
-        (title != null) ? Text(title, style: Styles().textStyles?.getTextStyle("widget.card.title.regular.fat"),) : Container(),
+        (title != null) ? Text(title, style: Styles().textStyles.getTextStyle("widget.card.title.regular.fat"),) : Container(),
         (message != null) ? Padding(padding: (title != null) ? EdgeInsets.only(top: 12) : EdgeInsets.zero, child:
-          Text(message, style: Styles().textStyles?.getTextStyle("widget.card.title.small"),),
+          Text(message, style: Styles().textStyles.getTextStyle("widget.card.title.small"),),
         ) : Container()
       ],),
       actions: <Widget>[
         TextButton(
           child: Text(Localization().getStringEx("dialog.ok.title", "OK"), style:
-            Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
+            Styles().textStyles.getTextStyle("widget.button.title.medium.fat")
           ),
           onPressed: () {
             Analytics().logAlert(text: message, selection: "OK");
@@ -868,15 +868,15 @@ class Event2Popup {
   }) async {
     return showDialog<bool?>(context: context, builder: (BuildContext context) => AlertDialog(
       content: Column(mainAxisSize: MainAxisSize.min, children: [
-        Text(title, style: Styles().textStyles?.getTextStyle("widget.card.title.regular.fat"),),
+        Text(title, style: Styles().textStyles.getTextStyle("widget.card.title.regular.fat"),),
         (message != null) ? Padding(padding: EdgeInsets.only(top: 12), child:
-          Text(message, style: Styles().textStyles?.getTextStyle("widget.card.title.small"),),
+          Text(message, style: Styles().textStyles.getTextStyle("widget.card.title.small"),),
         ) : Container()
       ],),
       actions: <Widget>[
         TextButton(
           child: Text(positiveButtonTitle ?? Localization().getStringEx("dialog.ok.title", "OK"), style:
-            Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
+            Styles().textStyles.getTextStyle("widget.button.title.medium.fat")
           ),
           onPressed: () {
             Analytics().logAlert(text: message, selection: positiveAnalyticsTitle ?? positiveButtonTitle ?? "OK");
@@ -885,7 +885,7 @@ class Event2Popup {
         ),
         TextButton(
           child: Text(negativeButtonTitle ?? Localization().getStringEx("dialog.cancel.title", "Cancel"), style:
-            Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
+            Styles().textStyles.getTextStyle("widget.button.title.medium.fat")
           ),
           onPressed: () {
             Analytics().logAlert(text: message, selection: negativeAnalyticsTitle ?? negativeButtonTitle ?? "Cancel");
