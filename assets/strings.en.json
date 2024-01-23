@@ -618,6 +618,9 @@
     "panel.athletics.content.my_teams.all.select.label": "Select All",
     "panel.athletics.content.my_teams.all.clear.label": "Clear All",
 
+    "panel.athletics.content.teams.empty.message": "There are no teams.",
+    "panel.athletics.content.teams.unknown_error.message": "Unknown Error Occurred.",
+
     "panel.onboarding.button.continue.title":"Continue",
     "panel.onboarding.button.continue.hint":"",
 

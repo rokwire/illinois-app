@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/athletics/AthleticsEventsContentWidget.dart';
+import 'package:illinois/ui/athletics/AthleticsTeamsContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -118,7 +119,7 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
                       onTap: _changeSettingsContentValuesVisibility))),
           Expanded(
               child: Stack(children: [
-                Container(child: Padding(padding: EdgeInsets.only(bottom: 16), child: _contentWidget)),
+                Container(child: _contentWidget),
             _buildContentValuesContainer()
           ]))
         ]),
@@ -238,6 +239,8 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
     switch (_selectedContent) {
       case AthleticsContent.events:
         return AthleticsEventsContentWidget();
+      case AthleticsContent.teams:
+        return AthleticsTeamsContentWidget();
       default:
         return Container();
     }

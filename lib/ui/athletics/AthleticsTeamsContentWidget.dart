@@ -1,0 +1,224 @@
+/*
+ * Copyright 2024 Board of Trustees of the University of Illinois.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import 'package:flutter/material.dart';
+import 'package:illinois/model/sport/SportDetails.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Sports.dart';
+import 'package:illinois/ui/athletics/AthleticsMyTeamsPanel.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+
+class AthleticsTeamsContentWidget extends StatefulWidget {
+  AthleticsTeamsContentWidget();
+
+  @override
+  State<AthleticsTeamsContentWidget> createState() => _AthleticsTeamsContentWidgetState();
+}
+
+class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidget> implements NotificationsListener {
+  List<SportDefinition>? _teams;
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationService().subscribe(this, [Auth2UserPrefs.notifyInterestsChanged]);
+    _load();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        color: Styles().colors.white,
+        child: Column(children: [
+          _buildTeamsFilterContent(),
+          Expanded(child: SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child: _buildContent()))
+        ]));
+  }
+
+  Widget _buildContent() {
+    if (_teams == null) {
+      return _buildErrorContent();
+    } else if (_teams?.length == 0) {
+      return _buildEmptyContent();
+    } else {
+      return _buildTeamsContent();
+    }
+  }
+
+  Widget _buildTeamsFilterContent() {
+    return Column(children: [
+      Container(
+          color: _filterApplied ? Styles().colors.white : null,
+          decoration: !_filterApplied ? _filterDecoration : null,
+          child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Row(children: [
+                InkWell(
+                    splashColor: Colors.transparent,
+                    onTap: _onTapTeamsFilter,
+                    child: Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
+                            borderRadius: BorderRadius.circular(16)),
+                        child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                            child: Row(children: [
+                              Styles().images.getImage('filters') ?? Container(),
+                              Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 5),
+                                  child: Text(Localization().getStringEx('panel.athletics.content.common.filter.teams.label', 'Teams'),
+                                      style: Styles().textStyles.getTextStyle('widget.button.title.small.fat'))),
+                              Styles().images.getImage('chevron-right-gray') ?? Container()
+                            ])))),
+                Expanded(child: Container())
+              ]))),
+      Visibility(
+          visible: _filterApplied,
+          child: Column(children: [
+            Divider(thickness: 1, color: Styles().colors.lightGray, height: 1),
+            Container(
+                decoration: _filterApplied ? _filterDecoration : null,
+                child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    child: Row(children: [
+                      Expanded(
+                          child: Text(StringUtils.ensureNotEmpty(_teamsFilterLabel),
+                              style: Styles().textStyles.getTextStyle('widget.button.title.small'),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1))
+                    ])))
+          ]))
+    ]);
+  }
+
+  Widget _buildTeamsContent() {
+    List<Widget> cardsList = <Widget>[];
+    for (SportDefinition team in _teams!) {
+      String? teamName = team.name;
+      if (teamName != null) {
+        cardsList.add(Padding(
+            padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0),
+            child: InkWell(
+                splashColor: Colors.transparent,
+                onTap: () => _onTapTeam(team),
+                child: Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Styles().colors.disabledTextColor, width: 1), borderRadius: BorderRadius.circular(8)),
+                    child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Row(children: [
+                          Expanded(
+                              child: Text(teamName.toUpperCase(),
+                                  style: Styles().textStyles.getTextStyle('widget.button.title.small.fat'),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis)),
+                          Styles().images.getImage('chevron-right-bold') ?? Container()
+                        ]))))));
+      }
+    }
+    return Padding(padding: EdgeInsets.all(16), child: Column(children: cardsList));
+  }
+
+  Widget _buildEmptyContent() {
+    return _buildCenteredWidget(Text(Localization().getStringEx('panel.athletics.content.teams.empty.message', 'There are no teams.'),
+        textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat')));
+  }
+
+  Widget _buildErrorContent() {
+    return _buildCenteredWidget(Text(
+        Localization().getStringEx('panel.athletics.content.teams.unknown_error.message', 'Unknown Error Occurred.'),
+        textAlign: TextAlign.center,
+        style: Styles().textStyles.getTextStyle('widget.item.medium.fat')));
+  }
+
+  Widget _buildCenteredWidget(Widget child) {
+    return Center(child: Column(children: <Widget>[Container(height: _screenHeight / 5), child, Container(height: _screenHeight / 5 * 3)]));
+  }
+
+  void _onTapTeamsFilter() {
+    Analytics().logSelect(target: 'Teams');
+    MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
+    double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        isDismissible: true,
+        useRootNavigator: true,
+        clipBehavior: Clip.antiAlias,
+        backgroundColor: Styles().colors.background,
+        constraints: BoxConstraints(maxHeight: height, minHeight: height),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+        builder: (context) {
+          return AthleticsMyTeamsPanel();
+        });
+  }
+
+  void _onTapTeam(SportDefinition sport) {
+    Analytics().logSelect(target: 'Team: ' + StringUtils.ensureNotEmpty(sport.shortName));
+    //TBD: DD - implement
+    // Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: game)));
+  }
+
+  void _load() {
+    Set<String>? preferredTeams = Auth2().prefs?.sportsInterests;
+    if (CollectionUtils.isNotEmpty(preferredTeams)) {
+      _teams = <SportDefinition>[];
+      for (String sportShortName in preferredTeams!) {
+        SportDefinition? sport = Sports().getSportByShortName(sportShortName);
+        if (sport != null) {
+          _teams!.add(sport);
+        }
+      }
+    } else {
+      _teams = Sports().sports;
+    }
+  }
+
+  String? get _teamsFilterLabel {
+    if (!_filterApplied) {
+      return null;
+    }
+    String filterPrefix = Localization().getStringEx('panel.athletics.content.common.filter.label', 'Filter:');
+    String? teamsFilterDisplayString = _teams?.map((team) => team.name).toList().join(', ');
+    return '$filterPrefix $teamsFilterDisplayString';
+  }
+
+  bool get _filterApplied => CollectionUtils.isNotEmpty(Auth2().prefs?.sportsInterests);
+
+  BoxDecoration get _filterDecoration => BoxDecoration(color: Styles().colors.white, boxShadow: kElevationToShadow[2]);
+
+  double get _screenHeight => MediaQuery.of(context).size.height;
+
+  // Notifications Listener
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Auth2UserPrefs.notifyInterestsChanged) {
+      _load();
+    }
+  }
+}

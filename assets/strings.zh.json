@@ -617,6 +617,9 @@
 	"panel.athletics.content.my_teams.all.select.label": "全選",
 	"panel.athletics.content.my_teams.all.clear.label": "全部清除",
 
+	"panel.athletics.content.teams.empty.message": "沒有團隊。",
+	"panel.athletics.content.teams.unknown_error.message": "發生未知錯誤。",
+
 	"panel.onboarding.button.continue.title":"继续",
 	"panel.onboarding.button.continue.hint":"",
 

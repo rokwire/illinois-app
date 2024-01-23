@@ -617,6 +617,9 @@
     "panel.athletics.content.my_teams.all.select.label": "Seleccionar todo",
     "panel.athletics.content.my_teams.all.clear.label": "Limpiar todo",
 
+    "panel.athletics.content.teams.empty.message": "No hay equipos.",
+    "panel.athletics.content.teams.unknown_error.message": "Se produjo un error desconocido.",
+
     "panel.onboarding.button.continue.title":"Continuar",
     "panel.onboarding.button.continue.hint":"",
 
