@@ -431,7 +431,7 @@ class PaymentTypeHelper {
   }
 
   static Widget? paymentTypeIcon(PaymentType? paymentType) {
-    return (paymentType != null) ? Styles().images?.getImage(paymentTypeToImageAsset(paymentType)!, semanticLabel: paymentTypeToDisplayString(paymentType)) : null;
+    return (paymentType != null) ? Styles().images.getImage(paymentTypeToImageAsset(paymentType)!, semanticLabel: paymentTypeToDisplayString(paymentType)) : null;
   }
 
   static List<PaymentType>? paymentTypesFromList(List<dynamic>? paymentTypesList) {

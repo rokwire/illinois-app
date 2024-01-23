@@ -68,7 +68,7 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.appointment.schedule.unit.header.title', 'Schedule Appointment')),
       body: _buildContent(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       //bottomNavigationBar: uiuc.TabBar()
     );
   }
@@ -86,7 +86,7 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
     else if (_providers?.length == 1) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
-          Text(_providers?.first.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.fat'))
+          Text(_providers?.first.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.fat'))
         ),
         Expanded(child:
           _buildUnitsContent(),
@@ -113,10 +113,10 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
       Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), container: true, child:
         RibbonButton(
-          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
-          backgroundColor: Styles().colors!.white,
+          textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+          backgroundColor: Styles().colors.white,
           borderRadius: BorderRadius.all(Radius.circular(5)),
-          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           rightIconKey: _isProvidersExpanded ? 'chevron-up' : 'chevron-down',
           label: (_selectedProvider != null) ? (_selectedProvider?.name ?? '') : 'Select a provider',
           onTap: _onProvidersDropdown
@@ -140,7 +140,7 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
     return Positioned.fill(child:
       BlockSemantics(child:
         GestureDetector(onTap: _onDismissProvidersDropdown, child:
-          Container(color: Styles().colors!.blackTransparent06)
+          Container(color: Styles().colors.blackTransparent06)
         )
       )
     );
@@ -148,13 +148,13 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
 
   Widget _buildProvidersDropdownItems() {
     List<Widget> items = <Widget>[];
-    items.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
+    items.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
 
     if (_providers != null) {
       for (AppointmentProvider provider in _providers!) {
         items.add(RibbonButton(
-          backgroundColor: Styles().colors!.white,
-          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+          backgroundColor: Styles().colors.white,
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           rightIconKey: null,
           label: provider.name,
           onTap: () => _onTapProvider(provider)
@@ -238,7 +238,7 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
   Widget _buildLoadingContent() {
     return Center(child:
       SizedBox(width: 32, height: 32, child:
-        CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,),
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
       )
     );
   }
@@ -246,7 +246,7 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
   Widget _buildMessageContent(String message) {
     return Center(child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32), child:
-        Text(message, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
+        Text(message, style: Styles().textStyles.getTextStyle('widget.item.medium.fat'),)
       )
     );
   }
@@ -327,26 +327,26 @@ class _AppointmentUnitCard extends StatelessWidget {
     return InkWell(onTap: onTap, child:
       ClipRRect(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)), child:
         Stack(children: [
-          Container(decoration: BoxDecoration(color: Styles().colors!.surface, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
+          Container(decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(provider?.name?.toUpperCase() ?? '', style: Styles().textStyles?.getTextStyle('widget.item.small.semi_fat'),),
+                Text(provider?.name?.toUpperCase() ?? '', style: Styles().textStyles.getTextStyle('widget.item.small.semi_fat'),),
                 Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Expanded(child:
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
                       Padding(padding: EdgeInsets.only(top: 6, bottom: 2), child:
-                        Text(unit.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),),
+                        Text(unit.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'),),
                       ),
                       
                       Visibility(visible: StringUtils.isNotEmpty(unitAddress), child:
                         Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
                           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             Padding(padding: EdgeInsets.only(right: 4), child:
-                              Styles().images?.getImage('location', excludeFromSemantics: true),
+                              Styles().images.getImage('location', excludeFromSemantics: true),
                             ),
                             Expanded(child:
-                              Text(unitAddress ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                              Text(unitAddress ?? '', style: Styles().textStyles.getTextStyle("widget.button.light.title.medium"))
                             ),
                           ],),
                         ),
@@ -356,10 +356,10 @@ class _AppointmentUnitCard extends StatelessWidget {
                         Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
                           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             Padding(padding: EdgeInsets.only(right: 6), child:
-                              Styles().images?.getImage('calendar', excludeFromSemantics: true),
+                              Styles().images.getImage('calendar', excludeFromSemantics: true),
                             ),
                             Expanded(child:
-                              Text(unitHours ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                              Text(unitHours ?? '', style: Styles().textStyles.getTextStyle("widget.button.light.title.medium"))
                             ),
                           ],),
                         ),
@@ -369,10 +369,10 @@ class _AppointmentUnitCard extends StatelessWidget {
                         Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
                           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             Padding(padding: EdgeInsets.only(right: 6), child:
-                              Styles().images?.getImage('person', excludeFromSemantics: true),
+                              Styles().images.getImage('person', excludeFromSemantics: true),
                             ),
                             Expanded(child:
-                              Text(unitPersons ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                              Text(unitPersons ?? '', style: Styles().textStyles.getTextStyle("widget.button.light.title.medium"))
                             ),
                           ],),
                         ),
@@ -382,12 +382,12 @@ class _AppointmentUnitCard extends StatelessWidget {
                         Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
                           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             Padding(padding: EdgeInsets.only(right: 6), child:
-                              Styles().images?.getImage('calendar', excludeFromSemantics: true),
+                              Styles().images.getImage('calendar', excludeFromSemantics: true),
                             ),
                             Expanded(child:
                               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                Text(Localization().getStringEx('panel.appointment.schedule.next_available_appointment.label', 'Next Available Appointment:'), style: Styles().textStyles?.getTextStyle("widget.item.regular")),
-                                Text(nextAvailableTime ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular.fat")),
+                                Text(Localization().getStringEx('panel.appointment.schedule.next_available_appointment.label', 'Next Available Appointment:'), style: Styles().textStyles.getTextStyle("widget.item.regular")),
+                                Text(nextAvailableTime ?? '', style: Styles().textStyles.getTextStyle("widget.item.regular.fat")),
                               ],)
                             ),
                           ],),
@@ -401,7 +401,7 @@ class _AppointmentUnitCard extends StatelessWidget {
                       SizedBox(width: 72, height: 72, child:
                         StringUtils.isNotEmpty(unit.imageUrl) ?
                           Image.network(unit.imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.cover,) :
-                          Styles().images?.getImage(unit.imageKey(provider: provider), excludeFromSemantics: true, fit: BoxFit.fill)
+                          Styles().images.getImage(unit.imageKey(provider: provider), excludeFromSemantics: true, fit: BoxFit.fill)
                       ),
                     ),
                   ),
@@ -410,7 +410,7 @@ class _AppointmentUnitCard extends StatelessWidget {
                   Padding(padding: EdgeInsets.only(top: 4), child:
                     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Expanded(child:
-                        Text(unitDesription ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular"))
+                        Text(unitDesription ?? '', style: Styles().textStyles.getTextStyle("widget.item.regular"))
                       ),
                     ],),
                   ),
@@ -418,7 +418,7 @@ class _AppointmentUnitCard extends StatelessWidget {
               ]),
             ),
           ),
-          Container(color: Styles().colors?.fillColorSecondary, height: 4,)
+          Container(color: Styles().colors.fillColorSecondary, height: 4,)
         ],)
       )
     );

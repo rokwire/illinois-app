@@ -53,7 +53,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
     String titleString = Localization().getStringEx('panel.onboarding.login.phone.label.title', 'Verify your phone number');
     String? skipTitle = Localization().getStringEx('panel.onboarding.login.phone.button.dont_continue.title', 'Not right now');
     return Scaffold(
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         body: Stack(
           children: <Widget>[
             Column(children:[
@@ -64,7 +64,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                     children: <Widget>[
                       Stack(
                         children: <Widget>[
-                          Styles().images?.getImage(
+                          Styles().images.getImage(
                             "header-login",
                             fit: BoxFit.fitWidth,
                             width: MediaQuery.of(context).size.width,
@@ -89,7 +89,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                             padding: EdgeInsets.symmetric(horizontal: 18),
                             child: Center(
                               child: Text(titleString,
-                                  textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 36, color: Styles().colors!.fillColorPrimary)),
+                                  textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary)),
                             )),
                       ),
                       Container(
@@ -98,7 +98,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                       Padding(
                           padding: EdgeInsets.symmetric(horizontal: 32),
                           child: Text(Localization().getStringEx('panel.onboarding.login.phone.label.description', 'This saves your preferences so you can have the same experience on more than one device.'),
-                              textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 20, color: Styles().colors!.fillColorPrimary))),
+                              textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary))),
                       Container(
                         height: 32,
                       ),
@@ -112,10 +112,10 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                     RoundedButton(
                       label: Localization().getStringEx('panel.onboarding.login.phone.button.continue.title', 'Verify My Phone Number'),
                       hint: Localization().getStringEx('panel.onboarding.login.phone.button.continue.hint', ''),
-                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      borderColor: Styles().colors!.fillColorSecondary,
-                      backgroundColor: Styles().colors!.white,
+                      borderColor: Styles().colors.fillColorSecondary,
+                      backgroundColor: Styles().colors.white,
                       onTap: _onLoginTapped,
                     ),
                     Onboarding2UnderlinedButton(

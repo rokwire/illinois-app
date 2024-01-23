@@ -25,6 +25,7 @@ import 'package:illinois/model/wellness/WellnessRing.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
@@ -65,6 +66,8 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogStdOSName                       = "os_name";
   static const String   LogStdOSVersionName                = "os_version";
   static const String   LogStdLocaleName                   = "locale";
+  static const String   LogStdSystemLocaleName             = "system_locale";
+  static const String   LogStdSelectedLocaleName           = "selected_locale";
   static const String   LogStdDeviceModelName              = "device_model";
   static const String   LogStdConnectionName               = "connection";
   static const String   LogStdLocationSvcName              = "location_services";
@@ -99,6 +102,8 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     LogStdOSName,
     LogStdOSVersionName,
     LogStdLocaleName,
+    LogStdSystemLocaleName,
+    LogStdSelectedLocaleName,
     LogStdDeviceModelName,
     LogStdConnectionName,
     LogStdLocationSvcName,
@@ -600,7 +605,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     return (location != null) ? {
       'latitude': location.latitude,
       'longitude': location.longitude,
-      'timestamp': location.timestamp?.millisecondsSinceEpoch,
+      'timestamp': location.timestamp.millisecondsSinceEpoch,
     } : null;
   }
   
@@ -671,6 +676,12 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         }
         else if (attributeName == LogStdLocaleName) {
           analyticsEvent[LogStdLocaleName] = Platform.localeName;
+        }
+        else if (attributeName == LogStdSystemLocaleName) {
+          analyticsEvent[LogStdSystemLocaleName] = (Localization().selectedLocale == null);
+        }
+        else if (attributeName == LogStdSelectedLocaleName) {
+          analyticsEvent[LogStdSelectedLocaleName] = Localization().selectedLocale?.languageCode;
         }
         else if (attributeName == LogStdDeviceModelName) {
           analyticsEvent[LogStdDeviceModelName] = super.deviceModel;

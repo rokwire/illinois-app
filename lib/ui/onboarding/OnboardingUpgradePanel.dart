@@ -54,12 +54,12 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
     bool canSkip = (widget.requiredVersion == null);
 
     return Scaffold(
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         body: SafeArea(
             child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Styles().images?.getImage(
+            Styles().images.getImage(
               'header-login',
               fit: BoxFit.fitWidth,
               width: MediaQuery.of(context).size.width,
@@ -74,9 +74,9 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
                     title!,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.bold,
+                        fontFamily: Styles().fontFamilies.bold,
                         fontSize: 32,
-                        color: Styles().colors!.fillColorPrimary),
+                        color: Styles().colors.fillColorPrimary),
                   )),
             )),
             Expanded(
@@ -88,9 +88,9 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
                         message!,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontFamily: Styles().fontFamilies!.regular,
+                            fontFamily: Styles().fontFamilies.regular,
                             fontSize: 20,
-                            color: Styles().colors!.fillColorPrimary),
+                            color: Styles().colors.fillColorPrimary),
                       ),
                     ))),
             Padding(
@@ -101,9 +101,9 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
                   RoundedButton(
                     label: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.title', 'Upgrade'),
                     hint: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.hint', ''),
-                    textStyle: Styles().textStyles?.getTextStyle("widget.colourful_button.title.large.accent"),
-                    borderColor: Styles().colors!.fillColorSecondary,
-                    backgroundColor: Styles().colors!.fillColorSecondary,
+                    textStyle: Styles().textStyles.getTextStyle("widget.colourful_button.title.large.accent"),
+                    borderColor: Styles().colors.fillColorSecondary,
+                    backgroundColor: Styles().colors.fillColorSecondary,
                     onTap: () => _onUpgradeClicked(context),
                   ),
                   canSkip
@@ -122,13 +122,13 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
                                       child: Text(
                                         dontShow,
                                         style: TextStyle(
-                                            fontFamily: Styles().fontFamilies!.medium,
+                                            fontFamily: Styles().fontFamilies.medium,
                                             fontSize: 16,
-                                            color: Styles().colors!.fillColorPrimary,
+                                            color: Styles().colors.fillColorPrimary,
                                             decoration:
                                                 TextDecoration.underline,
                                             decorationColor:
-                                                Styles().colors!.fillColorSecondary,
+                                                Styles().colors.fillColorSecondary,
                                             decorationThickness: 1,
                                             decorationStyle:
                                                 TextDecorationStyle.solid),
@@ -148,13 +148,13 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
                                       child: Text(
                                         notNow,
                                         style: TextStyle(
-                                            fontFamily: Styles().fontFamilies!.medium,
+                                            fontFamily: Styles().fontFamilies.medium,
                                             fontSize: 16,
-                                            color: Styles().colors!.fillColorPrimary,
+                                            color: Styles().colors.fillColorPrimary,
                                             decoration:
                                                 TextDecoration.underline,
                                             decorationColor:
-                                                Styles().colors!.fillColorSecondary,
+                                                Styles().colors.fillColorSecondary,
                                             decorationThickness: 1,
                                             decorationStyle:
                                                 TextDecorationStyle.solid),

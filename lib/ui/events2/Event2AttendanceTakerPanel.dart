@@ -1,10 +1,14 @@
 //import 'dart:math';
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:flutter_beep/flutter_beep.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -32,7 +36,7 @@ class Event2AttendanceTakerPanel extends StatelessWidget {
         ),
       ),
     ),
-    backgroundColor: Styles().colors!.white,
+    backgroundColor: Styles().colors.white,
   );
 
   Future<void> _onRefresh() async {
@@ -58,6 +62,7 @@ class Event2AttendanceTakerWidget extends StatefulWidget {
 class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidget> {
   
   Event2PersonsResult? _persons;
+  Map<String, Event2Person> _displayMap = <String, Event2Person>{};
   List<Event2Person> _displayList = <Event2Person>[];
   Set<String> _atendeesNetIds = <String>{};
   Set<String> _processingNetIds = <String>{};
@@ -92,7 +97,8 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
             setState(() {
               _loadingPeople = false;
               _persons = result;
-              _displayList = result.buildDisplayList();
+              _displayMap = result.buildDisplayMap();
+              _displayList = _displayMap.buildDisplayList();
               _atendeesNetIds = Event2Person.netIdsFromList(result.attendees) ?? <String>{};
             });
           }
@@ -134,40 +140,73 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     ]);
   }
 
-  Widget _buildEventDetailsSection() => Event2CreatePanel.buildSectionWidget(
-    body: Column(children: [
-      _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.capacity.label.title', 'EVENT CAPACITY:'), value: widget.event?.registrationDetails?.eventCapacity),
-      _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.registrations.label.title', 'TOTAL NUMBER OF REGISTRATIONS:'), value: _persons?.registrants?.length, loading: _loadingPeople, defaultValue: _hasError ? '-' : ''),
-      _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.attendees.label.title', 'TOTAL NUMBER OF ATTENDEES:'), value: (_persons?.attendees != null) ? _atendeesNetIds.length : null, loading: _loadingPeople, defaultValue: _hasError ? '-' : ''),
-      StringUtils.isNotEmpty(_errorMessage) ? _buildErrorStatus(_errorMessage ?? '') : Container(),
-    ],),
-  );
+  Widget _buildEventDetailsSection() {
+    String? attendeesStatus;
+    TextStyle? attendeesTextStyle, attendeesStatusTextStyle = Styles().textStyles.getTextStyle('widget.label.small.fat.spaced');
+    int attendeesCount = _atendeesNetIds.length;
+    int? eventCapacity = widget.event?.registrationDetails?.eventCapacity;
+    if (eventCapacity != null) {
+      if (eventCapacity < attendeesCount) {
+        attendeesStatus =  Localization().getStringEx('panel.event2.detail.attendance.attendees.capacity.exceeded.text', 'Event capacity exceeded');
+        attendeesStatusTextStyle = attendeesTextStyle = Styles().textStyles.getTextStyle('widget.label.small.extra_fat.spaced');
+      }
+      else if (eventCapacity == attendeesCount) {
+        attendeesStatus = Localization().getStringEx('panel.event2.detail.attendance.attendees.capacity.reached.text', 'Event capacity is reached');
+        attendeesStatusTextStyle = Styles().textStyles.getTextStyle('widget.item.small.thin.italic'); // widget.label.small.fat.spaced
+      }
+    }
+
+    return Event2CreatePanel.buildSectionWidget(
+      body: Column(children: [
+        _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.capacity.label.title', 'EVENT CAPACITY:'), value: eventCapacity),
+        _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.registrations.label.title', 'TOTAL NUMBER OF REGISTRATIONS:'), value: Event2Person.countInList(_persons?.registrants, role: Event2UserRole.participant), loading: _loadingPeople, defaultValue: _hasError ? '-' : ''),
+        _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.attendees.label.title', 'TOTAL NUMBER OF ATTENDEES:'), value: attendeesCount, loading: _loadingPeople, defaultValue: _hasError ? '-' : '',
+          description: attendeesStatus,
+          descriptionTextStyle: attendeesStatusTextStyle,
+          labelTextStyle: attendeesTextStyle,
+        ),
+        StringUtils.isNotEmpty(_errorMessage) ? _buildErrorStatus(_errorMessage ?? '') : Container(),
+      ],),
+    );
+  }
   
-  Widget _buildEventDetail({required String label, int? value, bool? loading, String defaultValue = ''}) {
+  Widget _buildEventDetail({required String label, int? value, String? description, 
+    TextStyle? labelTextStyle, TextStyle? valueTextStyle, TextStyle? descriptionTextStyle,
+    bool? loading, String defaultValue = ''
+  }) {
     String valueLabel = value?.toString() ?? defaultValue;
     String semanticsLabel = "$label: $valueLabel";
 
     return Padding(padding: Event2CreatePanel.innerSectionPadding, child:
       Semantics(label: semanticsLabel, excludeSemantics: true, child:
-        Row(children: [
-          Expanded(child:
-            Event2CreatePanel.buildSectionTitleWidget(label)
-          ),
-          (loading == true) ?
-            Padding(padding: EdgeInsets.all(2.5), child:
-              SizedBox(width: 16, height: 16, child:
-                CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2,),
-              ),
-            ) :
-            Text(valueLabel, style: Styles().textStyles?.getTextStyle('widget.label.medium.fat'),)
-        ])
+        Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+          Row(children: [
+            Expanded(child:
+              Event2CreatePanel.buildSectionTitleWidget(label, textStyle: labelTextStyle)
+            ),
+            (loading == true) ?
+              Padding(padding: EdgeInsets.all(2.5), child:
+                SizedBox(width: 16, height: 16, child:
+                  CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,),
+                ),
+              ) :
+              Text(valueLabel, style: valueTextStyle ?? Styles().textStyles.getTextStyle('widget.label.medium.fat'),)
+          ]),
+
+          (description != null) ? Row(children: [
+            Expanded(child:
+              Text(description, style: descriptionTextStyle ?? valueTextStyle ?? Event2CreatePanel.headingTextStype,)
+            )
+          ],) : Container()
+
+        ],)
       )
     );
   }
 
   Widget _buildErrorStatus(String errorText) {
-    TextStyle? boldStyle = Styles().textStyles?.getTextStyle("panel.settings.error.text");
-    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("panel.settings.error.text.small");
+    TextStyle? boldStyle = Styles().textStyles.getTextStyle("panel.settings.error.text");
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle("panel.settings.error.text.small");
     return Row(children: [
       Expanded(child:
         RichText(text: TextSpan(style: regularStyle, children: <InlineSpan>[
@@ -179,7 +218,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   }
 
   Widget _buildAttendeesListDropDownSection() => Event2CreatePanel.buildDropdownSectionWidget(
-    heading: Event2CreatePanel.buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.detail.attendance.attendees.drop_down.hint', 'ATTENDEE LIST'),
+    heading: Event2CreatePanel.buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.detail.attendance.attendees.drop_down.hint', 'GUEST LIST'),
       expanded: _attendeesSectionExpanded,
       onToggleExpanded: _onToggleAttendeesListSection,
     ),
@@ -192,6 +231,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 
   void _onToggleAttendeesListSection() {
     Analytics().logSelect(target: "Toggle Attendees List");
+    Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _attendeesSectionExpanded = !_attendeesSectionExpanded;
     });
@@ -201,7 +241,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     List<Widget> contentList = <Widget>[];
     for (Event2Person displayPerson in _displayList) {
       if (contentList.isNotEmpty) {
-        contentList.add(Divider(color: Styles().colors?.dividerLineAccent, thickness: 1, height: 1,));
+        contentList.add(Divider(color: Styles().colors.dividerLineAccent, thickness: 1, height: 1,));
       }
       contentList.add(_AttendeeListItemWidget(displayPerson,
         enabled: widget.manualCheckEnabled,
@@ -215,7 +255,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
         Center(child:
           SizedBox(width: 24, height: 24, child:
-            CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,)
+            CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,)
           ),
         ),
       );
@@ -230,7 +270,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
             Text(_hasError ?
               Localization().getStringEx("panel.event2.detail.attendance.attendees.failed.text", "Failed to load attendees list.") :
               Localization().getStringEx("panel.event2.detail.attendance.attendees.empty.text", "There are no users registered or attending for this event yet."),
-              textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.small.thin.italic'),),
+              textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.small.thin.italic'),),
           )
         ],)
       );
@@ -241,77 +281,125 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     Analytics().logSelect(target: "Toggle Attendee");
     Event2CreatePanel.hideKeyboard(context);
     String? eventId = widget.event?.id;
-    String? personNetId = person.identifier?.netId;
+    Event2PersonIdentifier? personIdentifier = person.identifier;
+    String? netId = personIdentifier?.netId;
     if (widget.manualCheckEnabled != true) {
       Event2Popup.showMessage(context,
-        Localization().getStringEx("panel.event2.detail.attendance.message.not_available.title", "Not Available"),
-        Localization().getStringEx("panel.event2.detail.attendance.manual_check.disabled", "Manual check is not enabled for this event."));
+        title: Localization().getStringEx("panel.event2.detail.attendance.message.not_available.title", "Not Available"),
+        message: Localization().getStringEx("panel.event2.detail.attendance.manual_check.disabled", "Manual check is not enabled for this event."));
     }
-    else if ((eventId != null) && (personNetId != null) && !_processingNetIds.contains(personNetId))  {
-
-      setState(() {
-        _processingNetIds.add(personNetId);
-      });
-
-      if (_atendeesNetIds.contains(personNetId)) {
-        Events2().unattendEvent(eventId, personIdentifier: person.identifier).then((dynamic result) {
-          if (mounted) {
-              setState(() {
-                _processingNetIds.remove(personNetId);
-              });
-
-            if (result == true) {
-              setState(() {
-                _atendeesNetIds.remove(personNetId);
-                if (personNetId == _processedNetId) {
-                  _processedNetId = null;
-                }
-              });
-            }
-            else {
-              Event2Popup.showErrorResult(context, result);
-            }
-          }
-        });
+    else if ((eventId != null) && (netId != null) && (personIdentifier != null) && !_processingNetIds.contains(netId))  {
+      if (_atendeesNetIds.contains(netId)) {
+        _unattendEvent(eventId: eventId, netId: netId, personIdentifier: personIdentifier);
       }
       else {
-        Events2().attendEvent(eventId, personIdentifier: person.identifier).then((dynamic result) {
-          if (mounted) {
-            setState(() {
-              _processingNetIds.remove(personNetId);
-            });
-            if (result is Event2Person) {
-              setState(() {
-                _atendeesNetIds.add(personNetId);
-              });
-            }
-            else {
-              Event2Popup.showErrorResult(context, result);
-            }
-          }
-        });
+        _attendEvent_CheckAttendee(eventId: eventId, netId: netId, personIdentifier: personIdentifier);
       }
     }
   }
+  
+  // In _attendEvent_CheckAttendee we check if the attendee candidate is already registered or already attended the event
+  void _attendEvent_CheckAttendee({required String eventId, required String netId, required Event2PersonIdentifier personIdentifier}) {
+    if (_isInternalRegisterationEvent && !_isAttendeeNetIdRegistered(netId)) {
+      _promptUnregisteredAttendee().then((bool? result) {
+        if ((result == true) && mounted) {
+          _attendEvent_CheckCapacity(eventId: eventId, netId: netId, personIdentifier: personIdentifier);
+        }
+      });
+    }
+    else {
+      _attendEvent_CheckCapacity(eventId: eventId, netId: netId, personIdentifier: personIdentifier);
+    }
+  }
+
+  // In _attendEvent_CheckCapacity we check if the event capacity is reached
+  void _attendEvent_CheckCapacity({required String eventId, required String netId, required Event2PersonIdentifier personIdentifier}) {
+    if (_isInternalRegisterationEvent && (_isEventCapacityReached == true)) {
+      _promptCapacityReached().then((bool? result) {
+        if ((result == true) && mounted) {
+          _attendEvent(eventId: eventId, netId: netId, personIdentifier: personIdentifier);
+        }
+      });
+    }
+    else {
+      _attendEvent(eventId: eventId, netId: netId, personIdentifier: personIdentifier);
+    }
+  }
+  
+  // In _attendEvent we call the Event2 service unconditionally
+  void _attendEvent({required String eventId, required String netId, required Event2PersonIdentifier personIdentifier}) {
+    setState(() {
+      _processingNetIds.add(netId);
+    });
+    Events2().attendEvent(eventId, personIdentifier: personIdentifier).then((dynamic result) {
+      if (mounted) {
+        setState(() {
+          _processingNetIds.remove(netId);
+        });
+
+        if (result is Event2Person) {
+          setState(() {
+            _atendeesNetIds.add(netId);
+          });
+          _beep(true);
+        }
+        else {
+          Event2Popup.showErrorResult(context, result);
+          _beep(false);
+        }
+      }
+    });
+  }
+
+  // In _unattendEvent we call the Event2 service unconditionally
+  void _unattendEvent({required String eventId, required String netId, Event2PersonIdentifier? personIdentifier}) {
+    setState(() {
+      _processingNetIds.add(netId);
+    });
+    Events2().unattendEvent(eventId, personIdentifier: personIdentifier).then((dynamic result) {
+      if (mounted) {
+        setState(() {
+          _processingNetIds.remove(netId);
+        });
+
+        if (result == true) {
+          setState(() {
+            _atendeesNetIds.remove(netId);
+            if (netId == _processedNetId) {
+              _processedNetId = null;
+            }
+          });
+          _beep(true);
+        }
+        else {
+          Event2Popup.showErrorResult(context, result);
+          _beep(false);
+        }
+      }
+    });
+  }
 
   Widget _buildUploadAttendeesDescription() {
-    TextStyle? mainStyle = Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
+    TextStyle? mainStyle = Styles().textStyles.getTextStyle('widget.item.small.thin.italic');
     final Color defaultStyleColor = Colors.red;
-    final String adminAppUrl = 'go.illinois.edu/ILappAdmin'; //TBD: DD - move it to config
-    final String adminAppUrlMacro = '{{admin_app_url}}';
-    String contentHtml = Localization().getStringEx('panel.event2.detail.attendance.attendees.description', "Looking for a way to upload an attendee list or download your current attendees? Share the link or visit <a href='{{admin_app_url}}'>{{admin_app_url}}</a>.");
-    contentHtml = contentHtml.replaceAll(adminAppUrlMacro, adminAppUrl);
-    return Padding(padding: EdgeInsets.only(top: 12), child:
-      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Styles().images?.getImage('info') ?? Container(),
-        Expanded(child:
-          Padding(padding: EdgeInsets.only(left: 6), child:
-            HtmlWidget(contentHtml, onTapUrl: _onTapHtmlLink, textStyle: mainStyle,
-              customStylesBuilder: (element) => (element.localName == "a") ? { "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor), "text-decoration-color": ColorUtils.toHex(Styles().colors?.fillColorSecondary ?? defaultStyleColor)} : null,
-            )
+    final String? eventAttendanceUrl = Config().eventAttendanceUrl;
+    final String eventAttendanceUrlMacro = '{{event_attendance_url}}';
+    String contentHtml = Localization().getStringEx('panel.event2.detail.attendance.attendees.description',
+        "Visit <a href='{{event_attendance_url}}'>{{event_attendance_url}}</a> to upload or download a list.");
+    contentHtml = contentHtml.replaceAll(eventAttendanceUrlMacro, eventAttendanceUrl ?? '');
+    return Visibility(visible: StringUtils.isNotEmpty(eventAttendanceUrl), child:
+      Padding(padding: EdgeInsets.only(top: 12), child:
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Styles().images.getImage('info') ?? Container(),
+          Expanded(child:
+            Padding(padding: EdgeInsets.only(left: 6), child:
+              HtmlWidget(contentHtml, onTapUrl: _onTapHtmlLink, textStyle: mainStyle,
+                customStylesBuilder: (element) => (element.localName == "a") ? { "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor), "text-decoration-color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null,
+              )
+            ),
           ),
-        ),
-      ])
+        ])
+      ),
     );
   }
 
@@ -322,7 +410,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   }
 
   Widget _buildManualNetIdInputSection() => Event2CreatePanel.buildSectionWidget(
-    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.detail.attendance.manual.netid.label', 'Net ID for manual attendance check:')),
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.detail.attendance.manual.netid.label', 'Add NetID to the guest list:')),
     body: _buildManualNetIdInputWidget() ,
   );
 
@@ -347,9 +435,9 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         Padding(padding: EdgeInsets.all(16), child:
           _manualInputProgress ? Padding(padding: EdgeInsets.all(2), child:
             SizedBox(width: 14, height: 14, child:
-              CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2,)
+              CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,)
             )
-          ) : Styles().images?.getImage('plus-circle')
+          ) : Styles().images.getImage('plus-circle')
         ),
       )
     ],)
@@ -360,47 +448,77 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     String netId = _manualNetIdController.text.trim();
     String? eventId = widget.event?.id;
     if (netId.isNotEmpty && (eventId != null) && (_manualInputProgress == false)) {
-      setState(() {
-        _manualInputProgress = true;
-      });
-      Events2().attendEvent(eventId, personIdentifier: Event2PersonIdentifier(accountId: "", exteralId: netId)).then((result) {
-        if (mounted) {
-          setState(() {
-            _manualInputProgress = false;
-          });
+      _manualAttendEvent_CheckAttendee(eventId: eventId, netId: netId);
+    }
+  }
 
-          String? attendeeNetId = (result is Event2Person) ? result.identifier?.netId : null;
-          if (attendeeNetId != null) {
-
-            List<Event2Person>? displayList;
-            if (!Event2Person.containsInList(_displayList, netId: attendeeNetId)) {
-              displayList = List.from(_displayList);
-              displayList.add(result);
-              displayList.sort((Event2Person person1, Event2Person person2) =>
-                SortUtils.compare(person1.identifier?.netId, person2.identifier?.netId));
-            }
-
-            setState(() {
-              _atendeesNetIds.add(attendeeNetId);
-              if (displayList != null) {
-                _displayList = displayList;
-              }
-              _processedNetId = attendeeNetId;
-              _attendeesSectionExpanded = true;
-            });
-            _manualNetIdController.text = '';
-            _setupProcessedTimer();
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _ensureVisibleManualNetIdInput();
-              _manualNetIdFocusNode.requestFocus();
-            });
-          }
-          else {
-            Event2Popup.showErrorResult(context, result);
-          }
+  // In _manualAttendEvent_CheckAttendee we check if the attendee candidate is already registered or already attended the event
+  void _manualAttendEvent_CheckAttendee({ required String eventId, required String netId}) {
+    if (_isAttendeeNetIdAttended(netId)) {
+      Event2Popup.showMessage(context, message: Localization().getStringEx('panel.event2.detail.attendance.prompt.attendee_already_registered.description', 'Already marked as attended.'));
+    }
+    else if (_isInternalRegisterationEvent && !_isAttendeeNetIdRegistered(netId)) {
+      _promptUnregisteredAttendee().then((bool? result) {
+        if ((result == true) && mounted) {
+          _manualAttendEvent_CheckCapacity(eventId: eventId, netId: netId);
         }
       });
     }
+    else {
+      _manualAttendEvent_CheckCapacity(eventId: eventId, netId: netId);
+    }
+  }
+
+  // In _manualAttendEvent_CheckCapacity we check if the event capacity is reached
+  void _manualAttendEvent_CheckCapacity({ required String eventId, required String netId}) {
+    if (_isInternalRegisterationEvent && (_isEventCapacityReached == true)) {
+      _promptCapacityReached().then((bool? result) {
+        if ((result == true) && mounted) {
+          _manualAttendEvent(eventId: eventId, netId: netId);
+        }
+      });
+    }
+    else {
+      _manualAttendEvent(eventId: eventId, netId: netId);
+    }
+  }
+
+  // In _manualAttendEvent we call the Event2 service unconditionally
+  void _manualAttendEvent({ required String eventId, required String netId}) {
+    setState(() {
+      _manualInputProgress = true;
+    });
+    Events2().attendEvent(eventId, personIdentifier: Event2PersonIdentifier(accountId: "", exteralId: netId)).then((result) {
+      if (mounted) {
+        setState(() {
+          _manualInputProgress = false;
+        });
+
+        String? attendeeNetId = (result is Event2Person) ? result.identifier?.netId : null;
+        if (attendeeNetId != null) {
+          setState(() {
+            _atendeesNetIds.add(attendeeNetId);
+            if (!_displayMap.containsKey(attendeeNetId)) {
+              _displayMap[attendeeNetId] = result;
+              _displayList = _displayMap.buildDisplayList();
+            }
+            _processedNetId = attendeeNetId;
+            _attendeesSectionExpanded = true;
+          });
+          _beep(true);
+          _manualNetIdController.text = '';
+          _setupProcessedTimer();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _ensureVisibleManualNetIdInput();
+            _manualNetIdFocusNode.requestFocus();
+          });
+        }
+        else {
+          Event2Popup.showErrorResult(context, result);
+          _beep(false);
+        }
+      }
+    });
   }
 
   void _ensureVisibleManualNetIdInput() {
@@ -413,9 +531,9 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   Widget _buildScanIlliniIdSection() => Event2CreatePanel.buildSectionWidget(body:
     RoundedButton(
       label: Localization().getStringEx('panel.event2.detail.attendance.scan.button', 'Scan Illini ID'),
-      textStyle: Styles().textStyles?.getTextStyle(widget.scanEnabled ? 'widget.button.title.large.fat' : 'widget.button.title.large.fat.variant3'),
-      borderColor: widget.scanEnabled ? Styles().colors!.fillColorSecondary : Styles().colors?.surfaceAccent,
-      backgroundColor: Styles().colors!.white,
+      textStyle: Styles().textStyles.getTextStyle(widget.scanEnabled ? 'widget.button.title.large.fat' : 'widget.button.title.large.fat.variant3'),
+      borderColor: widget.scanEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+      backgroundColor: Styles().colors.white,
       onTap: _onTapScanButton,
       contentWeight: 0.5,
       progress: _scanning,
@@ -427,8 +545,8 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 
     if (widget.scanEnabled != true) {
       Event2Popup.showMessage(context,
-        Localization().getStringEx("panel.event2.detail.attendance.message.not_available.title", "Not Available"),
-        Localization().getStringEx("panel.event2.detail.attendance.scan.disabled", "Scanning Illini ID is not enabled for this event."));
+        title: Localization().getStringEx("panel.event2.detail.attendance.message.not_available.title", "Not Available"),
+        message: Localization().getStringEx("panel.event2.detail.attendance.scan.disabled", "Scanning Illini ID is not enabled for this event."));
     }
     else if (!_scanning) {
       setState(() {
@@ -440,7 +558,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         _onScanFinished("$uin");
       }); */
       
-      String lineColor = UiColors.toHex(Styles().colors?.fillColorSecondary) ?? '#E84A27';
+      String lineColor = UiColors.toHex(Styles().colors.fillColorSecondary) ?? '#E84A27';
       String cancelButtonTitle = Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel');
       FlutterBarcodeScanner.scanBarcode(lineColor, cancelButtonTitle, true, ScanMode.QR).then((String scanResult) {
         if (mounted) {
@@ -464,43 +582,113 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         setState(() {
           _scanning = false;
         });
-
         Event2Popup.showErrorResult(context, _internalErrorString);
       }
       else {
-        Events2().attendEvent(eventId, uin: uin).then((result) {
-          if (mounted) {
+        _scanAttendEvent_CheckAttendee(eventId: eventId, uin: uin);
+      }
+    }
+    else {
+      setState(() {
+        _scanning = false;
+      });
+    }
+  }
+
+  // In _scanAttendEvent_CheckAttendee we check if the attendee candidate is already registered or already attended the event
+  void _scanAttendEvent_CheckAttendee({ required String eventId, required String uin}) {
+    if (_isInternalRegisterationEvent) {
+      Events2().loadEventPerson(uin: uin).then((Event2PersonIdentifier? personIdentifier) {
+        if (mounted) {
+          String? netId = personIdentifier?.exteralId;
+          if (netId != null) {
+            if (_isAttendeeNetIdAttended(netId)) {
+              setState(() {
+                _scanning = false;
+              });
+              Event2Popup.showMessage(context, message: Localization().getStringEx('panel.event2.detail.attendance.prompt.attendee_already_registered.description', 'Already marked as attended.'));
+            }
+            else if (!_isAttendeeNetIdRegistered(netId)) {
+              _promptUnregisteredAttendee().then((bool? result) {
+                if (mounted) {
+                  if (result == true) {
+                    _scanAttendEvent_CheckCapacity(eventId: eventId, uin: uin);
+                  }
+                  else {
+                    setState(() {
+                      _scanning = false;
+                    });
+                  }
+                }
+              });
+            }
+            else {
+              _scanAttendEvent_CheckCapacity(eventId: eventId, uin: uin);
+            }
+          }
+          else {
             setState(() {
               _scanning = false;
             });
+            Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.detail.attendance.prompt.uin.not_recognized.description', 'This QR code contain a valid UIN but we failed to identify its owner.'));
+          }
+        }
+      });
+    }
+    else {
+      _scanAttendEvent_CheckCapacity(eventId: eventId, uin: uin);
+    }
+  }
 
-            String? attendeeNetId = (result is Event2Person) ? result.identifier?.netId : null;
-            if (attendeeNetId != null) {
-
-              List<Event2Person>? displayList;
-              if (!Event2Person.containsInList(_displayList, netId: attendeeNetId)) {
-                displayList = List.from(_displayList);
-                displayList.add(result);
-                displayList.sort((Event2Person person1, Event2Person person2) =>
-                  SortUtils.compare(person1.identifier?.netId, person2.identifier?.netId));
-              }
-
-              setState(() {
-                _atendeesNetIds.add(attendeeNetId);
-                if (displayList != null) {
-                  _displayList = displayList;
-                }
-                _processedNetId = attendeeNetId;
-              });
-              _setupProcessedTimer();
+  // In _scanAttendEvent_CheckCapacity we check if the event capacity is reached
+  void _scanAttendEvent_CheckCapacity({ required String eventId, required String uin}) {
+    if (_isInternalRegisterationEvent && (_isEventCapacityReached == true)) {
+      _promptCapacityReached().then((bool? result) {
+          if (mounted) {
+            if (result == true) {
+              _scanAttendEvent(eventId: eventId, uin: uin);
             }
             else {
-              Event2Popup.showErrorResult(context, result);
+              setState(() {
+                _scanning = false;
+              });
             }
           }
-        });
-      }
+      });
     }
+    else {
+      _scanAttendEvent(eventId: eventId, uin: uin);
+    }
+  }
+
+  // In _scanAttendEvent we call the Event2 service unconditionally
+  void _scanAttendEvent({ required String eventId, required String uin}) {
+    Events2().attendEvent(eventId, uin: uin).then((result) {
+      if (mounted) {
+        setState(() {
+          _scanning = false;
+        });
+
+        String? attendeeNetId = (result is Event2Person) ? result.identifier?.netId : null;
+        if (attendeeNetId != null) {
+          setState(() {
+            _atendeesNetIds.add(attendeeNetId);
+            if (!_displayMap.containsKey(attendeeNetId)) {
+              _displayMap[attendeeNetId] = result;
+              _displayList = _displayMap.buildDisplayList();
+            }
+            _processedNetId = attendeeNetId;
+            _attendeesSectionExpanded = true;
+          });
+          _beep(true);
+          _setupProcessedTimer();
+        }
+        else {
+          Event2Popup.showErrorResult(context, result);
+          _beep(false);
+        }
+      }
+    });
   }
 
   ///
@@ -547,6 +735,44 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     });
   }
 
+  bool get _isInternalRegisterationEvent =>
+    widget.event?.registrationDetails?.type == Event2RegistrationType.internal;
+
+  bool _isAttendeeNetIdRegistered(String attendeeNetId) =>
+    _displayMap[attendeeNetId]?.registrationType != null;
+
+  bool _isAttendeeNetIdAttended(String attendeeNetId) =>
+    _atendeesNetIds.contains(attendeeNetId);
+
+  bool? get _isEventCapacityReached {
+    int attendeesCount = _atendeesNetIds.length;
+    int? eventCapacity = widget.event?.registrationDetails?.eventCapacity;
+    return ((eventCapacity != null) && (0 < eventCapacity)) ? (eventCapacity <= attendeesCount) : null;
+  }
+
+  Future<void> _beep(bool success) async {
+    if (Platform.isAndroid) {
+      await FlutterBeep.playSysSound(success ? AndroidSoundIDs.TONE_PROP_BEEP : AndroidSoundIDs.TONE_CDMA_ABBR_ALERT);
+    }
+    else if (Platform.isIOS) {
+      await FlutterBeep.playSysSound(success ? iOSSoundIDs.AudioToneKey2 : iOSSoundIDs.SIMToolkitTone3);
+    }
+  }
+
+  Future<bool?> _promptUnregisteredAttendee() => Event2Popup.showPrompt(context,
+    Localization().getStringEx('panel.event2.detail.attendance.prompt.attendee_not_registered.title', 'Not registered'),
+    Localization().getStringEx('panel.event2.detail.attendance.prompt.attendee_not_registered.description', 'Mark as attended?'),
+    positiveButtonTitle: Localization().getStringEx("dialog.yes.title", "Yes"),
+    negativeButtonTitle: Localization().getStringEx("dialog.no.title", "No"),
+  );
+
+  Future<bool?> _promptCapacityReached() => Event2Popup.showPrompt(context,
+    Localization().getStringEx('panel.event2.detail.attendance.prompt.event_capacity_reached.title', 'At event capacity'),
+    Localization().getStringEx('panel.event2.detail.attendance.prompt.event_capacity_reached.description', 'Mark as attended?'),
+    positiveButtonTitle: Localization().getStringEx("dialog.yes.title", "Yes"),
+    negativeButtonTitle: Localization().getStringEx("dialog.no.title", "No"),
+  );
+
   Future<void> _refresh() async {
     String? eventId = widget.event?.id;
     if (eventId != null) {
@@ -559,7 +785,8 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
           setState(() {
             _loadingPeople = false;
             _persons = result;
-            _displayList = result.buildDisplayList();
+            _displayMap = result.buildDisplayMap();
+            _displayList = _displayMap.buildDisplayList();
             _atendeesNetIds = Event2Person.netIdsFromList(result.attendees) ?? <String>{};
           });
         }
@@ -589,7 +816,7 @@ class _AttendeeListItemWidget extends StatelessWidget {
     return Row(children: [
       Expanded(child:
         Padding(padding: EdgeInsets.only(left: 16), child:
-          _nameWidget
+          _buildNameWidget(context)
         )
       ),
       
@@ -598,46 +825,80 @@ class _AttendeeListItemWidget extends StatelessWidget {
 
   }
 
-  Widget get _nameWidget {
+  Widget _buildNameWidget(BuildContext context) {
+    String titleStyleKey;
+    String descriptionStyleKey;
+    if (enabled) {
+      if (highlighted) {
+        titleStyleKey = 'widget.label.regular.fat';
+        descriptionStyleKey = 'widget.label.regular.thin';
+      }
+      else {
+        titleStyleKey = 'widget.card.title.small.fat';
+        descriptionStyleKey = 'widget.detail.light.regular';
+      }
+    }
+    else {
+      titleStyleKey = 'widget.card.title.small.fat.variant3';
+      descriptionStyleKey = 'widget.card.title.small.variant3';
+    }
+
     String? registrantNetId = registrant.identifier?.netId;
-    String textStyleKey = (enabled ? (highlighted ? 'widget.label.regular.fat' : 'widget.card.title.small.fat') : 'widget.card.title.small.fat.variant3');
-    return Text(registrantNetId ?? '', style: Styles().textStyles?.getTextStyle(textStyleKey));
+    String? registrantType = event2UserRegistrationToDisplayString(registrant.registrationType);
+    return (registrantType != null) ? RichText(textScaler: MediaQuery.of(context).textScaler, text:
+      TextSpan(text: registrantNetId, style: Styles().textStyles.getTextStyle(titleStyleKey),  children: <InlineSpan>[
+        TextSpan(text: " (${registrantType.toLowerCase()})", style: Styles().textStyles.getTextStyle(descriptionStyleKey),),
+      ])
+    ) : Text(registrantNetId ?? '', style: Styles().textStyles.getTextStyle(titleStyleKey));
   }
 
   Widget get _checkMarkWidget => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-    Styles().images?.getImage(_checkMarkImageKey) ?? Container()
+    Styles().images.getImage(_checkMarkImageKey) ?? Container()
   );
 
   String get _checkMarkImageKey {
     if (enabled) {
-      if (highlighted == true) {
+      if (highlighted) {
         return 'check-circle-outline';
       }
-      else if (selected == true) {
+      else if (selected) {
         return 'check-circle-filled';
       }
+      else {
+        return 'circle-outline-gray';
+      }
     }
-    return 'circle-outline-gray';
+    else {
+      if (highlighted) {
+        return 'check-circle-outline';
+      }
+      else if (selected) {
+        return 'check-circle-outline-gray';
+      }
+      else {
+        return 'circle-outline-gray';
+      }
+    }
   }
 
   Widget get _progressMarkWidget => Padding(padding: EdgeInsets.symmetric(horizontal: 18, vertical: 18), child:
     SizedBox(width: 20, height: 20, child:
-      CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2,)
+      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,)
     )
   );
+
 }
 
 extension Event2PersonsResultExt on Event2PersonsResult {
-  List<Event2Person> buildDisplayList() {
-    List<Event2Person> displayList = <Event2Person>[];
-    Set<String> displayNetIds  = <String>{};
+  
+  Map<String, Event2Person> buildDisplayMap() {
+    Map<String, Event2Person> displayMap = <String, Event2Person>{};
 
     if (registrants != null) {
       for (Event2Person registrant in registrants!) {
         String? registrantNetId = registrant.identifier?.netId;
-        if ((registrantNetId != null) && !displayNetIds.contains(registrantNetId)) {
-          displayList.add(registrant);
-          displayNetIds.add(registrantNetId);
+        if ((registrantNetId != null) && !displayMap.containsKey(registrantNetId)) {
+          displayMap[registrantNetId] = registrant;
         }
       }
     }
@@ -645,12 +906,20 @@ extension Event2PersonsResultExt on Event2PersonsResult {
     if (attendees != null) {
       for (Event2Person attendee in attendees!) {
         String? attendeeNetId = attendee.identifier?.netId;
-        if ((attendeeNetId != null) && !displayNetIds.contains(attendeeNetId)) {
-          displayList.add(attendee);
-          displayNetIds.add(attendeeNetId);
+        if ((attendeeNetId != null) && !displayMap.containsKey(attendeeNetId)) {
+          displayMap[attendeeNetId] = attendee;
         }
       }
     }
+
+    return displayMap;
+  }
+}
+
+extension Event2PersonsMapExt on Map<String, Event2Person> {
+
+  List<Event2Person> buildDisplayList() {
+    List<Event2Person> displayList = List.from(values);
 
     displayList.sort((Event2Person person1, Event2Person person2) =>
       SortUtils.compare(person1.identifier?.netId, person2.identifier?.netId));

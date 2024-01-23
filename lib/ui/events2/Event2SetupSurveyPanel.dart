@@ -31,6 +31,7 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
+import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/ui/widgets/survey.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -105,6 +106,8 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
   @override
   Widget build(BuildContext context) {
+    // TBD: Replace with PopScope
+    // ignore: deprecated_member_use
     return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBarBack), child: Platform.isIOS ?
       BackGestureDetector(onBack: _onHeaderBarBack, child:
         _buildScaffoldContent(),
@@ -116,7 +119,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors?.background
+    backgroundColor: Styles().colors.background
   );
 
   Widget _buildPanelContent() {
@@ -139,7 +142,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(Localization().getStringEx('panel.event2.setup.survey.explanation.title', 'Choose a survey template to be sent to attendees of this event after it completes.'),
-              style: Styles().textStyles?.getTextStyle('widget.description.regular')),
+              style: Styles().textStyles.getTextStyle('widget.description.regular')),
           SizedBox(height: 16.0),
           _buildSurveysSection(),
           _buildHoursSection(),
@@ -153,7 +156,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     return Column(children: [
       Expanded(flex: 1, child: Container(),),
       SizedBox(width: 32, height: 32, child:
-        CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,),
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
       ),
       Expanded(flex: 2, child: Container(),),
     ],);
@@ -163,7 +166,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     return Column(children: [
       Expanded(flex: 1, child: Container(),),
       Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
-        Text(message ?? '', textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18)),
+        Text(message ?? '', textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 18)),
       ),
       Expanded(flex: 2, child: Container(),),
     ],);
@@ -201,10 +204,10 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
       DropdownButtonHideUnderline(child:
         DropdownButton<Survey?>(
-          icon: Styles().images?.getImage('chevron-down'),
+          icon: Styles().images.getImage('chevron-down'),
           isExpanded: true,
           value: _survey,
-          style: Styles().textStyles?.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+          style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
           hint: Text((_survey != null) ? (_survey?.displayTitle ?? '') : nullSurveyTitle),
           items: _buildSurveyDropDownItems(),
           onChanged: _onSurveyChanged
@@ -254,7 +257,11 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     Padding(padding: Event2CreatePanel.sectionPadding, child:
       Row(children: [
         Flexible(flex: 3, child:
-          Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.survey.hours.title', 'How many hours after the event ends before sending this survey to attendees?'), maxLines: null)
+          Row( crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded( child:
+              Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.survey.hours.title', 'How many hours after the event ends before sending this survey to attendees?'), required: true)
+            )
+          ]),
         ),
         Flexible(flex: 1, child:
           Padding(padding: EdgeInsets.only(left: 6), child:
@@ -270,11 +277,34 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   Widget _buildSurveyPreviewSection() => Visibility(visible: _survey != null, child:
     Column(crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(Localization().getStringEx('panel.event2.setup.survey.preview.title', 'Survey Preview'), style: Styles().textStyles?.getTextStyle('widget.title.large.fat')),
-        SurveyWidget(survey: _displaySurvey, controller: _surveyController, summarizeResultRules: true),
+        Padding(padding: EdgeInsets.only(bottom: 16), child: Container(height: 1, color: Styles().colors.fillColorPrimaryTransparent015,),),
+        Text(Localization().getStringEx('panel.event2.setup.survey.preview.title', 'Survey Preview'), style: Styles().textStyles.getTextStyle('widget.title.large.fat')),
+        Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.survey.preview.subtitle', 'Optional: Try out the survey by filling out the sample below.')),
+        ),
+        SurveyWidget(survey: _displaySurvey, controller: _surveyController, summarizeResultRules: true, summarizeResultRulesWidget: _buildPreviewContinueWidget()),
       ],
     )
   );
+
+  Widget _buildPreviewContinueWidget() {
+    return PopupMessage(
+      title: "Sample Follow-Up Survey",
+      messageWidget: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 24, bottom: 8),
+        child: Text(
+          Localization().getStringEx('panel.event2.setup.survey.preview.continue.message',
+            'Thank you for testing your event follow-up survey. At this point, the survey would be submitted, and the results would be available to view under the event admin settings.'),
+          style: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),
+        )
+      ),
+      buttonTitle: Localization().getStringEx("dialog.ok.title", "OK"),
+      onTapButton: (context) {
+        Navigator.pop(context);
+      },
+    );
+  }
 
   // HeaderBar
 
@@ -320,7 +350,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
     // set calendarEventId in survey if it is missing
     if (survey != null && StringUtils.isEmpty(survey.calendarEventId)) {
-      survey.calendarEventId = widget.surveyParam.event?.id;
+      survey.calendarEventId = widget.surveyParam.survey?.calendarEventId ?? widget.surveyParam.event?.id;
     }
 
     return Event2SetupSurveyParam(
@@ -380,9 +410,9 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
             // a survey already exists and the template has been changed, so update the existing survey
             surveyUpdateResult = await Surveys().updateSurvey(surveyParam!.survey!) ?? false;
           }
-          if (surveyUpdateResult) {
-            survey = await Surveys().loadEvent2Survey(eventId);
-          }
+
+          // always load the survey to make sure we have the current version (other admins may be editing)
+          survey = await Surveys().loadEvent2Survey(eventId);
         }
 
         if (mounted) {
@@ -397,7 +427,12 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
             ));
           }
           else {
-            Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.setup.survey.update.failed.msg', 'Failed to update event survey.'));
+            Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.setup.survey.update.failed.msg', 'Failed to set event survey, but the number of hours setting has been saved. Remember that other event admins may have modified the survey.')).then((_) {
+              Navigator.of(context).pop(Event2SetupSurveyParam(
+                event: event,
+                survey: survey,
+              ));
+            });
           }
         }
       } else {

@@ -21,11 +21,13 @@ import 'dart:math';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
@@ -34,36 +36,110 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-class HomeEvent2FeedWidget extends StatefulWidget {
+abstract class HomeEvent2Widget extends StatefulWidget {
 
   final String? favoriteId;
   final StreamController<String>? updateController;
 
-  HomeEvent2FeedWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+  HomeEvent2Widget({super.key, this.favoriteId, this.updateController});
+
+  String get _title;
+
+  Widget _emptyContentWidget(BuildContext context);
+
+  //@override
+  //State<StatefulWidget> createState() => _HomeEvent2WidgetState();
+}
+
+class HomeEvent2FeedWidget extends HomeEvent2Widget {
+
+  HomeEvent2FeedWidget({super.key, super.favoriteId, super.updateController});
 
   static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home.event2_feed.label.header.title', 'Events Feed');
+  static String get title => Localization().getStringEx('widget.home.event2_feed.label.header.title', 'All Events');
 
-  State<HomeEvent2FeedWidget> createState() => _HomeEvent2FeedWidgetState();
+  @override
+  String get _title => title;
+
+  @override
+  Widget _emptyContentWidget(BuildContext context) => HomeMessageCard(
+    message: Localization().getStringEx('widget.home.event2_feed.text.empty.description', 'There are no events available.')
+  );
+
+  @override
+  State<StatefulWidget> createState() => _HomeEvent2WidgetState();
+}
+
+class HomeMyEvents2Widget extends HomeEvent2Widget {
+
+  static const String localScheme = 'local';
+  static const String localEventFeedHost = 'event2_feed';
+  static const String localUrlMacro = '{{local_url}}';
+
+  HomeMyEvents2Widget({super.key, super.favoriteId, super.updateController});
+
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: title,
+    );
+
+  static String get title => Localization().getStringEx('widget.home.my_events2.label.header.title', 'My Events');
+
+  @override
+  String get _title => title;
+
+  @override
+  Widget _emptyContentWidget(BuildContext context) => HomeMessageHtmlCard(
+    message: Localization().getStringEx("widget.home.my_events2.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Events Feed</b></a> for quick access here.")
+      .replaceAll(localUrlMacro, '$localScheme://$localEventFeedHost'),
+    linkColor: Styles().colors.eventColor,
+    onTapLink : (url) {
+      Uri? uri = (url != null) ? Uri.tryParse(url) : null;
+      if ((uri?.scheme == localScheme) && (uri?.host == localEventFeedHost)) {
+        Analytics().logSelect(target: 'Events Feed', source: runtimeType.toString());
+        Event2HomePanel.present(context);
+      }
+    },
+  );
+
+  @override
+  State<StatefulWidget> createState() => _HomeEvent2WidgetState(
+    timeFilter: Event2TimeFilter.upcoming, customStartTime: null, customEndTime: null,
+    types: LinkedHashSet<Event2TypeFilter>.from([Event2TypeFilter.favorite]),
+    attributes: <String, dynamic>{},
+    sortType: Event2SortType.dateTime,
+  );
 }
 
 enum _Staled { none, refresh, reload }
 
-class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements NotificationsListener {
+class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements NotificationsListener {
+  final Event2TimeFilter? timeFilter;
+  final TZDateTime? customStartTime;
+  final TZDateTime? customEndTime;
+
+  final LinkedHashSet<Event2TypeFilter>? types;
+  final Map<String, dynamic>? attributes;
+
+  final Event2SortType? sortType;
+
   List<Event2>? _events;
   bool? _lastPageLoadedAll;
   int? _totalEventsCount;
@@ -88,14 +164,21 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
   final double _pageSpacing = 16;
 
+  _HomeEvent2WidgetState({
+    this.timeFilter, this.customStartTime, this.customEndTime,
+    this.attributes, this.types, this.sortType
+  });
+
   @override
   void initState() {
 
     NotificationService().subscribe(this, [
+      Connectivity.notifyStatusChanged,
       AppLivecycle.notifyStateChanged,
       FlexUI.notifyChanged,
       Storage.notifySettingChanged,
       Events2.notifyChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
       Auth2.notifyLoginChanged,
     ]);
 
@@ -131,7 +214,7 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
     else if (name == FlexUI.notifyChanged) {
       _currentLocation = null;
       _updateLocationServicesStatus(() {
-        if (_needsContentUpdateOnLocationServicesStatusUpdate()) {
+        if (_needsContentUpdateOnLocationServicesStatusUpdate) {
           _reloadIfVisible();
         }
       });
@@ -141,8 +224,16 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
         _reloadIfVisible();
       }
     }
+    else if (name == Connectivity.notifyStatusChanged) {
+      _reloadIfVisible(); // or mark as needs refresh
+    }
     else if (name == Events2.notifyChanged) {
       _reloadIfVisible(); // or mark as needs refresh
+    }
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      if (_needsContentUpdateOnFavoritesChanged) {
+        _reloadIfVisible(); // or mark as needs refresh
+      }
     }
     else if (name == Auth2.notifyLoginChanged) {
       _reloadIfVisible(); // or mark as needs refresh
@@ -169,7 +260,7 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
   Widget build(BuildContext context) {
     return VisibilityDetector(key: _visibilityDetectorKey, onVisibilityChanged: _onVisibilityChanged, child:
       HomeSlantWidget(favoriteId: widget.favoriteId,
-        title: HomeEvent2FeedWidget.title,
+        title: widget._title,
         titleIconKey: 'events',
         child: _buildContent(),
       )
@@ -177,7 +268,13 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
   }
 
   Widget _buildContent() {
-    if (_loadingEvents || _loadingLocationServicesStatus) {
+    if (Connectivity().isOffline) {
+      return HomeMessageCard(
+        title: Localization().getStringEx("common.message.offline", "You appear to be offline"),
+        message: Localization().getStringEx("widget.home.event2_feed.text.offline.description", "Events are not available while offline."),
+      );
+    }
+    else if (_loadingEvents || _loadingLocationServicesStatus) {
       return HomeProgressWidget();
     }
     else if (_events == null) {
@@ -187,7 +284,7 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
       );
     }
     else if (_events?.length == 0) {
-      return HomeMessageCard(message: Localization().getStringEx('panel.events2.home.message.empty.description', 'There are no events matching the selected filters.'));
+      return widget._emptyContentWidget(context);
     }
     else {
       return _buildEventsContent();
@@ -281,12 +378,19 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
 
   void _onTapEvent2(Event2 event) {
     Analytics().logSelect(target: "Event: '${event.name}'", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, userLocation: _currentLocation,)));
+    if (event.hasGame) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game)));
+    } else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, userLocation: _currentLocation,)));
+    }
   }
 
   void _onTapViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Event2HomePanel.present(context);
+    Event2HomePanel.present(context,
+      timeFilter: timeFilter, customStartTime: customEndTime, customEndTime: customEndTime,
+      types: types, attributes: attributes, sortType: sortType,
+    );
   }
 
   // Visibility
@@ -335,29 +439,40 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
     }
   }
 
-  bool _needsContentUpdateOnLocationServicesStatusUpdate() {
+  bool get _needsContentUpdateOnLocationServicesStatusUpdate {
     bool locationNotAvailable = ((_locationServicesStatus == LocationServicesStatus.serviceDisabled) || ((_locationServicesStatus == LocationServicesStatus.permissionDenied)));
-    LinkedHashSet<Event2TypeFilter>? types = LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types));
-    Event2SortType? sortType = event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
-    return (locationNotAvailable && ((types?.contains(Event2TypeFilter.nearby) == true) || (sortType == Event2SortType.proximity)));
+    return (locationNotAvailable && ((_queryTypes?.contains(Event2TypeFilter.nearby) == true) || (_querySortType == Event2SortType.proximity)));
   }
+
+  bool get _needsContentUpdateOnFavoritesChanged =>
+      (_queryTypes?.contains(Event2TypeFilter.favorite) == true);
 
   // Event2 Query
 
   Future<Events2Query> _queryParam({int offset = 0, int limit = _eventsPageLength}) async {
-    Event2TimeFilter timeFilter = event2TimeFilterFromString(Storage().events2Time) ?? Event2TimeFilter.upcoming;
-    TZDateTime? customStartTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomStartTime));
-    TZDateTime? customEndTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime));
-    LinkedHashSet<Event2TypeFilter>? types = LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types));
-    Map<String, dynamic>? attributes = Storage().events2Attributes;
-    Event2SortType? sortType = event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
+    Event2TimeFilter queryTimeFilter;
+    TZDateTime? queryCustomStartTime, queryCustomEndTime;
+
+    if ((timeFilter != null) && (timeFilter != Event2TimeFilter.customRange) || ((customStartTime != null) && (customEndTime != null))) {
+      queryTimeFilter = timeFilter ?? Event2TimeFilter.upcoming;
+      queryCustomStartTime = (queryTimeFilter == Event2TimeFilter.customRange) ? customStartTime : null;
+      queryCustomEndTime = (queryTimeFilter == Event2TimeFilter.customRange) ? customEndTime : null;
+    }
+    else {
+      queryTimeFilter = event2TimeFilterFromString(Storage().events2Time) ?? Event2TimeFilter.upcoming;
+      queryCustomStartTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomStartTime));
+      queryCustomEndTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime));
+    }
+
+    LinkedHashSet<Event2TypeFilter>? queryTypes = _queryTypes;
+    Event2SortType? querySortType = _querySortType;
 
     bool locationNotAvailable = ((_locationServicesStatus == LocationServicesStatus.serviceDisabled) || ((_locationServicesStatus == LocationServicesStatus.permissionDenied)));
-    if ((types?.contains(Event2TypeFilter.nearby) == true) && locationNotAvailable) {
-      types?.remove(Event2TypeFilter.nearby);
+    if ((queryTypes?.contains(Event2TypeFilter.nearby) == true) && locationNotAvailable) {
+      queryTypes?.remove(Event2TypeFilter.nearby);
     }
-    if ((sortType == Event2SortType.proximity) && locationNotAvailable) {
-      sortType = Event2SortType.dateTime;
+    if ((querySortType == Event2SortType.proximity) && locationNotAvailable) {
+      querySortType = Event2SortType.dateTime;
     }
 
     if (((types?.contains(Event2TypeFilter.nearby) == true) || (sortType == Event2SortType.proximity)) && (_locationServicesStatus == LocationServicesStatus.permissionAllowed)) {
@@ -367,16 +482,25 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
     return Events2Query(
       offset: offset,
       limit: limit,
-      timeFilter: timeFilter,
-      customStartTimeUtc: customStartTime?.toUtc(),
-      customEndTimeUtc: customEndTime?.toUtc(),
-      types: types,
-      attributes: attributes,
-      sortType: sortType,
+      timeFilter: queryTimeFilter,
+      customStartTimeUtc: queryCustomStartTime?.toUtc(),
+      customEndTimeUtc: queryCustomEndTime?.toUtc(),
+      types: queryTypes,
+      attributes: _queryAttributes,
+      sortType: querySortType,
       sortOrder: Event2SortOrder.ascending,
       location: _currentLocation,
     );
   }
+
+  LinkedHashSet<Event2TypeFilter>? get _queryTypes =>
+    types ?? LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types));
+
+  Map<String, dynamic>? get _queryAttributes =>
+    attributes ?? Storage().events2Attributes;
+
+  Event2SortType? get _querySortType =>
+    sortType ?? event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
 
   Future<void> _reloadIfVisible({ int limit = _eventsPageLength }) async {
     if (_visible) {
@@ -394,7 +518,7 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
         _extendingEvents = false;
       });
 
-      dynamic result = await Events2().loadEventsEx(await _queryParam(limit: limit));
+      dynamic result = Connectivity().isNotOffline ? await Events2().loadEventsEx(await _queryParam(limit: limit)) : null;
       Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
       List<Event2>? events = listResult?.events;
       String? errorTextResult = (result is String) ? result : null;
@@ -430,7 +554,7 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
       });
 
       int limit = max(_events?.length ?? 0, _eventsPageLength);
-      dynamic result = await Events2().loadEventsEx(await _queryParam(limit: limit));
+      dynamic result = Connectivity().isNotOffline ? await Events2().loadEventsEx(await _queryParam(limit: limit)) : null;
       Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
       List<Event2>? events = listResult?.events;
       int? totalCount = listResult?.totalCount;
@@ -458,7 +582,7 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
   }
 
   Future<void> _extend() async {
-    if (!_loadingEvents && !_refreshingEvents && !_extendingEvents) {
+    if (!_loadingEvents && !_refreshingEvents && !_extendingEvents && Connectivity().isNotOffline) {
       setStateIfMounted(() {
         _extendingEvents = true;
       });

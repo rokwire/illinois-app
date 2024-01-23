@@ -46,12 +46,12 @@ class ExploreViewTypeTab extends StatelessWidget {
         Expanded(child: Container(),),
         Container(
           //color: Colors.amber,
-          decoration: selected ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!,width: 2, style: BorderStyle.solid))) : null,
+          decoration: selected ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary,width: 2, style: BorderStyle.solid))) : null,
           child:Padding(padding: EdgeInsets.symmetric(vertical:3, horizontal: 5), child:Column(children: <Widget>[
             Row(children: <Widget>[
-              Styles().images?.getImage(iconKey, excludeFromSemantics: true) ?? Container(),
+              Styles().images.getImage(iconKey, excludeFromSemantics: true) ?? Container(),
               Container(width: 5,),
-              Text(label!, style: Styles().textStyles?.getTextStyle("widget.colourful_button.title.accent"), textScaleFactor:( MediaQuery.of(context).textScaleFactor> 2 ? MediaQuery.of(context).textScaleFactor - 0.8 : MediaQuery.of(context).textScaleFactor),)
+              Text(label!, style: Styles().textStyles.getTextStyle("widget.colourful_button.title.accent"), textScaler: MediaQuery.of(context).textScaler,)
             ]),
           ],)
         )),

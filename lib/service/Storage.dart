@@ -135,9 +135,6 @@ class Storage extends rokwire.Storage {
     setStringWithName(offsetDateKey, AppDateTime().formatDateTime(value, ignoreTimeZone: true));
   }
 
-  // Language
-  @override String get currentLanguageKey => 'current_language';
-
   // Recent Items - backward compatability
   static const String recentItemsKey  = '_recent_items_json_string';
   List<dynamic>? get recentItems => JsonUtils.decode(getStringWithName(recentItemsKey));
@@ -184,8 +181,12 @@ class Storage extends rokwire.Storage {
   set debugUseSampleAppointments(bool? value) => setBoolWithName(debugUseSampleAppointmentsKey, value);
 
   static const String debugUseIdentityBbKey  = 'debug_mobile_icard_use_identity_bb';
-  bool? get debugUseIdentityBb => getBoolWithName(debugUseIdentityBbKey);
+  bool? get debugUseIdentityBb => getBoolWithName(debugUseIdentityBbKey, defaultValue: true);
   set debugUseIdentityBb(bool? value) => setBoolWithName(debugUseIdentityBbKey, value);
+
+  static const String debugAutomaticCredentialsKey  = 'debug_mobile_icard_automatic_credentials';
+  bool? get debugAutomaticCredentials => getBoolWithName(debugAutomaticCredentialsKey);
+  set debugAutomaticCredentials(bool? value) => setBoolWithName(debugAutomaticCredentialsKey, value);
 
   // Firebase
 // static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_subscription_topis';
@@ -234,10 +235,9 @@ class Storage extends rokwire.Storage {
   set auth2CardTime(int? value) => setIntWithName(auth2CardTimeKey, value);
 
   // Calendar
-
-  @override String get calendarEventsTableKey => 'calendar_events_table';
-  @override String get calendarEnableSaveKey => 'calendar_enabled_to_save';
-  @override String get calendarEnablePromptKey => 'calendar_enabled_to_prompt';
+  String get calendarShouldPromptKey => 'calendar_enabled_to_prompt';
+  bool get calendarShouldPrompt => getBoolWithName(calendarShouldPromptKey, defaultValue: true) ?? true;
+  set calendarShouldPrompt(bool value) => setBoolWithName(calendarShouldPromptKey, value);
 
   // Checklist
   static const String _navPagesKey  = 'checklist_nav_pages';
@@ -414,6 +414,10 @@ class Storage extends rokwire.Storage {
   static const String mobileAccessOpenTypeKey = 'mobile_access_open_type';
   String? get mobileAccessOpenType => getStringWithName(mobileAccessOpenTypeKey);
   set mobileAccessOpenType(String? value) => setStringWithName(mobileAccessOpenTypeKey, value);
+
+  static const String mobileAccessDeleteTimeoutInMillisKey = 'mobile_access_delete_timeout_millis';
+  int? get mobileAccessDeleteTimeoutUtcInMillis => getIntWithName(mobileAccessDeleteTimeoutInMillisKey);
+  set mobileAccessDeleteTimeoutUtcInMillis(int? value) => setIntWithName(mobileAccessDeleteTimeoutInMillisKey, value);
 
   // Events2
   static const String events2AttributesKey = 'events2_attributes';

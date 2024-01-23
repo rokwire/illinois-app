@@ -2,8 +2,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/GestureDetector.dart';
@@ -46,6 +49,12 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
 
   bool _modified = false;
   bool _updatingRegistration = false;
+
+  //Guests dropdown
+  List<Event2Person> _displayList = <Event2Person>[];
+  String? _errorMessage;
+  bool _guestsSectionExpanded = false;
+  bool _loadingPeople = false;
   
   @override
   void initState() {
@@ -63,6 +72,30 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
       _registrantsController.addListener(_checkModified);
     }
 
+    String? eventId = widget.event?.id;
+    if (eventId != null) {
+      _loadingPeople = true;
+      Events2().loadEventPeopleEx(eventId).then((result) {
+        if (mounted) {
+          if (result is Event2PersonsResult) {
+            setState(() {
+              _loadingPeople = false;
+              _displayList = result.buildDisplayMap().buildDisplayList();
+            });
+          }
+          else {
+            setState(() {
+              _loadingPeople = false;
+              _errorMessage = StringUtils.isNotEmptyString(result) ? result : _internalErrorString;
+            });
+          }
+        }
+      });
+    }
+    else {
+      _errorMessage = _internalErrorString;
+    }
+
     super.initState();
   }
 
@@ -77,6 +110,8 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
 
   @override
   Widget build(BuildContext context) {
+    // TBD: Replace with PopScope
+    // ignore: deprecated_member_use
     return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBarBack), child: Platform.isIOS ?
       BackGestureDetector(onBack: _onHeaderBarBack, child:
         _buildScaffoldContent(),
@@ -88,7 +123,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors!.white,
+    backgroundColor: Styles().colors.white,
   );
 
   Widget _buildPanelContent() {
@@ -130,9 +165,9 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
               Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
                 DropdownButtonHideUnderline(child:
                   DropdownButton<Event2RegistrationType>(
-                    icon: Styles().images?.getImage('chevron-down'),
+                    icon: Styles().images.getImage('chevron-down'),
                     isExpanded: true,
-                    style: Styles().textStyles?.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                    style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
                     hint: Text(event2RegistrationToDisplayString(_registrationType)),
                     items: _buildRegistrationTypeDropDownItems(),
                     onChanged: _onRegistrationTypeChanged
@@ -189,7 +224,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   }
 
 
-  TextStyle? get _infoTextStype => Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
+  TextStyle? get _infoTextStype => Styles().textStyles.getTextStyle('widget.item.small.thin.italic');
 
 
   // Internal Details
@@ -199,6 +234,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
       Container(decoration: Event2CreatePanel.sectionSplitterDecoration, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
         Column(children: [
          _buildCapacitySection(),
+          _buildGuestListDropDownSection(),
          _buildRegistrantsSection(),
         ],),
       ),
@@ -224,10 +260,10 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   // Event Registrants
 
   Widget _buildRegistrantsSection() => Event2CreatePanel.buildSectionWidget(
-    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.registrants.label.title', 'NETIDS FOR ADDITIONAL REGISTRANTS')),
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.registrants.label.title', 'ADD NETID(S) TO THE GUEST LIST')),
     body: Event2CreatePanel.buildTextEditWidget(_registrantsController, keyboardType: TextInputType.text, maxLines: null,
-      semanticsLabel: Localization().getStringEx('panel.event2.setup.registration.link.field.label', 'NETIDS FOR ADDITIONAL REGISTRANTS FIELD'),
-      semanticsHint: Localization().getStringEx('panel.event2.setup.registration.registrants.label.hint', 'A space or comma separated list of Net IDs.')
+      semanticsLabel: Localization().getStringEx('panel.event2.setup.registration.link.field.label', 'ADD NETID(S) TO THE GUEST LIST FIELD'),
+      semanticsHint: Localization().getStringEx('panel.event2.setup.registration.registrants.label.hint', 'A space- or comma-separated list of NetIDs.')
     ),
     trailing: _buildRegistrantsHint(),
   );
@@ -235,7 +271,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   Widget _buildRegistrantsHint() => Padding(padding: EdgeInsets.only(top: 2), child:
     Row(children: [
       Expanded(child:
-        Text(Localization().getStringEx('panel.event2.setup.registration.registrants.label.hint', 'A space or comma separated list of Net IDs.'), style: _infoTextStype, semanticsLabel: "",),
+        Text(Localization().getStringEx('panel.event2.setup.registration.registrants.label.hint', 'A space- or comma-separated list of NetIDs.'), style: _infoTextStype, semanticsLabel: "",),
       )
     ],),
   );
@@ -382,6 +418,96 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     }
   }
 
+  //Guests list
+  bool get _hasError => (_errorMessage != null);
+  bool get _isAdmin => (widget.event?.userRole == Event2UserRole.admin);
+  String get _internalErrorString => Localization().getStringEx('logic.general.internal_error', 'Internal Error Occured');
+
+  Widget _buildGuestListDropDownSection() => _isEditing? Event2CreatePanel.buildDropdownSectionWidget(
+    heading: Event2CreatePanel.buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.detail.attendance.attendees.drop_down.hint', 'GUEST LIST'),
+      expanded: _guestsSectionExpanded,
+      onToggleExpanded: _onToggleGuestsListSection,
+    ),
+    body: _buildGuestsListSectionBody(),
+    bodyPadding: EdgeInsets.zero,
+    expanded: _guestsSectionExpanded,
+    trailing: _isAdmin ? _buildUploadGuestsDescription() : null,
+  ) : Container();
+
+  void _onToggleGuestsListSection() {
+    Analytics().logSelect(target: "Toggle Guests List");
+    setStateIfMounted(() {
+      _guestsSectionExpanded = !_guestsSectionExpanded;
+    });
+  }
+
+  Widget _buildGuestsListSectionBody() {
+    List<Widget> contentList = <Widget>[];
+    for (Event2Person displayPerson in _displayList) {
+      if(displayPerson.role != Event2UserRole.participant) //Show only participants
+        continue;
+
+      if (contentList.isNotEmpty) {
+        contentList.add(Divider(color: Styles().colors.dividerLineAccent, thickness: 1, height: 1,));
+      }
+      contentList.add(_GuestListItemWidget(displayPerson, enabled: true, highlighted: false,));
+    }
+    if (_loadingPeople) {
+      return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+        Center(child:
+          SizedBox(width: 24, height: 24, child:
+            CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,)
+          ),
+        ),
+      );
+    }
+    if (0 < contentList.length) {
+      return Column(mainAxisSize: MainAxisSize.max, children: contentList,);
+    }
+    else {
+      return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+      Row(children: [
+        Expanded(child:
+        Text(_hasError ?
+        Localization().getStringEx("panel.event2.setup.registration.guest.failed.text", "Failed to load guests list.") :
+        Localization().getStringEx("panel.event2.setup.registration.guest.empty.text", "There are no users registered for this event yet."),
+          textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.small.thin.italic'),),
+        )
+      ],)
+      );
+    }
+  }
+
+  Widget _buildUploadGuestsDescription() {
+    TextStyle? mainStyle = Styles().textStyles.getTextStyle('widget.item.small.thin.italic');
+    final Color defaultStyleColor = Colors.red;
+    final String? eventAttendanceUrl = Config().eventAttendanceUrl;
+    final String eventAttendanceUrlMacro = '{{event_attendance_url}}';
+    String contentHtml = Localization().getStringEx('panel.event2.detail.attendance.attendees.description',
+        "Visit <a href='{{event_attendance_url}}'>{{event_attendance_url}}</a> to upload or download a list.");
+    contentHtml = contentHtml.replaceAll(eventAttendanceUrlMacro, eventAttendanceUrl ?? '');
+    return Visibility(visible: StringUtils.isNotEmpty(eventAttendanceUrl), child:
+      Padding(padding: EdgeInsets.only(top: 12), child:
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Styles().images.getImage('info') ?? Container(),
+          Expanded(child:
+            Padding(padding: EdgeInsets.only(left: 6), child:
+              HtmlWidget(contentHtml, onTapUrl: _onTapHtmlLink, textStyle: mainStyle,
+                customStylesBuilder: (element) => (element.localName == "a") ? { "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor), "text-decoration-color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null,
+              )
+            ),
+          ),
+        ])
+      ),
+    );
+  }
+
+  bool _onTapHtmlLink(String? url) {
+    Analytics().logSelect(target: '($url)');
+    UrlUtils.launchExternal(url);
+    return true;
+  }
+
   void _onHeaderBarApply() {
     Analytics().logSelect(target: 'HeaderBar: Apply');
     _updateEventRegistrationDetails((_registrationType != Event2RegistrationType.none) ? _buildRegistrationDetails() : null);
@@ -390,5 +516,40 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   void _onHeaderBarBack() {
     Analytics().logSelect(target: 'HeaderBar: Back');
     Navigator.of(context).pop(_isCreating ? _buildRegistrationDetails() : null);
+  }
+}
+
+class _GuestListItemWidget extends StatelessWidget {
+  final Event2Person registrant;
+  final bool enabled;
+  final bool highlighted;
+
+  _GuestListItemWidget(this.registrant, { Key? key, required this.enabled, required this.highlighted}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [
+      Expanded(flex: 3, child:
+        Padding(padding: EdgeInsets.only(left: 16, top: 10, bottom: 10), child:
+          _nameWidget
+        )
+      ),
+      Expanded( flex: 2, child:
+        Padding( padding: EdgeInsets.only(right: 16, left: 6),
+          child: _typeWidget,
+        ))
+    ],);
+
+  }
+
+  Widget get _nameWidget {
+    String? registrantNetId = registrant.identifier?.netId;
+    String textStyleKey = (enabled ? (highlighted ? 'widget.label.regular.fat' : 'widget.card.title.small.fat') : 'widget.card.title.small.fat.variant3');
+    return Text(registrantNetId ?? '', style: Styles().textStyles.getTextStyle(textStyleKey));
+  }
+
+  Widget get _typeWidget {
+    String type = event2UserRegistrationToDisplayString(registrant.registrationType) ?? Localization().getStringEx('model.event2.registrant_type.unknown', 'Unknown');
+    return Text(type, style: Styles().textStyles.getTextStyle('widget.detail.light.regular'), textAlign: TextAlign.end,);
   }
 }

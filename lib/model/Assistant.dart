@@ -105,6 +105,41 @@ class Message {
       feedbackExplanation: null,
     );
   }
+
+  factory Message.fromJson(Map<String, dynamic> json) {
+    Map<String, dynamic>? answerJson = JsonUtils.mapValue(json['answer']);
+
+    List<String>? sources = JsonUtils.stringListValue(answerJson?['sources']);
+    if (sources == null) {
+      String? source = JsonUtils.stringValue(answerJson?['sources']);
+      if (source != null) {
+        sources = source.split((RegExp(r'[,\n]')));
+        sources = sources.map((e) => e.trim()).toList();
+      }
+    }
+
+    List<Link>? deeplinks = Link.listFromJson(answerJson?['deeplinks']);
+    String? deeplink = JsonUtils.stringValue(answerJson?['deeplink'])?.trim();
+    if (deeplink != null) {
+      if (deeplinks == null) {
+        deeplinks = [];
+      }
+      deeplinks.add(Link(name: deeplinkNameMap[deeplink] ?? deeplink.split('.|_').join(' '), link: deeplink));
+    }
+
+    return Message(
+      id: JsonUtils.stringValue(json['id'])?.trim() ?? '',
+      content: JsonUtils.stringValue(answerJson?['answer'])?.trim() ?? '',
+      user: JsonUtils.boolValue(answerJson?['user']) ?? false,
+      example: JsonUtils.boolValue(answerJson?['example']) ?? false,
+      queryLimit: JsonUtils.intValue(answerJson?['query_limit']),
+      acceptsFeedback: JsonUtils.boolValue(answerJson?['accepts_feedback']) ?? true,
+      links: deeplinks,
+      sources: sources ?? [],
+      feedback: null,
+      feedbackExplanation: null,
+    );
+  }
 }
 
 class Link {

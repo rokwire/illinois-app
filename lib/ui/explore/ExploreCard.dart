@@ -17,14 +17,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/ext/Game.dart';
 import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
@@ -32,7 +33,6 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/events2.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Sports.dart';
@@ -48,7 +48,6 @@ import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:timezone/timezone.dart';
 
 class ExploreCard extends StatefulWidget {
   final GestureTapCallback? onTap;
@@ -158,14 +157,14 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                     _buildConvergeButton(),
                     Visibility(visible: _showInterests(), child:
                       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                        Container(height: 1, color: Styles().colors!.surfaceAccent,),
+                        Container(height: 1, color: Styles().colors.surfaceAccent,),
                         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
                           Row(children: <Widget>[
                             Flexible(flex: 8, child:
                               Container(width: double.infinity, child:
                                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                                  Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'), style:Styles().textStyles?.getTextStyle('widget.card.detail.tiny.fat')),
-                                  Text(StringUtils.ensureNotEmpty(interestsLabelValue), style:Styles().textStyles?.getTextStyle("widget.explore.card.detail.small"))
+                                  Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'), style:Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat')),
+                                  Text(StringUtils.ensureNotEmpty(interestsLabelValue), style:Styles().textStyles.getTextStyle("widget.explore.card.detail.small"))
                                 ],),
                               ),
                             ),
@@ -249,10 +248,10 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       if (StringUtils.isNotEmpty(sportName)) {
         leftLabel += ' - $sportName';
       }
-      leftLabelStyle = Styles().textStyles?.getTextStyle('widget.description.small.fat.semi_expanded') ;
+      leftLabelStyle = Styles().textStyles.getTextStyle('widget.description.small.fat.semi_expanded') ;
     } else {
       leftLabel = widget.explore!.exploreTitle ?? "";
-      leftLabelStyle = Styles().textStyles?.getTextStyle('widget.explore.card.title.regular.extra_fat') ;
+      leftLabelStyle = Styles().textStyles.getTextStyle('widget.explore.card.title.regular.extra_fat') ;
     
     }
 
@@ -286,7 +285,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                     onTap: _onTapExploreCardStar,
                     child:Container(child: Padding(padding: EdgeInsets.only(
                       right: 16, top: 12, left: 24, bottom: 5),
-                      child: Styles().images?.getImage(isFavorite
+                      child: Styles().images.getImage(isFavorite
                           ? 'star-filled'
                           : 'star-outline-gray',
                         excludeFromSemantics: true,)
@@ -300,7 +299,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     return Padding(
         padding: EdgeInsets.only(bottom: 12, left: 16, right: 16),
         child: Text(StringUtils.ensureNotEmpty(widget.explore?.exploreTitle),
-            style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat')));
+            style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat')));
   }
 
   Widget _exploreDetails() {
@@ -345,13 +344,13 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       padding: _detailPadding,
       child: Row(
         children: <Widget>[
-          Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
+          Styles().images.getImage('calendar', excludeFromSemantics: true) ?? Container(),
           Padding(
             padding: _iconPadding,
           ),
           Flexible(child: Text(displayTime!, overflow: TextOverflow.ellipsis,
               maxLines: 1,
-              style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular') )
+              style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular') )
             ,)
         ],
       ),
@@ -393,10 +392,10 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
         InkWell(onTap: onLocationTap, child:
           Padding(padding: _detailPadding, child:
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Padding(padding: _iconPadding, child: Styles().images?.getImage('location', excludeFromSemantics: true)
+              Padding(padding: _iconPadding, child: Styles().images.getImage('location', excludeFromSemantics: true)
               ),
               Expanded(child:
-                Text(locationText, style: (onLocationTap != null) ? Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular.underline') : Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular')
+                Text(locationText, style: (onLocationTap != null) ? Styles().textStyles.getTextStyle('widget.explore.card.detail.regular.underline') : Styles().textStyles.getTextStyle('widget.explore.card.detail.regular')
                 )
               ),
             ],
@@ -416,12 +415,12 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Styles().images?.getImage("laptop", excludeFromSemantics: true) ?? Container(), //TBD update icon res
+              Styles().images.getImage("laptop", excludeFromSemantics: true) ?? Container(), //TBD update icon res
               Padding(
                 padding: _iconPadding,
               ),
               Expanded(child: Text(Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event") ,
-                  style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'))),
+                  style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular'))),
             ],
           ),
         ));
@@ -439,13 +438,13 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Styles().images?.getImage('time', excludeFromSemantics: true) ?? Container(),
+            Styles().images.getImage('time', excludeFromSemantics: true) ?? Container(),
             Padding(
               padding: _iconPadding,
             ),
             Expanded(
               child: Text(displayTime,
-                  style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular')),
+                  style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular')),
             ),
           ],
         ),
@@ -489,8 +488,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     if (explore is Event) {
       return explore.timeDisplayString;
     } else if (explore is Event2) {
-      TZDateTime? dateTimeUni = explore.startTimeUtc?.toUniOrLocal();
-      return (dateTimeUni != null) ? DateFormat('MMM d, ha').format(dateTimeUni) : null;
+      return explore.shortDisplayDateAndTime;
     } else if (explore is Game) {
       return explore.displayTime;
     } else if (explore is StudentCourse) {
@@ -505,7 +503,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       padding: EdgeInsets.symmetric(vertical: 0),
       child: Container(
         height: 1,
-        color: Styles().colors!.fillColorPrimaryTransparent015,
+        color: Styles().colors.fillColorPrimaryTransparent015,
       ),
     );
   }
@@ -597,7 +595,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     } else if (widget.explore is Event2) {
       return Events2().contentAttributes?.displaySelectedLabelsFromSelection((widget.explore as Event2).attributes, usage: ContentAttributeUsage.category).join(', ');
     } else if (widget.explore is Game) {
-      return 'Athletics';
+      return 'Big 10 Athletics';
     } else {
       return '';
     }
@@ -637,7 +635,7 @@ class _EventSmallCard extends StatelessWidget {
   _EventSmallCard({this.event, this.type, this.onTap});
 
   static double _getScaledCardHeight(BuildContext context){
-      return  (_cardHeight-_cardTitleHeight) + (_cardTitleHeight*MediaQuery.of(context).textScaleFactor);
+      return  (_cardHeight-_cardTitleHeight) + (MediaQuery.of(context).textScaler.scale(_cardTitleHeight));
   }
 
   @override
@@ -659,9 +657,9 @@ class _EventSmallCard extends StatelessWidget {
           width: _cardWidth,
           height: scaledHeight,
           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(
-              color: Styles().colors!.surfaceAccent!, width: borderWidth)),
+              color: Styles().colors.surfaceAccent, width: borderWidth)),
           child: Column(children: <Widget>[
-            Container(height: topBorderHeight, color: Styles().colors!.fillColorSecondary),
+            Container(height: topBorderHeight, color: Styles().colors.fillColorSecondary),
             Padding(padding: EdgeInsets.all(internalPadding),
               child: SizedBox(height: internalHeight, width: internalWidth, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 Expanded(child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -670,7 +668,7 @@ class _EventSmallCard extends StatelessWidget {
                   children: <Widget>[
                     Expanded(child: Text(_title!, overflow: TextOverflow.ellipsis,
                       maxLines: 2,
-                      style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat') ,),),
+                      style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat') ,),),
                     Visibility(
                       visible: starVisible, child: GestureDetector(
                         behavior: HitTestBehavior.opaque,
@@ -685,15 +683,15 @@ class _EventSmallCard extends StatelessWidget {
                                 'widget.card.button.favorite.on.hint', ''),
                             button: true,
                             excludeSemantics: true,
-                            child: Container(child: Padding(padding: EdgeInsets.only(left: 24, bottom: 5), child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)))
+                            child: Container(child: Padding(padding: EdgeInsets.only(left: 24, bottom: 5), child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)))
                         )),),
                     Visibility(visible: isMoreCardType, child: Padding(
-                      padding: EdgeInsets.only(left: 24, top: 4), child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true)))
+                      padding: EdgeInsets.only(left: 24, top: 4), child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true)))
                   ],),),
                 Visibility(visible: !isMoreCardType, child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
                   Padding(padding: EdgeInsets.only(right: 10),
-                    child: Styles().images?.getImage('time', excludeFromSemantics: true)),
-                  Expanded(child: Text(_subTitle ?? '', overflow: TextOverflow.ellipsis, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.large') ,),)
+                    child: Styles().images.getImage('time', excludeFromSemantics: true)),
+                  Expanded(child: Text(_subTitle ?? '', overflow: TextOverflow.ellipsis, maxLines: 1, style: Styles().textStyles.getTextStyle('widget.explore.card.detail.large') ,),)
                 ],),)
               ],),),),
           ],),)),);

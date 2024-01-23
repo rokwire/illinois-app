@@ -105,7 +105,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx('panel.mtd_stops.home.header_bar.title', 'Bus Stops'), leading: RootHeaderBarLeading.Back,),
       body: _buildPage(),
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -135,10 +135,10 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   Widget _buildContentTypeDropdownButton() {
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
       RibbonButton(
-        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
-        backgroundColor: Styles().colors?.white,
+        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+        backgroundColor: Styles().colors.white,
         borderRadius: BorderRadius.all(Radius.circular(5)),
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: _contentTypesDropdownExpanded ? 'chevron-up' : 'chevron-down',
         label: _getContentTypeName(_selectedContentType),
         onTap: _onTapContentTypeDropdownButton
@@ -158,15 +158,15 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   Widget _buildContentTypesDropdownList() {
     
     List<Widget> contentList = <Widget>[];
-    contentList.add(Container(color: Styles().colors?.fillColorSecondary, height: 2));
+    contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
     for (MTDStopsContentType contentType in MTDStopsContentType.values) {
       if ((_selectedContentType != contentType)) {
         contentList.add(_buildContentTypeDropdownItem(contentType));
       }
     }
     contentList.add(RibbonButton(
-      backgroundColor: Styles().colors?.white,
-      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+      backgroundColor: Styles().colors.white,
+      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       rightIconKey: null,
       label: Localization().getStringEx('panel.mtd_stops.home.dropdown.search.title', 'Search Bus Stops'),
       onTap: _onTapSearch
@@ -181,8 +181,8 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
 
   Widget _buildContentTypeDropdownItem(MTDStopsContentType contentType) {
     return RibbonButton(
-        backgroundColor: Styles().colors?.white,
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        backgroundColor: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentTypeName(contentType),
         onTap: () => _onTapContentTypeDropdownItem(contentType));
@@ -260,7 +260,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
 
   Widget _buildLoading() {
     return Align(alignment: Alignment.center, child:
-      CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3, ),
+      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3, ),
     );
   }
 
@@ -270,7 +270,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
         Row(children: [
           Expanded(child:
             Text(status ,style:
-              Styles().textStyles?.getTextStyle("widget.message.large"), textAlign: TextAlign.center,),
+              Styles().textStyles.getTextStyle("widget.message.large"), textAlign: TextAlign.center,),
           ),
         ],)
     );

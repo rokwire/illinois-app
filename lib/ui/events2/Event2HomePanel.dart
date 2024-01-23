@@ -14,6 +14,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
@@ -48,9 +49,14 @@ class Event2HomePanel extends StatefulWidget {
   final LinkedHashSet<Event2TypeFilter>? types;
   final Map<String, dynamic>? attributes;
 
+  final Event2SortType? sortType;
+
+  final Event2Selector? eventSelector;
+
   Event2HomePanel({Key? key,
     this.timeFilter, this.customStartTime, this.customEndTime,
-    this.types, this.attributes
+    this.types, this.attributes, this.sortType,
+    this.eventSelector
   }) : super(key: key);
 
   @override
@@ -58,9 +64,22 @@ class Event2HomePanel extends StatefulWidget {
 
   // Filters onboarding
 
-  static void present(BuildContext context) {
-    if (Storage().events2Attributes != null) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel()));
+  static void present(BuildContext context, {
+    Event2TimeFilter? timeFilter, TZDateTime? customStartTime, TZDateTime? customEndTime,
+    LinkedHashSet<Event2TypeFilter>? types, Map<String, dynamic>? attributes, Event2SortType? sortType,
+    Event2Selector? eventSelector
+  }) {
+    if ((timeFilter != null) || (attributes != null) || (types != null)) {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(
+        timeFilter: timeFilter ?? Event2TimeFilter.upcoming, customStartTime: customStartTime, customEndTime: customEndTime,
+        types: types ?? LinkedHashSet<Event2TypeFilter>(),
+        attributes: attributes ?? <String, dynamic>{},
+        sortType: sortType ?? Event2SortType.dateTime,
+        eventSelector: eventSelector,
+      )));
+    }
+    else if (Storage().events2Attributes != null) {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(eventSelector: eventSelector,)));
     }
     else {
       getLocationServicesStatus().then((LocationServicesStatus? status) {
@@ -68,12 +87,12 @@ class Event2HomePanel extends StatefulWidget {
           title: Localization().getStringEx('panel.events2.home.attributes.launch.header.title', 'Events'),
           bgImageKey: 'event-filters-background',
           descriptionBuilder: _buildOnboardingDescription,
-          sectionTitleTextStyle: Styles().textStyles?.getTextStyle('widget.title.tiny.highlight'),
-          sectionDescriptionTextStyle: Styles().textStyles?.getTextStyle('widget.item.small.thin.highlight'),
-          sectionRequiredMarkTextStyle: Styles().textStyles?.getTextStyle('widget.title.tiny.extra_fat.highlight'),
+          sectionTitleTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.highlight'),
+          sectionDescriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.small.thin.highlight'),
+          sectionRequiredMarkTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.extra_fat.highlight'),
           applyBuilder: _buildOnboardingApply,
           continueTitle: Localization().getStringEx('panel.events2.home.attributes.launch.continue.title', 'Set Up Later'),
-          continueTextStyle: Styles().textStyles?.getTextStyle('widget.button.title.medium.underline.highlight'),
+          continueTextStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.underline.highlight'),
           contentAttributes: buildContentAttributesV1(status: status),
           sortType: ContentAttributesSortType.native,
           filtersMode: true,
@@ -91,6 +110,7 @@ class Event2HomePanel extends StatefulWidget {
             Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(
               types: (typesList != null) ? LinkedHashSet<Event2TypeFilter>.from(typesList) : null,
               attributes: attributes,
+              eventSelector: eventSelector,
             )));
           }
         });
@@ -101,11 +121,11 @@ class Event2HomePanel extends StatefulWidget {
   static Widget _buildOnboardingDescription(BuildContext context) {
     String decriptionHtml = Localization().getStringEx("panel.events2.home.attributes.launch.header.description", "Customize your events feed by setting the below filters or <a href='{{events2_url}}'>view all events now<a> and choose your event filters later.").
       replaceAll('{{events2_url}}', url);
-    TextStyle? descriptionTextStyle = Styles().textStyles?.getTextStyle('widget.description.medium.fat.highlight'); // TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 18, color: Styles().colors!.white);
+    TextStyle? descriptionTextStyle = Styles().textStyles.getTextStyle('widget.description.medium.fat.highlight'); // TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.white);
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(mainAxisSize: MainAxisSize.min, children: [
         Padding(padding: EdgeInsets.only(top: 32), child:
-          Styles().images?.getImage('event-onboarding-header') ?? Container(),
+          Styles().images.getImage('event-onboarding-header') ?? Container(),
         ),
         Padding(padding: EdgeInsets.only(top: 24, bottom: 8), child:
           HtmlWidget("<div style=text-align:center>$decriptionHtml</div>",
@@ -119,6 +139,8 @@ class Event2HomePanel extends StatefulWidget {
   }
 
   static String url = "${DeepLink().appUrl}/events2";
+
+  static Map<String, dynamic> athleticsCategoryAttributes = {'category': 'Big 10 Athletics'};
 
   static Future<bool> _onTapLinkUrl(BuildContext context, String urlParam) async {
     if (urlParam == url) {
@@ -138,11 +160,11 @@ class Event2HomePanel extends StatefulWidget {
 
   static Widget _buildOnboardingApply(BuildContext context, bool enabled, void Function() onTap) {
     String applyTitle = Localization().getStringEx('panel.events2.home.attributes.launch.apply.title', 'Create My Events Feed');
-    TextStyle? applyTextStyle = Styles().textStyles?.getTextStyle(enabled ? 'widget.button.title.medium.fat' : 'widget.button.title.regular.variant3');
-    Color? borderColor = enabled ? Styles().colors?.fillColorSecondary : Styles().colors?.fillColorPrimaryVariant;
+    TextStyle? applyTextStyle = Styles().textStyles.getTextStyle(enabled ? 'widget.button.title.medium.fat' : 'widget.button.title.regular.variant3');
+    Color? borderColor = enabled ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimaryVariant;
     Decoration? applyDecoration = BoxDecoration(
-      color: Styles().colors!.white,
-      border: Border.all(color: borderColor ?? Colors.transparent, width: 1),
+      color: Styles().colors.white,
+      border: Border.all(color: borderColor, width: 1),
       borderRadius: BorderRadius.all(Radius.circular(16))
     );
     return InkWell(onTap: onTap, child:
@@ -191,7 +213,7 @@ class Event2HomePanel extends StatefulWidget {
     return ContentAttribute(
       id: eventTypeContentAttributeId,
       title: Localization().getStringEx('panel.events2.home.attributes.event_type.title', 'Event Type'),
-      emptyHint: Localization().getStringEx('panel.events2.home.attributes.event_type.hint.empty', 'Select an event type...'),
+      emptyHint: Localization().getStringEx('panel.events2.home.attributes.event_type.hint.empty', 'Select an event type'),
       semanticsHint: Localization().getStringEx('panel.events2.home.attributes.event_type.hint.semantics', 'Double type to show event options.'),
       widget: ContentAttributeWidget.dropdown,
       scope: <String>{ internalContentAttributesScope },
@@ -226,7 +248,7 @@ class Event2HomePanel extends StatefulWidget {
     return ContentAttribute(
       id: eventTimeContentAttributeId,
       title: Localization().getStringEx('panel.events2.home.attributes.event_time.title', 'Date & Time'),
-      emptyHint: Localization().getStringEx('panel.events2.home.attributes.event_time.hint.empty', 'Select an date & time...'),
+      emptyHint: Localization().getStringEx('panel.events2.home.attributes.event_time.hint.empty', 'Select an date & time'),
       semanticsHint: Localization().getStringEx('panel.events2.home.attributes.event_time.hint.semantics', 'Double type to show date & time options.'),
       widget: ContentAttributeWidget.dropdown,
       scope: <String>{ internalContentAttributesScope },
@@ -355,7 +377,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     _scrollController.addListener(_scrollListener);
 
     if ((widget.timeFilter != null) && ((widget.timeFilter != Event2TimeFilter.customRange) || ((widget.customStartTime != null) && (widget.customEndTime != null)))) {
-      _timeFilter = widget.timeFilter!;
+      _timeFilter = widget.timeFilter ?? Event2TimeFilter.upcoming;
       _customStartTime = (_timeFilter == Event2TimeFilter.customRange) ? widget.customStartTime : null;
       _customEndTime = (_timeFilter == Event2TimeFilter.customRange) ? widget.customEndTime : null;
     }
@@ -367,7 +389,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
     _types = widget.types ?? LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types)) ?? LinkedHashSet<Event2TypeFilter>();
     _attributes = widget.attributes ?? Storage().events2Attributes ?? <String, dynamic>{};
-    _sortType = event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
+    _sortType = widget.sortType ?? event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
 
     _initLocationServicesStatus().then((_) {
       _ensureCurrentLocation();
@@ -390,7 +412,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       _onAppLivecycleStateChanged(param);
     }
     else if (name == Auth2.notifyLoginChanged) {
-      setStateIfMounted(() { });
+      _refresh();
     }
     else if (name == FlexUI.notifyChanged) {
       _currentLocation = null;
@@ -427,7 +449,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx("panel.events2.home.header.title", "Events"), leading: RootHeaderBarLeading.Back,),
       body: _buildPanelContent(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -457,8 +479,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   }
 
   Decoration get _commandBarDecoration => BoxDecoration(
-    color: Styles().colors?.white,
-    border: Border.all(color: Styles().colors?.disabledTextColor ?? Color(0xFF717273), width: 1)
+    color: Styles().colors.white,
+    border: Border.all(color: Styles().colors.disabledTextColor, width: 1)
   );
 
   Widget _buildCommandButtons() {
@@ -478,22 +500,22 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         LinkButton(
           title: Localization().getStringEx('panel.events2.home.bar.button.map.title', 'Map'), 
           hint: Localization().getStringEx('panel.events2.home.bar.button.map.hint', 'Tap to view map'),
+          textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.underline'),
+          padding: EdgeInsets.only(left: 0, right: 8, top: 12, bottom: 12),
           onTap: _onMapView,
-          padding: EdgeInsets.only(left: 0, right: 8, top: 16, bottom: 16),
-          textStyle: Styles().textStyles?.getTextStyle('widget.button.title.regular.underline'),
         ),
         Visibility(visible: Auth2().account?.isCalendarAdmin ?? false, child:
           Event2ImageCommandButton('plus-circle',
             label: Localization().getStringEx('panel.events2.home.bar.button.create.title', 'Create'),
             hint: Localization().getStringEx('panel.events2.home.bar.button.create.hint', 'Tap to create event'),
-            contentPadding: EdgeInsets.only(left: 8, right: 8, top: 16, bottom: 16),
+            contentPadding: EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 12),
             onTap: _onCreate
           ),
         ),
         Event2ImageCommandButton('search',
           label: Localization().getStringEx('panel.events2.home.bar.button.search.title', 'Search'),
           hint: Localization().getStringEx('panel.events2.home.bar.button.search.hint', 'Tap to search events'),
-          contentPadding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
+          contentPadding: EdgeInsets.only(left: 8, right: 16, top: 12, bottom: 12),
           onTap: _onSearch
         ),
       ])),
@@ -527,8 +549,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
           value: sortType,
           child: Semantics(label: displaySortType, container: true, button: true,
             child: Text(displaySortType, overflow: TextOverflow.ellipsis, style: (_sortType == sortType) ?
-              Styles().textStyles?.getTextStyle("widget.message.regular.fat") :
-              Styles().textStyles?.getTextStyle("widget.message.regular"),
+              Styles().textStyles.getTextStyle("widget.message.regular.fat") :
+              Styles().textStyles.getTextStyle("widget.message.regular"),
               semanticsLabel: "",
         ))));
       }
@@ -542,9 +564,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       final Size sizeFull = (TextPainter(
           text: TextSpan(
             text: _sortDropdownItemTitle(sortType),
-            style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"),
+            style: Styles().textStyles.getTextStyle("widget.message.regular.fat"),
           ),
-          textScaleFactor: MediaQuery.of(context).textScaleFactor,
+          textScaler: MediaQuery.of(context).textScaler,
           textDirection: TextDirection.ltr,
         )..layout()).size;
       if (width < sizeFull.width) {
@@ -567,8 +589,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   Widget _buildContentDescription() {
     List<InlineSpan> descriptionList = <InlineSpan>[];
-    TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.title.tiny.fat");
-    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
+    TextStyle? boldStyle = Styles().textStyles.getTextStyle("widget.card.title.tiny.fat");
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
 
     String? timeDescription = (_timeFilter != Event2TimeFilter.customRange) ?
       event2TimeFilterToDisplayString(_timeFilter) :
@@ -647,8 +669,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   }
 
   Decoration get _contentDescriptionDecoration => BoxDecoration(
-    color: Styles().colors?.white,
-    border: Border(top: BorderSide(color: Styles().colors?.disabledTextColor ?? Color(0xFF717273), width: 1))
+    color: Styles().colors.white,
+    border: Border(top: BorderSide(color: Styles().colors.disabledTextColor, width: 1))
   );
 
   Widget _buildEventsContent() {
@@ -694,9 +716,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: _screenHeight / 6), child:
       Column(children: [
         (title != null) ? Padding(padding: EdgeInsets.only(bottom: 12), child:
-          Text(title, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
+          Text(title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat'),)
         ) : Container(),
-        Text(message, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
+        Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
       ],),
     );
 
@@ -705,7 +727,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     return Column(children: [
       Padding(padding: EdgeInsets.symmetric(vertical: screenHeight / 4), child:
         SizedBox(width: 32, height: 32, child:
-          CircularProgressIndicator(color: Styles().colors?.fillColorSecondary,)
+          CircularProgressIndicator(color: Styles().colors.fillColorSecondary,)
         )
       ),
       Container(height: screenHeight / 2,)
@@ -715,7 +737,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   Widget get _extendingIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
     Align(alignment: Alignment.center, child:
       SizedBox(width: 24, height: 24, child:
-        CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary),),),),);
+        CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),),),),);
 
   void _scrollListener() {
     if ((_scrollController.offset >= _scrollController.position.maxScrollExtent) && (_hasMoreEvents != false) && !_loadingEvents && !_extendingEvents) {
@@ -979,7 +1001,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   void _onSearch() {
     Analytics().logSelect(target: 'Search');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2SearchPanel(userLocation: _currentLocation,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2SearchPanel(searchContext: Event2SearchContext.List, locationServicesStatus: _locationServicesStatus, userLocation: _currentLocation, eventSelector: widget.eventSelector)));
   }
 
   void _onCreate() {
@@ -989,12 +1011,17 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   void _onMapView() {
     Analytics().logSelect(target: 'Map View');
-    NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapType.Events2);
+    NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapSearchEventsParam(''));
   }
 
   void _onEvent(Event2 event) {
     Analytics().logSelect(target: 'Event: ${event.name}');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, userLocation: _currentLocation,)));
+    if (event.hasGame) {
+      widget.eventSelector?.data.event = event;
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game, eventSelector: widget.eventSelector)));
+    } else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, userLocation: _currentLocation, eventSelector: widget.eventSelector,)));
+    }
   }
 }
 

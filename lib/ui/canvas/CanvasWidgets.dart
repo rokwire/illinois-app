@@ -31,7 +31,7 @@ class CanvasCourseCard extends StatefulWidget {
   State<CanvasCourseCard> createState() => _CanvasCourseCardState();
 
   static double height(BuildContext context, { bool isSmall = false }) =>
-    MediaQuery.of(context).textScaleFactor * (isSmall ? 130 : 86);
+    MediaQuery.of(context).textScaler.scale(isSmall ? 130 : 86);
 }
 
 class _CanvasCourseCardState extends State<CanvasCourseCard> {
@@ -62,7 +62,7 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
         height: cardHeight,
         decoration: BoxDecoration(
             borderRadius: (widget.isSmall ? BorderRadius.circular(borderRadiusValue) : null),
-            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))]),
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))]),
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Column(children: [
             Expanded(
@@ -75,7 +75,7 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
                             padding: EdgeInsets.symmetric(horizontal: cardInnerPadding),
                             child: Container(
                                 padding: EdgeInsets.symmetric(vertical: 2, horizontal: 6),
-                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Styles().colors!.white),
+                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Styles().colors.white),
                                 child: _buildGradeScoreWidget(courseColor: defaultColor))))))
           ]),
           Expanded(
@@ -83,7 +83,7 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
             Expanded(
                 child: Container(
                     decoration: BoxDecoration(
-                        color: Styles().colors!.white,
+                        color: Styles().colors.white,
                         borderRadius: (widget.isSmall ? BorderRadius.horizontal(right: Radius.circular(borderRadiusValue)) : null)),
                     child: Padding(
                         padding: EdgeInsets.all(cardInnerPadding),
@@ -92,7 +92,7 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
                               child: Text(StringUtils.ensureNotEmpty(widget.course.name),
                                   maxLines: (widget.isSmall ? 5 : 3),
                                   overflow: TextOverflow.ellipsis,
-                                  style: Styles().textStyles?.getTextStyle('widget.canvas.card.title.regular')))
+                                  style: Styles().textStyles.getTextStyle('widget.canvas.card.title.regular')))
                         ]))))
           ]))
         ]));
@@ -106,7 +106,7 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
           height: indicatorSize,
           child: Padding(padding: EdgeInsets.all(5), child: CircularProgressIndicator(strokeWidth: 1, color: courseColor)));
     } else {
-      return Text(_formattedGradeScore, style: Styles().textStyles?.getTextStyle('widget.canvas.card.grade.score')?.copyWith(color: courseColor));
+      return Text(_formattedGradeScore, style: Styles().textStyles.getTextStyle('widget.canvas.card.grade.score')?.copyWith(color: courseColor));
     }
   }
 

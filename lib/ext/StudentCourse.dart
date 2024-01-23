@@ -26,7 +26,7 @@ extension StudentCourseExt on StudentCourse {
     return result;
   }
   
-  Color? get uiColor => Styles().colors?.eventColor;
+  Color? get uiColor => Styles().colors.eventColor;
 }
 
 extension StudentCourseSectionExt on StudentCourseSection {

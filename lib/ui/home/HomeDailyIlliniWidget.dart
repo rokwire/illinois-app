@@ -136,7 +136,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
 
     if (_loadingItems == true) {
       widgetsList.add(
-          _DailyIlliniLoadingWidget(progressColor: Styles().colors!.white!, padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24)));
+          _DailyIlliniLoadingWidget(progressColor: Styles().colors.white, padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24)));
     }
 
     if (widgetsList.isEmpty) {
@@ -221,7 +221,7 @@ class _DailyIlliniListPanelState extends State<DailyIlliniListPanel> {
         body: RefreshIndicator(
             onRefresh: _onPullToRefresh,
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[Expanded(child: _buildContent())])),
-        backgroundColor: Styles().colors!.background);
+        backgroundColor: Styles().colors.background);
   }
 
   Widget _buildContent() {
@@ -231,7 +231,7 @@ class _DailyIlliniListPanelState extends State<DailyIlliniListPanel> {
               height: 32,
               width: 32,
               child: CircularProgressIndicator(
-                  strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary!))));
+                  strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary))));
     } else {
       if (CollectionUtils.isNotEmpty(_illiniItems)) {
         int itemsCount = _illiniItems!.length;
@@ -303,9 +303,9 @@ class _DailyIlliniItemWidget extends StatelessWidget {
             onTap: _onTap,
             child: Container(
                 decoration: BoxDecoration(
-                    color: Styles().colors!.white,
+                    color: Styles().colors.white,
                     boxShadow: [
-                      BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
+                      BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
                     ],
                     borderRadius: BorderRadius.all(Radius.circular(4))),
                 clipBehavior: Clip.hardEdge,
@@ -326,12 +326,12 @@ class _DailyIlliniItemWidget extends StatelessWidget {
                     Padding(
                         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
                         child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.center,
-                            style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat')))
+                            style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat')))
                   ]),
                   Padding(
                       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                       child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
-                          style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fa")))
+                          style: Styles().textStyles.getTextStyle("widget.info.small.medium_fa")))
                 ]))));
   }
 
@@ -349,7 +349,7 @@ class _DailyIlliniItemWidget extends StatelessWidget {
   }
 
   Widget _defaultPlaceholderImage() {
-    return Row(children: [Expanded(child: Styles().images?.getImage('news-placeholder', fit: BoxFit.fill) ?? Container())]);
+    return Row(children: [Expanded(child: Styles().images.getImage('news-placeholder', fit: BoxFit.fill) ?? Container())]);
   }
 
   Widget _buildNavigationButton({required String navigationDirection, required String semanticsLabel, void Function()? onTap}) {
@@ -365,7 +365,7 @@ class _DailyIlliniItemWidget extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 18),
                     child: Text(navigationDirection,
                         semanticsLabel: "",
-                        style: Styles().textStyles?.getTextStyle("widget.button.title.extra_large")
+                        style: Styles().textStyles.getTextStyle("widget.button.title.extra_large")
                     )))));
   }
 

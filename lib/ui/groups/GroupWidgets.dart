@@ -19,15 +19,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:illinois/ext/Event.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
-import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -41,10 +44,8 @@ import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
-import 'package:illinois/ui/groups/GroupEventDetailPanel.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
@@ -80,15 +81,15 @@ class GroupSectionTitle extends StatelessWidget {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Semantics(label: title, hint: description, header: true, excludeSemantics: true, child:
           RichText(text:
-            TextSpan(text: title, style: titleTextStyle ?? Styles().textStyles?.getTextStyle("widget.title.tiny"),
+            TextSpan(text: title, style: titleTextStyle ?? Styles().textStyles.getTextStyle("widget.title.tiny"),
               children: [
-                TextSpan(text: (requiredMark == true) ?  " *" : "", style: requiredMarkTextStyle ?? Styles().textStyles?.getTextStyle("widget.title.tiny.extra_fat"),
+                TextSpan(text: (requiredMark == true) ?  " *" : "", style: requiredMarkTextStyle ?? Styles().textStyles.getTextStyle("widget.title.tiny.extra_fat"),
               )
             ],),
           ),
         ),
         (description != null) ? Container(padding: EdgeInsets.only(top: 2), child:
-          Text(description ?? "", semanticsLabel: "", style:  descriptionTextStyle ?? Styles().textStyles?.getTextStyle("widget.item.small.thin"),),
+          Text(description ?? "", semanticsLabel: "", style:  descriptionTextStyle ?? Styles().textStyles.getTextStyle("widget.item.small.thin"),),
         ) : Container(),
       ],)
     );
@@ -143,15 +144,15 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton<T>>{
 
   @override
   Widget build(BuildContext context) {
-    TextStyle? valueStyle = Styles().textStyles?.getTextStyle("widget.group.dropdown_button.value");
-    TextStyle? hintStyle = Styles().textStyles?.getTextStyle("widget.group.dropdown_button.hint");
+    TextStyle? valueStyle = Styles().textStyles.getTextStyle("widget.group.dropdown_button.value");
+    TextStyle? hintStyle = Styles().textStyles.getTextStyle("widget.group.dropdown_button.hint");
 
     String? buttonTitle = _getButtonTitleText();
     String? buttonDescription = _getButtonDescriptionText();
     return Container (
       decoration: widget.decoration ?? BoxDecoration(
-        color: Styles().colors!.white,
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        color: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         borderRadius: BorderRadius.all(Radius.circular(4))
       ),
       padding: widget.padding,
@@ -159,18 +160,18 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton<T>>{
         Semantics(container: true, label: buttonTitle, hint: widget.buttonHint, excludeSemantics: true, child:
           Theme(data: ThemeData(
             /// This is as a workaround to make dropdown backcolor always white according to Miro & Zepplin wireframes
-            hoverColor: Styles().colors!.white,
-            focusColor: Styles().colors!.white,
-            canvasColor: Styles().colors!.white,
-            primaryColor: Styles().colors!.white,
-            /*accentColor: Styles().colors!.white,*/
-            highlightColor: Styles().colors!.white,
-            splashColor: Styles().colors!.white,),
+            hoverColor: Styles().colors.white,
+            focusColor: Styles().colors.white,
+            canvasColor: Styles().colors.white,
+            primaryColor: Styles().colors.white,
+            /*accentColor: Styles().colors.white,*/
+            highlightColor: Styles().colors.white,
+            splashColor: Styles().colors.white,),
             child: DropdownButton(
-              icon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true), //Image.asset('images/icon-down-orange.png', excludeFromSemantics: true),
+              icon: Styles().images.getImage('chevron-down', excludeFromSemantics: true), //Image.asset('images/icon-down-orange.png', excludeFromSemantics: true),
               isExpanded: true,
               itemHeight: null,
-              focusColor: Styles().colors!.white,
+              focusColor: Styles().colors.white,
               underline: Container(),
               hint: Text(buttonTitle ?? "", style: (widget.initialSelectedValue == null ? hintStyle : valueStyle)),
               items: _constructItems(),
@@ -182,7 +183,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton<T>>{
           Semantics(container: true, child:
             Container(padding: EdgeInsets.only(right: 42, bottom: 12), child:
               Text(buttonDescription ?? '', style:
-                Styles().textStyles?.getTextStyle("widget.group.dropdown_button.hint"),
+                Styles().textStyles.getTextStyle("widget.group.dropdown_button.hint"),
               ),
             )
           )
@@ -205,22 +206,22 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton<T>>{
           Flexible(child:
             Padding(padding: const EdgeInsets.only(right: 8), child:
               Text(title, overflow: TextOverflow.ellipsis, style:
-                isSelected ? Styles().textStyles?.getTextStyle("widget.group.dropdown_button.item.selected") :  Styles().textStyles?.getTextStyle("widget.group.dropdown_button.item.not_selected")
+                isSelected ? Styles().textStyles.getTextStyle("widget.group.dropdown_button.item.selected") :  Styles().textStyles.getTextStyle("widget.group.dropdown_button.item.not_selected")
               ),
             )
           ),
           
-          Styles().images?.getImage(imageAsset, excludeFromSemantics: true) ?? Container()
+          Styles().images.getImage(imageAsset, excludeFromSemantics: true) ?? Container()
         ]),
         Visibility(visible: description != null, child: 
           Container(padding: EdgeInsets.only(right: 30, top: 6),
             child: Text(description ?? '',
-              style: Styles().textStyles?.getTextStyle("widget.group.dropdown_button.hint")
+              style: Styles().textStyles.getTextStyle("widget.group.dropdown_button.hint")
             ),
           ),
         ),
         Container(height: 11),
-        Container(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,)
+        Container(height: 1, color: Styles().colors.fillColorPrimaryTransparent03,)
       ],)
     );
   }
@@ -308,13 +309,13 @@ class GroupMembershipAddButton extends StatelessWidget {
     return GestureDetector(onTap: onTap,
       child: Container(height: height,
         decoration: BoxDecoration(color: Colors.white,
-          border: Border.all(color: enabled ? Styles().colors!.fillColorSecondary! : Styles().colors!.surfaceAccent!, width: 2),
+          border: Border.all(color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent, width: 2),
           borderRadius: BorderRadius.circular(height / 2),
         ),
         child: Padding(padding: EdgeInsets.only(left:16, right: 8, ),
           child: Center(
             child: Row(children: <Widget>[
-              Text(title!, style:  enabled ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled") ),
+              Text(title!, style:  enabled ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled") ),
             ],)
           )
         ),
@@ -332,7 +333,7 @@ class HeaderBackButton extends StatelessWidget {
       button: true,
       excludeSemantics: true,
       child: IconButton(
-          icon: Styles().images?.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(),
+          icon: Styles().images.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(),
           onPressed: (){
             Analytics().logSelect(target: "Back");
             Navigator.pop(context);
@@ -351,7 +352,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: Styles().colors!.fillColorPrimary,
+      backgroundColor: Styles().colors.fillColorPrimary,
       child: StatefulBuilder(
           builder: (context, setStateEx){
             return Padding(
@@ -364,7 +365,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
                     child: Text(
                       message!,
                       textAlign: TextAlign.left,
-                      style: Styles().textStyles?.getTextStyle("widget.dialog.message.regular.extra_fat"),
+                      style: Styles().textStyles.getTextStyle("widget.dialog.message.regular.extra_fat"),
                     ),
                   ),
                   Row(
@@ -373,9 +374,9 @@ class GroupsConfirmationDialog extends StatelessWidget{
                       Expanded(child:
                         RoundedButton(
                           label: Localization().getStringEx('headerbar.back.title', "Back"),
-                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.thin"),
-                          borderColor: Styles().colors!.white,
-                          backgroundColor: Styles().colors!.white,
+                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.thin"),
+                          borderColor: Styles().colors.white,
+                          backgroundColor: Styles().colors.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                           onTap: (){
                             Analytics().logAlert(text: message, selection: "Back");
@@ -386,9 +387,9 @@ class GroupsConfirmationDialog extends StatelessWidget{
                       Expanded(child:
                         RoundedButton(
                           label: buttonTitle ?? '',
-                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-                          borderColor: Styles().colors!.fillColorSecondary,
-                          backgroundColor: Styles().colors!.white,
+                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                          borderColor: Styles().colors.fillColorSecondary,
+                          backgroundColor: Styles().colors.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                           onTap: (){
                             Analytics().logAlert(text: message, selection: buttonTitle);
@@ -409,7 +410,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
 //GroupEventCard
 
 class GroupEventCard extends StatefulWidget {
-  final Event? groupEvent;
+  final Event2? groupEvent;
   final Group? group;
 
   GroupEventCard({this.groupEvent, this.group});
@@ -421,14 +422,14 @@ class GroupEventCard extends StatefulWidget {
 class _GroupEventCardState extends State<GroupEventCard>{
   @override
   Widget build(BuildContext context) {
-    Event? event = widget.groupEvent;
+    Event2? event = widget.groupEvent;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Container(
         decoration: BoxDecoration(
-            color: Styles().colors!.white,
-            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+            color: Styles().colors.white,
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
             borderRadius: BorderRadius.all(Radius.circular(8))
         ),
         child: _EventContent(event: event, group: widget.group),
@@ -439,7 +440,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
 
 class _EventContent extends StatefulWidget {
   final Group? group;
-  final Event? event;
+  final Event2? event;
 
   _EventContent({this.event, this.group});
 
@@ -483,25 +484,28 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   Widget build(BuildContext context) {
 
     bool isFavorite = widget.event?.isFavorite ?? false;
-    String? imageUrl = widget.event?.eventImageUrl;
+    String? imageUrl = widget.event?.imageUrl;
 
     List<Widget> content = [
       Padding(padding: EdgeInsets.only(bottom: 8, right: 8), child:
         Container(constraints: BoxConstraints(minHeight: 64), child:
-          Text(widget.event?.title ?? '',  style:Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")),
+          Text(widget.event?.name ?? '',  style:Styles().textStyles.getTextStyle("widget.title.large.extra_fat")),
       )),
     ];
     content.add(Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
-      Padding(padding: EdgeInsets.only(right: 8), child: Styles().images?.getImage('calendar')),
+      Padding(padding: EdgeInsets.only(right: 8), child: Styles().images.getImage('calendar')),
       Expanded(child:
-      Text(widget.event?.timeDisplayString ?? '', style: Styles().textStyles?.getTextStyle("widget.card.detail.small"))
+      Text(widget.event?.shortDisplayDate ?? '', style: Styles().textStyles.getTextStyle("widget.card.detail.small"))
       ),
     ],)),);
 
     return Stack(children: <Widget>[
       InkWell(onTap: () {
           Analytics().logSelect(target: "Group Event");
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, group: widget.group, previewMode: widget.isAdmin,)));
+          // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, group: widget.group, previewMode: widget.isAdmin,)));
+          Navigator.push(context, CupertinoPageRoute(builder: (context) =>  widget.event?.hasGame == true?
+          AthleticsGameDetailPanel(game: widget.event?.game, eventSelector: widget.group != null ? GroupEventSelector(GroupEventData(group: widget.group, event: widget.event), showSelectionButton: false) : null) :
+          Event2DetailPanel(event: widget.event, eventSelector: widget.group != null ? GroupEventSelector(GroupEventData(group: widget.group, event: widget.event), showSelectionButton: false) : null)));
         },
         child: Padding(padding: EdgeInsets.only(left:16, right: 80, top: 16, bottom: 16), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: content),
@@ -524,7 +528,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                   excludeSemantics: true,
                   child: InkWell(onTap: _onFavoriteTap, child:
                     Container(width: 42, height: 42, alignment: Alignment.center, child:
-                      Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray'),
+                      Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray'),
                     ),
                 ))),
 
@@ -532,7 +536,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                 Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
                   InkWell(onTap: _onEventOptionsTap, child:
                     Container(width: 42, height: 42, alignment: Alignment.center, child:
-                      Styles().images?.getImage('more'),
+                      Styles().images.getImage('more'),
                     ),
                   ),
                 )
@@ -552,7 +556,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   }
 
   void _onFavoriteTap() {
-    Analytics().logSelect(target: "Favorite: ${widget.event?.title}");
+    Analytics().logSelect(target: "Favorite: ${widget.event?.name}");
     Auth2().prefs?.toggleFavorite(widget.event);
   }
 
@@ -603,38 +607,44 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   }
 
   void _onRemoveEvent(BuildContext context){
-    Groups().deleteEventFromGroup(event: widget.event!, groupId: widget.group!.id).then((value){
-      Navigator.of(context).pop();
+    Groups().deleteEventForGroupV3(eventId: widget.event?.id, groupId: widget.group?.id).then((bool value){
+      if (value) {
+        Navigator.of(context).pop();
+      }
+      else {
+        
+      }
     });
   }
 
   void _onEditEventTap(){
     Analytics().logSelect(target: "Update Event");
     Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: widget.group, editEvent: widget.event, onEditTap: (BuildContext context, Event event, List<Member>? selection) {
-      Groups().updateGroupEvents(event).then((String? id) {
-        if (StringUtils.isNotEmpty(id)) {
-          Groups().updateLinkedEventMembers(groupId: widget.group?.id,eventId: event.id, toMembers: selection).then((success){
-            if(success){
-              Navigator.pop(context);
-            } else {
-              AppAlert.showDialogResult(context, "Unable to update event members");
-            }
-          }).catchError((_){
-            AppAlert.showDialogResult(context, "Error Occurred while updating event members");
-          });
-        }
-        else {
-          AppAlert.showDialogResult(context, "Unable to update event");
-        }
-      }).catchError((_){
-        AppAlert.showDialogResult(context, "Error Occurred while updating event");
-      });
-    })));
+    // Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(event: widget.event, group: widget.group,  onEditTap: (BuildContext context, Event event, List<Member>? selection) {
+    //   Groups().updateGroupEvents(event).then((String? id) {
+    //     if (StringUtils.isNotEmpty(id)) {
+    //       Groups().updateLinkedEventMembers(groupId: widget.group?.id,eventId: event.id, toMembers: selection).then((success){
+    //         if(success){
+    //           Navigator.pop(context);
+    //         } else {
+    //           AppAlert.showDialogResult(context, "Unable to update event members");
+    //         }
+    //       }).catchError((_){
+    //         AppAlert.showDialogResult(context, "Error Occurred while updating event members");
+    //       });
+    //     }
+    //     else {
+    //       AppAlert.showDialogResult(context, "Unable to update event");
+    //     }
+    //   }).catchError((_){
+    //     AppAlert.showDialogResult(context, "Error Occurred while updating event");
+    //   });
+    // })));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(event: widget.event, eventSelector: GroupEventSelector(GroupEventData(group: widget.group, event: widget.event), showSelectionButton: false, padding: EdgeInsets.only(top: 16)))));
   }
 
   bool get _canEdit {
-    return widget.isAdmin && StringUtils.isNotEmpty(widget.event?.createdByGroupId);
+    return widget.isAdmin && widget.event?.canUserEdit == true; //StringUtils.isNotEmpty(widget.event?.createdByGroupId);
   }
 
   bool get _canDelete {
@@ -689,7 +699,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
           children: <Widget>[
             Container(
               decoration: BoxDecoration(
-                color: Styles().colors!.fillColorPrimary,
+                color: Styles().colors.fillColorPrimary,
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
               ),
               child: Row(
@@ -699,7 +709,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                     padding: EdgeInsets.only(left: 10, top: 10),
                     child: Text(
                       Localization().getStringEx("widget.add_image.heading", "Select Image"),
-                      style: Styles().textStyles?.getTextStyle("widget.dialog.message.large.thin")
+                      style: Styles().textStyles.getTextStyle("widget.dialog.message.large.thin")
                     ),
                   ),
                   Spacer(),
@@ -710,7 +720,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                       child: Text(
                         '\u00D7',
                         semanticsLabel: "Close Button", //TBD localization
-                        style: Styles().textStyles?.getTextStyle('widget.dialog.button.close'),
+                        style: Styles().textStyles.getTextStyle('widget.dialog.button.close'),
                       ),
                     ),
                   )
@@ -735,17 +745,17 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                           padding: EdgeInsets.all(10),
                           child: RoundedButton(
                               label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url"),
-                              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-                              borderColor: Styles().colors!.fillColorSecondary,
-                              backgroundColor: Styles().colors!.background,
+                              textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                              borderColor: Styles().colors.fillColorSecondary,
+                              backgroundColor: Styles().colors.background,
                               onTap: _onTapUseUrl)),
                       Padding(
                           padding: EdgeInsets.all(10),
                           child: RoundedButton(
                               label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from Device"),
-                              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-                              borderColor: Styles().colors!.fillColorSecondary,
-                              backgroundColor: Styles().colors!.background,
+                              textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                              borderColor: Styles().colors.fillColorSecondary,
+                              backgroundColor: Styles().colors.background,
                               progress: _showProgress,
                               onTap: _onTapChooseFromDevice)),
                     ]))
@@ -762,14 +772,14 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
     Analytics().logSelect(target: "Use Url");
     String url = _imageUrlController.value.text;
     if (url == "") {
-      AppToast.show(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url"));
+      AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url"));
       return;
     }
 
     bool isReadyUrl = url.endsWith(".webp");
     if (isReadyUrl) {
       //ready
-      AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
+      AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
       Navigator.pop(context, url);
     } else {
       //we need to process it
@@ -791,11 +801,11 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
           //do nothing
             break;
           case ImagesResultType.error:
-            AppToast.show(logicResult.errorMessage ?? ''); //TBD: localize error message
+            AppToast.showMessage(logicResult.errorMessage ?? ''); //TBD: localize error message
             break;
           case ImagesResultType.succeeded:
           //ready
-            AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
+            AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
             Navigator.pop(context, logicResult.data);
             break;
           default:
@@ -826,11 +836,11 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
         //do nothing
           break;
         case ImagesResultType.error:
-          AppToast.show(logicResult.errorMessage ?? ''); //TBD: localize error message
+          AppToast.showMessage(logicResult.errorMessage ?? ''); //TBD: localize error message
           break;
         case ImagesResultType.succeeded:
         //ready
-          AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
+          AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
           Navigator.pop(context, logicResult.data);
           break;
         default:
@@ -881,7 +891,7 @@ class _GroupCardState extends State<GroupCard> {
   Widget build(BuildContext context) {
     return GestureDetector(onTap: () => _onTapCard(context), child:
       Padding(padding: widget.margin, child:
-        Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
+        Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
           Stack(children: [
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               _buildHeading(),
@@ -912,7 +922,7 @@ class _GroupCardState extends State<GroupCard> {
               Positioned.fill(child:
                 Align(alignment: Alignment.center, child:
                   SizedBox(height: 24, width: 24, child:
-                    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+                    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
                   ),
                 ),
               ),
@@ -996,12 +1006,12 @@ class _GroupCardState extends State<GroupCard> {
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(color: color, borderRadius: BorderRadius.all(Radius.circular(2))),
         child: Text(text,
-          style: Styles().textStyles?.getTextStyle("widget.heading.small"))));
+          style: Styles().textStyles.getTextStyle("widget.heading.small"))));
   }
 
   Widget _buildHeadingWrapLabel(String text) {
     return _buildHeadingLabel(text.toUpperCase(),
-      color: Styles().colors?.fillColorSecondary,
+      color: Styles().colors.fillColorSecondary,
       semanticsLabel: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: '), [text.toLowerCase()])
     );
   }
@@ -1010,7 +1020,7 @@ class _GroupCardState extends State<GroupCard> {
     return Row(children: [
       Expanded(child:
         Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
-          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))
+          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))
         )
       )
     ]);
@@ -1024,7 +1034,7 @@ class _GroupCardState extends State<GroupCard> {
         Text(displayList?.join(', ') ?? '',
             overflow: TextOverflow.ellipsis,
             maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
-            style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat")
+            style: Styles().textStyles.getTextStyle("widget.card.title.small.fat")
         )
       )
     ]) : Container();
@@ -1061,11 +1071,11 @@ class _GroupCardState extends State<GroupCard> {
   Widget _buildProperty(String title, String value) {
     return Row(children: [
       Text(title, overflow: TextOverflow.ellipsis, maxLines: 1, style:
-        Styles().textStyles?.getTextStyle("widget.card.detail.small.fat")
+        Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
       ),
       Expanded(child:
         Text(value, maxLines: 1, style:
-          Styles().textStyles?.getTextStyle("widget.card.detail.small.regular")
+          Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
         ),
       ),
     ],);
@@ -1108,7 +1118,7 @@ class _GroupCardState extends State<GroupCard> {
           _timeUpdatedText,
           maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
           overflow: TextOverflow.ellipsis,
-          style: Styles().textStyles?.getTextStyle("widget.card.detail.small.regular")
+          style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
     ));
   }
 
@@ -1144,7 +1154,7 @@ class _GroupCardState extends State<GroupCard> {
     }
     return Visibility(visible: StringUtils.isNotEmpty(membersLabel), child:
       Text(membersLabel, style:
-        Styles().textStyles?.getTextStyle("widget.card.detail.small.regular")
+        Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
       ),
     );
   }
@@ -1162,7 +1172,7 @@ class _GroupCardState extends State<GroupCard> {
     Analytics().logSelect(target: "Group: ${widget.group?.title}");
     if (FlexUI().isAuthenticationAvailable) {
       if (Auth2().isOidcLoggedIn) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: widget.group)));
+        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(group: widget.group)));
       }
       else {
         setState(() { _bussy = true; });
@@ -1171,7 +1181,7 @@ class _GroupCardState extends State<GroupCard> {
           if (mounted) {
             setState(() { _bussy = null; });
             if (result == Auth2OidcAuthenticateResult.succeeded) {
-              Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: widget.group)));
+              Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(group: widget.group)));
             }
           }
         });
@@ -1186,12 +1196,12 @@ class _GroupCardState extends State<GroupCard> {
 
   Widget _buildPrivacyAlertWidget() {
     final String iconMacro = '{{privacy_level_icon}}';
-    String privacyMsg = Localization().getStringEx('panel.group_card.privacy_alert.msg', 'With your privacy level at $iconMacro , you can only view existing groups.');
+    String privacyMsg = Localization().getStringEx('panel.group_card.privacy_alert.msg', 'With your privacy level at $iconMacro , you can only view the list of groups.');
     int iconMacroPosition = privacyMsg.indexOf(iconMacro);
     String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
     String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
 
-    return RichText(text: TextSpan(style: Styles().textStyles?.getTextStyle('widget.description.small.fat'), children: [
+    return RichText(text: TextSpan(style: Styles().textStyles.getTextStyle('widget.description.small.fat'), children: [
       TextSpan(text: privacyMsgStart),
       WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelWidget()),
       TextSpan(text: privacyMsgEnd)
@@ -1200,9 +1210,9 @@ class _GroupCardState extends State<GroupCard> {
 
   Widget _buildPrivacyLevelWidget() {
     String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
-    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-        Text(privacyLevel, style: Styles().textStyles?.getTextStyle('widget.card.title.regular.extra_fat'))
+    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorSecondary, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+        Text(privacyLevel, style: Styles().textStyles.getTextStyle('widget.card.title.regular.extra_fat'))
       ),
     );
   }
@@ -1255,8 +1265,8 @@ class _GroupPostCardState extends State<GroupPostCard> {
           onTap: _onTapCard,
           child: Container(
               decoration: BoxDecoration(
-                  color: Styles().colors!.white,
-                  boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+                  color: Styles().colors.white,
+                  boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
                   borderRadius: BorderRadius.all(Radius.circular(8))),
               child: Padding(
                   padding: EdgeInsets.all(12),
@@ -1266,18 +1276,18 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           child: Text(StringUtils.ensureNotEmpty(widget.post!.subject),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
-                              style: Styles().textStyles?.getTextStyle('widget.card.title.regular.fat') )),
+                              style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat') )),
                       Visibility(
                           visible: isRepliesLabelVisible,
                           child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                             Padding(
                                 padding: EdgeInsets.only(left: 8),
                                 child: Text(StringUtils.ensureNotEmpty(visibleRepliesCount.toString()),
-                                    style: Styles().textStyles?.getTextStyle('widget.description.small'))),
+                                    style: Styles().textStyles.getTextStyle('widget.description.small'))),
                             Padding(
                                 padding: EdgeInsets.only(left: 8),
                                 child: Text(StringUtils.ensureNotEmpty(repliesLabel),
-                                    style: Styles().textStyles?.getTextStyle('widget.description.small')))
+                                    style: Styles().textStyles.getTextStyle('widget.description.small')))
                           ])),
                     ]),
                     Row(
@@ -1290,12 +1300,12 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             HtmlWidget(
                                 "<div style= text-overflow:ellipsis;max-lines:3> ${StringUtils.ensureNotEmpty(htmlBody)}</div>",
                                 onTapUrl : (url) {_onLinkTap(url); return true;},
-                                textStyle:  Styles().textStyles?.getTextStyle("widget.card.title.small")
+                                textStyle:  Styles().textStyles.getTextStyle("widget.card.title.small")
                             )
                             // Html(data: htmlBody, style: {
                             //   "body": Style(
-                            //       color: Styles().colors!.fillColorPrimary,
-                            //       fontFamily: Styles().fontFamilies!.regular,
+                            //       color: Styles().colors.fillColorPrimary,
+                            //       fontFamily: Styles().fontFamilies.regular,
                             //       fontSize: FontSize(16),
                             //       maxLines: 3,
                             //       textOverflow: TextOverflow.ellipsis,
@@ -1328,7 +1338,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                               padding: EdgeInsets.only(right: 6),
                               child:Text(StringUtils.ensureNotEmpty(memberName),
                                 textAlign: TextAlign.left,
-                                style: Styles().textStyles?.getTextStyle('widget.description.small')),
+                                style: Styles().textStyles.getTextStyle('widget.description.small')),
                           )),
                           Expanded(
                             flex: 2,
@@ -1337,7 +1347,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                               child: Text(StringUtils.ensureNotEmpty(widget.post?.displayDateTime),
                                 semanticsLabel: "Updated ${widget.post?.displayDateTime ?? ""} ago",
                                 textAlign: TextAlign.right,
-                                style: Styles().textStyles?.getTextStyle('widget.description.small'))),
+                                style: Styles().textStyles.getTextStyle('widget.description.small'))),
                           )),
                         ],
                       )
@@ -1416,10 +1426,10 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
     if (widget.reply?.isUpdated ?? false) {
       bodyText +=
           ' <span>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</span>';
-      // bodyText += ' <span style=color:${ColorUtils.toHex(Styles().colors!.disabledTextColor  ?? Colors.blue)}>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</span>';
+      // bodyText += ' <span style=color:${ColorUtils.toHex(Styles().colors.disabledTextColor  ?? Colors.blue)}>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</span>';
       // bodyText += ' <a>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</a>';
 
-      // ' <span style=color:${ColorUtils.toHex(Styles().colors!.textSurface ?? Colors.blue)}} >(${"VERY VERY VERY VERY VERY VERY VEry  long Span so we can check it's overflow styling"/*Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')*/})</span>';
+      // ' <span style=color:${ColorUtils.toHex(Styles().colors.textSurface ?? Colors.blue)}} >(${"VERY VERY VERY VERY VERY VERY VEry  long Span so we can check it's overflow styling"/*Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')*/})</span>';
           // ' <span>(${"VERY VERY VERY VERY VERY VEry long Span so we can check it's overflow styling"/*Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')*/})</span>';
     }
     return Semantics(container: true, button: true,
@@ -1427,8 +1437,8 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
         onTap: widget.onCardTap ?? _onTapCard,
          child:Container(
         decoration: BoxDecoration(
-            color: Styles().colors!.white,
-            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+            color: Styles().colors.white,
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
             borderRadius: BorderRadius.all(Radius.circular(8))),
         child: Padding(
             padding: EdgeInsets.all(12),
@@ -1436,7 +1446,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
               Row(children: [
                 Semantics( child:
                   Text(StringUtils.ensureNotEmpty(widget.reply?.member?.displayShortName),
-                    style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat")),
+                    style: Styles().textStyles.getTextStyle("widget.card.title.small.fat")),
                 ),
                 Expanded(child: Container()),
                 Visibility(
@@ -1459,7 +1469,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                         onTap: widget.onIconTap,
                         child: Padding(
                             padding: EdgeInsets.only(left: 10, top: 3),
-                            child: (StringUtils.isNotEmpty(widget.iconPath) ? Styles().images?.getImage(widget.iconPath!, excludeFromSemantics: true,) : Container())))))))
+                            child: (StringUtils.isNotEmpty(widget.iconPath) ? Styles().images.getImage(widget.iconPath!, excludeFromSemantics: true,) : Container())))))))
               ]),
               Row(
                 children: [
@@ -1473,24 +1483,24 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                               HtmlWidget(
                                   StringUtils.ensureNotEmpty(bodyText),
                                   onTapUrl : (url) {_onLinkTap(url); return true;},
-                                  textStyle:  Styles().textStyles?.getTextStyle("widget.card.title.small"),
-                                  customStylesBuilder: (element) => (element.localName == "span") ? {"color": ColorUtils.toHex(Styles().colors!.disabledTextColor ?? Colors.blue)}: null //Not able to use Transparent colour, it's not parsed correctly
-                                  // customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.blackTransparent018 ?? Colors.blue)} : null
+                                  textStyle:  Styles().textStyles.getTextStyle("widget.card.title.small"),
+                                  customStylesBuilder: (element) => (element.localName == "span") ? {"color": ColorUtils.toHex(Styles().colors.disabledTextColor)}: null //Not able to use Transparent colour, it's not parsed correctly
+                                  // customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.blackTransparent018 ?? Colors.blue)} : null
                               )
                               // Html(
                               //   data: bodyText,
                               //   style: {
                               //   "body": Style(
-                              //       color: Styles().colors!.fillColorPrimary,
-                              //       fontFamily: Styles().fontFamilies!.regular,
+                              //       color: Styles().colors.fillColorPrimary,
+                              //       fontFamily: Styles().fontFamilies.regular,
                               //       fontSize: FontSize(16),
                               //       maxLines: 3000,
                               //       textOverflow: TextOverflow.ellipsis,
                               //       margin: EdgeInsets.zero
                               //   ),
                               //   "span": Style(
-                              //       color: Styles().colors!.blackTransparent018,
-                              //       fontFamily: Styles().fontFamilies!.regular,
+                              //       color: Styles().colors.blackTransparent018,
+                              //       fontFamily: Styles().fontFamilies.regular,
                               //       fontSize: FontSize(16),
                               //       maxLines: 1,
                               //       textOverflow: TextOverflow.ellipsis)
@@ -1518,13 +1528,13 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                           child: Container(
                             child: Semantics(child: Text(StringUtils.ensureNotEmpty(widget.reply?.displayDateTime),
                                 semanticsLabel: "Updated ${widget.reply?.displayDateTime ?? ""} ago",
-                                style: Styles().textStyles?.getTextStyle('widget.description.small'))),)),
+                                style: Styles().textStyles.getTextStyle('widget.description.small'))),)),
                       Visibility(
                         visible: isRepliesLabelVisible,
                         child: Expanded(child: Container(
                           child: Semantics(child: Text("$visibleRepliesCount $repliesLabel",
                               textAlign: TextAlign.right,
-                              style: Styles().textStyles?.getTextStyle('widget.description.small_underline')
+                              style: Styles().textStyles.getTextStyle('widget.description.small_underline')
                         ))),
                       ))
                 ],),)
@@ -1578,12 +1588,12 @@ class GroupPostReaction extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Styles().images?.getImage(selected ? selectedIconKey : deselectedIconKey, excludeFromSemantics: true) ?? Container(),
+                  Styles().images.getImage(selected ? selectedIconKey : deselectedIconKey, excludeFromSemantics: true) ?? Container(),
                   Visibility(visible: accountIDs != null && accountIDs!.length > 0,
                       child: Padding(
                         padding: const EdgeInsets.only(left: 4.0),
                         child: Text(accountIDs?.length.toString() ?? '',
-                            style: Styles().textStyles?.getTextStyle("widget.button.title.small")),
+                            style: Styles().textStyles.getTextStyle("widget.button.title.small")),
                       ))
                 ])));
   }
@@ -1615,9 +1625,9 @@ class GroupPostReaction extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Styles().images?.getImage('thumbs-up-filled', size: 24, fit: BoxFit.fill, excludeFromSemantics: true) ?? Container(),
+            Styles().images.getImage('thumbs-up-filled', size: 24, fit: BoxFit.fill, excludeFromSemantics: true) ?? Container(),
             Container(width: 16),
-            Text(member.displayShortName, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
+            Text(member.displayShortName, style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
           ],
         ),
       ));
@@ -1625,7 +1635,7 @@ class GroupPostReaction extends StatelessWidget {
 
     showModalBottomSheet(
         context: context,
-        backgroundColor: Styles().colors!.white,
+        backgroundColor: Styles().colors.white,
         isScrollControlled: true,
         isDismissible: true,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),
@@ -1635,7 +1645,7 @@ class GroupPostReaction extends StatelessWidget {
             height: MediaQuery.of(context).size.height / 2,
             child: Column(
               children: [
-                Container(width: 60, height: 8, decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Styles().colors?.disabledTextColor)),
+                Container(width: 60, height: 8, decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Styles().colors.disabledTextColor)),
                 Container(height: 16),
                 Expanded(
                   child: ListView(
@@ -1714,17 +1724,17 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       IconButton(
-                        icon: Styles().images?.getImage('bold-dark', semanticLabel: 'Bold') ?? Container(),
+                        icon: Styles().images.getImage('bold-dark', semanticLabel: 'Bold') ?? Container(),
                         onPressed: _onTapBold),
                       Padding(
                           padding: EdgeInsets.only(left: 20),
                           child: IconButton(
-                              icon: Styles().images?.getImage('italic-dark', semanticLabel: 'Italic') ?? Container(),
+                              icon: Styles().images.getImage('italic-dark', semanticLabel: 'Italic') ?? Container(),
                               onPressed: _onTapItalic)),
                       Padding(
                           padding: EdgeInsets.only(left: 20),
                           child: IconButton(
-                              icon: Styles().images?.getImage('underline-dark', semanticLabel: 'Underline') ?? Container(),
+                              icon: Styles().images.getImage('underline-dark', semanticLabel: 'Underline') ?? Container(),
                               onPressed: _onTapUnderline)),
                       Padding(
                           padding: EdgeInsets.only(left: 20),
@@ -1735,7 +1745,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                                   Localization().getStringEx(
                                       'panel.group.detail.post.create.link.label',
                                       'Link'),
-                                  style: Styles().textStyles?.getTextStyle('widget.group.input_field.link')))))
+                                  style: Styles().textStyles.getTextStyle('widget.group.input_field.link')))))
                     ])),
             Padding(
                 padding: EdgeInsets.only(top: 8, bottom: 16),
@@ -1749,9 +1759,9 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                         hintText: _hint,
                         border: OutlineInputBorder(
                             borderSide: BorderSide(
-                                color: Styles().colors!.mediumGray!,
+                                color: Styles().colors.mediumGray,
                                 width: 0.0))),
-                    style: Styles().textStyles?.getTextStyle(''))),
+                    style: Styles().textStyles.getTextStyle(''))),
           ],
         )
     );
@@ -1851,14 +1861,14 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
               Localization().getStringEx(
                   'panel.group.detail.post.create.dialog.link.edit.header',
                   'Edit Link'),
-              style: Styles().textStyles?.getTextStyle('widget.group.input_field.heading')),
+              style: Styles().textStyles.getTextStyle('widget.group.input_field.heading')),
           Padding(
               padding: EdgeInsets.only(top: 16),
               child: Text(
                   Localization().getStringEx(
                       'panel.group.detail.post.create.dialog.link.text.label',
                       'Link Text:'),
-                  style: Styles().textStyles?.getTextStyle('widget.group.input_field.detail'))),
+                  style: Styles().textStyles.getTextStyle('widget.group.input_field.detail'))),
           Padding(
               padding: EdgeInsets.only(top: 6),
               child: TextField(
@@ -1867,15 +1877,15 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Styles().colors!.mediumGray!, width: 0.0))),
-                  style: Styles().textStyles?.getTextStyle('widget.input_field.text.regular'))),
+                              color: Styles().colors.mediumGray, width: 0.0))),
+                  style: Styles().textStyles.getTextStyle('widget.input_field.text.regular'))),
           Padding(
               padding: EdgeInsets.only(top: 16),
               child: Text(
                   Localization().getStringEx(
                       'panel.group.detail.post.create.dialog.link.url.label',
                       'Link URL:'),
-                  style: Styles().textStyles?.getTextStyle('widget.group.input_field.detail'))),
+                  style: Styles().textStyles.getTextStyle('widget.group.input_field.detail'))),
           Padding(
               padding: EdgeInsets.only(top: 6),
               child: TextField(
@@ -1884,8 +1894,8 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Styles().colors!.mediumGray!, width: 0.0))),
-                  style: Styles().textStyles?.getTextStyle('widget.input_field.text.regular')))
+                              color: Styles().colors.mediumGray, width: 0.0))),
+                  style: Styles().textStyles.getTextStyle('widget.input_field.text.regular')))
         ]);
   }
 }
@@ -1924,6 +1934,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
 
   @override
   Widget build(BuildContext context) {
+    String selectedMembers = selectedMembersText;
     return Container(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -1931,22 +1942,24 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
         children: [
           Row(
             children: [
-              Text("To: ", style: Styles().textStyles?.getTextStyle('widget.group.members.title'),),
+              Text("To: ", style: Styles().textStyles.getTextStyle('widget.group.members.title'),),
               Expanded(
                 child: _buildDropDown(),
               )
             ],
           ),
-          GestureDetector(
-            onTap: _onTapEdit,
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              child: Text(selectedMembersText, style: Styles().textStyles?.getTextStyle("widget.group.members.selected_entry"),),
-            )
+          Visibility(visible: selectedMembers.isNotEmpty, child: 
+            GestureDetector(
+              onTap: _onTapEdit,
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Text(selectedMembers, style: Styles().textStyles.getTextStyle("widget.group.members.selected_entry"),),
+              )
+            ),
           ),
           Visibility(
             visible: _showChangeButton,
-            child: RoundedButton(label: "Edit", onTap: _onTapEdit, textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat.secondary"),conentAlignment: MainAxisAlignment.start, contentWeight: 0.33, padding: EdgeInsets.all(3), maxBorderRadius: 5,)
+            child: RoundedButton(label: "Edit", onTap: _onTapEdit, textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.secondary"),conentAlignment: MainAxisAlignment.start, contentWeight: 0.33, padding: EdgeInsets.all(3), maxBorderRadius: 5,)
           )
         ],
       ),
@@ -1957,8 +1970,8 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
     return Container(
         height: 48,
         decoration: BoxDecoration(
-            color:  widget.enabled? Colors.white: Styles().colors!.background!,
-            border: Border.all(color: Styles().colors!.lightGray!, width: 1),
+            color:  widget.enabled? Colors.white: Styles().colors.background,
+            border: Border.all(color: Styles().colors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),
@@ -1969,16 +1982,16 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
                   child: DropdownButton2<GroupMemberSelectionData>(
                     isExpanded: true,
                     dropdownStyleData: DropdownStyleData(padding: EdgeInsets.zero,
-                      decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2, style: BorderStyle.solid),
+                      decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 2, style: BorderStyle.solid),
                           borderRadius: BorderRadius.only(bottomRight: Radius.circular(8), bottomLeft: Radius.circular(8))),
                     ),
                     iconStyleData: IconStyleData(icon: widget.enabled? Icon(Icons.arrow_drop_down): Container(),
-                        iconEnabledColor: Styles().colors?.fillColorSecondary),
-                    // buttonDecoration: widget.enabled? null : BoxDecoration(color: Styles().colors!.background),
-                    // style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),
+                        iconEnabledColor: Styles().colors.fillColorSecondary),
+                    // buttonDecoration: widget.enabled? null : BoxDecoration(color: Styles().colors.background),
+                    // style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies.bold),
                     // value: _currentSelection,
                     items: _buildDropDownItems,
-                    hint: Text(_selectionText,  style: Styles().textStyles?.getTextStyle('widget.group.members.title') ,),
+                    hint: Text(_selectionText,  style: Styles().textStyles.getTextStyle('widget.group.members.title') ,),
                     onChanged: widget.enabled? (GroupMemberSelectionData? data) {
                       _onDropDownItemChanged(data);
                     } : null,
@@ -1993,15 +2006,15 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
     items.add(DropdownMenuItem(alignment: AlignmentDirectional.topCenter,enabled: false, value: null,
         child:
           Container(
-            color: Styles().colors!.fillColorPrimary,
+            color: Styles().colors.fillColorPrimary,
             child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
               Expanded(child:
-                Container(color: Styles().colors!.fillColorPrimary,
+                Container(color: Styles().colors.fillColorPrimary,
                   padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                  child:Text("Select Recipient(s)", style:  Styles().textStyles?.getTextStyle('widget.group.members.dropdown.item'),))
+                  child:Text("Select Recipient(s)", style:  Styles().textStyles.getTextStyle('widget.group.members.dropdown.item'),))
           )
           ])))
     );
@@ -2028,7 +2041,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
           Expanded(
               child:Container(
                   padding: EdgeInsets.symmetric(horizontal: 5),
-                  child: Text(title, maxLines: 2, style: Styles().textStyles?.getTextStyle('widget.group.members.dropdown.item'))
+                  child: Text(title, maxLines: 2, style: Styles().textStyles.getTextStyle('widget.group.members.dropdown.item'))
               ))
         ]
     );
@@ -2042,7 +2055,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
           Expanded(
             child:Container(
               padding: EdgeInsets.symmetric(horizontal: 5),
-              child: Text(title, maxLines: 2, style: Styles().textStyles?.getTextStyle('widget.group.members.dropdown.item.selected') ,)
+              child: Text(title, maxLines: 2, style: Styles().textStyles.getTextStyle('widget.group.members.dropdown.item.selected') ,)
           ))
       ]
     );
@@ -2190,15 +2203,15 @@ class _ImageChooserState extends State<ImageChooserWidget>{
         constraints: BoxConstraints(
           maxHeight: (imageUrl!=null || !wrapContent)? _imageHeight : (double.infinity),
         ),
-        color: Styles().colors!.background,
+        color: Styles().colors.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           StringUtils.isNotEmpty(imageUrl)
               ? Positioned.fill(child: ModalImageHolder(child: Image.network(imageUrl!, semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover)))
               : Container(),
           Visibility( visible: showSlant,
-              child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53))),
+              child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53))),
           Visibility( visible: showSlant,
-              child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background), child: Container(height: 30))),
+              child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container(height: 30))),
           StringUtils.isEmpty(imageUrl) || explicitlyShowAddButton
               ? Container(
               child: Center(
@@ -2209,7 +2222,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
                       excludeSemantics: true,
                       child: RoundedButton(
                           label:StringUtils.isEmpty(imageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
-                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                           contentWeight: 0.8,
                           onTap: (){ _onTapAddImage();}
                       )))):
@@ -2318,29 +2331,29 @@ class _GroupPollCardState extends State<GroupPollCard> {
     }
 
     Widget cardBody = ((poll.status == PollStatus.opened) && (poll.settings?.hideResultsUntilClosed ?? false)) ?
-      Text(Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends."), style: Styles().textStyles?.getTextStyle('widget.card.detail.regular'),) :
+      Text(Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends."), style: Styles().textStyles.getTextStyle('widget.card.detail.regular'),) :
       Column(children: _buildCheckboxOptions(),);
 
     return Column(children: <Widget>[
       Container(
         decoration: BoxDecoration(
-          color: Styles().colors!.white,
+          color: Styles().colors.white,
           borderRadius: BorderRadius.all(Radius.circular(8)),
-          boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+          boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
         ),
         child: Padding(padding: EdgeInsets.only(left: 16, bottom: 16), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Row(children: <Widget>[
               Expanded(child:
                 Semantics(label:semanticsQuestionText, excludeSemantics: true, child:
-                  Text(wantsToKnow, style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny'))),
+                  Text(wantsToKnow, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'))),
               ),
-              Text(pin, style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny.fat')),
+              Text(pin, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat')),
               Visibility(visible: _GroupPollOptionsState._hasPollOptions(widget), child:
                 Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
                   GestureDetector(onTap: _onPollOptionsTap, child:
                     Padding(padding: EdgeInsets.all(10), child:
-                    Styles().images?.getImage('more'),
+                    Styles().images.getImage('more'),
                     ),
                   ),
                 ),
@@ -2349,7 +2362,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
             Padding(padding: EdgeInsets.only(right: 16), child:
               Column(children: [
                 Container(height: 12,),
-                Text(poll.title!, style: Styles().textStyles?.getTextStyle('widget.group.card.poll.title')),
+                Text(poll.title!, style: Styles().textStyles.getTextStyle('widget.group.card.poll.title')),
                 Container(height:12),
                 cardBody,
                 Container(height:25),
@@ -2357,10 +2370,10 @@ class _GroupPollCardState extends State<GroupPollCard> {
                   Padding(padding: EdgeInsets.only(bottom: 12), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        Text(pollVotesStatus, style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny'),),
+                        Text(pollVotesStatus, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'),),
                       ),
                       Expanded(child:
-                        Text(pollStatus ?? "", textAlign: TextAlign.right, style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny.fat'),))
+                        Text(pollStatus ?? "", textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat'),))
                     ],),
                   ),
                 ),
@@ -2420,20 +2433,20 @@ class _GroupPollCardState extends State<GroupPollCard> {
           child:
           Semantics(label: semanticsText, excludeSemantics: true, child:
           Row(children: <Widget>[
-            Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage(checkboxImage)),
+            Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage(checkboxImage)),
             Expanded(
                 flex: 5,
                 key: progressKey, child:
             Stack(alignment: Alignment.centerLeft, children: <Widget>[
-              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors!.white, progressColor: useCustomColor ?Styles().colors!.fillColorPrimary:Styles().colors!.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.white, progressColor: useCustomColor ?Styles().colors.fillColorPrimary:Styles().colors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
               Container(/*height: 15+ 16*MediaQuery.of(context).textScaleFactor,*/ child:
               Padding(padding: EdgeInsets.only(left: 5), child:
               Row(children: <Widget>[
                 Expanded( child:
                 Padding( padding: EdgeInsets.symmetric(horizontal: 5),
-                  child: Text(option, style: useCustomColor? Styles().textStyles?.getTextStyle('widget.group.card.poll.option_variant')  : Styles().textStyles?.getTextStyle('widget.group.card.poll.option')),)),
+                  child: Text(option, style: useCustomColor? Styles().textStyles.getTextStyle('widget.group.card.poll.option_variant')  : Styles().textStyles.getTextStyle('widget.group.card.poll.option')),)),
                 Visibility( visible: didVote,
-                    child:Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('check-circle-outline-gray'))
+                    child:Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage('check-circle-outline-gray'))
                 ),
               ],),)
               ),
@@ -2441,7 +2454,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
             ),
             Expanded(
               flex: 5,
-              child: Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign: TextAlign.right,style: Styles().textStyles?.getTextStyle('widget.group.card.poll.votes'),),),
+              child: Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign: TextAlign.right,style: Styles().textStyles.getTextStyle('widget.group.card.poll.votes'),),),
             )
           ],)
           ))));
@@ -2462,21 +2475,21 @@ class _GroupPollCardState extends State<GroupPollCard> {
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 5,horizontal: 16),
                   decoration: BoxDecoration(
-                    color: Styles().colors!.white,
+                    color: Styles().colors.white,
                     border: Border.all(
-                        color: enabled? Styles().colors!.fillColorSecondary! :Styles().colors!.surfaceAccent!,
+                        color: enabled? Styles().colors.fillColorSecondary :Styles().colors.surfaceAccent,
                         width: 2.0),
                     borderRadius: BorderRadius.circular(24.0),
                   ),
                   child: Center(
-                    child: Text(title, style: Styles().textStyles?.getTextStyle("widget.description.small"),),
+                    child: Text(title, style: Styles().textStyles.getTextStyle("widget.description.small"),),
                   ),
                 ),
                 Visibility(visible: loading,
                   child: Container(padding: EdgeInsets.symmetric(vertical: 5),
                     child: Align(alignment: Alignment.center,
                       child: SizedBox(height: 24, width: 24,
-                          child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
+                          child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), )
                       ),
                     ),
                   ),
@@ -2713,7 +2726,7 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> imple
     bool hasProfilePhoto = (_imageBytes != null);
     Widget? profileImage = hasProfilePhoto
         ? Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: (hasProfilePhoto ? BoxFit.cover : BoxFit.contain), image: Image.memory(_imageBytes!).image)))
-        : Styles().images?.getImage('profile-placeholder', excludeFromSemantics: true);
+        : Styles().images.getImage('profile-placeholder', excludeFromSemantics: true);
 
     return GestureDetector(
         onTap: widget.onTap ?? _onImageTap,
@@ -2722,7 +2735,7 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> imple
           Visibility(
               visible: _loading,
               child: SizedBox(
-                  width: 20, height: 20, child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2)))
+                  width: 20, height: 20, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2)))
         ]));
   }
 
@@ -2796,26 +2809,26 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
     Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
       Container(
           decoration: BoxDecoration(
-            color: Styles().colors!.fillColorPrimary,
+            color: Styles().colors.fillColorPrimary,
             borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
           ),
           child: Row(children: <Widget>[
             Opacity(opacity: 0, child:
               Padding(padding: EdgeInsets.all(8), child:
-                Styles().images?.getImage('close-circle-white', excludeFromSemantics: true)
+                Styles().images.getImage('close-circle-white', excludeFromSemantics: true)
               )
             ),
             Expanded(child:
               Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
                 Text(Localization().getStringEx("widget.groups.selection.heading", "Select Group"), textAlign: TextAlign.center,
-                    style: Styles().textStyles?.getTextStyle("widget.dialog.message.large.thin")
+                    style: Styles().textStyles.getTextStyle("widget.dialog.message.large.thin")
                 )
               )
             ),
             Semantics(button: true, label: Localization().getStringEx("dialog.close.title","Close"), child:
               InkWell(onTap: _onTapClose, child:
                 Padding(padding: EdgeInsets.only(top: 8, bottom: 8, left: 4, right: 12), child:
-                  Styles().images?.getImage('close-circle-white', excludeFromSemantics: true)
+                  Styles().images.getImage('close-circle-white', excludeFromSemantics: true)
                 )
               )
             )
@@ -2840,7 +2853,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
                           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                           color: Colors.white,
                           child: Text( 'Select All', //TBD localize
-                            style:  Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.underline")),
+                            style:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat.underline")),
                       )
                     )
                   ),
@@ -2856,7 +2869,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
                           color: Colors.white,
                           child:Text('Deselect All', //TBD localize
                             textAlign: TextAlign.left,
-                            style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.underline"))),
+                            style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.underline"))),
 
                       ))
                     ],
@@ -2870,17 +2883,17 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
                   Expanded(
                   child: RoundedButton(
                       label: Localization().getStringEx("widget.groups.selection.button.send.label", "Send"),//TBD localize
-                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-                      borderColor: Styles().colors!.fillColorSecondary,
-                      backgroundColor: Styles().colors!.white,
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                      borderColor: Styles().colors.fillColorSecondary,
+                      backgroundColor: Styles().colors.white,
                       onTap: _onTapSelect
                   )),
                   Container(width: 16,),
                   Expanded(child:RoundedButton(
                       label: Localization().getStringEx("widget.groups.selection.button.cancel.label", "Cancel"),//TBD localize
-                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-                      borderColor: Styles().colors!.fillColorPrimary,
-                      backgroundColor: Styles().colors!.white,
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                      borderColor: Styles().colors.fillColorPrimary,
+                      backgroundColor: Styles().colors.white,
                       onTap: _onTapClose
                   ))
                 ],
@@ -2904,7 +2917,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
     groupWidgetList.add(Container(
       padding: EdgeInsets.only(top:10), //TBD localize
       child: Text(Localization().getStringEx("widget.groups.selection.message", "Also send this post to these selected groups:"), textAlign: TextAlign.center,
-          style: Styles().textStyles?.getTextStyle("widget.message.regular.fat")),
+          style: Styles().textStyles.getTextStyle("widget.message.regular.fat")),
     ),);
 
     for (Group group in widget.groups!) {
@@ -2914,7 +2927,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
             label: group.title,
             toggled: _selectedGroupIds.contains(group.id),
             onTap: () => _onTapGroup(group.id!),
-            textStyle:  Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
+            textStyle:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat")
         ));
       }
 
@@ -2998,7 +3011,7 @@ class EnabledToggleButton extends ToggleRibbonButton {
   bool get toggled => (enabled == true) && super.toggled;
 
   @override
-  Widget? get rightIconImage => Styles().images?.getImage(toggled ? 'toggle-on' : 'toggle-off');  //Workaround for blurry images
+  Widget? get rightIconImage => Styles().images.getImage(toggled ? 'toggle-on' : 'toggle-off');  //Workaround for blurry images
 }
 
 class GroupMemberSettingsLayout extends StatelessWidget{
@@ -3028,7 +3041,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
     preferenceWidgets.add(
         Container(
           padding: EdgeInsets.all(1),
-          decoration:  BoxDecoration(color: Styles().colors?.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
+          decoration:  BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
           child: Column(
             children: [
               EnabledToggleButton(
@@ -3040,12 +3053,12 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                       changeSetting: (){ settings?.memberInfoPreferences?.allowMemberInfo =  !(settings?.memberInfoPreferences?.allowMemberInfo ?? true);}
                   );},
                   textStyle: isGroupInfoAllowed
-                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled")
-                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled")),
+                      ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled")
+                      : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled")),
               Row(children: [
                 Expanded(
                     child: Container(
-                        color: Styles().colors!.white,
+                        color: Styles().colors.white,
                         child: Padding(
                             padding: EdgeInsets.only(left: 10),
                             child: Column(children: [
@@ -3058,8 +3071,8 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                       changeSetting: (){if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberNetId = !(settings?.memberInfoPreferences?.viewMemberNetId ?? false);}}
                                   );},
                                   textStyle: isGroupInfoAllowed
-                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                                      ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                              //Hide View Name. We will always want to show the name, so just keep it as true and just hide it so it cannot be changed.
                               /*EnabledToggleButton(
                                   enabled: isGroupInfoAllowed,
@@ -3071,8 +3084,8 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                         changeSetting: (){ if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberName =  !(settings?.memberInfoPreferences?.viewMemberName ?? false);}}
                                     );},
                                   textStyle: isGroupInfoAllowed
-                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),*/
+                                      ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),*/
                               EnabledToggleButton(
                                   enabled: isGroupInfoAllowed,
                                   borderRadius: BorderRadius.zero,
@@ -3082,8 +3095,8 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                       changeSetting: (){  if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberEmail =  !(settings?.memberInfoPreferences?.viewMemberEmail ?? false);}}
                                   );},
                                   textStyle: isGroupInfoAllowed
-                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                                      ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                               //Hide Phone for now
                               // EnabledToggleButton(
                               //     enabled: isGroupInfoAllowed,
@@ -3094,8 +3107,8 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                               //         changeSetting: (){ if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberPhone =  !(settings?.memberInfoPreferences?.viewMemberPhone ?? false);}}
                               //     );},
                               //     textStyle: isGroupInfoAllowed
-                              //         ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                              //         : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              //         ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                              //         : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                             ]))))
               ])
         ],
@@ -3106,7 +3119,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
     //Post
     preferenceWidgets.add(Container(
         padding: EdgeInsets.all(1),
-        decoration:  BoxDecoration(color: Styles().colors?.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
+        decoration:  BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
         child: Column(
             children: [
               EnabledToggleButton(
@@ -3118,12 +3131,12 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                       changeSetting: (){settings?.memberPostPreferences?.allowSendPost =  !(settings?.memberPostPreferences?.allowSendPost ?? true);}
                   );},
                   textStyle: isGroupPostAllowed
-                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled")
-                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled")),
+                      ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled")
+                      : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled")),
               Row(children: [
                 Expanded(
                     child: Container(
-                        color: Styles().colors!.white,
+                        color: Styles().colors.white,
                         child: Padding(
                             padding: EdgeInsets.only(left: 10),
                             child: Column(children: [
@@ -3136,8 +3149,8 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                       changeSetting: (){ if(isGroupPostAllowed == true && isGroupInfoAllowed == true) {settings?.memberPostPreferences?.sendPostToSpecificMembers =  !(settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false);}}
                                   );},
                                   textStyle: (isGroupPostAllowed == true && isGroupInfoAllowed == true)
-                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                                      ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                               EnabledToggleButton(
                                   enabled: isGroupPostAllowed,
                                   borderRadius: BorderRadius.zero,
@@ -3147,8 +3160,8 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                       changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToAdmins =  !(settings?.memberPostPreferences?.sendPostToAdmins ?? false);}}
                                   );},
                                   textStyle: isGroupPostAllowed
-                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                                      ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                               EnabledToggleButton(
                                   enabled: isGroupPostAllowed,
                                   borderRadius: BorderRadius.zero,
@@ -3158,8 +3171,8 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                       changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToAll =  !(settings?.memberPostPreferences?.sendPostToAll ?? false);}}
                                   );},
                                   textStyle: isGroupPostAllowed
-                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                                      ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                               EnabledToggleButton(
                                   enabled: isGroupPostAllowed,
                                   borderRadius: BorderRadius.zero,
@@ -3169,8 +3182,8 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                       changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostReplies =  !(settings?.memberPostPreferences?.sendPostReplies ?? false);}}
                                   );},
                                   textStyle: isGroupPostAllowed
-                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                                      ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                               EnabledToggleButton(
                                   enabled: isGroupPostAllowed,
                                   borderRadius: BorderRadius.zero,
@@ -3180,8 +3193,8 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                       changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostReactions =  !(settings?.memberPostPreferences?.sendPostReactions ?? false);}}
                                   );},
                                   textStyle: isGroupPostAllowed
-                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                                      ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                             ]))))
                   ])
     ])));

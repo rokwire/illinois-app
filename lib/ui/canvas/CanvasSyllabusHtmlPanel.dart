@@ -52,7 +52,7 @@ class _CanvasSyllabusHtmlPanelState extends State<CanvasSyllabusHtmlPanel> {
         title: Localization().getStringEx('panel.syllabus_html.header.title', 'Syllabus'),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors!.white,
+      backgroundColor: Styles().colors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -75,7 +75,7 @@ class _CanvasSyllabusHtmlPanelState extends State<CanvasSyllabusHtmlPanel> {
   Widget _buildErrorContent() {
     return Center(
         child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.syllabus_html.load.failed.error.msg', 'Failed to load syllabus content. Please, try again later.'),
-            textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
+            textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildHtmlContent() {
@@ -85,10 +85,10 @@ class _CanvasSyllabusHtmlPanelState extends State<CanvasSyllabusHtmlPanel> {
             padding: EdgeInsets.all(16),
             child: Html(data: _syllabusBody, onLinkTap: (url, context, element) => _onTapLink(url), style: {
               "body": Style(
-                  color: Styles().colors!.fillColorPrimary,
-                  fontFamily: Styles().fontFamilies!.bold,
+                  color: Styles().colors.fillColorPrimary,
+                  fontFamily: Styles().fontFamilies.bold,
                   fontSize: FontSize(18),
-                  padding: EdgeInsets.zero,
+                  padding: HtmlPaddings.zero,
                   margin: Margins.zero)
             })));
   }

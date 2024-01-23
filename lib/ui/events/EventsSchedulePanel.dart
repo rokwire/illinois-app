@@ -95,7 +95,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.events_schedule.header.title', 'Event Schedule'),),
       body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Container(color: Styles().colors!.white, child :
+        Container(color: Styles().colors.white, child :
           Padding(padding: EdgeInsets.all(12), child:
             Row(children: _buildTabWidgets(),)
           ),
@@ -107,7 +107,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Container( color: Styles().colors!.white,
+                      Container( color: Styles().colors.white,
                         width: double.infinity,
                         child :
                         SingleChildScrollView(
@@ -121,7 +121,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                       )),
                       Expanded(
                           child: Container(
-                            color: Styles().colors!.background,
+                            color: Styles().colors.background,
                             child: Center(
                               child: _buildListView(),
                             ),
@@ -133,7 +133,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
               ),
             )
           ]),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -161,7 +161,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     }
 
     return Stack(children: [
-      Container(padding: EdgeInsets.symmetric(horizontal: 16), color: Styles().colors!.background, child: exploresContent),
+      Container(padding: EdgeInsets.symmetric(horizontal: 16), color: Styles().colors.background, child: exploresContent),
       _buildDimmedContainer(),
     ]);
   }
@@ -192,12 +192,12 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   Widget _buildDateTitle(String date){
-    return Text(date, style: Styles().textStyles?.getTextStyle('panel.event_schedule.title')
+    return Text(date, style: Styles().textStyles.getTextStyle('panel.event_schedule.title')
     );
   }
 
   Widget _buildCategoryTitle(String category){
-    return Text(category, style: Styles().textStyles?.getTextStyle('panel.event_schedule.category'));
+    return Text(category, style: Styles().textStyles.getTextStyle('panel.event_schedule.category'));
   }
 
   Widget _buildEventCart(Event event) {
@@ -245,7 +245,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
           padding: EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 40),
           child: Container(
             decoration: BoxDecoration(
-              color: Styles().colors!.fillColorSecondary,
+              color: Styles().colors.fillColorSecondary,
               borderRadius: BorderRadius.circular(5.0),
             ),
             child: Padding(
@@ -256,7 +256,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                   shrinkWrap: true,
                   separatorBuilder: (context, index) => Divider(
                     height: 1,
-                    color: Styles().colors!.fillColorPrimaryTransparent03,
+                    color: Styles().colors.fillColorPrimaryTransparent03,
                   ),
                   itemCount: filterValues.length + 1, // 1 ForSearchField
                   itemBuilder: (context, index) {
@@ -299,9 +299,9 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                   onChanged: (text) => _onTextChanged(text),
                   onSubmitted: (_) => _onTapSearchTags(),
                   autofocus: true,
-                  cursorColor: Styles().colors!.fillColorSecondary,
+                  cursorColor: Styles().colors.fillColorSecondary,
                   keyboardType: TextInputType.text,
-                  style: Styles().textStyles?.getTextStyle('panel.event_schedule.search.edit'),
+                  style: Styles().textStyles.getTextStyle('panel.event_schedule.search.edit'),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                   ),
@@ -316,7 +316,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
               padding: EdgeInsets.all(12),
               child: GestureDetector(
                 onTap: _onTapSearchTags,
-                child: Styles().images?.getImage('search'),
+                child: Styles().images.getImage('search'),
               ),
             ),
           ),
@@ -734,12 +734,12 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
               visible: widget.showHeader,
               child: Container(
                 height: headerHeight,
-                color: widget.headerColor ?? Styles().colors!.fillColorSecondary,
+                color: widget.headerColor ?? Styles().colors.fillColorSecondary,
               ),
             ),
             Container(
               decoration: BoxDecoration(
-                  color: Colors.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0), borderRadius: BorderRadius.all(Radius.circular(5))),
+                  color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 0), borderRadius: BorderRadius.all(Radius.circular(5))),
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -754,11 +754,11 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                           Container(
                               child: Padding(
                                   padding: EdgeInsets.only(right: 8),
-                                  child: Styles().images?.getImage('calendar'))),
+                                  child: Styles().images.getImage('calendar'))),
                           Expanded(
                             child: Text(
                               widget.event!.title!,
-                              style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),
+                              style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'),
                             ),
                           ),
                           Visibility(
@@ -781,7 +781,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                                     child: Container(
                                         child: Padding(
                                             padding: EdgeInsets.only(left: 24),
-                                            child: Styles().images?.getImage(favorite ? 'star-filled' : 'star-outline-gray'))))),
+                                            child: Styles().images.getImage(favorite ? 'star-filled' : 'star-outline-gray'))))),
                           )
                         ],
                       )
@@ -789,7 +789,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 4, left: 28),
-                    child: Text(widget.event?.displaySuperTime ?? '', style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular')),
+                    child: Text(widget.event?.displaySuperTime ?? '', style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular')),
                   )
                 ]),
               ),
@@ -829,7 +829,7 @@ class _EventTabView extends StatelessWidget{
             ),
             child: Center(
                 child: Text(text!,
-                    style: selected! ? Styles().textStyles?.getTextStyle('widget.tab.selected') : Styles().textStyles?.getTextStyle('widget.tab.not_selected') )),
+                    style: selected! ? Styles().textStyles.getTextStyle('widget.tab.selected') : Styles().textStyles.getTextStyle('widget.tab.not_selected') )),
           )),
     );
   }

@@ -5,6 +5,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 extension LaundryRoomExt on LaundryRoom {
   
-  Color? get uiColor => Styles().colors?.accentColor2;
+  Color? get uiColor => Styles().colors.accentColor2;
 
 }

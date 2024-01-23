@@ -34,7 +34,7 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.info.header.title', 'Skills Self-Evaluation'), leading: RootHeaderBarLeading.Back,),
       body: SingleChildScrollView(child: Padding(padding: const EdgeInsets.all(24.0), child: content == null ? _buildUnavailableMessage() : _buildContent(context))),
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -44,7 +44,7 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
       Center(child:
         Text(
           Localization().getStringEx('panel.skills_self_evaluation.info.unavailable.error.msg', 'Information content not available.'),
-          textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title')
+          textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')
         )
       ),
     );
@@ -55,7 +55,7 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
     for (SkillsSelfEvaluationSection section in sections ?? content?.sections ?? []) {
       Widget titleWidget = Text(
         section.title,
-        style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
+        style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title'),
         textAlign: TextAlign.start,
       );
 
@@ -63,7 +63,7 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
         contentWidgets.add(titleWidget);
         contentWidgets.add(Padding(padding: const EdgeInsets.only(bottom: 16), child: Text(
           section.subtitle!,
-          style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
+          style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.body'),
           textAlign: TextAlign.start,
         )));
       } else {
@@ -77,13 +77,13 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
         if (CollectionUtils.isEmpty(matches)) {
           contentWidgets.add(Text(
             section.body!,
-            style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
+            style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.body'),
             textAlign: TextAlign.start,
           ));
         } else if (matches.elementAt(0).start > 0) {
           contentWidgets.add(Text(
             section.body!.substring(0, matches.elementAt(0).start),
-            style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
+            style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.body'),
             textAlign: TextAlign.start,
           ));
         }
@@ -103,10 +103,10 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: linkData.text,
-                          style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link'),
+                          style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.link'),
                         ),
                         WidgetSpan(
-                          child: linkData.icon != null ? Padding(padding: const EdgeInsets.only(left: 4.0), child: Styles().images?.getImage(linkData.icon, excludeFromSemantics: true)) : Container(),
+                          child: linkData.icon != null ? Padding(padding: const EdgeInsets.only(left: 4.0), child: Styles().images.getImage(linkData.icon, excludeFromSemantics: true)) : Container(),
                         ),
                       ],
                     ),
@@ -118,7 +118,7 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
                 if (widgetData is String) {
                   contentWidgets.add(Text(
                     widgetData,
-                    style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
+                    style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.body'),
                   ));
                 }
                 break;
@@ -128,7 +128,7 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
           if (match.end < section.body!.length) {
             contentWidgets.add(Text(
               section.body!.substring(match.end, (i+1 < matches.length) ? matches.elementAt(i+1).start : null),
-              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
+              style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.body'),
               textAlign: TextAlign.start,
             ));
           }

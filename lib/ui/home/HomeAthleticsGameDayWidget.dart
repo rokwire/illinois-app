@@ -40,7 +40,7 @@ class HomeAthleticsGameDayWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('panel.browse.entry.my.my_game_day.title', 'My Game Day');
+  static String get title => Localization().getStringEx('widget.game_day.label.my_game_day', 'My Game Day');
 
   State<HomeAthleticsGameDayWidget> createState() => _HomeAthleticsGameDayWidgetState();
 }
@@ -113,7 +113,7 @@ class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget>
       return HomeSlantWidget(favoriteId: widget.favoriteId,
         title: Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'),
         titleIconKey: 'athletics',
-        child: HomeMessageCard(message: Localization().getStringEx('widget.game_day.label.no_games', 'No today games.')),
+        child: HomeMessageCard(message: Localization().getStringEx('widget.game_day.label.no_games', 'No Illini Big 10 events today.')),
       );
     }
   }

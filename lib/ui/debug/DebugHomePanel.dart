@@ -143,12 +143,12 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx("panel.debug.header.title", "Debug"),),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
       body: Column(children: <Widget>[
         Expanded(child:
           SingleChildScrollView(child:
-            Container(color: Styles().colors!.background, child:
+            Container(color: Styles().colors.background, child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 Container(height: 16,),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5), child:
@@ -167,7 +167,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                   Text('Beacon: $_beaconsStatus'),
                 ),
                 
-                Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent),),
+                Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent),),
 
                 ToggleRibbonButton(label: 'Disable live game check', toggled: Storage().debugDisableLiveGameCheck ?? false, onTap: _onDisableLiveGameCheckToggled),
                 ToggleRibbonButton(label: 'Display all times in Central Time', toggled: !Storage().useDeviceLocalTimeZone!, onTap: _onUseDeviceLocalTimeZoneToggled),
@@ -176,8 +176,9 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 ToggleRibbonButton(label: 'Canvas LMS', toggled: (Storage().debugUseCanvasLms == true), onTap: _onUseCanvasLms),
                 ToggleRibbonButton(label: 'Sample Appointments', toggled: (Storage().debugUseSampleAppointments == true), onTap: _onUseSampleAppointments),
                 ToggleRibbonButton(label: 'Mobile icard - Use Identity BB', toggled: (Storage().debugUseIdentityBb == true), onTap: _onUseIdentityBb),
-                    
-                Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
+                ToggleRibbonButton(label: 'Mobile icard - Automatic Credentials', toggled: (Storage().debugAutomaticCredentials == true), onTap: _onAutomaticCredentials),
+
+                Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent))),
                 Container(color: Colors.white, child:
                   Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 16), child:
                     TextFormField(
@@ -190,7 +191,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                   )
                 ),
                     
-                Container(color: Colors.white,child: Padding(padding: EdgeInsets.only(bottom: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
+                Container(color: Colors.white,child: Padding(padding: EdgeInsets.only(bottom: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent))),
                 Container(color: Colors.white, child:
                   Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5), child:
                     TextFormField(
@@ -202,12 +203,12 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                     ),
                   )
                 ),
-                Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
+                Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent))),
                 
                 Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     Padding(padding: EdgeInsets.only(left: 16, bottom: 16), child:
-                      Text('Config Environment: ', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20 )),
+                      Text('Config Environment: ', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: 20 )),
                     ),
                     ListView.separated(
                       physics: NeverScrollableScrollPhysics(),
@@ -218,7 +219,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                         rokwire.ConfigEnvironment environment = rokwire.ConfigEnvironment.values[index];
                         RadioListTile widget = RadioListTile(
                           title: Text(rokwire.configEnvToString(environment) ?? '',
-                          style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16 )),
+                          style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: 16 )),
                           value: environment,
                           groupValue: _selectedEnv,
                           onChanged: _onConfigChanged
@@ -229,14 +230,14 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                   ],),
                 ),
 
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
 
                 Visibility(
                   visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
                   child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child: _buildSurveyCreation()),
                 ),
                 
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
                 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   Row(children: <Widget>[
@@ -245,20 +246,20 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                     ),
                     RoundedButton(
                       label: "Edit",
-                      backgroundColor: Styles().colors!.background,
+                      backgroundColor: Styles().colors.background,
                       fontSize: 16.0,
-                      textColor: Styles().colors!.fillColorPrimary,
-                      borderColor: Styles().colors!.fillColorPrimary,
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorPrimary,
                       contentWeight: 0.0,
                       onTap: _changeDate,
                     ),
                     Container(width: 5,),
                     RoundedButton(
                       label: "Clear",
-                      backgroundColor: Styles().colors!.background,
+                      backgroundColor: Styles().colors.background,
                       fontSize: 16.0,
-                      textColor: Styles().colors!.fillColorPrimary,
-                      borderColor: Styles().colors!.fillColorPrimary,
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorPrimary,
                       contentWeight: 0.0,
                       onTap: _clearDateOffset,
                     ),
@@ -271,10 +272,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                     ),
                     RoundedButton(
                       label: "Clear",
-                      backgroundColor: Styles().colors!.background,
+                      backgroundColor: Styles().colors.background,
                       fontSize: 16.0,
-                      textColor: Styles().colors!.fillColorPrimary,
-                      borderColor: Styles().colors!.fillColorPrimary,
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorPrimary,
                       contentWeight: 0.0,
                       onTap: _clearLastAppReview,
                     ),
@@ -283,110 +284,110 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "Clear Account Prefs",
-                    backgroundColor: Styles().colors!.background,
+                    backgroundColor: Styles().colors.background,
                     fontSize: 16.0,
-                    textColor: Styles().colors!.fillColorPrimary,
-                    borderColor: Styles().colors!.fillColorPrimary,
+                    textColor: Styles().colors.fillColorPrimary,
+                    borderColor: Styles().colors.fillColorPrimary,
                     onTap: _onTapClearAccountPrefs
                   )
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "Clear Voting",
-                    backgroundColor: Styles().colors!.background,
+                    backgroundColor: Styles().colors.background,
                     fontSize: 16.0,
-                    textColor: Styles().colors!.fillColorPrimary,
-                    borderColor: Styles().colors!.fillColorPrimary,
+                    textColor: Styles().colors.fillColorPrimary,
+                    borderColor: Styles().colors.fillColorPrimary,
                     onTap: _onTapClearVoting
                   )
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: _refreshTokenTitle,
-                    backgroundColor: Styles().colors!.background,
+                    backgroundColor: Styles().colors.background,
                     fontSize: 16.0,
-                    textColor: Styles().colors!.fillColorPrimary,
-                    borderColor: Styles().colors!.fillColorPrimary,
+                    textColor: Styles().colors.fillColorPrimary,
+                    borderColor: Styles().colors.fillColorPrimary,
                     onTap: _onTapRefreshToken
                   )
                 ),
 
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "Create Event",
-                    backgroundColor: Styles().colors!.background,
+                    backgroundColor: Styles().colors.background,
                     fontSize: 16.0,
-                    textColor: Styles().colors!.fillColorPrimary,
-                    borderColor: Styles().colors!.fillColorPrimary,
+                    textColor: Styles().colors.fillColorPrimary,
+                    borderColor: Styles().colors.fillColorPrimary,
                     onTap: _onCreateEventClicked
                   ),
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "Create Message",
-                    backgroundColor: Styles().colors!.background,
+                    backgroundColor: Styles().colors.background,
                     fontSize: 16.0,
-                    textColor: Styles().colors!.fillColorPrimary,
-                    borderColor: Styles().colors!.fillColorPrimary,
+                    textColor: Styles().colors.fillColorPrimary,
+                    borderColor: Styles().colors.fillColorPrimary,
                     onTap: _onCreateInboxMessageClicked
                   ),
                 ),
 
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "Inbox User Info",
-                    backgroundColor: Styles().colors!.background,
+                    backgroundColor: Styles().colors.background,
                     fontSize: 16.0,
-                    textColor: Styles().colors!.fillColorPrimary,
-                    borderColor: Styles().colors!.fillColorPrimary,
+                    textColor: Styles().colors.fillColorPrimary,
+                    borderColor: Styles().colors.fillColorPrimary,
                     onTap: _onInboxUserInfoClicked
                   ),
                 ),
                 Padding( padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "User Profile Info",
-                    backgroundColor: Styles().colors!.background,
+                    backgroundColor: Styles().colors.background,
                     fontSize: 16.0,
-                    textColor: Styles().colors!.fillColorPrimary,
-                    borderColor: Styles().colors!.fillColorPrimary,
+                    textColor: Styles().colors.fillColorPrimary,
+                    borderColor: Styles().colors.fillColorPrimary,
                     onTap: _onUserProfileInfoClicked
                   )
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "User Card Info",
-                    backgroundColor: Styles().colors!.background,
+                    backgroundColor: Styles().colors.background,
                     fontSize: 16.0,
-                    textColor: Styles().colors!.fillColorPrimary,
-                    borderColor: Styles().colors!.fillColorPrimary,
+                    textColor: Styles().colors.fillColorPrimary,
+                    borderColor: Styles().colors.fillColorPrimary,
                     onTap: _onUserCardInfoClicked
                   )
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: 'Canvas User Info',
-                    backgroundColor: Styles().colors!.background,
+                    backgroundColor: Styles().colors.background,
                     fontSize: 16.0,
-                    textColor: Styles().colors!.fillColorPrimary,
-                    borderColor: Styles().colors!.fillColorPrimary,
+                    textColor: Styles().colors.fillColorPrimary,
+                    borderColor: Styles().colors.fillColorPrimary,
                     onTap: _onTapCanvasUser
                   )
                 ),
 
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
 
                 Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev, child:
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
                       label: "Campus Guide",
-                      backgroundColor: Styles().colors!.background,
+                      backgroundColor: Styles().colors.background,
                       fontSize: 16.0,
-                      textColor: Styles().colors!.fillColorPrimary,
-                      borderColor: Styles().colors!.fillColorPrimary,
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorPrimary,
                       onTap: _onTapGuide
                     )
                   )
@@ -395,10 +396,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
                       label: "Student Courses",
-                      backgroundColor: Styles().colors!.background,
+                      backgroundColor: Styles().colors.background,
                       fontSize: 16.0,
-                      textColor: Styles().colors!.fillColorPrimary,
-                      borderColor: Styles().colors!.fillColorPrimary,
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorPrimary,
                       onTap: _onTapStudentCourses
                     )
                   ),
@@ -407,10 +408,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
                       label: "Styles",
-                      backgroundColor: Styles().colors!.background,
+                      backgroundColor: Styles().colors.background,
                       fontSize: 16.0,
-                      textColor: Styles().colors!.fillColorPrimary,
-                      borderColor: Styles().colors!.fillColorPrimary,
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorPrimary,
                       onTap: _onTapStyles
                     )
                   ),
@@ -419,25 +420,25 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
                       label: 'Rewards',
-                      backgroundColor: Styles().colors!.background,
+                      backgroundColor: Styles().colors.background,
                       fontSize: 16.0,
-                      textColor: Styles().colors!.fillColorPrimary,
-                      borderColor: Styles().colors!.fillColorPrimary,
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorPrimary,
                       onTap: _onTapRewards
                     )
                   )
                 ),
 
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
 
                 Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev, child:
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
                       label: 'Rate App',
-                      backgroundColor: Styles().colors!.background,
+                      backgroundColor: Styles().colors.background,
                       fontSize: 16.0,
-                      textColor: Styles().colors!.fillColorPrimary,
-                      borderColor: Styles().colors!.fillColorPrimary,
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorPrimary,
                       progress: _preparingRatingApp,
                       onTap: _onTapRateApp
                     )
@@ -448,38 +449,38 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
                       label: 'Review App',
-                      backgroundColor: Styles().colors!.background,
+                      backgroundColor: Styles().colors.background,
                       fontSize: 16.0,
-                      textColor: Styles().colors!.fillColorPrimary,
-                      borderColor: Styles().colors!.fillColorPrimary,
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorPrimary,
                       onTap: _onTapReviewApp
                     )
                   )
                 ),
 
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
                       label: 'Mobile Access Keys',
-                      backgroundColor: Styles().colors!.background,
+                      backgroundColor: Styles().colors.background,
                       fontSize: 16.0,
-                      textColor: Styles().colors!.fillColorPrimary,
-                      borderColor: Styles().colors!.fillColorPrimary,
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorPrimary,
                       onTap: _onTapMobileAccessKeys
                     )
                   ),
 
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
 
                 Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev, child:
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
                       label: "Http Proxy",
-                      backgroundColor: Styles().colors!.background,
+                      backgroundColor: Styles().colors.background,
                       fontSize: 16.0,
-                      textColor: Styles().colors!.fillColorPrimary,
-                      borderColor: Styles().colors!.fillColorPrimary,
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorPrimary,
                       onTap: _onTapHttpProxy
                     )
                   ),
@@ -487,14 +488,24 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "Test Crash",
-                    backgroundColor: Styles().colors!.background,
+                    backgroundColor: Styles().colors.background,
                     fontSize: 16.0,
-                    textColor: Styles().colors!.fillColorPrimary,
-                    borderColor: Styles().colors!.fillColorPrimary,
+                    textColor: Styles().colors.fillColorPrimary,
+                    borderColor: Styles().colors.fillColorPrimary,
                     onTap: _onTapCrash
                   )
                 ),
-                
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                    Padding(padding: EdgeInsets.only(bottom: 10), child: Text('Font Awesome Pro Icons: ', style: Styles().textStyles.getTextStyle('widget.message.medium'))),
+                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                      Center(child: Styles().images.getImage('thinVacuum')),
+                      Center(child: Styles().images.getImage('lightVacuum')),
+                      Center(child: Styles().images.getImage('solidVacuum'))
+                    ])
+                  ])
+                ),
+
                 Container(height: 16),
               ],),
             ),
@@ -513,12 +524,12 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
           Expanded(flex: 2, child: Text(survey.title)),
           Expanded(child: RoundedButton(
             label: 'Edit',
-            backgroundColor: Styles().colors!.background,
-            textColor: Styles().colors!.fillColorPrimary,
-            fontFamily: Styles().fontFamilies!.bold,
+            backgroundColor: Styles().colors.background,
+            textColor: Styles().colors.fillColorPrimary,
+            fontFamily: Styles().fontFamilies.bold,
             fontSize: 16,
             padding: EdgeInsets.all(8),
-            borderColor: Styles().colors!.fillColorPrimary,
+            borderColor: Styles().colors.fillColorPrimary,
             borderWidth: 2,
             onTap: () => _onTapCreateSurvey(survey: survey),
           )),
@@ -529,12 +540,12 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
       ...userSurveyEntries,
       Padding(padding: const EdgeInsets.only(top: 16), child: RoundedButton(
         label: 'Create New Survey',
-        backgroundColor: Styles().colors!.background,
-        textColor: Styles().colors!.fillColorPrimary,
-        fontFamily: Styles().fontFamilies!.bold,
+        backgroundColor: Styles().colors.background,
+        textColor: Styles().colors.fillColorPrimary,
+        fontFamily: Styles().fontFamilies.bold,
         fontSize: 16,
         padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-        borderColor: Styles().colors!.fillColorPrimary,
+        borderColor: Styles().colors.fillColorPrimary,
         borderWidth: 2,
         onTap: _onTapCreateSurvey,
       )),
@@ -728,6 +739,12 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     });
   }
 
+  void _onAutomaticCredentials() {
+    setState(() {
+      Storage().debugAutomaticCredentials = (Storage().debugAutomaticCredentials != true);
+    });
+  }
+
   void _onUseDeviceLocalTimeZoneToggled() {
     setState(() {
       Storage().useDeviceLocalTimeZone = !Storage().useDeviceLocalTimeZone!;
@@ -818,31 +835,31 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   Widget _buildTextContentInfoDialog(String? textContent) {
     return Material(type: MaterialType.transparency, borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)), child:
-      Dialog(backgroundColor: Styles().colors!.background, child:
+      Dialog(backgroundColor: Styles().colors.background, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Container(color: Styles().colors!.fillColorPrimary, child:
+          Container(color: Styles().colors.fillColorPrimary, child:
             Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
               Container(width: 20,),
               Expanded(child:
                 RoundedButton(
                   label: "Copy to clipboard",
-                  textColor: Styles().colors!.white,
-                  borderColor: Styles().colors!.fillColorSecondary,
-                  backgroundColor: Styles().colors!.fillColorPrimary,
+                  textColor: Styles().colors.white,
+                  borderColor: Styles().colors.fillColorSecondary,
+                  backgroundColor: Styles().colors.fillColorPrimary,
                   onTap: (){ _copyToClipboard(textContent); },
                 ),
               ),
               Container(width: 20,),
               GestureDetector( onTap:  () => Navigator.of(context).pop(), child:
                 Padding(padding: EdgeInsets.only(right: 10, top: 10), child:
-                  Text('\u00D7', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.medium, fontSize: 50 ),),
+                  Text('\u00D7', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies.medium, fontSize: 50 ),),
                 ),
               ),
             ],),
           ),
           Expanded(child:
             SingleChildScrollView(child:
-              Padding(padding: EdgeInsets.all(8), child: Text(StringUtils.ensureNotEmpty(textContent), style: TextStyle(color: Colors.black, fontFamily: Styles().fontFamilies!.bold, fontSize: 14)))
+              Padding(padding: EdgeInsets.all(8), child: Text(StringUtils.ensureNotEmpty(textContent), style: TextStyle(color: Colors.black, fontFamily: Styles().fontFamilies.bold, fontSize: 14)))
             )
           ),
         ])
@@ -852,7 +869,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   void _copyToClipboard(String? textContent){
     Clipboard.setData(ClipboardData(text: textContent ?? '')).then((_){
-      AppToast.show("Text data has been copied to the clipboard!");
+      AppToast.showMessage("Text data has been copied to the clipboard!");
     });
   }
 

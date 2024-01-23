@@ -94,22 +94,22 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: _visible ?? true, child:
-      Container(color: Styles().colors?.fillColorPrimary, child:
+      Container(color: Styles().colors.fillColorPrimary, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Container(height: 1, color: Styles().colors?.disabledTextColor),
+          Container(height: 1, color: Styles().colors.disabledTextColor),
           Row(children: [
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16), child:
                 Text(Localization().getStringEx("widget.home.welcome.text.title", 'Welcome to {{app_title}} {{app_version}}').
                   replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')).
-                  replaceAll('{{app_version}}', Config().appMasterVersion ?? ''),
-                  style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat")),
+                  replaceAll('{{app_version}}', Config().appMajorVersion ?? ''),
+                  style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat")),
               ),
             ),
             Semantics(label: Localization().getStringEx('widget.home.welcome.button.close.label', 'Close'), button: true, excludeSemantics: true, child:
               InkWell(onTap : _onClose, child:
                 Padding(padding: EdgeInsets.all(16), child:
-                  Styles().images?.getImage('close-circle-white', excludeFromSemantics: true)
+                  Styles().images.getImage('close-circle-white', excludeFromSemantics: true)
                 ),
               ),
             ),
@@ -117,7 +117,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
           Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16), child: 
             _buildVideoEntry()
           ),
-          Container(height: 1, color: Styles().colors?.disabledTextColor),
+          Container(height: 1, color: Styles().colors.disabledTextColor),
         ],),
       )
     );
@@ -127,7 +127,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
 
   Widget imagePlaceholder({ Widget? child}) =>
     AspectRatio(aspectRatio: (8000.0 / 4500.0), child:
-      Container(color: Styles().colors?.fillColorPrimary, child: child,)
+      Container(color: Styles().colors.fillColorPrimary, child: child,)
     );
 
   Widget _buildVideoEntry() {
@@ -142,7 +142,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
               ClipRRect(borderRadius: BorderRadius.circular(4), child:
                 Image.network(_video!.thumbUrl!, loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                   return imagePlaceholder(child: (loadingProgress != null) ? Center(child:
-                    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white), ) 
+                    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white), ) 
                   ) : child);
                 })
               ) :

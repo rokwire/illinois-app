@@ -84,7 +84,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
     return Scaffold(
       appBar: HeaderBar(
         title: Localization().getStringEx("panel.food_special_offers.title.text", "Dining News"),
-        //textStyle: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16 ),
+        //textStyle: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16 ),
       ),
       body: Column(
         children: <Widget>[
@@ -95,7 +95,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
           ),
         ],
       ),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -125,12 +125,12 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
                 Container(height: 16,),
                 HtmlWidget(
                     StringUtils.ensureNotEmpty(widget.special!.text),
-                    textStyle: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
+                    textStyle: Styles().textStyles.getTextStyle("widget.item.regular.thin")
                 ),
                 // Html(
                 //   data: widget.special!.text ?? "",
                 //   style: {
-                //     "body": Style(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground,)
+                //     "body": Style(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textBackground,)
                 //   },
                 // ),
                 /*Text(
@@ -145,7 +145,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
                 Text(_hasLocations
                     ? Localization().getStringEx("panel.food_special_offers.available.text", "Available at these locations")
                     : Localization().getStringEx("panel.food_special_offers.not_available.text", "No available locations"),
-                  style: Styles().textStyles?.getTextStyle("widget.item.regular.extra_fat")
+                  style: Styles().textStyles.getTextStyle("widget.item.regular.extra_fat")
                 ),
                 Container(height: 16,),
               ],

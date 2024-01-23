@@ -5,6 +5,343 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [5.1.12] - 2024-01-22
+### Changed
+- Added Clear Attributes button in content attributes panel [#3828](https://github.com/rokwire/illinois-app/issues/3828).
+- Updated event2 start time query logic [#3839](https://github.com/rokwire/illinois-app/issues/3839).
+### Fixed
+- Android: Crashes in HID Origo sdk [#3877](https://github.com/rokwire/illinois-app/issues/3877).
+
+## [5.1.11] - 2024-01-19
+### Changed
+- Wrap long location details to multiple lines in Event2 detail panel [#3842](https://github.com/rokwire/illinois-app/issues/3842).
+- Show in app notificatons as toast message [#2774](https://github.com/rokwire/illinois-app/issues/2774).
+- Make predefined Style colors and font families not nullable [#2774](https://github.com/rokwire/illinois-app/issues/2774).
+### Fixed
+- Voice Recording for ios [#3846](https://github.com/rokwire/illinois-app/issues/3846).
+
+## [5.1.10] - 2024-01-18
+### Fixed
+- Cleaned up DeviceCalendar service [#3868](https://github.com/rokwire/illinois-app/issues/3868).
+### Changed
+- Voice Recording upload/retrieve/delete updates [#3846](https://github.com/rokwire/illinois-app/issues/3846).
+
+## [5.1.9] - 2024-01-16
+### Fixed
+- Fixed content update check in ContentAttributesPanel [#3828](https://github.com/rokwire/illinois-app/issues/3828).
+- Fixed Event2 location detail display [#3842](https://github.com/rokwire/illinois-app/issues/3842) [#3843](https://github.com/rokwire/illinois-app/issues/3843).
+
+## [5.1.8] - 2024-01-15
+### Changed
+- Updated some display strings in Event2QRCodePanel [#3838](https://github.com/rokwire/illinois-app/issues/3838).
+### Fixed
+- Make sure to display result of Add to Calendar operation [#3789](https://github.com/rokwire/illinois-app/issues/3789).
+- Obey user selection when processing Firebase message [#2774](https://github.com/rokwire/illinois-app/issues/2774).
+
+## [5.1.7] - 2024-01-12
+### Changed
+- Make event card to look the same in list and page display modes [#3854](https://github.com/rokwire/illinois-app/issues/3854).
+- Make All Events widget a default widget for all NEW app users [#3856](https://github.com/rokwire/illinois-app/issues/3856).
+### Fixed
+- Fixed My Events widget content update of when favorites get changed [#3851](https://github.com/rokwire/illinois-app/issues/3851).
+### Added
+- Added linked events horizontal scroller in event cards [#3860](https://github.com/rokwire/illinois-app/issues/3860).
+
+## [5.1.6] - 2024-01-11
+### Added
+- Added favorite and admin event filter types, My events updated to use it [#3851](https://github.com/rokwire/illinois-app/issues/3851).
+### Changed
+- Make Promote group/event available to everyone [#3838](https://github.com/rokwire/illinois-app/issues/3838).
+
+## [5.1.5] - 2024-01-03
+### Added
+- Introduced Name Pronouncement Dialog [#3846](https://github.com/rokwire/illinois-app/issues/3846).
+### Changed
+- Replaced textScaleFactor usage with textScaler [#3832](https://github.com/rokwire/illinois-app/issues/3832).
+- Acknowledge the latest changes for renewing mobile access [#3840](https://github.com/rokwire/illinois-app/issues/3840).
+
+## [5.1.4] - 2023-11-29
+### Changed
+- Upgrade to Flutter 3.16.0 [#3825](https://github.com/rokwire/app-flutter-plugin/issues/3825).
+- Use AI Proxy BB instead of Assistant BB [#3830](https://github.com/rokwire/illinois-app/issues/3830).
+
+## [5.1.3] - 2023-11-21
+### Fixed
+- Fixed image assets resolution [#3823](https://github.com/rokwire/app-flutter-plugin/issues/3823).
+
+## [5.1.2] - 2023-11-20
+### Changed
+- Updated academics and wellness tab icons with test purposes [#3818](https://github.com/rokwire/illinois-app/issues/3818).
+### Added
+- Added rokwireillinois Twitter user account [#3820](https://github.com/rokwire/illinois-app/issues/3820).
+
+## [5.1.1] - 2023-11-16
+### Changed
+- Upgraded for Flutter 3.13.7 [#3805](https://github.com/rokwire/illinois-app/issues/3805).
+- Spanish strings [#3814](https://github.com/rokwire/illinois-app/issues/3814).
+### Added
+- Use Font Awesome Pro icons [#3816](https://github.com/rokwire/illinois-app/issues/3816).
+
+## [5.1.0] - 2023-10-02
+- N/A
+
+## [5.0.78] - 2023-10-10
+### Fixed
+- Showing all sub-events in Events2DetailPanel [#3790](https://github.com/rokwire/illinois-app/issues/3790).
+
+## [5.0.77] - 2023-10-09
+### Changed
+- Event2DetailPanel update follow up survey message [#3788](https://github.com/rokwire/illinois-app/issues/3788).
+- Removed "My" section from Browse panel, "My Athletics" and "My News" moved to "Athletics" section, most of the Athletics section entries renamed [#3787](https://github.com/rokwire/illinois-app/issues/3787)
+### Fixed 
+- Fix DeviceCalendar add to calendar functionality [#3789](https://github.com/rokwire/illinois-app/issues/3789).
+
+## [5.0.76] - 2023-10-06
+### Fixed
+- Privacy level on user sign in [#3781](https://github.com/rokwire/illinois-app/issues/3781).
+- Showing correct group events count [#3790](https://github.com/rokwire/illinois-app/issues/3790).
+
+## [5.0.75] - 2023-10-04
+### Fixed
+- Loading "Speakers and Seminars" events [#3780](https://github.com/rokwire/illinois-app/issues/3780).
+- Fix group privacy message [#3784](https://github.com/rokwire/illinois-app/issues/3784).
+
+## [5.0.74] - 2023-09-29
+### Fixed
+- Acknowledge selected and highlighted states when guest list item is disabled [#3722](https://github.com/rokwire/illinois-app/issues/3722).
+
+## [5.0.73] - 2023-09-27
+### Changed
+- English strings [#3770](https://github.com/rokwire/illinois-app/issues/3770).
+- Prompt if attendee candidate is not registered or if event capacity is reached [#3722](https://github.com/rokwire/illinois-app/issues/3722).
+
+## [5.0.72] - 2023-09-26
+### Changed
+- Acknowledged new Groups BB's v3 APIs for events [#3733](https://github.com/rokwire/illinois-app/issues/3733).
+
+## [5.0.71] - 2023-09-25
+### Changed
+- Check for attendance takers that are also registrant before applying attendance takers [#3762](https://github.com/rokwire/illinois-app/issues/3762).
+### Added
+- Implemented "Renew" mobile access [#3763](https://github.com/rokwire/illinois-app/issues/3763).
+
+## [5.0.70] - 2023-09-20
+### Fixed
+- Fix event survey update failure handling [#3758](https://github.com/rokwire/illinois-app/issues/3758).
+- Fixed notifications display time [#381](https://github.com/rokwire/app-flutter-plugin/issues/381).
+
+## [5.0.69] - 2023-09-19
+### Fixed
+- Event survey settings don't save between event admins [#3723](https://github.com/rokwire/illinois-app/issues/3723).
+### Changed
+- Updated chinese strings [#3749](https://github.com/rokwire/illinois-app/issues/3749).
+
+## [5.0.68] - 2023-09-18
+### Fixed
+- Display raw attribute value as it is if it does not persist as content attribute value [#3743](https://github.com/rokwire/illinois-app/issues/3743).
+- Do not show additional attendance takers edit when creating/updating event, make it available ONLY when editing event attendance strsaightly [#3656](https://github.com/rokwire/illinois-app/issues/3656).
+- Fix Sport events not being able to be add to group[#3739](https://github.com/rokwire/illinois-app/issues/3739).
+
+## [5.0.67] - 2023-09-15
+### Fixed
+- Do not show Register button until we are sure that registration is available for the event [#3671](https://github.com/rokwire/illinois-app/issues/3671).
+- Event additional attendance takers [#3656](https://github.com/rokwire/illinois-app/issues/3656).
+
+## [5.0.66] - 2023-09-13
+### Fixed
+- Show date range for game events [#3735](https://github.com/rokwire/illinois-app/issues/3735).
+- Event additional attendance takers [#3656](https://github.com/rokwire/illinois-app/issues/3656).
+
+## [5.0.65] - 2023-09-12
+### Changed
+- Upgrade to connectivity_plus plugin [#45](https://github.com/rokmetro/vogue-app/issues/45).
+- Android: Update HID / Origo sdk to 1.9.1 [#3725](https://github.com/rokwire/illinois-app/issues/3725).
+- iOS: Update HID / Origo sdk to 1.10.0 [#3727](https://github.com/rokwire/illinois-app/issues/3727).
+### Fixed
+- Showing live games [#3729](https://github.com/rokwire/illinois-app/issues/3729).
+### Added
+- Display registration type in guest list from attendance panel [#3722](https://github.com/rokwire/illinois-app/issues/3722).
+- Play sound when adding attedees to guest list [#3722](https://github.com/rokwire/illinois-app/issues/3722).
+
+## [5.0.64] - 2023-09-08
+### Changed
+- Show events time in local timezone [#3718](https://github.com/rokwire/illinois-app/issues/3718).
+
+## [5.0.63] - 2023-09-07
+### Fixed
+- SavedPanel: load events from events/lite (includes private events) [#3709](https://github.com/rokwire/illinois-app/issues/3709).
+- Display time for game events in local timezone and show past and upcoming games based on event day/time until midnight [#3714](https://github.com/rokwire/illinois-app/issues/3714).
+- Fixed DSYM upload for Firebase Crashlytics on iOS.
+
+## [5.0.62] - 2023-09-05
+### Added
+- Added Guest List to Registration Setup Panel [#3678](https://github.com/rokwire/illinois-app/issues/3678).
+### Changed
+- Changed texts in Registration and Attendance Panels [#3678](https://github.com/rokwire/illinois-app/issues/3678).
+- Acknowledged event capacity in registration and attendance taking [#3671](https://github.com/rokwire/illinois-app/issues/3671).
+
+## [5.0.61] - 2023-09-04
+### Changed
+- Event2CreatePanel update attendance description [#3702](https://github.com/rokwire/illinois-app/issues/3702).
+- Acknowledge location description when presenting event locations [#3510](https://github.com/rokwire/illinois-app/issues/3510).
+
+## [5.0.60] - 2023-09-01
+### Changed
+- Hide Illini ID FAQs for all [#3696](https://github.com/rokwire/illinois-app/issues/3696).
+- Show mobile access based on the mobile id status [#3698](https://github.com/rokwire/illinois-app/issues/3698).
+### Added
+- Bring back dialog for adding event to multiple groups that user is admin of [#3695](https://github.com/rokwire/illinois-app/issues/3695).
+### Fixed
+- Group events load private events for group members[#3674](https://github.com/rokwire/illinois-app/issues/3674).
+
+## [5.0.59] - 2023-08-31
+### Changed
+- Rename "i-card" to "Illini ID" [#3685](https://github.com/rokwire/illinois-app/issues/3685).
+- Do not show FAQs for users that do not have Mobile Access [#3687](https://github.com/rokwire/illinois-app/issues/3687).
+- Events Feed renamed to All Events [#3690](https://github.com/rokwire/illinois-app/issues/3690).
+- Removed members selection when Create/Add event to group [#3672](https://github.com/rokwire/illinois-app/issues/3672).
+### Fixed
+- Wording for team roster and staff [#3682](https://github.com/rokwire/illinois-app/issues/3682).
+- ### Added
+- Added dialog prompt to Star an event after successful registration [#3692](https://github.com/rokwire/illinois-app/issues/3692).
+
+### Changed
+## [5.0.58] - 2023-08-30
+### Changed
+- Update mobile access model [#3679](https://github.com/rokwire/illinois-app/issues/3679).
+- To-Do item header title [#3677](https://github.com/rokwire/illinois-app/issues/3677).
+### Fixed
+- Content attributes min-selection requirement validation [#3631](https://github.com/rokwire/illinois-app/issues/3631).
+
+## [5.0.57] - 2023-08-29
+### Changed
+- Event Admin Required to Fill Out Survey [#3581](https://github.com/rokwire/illinois-app/issues/3581).
+- Updated en and zh string files [#3665](https://github.com/rokwire/illinois-app/issues/3665).
+- Remove unneeded descriptions form Attendance panel [#3661](https://github.com/rokwire/illinois-app/issues/3661).
+### Added
+- New Mobile Access flow for requesting credentials [#3651](https://github.com/rokwire/illinois-app/issues/3651).
+
+## [5.0.56] - 2023-08-28
+### Added
+- Two new locale default analytics [#3648](https://github.com/rokwire/illinois-app/issues/3648).
+### Changed
+- Hide Laundry location button even if it's location is valid [#1674](https://github.com/rokwire/illinois-app/issues/1674).
+- Rename Attendee List to Registrants in Event2AttendanceDetailPanel [#3647](https://github.com/rokwire/illinois-app/issues/3647).
+### Fixed
+- Groups load upcoming events [#3645](https://github.com/rokwire/illinois-app/issues/3645).
+- Fixed typo. Rename Cineese to chinese [#3646](https://github.com/rokwire/illinois-app/issues/3646).
+
+## [5.0.55] - 2023-08-25
+### Changed
+- Create event panel UI polish and improvements [#3585](https://github.com/rokwire/illinois-app/issues/3585).
+- Use better ratio images for Android splash screen [#3307](https://github.com/rokwire/illinois-app/issues/3307).
+### Added
+- Added Pinch Zoom support for ModalImagePanel [#3305](https://github.com/rokwire/illinois-app/issues/3305).
+- Hook up "Request" button in Mobile access [#3641](https://github.com/rokwire/illinois-app/issues/3641).
+### Fixed
+- Do not show "View on map" command if laundry room has no location data [#3299](https://github.com/rokwire/illinois-app/issues/3299).
+
+## [5.0.54] - 2023-08-24
+### Changed
+- Hide "Renew" button in Mobile Access [#3634](https://github.com/rokwire/illinois-app/issues/3634).
+- Renamed Sponsor to Event Host [#3392](https://github.com/rokwire/illinois-app/issues/3392).
+### Added
+- Added filters & sort capabilities when searching events [#3633](https://github.com/rokwire/illinois-app/issues/3633).
+### Fixed
+- Fixed total number of events in Event2SearchPanel [#3633](https://github.com/rokwire/illinois-app/issues/3633).
+
+## [5.0.53] - 2023-08-23
+### Fixed
+- Displaying sport for athletics events [#3621](https://github.com/rokwire/illinois-app/issues/3621).
+- Fixed URLs parsing, validation and processing in Create Event and Event detail panels [#3580](https://github.com/rokwire/illinois-app/issues/3580).
+### Added
+- Added published flag in create/update event panel [#3623](https://github.com/rokwire/illinois-app/issues/3623).
+- CreateEventPanel add additional description in description section [#3620](https://github.com/rokwire/illinois-app/issues/3620).
+### Changed
+- Do not allow building event datetime on date part only [#3585](https://github.com/rokwire/illinois-app/issues/3585).
+- Twitter renamed to X/Twitter [#3610](https://github.com/rokwire/illinois-app/issues/3610).
+
+## [5.0.52] - 2023-08-22
+### Fixed
+- Displaying correct date time in athletics [#3611](https://github.com/rokwire/illinois-app/issues/3611).
+### Changed
+- Sample appointments updated with a true McKinley location [#3604](https://github.com/rokwire/illinois-app/issues/3604).
+- Use different separators to highlight attribute values groups [#3605](https://github.com/rokwire/illinois-app/issues/3605).
+- Handled events search in Map [#3609](https://github.com/rokwire/illinois-app/issues/3609).
+
+## [5.0.51] - 2023-08-21
+### Added
+- Added required sign for hours title in Event2SetupSurveyPanel [#3582](https://github.com/rokwire/illinois-app/issues/3582).
+- Added default course detail image [#2286](https://github.com/rokwire/illinois-app/issues/2286).
+- Handle sport events from Calendar BB [#3594](https://github.com/rokwire/illinois-app/issues/3594).
+### Changed
+- More precise processing of 'Confirm URL' command in Event2CreatePanel [#3580](https://github.com/rokwire/illinois-app/issues/3580).
+- Updated content attributes master copy [#3578](https://github.com/rokwire/illinois-app/issues/3578).
+- Event Feed Tweaks [#3392](https://github.com/rokwire/illinois-app/issues/3392).
+
+## [5.0.50] - 2023-08-18
+### Changed
+- Rename "i-card" to "Illini ID" in Settings [#3588](https://github.com/rokwire/illinois-app/issues/3588).
+- Read event attendance url from app config [#3584](https://github.com/rokwire/illinois-app/issues/3584).
+### Fixed
+- Show Twitter in favorites [#3590](https://github.com/rokwire/illinois-app/issues/3590).
+- Use calendar events for Academics / Events [#3586](https://github.com/rokwire/illinois-app/issues/3586).
+### Added
+- Added language selector in Settings panel [#3587](https://github.com/rokwire/illinois-app/issues/3587).
+- Added check for end time before start time in create event panel [#3585](https://github.com/rokwire/illinois-app/issues/3585).
+
+## [5.0.49] - 2023-08-17
+### Changed
+- "Multi-person" calendar event filter type renamed to "Multi-event" [#3570](https://github.com/rokwire/illinois-app/issues/3570).
+- Do not show "Next Available Appointment" if no slots are available [#3261](https://github.com/rokwire/illinois-app/issues/3261).
+### Fixed
+- Fixed Daily Illini RSS feeds parsing [#3572](https://github.com/rokwire/illinois-app/issues/3572).
+- Make sure not to show State Farm Center in Favorites or Browse panels [#3298](https://github.com/rokwire/illinois-app/issues/3298).
+- Fix adding super event to group [#3564](https://github.com/rokwire/illinois-app/issues/3564).
+### Added
+- Added background update and pull to refresh capability of MTD stop schedules panel [#3325](https://github.com/rokwire/illinois-app/issues/3325).
+
+## [5.0.48] - 2023-08-16
+### Changed
+- Updated privacy strings [#3332](https://github.com/rokwire/illinois-app/issues/3332).
+- Decouple Favourites from Device Calendar [#3558](https://github.com/rokwire/illinois-app/issues/3558).
+- Load again content attributes JSON from content service [#3560](https://github.com/rokwire/illinois-app/issues/3560).
+### Fixed
+- Android: request for location permission [#3563](https://github.com/rokwire/illinois-app/issues/3563).
+
+## [5.0.47] - 2023-08-15
+### Fixed
+- Cannot update survey created in admin app [#3542](https://github.com/rokwire/illinois-app/issues/3542).
+- Displaying athletics events [#3544](https://github.com/rokwire/illinois-app/issues/3544).
+- Fixed spelling of dietitian in Dining [#3404](https://github.com/rokwire/illinois-app/issues/3404).
+- Fixed Profile Settings panel inconsistencies [#3315](https://github.com/rokwire/illinois-app/issues/3315).
+### Changed
+- Enable cost description for free events [#3461](https://github.com/rokwire/illinois-app/issues/3461).
+- Removed periods from button titles [#3435](https://github.com/rokwire/illinois-app/issues/3435).
+- Renamed "Event admin actions" to "Event admin settings" [#3431](https://github.com/rokwire/illinois-app/issues/3431).
+- Do not load URLs from Event2DetailPanel in a WebPanel [#3430](https://github.com/rokwire/illinois-app/issues/3430).
+- Change HomeAthleticsGameDayWidget empty message [#3341](https://github.com/rokwire/illinois-app/issues/3341).
+
+## [5.0.46] - 2023-08-14
+### Added
+- Event admins cannot load all survey responses [#3524](https://github.com/rokwire/illinois-app/issues/3524).
+- Added "Multi-person" event type [#3531](https://github.com/rokwire/illinois-app/issues/3531).
+- Added recent items support for calendar events [#3535](https://github.com/rokwire/illinois-app/issues/3535).
+### Changed
+- Show mobile credential id in Mobile Access UI [#3529](https://github.com/rokwire/illinois-app/issues/3529).
+- Updated app version format in welcome widget in Favorites panel [#3528](https://github.com/rokwire/illinois-app/issues/3528).
+- Update groups events to use calendar BB [#3506](https://github.com/rokwire/illinois-app/issues/3506).
+- Show Apply button in disabled state in Event2TimeRangePanel. Display proper message if needed [#3518](https://github.com/rokwire/illinois-app/issues/3518).
+- Do not limit event title wrap to 2 lines in detail panel [#3517](https://github.com/rokwire/illinois-app/issues/3517).
+- Renamed register buttons in Event2DetailPanel [#3508](https://github.com/rokwire/illinois-app/issues/3508).
+- Hide old events from Map panel [#3507](https://github.com/rokwire/illinois-app/issues/3507).
+### Fixed
+- Fixed text style in Athletics News [#3526](https://github.com/rokwire/illinois-app/issues/3526).
+
+## [5.0.45] - 2023-08-11
+### Changed
+- Updated Event2Card UI [#3520](https://github.com/rokwire/illinois-app/issues/3520).
+- Updated Event2DetailPanel UI [#3522](https://github.com/rokwire/illinois-app/issues/3522).
 
 ## [5.0.44] - 2023-08-10
 ### Changed

@@ -1,15 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/ext/DeviceCalendar.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Survey.dart';
+import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/DeviceCalendar.dart';
-import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
@@ -24,6 +27,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
+import 'package:rokwire_plugin/service/device_calendar.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/events2.dart';
@@ -44,7 +48,8 @@ class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttribute
   final Event2? superEvent;
   final Survey? survey;
   final Position? userLocation;
-  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.userLocation});
+  final Event2Selector? eventSelector;
+  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.userLocation, this.eventSelector});
   
   @override
   State<StatefulWidget> createState() => _Event2DetailPanelState();
@@ -55,14 +60,22 @@ class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttribute
   Map<String, dynamic>? get analyticsPageAttributes => event?.analyticsAttributes;
 }
 
-class _Event2DetailPanelState extends State<Event2DetailPanel> implements NotificationsListener {
+class _Event2DetailPanelState extends State<Event2DetailPanel> implements NotificationsListener, Event2SelectorDataProvider {
 
   Event2? _event;
   Survey? _survey;
   bool? _hasSurveyResponse;
   Event2PersonsResult? _persons;
-  List<Event2>? _linkedEvents;
   Event2? _superEvent;
+
+  List<Event2>? _linkedEvents;
+  bool _linkedEventsLoading = false;
+  int? _totalLinkedEventsCount;
+  bool _extendingLinkedEvents = false;
+  bool? _lastPageLoadedAllLinkedEvents;
+  static const int _linkedEventsPageLength = 20;
+
+  ScrollController _scrollController = ScrollController();
 
   // Keep a copy of the user position in the State because it gets cleared somehow in the widget
   // when sending the appliction to background in iOS.
@@ -72,7 +85,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   bool _registrationLoading = false;
   bool _eventLoading = false;
   bool _eventProcessing = false;
-  bool _linkedEventsLoading = false;
+  bool _registrationLaunching = false;
+  bool _websiteLaunching = false;
+  bool _onlineLaunching = false;
+
+  List<String>? _displayCategories;
 
   @override
   void initState() {
@@ -81,11 +98,13 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       Auth2.notifyLoginChanged,
       Events2.notifyUpdated,
     ]);
-
+    _scrollController.addListener(_scrollListener);
     _event = widget.event;
     _superEvent = widget.superEvent;
     _survey = widget.survey;
+    _displayCategories = _buildDisplayCategories(widget.event);
     _initEvent();
+    _initSelector();
 
     if ((_userLocation = widget.userLocation) == null) {
       Event2HomePanel.getUserLocationIfAvailable().then((Position? userLocation) {
@@ -101,6 +120,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    widget.eventSelector?.dispose(this);
     super.dispose();
   }
 
@@ -131,14 +151,14 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget get _loadingContent {
       return Center(child:
           SizedBox(width: 32, height: 32, child:
-            CircularProgressIndicator(color: Styles().colors?.fillColorSecondary,)
+            CircularProgressIndicator(color: Styles().colors.fillColorSecondary,)
           )
         );
   }
 
   Widget get _eventContent =>
   RefreshIndicator(onRefresh: _refreshEvent, child:
-    CustomScrollView(slivers: <Widget>[
+    CustomScrollView(controller: _scrollController, slivers: <Widget>[
       SliverToutHeaderBar(
         title: _event?.name,
         flexImageUrl:  _event?.imageUrl,
@@ -147,18 +167,18 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ),
       SliverList(delegate:
       SliverChildListDelegate([
-        Container(color: Styles().colors?.white, child:
+        Container(color: Styles().colors.white, child:
           Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _badgeWidget,
-            _categoriesWidget,
+            _roleBadgeWidget,
+            _contentHeadingWidget,
             Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-            Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-              _titleWidget,
-              _sponsorWidget,
-              _detailsWidget,
-            ])
+              Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _titleWidget,
+                _sponsorWidget,
+                _detailsWidget,
+              ])
             ),
-            Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,),
+            Divider(height: 1, color: Styles().colors.fillColorPrimaryTransparent03,),
           ]),
         ),
         Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
@@ -171,21 +191,21 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ),
     ]));
 
-  Widget get _badgeWidget {
+  Widget get _roleBadgeWidget {
     String? label = _isAdmin ? Localization().getStringEx('panel.event2.detail.general.admin.title', 'ADMIN') : null;
     return (label != null) ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-      Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+      Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
         Semantics(label: event2UserRoleToString(_event?.userRole), excludeSemantics: true, child:
-          Text(event2UserRoleToString(_event?.userRole)?.toUpperCase() ?? 'ADMIN', style:  Styles().textStyles?.getTextStyle('widget.heading.small'),)
+          Text(event2UserRoleToString(_event?.userRole)?.toUpperCase() ?? 'ADMIN', style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
     ))) : Container();
   }
 
 
-  Widget get _categoriesWidget => 
+  Widget get _contentHeadingWidget => 
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Expanded(child:
-        Padding(padding: EdgeInsets.only(left: 16, top: 16, bottom: 8), child:
-          Text(_displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat"))
+        Padding(padding: EdgeInsets.only(left: 16, top: _hasDisplayCategories ? 16 : 8, bottom: 8), child:
+          _hasDisplayCategories ? _categoriesContentWidget : _titleContentWidget,
         ),
       ),
       _groupingBadgeWidget,
@@ -195,21 +215,24 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ],)
     ]);
 
-  List<String>? get _displayCategories =>
-    Events2().contentAttributes?.displaySelectedLabelsFromSelection(_event?.attributes, usage: ContentAttributeUsage.category);
+  Widget get _categoriesContentWidget =>
+    Text(_displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles.getTextStyle("widget.card.title.small.fat"));
+
+  static List<String>? _buildDisplayCategories(Event2? event) =>
+    Events2().contentAttributes?.displaySelectedLabelsFromSelection(event?.attributes, usage: ContentAttributeUsage.category);
 
   Widget get _groupingBadgeWidget {
     String? badgeLabel;
     if (_event?.isSuperEvent == true) {
-      badgeLabel = Localization().getStringEx('widget.event2.card.super_event.abbreviation.label', 'COMP'); // composite
+      badgeLabel = Localization().getStringEx('panel.event2.detail.general.super_event.abbreviation.title', 'Multi'); // composite
     }
     else if (_event?.isRecurring == true) {
-      badgeLabel = Localization().getStringEx('widget.event2.card.recurring.abbreviation.label', 'REC');
+      badgeLabel = Localization().getStringEx('panel.event2.detail.general.recurrence.abbreviation.title', 'Repeats');
     }
     return (badgeLabel != null) ? Padding(padding: EdgeInsets.only(top: 16), child:
-      Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+      Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
         Semantics(label: badgeLabel, excludeSemantics: true, child:
-          Text(badgeLabel, style:  Styles().textStyles?.getTextStyle('widget.heading.small'),)
+          Text(badgeLabel, style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
     ))) : Container();
   }
 
@@ -227,7 +250,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           button: true,
           child: InkWell(onTap: _onFavorite,
             child: Padding(padding: EdgeInsets.all(16),
-              child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true,)
+              child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true,)
             )
           ),
         ),
@@ -239,22 +262,26 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     Positioned.fill(child:
       Center(child:
         SizedBox(width: 18, height: 18, child:
-          CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2,),
+          CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,),
         ),
       ),
     ),
   );
 
-  Widget get _titleWidget => Row(children: [
-    Expanded(child: 
-      Text(_event?.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.extra_large'), maxLines: 2,)
-    ),
-  ],);
+  Widget get _titleWidget => _hasDisplayCategories ?
+    Row(children: [
+      Expanded(child:
+        _titleContentWidget
+      ),
+    ],) : Container();
+
+  Widget get _titleContentWidget =>
+    Text(_event?.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.extra_large'));
 
   Widget get _sponsorWidget => StringUtils.isNotEmpty(_event?.sponsor) ? Padding(padding: EdgeInsets.only(top: 8), child:
     Row(children: [
       Expanded(child: 
-        Text(_event?.sponsor ?? '', style: Styles().textStyles?.getTextStyle('widget.item.regular.fat'), maxLines: 2,)
+        Text(_event?.sponsor ?? '', style: Styles().textStyles.getTextStyle('widget.item.regular.fat'), maxLines: 2,)
       ),
     ],),
    ) : Container();
@@ -262,8 +289,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget get _descriptionWidget => StringUtils.isNotEmpty(_event?.description) ? Padding(padding: EdgeInsets.only(top: 24, left: 10, right: 10), child:
        HtmlWidget(
           StringUtils.ensureNotEmpty(_event?.description),
-          onTapUrl : (url) {_onLaunchUrl(url, context: context); return true;},
-          textStyle: Styles().textStyles?.getTextStyle("widget.info.regular")
+          onTapUrl : (url) { _launchUrl(url, context: context); return true; },
+          textStyle: Styles().textStyles.getTextStyle("widget.info.regular")
       )
   ) : Container();
 
@@ -276,6 +303,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ...?_priceDetailWidget,
       ...?_privacyDetailWidget,
       ...?_superEventDetailWidget,
+      ...?_promoteButton,
       ...?_addToCalendarButton,
       ...?_adminSettingsButtonWidget,
       ...?_attendanceDetailWidget,
@@ -301,13 +329,13 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       bool canLaunch = StringUtils.isNotEmpty(_event?.onlineDetails?.url);
       List<Widget> details = <Widget>[
         InkWell(onTap: canLaunch ? _onOnline : null, child:
-          _buildTextDetailWidget('Online', 'laptop'),
+          _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.online.title', 'Online'), 'laptop', showProgress: _onlineLaunching),
         ),
       ];
 
       Widget onlineWidget = canLaunch ?
-        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles?.getTextStyle('widget.button.title.small.semi_fat.underline'),) :
-        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),);
+        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles.getTextStyle('widget.button.title.small.semi_fat.underline'),) :
+        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular'),);
       details.add(
         InkWell(onTap: canLaunch ? _onOnline : null, child:
           _buildDetailWidget(onlineWidget, 'laptop', iconVisible: false, detailPadding: EdgeInsets.zero)
@@ -325,29 +353,33 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
       bool canLocation = _event?.location?.isLocationCoordinateValid ?? false;
 
-      TextStyle? textDetailStyle = Styles().textStyles?.getTextStyle(canLocation ?
-        'widget.explore.card.detail.regular.underline' : 'widget.explore.card.detail.regular');
+      String textDetailStyleName = canLocation ? 'widget.explore.card.detail.regular.underline' : 'widget.explore.card.detail.regular';
+      TextStyle? textDetailStyle = Styles().textStyles.getTextStyle(textDetailStyleName);
       
       List<Widget> details = <Widget>[
-        _buildTextDetailWidget('In Person', 'location'),
+        _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.in_person.title', 'In Person'), 'location',
+          textStyle: textDetailStyle
+        ),
       ];
 
-      String? locationText = (
-        _event?.location?.displayName ??
-        _event?.location?.displayAddress ??
-        _event?.location?.displayCoordinates
-      );
-      if (locationText != null) {
-        details.add(
-          _buildDetailWidget(Text(locationText, maxLines: 1, style: textDetailStyle), 'location', iconVisible: false, detailPadding: EdgeInsets.zero)
-        );
+      String? displayName = _event?.location?.displayName;
+      if (displayName != null) {
+        details.add(_buildLocationTextDetailWidget(displayName, textStyle: textDetailStyle));
+      }
+
+      String? displayAddress = _event?.location?.displayAddress;
+      if ((displayAddress != null) && (displayAddress != displayName)) {
+        details.add(_buildLocationTextDetailWidget(displayAddress, textStyle: textDetailStyle));
+      }
+
+      String? displayDescription = _event?.location?.displayDescription;
+      if ((displayDescription != null) && (displayDescription != displayAddress) && (displayDescription != displayName)) {
+        details.add(_buildLocationTextDetailWidget(displayDescription, textStyle: textDetailStyle));
       }
 
       String? distanceText = _event?.getDisplayDistance(_userLocation);
       if (distanceText != null) {
-        details.add(
-          _buildDetailWidget(Text(distanceText, maxLines: 1, style: textDetailStyle,), 'location', iconVisible: false, detailPadding: EdgeInsets.zero)
-        );
+        details.add(_buildLocationTextDetailWidget(distanceText, textStyle: textDetailStyle));
       }
 
       if (canLocation) {
@@ -372,21 +404,22 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   ] : null;
 
   List<Widget>? get _priceDetailWidget{
-    bool isFree = _event?.free ?? false;
-    String priceText =isFree? "Free" : (_event?.cost ?? "Free");
-    String? additionalDescription = isFree? _event?.cost : null;
-    List<Widget>? details = priceText.isNotEmpty ? <Widget>[
-      _buildTextDetailWidget(priceText, 'cost'),
-    ] : null;
-    
-    if(details != null && StringUtils.isNotEmpty(additionalDescription)){
-      details.add(Container(padding: EdgeInsets.only(left: 28), child:
-        Row(children: [Expanded(child:
-            Text(additionalDescription!, style: Styles().textStyles?.getTextStyle("widget.item.regular"))),
-          ])));
+    List<Widget>? details = <Widget>[];
+    if (_event?.free != false) {
+      details.add(_buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.free.title', 'Free'), 'cost'));
+      if (StringUtils.isNotEmpty(_event?.cost)) {
+        details.add(_buildTextDetailWidget(_event?.cost ?? '', 'cost',
+          textStyle: Styles().textStyles.getTextStyle('widget.info.regular.thin'),
+          iconVisible: false,
+          maxLines: 2,
+          detailPadding: EdgeInsets.zero
+        ));
+      }
     }
-    details?.add( _detailSpacerWidget);
-
+    else if (StringUtils.isNotEmpty(_event?.cost)) {
+      details.add(_buildTextDetailWidget(_event?.cost ?? '', 'cost'));
+    }
+    details.add( _detailSpacerWidget);
     return details;
   }
 
@@ -430,37 +463,50 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     bool hasSurvey = (_event?.hasSurvey ?? false) && (_survey != null);
     bool showSurvey = (_isAttendee || _isAdmin) && hasAttendance && hasSurvey;
     int surveyHours = _event?.surveyDetails?.hoursAfterEvent ?? 0;
+    bool registrationAvailable = (_event?.registrationDetails?.isRegistrationAvailable(_persons?.registrationOccupancy) != false);
 
     if (hasRegistration) {
       if (hasAttendance) {
         if (showSurvey) {
           if (_isAdmin) {
-            description = Localization().getStringEx('panel.event2.detail.survey.description.reg.att.svy.admin', 'This event requires Registering, Attendance will be taken and a Follow up Survey is set.');
+            description = registrationAvailable ?
+              Localization().getStringEx('panel.event2.detail.survey.description.reg.att.svy.admin', 'This event requires registration. Attendance will be taken and a follow-up survey will be sent.') :
+              Localization().getStringEx('panel.event2.detail.survey.description.reg.full.att.svy.admin', 'This event requires registration and its capacity is reached. Attendance will be taken and a follow-up survey will be sent.');
           }
           else switch (surveyHours) {
-            case 0:  description = Localization().getStringEx('panel.event2.detail.survey.description.reg.att.svy.none', 'This event requires Registering, Attendance will be taken and you will receive a Notification with a Follow up Survey after this event.'); break;
-            case 1:  description = Localization().getStringEx('panel.event2.detail.survey.description.reg.att.svy.single', 'This event requires Registering, Attendance will be taken and you will receive a Notification with a Follow up Survey 1 hour after this event.'); break;
-            default: description = Localization().getStringEx('panel.event2.detail.survey.description.reg.att.svy.multi', 'This event requires Registering, Attendance will be taken and you will receive a Notification with a Follow up Survey {{hours}} hours after this event.').replaceAll('{{hours}}', surveyHours.toString()); break;
+            case 0:  description = registrationAvailable ?
+              Localization().getStringEx('panel.event2.detail.survey.description.reg.att.svy.none', 'This event requires registration. Attendance will be taken and you will receive a notification with a follow-up survey after this event.') :
+              Localization().getStringEx('panel.event2.detail.survey.description.reg.full.att.svy.none', 'This event requires registration and its capacity is reached. Attendance will be taken and you will receive a notification with a follow-up survey after this event.'); break;
+            case 1:  description = registrationAvailable ?
+              Localization().getStringEx('panel.event2.detail.survey.description.reg.att.svy.single', 'This event requires registration. Attendance will be taken and you will receive a notification with a follow-up survey 1 hour after the event.') :
+              Localization().getStringEx('panel.event2.detail.survey.description.reg.full.att.svy.single', 'This event requires registration and its capacity is reached. Attendance will be taken and you will receive a notification with a follow-up survey 1 hour after the event.'); break;
+            default: description = (registrationAvailable ?
+              Localization().getStringEx('panel.event2.detail.survey.description.reg.att.svy.multi', 'This event requires registration. Attendance will be taken and you will receive a notification with a follow-up survey {{hours}} hours after the event.') :
+              Localization().getStringEx('panel.event2.detail.survey.description.reg.full.att.svy.multi', 'This event requires registration and its capacity is reached. Attendance will be taken and you will receive a notification with a follow-up survey {{hours}} hours after the event.')).replaceAll('{{hours}}', surveyHours.toString()); break;
           }
         }
         else {
-          description = Localization().getStringEx('panel.event2.detail.survey.description.reg.att', 'This event requires Registering and Attendance will be taken.'); 
+          description = registrationAvailable ?
+            Localization().getStringEx('panel.event2.detail.survey.description.reg.att', 'This event requires registration, and attendance will be taken.') :
+            Localization().getStringEx('panel.event2.detail.survey.description.reg.full.att', 'This event requires registration, its capacity is reached, and attendance will be taken.'); 
         }
       }
       else {
-        description = Localization().getStringEx('panel.event2.detail.survey.description.reg', 'Registration is required for this event.'); 
+        description = registrationAvailable ?
+          Localization().getStringEx('panel.event2.detail.survey.description.reg', 'Registration is required for this event.') :
+          Localization().getStringEx('panel.event2.detail.survey.description.reg.full', 'Registration is required for this event and its capacity is reached.');  
       }
     }
     else {
       if (hasAttendance) {
         if (showSurvey) {
           if (_isAdmin) {
-            description = Localization().getStringEx('panel.event2.detail.survey.description.att.svy.admin', 'Attendance will be taken at this event and a Follow up Survey is set.');
+            description = Localization().getStringEx('panel.event2.detail.survey.description.att.svy.admin', 'Attendance will be taken at this event, and a follow-up survey will be sent.');
           }
           else switch (surveyHours) {
-            case 0:  description = Localization().getStringEx('panel.event2.detail.survey.description.att.svy.none', 'Attendance will be taken at this event and you will receive a Notification with a Follow up Survey after this event.'); break;
-            case 1:  description = Localization().getStringEx('panel.event2.detail.survey.description.att.svy.single', 'Attendance will be taken at this event and you will receive a Notification with a Follow up Survey 1 hour after this event.'); break;
-            default: description = Localization().getStringEx('panel.event2.detail.survey.description.att.svy.multi', 'Attendance will be taken at this event and you will receive a Notification with a Follow up Survey {{hours}} hours after this event.').replaceAll('{{hours}}', surveyHours.toString()); break;
+            case 0:  description = Localization().getStringEx('panel.event2.detail.survey.description.att.svy.none', 'Attendance will be taken at this event and you will receive a notification with a follow-up survey after the event.'); break;
+            case 1:  description = Localization().getStringEx('panel.event2.detail.survey.description.att.svy.single', 'Attendance will be taken at this event, and you will receive a notification with a follow-up survey 1 hour after the event..'); break;
+            default: description = Localization().getStringEx('panel.event2.detail.survey.description.att.svy.multi', 'Attendance will be taken at this event, and you will receive a notification with a follow-up survey {{hours}} hours after the event.').replaceAll('{{hours}}', surveyHours.toString()); break;
           }
         }
         else {
@@ -474,7 +520,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
     return (description != null) ?<Widget>[
       _buildTextDetailWidget(description, 'info',
-        textStyle: 'widget.info.regular.thin.italic',
+        textStyle: Styles().textStyles.getTextStyle('widget.info.regular.thin.italic') ,
         iconPadding: const EdgeInsets.only(right: 6),
         maxLines: 5,
       ),
@@ -487,21 +533,21 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       return null;
 
     List<Widget> contactList = [];
-    contactList.add(_buildTextDetailWidget("Contacts", "person"));
+    contactList.add(_buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.contacts.title', 'Contacts'), 'person'));
 
     for (Event2Contact? contact in _event!.contacts!) {
       String? details =  event2ContactToDisplayString(contact);
       if(StringUtils.isNotEmpty(details)){
       contactList.add(
           _buildDetailWidget(
-        // Text(details?? '', style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular.underline')),
-              RichText(textScaleFactor: MediaQuery.textScaleFactorOf(context), text:
-                TextSpan(style: Styles().textStyles?.getTextStyle("widget.explore.card.detail.regular"), children: <TextSpan>[
+        // Text(details?? '', style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular.underline')),
+              RichText(textScaler: MediaQuery.of(context).textScaler, text:
+                TextSpan(style: Styles().textStyles.getTextStyle("widget.explore.card.detail.regular"), children: <TextSpan>[
                   TextSpan(text: StringUtils.isNotEmpty(contact?.firstName)?"${contact?.firstName}, " : ""),
                   TextSpan(text: StringUtils.isNotEmpty(contact?.lastName)?"${contact?.lastName}, " : ""),
                   TextSpan(text: StringUtils.isNotEmpty(contact?.organization)?"${contact?.organization}, " : ""),
-                  TextSpan(text: StringUtils.isNotEmpty(contact?.email)?"${contact?.email}, " : "", style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular.underline'), recognizer: TapGestureRecognizer()..onTap = () => _onContactEmail(contact?.email),),
-                  TextSpan(text: StringUtils.isNotEmpty(contact?.phone)?"${contact?.phone}, " : "", style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular.underline'), recognizer: TapGestureRecognizer()..onTap = () => _onContactPhone(contact?.phone),),
+                  TextSpan(text: StringUtils.isNotEmpty(contact?.email)?"${contact?.email}, " : "", style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular.underline'), recognizer: TapGestureRecognizer()..onTap = () => _onContactEmail(contact?.email),),
+                  TextSpan(text: StringUtils.isNotEmpty(contact?.phone)?"${contact?.phone}, " : "", style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular.underline'), recognizer: TapGestureRecognizer()..onTap = () => _onContactPhone(contact?.phone),),
             ])),
             'person', iconVisible: false, detailPadding: EdgeInsets.zero));
       }
@@ -514,13 +560,19 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   List<Widget>? get _adminSettingsButtonWidget => _isAdmin? <Widget>[
     InkWell(onTap: _onAdminSettings, child:
-       _buildTextDetailWidget("Event Admin Actions", "settings", underlined: true)),
+       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.admin_settings.title', 'Event Admin Settings'), 'settings', underlined: true)),
     _detailSpacerWidget
   ] : null;
 
   List<Widget>? get _addToCalendarButton => <Widget>[
     InkWell(onTap: _onAddToCalendar, child:
-       _buildTextDetailWidget("Add to Calendar", "event-save-to-calendar", underlined: true)),
+       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.add_to_calendar.title', 'Add to Calendar'), 'event-save-to-calendar', underlined: true)),
+    _detailSpacerWidget
+  ];
+
+  List<Widget>? get _promoteButton => <Widget>[
+    InkWell(onTap: _onPromote, child:
+       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.promote.title', 'Share this event'), 'qr', underlined: true)),
     _detailSpacerWidget
   ];
 
@@ -530,6 +582,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ...?_urlButtonWidget,
       ...?_registrationButtonWidget,
       ...?_logInButtonWidget,
+      ...?_selectorWidget,
     ];
 
     return buttons.isNotEmpty ? Padding(padding: EdgeInsets.only(top: 16), child:
@@ -541,18 +594,18 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     StringUtils.isNotEmpty(_event?.eventUrl) ? <Widget>[_buildButtonWidget(//TBD remove loading from here
       title: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
       hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
-      onTap: (){_onWebButton(_event?.eventUrl, analyticsName: 'Website');}
+      externalLink: true,
+      progress: _websiteLaunching,
+      onTap: _onWebsiteButton,
     )] : null;
 
   List<Widget>? get _logInButtonWidget{
     if(Auth2().isLoggedIn == true)
       return null;
 
-    return (_event?.registrationDetails?.type == Event2RegistrationType.internal) ? <Widget>[_buildButtonWidget(
-        title: Localization().getStringEx('panel.event2_detail.button.unregister.title', 'Log In to Register'),
+    return _isInternalRegistrationAvailable ? <Widget>[_buildButtonWidget(
+        title: Localization().getStringEx('panel.event2.detail.button.login.register.title', 'Log In to Register'),
         onTap: _onLogIn,
-        externalLink: false,
-        enabled: false,
         progress: _authLoading
     )] : null;
   }
@@ -566,27 +619,26 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     if ((startTimeUtc != null) && DateTime.now().toUtc().isAfter(startTimeUtc))
       return null;
 
-    if (_event?.registrationDetails?.type == Event2RegistrationType.internal) { //Require App registration
-        if( _event?.userRole == Event2UserRole.participant){//Already registered
+    if (_event?.registrationDetails?.type == Event2RegistrationType.internal) { // Require App registration
+        if (_event?.userRole == Event2UserRole.participant) {// Already registered
           return <Widget>[_buildButtonWidget(
-              title: Localization().getStringEx('panel.event2_detail.button.unregister.title', 'Unregister me'),
+              title: Localization().getStringEx('panel.event2.detail.button.unregister.title', 'Unregister'),
               onTap: _onUnregister,
-              externalLink: false,
               progress: _registrationLoading
           )];
-        } else if (_event?.userRole == null){//Not registered yet
+        } else if ((_event?.userRole == null) && _isInternalRegistrationAvailable) { // Not registered yet and has available capacity
           return <Widget>[_buildButtonWidget(
-              title: Localization().getStringEx('panel.event2_detail.button.register.title', 'Register me'),
+              title: Localization().getStringEx('panel.event2.detail.button.register.title', 'Register'),
               onTap: _onRegister,
-              externalLink: false,
               progress: _registrationLoading,
           )];
         }
-    } else if(StringUtils.isNotEmpty(_event?.registrationDetails?.externalLink)){// else external registration
-      // if(_event?.userRole == null){ //TBD check if this is correct check or we don't know if the user is registered externally
+    } else if (StringUtils.isNotEmpty(_event?.registrationDetails?.externalLink)) { // else external registration
+      // if (_event?.userRole == null){ //TBD check if this is correct check or we don't know if the user is registered externally
         return <Widget>[_buildButtonWidget(
-            title: Localization().getStringEx('panel.event2_detail.button.register.title', 'Register me'),
+            title: Localization().getStringEx('panel.event2.detail.button.register.title', 'Register'),
             onTap: _onExternalRegistration,
+            progress: _registrationLaunching,
             externalLink: true
         )];
       // }
@@ -600,8 +652,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       return <Widget>[_hasSurveyResponse == false ? _buildButtonWidget(
           title: Localization().getStringEx('panel.event2.detail.survey.button.follow_up_survey.title', 'Take Survey'),
           onTap: _onFollowUpSurvey,
-          externalLink: false,
-      ) : _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.survey.button.follow_up_survey.completed.message', 'You have completed this event\'s survey'), 'check')];
+      ) : _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.survey.button.follow_up_survey.completed.message', 'You have completed this event\'s survey'), 'check', maxLines: 2)];
     }
 
     return null;
@@ -610,8 +661,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget get _linkedEventsWidget => (_event?.hasLinkedEvents == true) ? SectionSlantHeader(
       title: _linkedEventsSectionTitle,
       slantImageKey: "slant-dark",
-      slantColor: Styles().colors!.backgroundVariant,
-      titleTextStyle: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"),
+      slantColor: Styles().colors.backgroundVariant,
+      titleTextStyle: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),
       progressWidget: _linkedEventsProgress,
       children: !_linkedEventsLoading ? _linkedEventsContent : [Row(children: [Expanded(child: Container())],)],
   ) : Container();
@@ -619,10 +670,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   String get _linkedEventsSectionTitle {
     if (_event?.isSuperEvent == true) {
-      return Localization().getStringEx('panel.explore_detail.super_event.schedule.heading.title', 'Event Schedule');
+      return Localization().getStringEx('panel.event2.detail.general.super_event.list.title', 'Multiple events');
     }
     else if (_event?.isRecurring == true) {
-      return Localization().getStringEx('panel.explore_detail.recurring_event.schedule.heading.title', 'Available Times');
+      return Localization().getStringEx('panel.event2.detail.general.recurrence.list.title', 'This event repeats');
     }
     else {
       return '';
@@ -630,7 +681,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   Widget? get _linkedEventsProgress => _linkedEventsLoading ? SizedBox(width: 24, height: 24, child:
-    CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,),
+    CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
   ) : null;
 
   List<Widget> get _linkedEventsContent {
@@ -646,6 +697,9 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
             ),
           ));
         }
+      }
+      if (_extendingLinkedEvents) {
+        cardWidgets.add(Padding(padding: EdgeInsets.only(top: cardWidgets.isNotEmpty ? 8 : 0), child: _extendingLinkedEventsIndicator));
       }
     }
     if (cardWidgets.isEmpty) {
@@ -672,58 +726,85 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24), child:
         Row(children: [
           Expanded(child:
-            Text(message, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"), textAlign: TextAlign.center,),
+            Text(message, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"), textAlign: TextAlign.center,),
           )
         ],)
       )
     )
   );
 
+  Widget get _extendingLinkedEventsIndicator => Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+      child: Align(
+          alignment: Alignment.center,
+          child: SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                  strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)))));
+
+  List<Widget>? get _selectorWidget {
+      Widget? customSelectorWidget = widget.eventSelector?.buildWidget(this);
+      return customSelectorWidget != null ? <Widget> [customSelectorWidget] : null;
+  }
+
   Widget get _adminSettingsWidget  =>
       Padding(padding: EdgeInsets.only(top: 40, bottom: 16, left: 16, right: 16), child:
         Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
           _buildSettingButton(title: "Edit event", onTap: _onSettingEditEvent),
-          _buildSettingButton(title: "Promote this event", onTap: _onSettingPromote),
           _buildSettingButton(title: "Event registration", onTap: _onSettingEventRegistration),
           _buildSettingButton(title: "Event attendance", onTap: _onSettingAttendance),
-          _buildSettingButton(title: "Event follow-up survey", onTap: _onSettingSurvey),
-          _buildSettingButton(title: _survey != null ? "Event follow-up survey responses" : null, onTap: _onSettingSurveyResponses),
+          _buildSettingButton(title: _event?.attendanceDetails?.isNotEmpty == true ? "Event follow-up survey" : null, onTap: _onSettingSurvey),
+          _buildSettingButton(title: _event?.hasSurvey == true ? "Event follow-up survey responses" : null, onTap: _onSettingSurveyResponses),
           _buildSettingButton(title: "Delete event", onTap: _onSettingDeleteEvent),
         ],)
     );
 
   Widget get _detailSpacerWidget => Container(height: 8,);
 
+  Widget _buildLocationTextDetailWidget(String text, { TextStyle? textStyle }) =>
+    _buildDetailWidget(Text(text, style: textStyle ?? Styles().textStyles.getTextStyle('widget.explore.card.detail.regular')), // #3842 maxLines: 1, overflow: TextOverflow.ellipsis
+      'location', iconVisible: false, detailPadding: EdgeInsets.zero
+    );
+
   Widget _buildTextDetailWidget(String text, String iconKey, {
-    String textStyle = 'widget.info.medium',
+    TextStyle? textStyle, // 'widget.info.medium' : 'widget.info.medium.underline'
+    int? maxLines = 1, TextOverflow? overflow = TextOverflow.ellipsis,
     EdgeInsetsGeometry detailPadding = const EdgeInsets.only(top: 4),
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6, top: 2, bottom: 2),
-    bool iconVisible = true, bool underlined = false, int maxLines = 1,
+    bool iconVisible = true, bool showProgress = false, bool underlined = false,
   }) =>
     _buildDetailWidget(
       Text(text,
-        style: Styles().textStyles?.getTextStyle(underlined ? '$textStyle.underline' : textStyle),
+        style: textStyle ?? Styles().textStyles.getTextStyle(underlined ? 'widget.info.medium.underline' : 'widget.info.medium'),
         maxLines: maxLines,
-        overflow: TextOverflow.ellipsis,
+        overflow: overflow,
       ),
       iconKey,
       detailPadding: detailPadding,
       iconPadding: iconPadding,
-      iconVisible: iconVisible
+      iconVisible: iconVisible,
+      showProgress: showProgress,
     );
 
   Widget _buildDetailWidget(Widget contentWidget, String iconKey, {
     EdgeInsetsGeometry detailPadding = const EdgeInsets.only(top: 4),
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6, top: 2, bottom: 2),
-    bool iconVisible = true
+    bool iconVisible = true,
+    bool showProgress = false,
   }) {
     List<Widget> contentList = <Widget>[];
-    Widget? iconWidget = Styles().images?.getImage(iconKey, excludeFromSemantics: true);
+    Widget? iconWidget = Styles().images.getImage(iconKey, excludeFromSemantics: true);
     if (iconWidget != null) {
-      contentList.add(Opacity(opacity: iconVisible ? 1 : 0, child:
-        Padding(padding: iconPadding, child:
-          iconWidget,
-        )
+      contentList.add(Padding(padding: iconPadding, child: showProgress ?
+        Stack(children: [
+          Opacity(opacity: 0, child: iconWidget),
+          Positioned.fill(child:
+            Padding(padding: EdgeInsets.all(2), child:
+              CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
+            ),
+          )
+        ],) : Opacity(opacity: iconVisible ? 1 : 0, child: iconWidget),
       ));
     }
     contentList.add(Expanded(child:
@@ -737,7 +818,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget _buildButtonWidget({String? title,
     String? hint,
     bool enabled = true,
-    bool externalLink = true,
+    bool externalLink = false,
     bool progress = false,
     void Function()? onTap,
   }) => StringUtils.isNotEmpty(title) ?
@@ -747,10 +828,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           RoundedButton(
               label: StringUtils.ensureNotEmpty(title),
               hint: hint,
-              textStyle: enabled ? Styles().textStyles?.getTextStyle("widget.button.title.small.fat") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.small.fat"),
-              backgroundColor: enabled ? Colors.white : Styles().colors!.background,
-              borderColor: enabled ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-              rightIcon:externalLink? Styles().images?.getImage(enabled ? 'external-link' : 'external-link-dark' ) : null,
+              textStyle: enabled ? Styles().textStyles.getTextStyle("widget.button.title.small.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.small.fat"),
+              backgroundColor: enabled ? Colors.white : Styles().colors.background,
+              borderColor: enabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+              rightIcon:externalLink? Styles().images.getImage(enabled ? 'external-link' : 'external-link-dark' ) : null,
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               onTap: onTap ?? (){},
             progress: progress,
@@ -780,10 +861,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onOnline() {
     Analytics().logSelect(target: "Online Url: ${_event?.name}");
-    String? url = _event?.onlineDetails?.url;
-    if(StringUtils.isNotEmpty(url)){
-      _onLaunchUrl(url);
-    }
+    _launchUrl(_event?.onlineDetails?.url, updateProgress: (bool value) => setStateDelayedIfMounted(() { _onlineLaunching = value; }));
   }
 
   void _onFavorite() {
@@ -791,32 +869,38 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     Auth2().prefs?.toggleFavorite(_event);
   }
 
-  void _onLaunchUrl(String? url, {BuildContext? context}) {
-    if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context ?? this.context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      } else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri);
-        }
+  void _launchUrl(String? url, { BuildContext? context, void Function(bool progress)? updateProgress }) {
+    Uri? uri = UrlUtils.parseUri(url);
+    if (uri != null) {
+      if (updateProgress != null) {
+        updateProgress(true);
       }
+      UrlUtils.fixUriAsync(uri).then((Uri? fixedUri) {
+        if (updateProgress != null) {
+          updateProgress(false);
+        }
+        launchUrl(fixedUri ?? uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault).then((bool result) {
+          if (result == false) {
+            Event2Popup.showMessage(context ?? this.context, message: Localization().getStringEx('panel.event2.detail.launch.url.failed.message', 'Failed to launch URL.'));
+          }
+        });
+      });
+    }
+    else {
+      Event2Popup.showMessage(context ?? this.context, message: Localization().getStringEx('panel.event2.detail.parse.url.failed.message', 'Failed to parse URL.'));
     }
   }
 
-  void _onWebButton(String? url, { String? analyticsName }) {
-    if (analyticsName != null) {
-      Analytics().logSelect(target: analyticsName);
-    }
-    if(StringUtils.isNotEmpty(url)){
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsName: "WebPanel($analyticsName)",)));
-    }
+  void _onWebsiteButton() {
+    Analytics().logSelect(target: 'Website');
+    _launchUrl(_event?.eventUrl, updateProgress: (bool value) => setStateDelayedIfMounted(() { _websiteLaunching = value; }));
   }
 
   void _onLinkedEvent(Event2 event) {
     Analytics().logSelect(target: event.name);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event,
       userLocation: _userLocation,
+      eventSelector:  widget.eventSelector,
       superEvent: (_event?.isSuperEvent == true) ? _event : null,
     )));
   }
@@ -829,13 +913,22 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     else {
       Navigator.of(context).push(CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: _superEvent,
         userLocation: _userLocation,
+        eventSelector:  widget.eventSelector,
       )));
     }
   }
 
   void _onRegister() {
     Analytics().logSelect(target: 'Register me');
-    _performRegistration(Events2().registerToEvent);
+    _performRegistration(Events2().registerToEvent,
+        onSuccess: (Event2 event) {
+          if(!Auth2().isFavorite(event)){ //Show only if it's not favorite yet
+            AppAlert.showConfirmationDialog(buildContext: context,
+                message: Localization().getStringEx("panel.event2.detail.star_event.dialog.message", "Do you want to also Star this event?"),
+                positiveCallback: ()=> _onFavorite()
+            );
+          }
+    });
   }
 
   void _onUnregister() {
@@ -843,7 +936,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     _performRegistration(Events2().unregisterFromEvent);
   }
 
-  void _performRegistration(Future<dynamic> Function(String eventId) registrationApi) {
+  void _performRegistration(Future<dynamic> Function(String eventId) registrationApi, {Function(Event2 event)? onSuccess}) {
     if ((_eventId != null) && !_registrationLoading) {
         setStateIfMounted(() {
           _registrationLoading = true;
@@ -852,9 +945,13 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       registrationApi(_eventId!).then((result) {
         if (mounted) {
           if (result is Event2) {
-            setState(() {
-              _event = result;
-              _registrationLoading = false;
+            Events2().loadEventPeople(_eventId!).then((Event2PersonsResult? persons) {
+              setState(() {
+                _event = result;
+                _persons = persons;
+                _registrationLoading = false;
+              });
+              onSuccess?.call(result);
             });
           }
           else {
@@ -870,8 +967,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onExternalRegistration(){
     Analytics().logSelect(target: 'Register me');
-    if(StringUtils.isNotEmpty(_event?.registrationDetails?.externalLink))
-       _onLaunchUrl(_event?.registrationDetails?.externalLink);
+    _launchUrl(_event?.registrationDetails?.externalLink, updateProgress: (bool value) => setStateDelayedIfMounted(() { _registrationLaunching = value; }));
   }
 
   void _onFollowUpSurvey(){
@@ -895,20 +991,23 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
   }  
   void _onAddToCalendar(){
-      DeviceCalendar().addToCalendar(_event);
+    DeviceCalendar().addToCalendar(context, _event);
+  }
+
+  void _onPromote(){
+    Analytics().logSelect(target: "Promote Event", attributes: _event?.analyticsAttributes);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2QrCodePanel(event: _event)));
   }
 
   void _onContactEmail(String? email){
     if(StringUtils.isNotEmpty(email)) {
-      String link = "mailto:$email";
-      _onLaunchUrl(link);
+      _launchUrl("mailto:$email");
     }
   }
 
   void _onContactPhone(String? phone){
     if(StringUtils.isNotEmpty(phone)) {
-      String link = "tel:$phone";
-      _onLaunchUrl(link);
+      _launchUrl("tel:$phone");
     }
   }
 
@@ -935,7 +1034,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onSettingEditEvent(){
     Analytics().logSelect(target: "Edit event");
-    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel(event: _event, survey: _survey,))).then((Event2SetupSurveyParam? result) {
+    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel(event: _event, survey: _survey, eventSelector: widget.eventSelector,))).then((Event2SetupSurveyParam? result) {
       if (result != null) {
         setStateIfMounted(() {
           if (result.event != null) {
@@ -945,11 +1044,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         });
       }
     });
-  }
-
-  void _onSettingPromote(){
-    Analytics().logSelect(target: "Promote Event", attributes: _event?.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2QrCodePanel(event: _event)));
   }
 
   void _onSettingEventRegistration(){
@@ -1051,9 +1145,20 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       });
       Event2? event = await Events2().loadEvent(widget.eventId!);
       setStateIfMounted(() {
-        _event = event;
         _eventLoading = false;
       });
+      if (event != null) {
+        List<String>? displayCategories = _buildDisplayCategories(event);
+        setStateIfMounted(() {
+          _event = event;
+          _selectorEvent = event;
+          _displayCategories = displayCategories;
+        });
+      }
+    }
+
+    if (_event != null) {
+      RecentItems().addRecentItem(RecentItem.fromSource(_event));
     }
 
     // Load additional stuff that we need for this event.
@@ -1071,10 +1176,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
       int? surveyResponseIndex = ((_event?.hasSurvey == true) && (_survey?.id != null)) ? futures.length : null;
       if (surveyResponseIndex != null) {
-        futures.add(Surveys().loadSurveyResponses(surveyIDs: [_survey!.id]));
+        futures.add(Surveys().loadUserSurveyResponses(surveyIDs: [_survey!.id]));
       }
 
-      int? peopleIndex = ((_event?.hasSurvey == true) && (_persons == null)) ? futures.length : null;
+      int? peopleIndex = (((_event?.hasSurvey == true) || (_event?.registrationDetails?.type == Event2RegistrationType.internal)) && (_persons == null)) ? futures.length : null;
       if (peopleIndex != null) {
         futures.add(Events2().loadEventPeople(eventId));
       }
@@ -1082,7 +1187,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       Event2Grouping? linkedEventsGrouping = _event?.linkedEventsGroupingQuery;
       int? linkedEventsIndex = ((linkedEventsGrouping != null) && (_linkedEvents == null)) ? futures.length : null;
       if (linkedEventsIndex != null) {
-        futures.add(Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping)));
+        futures.add(Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping, limit: _linkedEventsPageLength)));
         //TMP: futures.add(Events2().loadEvents(Events2Query(searchText: 'Prairie')));
         setState(() {
           _linkedEventsLoading = true;
@@ -1104,7 +1209,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
         // Handle searching for survey responses if the event survey was just loaded
         if ((_event?.hasSurvey == true) && (surveyResponseIndex == null) && (survey?.id != null)) {
-          surveyResponses = await Surveys().loadSurveyResponses(surveyIDs: [survey!.id]);
+          surveyResponses = await Surveys().loadUserSurveyResponses(surveyIDs: [survey!.id]);
         }
 
         setStateIfMounted(() {
@@ -1121,6 +1226,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           }
           if (linkedEventsResult?.events != null) {
             _linkedEvents = linkedEventsResult?.events;
+            _lastPageLoadedAllLinkedEvents = (linkedEventsResult!.events!.length >= _linkedEventsPageLength);
+            if (linkedEventsResult.totalCount != null) {
+              _totalLinkedEventsCount = linkedEventsResult.totalCount;
+            }
           }
           if (superEvent != null) {
             _superEvent = superEvent;
@@ -1140,70 +1249,89 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         });
       }
 
-      List<Future<dynamic>> futures = [
-        Events2().loadEvent(eventId),
-      ];
-      
-      // We need the survey and persons only if event has a survey attached.
-
-      int? surveyIndex = (_event?.hasSurvey == true) ? futures.length : null;
-      if (surveyIndex != null) {
-        futures.add(Surveys().loadEvent2Survey(eventId));
-      }
-
-      // Handle searching for existing survey responses
-      int? surveyResponseIndex = ((_event?.hasSurvey == true) && (_survey?.id != null)) ? futures.length : null;
-      if (surveyResponseIndex != null) {
-        futures.add(Surveys().loadSurveyResponses(surveyIDs: [_survey!.id]));
-      }
-
-      int? peopleIndex = (_event?.hasSurvey == true) ? futures.length : null;
-      if (peopleIndex != null) {
-        futures.add(Events2().loadEventPeople(eventId));
-      }
-
-      Event2Grouping? linkedEventsGrouping = _event?.linkedEventsGroupingQuery;
-      int? linkedEventsIndex = (linkedEventsGrouping != null) ? futures.length : null;
-      if (linkedEventsIndex != null) {
-        futures.add(Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping)));
-      }
-
-      int? superEventIndex = (_event?.isSuperEventChild == true) ? futures.length : null;
-      if (superEventIndex != null) {
-        futures.add(Events2().loadEvent(_event?.grouping?.superEventId ?? ''));
-      }
-
-      List<dynamic> results = await Future.wait(futures);
-      Event2? event = ((0 < results.length) && (results[0] is Event2)) ? results[0] : null;
-      Survey? survey = ((surveyIndex != null) && (surveyIndex < results.length) && (results[surveyIndex] is Survey)) ? results[surveyIndex] : null;
-      List<SurveyResponse>? surveyResponses = ((surveyResponseIndex != null) && (surveyResponseIndex < results.length) && (results[surveyResponseIndex] is List<SurveyResponse>)) ? results[surveyResponseIndex] : null;
-      Event2PersonsResult? persons = ((peopleIndex != null) && (peopleIndex < results.length) && (results[peopleIndex] is Event2PersonsResult)) ? results[peopleIndex] : null;
-      Events2ListResult? linkedEventsResult = ((linkedEventsIndex != null) && (linkedEventsIndex < results.length) && (results[linkedEventsIndex] is Events2ListResult)) ? results[linkedEventsIndex] : null;
-      Event2? superEvent = ((superEventIndex != null) && (superEventIndex < results.length) && (results[superEventIndex] is Event2)) ? results[superEventIndex] : null;
-
-      setStateIfMounted(() {
-        if (progress != null) {
-          progress(false);
-        }
+      Event2? event = await Events2().loadEvent(eventId);
+      if (mounted) {
         if (event != null) {
-          _event = event;
+
+          List<Future<dynamic>> futures = [];
+
+          // We need the survey only if event has a survey attached.
+          int? surveyIndex = event.hasSurvey ? futures.length : null;
+          if (surveyIndex != null) {
+            futures.add(Surveys().loadEvent2Survey(eventId));
+          }
+
+          // We need the persons only if event has a survey attached.
+          int? peopleIndex = event.hasSurvey ? futures.length : null;
+          if (peopleIndex != null) {
+            futures.add(Events2().loadEventPeople(eventId));
+          }
+
+          Event2Grouping? linkedEventsGrouping = event.linkedEventsGroupingQuery;
+          int? linkedEventsIndex = (linkedEventsGrouping != null) ? futures.length : null;
+          if (linkedEventsIndex != null) {
+            futures.add(Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping, limit: (_linkedEvents?.length ?? _linkedEventsPageLength))));
+          }
+
+          int? superEventIndex = event.isSuperEventChild ? futures.length : null;
+          if (superEventIndex != null) {
+            futures.add(Events2().loadEvent(event.grouping?.superEventId ?? ''));
+          }
+
+          if (futures.isNotEmpty) {
+            List<dynamic> results = await Future.wait(futures);
+            Survey? survey = ((surveyIndex != null) && (surveyIndex < results.length) && (results[surveyIndex] is Survey)) ? results[surveyIndex] : null;
+            Event2PersonsResult? persons = ((peopleIndex != null) && (peopleIndex < results.length) && (results[peopleIndex] is Event2PersonsResult)) ? results[peopleIndex] : null;
+            Events2ListResult? linkedEventsResult = ((linkedEventsIndex != null) && (linkedEventsIndex < results.length) && (results[linkedEventsIndex] is Events2ListResult)) ? results[linkedEventsIndex] : null;
+            Event2? superEvent = ((superEventIndex != null) && (superEventIndex < results.length) && (results[superEventIndex] is Event2)) ? results[superEventIndex] : null;
+
+            // Handle searching for existing survey responses
+            String? surveyId = survey?.id;
+            List<SurveyResponse>? surveyResponses = (event.hasSurvey && (surveyId != null) && mounted) ? await Surveys().loadUserSurveyResponses(surveyIDs: [surveyId]) : null;
+
+            // build display categories
+            List<String>? displayCategories = _buildDisplayCategories(event);
+
+            setStateIfMounted(() {
+              if (progress != null) {
+                progress(false);
+              }
+              _event = event;
+              _selectorEvent = event;
+              _displayCategories = displayCategories;
+              
+              _survey = survey;
+
+              if (persons != null) {
+                _persons = persons;
+              }
+              if (surveyResponses != null) {
+                _hasSurveyResponse = surveyResponses.isNotEmpty;
+              }
+              if (linkedEventsResult?.events != null) {
+                _linkedEvents = linkedEventsResult?.events;
+                _lastPageLoadedAllLinkedEvents = (linkedEventsResult!.events!.length >= _linkedEventsPageLength);
+                if (linkedEventsResult.totalCount != null) {
+                  _totalLinkedEventsCount = linkedEventsResult.totalCount;
+                }
+              }
+              if (superEvent != null) {
+                _superEvent = superEvent;
+              }
+            });
+          }
+          else if (progress != null) {
+            setState(() {
+              progress(true);
+            });
+          }
         }
-        if (survey != null) {
-          _survey = survey;
+        else if (progress != null) {
+          setState(() {
+            progress(true);
+          });
         }
-        if (surveyResponses != null) {
-          _hasSurveyResponse = surveyResponses.isNotEmpty;
-        }
-        if (persons != null) {
-          _persons = persons;
-        }
-        if (linkedEventsResult?.events != null) {
-          _linkedEvents = linkedEventsResult?.events;
-        }
-        if (superEvent != null) {
-          _superEvent = superEvent;
-        }
-      });
+      }
     }
   }
 
@@ -1211,7 +1339,47 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     if ((event != null) && (event.id == _eventId) && mounted) {
       setState(() {
         _event = event;
+        _selectorEvent = event;
       });
+    }
+  }
+
+  void _scrollListener() {
+    if ((_event?.hasLinkedEvents == true) &&
+        (_scrollController.offset >= _scrollController.position.maxScrollExtent) &&
+        (_hasMoreLinkedEvents != false) &&
+        !_linkedEventsLoading &&
+        !_extendingLinkedEvents) {
+      _extendLinkedEvents();
+    }
+  }
+
+  Future<void> _extendLinkedEvents() async {
+    Event2Grouping? linkedEventsGrouping = _event?.linkedEventsGroupingQuery;
+    if ((linkedEventsGrouping != null) && !_linkedEventsLoading && !_extendingLinkedEvents) {
+      setStateIfMounted(() {
+        _extendingLinkedEvents = true;
+      });
+      Events2ListResult? linkedEventsListResult = await Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping, offset: _linkedEvents?.length ?? 0, limit: _linkedEventsPageLength));
+      List<Event2>? events = linkedEventsListResult?.events;
+      int? totalCount = linkedEventsListResult?.totalCount;
+
+      if (mounted && _extendingLinkedEvents && !_linkedEventsLoading) {
+        setState(() {
+          if (events != null) {
+            if (_linkedEvents != null) {
+              _linkedEvents?.addAll(events);
+            } else {
+              _linkedEvents = List<Event2>.from(events);
+            }
+            _lastPageLoadedAllLinkedEvents = (events.length >= _linkedEventsPageLength);
+          }
+          if (totalCount != null) {
+            _totalLinkedEventsCount = totalCount;
+          }
+          _extendingLinkedEvents = false;
+        });
+      }
     }
   }
 
@@ -1220,25 +1388,63 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   bool get _isAttendanceTaker =>  _event?.userRole == Event2UserRole.attendanceTaker;
   //bool get _isParticipant =>  _event?.userRole == Event2UserRole.participant;
   bool get _isAttendee => (_persons?.attendees?.indexWhere((person) => person.identifier?.accountId == Auth2().accountId) ?? -1) > -1;
+  bool get _hasDisplayCategories => (_displayCategories?.isNotEmpty == true);
+  bool get _isInternalRegistrationAvailable => (_event?.registrationDetails?.type == Event2RegistrationType.internal) &&
+    (_event?.registrationDetails?.isRegistrationAvailable(_persons?.registrationOccupancy) == true);
+  bool? get _hasMoreLinkedEvents => (_totalLinkedEventsCount != null) ? ((_linkedEvents?.length ?? 0) < _totalLinkedEventsCount!) : _lastPageLoadedAllLinkedEvents;
 
   String? get _eventId => widget.event?.id ?? widget.eventId;
+
+  //Event to Group Binding support
+  @override
+  Event2SelectorData? selectorData;
+
+  void _initSelector(){
+    widget.eventSelector?.init(this);
+    selectorData?.event = _event;
+  }
+
+  void set _selectorEvent(Event2 event) => selectorData?.event = event;
 }
 
-extension _Event2Ext on Event2 {
+//EventSelector Interface
+abstract class Event2Selector<T extends Event2SelectorData> {
+  final T data; //Pass initial data (containing group etc)
 
-  bool get hasSurvey => (attendanceDetails?.isNotEmpty ?? false) && (surveyDetails?.isNotEmpty ?? false);
+  Event2Selector(this.data);
 
-  bool get hasLinkedEvents => (isSuperEvent || isRecurring);
+  void init(State state){
+    if( (state is Event2SelectorDataProvider)){
+      ( state as Event2SelectorDataProvider).selectorData = data; // Hook the data to the DataProvider (pass initial data)
+    }
+  }
 
-  Event2Grouping? get linkedEventsGroupingQuery {
-    if (isSuperEvent) {
-      return Event2Grouping.superEvent(id);
-    }
-    else if (isRecurring) {
-      return Event2Grouping.recurrence(grouping?.recurrenceId);
-    }
-    else {
-      return null;
-    }
+  void dispose(State state){}
+
+  Widget? buildWidget(State state); //Provide custom layout to perform selection
+
+  Future<void> prepareSelection(State state) async {} //Call whatever API we need before performing the selection
+
+  Future<dynamic> Function(Event2 source)? event2SelectorServiceAPI() => null;
+
+  Future<void> performSelection(State state) async {} //Call the bind API
+
+  void finishSelection(State state) {} //Go Back to the initial flow panel
+
+}
+
+abstract class Event2SelectorDataProvider <T extends Event2SelectorData>{
+  void set selectorData(T? data);
+  T? get selectorData; //Mechanism to write to the data from the Provider[EventPanel] (passing selected event etc)
+}
+
+class Event2SelectorData{
+  Map<String, dynamic> data;
+  Event2SelectorData({required this.data});
+
+  void set event(Event2? event) => data["event"] = event;
+  Event2? get event {
+    dynamic eventData = data["event"];
+    return (eventData is Event2)? eventData : null;
   }
 }

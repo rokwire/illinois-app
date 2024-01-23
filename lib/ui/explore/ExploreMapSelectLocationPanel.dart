@@ -33,7 +33,6 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -135,14 +134,14 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx("panel.map.select.header.title", "Select Location")),
       body: _buildScaffoldBody(),
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
     );
   }
 
   Widget _buildScaffoldBody() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Expanded(child:
-        Container(key: _mapContainerKey, color: Styles().colors!.background, child:
+        Container(key: _mapContainerKey, color: Styles().colors.background, child:
           _buildContent(),
         ),
       ),
@@ -168,7 +167,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
         Positioned.fill(child:
           Center(child:
             SizedBox(width: 24, height: 24, child:
-              CircularProgressIndicator(color: Styles().colors?.accentColor2, strokeWidth: 3,),
+              CircularProgressIndicator(color: Styles().colors.accentColor2, strokeWidth: 3,),
             )
           )
         )
@@ -177,7 +176,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   }
 
   Widget _buildMapView() {
-    return Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors?.disabledTextColor ?? Color(0xFF717273), width: 1)), child:
+    return Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.disabledTextColor, width: 1)), child:
       GoogleMap(
         key: _mapKey,
         initialCameraPosition: _lastCameraPosition ?? _defaultCameraPosition,
@@ -284,7 +283,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     if (_selectedMapExplore is Explore) {
       title = (_selectedMapExplore as Explore).mapMarkerTitle;
       description = (_selectedMapExplore as Explore).mapMarkerSnippet;
-      exploreColor = (_selectedMapExplore as Explore).uiColor ?? Styles().colors?.white;
+      exploreColor = (_selectedMapExplore as Explore).uiColor ?? Styles().colors.white;
       if (_selectedMapExplore is ExplorePOI) {
         title = title?.replaceAll('\n', ' ');
         detailsLabel = Localization().getStringEx('panel.explore.button.clear.title', 'Clear');
@@ -298,10 +297,10 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
       title = sprintf(Localization().getStringEx('panel.explore.map.popup.title.format', '%d %s'), [_selectedMapExplore?.length, exploreName]);
       Explore? explore = _selectedMapExplore.isNotEmpty ? _selectedMapExplore.first : null;
       description = explore?.exploreLocation?.description ?? "";
-      exploreColor = explore?.uiColor ?? Styles().colors?.fillColorSecondary;
+      exploreColor = explore?.uiColor ?? Styles().colors.fillColorSecondary;
     }
     else {
-      exploreColor = Styles().colors?.white;
+      exploreColor = Styles().colors.white;
       canSelect = canDetail = false;
     }
 
@@ -313,25 +312,25 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     double top = wrapHeight - (progress * barHeight);
 
     return Positioned(top: top, left: 0, right: 0, child:
-      Container(key: _mapExploreBarKey, decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: exploreColor!, width: 2, style: BorderStyle.solid), bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid),),), child:
+      Container(key: _mapExploreBarKey, decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: exploreColor, width: 2, style: BorderStyle.solid), bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid),),), child:
         SafeArea(child:
         Stack(children: [
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Padding(padding: EdgeInsets.only(right: 10), child:
-                Text(title ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")),
+                Text(title ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat")),
               ),
-              Text(description ?? "", overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("panel.event_schedule.map.description")),
+              Text(description ?? "", overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("panel.event_schedule.map.description")),
               Container(height: 8,),
               Row(children: <Widget>[
                 SizedBox(width: buttonWidth, child:
                   RoundedButton(
                     label: Localization().getStringEx('panel.map.select.button.select.title', 'Select'),
                     hint: Localization().getStringEx('panel.map.select.button.select.hint', ''),
-                    textStyle: canSelect ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled"),
+                    textStyle: canSelect ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
                     backgroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    borderColor: canSelect ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+                    borderColor: canSelect ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
                     onTap: _onTapMapSelectLocation
                   ),
                 ),
@@ -340,10 +339,10 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
                   RoundedButton(
                     label: detailsLabel,
                     hint: detailsHint,
-                    textStyle: canDetail ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled"),
+                    textStyle: canDetail ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
                     backgroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    borderColor: canDetail ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+                    borderColor: canDetail ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
                     onTap: onTapDetail,
                   ),
                 ),
@@ -446,7 +445,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
       child: Column(children: [
         Expanded(flex: 1, child: Container(),),
         SizedBox(width: 32, height: 32, child:
-          CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,),
+          CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
         ),
         Expanded(flex: 1, child: Container(),),
       ],)
@@ -491,7 +490,6 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   Future<List<Explore>?> _loadExplores() async {
     if (Connectivity().isNotOffline) {
       switch (_mapType) {
-        case ExploreMapType.Events: return Events().loadEvents();
         case ExploreMapType.Events2: return Events2().loadEventsList(Events2Query());
         case ExploreMapType.Dining: return _loadDinings();
         case ExploreMapType.Laundry: return _loadLaundry();
@@ -758,7 +756,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
       backColor: backColor,
       strokeColor: borderColor,
       text: count?.toString(),
-      textStyle: Styles().textStyles?.getTextStyle("widget.text.fat")?.copyWith(
+      textStyle: Styles().textStyles.getTextStyle("widget.text.fat")?.copyWith(
         fontSize: 12 * MediaQuery.of(context).devicePixelRatio,
         color: textColor,
         overflow: TextOverflow.visible //defined in code to be sure it is set

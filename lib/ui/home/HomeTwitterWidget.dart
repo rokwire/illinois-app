@@ -37,7 +37,7 @@ class HomeTwitterWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home.twitter.header.label', 'Twitter');
+  static String get title => Localization().getStringEx('widget.home.twitter.header.label', 'X/Twitter');
   
   @override
   _HomeTwitterWidgetState createState() => _HomeTwitterWidgetState();
@@ -125,32 +125,29 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
   @override
   Widget build(BuildContext context) {
-    int displayPagesCount = _tweetsCount + ((_loadingPage == true) ? 1 : 0);
-    return Visibility(visible: (0 < displayPagesCount), child:
-        Semantics(container: true, child:
-          Column(children: <Widget>[
-            _buildHeader(),
-            Stack(children:<Widget>[
-              _buildSlant(),
-              _buildContent(),
-            ]),
-          ]),
-        ),
+    return Semantics(container: true, child:
+      Column(children: <Widget>[
+        _buildHeader(),
+        Stack(children:<Widget>[
+          _buildSlant(),
+          _buildContent(),
+        ]),
+      ]),
     );
   }
 
   Widget _buildHeader() {
     return Semantics(child:
       Padding(padding: EdgeInsets.zero, child: 
-        Container(color: Styles().colors!.fillColorPrimary, child:
+        Container(color: Styles().colors.fillColorPrimary, child:
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
-            HomeTitleIcon(image: Styles().images?.getImage('news')),
+            HomeTitleIcon(image: Styles().images.getImage('news')),
 
             Expanded(child:
               Padding(padding: EdgeInsets.only(top: 14), child:
                 Semantics(label: HomeTwitterWidget.title, header: true, excludeSemantics: true, child:
-                  Text(HomeTwitterWidget.title, style: Styles().textStyles?.getTextStyle("widget.heading.large.extra_fat"))
+                  Text(HomeTwitterWidget.title, style: Styles().textStyles.getTextStyle("widget.heading.large.extra_fat"))
                 )
               )
             ),
@@ -170,10 +167,10 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     return Semantics(label: currentAccountName, hint: "Double tap to select account", button: true, container: true, child:
       DropdownButtonHideUnderline(child:
         DropdownButton<String>(
-          icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images?.getImage('chevron-down-white', excludeFromSemantics: true)),
+          icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images.getImage('chevron-down-white', excludeFromSemantics: true)),
           isExpanded: false,
-          style: Styles().textStyles?.getTextStyle("widget.colourful_button.title"),
-          hint: (currentAccountName != null) ? Text(currentAccountName, style: Styles().textStyles?.getTextStyle("widget.colourful_button.title")) : null,
+          style: Styles().textStyles.getTextStyle("widget.colourful_button.title"),
+          hint: (currentAccountName != null) ? Text(currentAccountName, style: Styles().textStyles.getTextStyle("widget.colourful_button.title")) : null,
           items: _buildDropDownItems(),
           onChanged: _onDropDownValueChanged
         ),
@@ -188,7 +185,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
       dropDownItems.add(DropdownMenuItem<String>(value: accountKey, child:
         // BlockSemantics(blocking: true, child:
           Semantics(label: accountName, hint: "Double tap to select account", button:false, excludeSemantics: true,child:
-            Text(accountName ?? '', style: Styles().textStyles?.getTextStyle("widget.button.title.medium")),
+            Text(accountName ?? '', style: Styles().textStyles.getTextStyle("widget.button.title.medium")),
           )
         // )
       ));
@@ -198,9 +195,9 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
   Widget _buildSlant() {
     return Column(children: <Widget>[
-      Container(color:  Styles().colors!.fillColorPrimary, height: 45,),
-      Container(color: Styles().colors!.fillColorPrimary, child:
-        CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft), child:
+      Container(color:  Styles().colors.fillColorPrimary, height: 45,),
+      Container(color: Styles().colors.fillColorPrimary, child:
+        CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
           Container(height: 65,),
         )),
     ],);
@@ -227,7 +224,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
     if (_loadingPage == true) {
       pages.add(_TweetLoadingWidget(
-        progressColor: Styles().colors!.white!,
+        progressColor: Styles().colors.white,
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24)
       ));
     }
@@ -445,7 +442,7 @@ class _TwitterPanelState extends State<TwitterPanel> implements NotificationsLis
             _buildContent(),
           ),
         ],)),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
     );
   }
 
@@ -455,10 +452,10 @@ class _TwitterPanelState extends State<TwitterPanel> implements NotificationsLis
       Semantics(label: currentAccountName, hint: "Double tap to select account", button: true, container: true, child:
         DropdownButtonHideUnderline(child:
           DropdownButton<String>(
-            icon: Padding(padding: EdgeInsets.only(left: 4, right: 16), child: Styles().images?.getImage('chevron-down-white', excludeFromSemantics: true)),
+            icon: Padding(padding: EdgeInsets.only(left: 4, right: 16), child: Styles().images.getImage('chevron-down-white', excludeFromSemantics: true)),
             isExpanded: false,
-            style: Styles().textStyles?.getTextStyle("widget.colourful_button.title"),
-            hint: (currentAccountName != null) ? Text(currentAccountName, style: Styles().textStyles?.getTextStyle("widget.colourful_button.title")) : null,
+            style: Styles().textStyles.getTextStyle("widget.colourful_button.title"),
+            hint: (currentAccountName != null) ? Text(currentAccountName, style: Styles().textStyles.getTextStyle("widget.colourful_button.title")) : null,
             items: _buildDropDownItems(),
             onChanged: _onDropDownValueChanged
           ),
@@ -475,7 +472,7 @@ class _TwitterPanelState extends State<TwitterPanel> implements NotificationsLis
       dropDownItems.add(DropdownMenuItem<String>(value: accountKey, child:
         // BlockSemantics(blocking: true, child:
           Semantics(label: accountName, hint: "Double tap to select account", button:false, excludeSemantics: true,child:
-            Text(accountName ?? '', style: Styles().textStyles?.getTextStyle("widget.button.title.medium")),
+            Text(accountName ?? '', style: Styles().textStyles.getTextStyle("widget.button.title.medium")),
           )
         // )
       ));
@@ -487,7 +484,7 @@ class _TwitterPanelState extends State<TwitterPanel> implements NotificationsLis
     if (_tweetsPages.isEmpty && _loadingPage == true) {
       return Center(child: 
         SizedBox(height: 32, width: 32, child:
-          CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary!), )
+          CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), )
         ),
       );
     }
@@ -519,7 +516,7 @@ class _TwitterPanelState extends State<TwitterPanel> implements NotificationsLis
         margin: (0 < index) ? EdgeInsets.symmetric(horizontal: 16) : EdgeInsets.only(left: 16, right: 16, top: 16)
       ) :
       _TweetLoadingWidget(
-        progressColor: Styles().colors!.fillColorPrimary!,
+        progressColor: Styles().colors.fillColorPrimary,
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: _tweetsPages.isNotEmpty ? 48 : 192)
       );
   }
@@ -651,8 +648,8 @@ class _TweetWidget extends StatelessWidget {
     return Padding(padding: margin ?? EdgeInsets.zero, child:
       Container(
         decoration: BoxDecoration(
-            color: Styles().colors!.white,
-            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            color: Styles().colors.white,
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.all(Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
         ),
         clipBehavior: Clip.hardEdge,
@@ -679,7 +676,7 @@ class _TweetWidget extends StatelessWidget {
                                     child: Text(
                                       "<",
                                       semanticsLabel: "",
-                                      style: Styles().textStyles?.getTextStyle("widget.button.title.extra_large")),)
+                                      style: Styles().textStyles.getTextStyle("widget.button.title.extra_large")),)
                               )
                           )
                       ),
@@ -695,7 +692,7 @@ class _TweetWidget extends StatelessWidget {
                                     child: Text(
                                       ">",
                                       semanticsLabel: "",
-                                      style: Styles().textStyles?.getTextStyle("widget.button.title.extra_large")),)
+                                      style: Styles().textStyles.getTextStyle("widget.button.title.extra_large")),)
                               )
                           )
                       )
@@ -706,8 +703,8 @@ class _TweetWidget extends StatelessWidget {
                         child: HtmlWidget(
                          tweet!.html??"",
                           onTapUrl : (url) {_launchUrl(url, context: context); return true;},
-                          textStyle:  Styles().textStyles?.getTextStyle("widget.detail.medium"),
-                          // customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondaryVariant ?? Colors.blueAccent)} : null
+                          textStyle:  Styles().textStyles.getTextStyle("widget.detail.medium"),
+                          // customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondaryVariant ?? Colors.blueAccent)} : null
                       )
                     )
                   //   Container()
@@ -720,12 +717,12 @@ class _TweetWidget extends StatelessWidget {
                       child: HtmlWidget(
                         tweet?.author?.html ?? "",
                         onTapUrl : (url) {_launchUrl(url, context: context); return true;},
-                        textStyle:  Styles().textStyles?.getTextStyle("widget.info.small.medium_fat"),
+                        textStyle:  Styles().textStyles.getTextStyle("widget.info.small.medium_fat"),
                       )
                   ) :
                   Container(),
                 ),
-                Text(tweet?.displayTime ?? '', style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fat")),
+                Text(tweet?.displayTime ?? '', style: Styles().textStyles.getTextStyle("widget.info.small.medium_fat")),
               ],)
             ),
           ])
