@@ -211,8 +211,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
       offset: offset,
       limit: limit,
       timeFilter: Event2TimeFilter.upcoming,
-      //TBD: DD - store the athletics categories in a single place
-      attributes: {'category': 'Big 10 Athletics'},
+      attributes: _buildQueryAttributes(),
       sortType: Event2SortType.dateTime,
       sortOrder: Event2SortOrder.ascending
     );
@@ -330,6 +329,22 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
     } else {
       _teamsFilter = null;
     }
+  }
+
+  Map<String, dynamic> _buildQueryAttributes() {
+    //TBD: DD - store Big 10 Athletics category in a single place
+    Map<String, dynamic> attributes = {'category': 'Big 10 Athletics'};
+    if (CollectionUtils.isNotEmpty(_teamsFilter)) {
+      late dynamic sportAttribute;
+      if (_teamsFilter!.length == 1) {
+        sportAttribute = _teamsFilter!.first.name;
+      } else {
+        sportAttribute = <String>[];
+        sportAttribute = List.from(_teamsFilter!.map((sport) => sport.name));
+      }
+      attributes.addAll({'sport': sportAttribute});
+    }
+    return attributes;
   }
 
   String get _teamsFilterLabel {
