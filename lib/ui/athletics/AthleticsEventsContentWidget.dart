@@ -20,11 +20,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/athletics/AthleticsEventCard.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsMyTeamsPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -49,15 +53,16 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   bool _extendingEvents = false;
   static const int _eventsPageLength = 16;
 
-  List<Sport>? _teamsFilter;
+  List<SportDefinition>? _teamsFilter;
 
   ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Events2.notifyChanged]);
+    NotificationService().subscribe(this, [Events2.notifyChanged, Auth2UserPrefs.notifyInterestsChanged]);
     _scrollController.addListener(_scrollListener);
+    _buildTeamsFilter();
     _reload();
   }
 
@@ -70,7 +75,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      _buildTeamsFilter(),
+      _buildTeamsFilterContent(),
       Expanded(child: RefreshIndicator(
           onRefresh: _onRefresh,
           child: SingleChildScrollView(
@@ -93,7 +98,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
     }
   }
 
-  Widget _buildTeamsFilter() {
+  Widget _buildTeamsFilterContent() {
     return Column(children: [
       Container(
           color: Styles().colors.white,
@@ -124,7 +129,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Row(children: [
-                Expanded(child: Text(_teamsFilterLabel, style: Styles().textStyles.getTextStyle('widget.button.title.small')))
+                Expanded(child: Text(_teamsFilterLabel, style: Styles().textStyles.getTextStyle('widget.button.title.small'), overflow: TextOverflow.ellipsis, maxLines: 1))
               ])))
     ]);
   }
@@ -312,11 +317,26 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
     }
   }
 
+  void _buildTeamsFilter() {
+    Set<String>? preferredTeams = Auth2().prefs?.sportsInterests;
+    if (CollectionUtils.isNotEmpty(preferredTeams)) {
+      _teamsFilter = <SportDefinition>[];
+      for (String sportShortName in preferredTeams!) {
+        SportDefinition? sport = Sports().getSportByShortName(sportShortName);
+        if (sport != null) {
+          _teamsFilter!.add(sport);
+        }
+      }
+    } else {
+      _teamsFilter = null;
+    }
+  }
+
   String get _teamsFilterLabel {
-    String filterPrefix = Localization().getStringEx('key', 'Filter:');
+    String filterPrefix = Localization().getStringEx('panel.athletics.content.common.filter.label', 'Filter:');
     String? teamsFilterDisplayString = CollectionUtils.isNotEmpty(_teamsFilter)
-        ? _teamsFilter!.map((team) => team.title).toList().join(',')
-        : Localization().getStringEx('key', 'None');
+        ? _teamsFilter!.map((team) => team.name).toList().join(', ')
+        : Localization().getStringEx('panel.athletics.content.common.filter.value.none.label', 'None');
     return '$filterPrefix $teamsFilterDisplayString';
   }
 
@@ -327,6 +347,9 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   @override
   void onNotification(String name, param) {
     if (name == Events2.notifyChanged) {
+      _reload();
+    } else if (name == Auth2UserPrefs.notifyInterestsChanged) {
+      _buildTeamsFilter();
       _reload();
     }
   }
