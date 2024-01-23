@@ -1216,10 +1216,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
   ]);
     
   Widget _buildFreeToggle() => Semantics(toggled: _free, excludeSemantics: true, 
-    label: Localization().getStringEx("panel.event2.create.free.toggle.title", "Is this event free?"),
+    label: Localization().getStringEx("panel.event2.create.free.toggle.title", "List event as free"),
     hint: Localization().getStringEx("panel.event2.create.free.toggle.hint", ""),
     child: ToggleRibbonButton(
-      label: Localization().getStringEx("panel.event2.create.free.toggle.title", "Is this event free?"),
+      label: Localization().getStringEx("panel.event2.create.free.toggle.title", "List event as free"),
       padding: _togglePadding,
       toggled: _free,
       onTap: _onTapFree,

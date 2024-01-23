@@ -1207,7 +1207,7 @@
 	"panel.event2.create.location.longitude.title": "目的地座标经度",
 	"panel.event2.create.location.button.select.title": "在地图上选择地点",
 	"panel.event2.create.location.button.select.hint": "",
-	"panel.event2.create.free.toggle.title": "是免费活动吗？",
+	"panel.event2.create.free.toggle.title": "List event as free",
 	"panel.event2.create.free.toggle.hint": "",
 	"panel.event2.create.label.cost.title": "成本细节信息",
 	"panel.event2.create.label.cost.description": " (eg: $10, 建议捐款额)",

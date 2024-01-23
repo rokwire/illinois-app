@@ -1217,7 +1217,7 @@
     "panel.event2.create.location.longitude.field": "CAMPO DE LA LONGITUD DEL SITIO",
     "panel.event2.create.location.button.select.title": "Elige la Ubicación en un Mapa",
     "panel.event2.create.location.button.select.hint": "",
-    "panel.event2.create.free.toggle.title": "¿Este evento es gratuito?",
+    "panel.event2.create.free.toggle.title": "List event as free",
     "panel.event2.create.free.toggle.hint": "",
     "panel.event2.create.label.cost.title": "DESCRIPCIÓN DEL COSTO",
     "panel.event2.create.label.cost.description": " (p.ej.: $10, donación sugerida)",

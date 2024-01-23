@@ -1218,7 +1218,7 @@
     "panel.event2.create.location.longitude.field": "LOCATION LONGITUDE FIELD",
     "panel.event2.create.location.button.select.title": "Select Location on a Map",
     "panel.event2.create.location.button.select.hint": "",
-    "panel.event2.create.free.toggle.title": "Is this event free?",
+    "panel.event2.create.free.toggle.title": "List event as free",
     "panel.event2.create.free.toggle.hint": "",
     "panel.event2.create.label.cost.title": "COST DESCRIPTION",
     "panel.event2.create.label.cost.description": " (e.g., $10, Donation suggested)",
