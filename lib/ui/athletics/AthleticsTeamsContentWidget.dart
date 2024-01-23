@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Sports.dart';
+import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -115,8 +117,7 @@ class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidge
 
   void _onTapTeam(SportDefinition sport) {
     Analytics().logSelect(target: 'Team: ' + StringUtils.ensureNotEmpty(sport.shortName));
-    //TBD: DD - implement
-    // Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: game)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamPanel(sport)));
   }
 
   void _load() {
