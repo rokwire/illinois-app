@@ -613,6 +613,8 @@
     "panel.athletics.content.events.empty.message": "There are no events.",
 
     "panel.athletics.content.my_teams.header.title": "My Big 10 Teams",
+    "panel.athletics.content.my_teams.all.select.label": "Select All",
+    "panel.athletics.content.my_teams.all.clear.label": "Clear All",
 
     "panel.onboarding.button.continue.title":"Continue",
     "panel.onboarding.button.continue.hint":"",

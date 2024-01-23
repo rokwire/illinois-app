@@ -612,6 +612,8 @@
     "panel.athletics.content.events.empty.message": "No hay eventos.",
 
     "panel.athletics.content.my_teams.header.title": "Mis 10 grandes equipos",
+    "panel.athletics.content.my_teams.all.select.label": "Seleccionar todo",
+    "panel.athletics.content.my_teams.all.clear.label": "Limpiar todo",
 
     "panel.onboarding.button.continue.title":"Continuar",
     "panel.onboarding.button.continue.hint":"",

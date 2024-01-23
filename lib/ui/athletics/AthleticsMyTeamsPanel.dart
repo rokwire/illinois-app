@@ -15,10 +15,18 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Sports.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class AthleticsMyTeamsPanel extends StatefulWidget {
   AthleticsMyTeamsPanel();
@@ -28,10 +36,15 @@ class AthleticsMyTeamsPanel extends StatefulWidget {
 }
 
 class _AthleticsMyTeamsPanelState extends State<AthleticsMyTeamsPanel> implements NotificationsListener {
+  List<SportDefinition>? _sports;
+  Set<String>? _preferredSports;
+
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, []);
+    NotificationService().subscribe(this, [Auth2UserPrefs.notifyInterestsChanged, FlexUI.notifyChanged]);
+    _sports = Sports().sports;
+    _preferredSports = Auth2().prefs?.sportsInterests ?? Set<String>();
   }
 
   @override
@@ -42,10 +55,6 @@ class _AthleticsMyTeamsPanelState extends State<AthleticsMyTeamsPanel> implement
 
   @override
   Widget build(BuildContext context) {
-    return _buildSheet(context);
-  }
-
-  Widget _buildSheet(BuildContext context) {
     return Column(children: [
       Container(
           color: Styles().colors.white,
@@ -63,13 +72,56 @@ class _AthleticsMyTeamsPanelState extends State<AthleticsMyTeamsPanel> implement
                 child: InkWell(
                     onTap: _onTapClose,
                     child: Container(
-                      padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
-                      child: Styles().images.getImage('close-circle', excludeFromSemantics: true),
-                    )))
+                        padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
+                        child: Styles().images.getImage('close-circle', excludeFromSemantics: true))))
           ])),
       Container(color: Styles().colors.surfaceAccent, height: 1),
-      Expanded(child: Container(child: Text('TBD: to be implemented')))
+      _buildGlobalSelectionContent(),
+      Expanded(child: Padding(padding: EdgeInsets.all(16), child: _buildTeamsContent()))
     ]);
+  }
+
+  Widget _buildGlobalSelectionContent() {
+    String label = CollectionUtils.isEmpty(_preferredSports)
+        ? Localization().getStringEx('panel.athletics.content.my_teams.all.select.label', 'Select All')
+        : Localization().getStringEx('panel.athletics.content.my_teams.all.clear.label', 'Clear All');
+    return Row(children: [
+      Expanded(child: Container()),
+      LinkButton(onTap: _onTapAll, title: label, padding: EdgeInsets.only(left: 16, top: 16, right: 16))
+    ]);
+  }
+
+  Widget _buildTeamsContent() {
+    return ClipRRect(
+        borderRadius: BorderRadius.circular(15),
+        child: Container(
+            foregroundDecoration: BoxDecoration(
+                border: Border.all(color: Styles().colors.surfaceAccent, width: 1.0), borderRadius: BorderRadius.circular(15)),
+            child: SingleChildScrollView(child: Column(children: _buildTeams()))));
+  }
+
+  List<Widget> _buildTeams() {
+    List<Widget> teamWidgets = [];
+
+    if (_sports != null && _preferredSports != null) {
+      for (SportDefinition team in _sports!) {
+        if (CollectionUtils.isNotEmpty(teamWidgets)) {
+          teamWidgets.add(Container(height: 1, color: Styles().colors.surfaceAccent));
+        }
+
+        String? teamShortName = StringUtils.ensureNotEmpty(team.shortName);
+        String? teamName = StringUtils.ensureNotEmpty(team.name);
+        teamWidgets.add(_SelectionItemWidget(
+            label: teamName,
+            selected: _preferredSports!.contains(teamShortName),
+            onTap: () {
+              Analytics().logSelect(target: 'Team: $teamShortName');
+              AppSemantics.announceCheckBoxStateChange(context, _preferredSports!.contains(teamShortName), teamName);
+              Auth2().prefs?.toggleSportInterest(team.shortName);
+            }));
+      }
+    }
+    return teamWidgets;
   }
 
   void _onTapClose() {
@@ -77,10 +129,65 @@ class _AthleticsMyTeamsPanelState extends State<AthleticsMyTeamsPanel> implement
     Navigator.of(context).pop();
   }
 
+  void _onTapAll() {
+    bool selectAll = CollectionUtils.isEmpty(_preferredSports);
+    String analyticsTarget = selectAll
+        ? Localization().getStringEx('panel.athletics.content.my_teams.all.select.label', 'Select All')
+        : Localization().getStringEx('panel.athletics.content.my_teams.all.clear.label', 'Clear All');
+    Analytics().logSelect(target: analyticsTarget, source: widget.runtimeType.toString());
+    Iterable<String>? toggleSportNames;
+    if (selectAll) {
+      toggleSportNames = _sports?.map((sport) => sport.shortName!);
+    } else {
+      toggleSportNames = Set.from(_preferredSports!);
+    }
+    setStateIfMounted(() {
+      Auth2().prefs?.toggleSportInterests(toggleSportNames);
+    });
+  }
+
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
-    //TBD: DD - implement
+    if (name == Auth2UserPrefs.notifyInterestsChanged) {
+      setStateIfMounted(() {
+        _preferredSports = Auth2().prefs?.sportsInterests ?? Set<String>();
+      });
+    } else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
+    }
+  }
+}
+
+class _SelectionItemWidget extends StatelessWidget {
+  final String? label;
+  final GestureTapCallback? onTap;
+  final bool? selected;
+
+  _SelectionItemWidget({required this.label, this.onTap, this.selected = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+        label: label,
+        value: (selected!
+                ? Localization().getStringEx('toggle_button.status.checked', 'checked')
+                : Localization().getStringEx('toggle_button.status.unchecked', 'unchecked')) +
+            ", " +
+            Localization().getStringEx('toggle_button.status.checkbox', 'checkbox'),
+        excludeSemantics: true,
+        child: GestureDetector(
+            onTap: onTap,
+            child: Container(
+                color: Colors.white,
+                child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+                      Flexible(
+                          child: Text(StringUtils.ensureNotEmpty(label),
+                              overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"))),
+                      Styles().images.getImage(selected! ? 'check-circle-filled' : 'check-circle-outline-gray') ?? Container()
+                    ])))));
   }
 }
