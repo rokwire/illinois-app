@@ -161,20 +161,7 @@ class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidge
 
   void _onTapTeamsFilter() {
     Analytics().logSelect(target: 'Teams');
-    MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
-    double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        isDismissible: true,
-        useRootNavigator: true,
-        clipBehavior: Clip.antiAlias,
-        backgroundColor: Styles().colors.background,
-        constraints: BoxConstraints(maxHeight: height, minHeight: height),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
-        builder: (context) {
-          return AthleticsMyTeamsPanel();
-        });
+    AthleticsMyTeamsPanel.present(context);
   }
 
   void _onTapTeam(SportDefinition sport) {
