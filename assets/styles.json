@@ -978,9 +978,9 @@
     "event-onboarding-header": {"src": "images/event-onboarding-header.png", "type": "flutter.asset"},
 
     "skills-social": {"src": "images/skills_social.png", "type": "flutter.asset"},
-    "skills-play": {"src": "images/play.png", "type": "flutter.asset", "size": 50},
-    "skills-question": {"src": "images/question.png", "type": "flutter.asset", "size": 50},
-    "skills-check": {"src": "images/check.png", "type": "flutter.asset", "size": 50},
+    "skills-play": {"src": "images/play.png", "type": "flutter.asset", "size": 60},
+    "skills-question": {"src": "images/question.png", "type": "flutter.asset", "size": 60},
+    "skills-check": {"src": "images/check.png", "type": "flutter.asset", "size": 60},
     "skills-management": {"src": "images/management.png", "type": "flutter.asset"},
     "skills-cooperation": {"src": "images/cooperation.png", "type": "flutter.asset"},
     "skills-emotional": {"src": "images/emotional_skills.png", "type": "flutter.asset"},
@@ -989,6 +989,7 @@
     "skills-management-button": {"src": "images/management_button.png", "type": "flutter.asset", "size": 50},
     "skills-cooperation-button": {"src": "images/cooperation_button.png", "type": "flutter.asset", "size": 50},
     "skills-emotional-button": {"src": "images/emotional_skills_button.png", "type": "flutter.asset", "size": 50},
-    "skills-innovation-button": {"src": "images/innovation_button.png", "type": "flutter.asset", "size": 50}
+    "skills-innovation-button": {"src": "images/innovation_button.png", "type": "flutter.asset", "size": 50},
+    "skills-mic": {"src": "images/mic.png", "type": "flutter.asset", "size": 25}
   }
 }

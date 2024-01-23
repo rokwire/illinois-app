@@ -1,9 +1,15 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/courses/Content.dart';
+import 'package:illinois/model/courses/Module.dart';
+import 'package:illinois/ui/academics/courses/AssignmentPanel.dart';
+import 'package:illinois/ui/academics/courses/UnitInfoPanel.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+
+import '../../model/courses/Course.dart';
+import '../../model/courses/Unit.dart';
 
 
 
@@ -17,67 +23,220 @@ class EssentialSkillsCoachDashboardPanel extends StatefulWidget {
 class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoachDashboardPanel> implements NotificationsListener {
 
   final PageController controller = PageController();
-  Course _course = Course();
   List<String> moduleIconNames = ["skills-social-button", "skills-management-button", "skills-cooperation-button", "skills-emotional-button", "skills-innovation-button"];
   int moduleNumber = 0;
-  bool _isFirstModule = true;
-  bool _isLastModule = false;
+  late Course _course;
+
+  String? _selectedTimeframe = "Social Engagement Skills";
+  final List<String> _timeframes = ["Social Engagement Skills", "Self Management Skills",
+    "Cooperation Skills", "Emotional Resilience Skills", "Innovation Skills"];
 
   @override
   void initState() {
     super.initState();
-    //TODO delete all hardcoded data once integration starts
-    List<Content> content1 = <Content>[];
-    content1.add(Content());
-    content1.add(Content());
-    content1.add(Content());
-    content1.add(Content());
-    content1.add(Content());
-    List<Content> content2 = <Content>[];
-    content2.add(Content());
-    content2.add(Content());
-    content2.add(Content());
-    List<Unit> units = <Unit>[];
-    Unit unit1 = new Unit("The first unit of this module", content1);
-    Unit unit2 = new Unit("The second unit of this module", content2);
-    Unit unit3 = new Unit("The third unit of this module", content1);
-    units.add(unit1);
-    units.add(unit2);
-    units.add(unit3);
-    List<Module> modules = <Module>[];
-    Module module = Module("Social Engagement Skills", units);
-    Module module2 = Module("Self Management Skills", units);
-    Module module3 = Module("Cooperation Skills", units);
-    Module module4 = Module("Emotional Resilience Skills", units);
-    Module module5 = Module("Innovation Skills", units);
-    modules.add(module);
-    modules.add(module2);
-    modules.add(module3);
-    modules.add(module4);
-    modules.add(module5);
-    _course.moduleList = modules;
 
+    Content skillsHelpContent = Content(
+        name: "Soften",
+        type: "info",
+        details: "(smile, open posture, forward lean, touch, eye contact, nod)",
+    );
+
+    Content skillsHelpInfoVideoContent = Content(
+        name: "Soften",
+        type: "infoVideo",
+        details: "(smile, open posture, forward lean, touch, eye contact, nod)"
+    );
+
+    Content lesson1 = Content(
+        name: "Arm Position in Conversations",
+        type: "assignment",
+        details: "Make a note of holding your arms in a relaxed position at your side when talking to a colleague",
+        isComplete: true
+    );
+
+    Content lesson2 = Content(
+        name: "Try to smile during three conversations",
+        type: "assignment",
+        details: "Try to smile during three conversations"
+    );
+
+    Content lesson3 = Content(
+        name: "Make a note of looking your conversational partners in the eyes while talking to them",
+        type: "assignment",
+        details: "Make a note of looking your conversational partners in the eyes while talking to them"
+    );
+
+    Content lesson4 = Content(
+        name: "Make a note of leaning forward while having a conversation (while sitting).",
+        type: "assignment",
+        details: "Make a note of leaning forward while having a conversation (while sitting)."
+    );
+
+    Content lesson5 = Content(
+        name: "Try to touch conversational partners in a non-threatening fashion–on the back of the arm.",
+        type: "assignment",
+        details: "Try to touch conversational partners in a non-threatening fashion–on the back of the arm."
+    );
+
+    Content lesson6 = Content(
+        name: "Try to nod affirmatively during 3 conversations",
+        type: "assignment",
+        details: "Try to nod affirmatively during 3 conversations"
+    );
+
+    List<Content>? contentList = <Content>[];
+    contentList.add(skillsHelpContent);
+    contentList.add(skillsHelpInfoVideoContent);
+    contentList.add(lesson1);
+    contentList.add(lesson2);
+    contentList.add(lesson3);
+    contentList.add(lesson4);
+    contentList.add(lesson5);
+    contentList.add(lesson6);
+
+
+    Unit unit1 = Unit(
+      name: "The physical side of communication",
+      contentItems: contentList,
+
+    );
+
+    Content skillsHelpContent2 = Content(
+        name: "ART",
+        type: "info",
+        details: "Ask an open-ended question, Tell them that their answer is interesting/good/compelling, Respond with relevant story about yourself and Repeat"
+    );
+
+    Content lesson7 = Content(
+        name: "Arm Position in Conversations",
+        type: "assignment",
+        details: "Make a note of holding your arms in a relaxed position at your side when talking to a colleague"
+    );
+
+    Content lesson8 = Content(
+        name: "Try to smile during three conversations",
+        type: "assignment",
+        details: "Try to smile during three conversations"
+    );
+
+    Content lesson9 = Content(
+        name: "Make a note of looking your conversational partners in the eyes while talking to them",
+        type: "assignment",
+        details: "Make a note of looking your conversational partners in the eyes while talking to them"
+    );
+
+    Content lesson10 = Content(
+        name: "Make a note of leaning forward while having a conversation (while sitting).",
+        type: "assignment",
+        details: "Make a note of leaning forward while having a conversation (while sitting)."
+    );
+
+    List<Content>? contentList2 = <Content>[];
+    contentList2.add(skillsHelpContent2);
+    contentList2.add(lesson7);
+    contentList2.add(lesson8);
+    contentList2.add(lesson9);
+    contentList2.add(lesson10);
+
+
+    Unit unit2 = Unit(
+      name: "Asking questions that promote conversations",
+      contentItems: contentList2,
+
+    );
+
+
+    Content skillsHelpContent3 = Content(
+      name: "Soften",
+      type: "info",
+      details: "How to begin: \n1. Ask a question \n2. Voice an opinion \n3. State a fact \n4. Follow up with how, why, and in what way questions",
+    );
+
+    Content lesson11 = Content(
+        name: "Observe at least 2 strangers and note things about them or the situation that you could use to start a conversation.",
+        type: "assignment",
+        details: "Observe at least 2 strangers and note things about them or the situation that you could use to start a conversation."
+    );
+
+    Content lesson12 = Content(
+        name: "Practice introducing yourself to a stranger",
+        type: "assignment",
+        details: "Practice introducing yourself to a stranger"
+    );
+
+    Content lesson13 = Content(
+        name: "Talk to a stranger about the stranger",
+        type: "assignment",
+        details: "Talk to a stranger about the stranger"
+    );
+
+    Content lesson14 = Content(
+        name: "Talk to a stranger about the situation",
+        type: "assignment",
+        details: "Talk to a stranger about the situation"
+    );
+
+    List<Content>? contentList3 = <Content>[];
+    contentList3.add(skillsHelpContent3);
+    contentList3.add(lesson11);
+    contentList3.add(lesson12);
+    contentList3.add(lesson13);
+    contentList3.add(lesson14);
+
+    Unit unit3 = Unit(
+      name: "Starting and maintaining conversations",
+      contentItems: contentList3,
+
+    );
+
+    List<Unit>? unitList = <Unit>[];
+    unitList.add(unit1);
+    unitList.add(unit2);
+    unitList.add(unit3);
+
+    Module socialModule = Module(
+      name: "Social Engagement Skills",
+      units: unitList
+    );
+
+    Module managementModule = Module(
+        name: "Self Management Skills",
+        units: unitList
+    );
+
+    Module coopModule = Module(
+        name: "Cooperation Skills",
+        units: unitList
+    );
+
+    Module emotionalModule = Module(
+        name: "Emotional Resilience Skills",
+        units: unitList
+    );
+
+    Module innovationModule = Module(
+        name: "Innovation Skills",
+        units: unitList
+    );
+
+    List<Module>? moduleList = <Module>[];
+    moduleList.add(socialModule);
+    moduleList.add(managementModule);
+    moduleList.add(coopModule);
+    moduleList.add(emotionalModule);
+    moduleList.add(innovationModule);
+
+    _course = Course(
+      modules: moduleList
+    );
 
   }
 
   @override
   Widget build(BuildContext context) {
 
-    if(moduleNumber != 0){
-      _isFirstModule = false;
-    }else{
-      _isFirstModule = true;
-    }
-
-    if(moduleNumber !=4){
-      _isLastModule = false;
-    }else{
-      _isLastModule = true;
-    }
-
-
     return SingleChildScrollView(
-      child: _buildModuleView(),
+      child: _buildModuleView(_selectedTimeframe!),
     );
   }
 
@@ -86,32 +245,33 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     // TODO: implement onNotification
   }
 
-  Widget _buildModuleView(){
-    switch (moduleNumber){
-      case 0:
+
+  Widget _buildModuleView(String module){
+    switch (module){
+      case "Social Engagement Skills":
         return Container(
           color: Styles().colors!.essentialSkillsCoachPurple,
           child: _buildModuleInfoView("skills-social", Styles().colors!.essentialSkillsCoachPurple, Styles().colors!.essentialSkillsCoachPurpleAccent),
         );
-      case 1:
+      case "Self Management Skills":
         return Container(
           color: Styles().colors!.essentialSkillsCoachBlue,
           child: _buildModuleInfoView("skills-management", Styles().colors!.essentialSkillsCoachBlue, Styles().colors!.essentialSkillsCoachBlueAccent),
 
         );
-      case 2:
+      case "Cooperation Skills":
         return Container(
           color: Styles().colors!.essentialSkillsCoachRed,
           child: _buildModuleInfoView("skills-cooperation", Styles().colors!.essentialSkillsCoachRed, Styles().colors!.essentialSkillsCoachRedAccent),
 
         );
-      case 3:
+      case "Emotional Resilience Skills":
         return Container(
           color: Styles().colors!.essentialSkillsCoachOrange,
           child: _buildModuleInfoView("skills-emotional", Styles().colors!.essentialSkillsCoachOrange, Styles().colors!.essentialSkillsCoachOrangeAccent),
 
         );
-      case 4:
+      case "Innovation Skills":
         return Container(
           color: Styles().colors!.essentialSkillsCoachGreen,
           child: _buildModuleInfoView("skills-innovation", Styles().colors!.essentialSkillsCoachGreen, Styles().colors!.essentialSkillsCoachGreenAccent),
@@ -142,7 +302,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                 }
               },
               child: Container(
-                height: 150,
+                height: 170,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -153,38 +313,25 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                       ),
 
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        (
-                          _isFirstModule ? Container(width: 30) : IconButton(
-                            icon: const Icon(Icons.chevron_left_rounded),
-                            color: Colors.white,
-                            onPressed: () {
-                              if (moduleNumber != 0){
-                                setState(() {
-                                  moduleNumber= moduleNumber-1;
-                                });
-                              }
-                            },
-                          )
+                    Padding(padding: EdgeInsets.only(left: 16, right: 16,bottom: 16),
+                      child:  Center(
+                        child: DropdownButton(
+                            value: _selectedTimeframe,
+                            iconDisabledColor: Colors.white,
+                            iconEnabledColor: Colors.white,
+                            focusColor: Colors.white,
+                            dropdownColor: colorAccent,
+                            isExpanded: true,
+                            items: DropdownBuilder.getItems(_timeframes, style: Styles().textStyles?.getTextStyle("widget.title.light.large.fat")),
+                            onChanged: (String? selected) {
+                              setState(() {
+                                _selectedTimeframe = selected;
+                              });
+                            }
                         ),
-                        Text(_course.moduleList[moduleNumber].name,style: Styles().textStyles?.getTextStyle("widget.title.light.large.fat")),
-                        (
-                          _isLastModule ? Container(width: 30): IconButton(
-                            icon: const Icon(Icons.chevron_right_rounded),
-                            color: Colors.white,
-                            onPressed: () {
-                              if (moduleNumber != 4){
-                                setState(() {
-                                  moduleNumber= moduleNumber+1;
-                                });
-                              }
-                            },
-                          )
-                        ),
-                      ],
-                    )
+                      )
+                    ),
+                    // Text(_course.modules?[moduleNumber].name ?? "No name",style: Styles().textStyles?.getTextStyle("widget.title.light.large.fat")),
                   ],
                 ),
               ),
@@ -200,32 +347,13 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
 
   List<Widget> _buildModuleUnitWidgets(Color? color, Color? colorAccent, int moduleNumber){
     List<Widget> moduleUnitWidgets = <Widget>[];
-    for(int i =0; i<_course.moduleList[moduleNumber].unitList.length; i++ ){
+    for(int i =0; i<(_course.modules?[moduleNumber].units?.length ?? 0); i++ ){
       moduleUnitWidgets.add(_buildUnitInfoWidget(color, colorAccent, i, moduleNumber));
       moduleUnitWidgets.add(Container(height: 16,));
-      //TODO check based on data
-      moduleUnitWidgets.add(_buildUnitHelpButtons());
-      moduleUnitWidgets.add(Container(height: 16,));
+      moduleUnitWidgets.add(_buildUnitHelpButtons(_course.modules?[moduleNumber].units?[i].contentItems ?? <Content>[], color, colorAccent));
       //TODO delete below checkmark widget only after integration
-      moduleUnitWidgets.add(
-        Center(
-          // elevated button
-          child: ElevatedButton(
-            onPressed: () {},
-            // icon of the button
-            child: Styles().images?.getImage("skills-check") ?? Container(),
-            // styling the button
-            style: ElevatedButton.styleFrom(
-              shape: CircleBorder(),
-              padding: EdgeInsets.all(10),
-              // Button color
-              backgroundColor: Colors.green,
-            ),
-          ),
-        ),
-      );
       moduleUnitWidgets.add(Container(height: 16,));
-      moduleUnitWidgets.addAll(_buildUnitWidgets(color, colorAccent, _course.moduleList[moduleNumber].unitList[i].contentList, moduleNumber));
+      moduleUnitWidgets.addAll(_buildUnitWidgets(color, colorAccent, _course.modules?[moduleNumber].units?[i].contentItems ?? <Content>[], moduleNumber));
     }
     return moduleUnitWidgets;
 
@@ -241,50 +369,107 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         shape: BoxShape.circle,
       ),
     );
+    bool isOpaqe = false;
+    Content helpContent = Content();
     for(int i =0; i< contentList.length; i++ ){
-      unitWidgets.add(Center(
-        // elevated button
-        child: Stack(
-          children: [
-            bigCircle,
-            Padding(
-              padding: EdgeInsets.only(top: 4, left: 4),
+      if(contentList[i].type != "info" && contentList[i].type != "infoVideo"){
+        if(contentList[i].isComplete){
+          unitWidgets.add(
+            Center(
+              // elevated button
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+
+                  Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentPanel(content: contentList[i], color: color, colorAccent:colorAccent, isActivityComplete: true, helpContent: helpContent,)));
+                },
                 // icon of the button
-                child: Padding(
-                  padding: EdgeInsets.all(4),
-                  child: Styles().images?.getImage(moduleIconNames[moduleNumber]) ?? Container(),
-                ),
+                child: Styles().images?.getImage("skills-check") ?? Container(),
                 // styling the button
                 style: ElevatedButton.styleFrom(
                   shape: CircleBorder(),
-                  padding: EdgeInsets.all(8),
+                  padding: EdgeInsets.all(10),
                   // Button color
-                  backgroundColor: colorAccent,
+                  backgroundColor: Colors.green,
                 ),
               ),
             ),
-          ],
-        ),
-      ),);
-      // unitWidgets.add(
-      //   Center(
-      //     child: ElevatedButton(
-      //       onPressed: () {},
-      //       // icon of the button
-      //       child: Styles().images?.getImage(moduleIconNames[moduleNumber]) ?? Container(),
-      //       // styling the button
-      //       style: ElevatedButton.styleFrom(
-      //         shape: CircleBorder(),
-      //         padding: EdgeInsets.all(12),
-      //         // Button color
-      //         backgroundColor: colorAccent,
-      //       ),
-      //     ),
-      //   )
-      // );
-      unitWidgets.add(Container(height: 16,));
+          );
+          unitWidgets.add(Container(height: 16,));
+        }else{
+          if(!isOpaqe){
+            unitWidgets.add(Center(
+              // elevated button
+              child: Stack(
+                children: [
+                  bigCircle,
+                  Padding(
+                    padding: EdgeInsets.only(top: 4, left: 4),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentPanel(content: contentList[i], color: color, colorAccent:colorAccent, isActivityComplete: false, helpContent: helpContent,)));
+                          contentList[i].isComplete = true;
+
+                        });
+                        // Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentPanel(content: contentList[i], color: color, colorAccent:colorAccent, isActivityComplete: false, helpContent: helpContent,)));
+                      },
+                      // icon of the button
+                      child: Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Styles().images?.getImage(moduleIconNames[moduleNumber]) ?? Container(),
+                      ),
+                      // styling the button
+                      style: ElevatedButton.styleFrom(
+                        shape: CircleBorder(),
+                        padding: EdgeInsets.all(8),
+                        // Button color
+                        backgroundColor: colorAccent
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),);
+            isOpaqe = true;
+          }else{
+            unitWidgets.add(Center(
+              // elevated button
+              child: Stack(
+                children: [
+                  bigCircle,
+                  Padding(
+                    padding: EdgeInsets.only(top: 4, left: 4),
+                    child: ElevatedButton(
+                      onPressed: () {
+
+                        Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentPanel(content: contentList[i], color: color, colorAccent:colorAccent, isActivityComplete: false, helpContent: helpContent,)));
+                      },
+                      // icon of the button
+                      child: Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Styles().images?.getImage(moduleIconNames[moduleNumber]) ?? Container(),
+                      ),
+                      // styling the button
+                      style: ElevatedButton.styleFrom(
+                        shape: CircleBorder(),
+                        padding: EdgeInsets.all(8),
+                        // Button color
+                        backgroundColor: colorAccent?.withOpacity(.3),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),);
+          }
+          unitWidgets.add(Container(height: 16,));
+        }
+
+      }else{
+        if(contentList[i].type != "info"){
+          helpContent = contentList[i];
+        }
+      }
     }
 
     return unitWidgets;
@@ -305,7 +490,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                 Text('Unit ' + (unitNumber + 1).toString(), style: Styles().textStyles?.getTextStyle("widget.title.light.huge.fat")),
                 Container(
                   width: 200,
-                  child: Text(_course.moduleList[moduleNumber].unitList[unitNumber].name, style: Styles().textStyles?.getTextStyle("widget.title.light.regular.fat")),
+                  child: Text(_course.modules?[moduleNumber].units?[unitNumber].name ?? "No name", style: Styles().textStyles?.getTextStyle("widget.title.light.regular.fat")),
                 )
               ],
             ),
@@ -318,7 +503,9 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                 Padding(
                   padding: EdgeInsets.only(top: 4),
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+
+                    },
                     // icon of the button
                     child: Icon(
                       Icons.menu_book_rounded,
@@ -365,46 +552,107 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     );
   }
 
-  Widget _buildUnitHelpButtons(){
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(
-          // elevated button
-          child: ElevatedButton(
-            onPressed: () {},
-            // icon of the button
-            child: Styles().images?.getImage("skills-question") ?? Container(),
-            // styling the button
-            style: ElevatedButton.styleFrom(
-              shape: CircleBorder(),
-              padding: EdgeInsets.all(10),
-              // Button color
-              backgroundColor: Colors.green,
+  Widget _buildUnitHelpButtons(List<Content> contentItems, Color? color, Color? colorAccent){
+
+    bool isHelpContentPresent = false;
+    bool isHelpVideoContentPresent = false;
+    Content? helpContent;
+    Content? helpVideoContent;
+    for(final content in contentItems){
+      if(content.type == "info"){
+        isHelpContentPresent = true;
+        helpContent = content;
+      }
+
+      if(content.type == "infoVideo"){
+        isHelpVideoContentPresent = true;
+        helpVideoContent = content;
+      }
+    }
+
+    if(isHelpContentPresent == true && isHelpVideoContentPresent == true){
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+            // elevated button
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(context, CupertinoPageRoute(builder: (context) => UnitInfoPanel(content: helpContent, color: color, colorAccent:colorAccent,)));
+              },
+              // icon of the button
+              child: Styles().images?.getImage("skills-question") ?? Container(),
+              // styling the button
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                padding: EdgeInsets.all(10),
+                // Button color
+                backgroundColor: Colors.green,
+              ),
             ),
           ),
-        ),
-        Container(width: 24,),
-        Center(
-          // elevated button
-          child: ElevatedButton(
-            onPressed: () {},
-            // icon of the button
-            child: Padding(
-              padding: EdgeInsets.only(left: 4),
-              child: Styles().images?.getImage("skills-play") ?? Container(),
-            ),
-            // styling the button
-            style: ElevatedButton.styleFrom(
-              shape: CircleBorder(),
-              padding: EdgeInsets.all(10),
-              // Button color
-              backgroundColor: Colors.green,
+          Container(width: 24,),
+          Center(
+            // elevated button
+            child: ElevatedButton(
+              onPressed: () {},
+              // icon of the button
+              child: Padding(
+                padding: EdgeInsets.only(left: 4),
+                child: Styles().images?.getImage("skills-play") ?? Container(),
+              ),
+              // styling the button
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                padding: EdgeInsets.all(10),
+                // Button color
+                backgroundColor: Colors.green,
+              ),
             ),
           ),
+        ],
+      );
+    }else if(isHelpContentPresent == false && isHelpVideoContentPresent == false){
+      return Container();
+    }else if(isHelpContentPresent == true && isHelpVideoContentPresent == false){
+      return Center(
+        // elevated button
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => UnitInfoPanel(content: helpContent, color: color, colorAccent:colorAccent,)));
+          },
+          // icon of the button
+          child: Styles().images?.getImage("skills-question") ?? Container(),
+          // styling the button
+          style: ElevatedButton.styleFrom(
+            shape: CircleBorder(),
+            padding: EdgeInsets.all(10),
+            // Button color
+            backgroundColor: Colors.green,
+          ),
         ),
-      ],
-    );
+      );
+    }else{
+      return Center(
+        // elevated button
+        child: ElevatedButton(
+          onPressed: () {},
+          // icon of the button
+          child: Padding(
+            padding: EdgeInsets.only(left: 4),
+            child: Styles().images?.getImage("skills-play") ?? Container(),
+          ),
+          // styling the button
+          style: ElevatedButton.styleFrom(
+            shape: CircleBorder(),
+            padding: EdgeInsets.all(10),
+            // Button color
+            backgroundColor: Colors.green,
+          ),
+        ),
+      );
+    }
+
   }
 
 }
@@ -422,41 +670,4 @@ class DropdownBuilder {
     }
     return dropDownItems;
   }
-}
-
-//TODO delete everything below once integration starts
-class Course {
-  String name = "Essential Skills";
-  String key = "Essential Skills";
-  late List<Module> moduleList;
-
-}
-
-class Module {
-  late String name;
-  late List<Unit> unitList;
-
-  Module(String name, List<Unit> unitList) {
-    this.name = name;
-    this.unitList = unitList;
-  }
-}
-
-class Unit{
-  late String name;
-  late List<Content> contentList;
-
-  Unit(String name, List<Content> contentList) {
-    this.name = name;
-    this.contentList = contentList;
-  }
-}
-
-class Content{
-  late String key;
-  String content = "test";
-}
-
-class Schedule{
-
 }
