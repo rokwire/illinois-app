@@ -1384,8 +1384,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
   void _onEventAttendance() {
     Analytics().logSelect(target: "Event Attendance");
     Event2CreatePanel.hideKeyboard(context);
-    Navigator.push<Event2AttendanceDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(attendanceDetails: _attendanceDetails
-    ))).then((Event2AttendanceDetails? result) {
+    Navigator.push<Event2AttendanceDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(attendanceDetails: _attendanceDetails, event: widget.event,))).then((Event2AttendanceDetails? result) {
       if ((result != null) && mounted) {
         setState(() {
           _attendanceDetails = result;
