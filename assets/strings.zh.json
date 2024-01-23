@@ -1193,6 +1193,8 @@
 	"panel.event2.create.button.sponsorship_and_contacts.label.sponsor": "Event Host: ",
 	"panel.event2.create.button.sponsorship_and_contacts.label.speaker": "演讲人： ",
 	"panel.event2.create.button.sponsorship_and_contacts.label.contacts": "联络信息： ",
+	"panel.event2.create.button.groups.title": "EVENT GROUPS",
+ 	"panel.event2.create.button.groups.description": "Publish your events in group(s) that you administer.",
 	"panel.event2.create.button.survey.title": "关注未来活动信息",
 	"panel.event2.create.button.survey.description": "活动意见反馈。",
 	"panel.event2.create.button.survey.confirmation": "活动意见问卷。",
@@ -1316,6 +1318,10 @@
 	"panel.event2.setup.sponsorship_and_contacts.contacts.button.create.hint": "请点选建立新的联络信息",
 	"panel.event2.setup.sponsorship_and_contacts.contacts.label.empty.title": "尚无联络信息。",
 	"panel.event2.setup.sponsorship_and_contacts.contacts.prompt.confirm.delete.title": "删除联络信息 {{name}}？ 。",
+
+	"panel.event2.setup.groups.header.title": "Select Groups",
+	"panel.event2.setup.groups.content.failed": "Failed to load user's groups",
+	"panel.event2.setup.groups.content.empty": "There are no user's groups",
 
 	"panel.event2.setup.contact.header.title": "活动主要联络人信息",
 	"panel.event2.setup.contact.first_name.label.title": "名字",

@@ -14,6 +14,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupAttendancePanel.dart';
+import 'package:illinois/ui/events2/Event2SetupGroupsPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSponsorshipAndContactsPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
@@ -30,9 +31,11 @@ import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/events2.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
@@ -503,6 +506,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
   bool _costSectionExpanded = false;
 
   List<Survey> _surveysCache = <Survey>[];
+  List<Group> _selectedGroups = <Group>[];
 
   @override
   void initState() {
@@ -631,6 +635,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
             _buildAttendanceButtonSection(),
             _buildSurveyButtonSection(),
             _buildSponsorshipAndContactsButtonSection(),
+            _buildGroupsButtonSection(),
             _buildPublishedSection(),
             _buildVisibilitySection(),
             _buildEventSelectorSection(),
@@ -1524,6 +1529,66 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     });
   }
 
+  // Groups
+
+  Widget _buildGroupsButtonSection() => widget.isCreate ? Event2CreatePanel.buildButtonSectionWidget(
+    heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
+      title: Localization().getStringEx('panel.event2.create.button.groups.title', 'EVENT GROUPS'),
+      subTitle: Localization().getStringEx('panel.event2.create.button.groups.description', 'Publish your events in group(s) that you administer.'),
+      onTap: _onGroups,
+    ),
+    body: _buildGroupsSectionBody()
+  ) : Container();
+
+  Widget? _buildGroupsSectionBody() {
+    List<InlineSpan> descriptionList = <InlineSpan>[];
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
+
+    if (_selectedGroups.isNotEmpty) {
+      for (Group group in _selectedGroups) {
+        if (descriptionList.isNotEmpty) {
+          descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
+        }
+        descriptionList.add(TextSpan(text: group.title ?? '', style: regularStyle,),);
+      }
+
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
+      }
+
+      return Row(children: [
+        Expanded(child:
+          RichText(textScaler: MediaQuery.of(context).textScaler, text: TextSpan(style: regularStyle, children: descriptionList))
+        ),
+      ],);
+    }
+    else {
+      return null;
+    }
+  }
+
+  void _onGroups() {
+    Analytics().logSelect(target: "Event Groups");
+    Event2CreatePanel.hideKeyboard(context);
+    Navigator.push<List<Group>>(context, CupertinoPageRoute(builder: (context) => Event2SetupGroups(selectedGroups: _selectedGroups))).then((List<Group>? selectedGroups) {
+      if ((selectedGroups != null) && mounted) {
+        setState(() {
+          _selectedGroups = selectedGroups;
+        });
+      }
+    });
+  }
+
+  List<String> get _selectedGroupIds {
+    List<String> selectedGroupIds = <String>[];
+    for (Group group in _selectedGroups) {
+      if (group.id != null) {
+        selectedGroupIds.add(group.id ?? '');
+      }
+    }
+    return selectedGroupIds;
+  }
+
   // Visibility
 
   Widget _buildVisibilitySection() {
@@ -1788,8 +1853,22 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       _creatingEvent = true;
     });
     await widget.eventSelector?.prepareSelection(this);
-    Future<dynamic> Function(Event2 source) serviceAPI = widget.eventSelector?.event2SelectorServiceAPI() ?? (widget.isCreate ? Events2().createEvent : Events2().updateEvent);
-    dynamic result = await serviceAPI(_createEventFromData());
+
+    dynamic result;
+    Event2 event = _createEventFromData();
+    Future<dynamic> Function(Event2 source)? selectorAPI = widget.eventSelector?.event2SelectorServiceAPI();
+    if (selectorAPI != null) {
+      result = await selectorAPI(event);
+    }
+    else if (widget.isUpdate) {
+      result = await Events2().updateEvent(event);
+    }
+    else if (_selectedGroups.isEmpty) {
+      result = await Events2().createEvent(event);
+    }
+    else {
+      result = await _createEventForGroups(event);
+    }
 
     if (mounted) {
       if (result is Event2) {
@@ -1875,6 +1954,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
         Event2Popup.showErrorResult(context, result);
       }
     }
+  }
+
+  Future<dynamic> _createEventForGroups(Event2 source) async {
+    dynamic result = await Groups().createEventForGroupsV3(source, groupIds: _selectedGroupIds);
+    return (result is CreateEventForGroupsV3Param) ? result.event : result;
   }
 
   bool get _onlineEventType => (_eventType == Event2Type.online) ||  (_eventType == Event2Type.hybrid);
