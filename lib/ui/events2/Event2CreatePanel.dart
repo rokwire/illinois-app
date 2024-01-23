@@ -1419,14 +1419,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
   void _onEventSurvey() {
     Analytics().logSelect(target: "Event Follow-Up Survey");
     Event2CreatePanel.hideKeyboard(context);
-    Navigator.push<Event2SetupSurveyParam>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(
+    Event2SetupSurveyPanel.push(context,
       surveyParam: Event2SetupSurveyParam(
         details: _surveyDetails,
         survey: _survey,
       ),
       eventName: _titleController.text,
       surveysCache: _surveysCache,
-    ))).then((Event2SetupSurveyParam? result) {
+    ).then((Event2SetupSurveyParam? result) {
       if ((result != null) && mounted) {
         setState(() {
           _survey = result.survey;
