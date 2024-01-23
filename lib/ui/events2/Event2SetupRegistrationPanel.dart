@@ -260,7 +260,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   // Event Registrants
 
   Widget _buildRegistrantsSection() => Event2CreatePanel.buildSectionWidget(
-    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.registrants.label.title', 'ADD NETID(S) TO THE GUEST LIST')),
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.registrants.label.title', 'ADD AND REGISTER NETID(S)')),
     body: Event2CreatePanel.buildTextEditWidget(_registrantsController, keyboardType: TextInputType.text, maxLines: null,
       semanticsLabel: Localization().getStringEx('panel.event2.setup.registration.link.field.label', 'ADD NETID(S) TO THE GUEST LIST FIELD'),
       semanticsHint: Localization().getStringEx('panel.event2.setup.registration.registrants.label.hint', 'A space- or comma-separated list of NetIDs.')

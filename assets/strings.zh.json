@@ -1257,7 +1257,7 @@
 	"panel.event2.setup.registration.require.toggle.title": "必须透过应用程序注册",
 	"panel.event2.setup.registration.require.toggle.hint": "",
 	"panel.event2.setup.registration.capacity.label.title": "活动规模",
-	"panel.event2.setup.registration.registrants.label.title": "新增NetIDs至与会人名单",
+	"panel.event2.setup.registration.registrants.label.title": "ADD AND REGISTER NETID(S)",
 	"panel.event2.setup.registration.registrants.label.hint": "逗号或空白分开的NetIDs名单。",
 	"panel.event2.setup.registration.label.label.title": "添加注册标记",
 	"panel.event2.setup.registration.link.label.title": "添加外部连结",
