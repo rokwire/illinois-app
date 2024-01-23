@@ -24,9 +24,8 @@ import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/ui/athletics/AthleticsEventCard.dart';
+import 'package:illinois/ui/athletics/AthleticsWidgets.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
-import 'package:illinois/ui/athletics/AthleticsMyTeamsPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -75,7 +74,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      _buildTeamsFilterContent(),
+      AthleticsTeamsFilterWidget(),
       Expanded(child: RefreshIndicator(
           onRefresh: _onRefresh,
           child: SingleChildScrollView(
@@ -96,42 +95,6 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
     } else {
       return _buildEventsContent();
     }
-  }
-
-  Widget _buildTeamsFilterContent() {
-    return Column(children: [
-      Container(
-          color: Styles().colors.white,
-          child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Row(children: [
-                InkWell(
-                    splashColor: Colors.transparent,
-                    onTap: _onTapTeamsFilter,
-                    child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Styles().colors.disabledTextColor, width: 1), borderRadius: BorderRadius.circular(16)),
-                        child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                            child: Row(children: [
-                              Styles().images.getImage('filters') ?? Container(),
-                              Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 5),
-                                  child: Text(Localization().getStringEx('panel.athletics.content.common.filter.teams.label', 'Teams'),
-                                      style: Styles().textStyles.getTextStyle('widget.button.title.small.fat'))),
-                              Styles().images.getImage('chevron-right-gray') ?? Container()
-                            ])))),
-                Expanded(child: Container())
-              ]))),
-      Divider(thickness: 1, color: Styles().colors.lightGray, height: 1),
-      Container(
-          decoration: BoxDecoration(color: Styles().colors.white, boxShadow: kElevationToShadow[2]),
-          child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Row(children: [
-                Expanded(child: Text(_teamsFilterLabel, style: Styles().textStyles.getTextStyle('widget.button.title.small'), overflow: TextOverflow.ellipsis, maxLines: 1))
-              ])))
-    ]);
   }
 
   Widget _buildEventsContent() {
@@ -181,11 +144,6 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
                 height: 24,
                 child: CircularProgressIndicator(
                     strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)))));
-  }
-
-  void _onTapTeamsFilter() {
-    Analytics().logSelect(target: 'Teams');
-    AthleticsMyTeamsPanel.present(context);
   }
 
   void _onTapGame(Game game) {
@@ -332,14 +290,6 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
       attributes.addAll({'sport': sportAttribute});
     }
     return attributes;
-  }
-
-  String get _teamsFilterLabel {
-    String filterPrefix = Localization().getStringEx('panel.athletics.content.common.filter.label', 'Filter:');
-    String? teamsFilterDisplayString = CollectionUtils.isNotEmpty(_teamsFilter)
-        ? _teamsFilter!.map((team) => team.name).toList().join(', ')
-        : Localization().getStringEx('panel.athletics.content.common.filter.value.none.label', 'None');
-    return '$filterPrefix $teamsFilterDisplayString';
   }
 
   double get _screenHeight => MediaQuery.of(context).size.height;

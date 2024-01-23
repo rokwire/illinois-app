@@ -19,7 +19,7 @@ import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/ui/athletics/AthleticsMyTeamsPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -54,7 +54,7 @@ class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidge
     return Container(
         color: Styles().colors.white,
         child: Column(children: [
-          _buildTeamsFilterContent(),
+          AthleticsTeamsFilterWidget(hideFilterDescription: true),
           Expanded(child: SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child: _buildContent()))
         ]));
   }
@@ -67,52 +67,6 @@ class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidge
     } else {
       return _buildTeamsContent();
     }
-  }
-
-  Widget _buildTeamsFilterContent() {
-    return Column(children: [
-      Container(
-          color: _filterApplied ? Styles().colors.white : null,
-          decoration: !_filterApplied ? _filterDecoration : null,
-          child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Row(children: [
-                InkWell(
-                    splashColor: Colors.transparent,
-                    onTap: _onTapTeamsFilter,
-                    child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
-                            borderRadius: BorderRadius.circular(16)),
-                        child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                            child: Row(children: [
-                              Styles().images.getImage('filters') ?? Container(),
-                              Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 5),
-                                  child: Text(Localization().getStringEx('panel.athletics.content.common.filter.teams.label', 'Teams'),
-                                      style: Styles().textStyles.getTextStyle('widget.button.title.small.fat'))),
-                              Styles().images.getImage('chevron-right-gray') ?? Container()
-                            ])))),
-                Expanded(child: Container())
-              ]))),
-      Visibility(
-          visible: _filterApplied,
-          child: Column(children: [
-            Divider(thickness: 1, color: Styles().colors.lightGray, height: 1),
-            Container(
-                decoration: _filterApplied ? _filterDecoration : null,
-                child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    child: Row(children: [
-                      Expanded(
-                          child: Text(StringUtils.ensureNotEmpty(_teamsFilterLabel),
-                              style: Styles().textStyles.getTextStyle('widget.button.title.small'),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1))
-                    ])))
-          ]))
-    ]);
   }
 
   Widget _buildTeamsContent() {
@@ -159,11 +113,6 @@ class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidge
     return Center(child: Column(children: <Widget>[Container(height: _screenHeight / 5), child, Container(height: _screenHeight / 5 * 3)]));
   }
 
-  void _onTapTeamsFilter() {
-    Analytics().logSelect(target: 'Teams');
-    AthleticsMyTeamsPanel.present(context);
-  }
-
   void _onTapTeam(SportDefinition sport) {
     Analytics().logSelect(target: 'Team: ' + StringUtils.ensureNotEmpty(sport.shortName));
     //TBD: DD - implement
@@ -184,19 +133,6 @@ class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidge
       _teams = Sports().sports;
     }
   }
-
-  String? get _teamsFilterLabel {
-    if (!_filterApplied) {
-      return null;
-    }
-    String filterPrefix = Localization().getStringEx('panel.athletics.content.common.filter.label', 'Filter:');
-    String? teamsFilterDisplayString = _teams?.map((team) => team.name).toList().join(', ');
-    return '$filterPrefix $teamsFilterDisplayString';
-  }
-
-  bool get _filterApplied => CollectionUtils.isNotEmpty(Auth2().prefs?.sportsInterests);
-
-  BoxDecoration get _filterDecoration => BoxDecoration(color: Styles().colors.white, boxShadow: kElevationToShadow[2]);
 
   double get _screenHeight => MediaQuery.of(context).size.height;
 

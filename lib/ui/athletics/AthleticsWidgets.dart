@@ -23,6 +23,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Sports.dart';
+import 'package:illinois/ui/athletics/AthleticsMyTeamsPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -48,20 +49,21 @@ class AthleticsEventCard extends StatefulWidget {
   static const EdgeInsetsGeometry imageMargin = const EdgeInsets.only(left: 20, right: 20);
   static const EdgeInsetsGeometry regularMargin = const EdgeInsets.only(left: 20, right: 20, top: 20);
 
-  AthleticsEventCard({required this.game, this.onTap,
-    EdgeInsetsGeometry? margin,
-    this.showImage = false,
-    this.showDescription = false,
-    this.showInterests = false,
-    this.showGetTickets = false}) :
-        margin = margin ?? (showImage ? imageMargin : regularMargin);
+  AthleticsEventCard(
+      {required this.game,
+      this.onTap,
+      EdgeInsetsGeometry? margin,
+      this.showImage = false,
+      this.showDescription = false,
+      this.showInterests = false,
+      this.showGetTickets = false})
+      : margin = margin ?? (showImage ? imageMargin : regularMargin);
 
   @override
   _AthleticsEventCardState createState() => _AthleticsEventCardState();
 }
 
 class _AthleticsEventCardState extends State<AthleticsEventCard> implements NotificationsListener {
-
   static const EdgeInsets _detailPadding = EdgeInsets.only(bottom: 12, left: 24, right: 24);
   static const EdgeInsets _iconPadding = EdgeInsets.only(right: 5);
 
@@ -86,8 +88,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setStateIfMounted(() {});
-    }
-    else if (name == FlexUI.notifyChanged) {
+    } else if (name == FlexUI.notifyChanged) {
       setStateIfMounted(() {});
     }
   }
@@ -99,7 +100,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
     String sportName = sport?.name ?? '';
     bool isTicketedSport = sport?.ticketed ?? false;
     bool showImage = widget.showImage && StringUtils.isNotEmpty(widget.game.imageUrl) && isTicketedSport;
-    bool isGetTicketsVisible = widget.showGetTickets &&  StringUtils.isNotEmpty(widget.game.links?.tickets) && isTicketedSport;
+    bool isGetTicketsVisible = widget.showGetTickets && StringUtils.isNotEmpty(widget.game.links?.tickets) && isTicketedSport;
     bool isFavorite = Auth2().isFavorite(widget.game);
     String? interestsLabelValue = _getInterestsLabelValue();
     bool showInterests = StringUtils.isNotEmpty(interestsLabelValue);
@@ -223,8 +224,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
   }
 
   void _onTapGetTickets() {
-    Analytics().logSelect(
-        target: "AthleticsEventCard: Item:${widget.game.title} - Get Tickets");
+    Analytics().logSelect(target: "AthleticsEventCard: Item:${widget.game.title} - Get Tickets");
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
         _showTicketsPanel();
@@ -265,11 +265,8 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
 
     return (0 < details.length)
         ? Padding(
-        padding: EdgeInsets.symmetric(vertical: 10),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: details))
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: details))
         : Container();
   }
 
@@ -278,16 +275,18 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
     if (StringUtils.isNotEmpty(displayTime)) {
       return Padding(
         padding: _detailPadding,
-        child:Semantics(label:displayTime, excludeSemantics: true ,child: Row(
-          children: <Widget>[
-            Styles().images.getImage('time', excludeFromSemantics: true) ?? Container(),
-            Padding(
-              padding: _iconPadding,
-            ),
-            Text(displayTime!,
-                style: Styles().textStyles.getTextStyle('widget.card.detail.medium')),
-          ],
-        )),
+        child: Semantics(
+            label: displayTime,
+            excludeSemantics: true,
+            child: Row(
+              children: <Widget>[
+                Styles().images.getImage('time', excludeFromSemantics: true) ?? Container(),
+                Padding(
+                  padding: _iconPadding,
+                ),
+                Text(displayTime!, style: Styles().textStyles.getTextStyle('widget.card.detail.medium')),
+              ],
+            )),
       );
     } else {
       return null;
@@ -299,20 +298,23 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
     if ((locationText != null) && locationText.isNotEmpty) {
       return Padding(
         padding: _detailPadding,
-        child: Semantics(label:locationText, excludeSemantics: true ,child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Styles().images.getImage('location', excludeFromSemantics: true) ?? Container(),
-            Padding(
-              padding: _iconPadding,
-            ),
-            Flexible(
-                child: Text(locationText,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                    style: Styles().textStyles.getTextStyle('widget.card.detail.medium'))),
-          ],
-        )),
+        child: Semantics(
+            label: locationText,
+            excludeSemantics: true,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Styles().images.getImage('location', excludeFromSemantics: true) ?? Container(),
+                Padding(
+                  padding: _iconPadding,
+                ),
+                Flexible(
+                    child: Text(locationText,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        style: Styles().textStyles.getTextStyle('widget.card.detail.medium'))),
+              ],
+            )),
       );
     } else {
       return null;
@@ -339,9 +341,9 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
     if (sport != null) {
       if (Connectivity().isNotOffline) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamPanel(sport)));
-      }
-      else {
-        AppAlert.showOfflineMessage(context, Localization().getStringEx('widget.athletics_card.label.offline.sports', 'Sports are not available while offline.'));
+      } else {
+        AppAlert.showOfflineMessage(
+            context, Localization().getStringEx('widget.athletics_card.label.offline.sports', 'Sports are not available while offline.'));
       }
     }
   }
@@ -350,5 +352,112 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
     String? sportName = widget.game.sport?.shortName;
     bool isSportFavorite = Auth2().prefs?.hasSportInterest(sportName) ?? false;
     return isSportFavorite ? Sports().getSportByShortName(sportName)?.customName : null;
+  }
+}
+
+class AthleticsTeamsFilterWidget extends StatefulWidget {
+  final bool? hideFilterDescription;
+
+  AthleticsTeamsFilterWidget({this.hideFilterDescription});
+
+  @override
+  State<AthleticsTeamsFilterWidget> createState() => _AthleticsTeamsFilterWidgetState();
+}
+
+class _AthleticsTeamsFilterWidgetState extends State<AthleticsTeamsFilterWidget> implements NotificationsListener {
+  @override
+  void initState() {
+    super.initState();
+    NotificationService().subscribe(this, [Auth2UserPrefs.notifyInterestsChanged]);
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      Container(
+          color: _showFilterDescription ? Styles().colors.white : null,
+          decoration: !_showFilterDescription ? _filterDecoration : null,
+          child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Row(children: [
+                InkWell(
+                    splashColor: Colors.transparent,
+                    onTap: () => _onTapTeamsFilter(context),
+                    child: Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
+                            borderRadius: BorderRadius.circular(16)),
+                        child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                            child: Row(children: [
+                              Styles().images.getImage('filters') ?? Container(),
+                              Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 5),
+                                  child: Text(Localization().getStringEx('panel.athletics.content.common.filter.teams.label', 'Teams'),
+                                      style: Styles().textStyles.getTextStyle('widget.button.title.small.fat'))),
+                              Styles().images.getImage('chevron-right-gray') ?? Container()
+                            ])))),
+                Expanded(child: Container())
+              ]))),
+      Visibility(
+          visible: _showFilterDescription,
+          child: Column(children: [
+            Divider(thickness: 1, color: Styles().colors.lightGray, height: 1),
+            Container(
+                decoration: _showFilterDescription ? _filterDecoration : null,
+                child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    child: Row(children: [
+                      Expanded(
+                          child: Text(StringUtils.ensureNotEmpty(_teamsFilterLabel),
+                              style: Styles().textStyles.getTextStyle('widget.button.title.small'),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1))
+                    ])))
+          ]))
+    ]);
+  }
+
+  void _onTapTeamsFilter(BuildContext context) {
+    Analytics().logSelect(target: 'Teams');
+    AthleticsMyTeamsPanel.present(context);
+  }
+
+  String get _teamsFilterLabel {
+    Set<String>? favoriteSports = Auth2().prefs?.sportsInterests;
+    String filterPrefix = Localization().getStringEx('panel.athletics.content.common.filter.label', 'Filter:');
+    String teamsFilterDisplayString = Localization().getStringEx('panel.athletics.content.common.filter.value.none.label', 'None');
+    if (CollectionUtils.isNotEmpty(favoriteSports)) {
+      List<SportDefinition> sports = <SportDefinition>[];
+      for (String sportShortName in favoriteSports!) {
+        SportDefinition? sport = Sports().getSportByShortName(sportShortName);
+        if (sport != null) {
+          sports.add(sport);
+        }
+      }
+      teamsFilterDisplayString = sports.map((team) => team.name).toList().join(', ');
+    }
+    return '$filterPrefix $teamsFilterDisplayString';
+  }
+
+  bool get _showFilterDescription => (_filterApplied || (widget.hideFilterDescription != true));
+
+  bool get _filterApplied => CollectionUtils.isNotEmpty(Auth2().prefs?.sportsInterests);
+
+  BoxDecoration get _filterDecoration => BoxDecoration(color: Styles().colors.white, boxShadow: kElevationToShadow[2]);
+
+  // Notifications Listener
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Auth2UserPrefs.notifyInterestsChanged) {
+      setStateIfMounted(() {});
+    }
   }
 }

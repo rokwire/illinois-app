@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/ui/athletics/AthleticsEventCard.dart';
+import 'package:illinois/ui/athletics/AthleticsWidgets.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
