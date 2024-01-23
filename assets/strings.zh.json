@@ -1386,7 +1386,7 @@
 	"panel.event2.detail.attendance.attendees.empty.text": "尚未有使用者注册或参加此活动。",
 	"panel.event2.detail.attendance.attendees.failed.text": "无法加载活动与会人员名单。",
 	"panel.event2.detail.attendance.scan.button": "扫描Illini ID",
-	"panel.event2.detail.attendance.manual.netid.label": "新增NetID至与会人名单A：",
+	"panel.event2.detail.attendance.manual.netid.label": "Add NetID(s) as attended:",
 	"panel.event2.detail.attendance.message.not_available.title": "无法提供",
 	"panel.event2.detail.attendance.manual_check.disabled": "此活动无法使用人工签到。",
 	"panel.event2.detail.attendance.scan.disabled": "此活动无法扫描Illini ID。",

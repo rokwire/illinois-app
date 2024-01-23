@@ -1398,7 +1398,7 @@
     "panel.event2.detail.attendance.attendees.capacity.exceeded.text": "Se ha superado la capacidad del evento",
     "panel.event2.detail.attendance.attendees.empty.text": "Aún no hay usuarios registrados ni asistentes a este evento.",
     "panel.event2.detail.attendance.attendees.failed.text": "Error al cargar la lista de asistentes.",
-    "panel.event2.detail.attendance.manual.netid.label": "Agregar NetID a la lista de invitados:",
+    "panel.event2.detail.attendance.manual.netid.label": "Add NetID(s) as attended:",
     "panel.event2.detail.attendance.scan.button": "Escanear la Illini ID",
     "panel.event2.detail.attendance.message.not_available.title": "No disponible",
     "panel.event2.detail.attendance.manual_check.disabled": "La verificación manual no está activada para este evento.",
