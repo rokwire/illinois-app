@@ -70,6 +70,8 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   static ProfileContent? _lastSelectedContent;
   late ProfileContent _selectedContent;
   bool _contentValuesVisible = false;
+  final GlobalKey _pageKey = GlobalKey();
+  final GlobalKey _pageHeadingKey = GlobalKey();
 
   @override
   void initState() {
@@ -127,11 +129,11 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   }
 
   Widget _buildPage(BuildContext context) {
-    return Column(children: <Widget>[
+    return Column(key: _pageKey, children: <Widget>[
       Expanded(child:
         SingleChildScrollView(physics: _contentValuesVisible ? NeverScrollableScrollPhysics() : null, child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
+            Padding(key: _pageHeadingKey, padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
               RibbonButton(
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
                 backgroundColor: Styles().colors.white,
@@ -153,6 +155,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   Widget _buildContent() {
     return Stack(children: [
       Padding(padding: EdgeInsets.all(16), child: _contentWidget),
+      Container(height: _contentHeight),
       _buildContentValuesContainer()
     ]);
   }
@@ -169,15 +172,13 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   }
 
   Widget _buildContentDismissLayer() {
-    return Positioned.fill(
-        child: BlockSemantics(
-            child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _contentValuesVisible = false;
-                  });
-                },
-                child: Container(color: Styles().colors.blackTransparent06))));
+    return Positioned.fill(child:
+      BlockSemantics(child:
+        GestureDetector(onTap: _onTapDismissLayer, child:
+          Container(color: Styles().colors.blackTransparent06)
+        )
+      )
+    );
   }
 
   Widget _buildContentValuesWidget() {
@@ -247,7 +248,23 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     Navigator.of(context).pop();
   }
 
+  void _onTapDismissLayer() {
+    setState(() {
+      _contentValuesVisible = false;
+    });
+  }
+
   // Utilities
+
+  double? get _contentHeight  {
+    RenderObject? pageRenderBox = _pageKey.currentContext?.findRenderObject();
+    double? pageHeight = (pageRenderBox is RenderBox) ? pageRenderBox.size.height : null;
+
+    RenderObject? pageHeaderRenderBox = _pageHeadingKey.currentContext?.findRenderObject();
+    double? pageHeaderHeight = (pageHeaderRenderBox is RenderBox) ? pageHeaderRenderBox.size.height : null;
+
+    return ((pageHeight != null) && (pageHeaderHeight != null)) ? (pageHeight - pageHeaderHeight) : null;
+  }
 
   String _getContentLabel(ProfileContent content) {
     switch (content) {
