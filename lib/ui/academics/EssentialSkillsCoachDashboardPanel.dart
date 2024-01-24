@@ -1,16 +1,11 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/courses/Content.dart';
-import 'package:illinois/model/courses/Module.dart';
+import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/ui/academics/courses/AssignmentPanel.dart';
 import 'package:illinois/ui/academics/courses/UnitInfoPanel.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-
-import '../../model/courses/Course.dart';
-import '../../model/courses/Unit.dart';
-
 
 
 class EssentialSkillsCoachDashboardPanel extends StatefulWidget {
@@ -230,6 +225,8 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       modules: moduleList
     );
 
+    // String? courseJson = JsonUtils.encode(_course.toJson());
+    // debugPrint(courseJson);
   }
 
   @override
@@ -250,31 +247,31 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     switch (module){
       case "Social Engagement Skills":
         return Container(
-          color: Styles().colors!.essentialSkillsCoachPurple,
-          child: _buildModuleInfoView("skills-social", Styles().colors!.essentialSkillsCoachPurple, Styles().colors!.essentialSkillsCoachPurpleAccent),
+          color: Styles().colors.getColor("essentialSkillsCoachPurple"),
+          child: _buildModuleInfoView("skills-social", Styles().colors.getColor("essentialSkillsCoachPurple"), Styles().colors.getColor("essentialSkillsCoachPurpleAccent")),
         );
       case "Self Management Skills":
         return Container(
-          color: Styles().colors!.essentialSkillsCoachBlue,
-          child: _buildModuleInfoView("skills-management", Styles().colors!.essentialSkillsCoachBlue, Styles().colors!.essentialSkillsCoachBlueAccent),
+          color: Styles().colors.getColor("essentialSkillsCoachBlue"),
+          child: _buildModuleInfoView("skills-management", Styles().colors.getColor("essentialSkillsCoachBlue"), Styles().colors.getColor("essentialSkillsCoachBlueAccent")),
 
         );
       case "Cooperation Skills":
         return Container(
-          color: Styles().colors!.essentialSkillsCoachRed,
-          child: _buildModuleInfoView("skills-cooperation", Styles().colors!.essentialSkillsCoachRed, Styles().colors!.essentialSkillsCoachRedAccent),
+          color: Styles().colors.getColor("essentialSkillsCoachRed"),
+          child: _buildModuleInfoView("skills-cooperation", Styles().colors.getColor("essentialSkillsCoachRed"), Styles().colors.getColor("essentialSkillsCoachRedAccent")),
 
         );
       case "Emotional Resilience Skills":
         return Container(
-          color: Styles().colors!.essentialSkillsCoachOrange,
-          child: _buildModuleInfoView("skills-emotional", Styles().colors!.essentialSkillsCoachOrange, Styles().colors!.essentialSkillsCoachOrangeAccent),
+          color: Styles().colors.getColor("essentialSkillsCoachOrange"),
+          child: _buildModuleInfoView("skills-emotional", Styles().colors.getColor("essentialSkillsCoachOrange"), Styles().colors.getColor("essentialSkillsCoachOrangeAccent")),
 
         );
       case "Innovation Skills":
         return Container(
-          color: Styles().colors!.essentialSkillsCoachGreen,
-          child: _buildModuleInfoView("skills-innovation", Styles().colors!.essentialSkillsCoachGreen, Styles().colors!.essentialSkillsCoachGreenAccent),
+          color: Styles().colors.getColor("essentialSkillsCoachGreen"),
+          child: _buildModuleInfoView("skills-innovation", Styles().colors.getColor("essentialSkillsCoachGreen"), Styles().colors.getColor("essentialSkillsCoachGreenAccent")),
         );
       default:
         return Container();

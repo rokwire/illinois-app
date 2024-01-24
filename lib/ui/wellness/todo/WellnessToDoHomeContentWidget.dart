@@ -67,7 +67,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     _initCalendarDates();
     // _loadToDoItems();
 
-    _scrollPagerController = ScrollPagerController(limit: _limit, controller:_scrollController, infinite: true, onPage: _loadTodos, onStateChanged: (){
+    _scrollPagerController = ScrollPagerController(limit: _limit, controller:_scrollController, /*infinite: true,*/ onPage: _loadTodos, onStateChanged: (){
       if (mounted) {
         setState(() {
         });

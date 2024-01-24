@@ -1,14 +1,13 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/CustomCourses.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/academics/courses/AssignmentCompletePanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-
-import '../../../model/courses/Content.dart';
-import '../../widgets/HeaderBar.dart';
-import 'AssignmentCompletePanel.dart';
 
 class AssignmentPanel extends StatefulWidget {
   final Content? content;
