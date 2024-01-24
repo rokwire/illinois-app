@@ -606,8 +606,8 @@
     "panel.athletics.content.section.game_day.label": "¡Es el día del juego!",
     "panel.athletics.content.section.my_events.label": "Mis 10 grandes eventos",
     "panel.athletics.content.section.my_news.label": "Mis noticias",
-    "panel.athletics.content.section.news.label": "Noticias",
-    "panel.athletics.content.section.teams.label": "Equipos",
+    "panel.athletics.content.section.news.label": "10 grandes noticias",
+    "panel.athletics.content.section.teams.label": "10 grandes equipos",
 
     "panel.athletics.content.events.unknown_error.message": "Se produjo un error desconocido",
     "panel.athletics.content.events.empty.message": "No hay eventos.",
@@ -618,6 +618,9 @@
 
     "panel.athletics.content.teams.empty.message": "No hay equipos.",
     "panel.athletics.content.teams.unknown_error.message": "Se produjo un error desconocido.",
+
+    "panel.athletics.content.news.empty.message": "No hay novedades.",
+    "panel.athletics.content.news.failed.message": "No se pudieron cargar las noticias.",
 
     "panel.onboarding.button.continue.title":"Continuar",
     "panel.onboarding.button.continue.hint":"",

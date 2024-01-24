@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/athletics/AthleticsEventsContentWidget.dart';
+import 'package:illinois/ui/athletics/AthleticsNewsContentWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -239,6 +240,8 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
     switch (_selectedContent) {
       case AthleticsContent.events:
         return AthleticsEventsContentWidget();
+      case AthleticsContent.news:
+        return AthleticsNewsContentWidget();
       case AthleticsContent.teams:
         return AthleticsTeamsContentWidget();
       default:
@@ -259,9 +262,9 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
       case AthleticsContent.my_news:
         return _loadContentString('panel.athletics.content.section.my_news.label', 'My News', language: language);
       case AthleticsContent.news:
-        return _loadContentString('panel.athletics.content.section.news.label', 'News', language: language);
+        return _loadContentString('panel.athletics.content.section.news.label', 'Big 10 News', language: language);
       case AthleticsContent.teams:
-        return _loadContentString('panel.athletics.content.section.teams.label', 'Teams', language: language);
+        return _loadContentString('panel.athletics.content.section.teams.label', 'Big 10 Teams', language: language);
     }
   }
 

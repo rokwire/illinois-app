@@ -606,8 +606,8 @@
 	"panel.athletics.content.section.game_day.label": "今天是比賽日！",
 	"panel.athletics.content.section.my_events.label": "我的十大事件",
 	"panel.athletics.content.section.my_news.label": "我的消息",
-	"panel.athletics.content.section.news.label": "訊息",
-	"panel.athletics.content.section.teams.label": "團隊",
+	"panel.athletics.content.section.news.label": "十大新聞",
+	"panel.athletics.content.section.teams.label": "十大球隊",
 
 	"panel.athletics.content.events.unknown_error.message": "發生未知錯誤",
 	"panel.athletics.content.events.empty.message": "沒有事件。",
@@ -618,6 +618,9 @@
 
 	"panel.athletics.content.teams.empty.message": "沒有團隊。",
 	"panel.athletics.content.teams.unknown_error.message": "發生未知錯誤。",
+
+	"panel.athletics.content.news.empty.message": "目前還沒有消息。",
+	"panel.athletics.content.news.failed.message": "加載新聞失敗。",
 
 	"panel.onboarding.button.continue.title":"继续",
 	"panel.onboarding.button.continue.hint":"",

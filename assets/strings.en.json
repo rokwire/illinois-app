@@ -607,8 +607,8 @@
     "panel.athletics.content.section.game_day.label": "It's Game Day!",
     "panel.athletics.content.section.my_events.label": "My Big 10 Events",
     "panel.athletics.content.section.my_news.label": "My News",
-    "panel.athletics.content.section.news.label": "News",
-    "panel.athletics.content.section.teams.label": "Teams",
+    "panel.athletics.content.section.news.label": "Big 10 News",
+    "panel.athletics.content.section.teams.label": "Big 10 Teams",
 
     "panel.athletics.content.events.unknown_error.message": "Unknown Error Occurred",
     "panel.athletics.content.events.empty.message": "There are no events.",
@@ -619,6 +619,9 @@
 
     "panel.athletics.content.teams.empty.message": "There are no teams.",
     "panel.athletics.content.teams.unknown_error.message": "Unknown Error Occurred.",
+
+    "panel.athletics.content.news.empty.message": "There are no news.",
+    "panel.athletics.content.news.failed.message": "Failed to load news.",
 
     "panel.onboarding.button.continue.title":"Continue",
     "panel.onboarding.button.continue.hint":"",
