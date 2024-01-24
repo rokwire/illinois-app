@@ -110,7 +110,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     
     List<Widget> contentList = [];
 
-    List<dynamic> codes = FlexUI()['settings'] ?? [];
+    List<dynamic> codes = FlexUI()['authenticate'] ?? [];
 
     for (String code in codes) {
       if (code == 'connect') {
@@ -122,10 +122,9 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       else if (code == 'linked') {
         contentList.add(_buildLinked());
       }
-      else if (code == 'feedback') {
-        contentList.add(_buildFeedback(),);
-      }
     }
+
+    contentList.add(_buildFeedback(),);
 
     if (kDebugMode || (Config().configEnvironment == rokwire.ConfigEnvironment.dev)) {
       contentList.add(_buildDebug());
@@ -153,7 +152,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       ),
     );
 
-    List<dynamic> codes = FlexUI()['settings.connect'] ?? [];
+    List<dynamic> codes = FlexUI()['authenticate.connect'] ?? [];
     for (String code in codes) {
       if (code == 'netid') {
           contentList.add(Padding(
@@ -254,7 +253,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
   Widget _buildConnected() {
     List<Widget> contentList =  [];
 
-    List<dynamic> codes = FlexUI()['settings.connected'] ?? [];
+    List<dynamic> codes = FlexUI()['authenticate.connected'] ?? [];
     for (String code in codes) {
       if (code == 'netid') {
         contentList.addAll(_buildConnectedNetIdLayout());
@@ -283,7 +282,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
   List<Widget> _buildConnectedNetIdLayout() {
     List<Widget> contentList = [];
 
-    List<dynamic> codes = FlexUI()['settings.connected.netid'] ?? [];
+    List<dynamic> codes = FlexUI()['authenticate.connected.netid'] ?? [];
     for (int index = 0; index < codes.length; index++) {
       String code = codes[index];
       if (code == 'info') {
@@ -316,7 +315,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     String fullName = Auth2().fullName ?? "";
     bool hasFullName = StringUtils.isNotEmpty(fullName);
 
-    List<dynamic> codes = FlexUI()['settings.connected.phone'] ?? [];
+    List<dynamic> codes = FlexUI()['authenticate.connected.phone'] ?? [];
     for (int index = 0; index < codes.length; index++) {
       String code = codes[index];
       if (code == 'info') {
@@ -363,7 +362,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     String fullName = Auth2().fullName ?? "";
     bool hasFullName = StringUtils.isNotEmpty(fullName);
 
-    List<dynamic> codes = FlexUI()['settings.connected.email'] ?? [];
+    List<dynamic> codes = FlexUI()['authenticate.connected.email'] ?? [];
     for (int index = 0; index < codes.length; index++) {
       String code = codes[index];
       if (code == 'info') {
@@ -465,7 +464,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
   Widget _buildLinked() {
     List<Widget> contentList =  [];
 
-    List<dynamic> codes = FlexUI()['settings.linked'] ?? [];
+    List<dynamic> codes = FlexUI()['authenticate.linked'] ?? [];
     for (String code in codes) {
       if (code == 'netid') {
         List<Widget> linkedNetIDs = _buildLinkedNetIdLayout();
@@ -501,7 +500,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     List<Widget> contentList = [];
     List<Auth2Type> linkedTypes = Auth2().linkedOidc;
 
-    List<dynamic> codes = FlexUI()['settings.linked.netid'] ?? [];
+    List<dynamic> codes = FlexUI()['authenticate.linked.netid'] ?? [];
     for (Auth2Type linked in linkedTypes) {
       if (StringUtils.isNotEmpty(linked.identifier) && linked.identifier != Auth2().account?.authType?.identifier) {
         for (int index = 0; index < codes.length; index++) {
@@ -534,7 +533,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     List<Widget> contentList = [];
     List<Auth2Type> linkedTypes = Auth2().linkedPhone;
 
-    List<dynamic> codes = FlexUI()['settings.linked.phone'] ?? [];
+    List<dynamic> codes = FlexUI()['authenticate.linked.phone'] ?? [];
     for (Auth2Type linked in linkedTypes) {
       if (StringUtils.isNotEmpty(linked.identifier) && linked.identifier != Auth2().account?.authType?.identifier) {
         for (int index = 0; index < codes.length; index++) {
@@ -573,7 +572,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     List<Widget> contentList = [];
     List<Auth2Type> linkedTypes = Auth2().linkedEmail;
 
-    List<dynamic> codes = FlexUI()['settings.linked.email'] ?? [];
+    List<dynamic> codes = FlexUI()['authenticate.linked.email'] ?? [];
     for (Auth2Type linked in linkedTypes) {
       if (StringUtils.isNotEmpty(linked.identifier) && linked.identifier != Auth2().account?.authType?.identifier) {
         for (int index = 0; index < codes.length; index++) {
@@ -613,7 +612,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   Widget _buildLink() {
     List<Widget> contentList =  [];
-    List<dynamic> codes = FlexUI()['settings.link'] ?? [];
+    List<dynamic> codes = FlexUI()['authenticate.link'] ?? [];
     for (int index = 0; index < codes.length; index++) {
       String code = codes[index];
       if (code == 'netid') {
