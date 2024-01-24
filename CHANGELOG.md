@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Clear header bar button in Content Attributes panel [#3828](https://github.com/rokwire/illinois-app/issues/3828).
 ### Changed
 - Implemented various issues for event creation [#3876](https://github.com/rokwire/illinois-app/issues/3876).
+### Added
+- Athletics UI Cleanup - in progress [#3867](https://github.com/rokwire/illinois-app/issues/3867).
 
 ## [5.1.12] - 2024-01-22
 ### Changed
