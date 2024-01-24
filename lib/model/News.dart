@@ -25,6 +25,7 @@ class News implements Favorite {
   final String? title;
   final String? link;
   final String? category;
+  final String? sportKey;
   final String? description;
   final String? fullText;
   final String? fullTextRaw;
@@ -35,7 +36,7 @@ class News implements Favorite {
 
   static final String dateTimeFormat = 'E, dd MMM yyyy HH:mm:ss v';
 
-  News({this.id, this.title, this.link, this.category, this.description, this.fullText, this.fullTextRaw, this.imageUrl, this.pubDateUtc, this.json});
+  News({this.id, this.title, this.link, this.category, this.sportKey, this.description, this.fullText, this.fullTextRaw, this.imageUrl, this.pubDateUtc, this.json});
 
   static News? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -46,12 +47,24 @@ class News implements Favorite {
         title: json['title'],
         link: json['link'],
         category: json["category"],
+        sportKey: json["sport"],
         description: json['description'],
         fullText: json['fulltext'],
         fullTextRaw: json['fulltext_raw'],
         imageUrl: json['image_url'],
         pubDateUtc: DateTimeUtils.dateTimeFromString(json['pub_date_utc'], format: dateTimeFormat, isUtc: true),
         json: json);
+  }
+
+  static List<News>? listFromJson(List<dynamic>? jsonList) {
+    List<News>? items;
+    if (jsonList != null) {
+      items = <News>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(items, News.fromJson(jsonEntry));
+      }
+    }
+    return items;
   }
 
   @override
