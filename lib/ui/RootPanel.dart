@@ -20,7 +20,7 @@ import 'dart:collection';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/AssistantPanel.dart';
@@ -41,10 +41,10 @@ import 'package:illinois/ui/settings/SettingsProfileContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
+import 'package:illinois/ui/widgets/InAppNotificationToast.dart';
 import 'package:rokwire_plugin/model/actions.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
-import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
@@ -67,7 +67,6 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
-import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/popups/alerts.dart';
 import 'package:rokwire_plugin/ui/popups/popup_message.dart';
@@ -170,6 +169,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Alerts.notifyAlert,
       ActionBuilder.notifyShowPanel,
       Events.notifyEventDetail,
+      Events2.notifyLaunchDetail,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
       Appointments.notifyAppointmentDetail,
@@ -182,13 +182,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Styles.notifyChanged,
       Polls.notifyPresentVote,
       Polls.notifyPresentResult,
-      DeviceCalendar.notifyPromptPopup,
-      DeviceCalendar.notifyCalendarSelectionPopup,
-      DeviceCalendar.notifyShowConsoleMessage,
       uiuc.TabBar.notifySelectionChanged,
       HomePanel.notifySelect,
       ExploreMapPanel.notifySelect,
-      Events2.notifyLaunchDetail
     ]);
 
     _tabs = _getTabs();
@@ -213,16 +209,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == DeviceCalendar.notifyPromptPopup) {
-      _onCalendarPromptMessage(param);
-    }
-    else if (name == DeviceCalendar.notifyCalendarSelectionPopup) {
-      _promptCalendarSelection(param);
-    }
-    else if (name == DeviceCalendar.notifyShowConsoleMessage) {
-      _showConsoleMessage(param);
-    }
-    else if (name == Alerts.notifyAlert) {
+    if (name == Alerts.notifyAlert) {
       Alerts.handleNotification(context, param);
     }
     else if (name == ActionBuilder.notifyShowPanel) {
@@ -323,7 +310,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onFirebaseTabNotification(RootTab.Maps);
     }
     else if (name == FirebaseMessaging.notifyMapEventsNotification) {
-      _onFirebaseMapNotification(ExploreMapType.Events);
+      _onFirebaseMapNotification(ExploreMapType.Events2);
     }
     else if (name == FirebaseMessaging.notifyMapDiningNotification) {
       _onFirebaseMapNotification(ExploreMapType.Dining);
@@ -475,6 +462,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
     }
+
   }
 
   void _onTabSelectionChanged(int tabIndex) {
@@ -492,16 +480,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  void _onSelectMaps(ExploreMapType? mapType) {
+  void _onSelectMaps(dynamic param) {
     int? mapsIndex = _getIndexByRootTab(RootTab.Maps);
     if (mounted && (mapsIndex != null)) {
       Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
       int lastTabIndex = _currentTabIndex;
       _selectTab(mapsIndex);
-      if ((lastTabIndex != mapsIndex) && (mapType != null) && !ExploreMapPanel.hasState) {
+      if ((lastTabIndex != mapsIndex) && (param != null) && !ExploreMapPanel.hasState) {
         Widget? mapsWidget = _panels[RootTab.Maps];
         ExploreMapPanel? mapsPanel = (mapsWidget is ExploreMapPanel) ? mapsWidget : null;
-        mapsPanel?.params[ExploreMapPanel.mapTypeKey] = mapType;
+        mapsPanel?.params[ExploreMapPanel.selectParamKey] = param;
       }
     }
   }
@@ -517,6 +505,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       panels.add(_panels[rootTab] ?? Container());
     }
 
+    // TBD: Replace with PopScope
+    // ignore: deprecated_member_use
     return WillPopScope(
         child: Container(
           color: Colors.white,
@@ -527,7 +517,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                 children: panels,
               ),
             bottomNavigationBar: uiuc.TabBar(tabController: _tabBarController),
-            backgroundColor: Styles().colors!.background,
+            backgroundColor: Styles().colors.background,
           ),
         ),
         onWillPop: _onWillPop);
@@ -611,13 +601,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               children: <Widget>[
                 Expanded(
                   child: Container(
-                    color: Styles().colors!.fillColorPrimary,
+                    color: Styles().colors.fillColorPrimary,
                     child: Padding(
                       padding: EdgeInsets.all(8),
                       child: Center(
                         child: Text(
                           Localization().getStringEx("app.title", "Illinois"),
-                          style: Styles().textStyles?.getTextStyle("widget.dialog.message.regular"),
+                          style: Styles().textStyles.getTextStyle("widget.dialog.message.regular"),
                         ),
                       ),
                     ),
@@ -630,7 +620,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               Localization().getStringEx(
                   "common.message.exit_app", "Are you sure you want to exit?"),
               textAlign: TextAlign.center,
-              style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.regular.fat")
+              style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.regular.fat")
             ),
             Container(height: 26,),
             Padding(
@@ -645,8 +635,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                         Navigator.of(context).pop(true);
                       },
                       backgroundColor: Colors.transparent,
-                      borderColor: Styles().colors!.fillColorSecondary,
-                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                      borderColor: Styles().colors.fillColorSecondary,
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                       label: Localization().getStringEx("dialog.yes.title", 'Yes')),
                   Container(height: 10,),
                   RoundedButton(
@@ -656,8 +646,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                         Navigator.of(context).pop(false);
                       },
                       backgroundColor: Colors.transparent,
-                      borderColor: Styles().colors!.fillColorSecondary,
-                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                      borderColor: Styles().colors.fillColorSecondary,
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                       label: Localization().getStringEx("dialog.no.title", 'No'))
                 ],
               ),
@@ -666,25 +656,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         ),
       ),
     );
-  }
-
-  void _promptCalendarSelection(dynamic data){
-      CalendarSelectionDialog.show(context: context,
-          onContinue:( selectedCalendar) {
-            Navigator.of(context).pop();
-//            data["calendar"] = selectedCalendar;
-            //Store the selection even if the event is not stored
-            if(selectedCalendar!=null){
-              DeviceCalendar().calendar = selectedCalendar;
-            }
-            NotificationService().notify(
-                DeviceCalendar.notifyPromptPopup, data);
-          }
-      );
-  }
-
-  void _onCalendarPromptMessage(dynamic data) {
-        DeviceCalendarDialog.show(context: context);
   }
 
   void _showPanel(Map<String, dynamic> content) {
@@ -696,12 +667,29 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   void _onFirebaseForegroundMessage(Map<String, dynamic> content) {
     String? body = content["body"];
-    Function? completion = content["onComplete"];
-    AppAlert.showDialogResult(context, body).then((value){
-      if(completion != null){
-        completion();
-      }
-    });
+    void Function()? completion = content["onComplete"];
+    if (body != null) {
+      FToast toast = FToast();
+      AppToast.show(context,
+        toast: toast,
+        gravity: ToastGravity.TOP,
+        child: InAppNotificationToast.message(body,
+          actionText: Localization().getStringEx('dialog.show.title', 'Show'),
+          onAction: (completion != null) ? () => _onFirebaseForegroundMessageCompletition(toast, completion) : null,
+          onMessage: (completion != null) ? () => _onFirebaseForegroundMessageCompletition(toast, completion) : null,
+        )
+      );
+      /*AppAlert.showDialogResult(context, body, buttonTitle: Localization().getStringEx('dialog.show.title', 'Show')).then((bool? result) {
+        if ((result == true) && (completion != null)) {
+          completion();
+        }
+      });*/
+    }
+  }
+
+  void _onFirebaseForegroundMessageCompletition(FToast toast, void Function() completion) {
+    toast.removeCustomToast();
+    completion.call();
   }
 
   void _onFirebasePopupMessage(Map<String, dynamic> content) {
@@ -858,25 +846,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => PollBubbleResultPanel(pollId: pollId)));
   }
 
-  void _showConsoleMessage(message){
-    AppAlert.showCustomDialog(
-        context: context,
-        contentWidget: Text(message??""),
-        actions: <Widget>[
-          TextButton(
-              child:
-              Text("Ok"),
-              onPressed: () => Navigator.of(context).pop()),
-          TextButton(
-              child: Text("Copy"),
-              onPressed: () {
-                Clipboard.setData(ClipboardData(text: message)).then((_){
-                  AppToast.show("Text data has been copied to the clipboard!");
-                });
-              } )
-        ]);
-  }
-
   static List<String>? _getTabbarCodes() {
     try {
       dynamic tabsList = FlexUI()['tabbar'];
@@ -981,7 +950,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   void _presentGroupDetailPanel({String? groupId, String? groupPostId}) {
     if (StringUtils.isNotEmpty(groupId)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(groupIdentifier: groupId, groupPostId: groupPostId)));
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(groupIdentifier: groupId, groupPostId: groupPostId)));
     } else {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
     }

@@ -44,12 +44,12 @@ class _LaundrySubmittedIssuePanelState extends State<LaundrySubmittedIssuePanel>
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [_buildSuccessHeader(), _buildSuccessDescription(), _buildReturnWidget()]))
         ])),
-        backgroundColor: Styles().colors?.background,
+        backgroundColor: Styles().colors.background,
         bottomNavigationBar: uiuc.TabBar());
   }
 
   Widget _buildLaundryColorSection() {
-    return Container(color: Styles().colors?.accentColor2, height: 4);
+    return Container(color: Styles().colors.accentColor2, height: 4);
   }
 
   Widget _buildSuccessHeader() {
@@ -59,7 +59,7 @@ class _LaundrySubmittedIssuePanelState extends State<LaundrySubmittedIssuePanel>
             Localization()
                 .getStringEx('panel.laundry.issues_submitted.success.header.label', 'Thank You! Your Service Request has been received.'),
             textAlign: TextAlign.center,
-            style: Styles().textStyles?.getTextStyle("widget.title.semi_huge")));
+            style: Styles().textStyles.getTextStyle("widget.title.semi_huge")));
   }
 
   Widget _buildSuccessDescription() {
@@ -69,18 +69,18 @@ class _LaundrySubmittedIssuePanelState extends State<LaundrySubmittedIssuePanel>
             Localization().getStringEx('panel.laundry.issues_submitted.success.description.label',
                 'One of our technicians will arrive at your property within 3 business days to service the machine. We apologize for any inconvenience you may have experienced.'),
             textAlign: TextAlign.center,
-            style: Styles().textStyles?.getTextStyle("widget.description.medium_large")));
+            style: Styles().textStyles.getTextStyle("widget.description.medium_large")));
   }
 
   Widget _buildReturnWidget() {
     return RoundedButton(
         label: Localization().getStringEx('panel.laundry.issues_submitted.return.button', 'Return'),
-        textStyle: Styles().textStyles?.getTextStyle("widget.colourful_button.title.large.accent"),
-        backgroundColor: Styles().colors!.fillColorPrimary,
+        textStyle: Styles().textStyles.getTextStyle("widget.colourful_button.title.large.accent"),
+        backgroundColor: Styles().colors.fillColorPrimary,
         contentWeight: 0.5,
-        borderColor: Styles().colors!.fillColorPrimary,
+        borderColor: Styles().colors.fillColorPrimary,
         onTap: _onTapBack,
-        leftIcon: Styles().images?.getImage('chevron-left-white', excludeFromSemantics: true));
+        leftIcon: Styles().images.getImage('chevron-left-white', excludeFromSemantics: true));
   }
 
   void _onTapBack() {

@@ -151,18 +151,18 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
               child: RoundedButton(
                   padding: EdgeInsets.symmetric(vertical: 10),
                   label: Localization().getStringEx('panel.wellness.todo.items.add.button', 'Add Item'),
-                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.small.fat"),
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.fat"),
                   rightIconPadding: EdgeInsets.symmetric(horizontal: 12),
-                  borderColor: Styles().colors!.fillColorSecondary,
-                  leftIcon: Styles().images?.getImage('plus-dark', excludeFromSemantics: true),
+                  borderColor: Styles().colors.fillColorSecondary,
+                  leftIcon: Styles().images.getImage('plus-dark', excludeFromSemantics: true),
                   onTap: _onTapAddItem)),
           Container(width: 15),
           Flexible(
               flex: 3,
               child: RoundedButton(
                   label: Localization().getStringEx('panel.wellness.todo.categories.manage.button', 'Manage Categories'),
-                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.small.fat"),
-                  borderColor: Styles().colors!.fillColorPrimary,
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.fat"),
+                  borderColor: Styles().colors.fillColorPrimary,
                   onTap: _onTapManageCategories))
         ]));
   }
@@ -174,8 +174,8 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
             padding: EdgeInsets.only(top: 40),
             child: RoundedButton(
                 label: Localization().getStringEx('panel.wellness.todo.items.completed.clear.button', 'Clear Completed Items'),
-                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.regular"),
-                borderColor: Styles().colors!.fillColorPrimary,
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.regular"),
+                borderColor: Styles().colors.fillColorPrimary,
                 contentWeight: 0.75,
                 padding: EdgeInsets.symmetric(vertical: 8),
                 onTap: _onTapClearCompletedItems)));
@@ -185,17 +185,17 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     if (_selectedTab != _ToDoTab.weekly) {
       return Container();
     }
-    TextStyle? smallStyle = Styles().textStyles?.getTextStyle("widget.detail.small");
+    TextStyle? smallStyle = Styles().textStyles.getTextStyle("widget.detail.small");
     return Padding(
         padding: EdgeInsets.only(top: 13),
         child: Column(children: [
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: [
               Text(StringUtils.ensureNotEmpty(_formattedCalendarMonthLabel),
-                  style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
+                  style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
               GestureDetector(
                   onTap: _onTapCalendarInfo,
-                  child: Padding(padding: EdgeInsets.only(left: 5), child: Styles().images?.getImage('info', excludeFromSemantics: true)))
+                  child: Padding(padding: EdgeInsets.only(left: 5), child: Styles().images.getImage('info', excludeFromSemantics: true)))
             ]),
             Expanded(child: Container()),
             GestureDetector(
@@ -204,7 +204,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                     color: Colors.transparent,
                     child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                        child: Styles().images?.getImage('chevron-left-bold', excludeFromSemantics: true)))),
+                        child: Styles().images.getImage('chevron-left-bold', excludeFromSemantics: true)))),
             Text(Localization().getStringEx('panel.wellness.todo.items.this_week.label', 'This Week'), style: smallStyle),
             GestureDetector(
                 onTap: _onTapNextWeek,
@@ -212,7 +212,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                     color: Colors.transparent,
                     child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                        child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true))))
+                        child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true))))
           ]),
           Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
             Text('Su', style: smallStyle),
@@ -227,8 +227,8 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
               padding: EdgeInsets.only(top: 5),
               child: Container(
                   height: 176,
-                  decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(5), boxShadow: [
-                    BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
+                  decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(5), boxShadow: [
+                    BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
                   ]),
                   child: Stack(children: [
                     _buildCalendarVerticalDelimiters(),
@@ -251,11 +251,11 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   Widget _buildCalendarHotizontalDelimiter() {
-    return Padding(padding: EdgeInsets.only(top: 32), child: Container(height: 1, color: Styles().colors!.lightGray));
+    return Padding(padding: EdgeInsets.only(top: 32), child: Container(height: 1, color: Styles().colors.lightGray));
   }
 
   Widget _buildCalendarVerticalDelimiter() {
-    return Container(width: 1, color: Styles().colors!.lightGray);
+    return Container(width: 1, color: Styles().colors.lightGray);
   }
 
   Widget _buildCalendarHeaderDatesWidget() {
@@ -264,7 +264,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     while (currentDate.isBefore(_calendarEndDate)) {
       String dateFormatted = AppDateTime().formatDateTime(currentDate, format: 'dd', ignoreTimeZone: true)!;
       Text dateWidget = Text(dateFormatted,
-          style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"));
+          style: Styles().textStyles.getTextStyle("widget.title.regular.fat"));
       dateWidgetList.add(dateWidget);
       currentDate = currentDate.add(Duration(days: 1));
     }
@@ -307,7 +307,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
             decoration: BoxDecoration(color: item?.color ?? Colors.transparent, shape: BoxShape.circle),
             child: Visibility(
                 visible: hasReminder,
-                child: Center(child: Styles().images?.getImage('clock-white', excludeFromSemantics: true) ?? Container()))));
+                child: Center(child: Styles().images.getImage('clock-white', excludeFromSemantics: true) ?? Container()))));
   }
 
   Widget _buildItemsContent() {
@@ -351,7 +351,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       Padding(
           padding: EdgeInsets.symmetric(vertical: 30, horizontal: 16),
           child: Text(Localization().getStringEx('panel.wellness.todo.items.add.empty.msg', 'You currently have no to-do list items.'),
-              style: Styles().textStyles?.getTextStyle("widget.message.small")))
+              style: Styles().textStyles.getTextStyle("widget.message.small")))
     ]);
   }
 
@@ -359,13 +359,13 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     return Padding(
         padding: EdgeInsets.only(top: 25),
         child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Styles().images?.getImage('chevron-down', excludeFromSemantics: true) ?? Container(),
+          Styles().images.getImage('chevron-down', excludeFromSemantics: true) ?? Container(),
           Padding(
               padding: EdgeInsets.only(left: 7),
               child: Text(sectionKey,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
-                  style: Styles().textStyles?.getTextStyle("widget.title.large.fat")))
+                  style: Styles().textStyles.getTextStyle("widget.title.large.fat")))
         ]));
   }
 
@@ -375,7 +375,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         contentPadding: EdgeInsets.all(0),
         contentWidget: Container(
             height: 250,
-            decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)),
+            decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)),
             child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
               Padding(
                   padding: EdgeInsets.all(30),
@@ -384,20 +384,20 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                         padding: EdgeInsets.symmetric(horizontal: 40),
                         child: Text(Localization().getStringEx('panel.wellness.todo.welcome.label', 'Welcome to Your To-Do List'),
                             textAlign: TextAlign.center,
-                            style: Styles().textStyles?.getTextStyle("panel.wellness.todo.dialog.heading.regular"))),
+                            style: Styles().textStyles.getTextStyle("panel.wellness.todo.dialog.heading.regular"))),
                     Padding(
                         padding: EdgeInsets.only(top: 20),
                         child: Text(
                             Localization().getStringEx('panel.wellness.todo.welcome.description.label',
                                 'Free up space in your mind by recording your to-do items here.'),
                             textAlign: TextAlign.center,
-                            style:  Styles().textStyles?.getTextStyle("widget.detail.small")))
+                            style:  Styles().textStyles.getTextStyle("widget.detail.small")))
                   ])),
               Align(
                   alignment: Alignment.topRight,
                   child: GestureDetector(
                       onTap: _onClose,
-                      child: Padding(padding: EdgeInsets.all(16), child: Styles().images?.getImage('close', excludeFromSemantics: true))))
+                      child: Padding(padding: EdgeInsets.all(16), child: Styles().images.getImage('close', excludeFromSemantics: true))))
             ])));
   }
 
@@ -842,16 +842,16 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
                 Expanded(
                     child: Text(StringUtils.ensureNotEmpty(widget.item.name),
                         overflow: TextOverflow.ellipsis,
-                        style: Styles().textStyles?.getTextStyle("panel.wellness.todo.card.title"))),
+                        style: Styles().textStyles.getTextStyle("panel.wellness.todo.card.title"))),
             ]))),
-            Semantics(label: "Edit", button: true, child: InkWell(onTap: () => _onTapEdit(widget.item), child: Padding(padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10), child: Styles().images?.getImage('edit-white', excludeFromSemantics: true))))
+            Semantics(label: "Edit", button: true, child: InkWell(onTap: () => _onTapEdit(widget.item), child: Padding(padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10), child: Styles().images.getImage('edit-white', excludeFromSemantics: true))))
           ])),
       Visibility(visible: _loading, child: CircularProgressIndicator())
     ]);
   }
 
   Widget _buildCompletedWidget({required Color color}) {
-    Widget? viewWidget = Styles().images?.getImage(widget.item.isCompleted ? 'check-circle-outline-gray-white' : 'circle-outline-white', excludeFromSemantics: true);
+    Widget? viewWidget = Styles().images.getImage(widget.item.isCompleted ? 'check-circle-outline-gray-white' : 'circle-outline-white', excludeFromSemantics: true);
     return AppSemantics.buildCheckBoxSemantics( selected: widget.item.isCompleted, title: widget.item.name,
     child:GestureDetector(onTap: _onTapCompleted, child: Padding(padding: EdgeInsets.only(right: 20), child: viewWidget)));
   }
@@ -925,14 +925,14 @@ class _TabButton extends StatelessWidget {
             button: true,
             excludeSemantics: true,
             child: Container(
-                height: 24 + 16 * MediaQuery.of(context).textScaleFactor,
+                height: 24 + MediaQuery.of(context).textScaler.scale(16),
                 decoration: BoxDecoration(
-                    color: selected! ? Colors.white : Styles().colors!.lightGray, border: _border, borderRadius: _borderRadius),
+                    color: selected! ? Colors.white : Styles().colors.lightGray, border: _border, borderRadius: _borderRadius),
                 child: Center(
                     child: Text(label!,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
-                        style: selected! ? Styles().textStyles?.getTextStyle("widget.tab.selected") : Styles().textStyles?.getTextStyle("widget.tab.not_selected"))))));
+                        style: selected! ? Styles().textStyles.getTextStyle("widget.tab.selected") : Styles().textStyles.getTextStyle("widget.tab.not_selected"))))));
   }
 
   BorderRadiusGeometry? get _borderRadius {
@@ -947,7 +947,7 @@ class _TabButton extends StatelessWidget {
   }
 
   BoxBorder? get _border {
-    BorderSide borderSide = BorderSide(color: Styles().colors!.surfaceAccent!, width: 2, style: BorderStyle.solid);
+    BorderSide borderSide = BorderSide(color: Styles().colors.surfaceAccent, width: 2, style: BorderStyle.solid);
     switch (position) {
       case _TabButtonPosition.first:
         return Border.fromBorderSide(borderSide);
@@ -990,7 +990,7 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
                 onTap: _onTapCloseEditReminderDialog,
                 child: Container(
                     color: Colors.transparent,
-                    child: Padding(padding: EdgeInsets.all(16), child: Styles().images?.getImage('close', excludeFromSemantics: true))))),
+                    child: Padding(padding: EdgeInsets.all(16), child: Styles().images.getImage('close', excludeFromSemantics: true))))),
         Padding(
             padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
             child: Center(
@@ -1001,7 +1001,7 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
                         overflow: TextOverflow.ellipsis,
                         maxLines: 4,
                         textAlign: TextAlign.center,
-                        style:Styles().textStyles?.getTextStyle("widget.title.regular.fat")))
+                        style:Styles().textStyles.getTextStyle("widget.title.regular.fat")))
               ]),
               GestureDetector(
                   onTap: _onTapPickReminderDate,
@@ -1010,7 +1010,7 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
                       child: Padding(
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: Text(StringUtils.ensureNotEmpty(_formattedDate),
-                              style: Styles().textStyles?.getTextStyle("widget.detail.small"))))),
+                              style: Styles().textStyles.getTextStyle("widget.detail.small"))))),
               GestureDetector(
                   onTap: _onTapPickReminderTime,
                   child: Container(
@@ -1018,7 +1018,7 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
                       child: Padding(
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: Text(StringUtils.ensureNotEmpty(_formattedTime),
-                              style: Styles().textStyles?.getTextStyle("panel.wellness.todo.content.large_title"))))),
+                              style: Styles().textStyles.getTextStyle("panel.wellness.todo.content.large_title"))))),
               Padding(
                   padding: EdgeInsets.only(top: 10),
                   child: RoundedButton(

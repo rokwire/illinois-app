@@ -26,6 +26,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/ext/Game.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -88,14 +89,14 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Styles().colors!.fillColorPrimaryVariant,
+        backgroundColor: Styles().colors.fillColorPrimaryVariant,
         leading: widget.rootTabDisplay ? _buildHeaderHomeButton() : _buildHeaderBackButton(),
         title: _buildHeaderTitle(),
         actions: [_buildHeaderActions()],
 
       ),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child: _buildContentWidget()),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: widget.rootTabDisplay ? null : uiuc.TabBar(),
       );
   }
@@ -112,7 +113,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
             child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Container(
-              color: Styles().colors!.background,
+              color: Styles().colors.background,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -161,10 +162,10 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                 child: RoundedButton(
                                   label: Localization().getStringEx("panel.athletics.button.see_more_events.title", 'See More Events'),
                                   hint: Localization().getStringEx("panel.athletics.button.see_more_events.hint", ''),
-                                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                                   onTap: _onTapMoreUpcomingEvents,
-                                  backgroundColor: Styles().colors!.background,
-                                  borderColor: Styles().colors!.fillColorSecondary,
+                                  backgroundColor: Styles().colors.background,
+                                  borderColor: Styles().colors.fillColorSecondary,
                                 ),
                               ),
                               Expanded(flex: 1, child: Container())
@@ -176,7 +177,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                           alignment: Alignment.topCenter,
                           children: <Widget>[
                             Container(
-                              color: Styles().colors!.backgroundVariant,
+                              color: Styles().colors.backgroundVariant,
                               child: Padding(
                                 padding: EdgeInsets.fromLTRB(16, 16, 16, 40),
                                 child: Column(
@@ -186,7 +187,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                       padding: EdgeInsets.only(bottom: 10),
                                       child: Text(
                                         Localization().getStringEx("panel.athletics.label.all_sports.title",'All {{app_title}} Sports').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-                                        style: Styles().textStyles?.getTextStyle('panel.athletics.home.title.large'),
+                                        style: Styles().textStyles.getTextStyle('panel.athletics.home.title.large'),
                                       ),
                                     ),
                                     Semantics(
@@ -199,14 +200,14 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                         children: <Widget>[
                                           Text(
                                             Localization().getStringEx("panel.athletics.label.tap_the.title", "Tap the "),
-                                            style: Styles().textStyles?.getTextStyle('panel.athletics.home.detail.medium') ,
+                                            style: Styles().textStyles.getTextStyle('panel.athletics.home.detail.medium') ,
                                           ),
-                                          Styles().images?.getImage('check-circle-outline-gray', excludeFromSemantics: true) ?? Container(),
+                                          Styles().images.getImage('check-circle-outline-gray', excludeFromSemantics: true) ?? Container(),
                                           Expanded(
                                             child:Text(
                                               Localization().getStringEx("panel.athletics.label.follow_team.title", " to follow your favorite teams"),
                                               overflow: TextOverflow.ellipsis,
-                                              style: Styles().textStyles?.getTextStyle('panel.athletics.home.detail.medium'),
+                                              style: Styles().textStyles.getTextStyle('panel.athletics.home.detail.medium'),
                                             )
                                           )
                                         ],
@@ -234,13 +235,13 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                       Column(
                                         children: <Widget>[
                                           Container(
-                                            color: Styles().colors!.fillColorPrimary,
+                                            color: Styles().colors.fillColorPrimary,
                                             height: 40,
                                           ),
                                           Container(
                                             height: 112,
                                             width: double.infinity,
-                                            child: Styles().images?.getImage('slant-dark',
+                                            child: Styles().images.getImage('slant-dark',
                                               fit:BoxFit.fill,
                                               excludeFromSemantics: true
                                             ),
@@ -258,12 +259,12 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                                 Padding(
                                                   padding: EdgeInsets.only(
                                                       right: 16),
-                                                  child: Styles().images?.getImage('compass', excludeFromSemantics: true),
+                                                  child: Styles().images.getImage('compass', excludeFromSemantics: true),
                                                 ),
                                                 Expanded(child:
                                                   Text(
                                                     Localization().getStringEx("panel.athletics.label.explore_athletics.title", 'Explore Athletics'),
-                                                    style: Styles().textStyles?.getTextStyle('widget.heading.large'),
+                                                    style: Styles().textStyles.getTextStyle('widget.heading.large'),
                                                   )
                                                 )
                                               ],
@@ -349,24 +350,24 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
 
   Widget _buildHeaderHomeButton() {
     return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
-          IconButton(icon: Styles().images?.getImage('university-logo', excludeFromSemantics: true) ?? Container(), onPressed: _onTapHome,),);
+          IconButton(icon: Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container(), onPressed: _onTapHome,),);
   }
 
   Widget _buildHeaderBackButton() {
     return Semantics(label: Localization().getStringEx('headerbar.back.title', 'Back'), hint: Localization().getStringEx('headerbar.back.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images?.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(), onPressed: _onTapBack,));
+      IconButton(icon: Styles().images.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(), onPressed: _onTapBack,));
   }
 
   Widget _buildHeaderTitle() {
     return Semantics(label: Localization().getStringEx('panel.athletics.header.title', 'Athletics'), excludeSemantics: true, child:
-          Text(Localization().getStringEx('panel.athletics.header.title', 'Athletics'), style: Styles().textStyles?.getTextStyle('panel.athletics.home.heading.regular')),);
+          Text(Localization().getStringEx('panel.athletics.header.title', 'Athletics'), style: Styles().textStyles.getTextStyle('panel.athletics.home.heading.regular')),);
   }
 
   Widget _buildHeaderTeamsButton({double horizontalPadding = 16}) {
     return Semantics(label: Localization().getStringEx('headerbar.teams.title', 'Teams'), button: true, excludeSemantics: true, child: 
         InkWell(onTap: _onTapTeams, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 19), child:
-            Text(Localization().getStringEx('headerbar.teams.title', 'Teams'), style: Styles().textStyles?.getTextStyle('panel.athletics.home.button.underline'))
+            Text(Localization().getStringEx('headerbar.teams.title', 'Teams'), style: Styles().textStyles.getTextStyle('panel.athletics.home.button.underline'))
           ),
         ),
       );
@@ -374,7 +375,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
 
   Widget _buildHeaderSettingsButton() {
     return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images?.getImage('settings-white', excludeFromSemantics: true) ?? Container(), onPressed: _onTapSettings));
+      IconButton(icon: Styles().images.getImage('settings-white', excludeFromSemantics: true) ?? Container(), onPressed: _onTapSettings));
   }
 
   Widget _buildHeaderActions() {
@@ -430,7 +431,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   void _onTapMoreUpcomingEvents() {
     Analytics().logSelect(target: "More Events");
     if (Connectivity().isNotOffline) {
-      ExploreFilter initialFilter = ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3});
+      ExploreFilter initialFilter = ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {2});
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, initialFilter: initialFilter)));
     }
     else {
@@ -604,12 +605,12 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
             showImage? Positioned(child:
               InkWell(onTap: () => _onTapCardImage(widget.game.imageUrl!), child: Image.network(widget.game.imageUrl!, semanticLabel: "Sports",))
             ) : Container(),
-            showImage ? Container(height: 72, color: Styles().colors!.fillColorSecondaryTransparent05,) : Container(height: 0)
+            showImage ? Container(height: 72, color: Styles().colors.fillColorSecondaryTransparent05,) : Container(height: 0)
           ],),
           showImage ? Container(height: 112, width: double.infinity, child:
-            Styles().images?.getImage('slant', fit: BoxFit.fill, excludeFromSemantics: true),
+            Styles().images.getImage('slant', fit: BoxFit.fill, excludeFromSemantics: true),
           ) : Container(),
-          showImage ? Container(height: 140, color: Styles().colors!.background,) : Container()
+          showImage ? Container(height: 140, color: Styles().colors.background,) : Container()
         ],),
         Padding(padding: widget.margin, child:
           Stack(alignment: Alignment.topCenter, children: [
@@ -621,9 +622,9 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                       Semantics(button: true, child:
                         GestureDetector(onTap: () => _onTapSportCategory(sport!), child:
                           Padding(padding: EdgeInsets.only(top:24), child:
-                            Container(color: Styles().colors!.fillColorPrimary, child:
+                            Container(color: Styles().colors.fillColorPrimary, child:
                               Padding(padding: EdgeInsets.all(5), child:
-                                Text(sportName.toUpperCase(), style: Styles().textStyles?.getTextStyle('widget.colourful_button.title.regular.accent'),),
+                                Text(sportName.toUpperCase(), style: Styles().textStyles.getTextStyle('widget.colourful_button.title.regular.accent'),),
                               ),
                             ),
                           ),
@@ -637,7 +638,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                             hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx( 'widget.card.button.favorite.on.hint', ''),
                             excludeSemantics: true, child:
                             Padding(padding: EdgeInsets.only(right: 24, top: 24, left: 24, bottom: 8), child:
-                              Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
+                              Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
                             ),
                           ),
                         ),
@@ -645,24 +646,24 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                     ],),
                   ),
                   Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
-                    Text(widget.game.title, style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat')),
+                    Text(widget.game.title, style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat')),
                   ),
                   _athleticsDetails(),
                   Visibility(visible: showDescription, child:
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                       _divider(),
                       Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
-                        Text(description ?? '', style:Styles().textStyles?.getTextStyle('widget.card.detail.medium')),
+                        Text(description ?? '', style:Styles().textStyles.getTextStyle('widget.card.detail.medium')),
                       )
                     ]),
                   ),
                   Visibility(visible: showInterests, child:
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                      Container(height: 1,color: Styles().colors!.surfaceAccent,),
+                      Container(height: 1,color: Styles().colors.surfaceAccent,),
                       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
                         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                          Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'), style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny.fat')),
-                          Text(StringUtils.ensureNotEmpty(interestsLabelValue), style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny.medium_fat'),)
+                          Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'), style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat')),
+                          Text(StringUtils.ensureNotEmpty(interestsLabelValue), style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.medium_fat'),)
                         ],),
                       )
                     ],),
@@ -672,9 +673,9 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                       RoundedButton(
                         label: Localization().getStringEx('widget.athletics_card.button.get_tickets.title', 'Get Tickets'),
                         hint: Localization().getStringEx('widget.athletics_card.button.get_tickets.hint', ''),
-                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                         backgroundColor: Colors.white,
-                        borderColor: Styles().colors!.fillColorSecondary,
+                        borderColor: Styles().colors.fillColorSecondary,
                         onTap: _onTapGetTickets,
                       ),
                     ),
@@ -682,7 +683,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                 ],),
               ),
             ),
-            !showImage ? Container(height: 7, color: Styles().colors!.fillColorPrimary) : Container(),
+            !showImage ? Container(height: 7, color: Styles().colors.fillColorPrimary) : Container(),
           ]),
         ),
       ],),
@@ -741,18 +742,18 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
   }
 
   Widget? _athleticsTimeDetail() {
-    String displayTime = widget.game.displayTime;
-    if (displayTime.isNotEmpty) {
+    String? displayTime = widget.game.displayTime;
+    if (StringUtils.isNotEmpty(displayTime)) {
       return Padding(
         padding: _detailPadding,
         child:Semantics(label:displayTime, excludeSemantics: true ,child: Row(
           children: <Widget>[
-            Styles().images?.getImage('time', excludeFromSemantics: true) ?? Container(),
+            Styles().images.getImage('time', excludeFromSemantics: true) ?? Container(),
             Padding(
               padding: _iconPadding,
             ),
-            Text(displayTime,
-                style: Styles().textStyles?.getTextStyle('widget.card.detail.medium')),
+            Text(displayTime!,
+                style: Styles().textStyles.getTextStyle('widget.card.detail.medium')),
           ],
         )),
       );
@@ -769,7 +770,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
         child: Semantics(label:locationText, excludeSemantics: true ,child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Styles().images?.getImage('location', excludeFromSemantics: true) ?? Container(),
+            Styles().images.getImage('location', excludeFromSemantics: true) ?? Container(),
             Padding(
               padding: _iconPadding,
             ),
@@ -777,7 +778,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                 child: Text(locationText,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
-                    style: Styles().textStyles?.getTextStyle('widget.card.detail.medium'))),
+                    style: Styles().textStyles.getTextStyle('widget.card.detail.medium'))),
           ],
         )),
       );
@@ -791,7 +792,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
       padding: EdgeInsets.symmetric(vertical: 0),
       child: Container(
         height: 1,
-        color: Styles().colors!.fillColorPrimaryTransparent015,
+        color: Styles().colors.fillColorPrimaryTransparent015,
       ),
     );
   }

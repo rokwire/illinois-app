@@ -35,6 +35,7 @@ import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
+import 'package:illinois/ui/events2/Event2SearchPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
@@ -47,12 +48,10 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
-import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -64,11 +63,11 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:timezone/timezone.dart';
 
-enum ExploreMapType { Events, Events2, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MTDDestinations, MentalHealth, StateFarmWayfinding }
+enum ExploreMapType { Events2, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MTDDestinations, MentalHealth, StateFarmWayfinding }
 
 class ExploreMapPanel extends StatefulWidget {
   static const String notifySelect = "edu.illinois.rokwire.explore.map.select";
-  static const String mapTypeKey = "map-type";
+  static const String selectParamKey = "select-param";
 
   final Map<String, dynamic> params = <String, dynamic>{};
 
@@ -106,8 +105,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   TZDateTime? _event2CustomEndTime;
   late LinkedHashSet<Event2TypeFilter> _event2Types;
   late Map<String, dynamic> _event2Attributes;
+  String? _event2SearchText;
 
-  List<String>? _eventCategories;
   List<StudentCourseTerm>? _studentCourseTerms;
   
   List<String>? _filterWorkTimeValues;
@@ -192,6 +191,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     _event2CustomEndTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime));
     _event2Types = LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types)) ?? LinkedHashSet<Event2TypeFilter>();
     _event2Attributes = Storage().events2Attributes ?? <String, dynamic>{};
+    _event2SearchText = _intialEvent2SearchParam?.searchText;
 
     _initFilters();
     _initMapStyles();
@@ -272,17 +272,27 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       }
     }
     else if (name == ExploreMapPanel.notifySelect) {
-      ExploreMapType? exploreItem = param;
-      if (mounted && (exploreItem != null) && (_selectedMapType != exploreItem)) {
-        setState(() {
-          _selectedMapType = exploreItem;
-        });
-        _initExplores();
+      if (mounted) {
+        if ((param is ExploreMapType) && (_selectedMapType != param)) {
+          setState(() {
+            _selectedMapType = param;
+          });
+          _initExplores();
+        }
+        else if (param is ExploreMapSearchEventsParam) {
+          if ((_selectedMapType != ExploreMapType.Events2) || (_event2SearchText != param.searchText)) {
+            setState(() {
+              _selectedMapType = ExploreMapType.Events2;
+              _event2SearchText = param.searchText;
+            });
+            _initExplores();
+          }
+        }
       }
     }
     else if (name == RootPanel.notifyTabChanged) {
       if ((param == RootTab.Maps) && mounted &&
-          (CollectionUtils.isEmpty(_exploreTypes) || (_selectedMapType == ExploreMapType.Events) || (_selectedMapType == ExploreMapType.Appointments)) // Do not refresh for other ExploreMapType types as they are rarely changed or fire notification for that
+          (CollectionUtils.isEmpty(_exploreTypes) || (_selectedMapType == ExploreMapType.Events2) || (_selectedMapType == ExploreMapType.Appointments)) // Do not refresh for other ExploreMapType types as they are rarely changed or fire notification for that
       ) {
         _refreshExplores();
       }
@@ -323,9 +333,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       if (_locationServicesStatus == null) {
         await _initLocationServicesStatus();
       }
-      if (_eventCategories == null) {
-        await _initEventCategories();
-      }
       if ((_explores == null) && (_exploreTask == null)) {
         _initExplores();
       }
@@ -342,7 +349,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx("panel.maps.header.title", "Map")),
       body: RefreshIndicator(onRefresh: _onRefresh, child: _buildScaffoldBody(),),
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
     );
   }
 
@@ -354,11 +361,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       Expanded(child:
         Stack(children: [
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Visibility(visible: (_selectedMapType == ExploreMapType.Events), child:
-              Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 0), child:
-                _buildEventsDisplayTypesDropDownButton(),
-              ),
-            ),
             Visibility(visible: (_selectedMapType == ExploreMapType.Events2), child:
               Padding(padding: EdgeInsets.only(top: 8, bottom: 2), child:
                 _buildEvents2HeaderBar(),
@@ -371,7 +373,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
                     Wrap(children: _buildFilters()),
                   ),
                   Expanded(child:
-                    Container(key: _mapContainerKey, color: Styles().colors!.background, child:
+                    Container(key: _mapContainerKey, color: Styles().colors.background, child:
                       _buildContent(),
                     ),
                   ),
@@ -415,7 +417,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         Positioned.fill(child:
           Center(child:
             SizedBox(width: 24, height: 24, child:
-              CircularProgressIndicator(color: Styles().colors?.accentColor2, strokeWidth: 3,),
+              CircularProgressIndicator(color: Styles().colors.accentColor2, strokeWidth: 3,),
             )
           )
         )
@@ -424,7 +426,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   Widget _buildMapView() {
-    return Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors?.disabledTextColor ?? Color(0xFF717273), width: 1)), child:
+    return Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.disabledTextColor, width: 1)), child:
       GoogleMap(
         key: _mapKey,
         initialCameraPosition: _lastCameraPosition ?? _defaultCameraPosition,
@@ -532,7 +534,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     if (_selectedMapExplore is Explore) {
       title = (_selectedMapExplore as Explore).mapMarkerTitle;
       description = (_selectedMapExplore as Explore).mapMarkerSnippet;
-      exploreColor = (_selectedMapExplore as Explore).uiColor ?? Styles().colors?.white;
+      exploreColor = (_selectedMapExplore as Explore).uiColor ?? Styles().colors.white;
       if (_selectedMapExplore is MTDStop) {
         detailsLabel = Localization().getStringEx('panel.explore.button.bus_schedule.title', 'Bus Schedule');
         detailsHint = Localization().getStringEx('panel.explore.button.bus_schedule.hint', '');
@@ -550,10 +552,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       title = sprintf(Localization().getStringEx('panel.explore.map.popup.title.format', '%d %s'), [_selectedMapExplore?.length, exploreName]);
       Explore? explore = _selectedMapExplore.isNotEmpty ? _selectedMapExplore.first : null;
       description = explore?.exploreLocation?.description ?? "";
-      exploreColor = explore?.uiColor ?? Styles().colors?.fillColorSecondary;
+      exploreColor = explore?.uiColor ?? Styles().colors.fillColorSecondary;
     }
     else {
-      exploreColor = Styles().colors?.white;
+      exploreColor = Styles().colors.white;
       canDirections = canDetail = false;
     }
 
@@ -565,29 +567,29 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     double top = wrapHeight - (progress * barHeight);
 
     return Positioned(top: top, left: 0, right: 0, child:
-      Container(key: _mapExploreBarKey, decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: exploreColor!, width: 2, style: BorderStyle.solid), bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid),),), child:
+      Container(key: _mapExploreBarKey, decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: exploreColor, width: 2, style: BorderStyle.solid), bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid),),), child:
         Stack(children: [
           Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Padding(padding: EdgeInsets.only(right: 10), child:
-                Text(title ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")),
+                Text(title ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat")),
               ),
               (descriptionWidget != null) ?
                 Row(children: <Widget>[
-                  Text(description ?? "", maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("panel.event_schedule.map.description")),
+                  Text(description ?? "", maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("panel.event_schedule.map.description")),
                   descriptionWidget
                 ]) :
-                Text(description ?? "", overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("panel.event_schedule.map.description")),
+                Text(description ?? "", overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("panel.event_schedule.map.description")),
               Container(height: 8,),
               Row(children: <Widget>[
                 SizedBox(width: buttonWidth, child:
                   RoundedButton(
                     label: Localization().getStringEx('panel.explore.button.directions.title', 'Directions'),
                     hint: Localization().getStringEx('panel.explore.button.directions.hint', ''),
-                    textStyle: canDirections ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled"),
+                    textStyle: canDirections ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
                     backgroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    borderColor: canDirections ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+                    borderColor: canDirections ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
                     onTap: _onTapMapExploreDirections
                   ),
                 ),
@@ -596,10 +598,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
                   RoundedButton(
                     label: detailsLabel,
                     hint: detailsHint,
-                    textStyle: canDirections ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled"),
+                    textStyle: canDirections ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
                     backgroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    borderColor: canDetail ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+                    borderColor: canDetail ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
                     onTap: onTapDetail,
                   ),
                 ),
@@ -721,7 +723,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     if (_loadingMapStopIdRoutes != null) {
       return Padding(padding: EdgeInsets.only(left: 8, top: 3, bottom: 2), child:
         SizedBox(width: 16, height: 16, child:
-          CircularProgressIndicator(color: Styles().colors?.mtdColor, strokeWidth: 2,),
+          CircularProgressIndicator(color: Styles().colors.mtdColor, strokeWidth: 2,),
         ),
       );
     }
@@ -733,7 +735,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
             Padding(padding: EdgeInsets.only(left: routeWidgets.isNotEmpty ? 6 : 0), child:
               Container(decoration: BoxDecoration(color: route.color, border: Border.all(color: route.textColor ?? Colors.transparent, width: 1), borderRadius: BorderRadius.circular(5)), child:
                 Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2), child:
-                  Text(route.shortName ?? '', overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("widget.item.tiny.extra_fat")?.copyWith(color: route.textColor)),
+                  Text(route.shortName ?? '', overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("widget.item.tiny.extra_fat")?.copyWith(color: route.textColor)),
                 )
               )
             )
@@ -761,7 +763,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       child: Column(children: [
         Expanded(flex: 1, child: Container(),),
         SizedBox(width: 32, height: 32, child:
-          CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,),
+          CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
         ),
         Expanded(flex: 1, child: Container(),),
       ],)
@@ -772,7 +774,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     return Column(children: [
       Expanded(flex: 1, child: Container(),),
       Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
-        Text(message, textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18)),
+        Text(message, textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 18)),
       ),
       Expanded(flex: 2, child: Container(),),
     ],);
@@ -781,14 +783,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   void _showMessagePopup(String? message) {
     if ((message != null) && message.isNotEmpty) {
       showDialog(context: context, builder: (context) => AlertDialog(contentPadding: EdgeInsets.zero, content: 
-        Container(decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)), child:
+        Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)), child:
           Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
             Padding(padding: EdgeInsets.all(30), child:
               Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-                Styles().images?.getImage('university-logo') ?? Container(),
+                Styles().images.getImage('university-logo') ?? Container(),
                 Padding(padding: EdgeInsets.only(top: 20), child:
                   Text(message, textAlign: TextAlign.center, style:
-                    Styles().textStyles?.getTextStyle("widget.detail.small")
+                    Styles().textStyles.getTextStyle("widget.detail.small")
                   )
                 )
               ])
@@ -797,7 +799,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
               Align(alignment: Alignment.topRight, child:
                 InkWell(onTap: () => _onCloseMessagePopup(message), child:
                   Padding(padding: EdgeInsets.all(16), child:
-                    Styles().images?.getImage("close")
+                    Styles().images.getImage("close")
                   )
                 )
               )
@@ -841,12 +843,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
       ])),
       Expanded(flex: 4, child: Wrap(alignment: WrapAlignment.end, verticalDirection: VerticalDirection.up, children: [
-        LinkButton(
-          title: Localization().getStringEx('panel.events2.home.bar.button.list.title', 'List'), 
-          hint: Localization().getStringEx('panel.events2.home.bar.button.list.hint', 'Tap to view events as list'),
-          onTap: _onEvent2ListView,
-          padding: EdgeInsets.only(left: 0, right: 8, top: 16, bottom: 16),
-          textStyle: Styles().textStyles?.getTextStyle('widget.button.title.regular.underline'),
+        Visibility(visible: StringUtils.isEmpty(_event2SearchText), child:
+          LinkButton(
+            title: Localization().getStringEx('panel.events2.home.bar.button.list.title', 'List'), 
+            hint: Localization().getStringEx('panel.events2.home.bar.button.list.hint', 'Tap to view events as list'),
+            onTap: _onEvent2ListView,
+            padding: EdgeInsets.only(left: 0, right: 8, top: 16, bottom: 16),
+            textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.underline'),
+          ),
         ),
         Visibility(visible: Auth2().account?.isCalendarAdmin ?? false, child:
           Event2ImageCommandButton('plus-circle',
@@ -868,47 +872,32 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   Widget _buildEvents2ContentDescription() {
     List<InlineSpan> descriptionList = <InlineSpan>[];
-    TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.title.tiny.fat");
-    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
+    TextStyle? boldStyle = Styles().textStyles.getTextStyle("widget.card.title.tiny.fat");
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
 
-    String? timeDescription = (_event2TimeFilter != Event2TimeFilter.customRange) ?
-      event2TimeFilterToDisplayString(_event2TimeFilter) :
-      event2TimeFilterDisplayInfo(Event2TimeFilter.customRange, customStartTime: _event2CustomStartTime, customEndTime: _event2CustomEndTime);
-    
-    if (timeDescription != null) {
+    if (StringUtils.isNotEmpty(_event2SearchText)) {
       if (descriptionList.isNotEmpty) {
-        descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
+        descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
       }
-      descriptionList.add(TextSpan(text: timeDescription, style: regularStyle,),);
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.search.search.label.title', 'Search: ') , style: boldStyle,));
+      descriptionList.add(TextSpan(text: _event2SearchText ?? '' , style: regularStyle,));
     }
 
-    for (Event2TypeFilter type in _event2Types) {
+    List<InlineSpan> filtersList = _buildEvents2FilterAttributes(boldStyle: boldStyle, regularStyle: regularStyle);
+    if (filtersList.isNotEmpty) {
       if (descriptionList.isNotEmpty) {
-        descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
+        descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
       }
-      descriptionList.add(TextSpan(text: event2TypeFilterToDisplayString(type), style: regularStyle,),);
-    }
-
-    ContentAttributes? contentAttributes = Events2().contentAttributes;
-    List<ContentAttribute>? attributes = contentAttributes?.attributes;
-    if (_event2Attributes.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
-      for (ContentAttribute attribute in attributes) {
-        List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(_event2Attributes, complete: true);
-        if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
-          for (String attributeValue in displayAttributeValues) {
-            if (descriptionList.isNotEmpty) {
-              descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
-            }
-            descriptionList.add(TextSpan(text: attributeValue, style: regularStyle,),);
-          }
-        }
-      }
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filter.label.title', 'Filter: ') , style: boldStyle,));
+      descriptionList.addAll(filtersList);
     }
 
     if (descriptionList.isNotEmpty) {
-      descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filter.label.title', 'Filter: ') , style: boldStyle,));
-      descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
+      descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
     }
+    descriptionList.add(TextSpan(text: Localization().getStringEx('panel.explore.label.locations.label.title', 'Locations: ') , style: boldStyle,));
+    descriptionList.add(TextSpan(text: _exploreProgress ? '...' : (_totalExploreLocations()?.toString() ?? '-') , style: regularStyle,));
+    descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
 
     if (descriptionList.isNotEmpty) {
       return Container(padding: EdgeInsets.only(left: 16, right: 16), child:
@@ -920,6 +909,45 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     else {
       return Container();
     }
+  }
+
+  List<InlineSpan> _buildEvents2FilterAttributes({TextStyle? boldStyle, TextStyle? regularStyle}) {
+    List<InlineSpan> filtersList = <InlineSpan>[];
+    String? timeDescription = (_event2TimeFilter != Event2TimeFilter.customRange) ?
+      event2TimeFilterToDisplayString(_event2TimeFilter) :
+      event2TimeFilterDisplayInfo(Event2TimeFilter.customRange, customStartTime: _event2CustomStartTime, customEndTime: _event2CustomEndTime);
+    
+    if (timeDescription != null) {
+      if (filtersList.isNotEmpty) {
+        filtersList.add(TextSpan(text: ", " , style: regularStyle,));
+      }
+      filtersList.add(TextSpan(text: timeDescription, style: regularStyle,),);
+    }
+
+    for (Event2TypeFilter type in _event2Types) {
+      if (filtersList.isNotEmpty) {
+        filtersList.add(TextSpan(text: ", " , style: regularStyle,));
+      }
+      filtersList.add(TextSpan(text: event2TypeFilterToDisplayString(type), style: regularStyle,),);
+    }
+
+    ContentAttributes? contentAttributes = Events2().contentAttributes;
+    List<ContentAttribute>? attributes = contentAttributes?.attributes;
+    if (_event2Attributes.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
+      for (ContentAttribute attribute in attributes) {
+        List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(_event2Attributes, complete: true);
+        if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+          for (String attributeValue in displayAttributeValues) {
+            if (filtersList.isNotEmpty) {
+              filtersList.add(TextSpan(text: ", " , style: regularStyle,));
+            }
+            filtersList.add(TextSpan(text: attributeValue, style: regularStyle,),);
+          }
+        }
+      }
+    }
+
+    return filtersList;
   }
 
   void _onEvent2Filters() {
@@ -982,7 +1010,17 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   void _onEvent2Search() {
     Analytics().logSelect(target: 'Search');
-    AppAlert.showDialogResult(context, 'TBD');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2SearchPanel(searchText: _event2SearchText, searchContext: Event2SearchContext.Map, userLocation: _currentLocation))).then((result) {
+      if (result is String) {
+        String? event2SearchText = result.isNotEmpty ? result : null;
+        if (_event2SearchText != event2SearchText) {
+          setStateIfMounted(() {
+            _event2SearchText = event2SearchText;
+          });
+          _initExplores();
+        }
+      }
+    });
   }
 
   void _onEvent2Create() {
@@ -999,10 +1037,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   Widget _buildExploreTypesDropDownButton() {
     return RibbonButton(
-      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
-      backgroundColor: Styles().colors!.white,
+      textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+      backgroundColor: Styles().colors.white,
       borderRadius: BorderRadius.all(Radius.circular(5)),
-      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       rightIconKey: (_itemsDropDownValuesVisible ? 'chevron-up' : 'chevron-down'),
       label: _exploreItemName(_selectedMapType),
       hint: _exploreItemHint(_selectedMapType),
@@ -1015,26 +1053,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     setStateIfMounted(() {
       _clearActiveFilter();
       _itemsDropDownValuesVisible = !_itemsDropDownValuesVisible;
-    });
-  }
-
-  Widget _buildEventsDisplayTypesDropDownButton() {
-    return RibbonButton(
-      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
-      backgroundColor: Styles().colors!.white,
-      borderRadius: BorderRadius.all(Radius.circular(5)),
-      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-      rightIconKey: (_eventsDisplayDropDownValuesVisible ? 'chevron-up' : 'chevron-down'),
-      label: _eventsDisplayTypeName(_selectedEventsDisplayType),
-      onTap: _onEventsDisplayTypesDropDown
-    );
-  }
-
-  void _onEventsDisplayTypesDropDown() {
-    Analytics().logSelect(target: 'Events Type Dropdown');
-    setStateIfMounted(() {
-      _clearActiveFilter();
-      _eventsDisplayDropDownValuesVisible = !_eventsDisplayDropDownValuesVisible;
     });
   }
 
@@ -1053,7 +1071,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     return Positioned.fill(child:
       BlockSemantics(child:
         GestureDetector(onTap: _onDismissEventsDisplayTypesDropDown, child:
-          Container(color: Styles().colors!.blackTransparent06)
+          Container(color: Styles().colors.blackTransparent06)
         )
       )
     );
@@ -1068,7 +1086,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   Widget _buildEventsDisplayTypesDropDownWidget() {
     List<Widget> displayTypesWidgetList = <Widget>[
-      Container(color: Styles().colors!.fillColorSecondary, height: 2)
+      Container(color: Styles().colors.fillColorSecondary, height: 2)
     ];
     for (EventsDisplayType displayType in EventsDisplayType.values) {
       if ((_selectedEventsDisplayType != displayType)) {
@@ -1084,8 +1102,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   Widget _buildEventsDisplayTypeDropDownItem(EventsDisplayType displayType) {
     return RibbonButton(
-        backgroundColor: Styles().colors!.white,
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        backgroundColor: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _eventsDisplayTypeName(displayType),
         onTap: () => _onEventsDisplayType(displayType));
@@ -1120,7 +1138,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     return Positioned.fill(child:
       BlockSemantics(child:
         GestureDetector(onTap: _onDismissExploreDropDown, child:
-          Container(color: Styles().colors!.blackTransparent06)
+          Container(color: Styles().colors.blackTransparent06)
         )
       )
     );
@@ -1135,7 +1153,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   Widget _buildExploreTypesDropDownWidget() {
     List<Widget> itemList = <Widget>[
-      Container(color: Styles().colors!.fillColorSecondary, height: 2),
+      Container(color: Styles().colors.fillColorSecondary, height: 2),
     ];
     for (ExploreMapType exploreItem in _exploreTypes) {
       if ((_selectedMapType != exploreItem)) {
@@ -1151,8 +1169,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   Widget _buildExploreDropDownItem(ExploreMapType exploreItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors!.white,
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        backgroundColor: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _exploreItemName(exploreItem),
         onTap: () => _onTapExploreType(exploreItem)
@@ -1179,7 +1197,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   List<Widget> _buildFilters() {
     List<Widget> filterTypeWidgets = [];
     List<ExploreFilter>? visibleFilters = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedMapType] : null;
-    if ((visibleFilters == null ) || visibleFilters.isEmpty || (_eventCategories == null)) {
+    if ((visibleFilters == null ) || visibleFilters.isEmpty) {
       filterTypeWidgets.add(Container());
     }
     else {
@@ -1215,12 +1233,12 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         Visibility(visible: _filtersDropdownVisible, child:
           Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 40), child:
             Semantics(child:
-              Container(decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.circular(5.0),), child:
+              Container(decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.circular(5.0),), child:
                 Padding(padding: EdgeInsets.only(top: 2), child:
                   Container(color: Colors.white, child:
                     ListView.separated(
                       shrinkWrap: true,
-                      separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,),
+                      separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors.fillColorPrimaryTransparent03,),
                       itemCount: filterValues.length,
                       itemBuilder: (context, index) => FilterListItem(
                         title: filterValues[index],
@@ -1331,10 +1349,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     List<dynamic>? codes = FlexUI()['explore.map'];
     if (codes != null) {
       for (dynamic code in codes) {
-        if (code == 'events') {
-          exploreTypes.add(ExploreMapType.Events);
-        }
-        else if (code == 'events2') {
+        if (code == 'events2') {
           exploreTypes.add(ExploreMapType.Events2);
         }
         else if (code == 'dining') {
@@ -1393,9 +1408,23 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   }
 
-  ExploreMapType? get _initialExploreType =>
-    widget.params[ExploreMapPanel.mapTypeKey];
+  ExploreMapType? get _initialExploreType => _paramExploreType(widget.params[ExploreMapPanel.selectParamKey]);
 
+  static ExploreMapType? _paramExploreType(dynamic param) {
+    if (param is ExploreMapType) {
+      return param;
+    }
+    else if (param is ExploreMapSearchEventsParam) {
+      return ExploreMapType.Events2;
+    }
+    else {
+      return null;
+    }
+  }
+
+  ExploreMapSearchEventsParam? get _intialEvent2SearchParam => _paramSearchEvents2(widget.params[ExploreMapPanel.selectParamKey]);
+
+  static ExploreMapSearchEventsParam? _paramSearchEvents2(dynamic param) => (param is ExploreMapSearchEventsParam) ? param : null;
 
   ExploreMapType? get _lastExploreType => exploreMapItemFromString(Storage().selectedMapExploreType);
   
@@ -1403,8 +1432,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   static String? _exploreItemName(ExploreMapType? exploreItem) {
     switch (exploreItem) {
-      case ExploreMapType.Events:              return Localization().getStringEx('panel.explore.button.events.title', 'Events');
-      case ExploreMapType.Events2:             return Localization().getStringEx('panel.explore.button.events2.title', 'Events Feed');
+      case ExploreMapType.Events2:             return Localization().getStringEx('panel.explore.button.events2.title', 'All Events');
       case ExploreMapType.Dining:              return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining');
       case ExploreMapType.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.title', 'Laundry');
       case ExploreMapType.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.title', 'Campus Buildings');
@@ -1420,7 +1448,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   static String? _exploreItemHint(ExploreMapType? exploreItem) {
     switch (exploreItem) {
-      case ExploreMapType.Events:              return Localization().getStringEx('panel.explore.button.events.hint', '');
       case ExploreMapType.Events2:             return Localization().getStringEx('panel.explore.button.events2.hint', '');
       case ExploreMapType.Dining:              return Localization().getStringEx('panel.explore.button.dining.hint', '');
       case ExploreMapType.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.hint', '');
@@ -1462,10 +1489,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     _studentCourseTerms = StudentCourses().terms;
 
     _itemToFilterMap = {
-      ExploreMapType.Events: <ExploreFilter>[
-        ExploreFilter(type: ExploreFilterType.categories),
-        ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {2})
-      ],
       ExploreMapType.Dining: <ExploreFilter>[
         ExploreFilter(type: ExploreFilterType.work_time),
         ExploreFilter(type: ExploreFilterType.payment_type)
@@ -1475,18 +1498,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       ],
     };
     
-    _initEventCategories();
-  }
-
-  Future<void> _initEventCategories() async {
-    if (Connectivity().isNotOffline) {
-      List<dynamic>? categories = await Events().loadEventCategories();
-      if (categories != null) {
-        setStateIfMounted(() {
-          _eventCategories = _buildEventCategories(categories);
-        });
-      }
-    }
   }
 
   void _clearActiveFilter() {
@@ -1527,7 +1538,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   List<String>? _getFilterValues(ExploreFilterType filterType) {
     switch (filterType) {
-      case ExploreFilterType.categories:   return _filterEventCategoriesValues;
       case ExploreFilterType.work_time:    return _filterWorkTimeValues;
       case ExploreFilterType.payment_type: return _filterPaymentTypeValues;
       case ExploreFilterType.event_time:   return _filterEventTimeValues;
@@ -1536,12 +1546,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       default: return null;
     }
   }
-
-  List<String> get _filterEventCategoriesValues => <String>[
-      Localization().getStringEx('panel.explore.filter.categories.all', 'All Categories'),
-      Localization().getStringEx('panel.explore.filter.categories.my', 'My Categories'),
-      ... _eventCategories ?? <String>[]
-    ];
 
   List<String> get _filterTagsValues => <String>[
     Localization().getStringEx('panel.explore.filter.tags.all', 'All Tags'),
@@ -1603,127 +1607,11 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
   }
 
-  List<String>? _buildEventCategories(List<dynamic>? categories) {
-    List<String>? eventCategories;
-    if (categories != null) {
-      eventCategories = <String>[];
-      for (dynamic entry in categories) {
-        Map<String, dynamic>? mapEntry = JsonUtils.mapValue(entry);
-        String? category = (mapEntry != null) ? JsonUtils.stringValue(['category']) : null;
-        if (category != null) {
-          eventCategories.add(category); 
-        }
-      }
-    }
-    return eventCategories;
-  }
-
-  Set<int>? _getSelectedFilterIndexes(List<ExploreFilter>? selectedFilterList, ExploreFilterType filterType) {
-    if (selectedFilterList != null) {
-      for (ExploreFilter selectedFilter in selectedFilterList) {
-        if (selectedFilter.type == filterType) {
-          return selectedFilter.selectedIndexes;
-        }
-      }
-    }
-    return null;
-  }
-
   ExploreFilter? _getSelectedFilter(List<ExploreFilter>? selectedFilterList, ExploreFilterType type) {
     if (selectedFilterList != null) {
       for (ExploreFilter selectedFilter in selectedFilterList) {
         if (selectedFilter.type == type) {
           return selectedFilter;
-        }
-      }
-    }
-    return null;
-  }
-
-  Set<String?>? _getSelectedCategories(List<ExploreFilter>? selectedFilterList) {
-    if (selectedFilterList == null || selectedFilterList.isEmpty) {
-      return null;
-    }
-    
-    Set<String?>? selectedCategories;
-    for (ExploreFilter selectedFilter in selectedFilterList) {
-      //Apply custom logic for categories
-      if (selectedFilter.type == ExploreFilterType.categories) {
-        Set<int> selectedIndexes = selectedFilter.selectedIndexes;
-        if (selectedIndexes.isEmpty || selectedIndexes.contains(0)) {
-          break; // All Categories
-        }
-        else {
-          selectedCategories = Set();
-          
-          if (selectedIndexes.contains(1)) { // My categories
-            Iterable<String>? userCategories = Auth2().prefs?.interestCategories;
-            if (userCategories != null && userCategories.isNotEmpty) {
-              selectedCategories.addAll(userCategories);
-            }
-          }
-          
-          List<String> filterCategoriesValues = _filterEventCategoriesValues;
-          if (filterCategoriesValues.isNotEmpty) {
-            for (int selectedCategoryIndex in selectedIndexes) {
-              if ((selectedCategoryIndex < filterCategoriesValues.length) && selectedCategoryIndex != 1) {
-                String? singleCategory = filterCategoriesValues[selectedCategoryIndex];
-                if (StringUtils.isNotEmpty(singleCategory)) {
-                  selectedCategories.add(singleCategory);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    return selectedCategories;
-  }
-
-  EventTimeFilter _getSelectedEventTimePeriod(List<ExploreFilter>? selectedFilterList) {
-    Set<int>? selectedIndexes = _getSelectedFilterIndexes(selectedFilterList, ExploreFilterType.event_time);
-    int index = (selectedIndexes != null && selectedIndexes.isNotEmpty) ? selectedIndexes.first : -1; //Get first one because only categories has more than one selectable index
-    switch (index) {
-
-      case 0: // 'Upcoming':
-        return EventTimeFilter.upcoming;
-      case 1: // 'Today':
-        return EventTimeFilter.today;
-      case 2: // 'Next 7 days':
-        return EventTimeFilter.next7Day;
-      case 3: // 'This Weekend':
-        return EventTimeFilter.thisWeekend;
-      
-      case 4: //'Next 30 days':
-        return EventTimeFilter.next30Days;
-      default:
-        return EventTimeFilter.upcoming;
-    }
-
-    /*//Filter by the time in the University
-    DateTime nowUni = AppDateTime().getUniLocalTimeFromUtcTime(now.toUtc());
-    int hoursDiffToUni = now.hour - nowUni.hour;
-    DateTime startDateUni = startDate.add(Duration(hours: hoursDiffToUni));
-    DateTime endDateUni = (endDate != null) ? endDate.add(
-        Duration(hours: hoursDiffToUni)) : null;
-
-    return {
-      'start_date' : startDateUni,
-      'end_date' : endDateUni
-    };*/
-  }
-
-  Set<String>? _getSelectedEventTags(List<ExploreFilter>? selectedFilterList) {
-    if (selectedFilterList == null || selectedFilterList.isEmpty) {
-      return null;
-    }
-    for (ExploreFilter selectedFilter in selectedFilterList) {
-      if (selectedFilter.type == ExploreFilterType.event_tags) {
-        int index = selectedFilter.firstSelectedIndex;
-        if (index == 0) {
-          return null; //All Tags
-        } else { //My tags
-          return Auth2().prefs?.positiveTags;
         }
       }
     }
@@ -1794,6 +1682,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       await _ensureCurrentLocation();
     }
     return Events2Query(
+      searchText: _event2SearchText,
       timeFilter: _event2TimeFilter,
       customStartTimeUtc: _event2CustomStartTime?.toUtc(),
       customEndTimeUtc: _event2CustomEndTime?.toUtc(),
@@ -1824,8 +1713,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   String? get _emptyContentMessage {
     switch (_selectedMapType) {
-      case ExploreMapType.Events: return Localization().getStringEx('panel.explore.state.online.empty.events', 'No upcoming events.');
-      case ExploreMapType.Events2: return Localization().getStringEx('panel.explore.state.online.empty.events2', 'No events feed is available.');
+      case ExploreMapType.Events2: return Localization().getStringEx('panel.explore.state.online.empty.events2', 'No events are available.');
       case ExploreMapType.Dining: return Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.');
       case ExploreMapType.Laundry: return Localization().getStringEx('panel.explore.state.online.empty.laundry', 'No laundry locations are currently open.');
       case ExploreMapType.Buildings: return Localization().getStringEx('panel.explore.state.online.empty.buildings', 'No building locations available.');
@@ -1841,8 +1729,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   String? get _failedContentMessage {
     switch (_selectedMapType) {
-      case ExploreMapType.Events: return Localization().getStringEx('panel.explore.state.failed.events', 'Failed to load upcoming events.');
-      case ExploreMapType.Events2: return Localization().getStringEx('panel.explore.state.failed.events2', 'Failed to load events feed.');
+      case ExploreMapType.Events2: return Localization().getStringEx('panel.explore.state.failed.events2', 'Failed to load all events.');
       case ExploreMapType.Dining: return Localization().getStringEx('panel.explore.state.failed.dining', 'Failed to load dining locations.');
       case ExploreMapType.Laundry: return Localization().getStringEx('panel.explore.state.failed.laundry', 'Failed to load laundry locations.');
       case ExploreMapType.Buildings: return Localization().getStringEx('panel.explore.state.failed.buildings', 'Failed to load building locations.');
@@ -1918,7 +1805,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     if (Connectivity().isNotOffline) {
       List<ExploreFilter>? selectedFilterList = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedMapType] : null;
       switch (_selectedMapType) {
-        case ExploreMapType.Events: return _loadEvents(selectedFilterList);
         case ExploreMapType.Events2: return _loadEvents2();
         case ExploreMapType.Dining: return _loadDining(selectedFilterList);
         case ExploreMapType.Laundry: return _loadLaundry();
@@ -1933,34 +1819,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       }
     }
     return null;
-  }
-
-  Future<List<Explore>?> _loadEvents(List<ExploreFilter>? selectedFilterList) async {
-    List<Explore>? explores;
-    Set<String?>? categories = _getSelectedCategories(selectedFilterList);
-    Set<String>? tags = _getSelectedEventTags(selectedFilterList);
-    EventTimeFilter eventFilter = _getSelectedEventTimePeriod(selectedFilterList);
-    List<Event>? events = await Events().loadEvents(categories: categories, tags: tags, eventFilter: eventFilter);
-    if (events != null) {
-      explores = _filterEvents(events);
-    }
-    return explores;
-  }
-
-  List<Explore>? _filterEvents(List<Event> allEvents) {
-    if (_selectedEventsDisplayType == EventsDisplayType.all) {
-      return allEvents;
-    }
-    else {
-        List<Explore> displayEvents = [];
-        for (Event event in allEvents) {
-          if (((_selectedEventsDisplayType == EventsDisplayType.multiple) && event.isMultiEvent) ||
-              ((_selectedEventsDisplayType == EventsDisplayType.single) && !event.isMultiEvent)) {
-            displayEvents.add(event);
-          }
-        }
-        return displayEvents;
-    }
   }
 
   Future<List<Explore>?> _loadEvents2() async =>
@@ -2272,6 +2130,22 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     return markers;
   }
 
+  int? _totalExploreLocations() {
+    if (_exploreMarkerGroups != null) {
+      int totalCount = 0;
+      for (dynamic group in _exploreMarkerGroups!) {
+        if (group is Explore) {
+          totalCount++;
+        }
+        else if (group is List) {
+          totalCount += group.length;
+        }
+      }
+      return totalCount;
+    }
+    return null;
+  }
+
   Future<Marker?> _createExploreGroupMarker(List<Explore>? exploreGroup, { required ImageConfiguration imageConfiguration }) async {
     LatLng? markerPosition = ExploreMap.centerOfList(exploreGroup);
     if ((exploreGroup != null) && (markerPosition != null)) {
@@ -2309,7 +2183,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       backColor: backColor,
       strokeColor: borderColor,
       text: count?.toString(),
-      textStyle: Styles().textStyles?.getTextStyle("widget.text.fat")?.copyWith(
+      textStyle: Styles().textStyles.getTextStyle("widget.text.fat")?.copyWith(
         fontSize: 12 * MediaQuery.of(context).devicePixelRatio,
         color: textColor,
         overflow: TextOverflow.visible //defined in code to be sure it is set
@@ -2417,10 +2291,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
 
 ExploreMapType? exploreMapItemFromString(String? value) {
-  if (value == 'events') {
-    return ExploreMapType.Events;
-  }
-  else if (value == 'events2') {
+  if (value == 'events2') {
     return ExploreMapType.Events2;
   }
   else if (value == 'dining') {
@@ -2457,7 +2328,6 @@ ExploreMapType? exploreMapItemFromString(String? value) {
 
 String? exploreMapTypeToString(ExploreMapType? value) {
   switch(value) {
-    case ExploreMapType.Events:              return 'events';
     case ExploreMapType.Events2:             return 'events2';
     case ExploreMapType.Dining:              return 'dining';
     case ExploreMapType.Laundry:             return 'laundry';
@@ -2470,4 +2340,9 @@ String? exploreMapTypeToString(ExploreMapType? value) {
     case ExploreMapType.StateFarmWayfinding: return 'stateFarmWayfinding';
     default: return null;
   }
+}
+
+class ExploreMapSearchEventsParam {
+  final String searchText;
+  ExploreMapSearchEventsParam(this.searchText);
 }

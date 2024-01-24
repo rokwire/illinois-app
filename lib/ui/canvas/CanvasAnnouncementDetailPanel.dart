@@ -40,7 +40,7 @@ class _CanvasAnnouncementDetailPanelState extends State<CanvasAnnouncementDetail
         title: Localization().getStringEx('panel.canvas_announcement.header.title', 'Announcement'),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors!.white,
+      backgroundColor: Styles().colors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -60,26 +60,26 @@ class _CanvasAnnouncementDetailPanelState extends State<CanvasAnnouncementDetail
                     child: Text(StringUtils.ensureNotEmpty(widget.announcement.title),
                         maxLines: 5,
                         overflow: TextOverflow.ellipsis,
-                        style:  Styles().textStyles?.getTextStyle("panel.canvas.text.medium"))),
+                        style:  Styles().textStyles.getTextStyle("panel.canvas.text.medium"))),
                 Padding(
                     padding: EdgeInsets.only(left: 7),
                     child: Text(StringUtils.ensureNotEmpty(widget.announcement.postedAtDisplayDate),
-                        style:  Styles().textStyles?.getTextStyle("widget.info.small")))
+                        style:  Styles().textStyles.getTextStyle("widget.info.small")))
               ]),
               Visibility(
                   visible: StringUtils.isNotEmpty(widget.announcement.author?.displayName),
                   child: Padding(
                       padding: EdgeInsets.only(top: 5),
                       child: Text(StringUtils.ensureNotEmpty(widget.announcement.author?.displayName),
-                          style:  Styles().textStyles?.getTextStyle("widget.info.small")))),
+                          style:  Styles().textStyles.getTextStyle("widget.info.small")))),
               Visibility(
                   visible: StringUtils.isNotEmpty(widget.announcement.message),
                   child: Html(data: widget.announcement.message, style: {
                     "body": Style(
-                        color: Styles().colors!.textSurfaceAccent,
-                        fontFamily: Styles().fontFamilies!.bold,
+                        color: Styles().colors.textSurfaceAccent,
+                        fontFamily: Styles().fontFamilies.bold,
                         fontSize: FontSize(16),
-                        padding: EdgeInsets.zero,
+                        padding: HtmlPaddings.zero,
                         margin: Margins.zero)
                   })),
               _buildAttachmentsContent()
@@ -97,7 +97,7 @@ class _CanvasAnnouncementDetailPanelState extends State<CanvasAnnouncementDetail
           child: GestureDetector(
               onTap: () => _onTapAttachment(attachment),
               child: Text(StringUtils.ensureNotEmpty(attachment.displayName),
-                  style:  Styles().textStyles?.getTextStyle("widget.link.button.title.small")))));
+                  style:  Styles().textStyles.getTextStyle("widget.link.button.title.small")))));
     }
     return Padding(
         padding: EdgeInsets.only(top: 10), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: attachmentWidgetList));

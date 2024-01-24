@@ -60,7 +60,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
   static BorderRadius _bottomRounding = BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5));
   static BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5));
   static BorderRadius _allRounding = BorderRadius.all(Radius.circular(5));
-  static Border _allBorder = Border.all(color: Styles().colors!.surfaceAccent!, width: 1);
+  static Border _allBorder = Border.all(color: Styles().colors.surfaceAccent, width: 1);
 
   String _versionName = "";
   bool _connectingNetId = false;
@@ -148,7 +148,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
         padding: EdgeInsets.only(bottom: 2),
         child: Text(
           Localization().getStringEx("panel.settings.home.connect.not_logged_in.title", "Sign in to {{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-          style: Styles().textStyles?.getTextStyle("widget.title.large"),
+          style: Styles().textStyles.getTextStyle("widget.title.large"),
         ),
       ),
     );
@@ -160,16 +160,16 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
             padding: EdgeInsets.symmetric(vertical: 10),
             child: new RichText(
               text: new TextSpan(
-                style:Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
+                style:Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                 children: <TextSpan>[
                   new TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_1", "Are you a ")),
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_2", "university student"),
-                      style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
+                      style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
                   new TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_3", " or ")),
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_4", "employee"),
-                      style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
+                      style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_5",
                           "? Sign in with your NetID to see {{app_title}} information specific to you, like your Illini Cash and meal plan.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')))
@@ -189,11 +189,11 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
             padding: EdgeInsets.symmetric(vertical: 10),
             child: new RichText(
               text: new TextSpan(
-                style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
+                style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                 children: <TextSpan>[
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.description.part_1", "Don't have a NetID? "),
-                      style:Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
+                      style:Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.description.part_2",
                           "Sign in with your mobile phone number or email address to save your preferences and have the same experience on more than one device.")),
@@ -274,9 +274,9 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                    color: Styles().colors!.white,
+                    color: Styles().colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(4)),
-                    border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
+                    border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList))));
   }
 
@@ -289,9 +289,9 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       if (code == 'info') {
         contentList.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Text(Localization().getStringEx("panel.settings.home.net_id.message", "Signed in with your NetID"),
-                  style: Styles().textStyles?.getTextStyle("widget.message.regular.extra_fat")),
+                  style: Styles().textStyles.getTextStyle("widget.message.regular.extra_fat")),
               Padding(padding: EdgeInsets.only(top: 3), child: Text(Auth2().fullName ?? "",
-                  style: Styles().textStyles?.getTextStyle("widget.detail.large.fat"))),
+                  style: Styles().textStyles.getTextStyle("widget.detail.large.fat"))),
             ]));
       }
       else if (code == 'disconnect') {
@@ -299,7 +299,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
             padding: EdgeInsets.only(top: 12),
             child: RoundedButton(
                 label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Sign Out"),
-                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
                 contentWeight: 0.45,
                 conentAlignment: MainAxisAlignment.start,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
@@ -322,17 +322,17 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       if (code == 'info') {
         contentList.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Text(Localization().getStringEx("panel.settings.home.phone_ver.message", "Signed in with your Phone"),
-              style: Styles().textStyles?.getTextStyle("widget.message.regular.extra_fat")),
+              style: Styles().textStyles.getTextStyle("widget.message.regular.extra_fat")),
           Visibility(
               visible: hasFullName,
               child: Padding(
                   padding: EdgeInsets.only(top: 3),
                   child: Text(fullName,
-                      style: Styles().textStyles?.getTextStyle("widget.detail.large.fat")))),
+                      style: Styles().textStyles.getTextStyle("widget.detail.large.fat")))),
           Padding(
               padding: EdgeInsets.only(top: 3),
               child: Text(Auth2().account?.authType?.phone ?? "",
-                  style: Styles().textStyles?.getTextStyle("widget.detail.large.fat")))
+                  style: Styles().textStyles.getTextStyle("widget.detail.large.fat")))
         ]));
       }
       else if (code == 'verify') {
@@ -347,7 +347,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
             padding: EdgeInsets.only(top: 12),
             child: RoundedButton(
                 label: Localization().getStringEx("panel.settings.home.phone_ver.button.disconnect", "Sign Out"),
-                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
                 contentWeight: 0.45,
                 conentAlignment: MainAxisAlignment.start,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
@@ -369,17 +369,17 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       if (code == 'info') {
         contentList.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Text(Localization().getStringEx("panel.settings.home.email_login.message", "Signed in with your Email"),
-              style: Styles().textStyles?.getTextStyle("widget.message.regular.extra_fat")),
+              style: Styles().textStyles.getTextStyle("widget.message.regular.extra_fat")),
           Visibility(
               visible: hasFullName,
               child: Padding(
                   padding: EdgeInsets.only(top: 3),
                   child: Text(fullName,
-                      style: Styles().textStyles?.getTextStyle("widget.detail.large.fat")))),
+                      style: Styles().textStyles.getTextStyle("widget.detail.large.fat")))),
           Padding(
               padding: EdgeInsets.only(top: 3),
               child: Text(Auth2().account?.authType?.email ?? "",
-                  style:  Styles().textStyles?.getTextStyle("widget.detail.large.fat")))
+                  style:  Styles().textStyles.getTextStyle("widget.detail.large.fat")))
         ]));
       }
       else if (code == 'login') {
@@ -394,7 +394,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
             padding: EdgeInsets.only(top: 12),
             child: RoundedButton(
                 label: Localization().getStringEx("panel.settings.home.email_login.button.disconnect", "Sign Out"),
-                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
                 contentWeight: 0.45,
                 conentAlignment: MainAxisAlignment.start,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
@@ -425,14 +425,14 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
           children: <Widget>[
             Text(
               Localization().getStringEx("panel.settings.home.logout.title", "{{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-              style: Styles().textStyles?.getTextStyle("widget.message.dark.extra_large"),
+              style: Styles().textStyles.getTextStyle("widget.message.dark.extra_large"),
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 26),
               child: Text(
                 Localization().getStringEx("panel.settings.home.logout.message", promptEn),
                 textAlign: TextAlign.left,
-                style: Styles().textStyles?.getTextStyle("widget.message.dark.medium")
+                style: Styles().textStyles.getTextStyle("widget.message.dark.medium")
               ),
             ),
             Row(
@@ -510,15 +510,15 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
           if (code == 'info') {
             contentList.add(Container(
                 width: double.infinity,
-                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)),
+                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors.surfaceAccent, width: 1)),
                 child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(Localization().getStringEx("panel.settings.home.linked.net_id.header", "UIN"),
-                            style: Styles().textStyles?.getTextStyle("widget.item.small.thin")),
-                        Text(linked.identifier!, style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
+                            style: Styles().textStyles.getTextStyle("widget.item.small.thin")),
+                        Text(linked.identifier!, style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
                       ],
                     )
                 )));
@@ -543,7 +543,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
           if (code == 'info') {
             contentList.add(GestureDetector(onTap: (){_onTapAlternatePhone(linked);}, child: Container(
                 width: double.infinity,
-                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)),
+                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors.surfaceAccent, width: 1)),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -551,14 +551,14 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(Localization().getStringEx("panel.settings.home.linked.phone.header", "Phone"),
-                            style: Styles().textStyles?.getTextStyle("widget.item.small.thin")),
+                            style: Styles().textStyles.getTextStyle("widget.item.small.thin")),
                         Text(linked.identifier!,
                             style:
-                            Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
+                            Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
                       ],
                     ),
                     Expanded(child: Container()),
-                    Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
+                    Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
                   ])
                 ))));
           }
@@ -582,7 +582,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
           if (code == 'info') {
             contentList.add(GestureDetector(onTap: (){_onTapAlternateEmail(linked);}, child: Container(
                 width: double.infinity,
-                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)),
+                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors.surfaceAccent, width: 1)),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -590,14 +590,14 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(Localization().getStringEx("panel.settings.home.linked.email.header", "Email"),
-                            style: Styles().textStyles?.getTextStyle("widget.item.small.thin")),
+                            style: Styles().textStyles.getTextStyle("widget.item.small.thin")),
                         Text(linked.identifier!,
                             style:
-                            Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
+                            Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
                       ]
                     ),
                     Expanded(child: Container()),
-                    Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
+                    Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
                   ]),
                 ))));
           }
@@ -619,7 +619,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       if (code == 'netid') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: Styles().colors!.white,
+            backgroundColor: Styles().colors.white,
             border: _allBorder, 
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Add a NetID"),
@@ -630,7 +630,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       else if (code == 'phone') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: Styles().colors!.white,
+            backgroundColor: Styles().colors.white,
             border: _allBorder, 
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
@@ -640,7 +640,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       else if (code == 'email') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: Styles().colors!.white,
+            backgroundColor: Styles().colors.white,
             border: _allBorder, 
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
@@ -691,12 +691,12 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     AppAlert.showCustomDialog(context: context,
       contentWidget: Column(mainAxisSize: MainAxisSize.min, children: [
         Text(Localization().getStringEx("panel.settings.netid.link.failed.exists", "An account is already using this NetID."),
-          style: Styles().textStyles?.getTextStyle("panel.settings.error.text")),
+          style: Styles().textStyles.getTextStyle("panel.settings.error.text")),
         Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: Text(Localization().getStringEx("panel.settings.netid.link.failed.exists.details",
               "1. You will need to sign in to the other account with this NetID.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login."),
-            style: Styles().textStyles?.getTextStyle("widget.message.small")),
+            style: Styles().textStyles.getTextStyle("widget.message.small")),
         ),
       ]),
       actions: [
@@ -803,12 +803,12 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       Padding(padding: EdgeInsets.only(top: 12), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Text(Localization().getStringEx("panel.settings.home.feedback.title", "App Feedback"), style:
-            Styles().textStyles?.getTextStyle("widget.title.large")),
+            Styles().textStyles.getTextStyle("widget.title.large")),
           Container(height: 5),
           Text(Localization().getStringEx("panel.settings.home.feedback.description",
             "Enjoying the app? Missing something? The {{app_title}} app team needs your ideas and input. Thank you!").
               replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-                style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"))
+                style: Styles().textStyles.getTextStyle("widget.item.regular.thin"))
         ])
       ),
       Padding(padding: EdgeInsets.only(top: 12), child:
@@ -831,7 +831,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       HtmlWidget(
           StringUtils.ensureNotEmpty(descriptionHtml),
           onTapUrl : (url) {_onTapHtmlLink(url); return true;},
-          textStyle:  Styles().textStyles?.getTextStyle("panel.settings.section_content.htm.title.regula")
+          textStyle:  Styles().textStyles.getTextStyle("panel.settings.section_content.htm.title.regula")
       )
       ),
     ]);
@@ -901,10 +901,10 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
         child: RichText(
             textAlign: TextAlign.left,
             text: TextSpan(
-                style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
+                style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                 children:[
                   TextSpan(text: versionLabel,),
-                  TextSpan(text:  " $_versionName", style : Styles().textStyles?.getTextStyle("widget.item.regular.fat")),
+                  TextSpan(text:  " $_versionName", style : Styles().textStyles.getTextStyle("widget.item.regular.fat")),
                 ]
             ))
       );
@@ -923,7 +923,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     String copyrightLabel = Localization().getStringEx('panel.settings.home.copyright.text', 'Copyright © {{COPYRIGHT_YEAR}} University of Illinois Board of Trustees')
       .replaceAll('{{COPYRIGHT_YEAR}}', DateFormat('yyyy').format(DateTime.now()));
     return Container(alignment: Alignment.center, child:
-      Text(copyrightLabel, textAlign: TextAlign.center, style:  Styles().textStyles?.getTextStyle("widget.item.regular.thin"))
+      Text(copyrightLabel, textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.thin"))
     );
   }
 
@@ -982,7 +982,7 @@ class _OptionsSection extends StatelessWidget {
               padding: titlePadding,
               child: Text(
                 (title != null) ? title! : '',
-                style:  Styles().textStyles?.getTextStyle("widget.title.large"),
+                style:  Styles().textStyles.getTextStyle("widget.title.large"),
               ),
             ),
           ),
@@ -992,12 +992,12 @@ class _OptionsSection extends StatelessWidget {
                   padding: EdgeInsets.only(left: 8, right: 8, bottom: 12),
                   child: Text(
                     description!,
-                    style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
+                    style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                   )),
           Stack(alignment: Alignment.topCenter, children: [
             Container(
               decoration: (showBox == false) ? null : BoxDecoration(
-                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5),
+                border: Border.all(color: Styles().colors.surfaceAccent, width: 0.5),
                 borderRadius: BorderRadius.circular(5.0),
               ),
               child: Padding(padding: EdgeInsets.all(0), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets!)),

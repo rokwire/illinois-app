@@ -42,8 +42,7 @@ class Identity /* with Service */ {
       Log.e('Identity: Failed to load mobile credential - missing identity url.');
       return null;
     }
-    Response? response =
-        await Network().get("${Config().identityUrl}/mobilecredential", auth: Auth2(), headers: _externalAuthorizationHeader);
+    Response? response = await Network().get("${Config().identityUrl}/mobilecredential", auth: Auth2(), headers: _externalAuthorizationHeader);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -51,6 +50,23 @@ class Identity /* with Service */ {
     } else {
       Log.e('Identity: Failed to load mobile credential. Reason ($responseCode): $responseString');
       return null;
+    }
+  }
+
+  Future<bool> deleteMobileCredential() async {
+    if (StringUtils.isEmpty(Config().identityUrl)) {
+      Log.e('Identity: Failed to delete mobile credential - missing identity url.');
+      return false;
+    }
+    Response? response = await Network().delete("${Config().identityUrl}/mobilecredential", auth: Auth2(), headers: _externalAuthorizationHeader);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      Log.i('Identity: Successfully deleted mobile credential.');
+      return true;
+    } else {
+      Log.e('Identity: Failed to delete mobile credential. Reason ($responseCode): $responseString');
+      return false;
     }
   }
 
@@ -68,6 +84,22 @@ class Identity /* with Service */ {
       return StudentId.fromJson(JsonUtils.decodeMap(responseString));
     } else {
       Log.e('Identity: Failed to load student id. Reason ($responseCode): $responseString');
+      return null;
+    }
+  }
+
+  Future<RenewMobileIdResult?> renewMobileId() async {
+    if (StringUtils.isEmpty(Config().identityUrl)) {
+      Log.e('Identity: renewMobileId - missing identity url.');
+      return null;
+    }
+    Response? response = await Network().get("${Config().identityUrl}/renewmobileid", auth: Auth2(), headers: _externalAuthorizationHeader);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      return RenewMobileIdResult.fromJson(JsonUtils.decodeMap(responseString));
+    } else {
+      Log.e('Identity: Renew mobile id failed. Reason ($responseCode): $responseString');
       return null;
     }
   }

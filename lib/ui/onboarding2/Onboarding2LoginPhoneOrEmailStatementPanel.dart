@@ -53,9 +53,9 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
     String titleString = Localization().getStringEx('panel.onboarding2.phone_or_email_statement.title.text', 'Login by phone or email');
     EdgeInsetsGeometry backButtonInsets = EdgeInsets.only(left: 10, top: 20 + MediaQuery.of(context).padding.top, right: 20, bottom: 20);
 
-    return Scaffold(backgroundColor: Styles().colors!.background, body:
+    return Scaffold(backgroundColor: Styles().colors.background, body:
       Stack(children: <Widget>[
-        Styles().images?.getImage("header-login", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
+        Styles().images.getImage("header-login", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
         Column(children:[
           Expanded(child:
             SingleChildScrollView(child:
@@ -64,13 +64,13 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
                   Semantics(label: titleString, hint: Localization().getStringEx('panel.onboarding2.phone_or_email_statement.title.hint', ''), excludeSemantics: true, header:true, child:
                     Padding(padding: EdgeInsets.symmetric(horizontal: 18), child:
                       Center(child:
-                        Text(titleString, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.onboarding2.login_email.heading.title")),
+                        Text(titleString, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.login_email.heading.title")),
                       )
                     ),
                   ),
                   Container(height: 24,),
                   Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 32), child:
-                    Text(Localization().getStringEx('panel.onboarding2.phone_or_email_statement.description', 'This saves your preferences so you can have the same experience on more than one device.'), textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.description.large"))
+                    Text(Localization().getStringEx('panel.onboarding2.phone_or_email_statement.description', 'This saves your preferences so you can have the same experience on more than one device.'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.description.large"))
                   ),
                 ]),
               ),
@@ -81,10 +81,10 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
               RoundedButton(
                 label: Localization().getStringEx('panel.onboarding2.phone_or_email_statement.continue.title', 'Continue'),
                 hint: Localization().getStringEx('panel.onboarding2.phone_or_email_statement.continue.hint', ''),
-                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                borderColor: Styles().colors!.fillColorSecondary,
-                backgroundColor: Styles().colors!.white,
+                borderColor: Styles().colors.fillColorSecondary,
+                backgroundColor: Styles().colors.white,
                 onTap: _onContinueTapped,
               ),
               Onboarding2UnderlinedButton(

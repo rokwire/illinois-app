@@ -87,7 +87,7 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
         title: Localization().getStringEx("panel.mtd_stops.search.header.title", "Search"),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -105,9 +105,9 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
                 onChanged: (text) => _onSearchTextChanged(text),
                 onSubmitted: (_) => _onTapSearch(),
                 autofocus: true,
-                cursorColor: Styles().colors!.fillColorSecondary,
+                cursorColor: Styles().colors.fillColorSecondary,
                 keyboardType: TextInputType.text,
-                style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"),
+                style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
                 decoration: InputDecoration(
                   border: InputBorder.none,
                 ),
@@ -119,7 +119,7 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
               hint: Localization().getStringEx('panel.mtd_stops.search.clear.button.hint', ''),
               child: Padding(padding: EdgeInsets.all(16), child:
                 GestureDetector(onTap: _onTapClear, child:
-                  Styles().images?.getImage('close', excludeFromSemantics: true)
+                  Styles().images.getImage('close', excludeFromSemantics: true)
                 ),
               )
           ),
@@ -128,7 +128,7 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
             hint: Localization().getStringEx('panel.mtd_stops.search.search.button.hint', ''),
             child: Padding(padding: EdgeInsets.all(12), child:
               GestureDetector(onTap: _onTapSearch, child:
-                Image.asset('images/icon-search.png', color: Styles().colors!.fillColorSecondary),
+                Image.asset('images/icon-search.png', color: Styles().colors.fillColorSecondary),
               ),
             ),
           ),*/
@@ -138,13 +138,13 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(padding: EdgeInsets.all(16), child:
             RichText(text:
-              TextSpan(style: Styles().textStyles?.getTextStyle("widget.button.title.large.thin"), children: <TextSpan>[
-                TextSpan(text: _searchLabel, style: Styles().textStyles?.getTextStyle("widget.text.semi_fat")),
+              TextSpan(style: Styles().textStyles.getTextStyle("widget.button.title.large.thin"), children: <TextSpan>[
+                TextSpan(text: _searchLabel, style: Styles().textStyles.getTextStyle("widget.text.semi_fat")),
               ],),
             )
           ),
           Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
-            Text(_resultsCountLabel, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
+            Text(_resultsCountLabel, style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
             ),
           ),
         ],),

@@ -66,15 +66,15 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child: SingleChildScrollView(
         child: SectionSlantHeader(
           headerWidget: _buildHeader(),
-          slantColor: Styles().colors?.gradientColorPrimary,
+          slantColor: Styles().colors.gradientColorPrimary,
           slantPainterHeadingHeight: 0,
-          backgroundColor: Styles().colors?.background,
+          backgroundColor: Styles().colors.background,
           children: Connectivity().isOffline ? _buildOfflineMessage() : _buildContent(),
           childrenPadding: EdgeInsets.zero,
           allowOverlap: !Connectivity().isOffline,
         ),
       )),
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -85,7 +85,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
         Center(child:
           Text(
             Localization().getStringEx('panel.skills_self_evaluation.results.offline.error.msg', 'Results not available while offline.'),
-            textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title')
+            textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')
           )
         ),
       ),
@@ -96,16 +96,16 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     return Container(
       padding: EdgeInsets.only(top: 40),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Text(Localization().getStringEx('panel.skills_self_evaluation.results.section.title', 'Results'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.header'), textAlign: TextAlign.center,),
-        Text(Localization().getStringEx('panel.skills_self_evaluation.results.score.description', 'Skills Domain Score'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'), textAlign: TextAlign.center,),
-        Text(Localization().getStringEx('panel.skills_self_evaluation.results.score.scale', '(0-100)'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'), textAlign: TextAlign.center,),
+        Text(Localization().getStringEx('panel.skills_self_evaluation.results.section.title', 'Results'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.header'), textAlign: TextAlign.center,),
+        Text(Localization().getStringEx('panel.skills_self_evaluation.results.score.description', 'Skills Domain Score'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.header.description'), textAlign: TextAlign.center,),
+        Text(Localization().getStringEx('panel.skills_self_evaluation.results.score.scale', '(0-100)'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.header.description'), textAlign: TextAlign.center,),
         // TODO: Need to change the look and size of the button
         Align(alignment: Alignment.center, child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 16),
           child: RoundedButton(
             label: Localization().getStringEx("panel.skills_self_evaluation.go_to_results.button.label", 'Career Explorer'),
-            textColor: Styles().colors?.fillColorPrimaryVariant,
-            backgroundColor: Styles().colors?.surface,
+            textColor: Styles().colors.fillColorPrimaryVariant,
+            backgroundColor: Styles().colors.surface,
             onTap: () {
               Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillSelfEvaluationOccupationListPanel(percentages: _latestResponse?.survey.stats?.percentages ?? {})));
             }
@@ -119,8 +119,8 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Styles().colors?.fillColorPrimaryVariant ?? Colors.transparent,
-            Styles().colors?.gradientColorPrimary ?? Colors.transparent,
+            Styles().colors.fillColorPrimaryVariant,
+            Styles().colors.gradientColorPrimary,
           ]
         )
       ),
@@ -131,19 +131,19 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     return Padding(padding: const EdgeInsets.only(top: 20, left: 28, right: 28), child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Divider(color: Styles().colors?.surface, thickness: 2),
+        Divider(color: Styles().colors.surface, thickness: 2),
         Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Flexible(flex: 4, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.results.skills.title', 'SKILLS'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),)),
-          Flexible(flex: 3, fit: FlexFit.tight, child: Text(_latestResponse != null ? DateTimeUtils.localDateTimeToString(_latestResponse!.dateTaken, format: 'MM/dd/yy h:mma') ?? 'NONE' : 'NONE', textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),)),
+          Flexible(flex: 4, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.results.skills.title', 'SKILLS'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.table.header'),)),
+          Flexible(flex: 3, fit: FlexFit.tight, child: Text(_latestResponse != null ? DateTimeUtils.localDateTimeToString(_latestResponse!.dateTaken, format: 'MM/dd/yy h:mma') ?? 'NONE' : 'NONE', textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.table.header'),)),
           Flexible(flex: 3, fit: FlexFit.tight, child: DropdownButtonHideUnderline(child:
             DropdownButton<String>(
-              icon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true),
+              icon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),
               isExpanded: true,
-              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),
+              style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.table.header'),
               items: _buildResponseDateDropDownItems(),
               value: _comparisonResponseId,
               onChanged: _onResponseDateDropDownChanged,
-              dropdownColor: Styles().colors?.textBackground,
+              dropdownColor: Styles().colors.textBackground,
             ),
           )),
         ],)),
@@ -192,23 +192,23 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
                 child: InkWell(
                   onTap: () => _showScoreDescription(section),
                   child: Padding(padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16), child: Row(children: [
-                    Flexible(flex: 5, fit: FlexFit.tight, child: Text(title, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'))),
-                    Flexible(flex: 3, fit: FlexFit.tight, child: Text(mostRecentScore?.toString() ?? "--", style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.current'), textAlign: TextAlign.center,)),
-                    Flexible(flex: 3, fit: FlexFit.tight, child: Text(comparisonScore?.toString() ?? "--", style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.past'), textAlign: TextAlign.center)),
-                    Flexible(flex: 1, fit: FlexFit.tight, child: SizedBox(height: 16.0 , child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true))),
+                    Flexible(flex: 5, fit: FlexFit.tight, child: Text(title, style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title'))),
+                    Flexible(flex: 3, fit: FlexFit.tight, child: Text(mostRecentScore?.toString() ?? "--", style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.score.current'), textAlign: TextAlign.center,)),
+                    Flexible(flex: 3, fit: FlexFit.tight, child: Text(comparisonScore?.toString() ?? "--", style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.score.past'), textAlign: TextAlign.center)),
+                    Flexible(flex: 1, fit: FlexFit.tight, child: SizedBox(height: 16.0 , child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true))),
                   ],)),
                 )
               )
             );
         }) : Padding(padding: const EdgeInsets.only(top: 80, bottom: 32, left: 32, right: 32), child: Text(
           Localization().getStringEx('panel.skills_self_evaluation.results.unavailable.message', 'Results content is currently unavailable. Please try again later.'),
-          style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
+          style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.body'),
           textAlign: TextAlign.center,
         )),
         Visibility(
           visible: _loading,
           child: Container(
-            child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.fillColorPrimary)),
+            child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary)),
             alignment: Alignment.center,
             padding: const EdgeInsets.symmetric(vertical: 64),
           )
@@ -217,7 +217,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
       Visibility(
         visible: responseSections.length > 0,
         child: Padding(padding: const EdgeInsets.only(top: 4), child: GestureDetector(onTap: _onTapClearAllScores, child:
-          Text(Localization().getStringEx('panel.skills_self_evaluation.results.more_info.description', '*Tap score cards for more info'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body.small'), textAlign: TextAlign.left,
+          Text(Localization().getStringEx('panel.skills_self_evaluation.results.more_info.description', '*Tap score cards for more info'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.body.small'), textAlign: TextAlign.left,
         ),)),
       ),
       Visibility(
@@ -227,18 +227,18 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
             children: [
               TextSpan(
                 text: selectedProfile?.params['name'] ?? '',
-                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
+                style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title'),
               ),
               TextSpan(
                 text: ' = ${selectedProfile?.params['definition'] ?? ''}',
-                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
+                style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.body'),
               ),
             ],
           ),
         ),)
       ),
       Padding(padding: const EdgeInsets.symmetric(vertical: 32), child: GestureDetector(onTap: _onTapClearAllScores, child:
-        Text(Localization().getStringEx('panel.skills_self_evaluation.results.clear_scores.label', 'Clear All Scores'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
+        Text(Localization().getStringEx('panel.skills_self_evaluation.results.clear_scores.label', 'Clear All Scores'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
       ),)),
     ];
   }
@@ -247,7 +247,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     List<DropdownMenuItem<String>> items = [
       DropdownMenuItem<String>(
         value: _defaultComparisonResponseId,
-        child: Align(alignment: Alignment.center, child: Text('NONE', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,)),
+        child: Align(alignment: Alignment.center, child: Text('NONE', style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,)),
       ),
     ];
 
@@ -256,7 +256,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
       if (profile.params['abbreviation'] is String && !profileKeys.contains(profile.key)) {
         items.add(DropdownMenuItem<String>(
           value: profile.key,
-          child: Align(alignment: Alignment.center, child: Text(profile.params['abbreviation'], style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,)),
+          child: Align(alignment: Alignment.center, child: Text(profile.params['abbreviation'], style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,)),
         ));
         profileKeys.add(profile.key);
       }
@@ -266,7 +266,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
       String dateString = DateTimeUtils.localDateTimeToString(response.dateTaken, format: 'MM/dd/yy h:mma') ?? '';
       items.add(DropdownMenuItem<String>(
         value: response.id,
-        child: Align(alignment: Alignment.center, child: Text(dateString, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,)),
+        child: Align(alignment: Alignment.center, child: Text(dateString, style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,)),
       ));
     }
     return items;
@@ -274,7 +274,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
 
   void _loadResults() {
     _setLoading(true);
-    Surveys().loadSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
+    Surveys().loadUserSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
       _responses.clear();
       if (CollectionUtils.isNotEmpty(responses)) {
         responses!.sort(((a, b) => b.dateTaken.compareTo(a.dateTaken)));
@@ -343,30 +343,30 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     List<Widget> buttons = [
       Padding(padding: const EdgeInsets.symmetric(horizontal: 4), child: RoundedButton(
         label: Localization().getStringEx('dialog.no.title', 'No'),
-        borderColor: Styles().colors?.fillColorPrimaryVariant,
-        backgroundColor: Styles().colors?.surface,
-        textStyle: Styles().textStyles?.getTextStyle('widget.detail.large.fat'),
+        borderColor: Styles().colors.fillColorPrimaryVariant,
+        backgroundColor: Styles().colors.surface,
+        textStyle: Styles().textStyles.getTextStyle('widget.detail.large.fat'),
         onTap: _onTapDismissDeleteScores,
       )),
       Padding(padding: const EdgeInsets.symmetric(horizontal: 4), child: RoundedButton(
         label: Localization().getStringEx('dialog.yes.title', 'Yes'),
-        borderColor: Styles().colors?.fillColorSecondary,
-        backgroundColor: Styles().colors?.surface,
-        textStyle: Styles().textStyles?.getTextStyle('widget.detail.large.fat'),
+        borderColor: Styles().colors.fillColorSecondary,
+        backgroundColor: Styles().colors.surface,
+        textStyle: Styles().textStyles.getTextStyle('widget.detail.large.fat'),
         onTap: _onTapConfirmDeleteScores,
       )),
     ];
 
     ActionsMessage.show(
       context: context,
-      titleBarColor: Styles().colors?.surface,
+      titleBarColor: Styles().colors.surface,
       message: Localization().getStringEx('panel.skills_self_evaluation.results.delete_scores.message', 'Are you sure you want to delete all of your scores?'),
-      messageTextStyle: Styles().textStyles?.getTextStyle('widget.description.medium'),
+      messageTextStyle: Styles().textStyles.getTextStyle('widget.description.medium'),
       messagePadding: const EdgeInsets.only(left: 32, right: 32, top: 8, bottom: 32),
       messageTextAlign: TextAlign.center,
       buttons: buttons,
       buttonsPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 32),
-      closeButtonIcon: Styles().images?.getImage('close', excludeFromSemantics: true),
+      closeButtonIcon: Styles().images.getImage('close', excludeFromSemantics: true),
     );
   }
 

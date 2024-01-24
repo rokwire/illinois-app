@@ -227,12 +227,12 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
       headerTitle = _isResearchProject ? "Participants" : Localization().getStringEx("panel.manage_members.header.member.title", "Members");
     }
     return Scaffold(
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         appBar: HeaderBar(title: headerTitle),
         body: _isLoading
             ? Center(
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary)))
+                    strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)))
             : RefreshIndicator(
                 onRefresh: _onPullToRefresh,
                 child: SingleChildScrollView(
@@ -251,7 +251,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         Padding(
             padding: EdgeInsets.symmetric(horizontal: 32),
             child: Text(_getEmptyMembersMessage(), textAlign: TextAlign.center,
-                style: Styles().textStyles?.getTextStyle('widget.group.members.title'))),
+                style: Styles().textStyles.getTextStyle('widget.group.members.title'))),
         Container(height: MediaQuery.of(context).size.height / 4)
       ]));
     } else {
@@ -281,10 +281,10 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         Visibility(visible: 1 < CollectionUtils.length(_sortedMemberStatusList), child:
           Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
             RibbonButton(
-              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
-              backgroundColor: Styles().colors!.white,
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+              backgroundColor: Styles().colors.white,
               borderRadius: BorderRadius.all(Radius.circular(5)),
-              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                 rightIconKey: _statusValuesVisible ? 'chevron-up' : 'chevron-down',
                 label: _memberStatusToString(_selectedMemberStatus),
               onTap: _onTapRibbonButton))),
@@ -321,9 +321,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                     onSubmitted: (_) => _onTapSearch(),
                     autofocus: false,
                     focusNode: _searchFocus,
-                    cursorColor: Styles().colors!.fillColorSecondary,
+                    cursorColor: Styles().colors.fillColorSecondary,
                     keyboardType: TextInputType.text,
-                    style:  Styles().textStyles?.getTextStyle('widget.group.members.search'),
+                    style:  Styles().textStyles.getTextStyle('widget.group.members.search'),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                     ),
@@ -339,7 +339,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                   padding: EdgeInsets.all(12),
                   child: GestureDetector(
                     onTap: _onTapClearSearch,
-                    child: Styles().images?.getImage('clear', excludeFromSemantics: true),
+                    child: Styles().images.getImage('clear', excludeFromSemantics: true),
                   ),
                 )
             ),
@@ -352,7 +352,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                 padding: EdgeInsets.all(12),
                 child: GestureDetector(
                   onTap: _onTapSearch,
-                  child: Styles().images?.getImage('search', excludeFromSemantics: true),
+                  child: Styles().images.getImage('search', excludeFromSemantics: true),
                 ),
               ),
             ),
@@ -373,13 +373,13 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
       child: Container(child: Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
         Visibility(visible: showSynced,
           child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Last sync:'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))),
-            Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
+            Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Last sync:'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))),
+            Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))
         ])),
         Visibility(visible: showUpdated,
           child: Padding(padding: EdgeInsets.only(top: 5), child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Last updated:'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))),
-            Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
+            Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Last updated:'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))),
+            Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))
         ])))
     ]))));
   }
@@ -449,7 +449,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                   _statusValuesVisible = false;
                 });
               },
-              child: Container(color: Styles().colors!.blackTransparent06)
+              child: Container(color: Styles().colors.blackTransparent06)
             )
           )
         );
@@ -457,7 +457,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   Widget _buildStatusValuesWidget() {
     List<Widget> widgetList = <Widget>[];
-    widgetList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
+    widgetList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
     if ((_selectedMemberStatus != null) && (1 < CollectionUtils.length(_sortedMemberStatusList))) {
       widgetList.add(_buildStatusItem(null));
     }
@@ -473,8 +473,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   Widget _buildStatusItem(GroupMemberStatus? status) {
     return RibbonButton(
-        backgroundColor: Styles().colors!.white,
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        backgroundColor: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         rightIcon: null,
         label: _memberStatusToString(status),
@@ -583,9 +583,9 @@ class _PendingMemberCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Styles().colors!.white,
+          color: Styles().colors.white,
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid)
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid)
       ),
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
@@ -601,16 +601,16 @@ class _PendingMemberCard extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     member?.displayName ?? "",
-                    style: Styles().textStyles?.getTextStyle('widget.group.members.title'),
+                    style: Styles().textStyles.getTextStyle('widget.group.members.title'),
                   ),
                   Container(height: 4,),
                       RoundedButton(
                         label: Localization().getStringEx("panel.manage_members.button.review_request.title", "Review Request"),
                         hint: Localization().getStringEx("panel.manage_members.button.review_request.hint", ""),
-                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
-                        borderColor: Styles().colors!.fillColorSecondary,
-                        backgroundColor: Styles().colors!.white,
-                        rightIcon: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+                        borderColor: Styles().colors.fillColorSecondary,
+                        backgroundColor: Styles().colors.white,
+                        rightIcon: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true),
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         onTap: (){
                           Analytics().logSelect(target:"Review request");
@@ -640,9 +640,9 @@ class _GroupMemberCard extends StatelessWidget {
       onTap: ()=>_onTapMemberCard(context),
       child: Container(
         decoration: BoxDecoration(
-            color: Styles().colors!.white,
+            color: Styles().colors.white,
             borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid)
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid)
         ),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
@@ -660,7 +660,7 @@ class _GroupMemberCard extends StatelessWidget {
                       children: <Widget>[
                         Expanded(child:
                           Text(StringUtils.ensureNotEmpty(_memberDisplayName),
-                            style: Styles().textStyles?.getTextStyle('widget.group.members.title')
+                            style: Styles().textStyles.getTextStyle('widget.group.members.title')
                           )
                         )
                       ],
@@ -676,7 +676,7 @@ class _GroupMemberCard extends StatelessWidget {
                           ),
                           child: Center(
                             child: Text(memberStatus?.toUpperCase() ?? '',
-                              style: Styles().textStyles?.getTextStyle('widget.heading.small')
+                              style: Styles().textStyles.getTextStyle('widget.heading.small')
                             ),
                           ),
                         ),
@@ -687,10 +687,10 @@ class _GroupMemberCard extends StatelessWidget {
                                 child: Container(
                                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                        color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.all(Radius.circular(2))),
+                                        color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.all(Radius.circular(2))),
                                     child: Center(
                                         child: Text(Localization().getStringEx('widget.group.member.card.attended.label', 'ATTENDED'),
-                                            style: Styles().textStyles?.getTextStyle('widget.heading.small')))))),
+                                            style: Styles().textStyles.getTextStyle('widget.heading.small')))))),
                         Expanded(child: Container()),
                       ],
                     )

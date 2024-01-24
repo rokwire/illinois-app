@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:collection/collection.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -194,7 +195,9 @@ class StudentId {
   final String? resultDescription;
   final bool? isActiveCard;
   final int? birthYear;
+  final MobileIdStatus? mobileIdStatus;
   final List<MobileIdCredential>? mobileCredentials;
+  final bool? canRenewMobileId;
 
   StudentId(
       {this.fullName,
@@ -210,13 +213,17 @@ class StudentId {
       this.resultDescription,
       this.isActiveCard,
       this.birthYear,
-      this.mobileCredentials});
+      this.mobileIdStatus,
+      this.mobileCredentials,
+      this.canRenewMobileId});
 
   static StudentId? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
     bool isActiveCard = ('Y' == JsonUtils.stringValue(json['is_active_card']));
+    String? birthYearValue = JsonUtils.stringValue(json['birth_year']);
+    bool canRenewMobileId = ('yes' == JsonUtils.stringValue(json['can_renew_mobileid'])?.toLowerCase());
     return StudentId(
         fullName: JsonUtils.stringValue(json['full_name']),
         uin: JsonUtils.stringValue(json['UIN']),
@@ -231,21 +238,84 @@ class StudentId {
         resultCode: JsonUtils.intValue(int.tryParse(json['result_code'])),
         resultDescription: JsonUtils.stringValue(json['result_description']),
         isActiveCard: isActiveCard,
-        birthYear: JsonUtils.intValue(int.tryParse(json['birth_year'])),
-        mobileCredentials: MobileIdCredential.fromJsonList(JsonUtils.listValue(json['mobile_credentials'])));
+        birthYear: (birthYearValue != null) ? int.tryParse(birthYearValue) : null,
+        mobileIdStatus: mobileIdStatusFromString(JsonUtils.stringValue(json['mobileid_status'])),
+        mobileCredentials: MobileIdCredential.fromJsonList(JsonUtils.listValue(json['mobile_credentials'])),
+        canRenewMobileId: canRenewMobileId);
+  }
+
+  @override
+  bool operator ==(dynamic other) =>
+      (other is StudentId) &&
+      (fullName == other.fullName) &&
+      (uin == other.uin) &&
+      (role == other.role) &&
+      (studentLevel == other.studentLevel) &&
+      (cardNumber == other.cardNumber) &&
+      (expirationDate == other.expirationDate) &&
+      (libraryNumber == other.libraryNumber) &&
+      (magTrack2 == other.magTrack2) &&
+      (photoBase64 == other.photoBase64) &&
+      (resultCode == other.resultCode) &&
+      (resultDescription == other.resultDescription) &&
+      (isActiveCard == other.isActiveCard) &&
+      (birthYear == other.birthYear) &&
+      (mobileIdStatus == other.mobileIdStatus) &&
+      (DeepCollectionEquality().equals(mobileCredentials, other.mobileCredentials)) &&
+      (canRenewMobileId == other.canRenewMobileId);
+
+  @override
+  int get hashCode =>
+      (fullName?.hashCode ?? 0) ^
+      (uin?.hashCode ?? 0) ^
+      (role?.hashCode ?? 0) ^
+      (studentLevel?.hashCode ?? 0) ^
+      (cardNumber?.hashCode ?? 0) ^
+      (expirationDate?.hashCode ?? 0) ^
+      (libraryNumber?.hashCode ?? 0) ^
+      (magTrack2?.hashCode ?? 0) ^
+      (photoBase64?.hashCode ?? 0) ^
+      (resultCode?.hashCode ?? 0) ^
+      (resultDescription?.hashCode ?? 0) ^
+      (isActiveCard?.hashCode ?? 0) ^
+      (birthYear?.hashCode ?? 0) ^
+      (mobileIdStatus?.hashCode ?? 0) ^
+      (DeepCollectionEquality().hash(mobileCredentials)) ^
+      (canRenewMobileId?.hashCode ?? 0);
+
+  static MobileIdStatus? mobileIdStatusFromString(String? value) {
+    switch (value) {
+      case 'ELIGIBLE':
+        return MobileIdStatus.eligible;
+      case 'ACTIVE':
+        return MobileIdStatus.active;
+      case 'PENDING':
+        return MobileIdStatus.pending;
+      case 'ISSUING':
+        return MobileIdStatus.issuing;
+      case 'INELIGIBLE':
+        return MobileIdStatus.ineligible;
+      default:
+        return null;
+    }
   }
 }
 
 class MobileIdCredential {
   final String? id;
-  final String? status;
   final DateTime? expirationDate;
 
-  MobileIdCredential({this.id, this.status, this.expirationDate});
+  MobileIdCredential({this.id, this.expirationDate});
 
   String? get displayExpirationDate {
     return AppDateTime().formatDateTime(expirationDate, format: _expirationDateFormat);
   }
+
+  @override
+  bool operator ==(dynamic other) => (other is MobileIdCredential) && (id == other.id) && (expirationDate == other.expirationDate);
+
+  @override
+  int get hashCode => (id?.hashCode ?? 0) ^ (expirationDate?.hashCode ?? 0);
 
   static MobileIdCredential? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -253,7 +323,6 @@ class MobileIdCredential {
     }
     return MobileIdCredential(
         id: JsonUtils.stringValue(json['id']),
-        status: JsonUtils.stringValue(json['status']),
         expirationDate: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['expiration_date']), format: 'yyyy-MM-dd', isUtc: false));
   }
 
@@ -268,6 +337,50 @@ class MobileIdCredential {
     return items;
   }
 }
+
+class RenewMobileIdResult {
+  final int? resultCode;
+  final String? resultDescription;
+  final String? uin;
+  final RenewMobileIdStatus? status;
+  final List<MobileIdCredential>? mobileCredentials;
+
+  RenewMobileIdResult({this.resultCode, this.resultDescription, this.uin, this.status, this.mobileCredentials});
+
+  static RenewMobileIdResult? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    String? resultCodeValue = JsonUtils.stringValue(json['result_code']);
+    return RenewMobileIdResult(
+        resultCode: (resultCodeValue != null) ? int.tryParse(resultCodeValue) : null,
+        resultDescription: JsonUtils.stringValue(json['result_description']),
+        uin: JsonUtils.stringValue(json['UIN']),
+        status: renewMobileIdStatusFromString(JsonUtils.stringValue(json['mobileid_status'])),
+        mobileCredentials: MobileIdCredential.fromJsonList(JsonUtils.listValue(json['mobile_credentials'])));
+  }
+
+  bool get isRenewed => (status == RenewMobileIdStatus.renewed);
+
+  static RenewMobileIdStatus? renewMobileIdStatusFromString(String? value) {
+    switch (value) {
+      case 'RENEWED':
+        return RenewMobileIdStatus.renewed;
+      case 'UINERROR':
+        return RenewMobileIdStatus.uin_error;
+      case 'INACTIVE':
+        return RenewMobileIdStatus.inactive;
+      case 'NOACTION':
+        return RenewMobileIdStatus.no_action;
+      default:
+        return null;
+    }
+  }
+}
+
+enum MobileIdStatus { eligible, active, pending, issuing, ineligible }
+
+enum RenewMobileIdStatus { renewed, uin_error, inactive, no_action }
 
 final String _serverDateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
 final String _expirationDateFormat = 'yyyy-MM-dd';

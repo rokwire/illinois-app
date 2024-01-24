@@ -118,7 +118,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
                 SingleChildScrollView(child:
                 Column(children: <Widget>[
                   Container(
-                    decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.circular(5)),
+                    decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.circular(5)),
                     child: Padding(padding: EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: _buildContent(),),),
                   ),
                 ],)),
@@ -138,14 +138,14 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
   List<Widget> _buildInfoContent() {
     return <Widget>[
       IconButton(
-        icon: Semantics(label: "Back", child: Styles().images?.getImage('chevron-left-white', excludeFromSemantics: true)),
+        icon: Semantics(label: "Back", child: Styles().images.getImage('chevron-left-white', excludeFromSemantics: true)),
         onPressed: ()=>setState((){_showInfo = false;}),
       ),
       Padding(
         padding: EdgeInsets.only(left: 24, right: 24, top: 10, bottom: 52),
         child: Text(
           Localization().getStringEx("panel.poll_pin_bouble.long_info_description", "Each poll has a four-digit number. The poll creator can share this code so others can respond."),
-          style: Styles().textStyles?.getTextStyle("widget.dialog.message.medium.thin")
+          style: Styles().textStyles.getTextStyle("widget.dialog.message.medium.thin")
 
         ),
       )
@@ -160,7 +160,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
           RichText(
             text: TextSpan(
               text:Localization().getStringEx("panel.poll_pin_bouble.label_description", "Enter the four-digit poll number to see the poll.") + " ",
-              style: Styles().textStyles?.getTextStyle("widget.dialog.message.large.extra_fat"),
+              style: Styles().textStyles.getTextStyle("widget.dialog.message.large.extra_fat"),
               children:[
                 WidgetSpan(
                     child: Semantics(label: "Info", container:true, button: true,
@@ -173,13 +173,13 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
                             borderRadius: new BorderRadius.circular(15.0),
                             border: new Border.all(
                               width: 2.0,
-                              color: Styles().colors!.fillColorSecondary!,
+                              color: Styles().colors.fillColorSecondary,
                             ),
                           ),
                           child: Center(
                             child: Text("i",
                               semanticsLabel: "",
-                              style:  Styles().textStyles?.getTextStyle("panel.poll.bubble.pin.button.info"),
+                              style:  Styles().textStyles.getTextStyle("panel.poll.bubble.pin.button.info"),
                             ),
                           ),
                         ),
@@ -231,7 +231,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
       }
     };
     return Container(
-      width: 24+ 24*MediaQuery.of(context).textScaleFactor,
+      width: 24 + MediaQuery.of(context).textScaler.scale(24),
       child: Semantics(
         label: _initialSemanticsAnnouncement(position),
         hint: " ${position + 1} of $_digitsCount",
@@ -245,14 +245,14 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
           onChanged: (values)=> nextCallBack(),
           decoration: new InputDecoration(
             filled: true,
-            fillColor: Styles().colors!.white,
+            fillColor: Styles().colors.white,
             border: new OutlineInputBorder(
               borderRadius: const BorderRadius.all(
                 const Radius.circular(4),
               ),
             ),
           ),
-          style: Styles().textStyles?.getTextStyle("panel.poll.bubble.pin.field.text")
+          style: Styles().textStyles.getTextStyle("panel.poll.bubble.pin.field.text")
         ),
       )
     );
@@ -264,11 +264,11 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
         child: RoundedButton(
             label: Localization().getStringEx('dialog.continue.title', 'Continue'),
             hint: Localization().getStringEx('dialog.continue.hint', ''),
-            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
-            backgroundColor: Styles().colors!.white,
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+            backgroundColor: Styles().colors.white,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             progress: _loading,
-            borderColor: Styles().colors!.fillColorSecondary,
+            borderColor: Styles().colors.fillColorSecondary,
             onTap: () { _onContinue(); }
           ),       
       );
@@ -281,7 +281,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
         button: true,
         child: InkWell(
             onTap : _onClose,
-            child: Container(width: 48, height: 48, alignment: Alignment.center, child: Styles().images?.getImage('close-circle-white', excludeFromSemantics: true))));
+            child: Container(width: 48, height: 48, alignment: Alignment.center, child: Styles().images.getImage('close-circle-white', excludeFromSemantics: true))));
   }
 
   //Workaround to pronounce the Dialog Message when entering the first field for first time.

@@ -99,7 +99,7 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
         }
         if (section.isNotEmpty) {
           widgetList.add(Padding(padding: EdgeInsets.only(bottom: 2), child:
-            Text(section, style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))
+            Text(section, style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))
           ));
         }
         int startLength = widgetList.length;
@@ -197,8 +197,8 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
     final Widget emptyImagePlaceholder = Container(height: 102);
     return Container(
         decoration: BoxDecoration(
-            color: Styles().colors?.white,
-            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            color: Styles().colors.white,
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(4))),
         child: Stack(children: [
           Semantics(button: true,
@@ -218,7 +218,7 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
                             : emptyImagePlaceholder,
                         VideoPlayButton()
                       ])))),
-          Container(color: Styles().colors?.accentColor3, height: 4)
+          Container(color: Styles().colors.accentColor3, height: 4)
         ]));
   }
 

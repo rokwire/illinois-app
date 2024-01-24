@@ -166,11 +166,11 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
 
       if (_loadingPollsPage) {
         pages.add(Padding(key: _contentKeys['last'] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
-          Container(decoration: BoxDecoration(color: Styles().colors?.white, borderRadius: BorderRadius.circular(5)), child:
+          Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(5)), child:
             HomeProgressWidget(
               padding: EdgeInsets.symmetric(horizontal: 32, vertical: (_pageHeight - 24) / 2),
               progessSize: Size(24, 24),
-              progressColor: Styles().colors?.fillColorPrimary,
+              progressColor: Styles().colors.fillColorPrimary,
             ),
           ),
         ));

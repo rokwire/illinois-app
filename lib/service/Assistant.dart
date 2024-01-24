@@ -30,7 +30,7 @@ class Assistant /* with Service */ {
       return null;
     }
 
-    String url = '${Config().assistantUrl}/query';
+    String url = '${Config().aiProxyUrl}/query';
     Map<String, String> headers = {
       'Content-Type': 'application/json',
     };
@@ -48,9 +48,8 @@ class Assistant /* with Service */ {
       String? responseString = response?.body;
       if (responseCode == 200) {
         Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
-        Map<String, dynamic>? answerJson = JsonUtils.mapValue(responseJson?['answer']) ;
-        if (answerJson != null) {
-          return Message.fromAnswerJson(answerJson);
+        if (responseJson != null) {
+          return Message.fromJson(responseJson);
         }
         return null;
       } else {
@@ -69,7 +68,7 @@ class Assistant /* with Service */ {
       return null;
     }
 
-    String url = '${Config().assistantUrl}/feedback';
+    String url = '${Config().aiProxyUrl}/feedback';
     Map<String, String> headers = {
       'Content-Type': 'application/json',
     };
@@ -86,9 +85,8 @@ class Assistant /* with Service */ {
       String? responseString = response?.body;
       if (responseCode == 200) {
         Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
-        Map<String, dynamic>? answerJson = JsonUtils.mapValue(responseJson?['answer']);
-        if (answerJson != null) {
-          return Message.fromAnswerJson(answerJson);
+        if (responseJson != null) {
+          return Message.fromJson(responseJson);
         }
         return null;
       } else {
@@ -108,7 +106,7 @@ class Assistant /* with Service */ {
       return null;
     }
 
-    String url = '${Config().assistantUrl}/query-limit';
+    String url = '${Config().aiProxyUrl}/query-limit';
     Map<String, String> headers = {
       'Content-Type': 'application/json',
     };
@@ -130,5 +128,5 @@ class Assistant /* with Service */ {
   }
 
 
-  bool get isEnabled => StringUtils.isNotEmpty(Config().assistantUrl);
+  bool get isEnabled => StringUtils.isNotEmpty(Config().aiProxyUrl);
 }

@@ -24,6 +24,7 @@ import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
+import 'package:illinois/ui/settings/SettingsVoiceRecordigWidgets.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -137,6 +138,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
       _PersonalInfoEntry(
           title: Localization().getStringEx('panel.profile_info.full_name.title', 'Full Name'),
           value: Auth2().account?.authType?.uiucUser?.fullName ?? ""),
+      NamePronouncementWidget(),
       _PersonalInfoEntry(
           title: Localization().getStringEx('panel.profile_info.middle_name.title', 'Middle Name'),
           value: Auth2().account?.authType?.uiucUser?.middleName ?? ""),
@@ -165,14 +167,14 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           textField: true, excludeSemantics: true,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
+            decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
 //          height: 48,
             child: TextField(
               controller: _nameController,
               onChanged: (text) { setState(() {});},
               decoration: InputDecoration(border: InputBorder.none),
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
-              style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular")
+              style: Styles().textStyles.getTextStyle("widget.input_field.text.regular")
             ),
           )
           ),
@@ -192,14 +194,14 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
             textField: true, excludeSemantics: true,
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
+                decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
 //                height: 48,
                 child: TextField(
                   controller: _emailController,
                   onChanged: (text) { setState(() {});},
                   decoration: InputDecoration(border: InputBorder.none),
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                  style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular")
+                  style: Styles().textStyles.getTextStyle("widget.input_field.text.regular")
                 ),
               )
           ),
@@ -224,14 +226,14 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           textField: true, excludeSemantics: true,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
+            decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
 //          height: 48,
             child: TextField(
               controller: _nameController,
               onChanged: (text) { setState(() {});},
               decoration: InputDecoration(border: InputBorder.none),
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
-              style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular")
+              style: Styles().textStyles.getTextStyle("widget.input_field.text.regular")
             ),
           )
           ),
@@ -250,14 +252,14 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
             textField: true, excludeSemantics: true,
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
+                decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
 //                height: 48,
                 child: TextField(
                   controller: _phoneController,
                   onChanged: (text) { setState(() {});},
                   decoration: InputDecoration(border: InputBorder.none),
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                  style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular")
+                  style: Styles().textStyles.getTextStyle("widget.input_field.text.regular")
                 ),
               )
           ),
@@ -274,14 +276,15 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         Row(children: [
           Expanded(child:
             Text(Localization().getStringEx('panel.settings.home.calendar.ada.title', 'Accessibility Needs'), style:
-            Styles().textStyles?.getTextStyle("widget.title.large.fat")
+            Styles().textStyles.getTextStyle("widget.title.large.fat")
             ),
           ),
         ]),
         Container(height: 4),
         ToggleRibbonButton(
           label: Localization().getStringEx('panel.settings.home.calendar.ada.toggle.title', 'Display ADA accessible building entrances for My Courses'),
-          border: Border.all(color: Styles().colors!.surfaceAccent!),
+          border: Border.all(color: Styles().colors.surfaceAccent),
+          borderRadius: BorderRadius.all(Radius.circular(4)),
           toggled: StudentCourses().requireAda,
           onTap: _onRequireAdaToggled)
       ]),
@@ -294,23 +297,24 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         Row(children: [
           Expanded(child:
             Text(Localization().getStringEx('panel.settings.home.calendar.research.title', 'Research at Illinois'), style:
-            Styles().textStyles?.getTextStyle("widget.title.large.fat")
+            Styles().textStyles.getTextStyle("widget.title.large.fat")
             ),
           ),
         ]),
         Container(height: 4),
         ToggleRibbonButton(
           label: Localization().getStringEx('panel.settings.home.calendar.research.toggle.title', 'Participate in research'),
-          border: Border.all(color: Styles().colors!.surfaceAccent!),
+          border: Border.all(color: Styles().colors.surfaceAccent),
+          borderRadius: BorderRadius.all(Radius.circular(4)),
           toggled: Questionnaires().participateInResearch == true,
           onTap: _onResearchQuestionnaireToggled
         ),
         Container(height: 4),
         RibbonButton(
-          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-          //borderRadius: BorderRadius.all(Radius.circular(5)),
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+          borderRadius: BorderRadius.all(Radius.circular(4)),
           label: Localization().getStringEx("panel.settings.home.calendar.research.questionnaire.title", "Research interest form"),
-          textStyle:  (Questionnaires().participateInResearch == true) ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled"),
+          textStyle:  (Questionnaires().participateInResearch == true) ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
           rightIconKey: Questionnaires().participateInResearch ?? false ? 'chevron-right-bold' : 'chevron-right-gray',
           onTap: _onResearchQuestionnaireClicked
         ),
@@ -339,7 +343,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         Row(children: [
           Expanded(child:
             Text(Localization().getStringEx('panel.settings.home.calendar.on_campus.title', 'On Campus'), style:
-              Styles().textStyles?.getTextStyle("widget.title.large.fat")
+              Styles().textStyles.getTextStyle("widget.title.large.fat")
             ),
           ),
         ]),
@@ -367,16 +371,16 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           decoration: BoxDecoration(
-            color: Styles().colors!.white,
-            border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+            color: Styles().colors.white,
+            border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Expanded(child:
-              Text(label, style: enabled ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled")
+              Text(label, style: enabled ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled")
               )
             ),
             Padding(padding: EdgeInsets.only(left: 5), child:
-              Styles().images?.getImage(selected ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true)
+              Styles().images.getImage(selected ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true)
             )
           ])
         )
@@ -414,7 +418,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     return await AppAlert.showCustomDialog(context: context,
       contentWidget:
         Text(Localization().getStringEx('panel.settings.home.calendar.research.prompt.title', promptEn),
-          style: Styles().textStyles?.getTextStyle("widget.message.regular"),
+          style: Styles().textStyles.getTextStyle("widget.message.regular"),
         ),
       actions: [
         TextButton(
@@ -507,9 +511,10 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     return RoundedButton(
       label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
       hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
-      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
-      backgroundColor: Styles().colors!.background,
-      borderColor: Styles().colors!.fillColorSecondary,
+      textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+      backgroundColor: Styles().colors.background,
+      borderColor: Styles().colors.fillColorSecondary,
+      borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
       onTap: _onSignOutClicked,
     );
   }
@@ -518,10 +523,10 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     return RoundedButton(
       label: Localization().getStringEx("panel.profile_info.button.save.title", "Save Changes"),
       hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
-       textStyle: _canSave ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled"),
+       textStyle: _canSave ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
       enabled: _canSave,
-      backgroundColor: _canSave ? Styles().colors!.white : Styles().colors!.background,
-      borderColor: _canSave? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+      backgroundColor: _canSave ? Styles().colors.white : Styles().colors.background,
+      borderColor: _canSave? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
       progress: _isSaving,
       onTap: _onSaveChangesClicked,
     );
@@ -537,14 +542,14 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           children: <Widget>[
             Text(
               Localization().getStringEx("panel.profile_info.logout.title", "{{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-              style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.large"),
+              style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.large"),
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 26),
               child: Text(
                 Localization().getStringEx("panel.profile_info.logout.message", promptEn),
                 textAlign: TextAlign.left,
-                style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.regular")
+                style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.regular")
               ),
             ),
             Row(
@@ -582,7 +587,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           child: Container(decoration:
             BoxDecoration(shape: BoxShape.circle, color: Colors.white, image: DecorationImage(fit: _hasProfilePicture ? BoxFit.cover : BoxFit.contain, image: profileImage!.image))
           ),
-        ) : Styles().images?.getImage('profile-placeholder', excludeFromSemantics: true);
+        ) : Styles().images.getImage('profile-placeholder', excludeFromSemantics: true);
       contentWidget = Column(children: [
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Visibility(visible: _hasProfilePicture, child:
@@ -628,11 +633,11 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         child: GestureDetector(
         onTap: onTap,
         child: Container(
-            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1))),
+            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1))),
             padding: EdgeInsets.only(bottom: 2),
             child: Text(title,
                 semanticsLabel: "",
-                style:  Styles().textStyles?.getTextStyle("panel.settings.button.title.medium")))));
+                style:  Styles().textStyles.getTextStyle("panel.settings.button.title.medium")))));
   }
 
   void _loadUserProfilePicture() {
@@ -715,7 +720,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
                 if (result == true) {
                   Navigator.pop(context);
                 } else {
-                  AppToast.show("Unable to perform save");
+                  AppToast.showMessage("Unable to perform save");
                 }
               }
             });
@@ -727,7 +732,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         }
         else {
           setState(() { _isSaving = false; });
-          AppToast.show("Unable to perform save");
+          AppToast.showMessage("Unable to perform save");
         }
       }
     });
@@ -802,7 +807,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     AppAlert.showCustomDialog(context: context,
         contentWidget:
         Text(promptEn,
-          style: Styles().textStyles?.getTextStyle("widget.message.regular"),
+          style: Styles().textStyles.getTextStyle("widget.message.regular"),
         ),
         actions: [
           TextButton(
@@ -823,16 +828,17 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
   Widget _buildDeleteMyAccount() {
     return Padding(padding: EdgeInsets.only(top: 24, bottom: 12), child:
     RoundedButton(
-        backgroundColor: Styles().colors!.white,
-        borderColor: Styles().colors!.white,
+        backgroundColor: Styles().colors.white,
+        borderColor: Styles().colors.white,
         label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Delete My Account"),
         hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
-        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.thin.secondary"),
+        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.thin.secondary"),
         borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
         onTap: _onTapDeleteData
       )
     );
   }
+
 
   void _onTapDeleteData() async {
     final String groupsSwitchTitle = Localization().getStringEx('panel.settings.privacy_center.delete_account.contributions.delete.msg', 'Please delete all my contributions.');
@@ -843,7 +849,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         title: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.title", "Delete your account?"),
         message: [
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description1", "This will ")),
-          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: Styles().textStyles?.getTextStyle("widget.text.fat")),
+          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: Styles().textStyles.getTextStyle("widget.text.fat")),
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description3", "delete all of your information. You will not be able to retrieve your data after you have deleted it. Are you sure you want to continue?")),
           TextSpan(text: contributeInGroups?
           Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description.groups", " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, reactions and events) or leave them for others to see.") :
@@ -872,7 +878,6 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     Analytics().logAlert(text: "Remove My Information", selection: "Yes");
     await Auth2().deleteUser();
   }
-
 
   bool get _canSave{
     return _isEmailChanged || _isNameChanged;
@@ -907,7 +912,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
   }
 
   TextStyle? get _formFieldLabelTextStyle {
-    return  Styles().textStyles?.getTextStyle("widget.item.small");
+    return  Styles().textStyles.getTextStyle("widget.item.small");
   }
 }
 
@@ -924,10 +929,10 @@ class _PersonalInfoEntry extends StatelessWidget {
       Row(children: [
         Expanded(child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Text(title ?? '', style: Styles().textStyles?.getTextStyle("panel.settings.detail.title.medium")
+              Text(title ?? '', style: Styles().textStyles.getTextStyle("panel.settings.detail.title.medium")
               ),
               Container(height: 5,),
-              Text(value ?? '', style: Styles().textStyles?.getTextStyle("widget.detail.large.fat"))
+              Text(value ?? '', style: Styles().textStyles.getTextStyle("widget.detail.large.fat"))
             ],),
         )
       ],),

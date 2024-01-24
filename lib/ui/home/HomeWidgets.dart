@@ -73,7 +73,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
 
   Widget _buildContent(BuildContext context, {bool dropTarget = false }) {
     return Column(key: _contentKey, children: <Widget>[
-      Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors?.fillColorSecondary : ((widget.position == 0) ? Styles().colors!.surfaceAccent : Colors.transparent),),
+      Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors.fillColorSecondary : ((widget.position == 0) ? Styles().colors.surfaceAccent : Colors.transparent),),
       Semantics(
         container: true,
         inMutuallyExclusiveGroup: true,
@@ -101,14 +101,14 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
 
           Semantics(label: 'Drag Handle' /* TBD: Localization */, onLongPress: (){},button: true, child:
             Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-              Styles().images?.getImage('drag-white', excludeFromSemantics: true),
+              Styles().images.getImage('drag-white', excludeFromSemantics: true),
             ),
           ),
 
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
               Semantics(label: widget.title, header: true, excludeSemantics: true, child:
-                Text(widget.title ?? '', style: Styles().textStyles?.getTextStyle("widget.title.medium.fat"),)
+                Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),)
               )
             )
           ),
@@ -118,7 +118,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
         ],),
       )),
 
-      Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.end)) ? Styles().colors?.fillColorSecondary : Styles().colors!.surfaceAccent,),
+      Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.end)) ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,),
     ]);
   }
 
@@ -272,15 +272,15 @@ class HomeSlantWidget extends StatelessWidget {
       // Title Row
       Padding(padding: EdgeInsets.zero, child: 
         Semantics(container: true, header: true,
-          child: Container(color: Styles().colors!.fillColorPrimary, child:
+          child: Container(color: Styles().colors.fillColorPrimary, child:
             Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
 
-              HomeTitleIcon(image: Styles().images?.getImage(titleIconKey, excludeFromSemantics: true)),
+              HomeTitleIcon(image: Styles().images.getImage(titleIconKey, excludeFromSemantics: true)),
 
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
                   Semantics(label: title, header: true, excludeSemantics: true, child:
-                    Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat"))
+                    Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat"))
                   )
                 )
               ),
@@ -297,9 +297,9 @@ class HomeSlantWidget extends StatelessWidget {
       
         // Slant
         Column(children: <Widget>[
-          Container(color: Styles().colors?.fillColorPrimary, height: flatHeight,),
-          Container(color: Styles().colors?.fillColorPrimary, child:
-            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft), child:
+          Container(color: Styles().colors.fillColorPrimary, height: flatHeight,),
+          Container(color: Styles().colors.fillColorPrimary, child:
+            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
               Container(height: slantHeight,),
             ),
           ),
@@ -503,17 +503,17 @@ class HomeDragFeedback extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(width: MediaQuery.of(context).size.width, color: Styles().colors!.accentColor3!.withOpacity(0.25), child:
+      Container(width: MediaQuery.of(context).size.width, color: Styles().colors.accentColor3.withOpacity(0.25), child:
         Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
 
           Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-            Styles().images?.getImage('drag-white', excludeFromSemantics: true),
+            Styles().images.getImage('drag-white', excludeFromSemantics: true),
           ),
 
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-              Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat")?.copyWith(decoration: TextDecoration.none, shadows: <Shadow>[
-                Shadow(color: Styles().colors!.fillColorPrimary!.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
+              Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat")?.copyWith(decoration: TextDecoration.none, shadows: <Shadow>[
+                Shadow(color: Styles().colors.fillColorPrimary.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
               ] ),),
             ),
           ),
@@ -543,19 +543,19 @@ class HomeCommandButton extends StatelessWidget {
     return Semantics(label: title, hint: description, button: true, child:
       InkWell(onTap: onTap, child: Container(
           padding: EdgeInsets.only(left: 16, bottom: 16),
-          decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+          decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Expanded(child:
                 Padding(padding: EdgeInsets.only(top: 15, bottom: 7), child:
-                  Text(title ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), semanticsLabel: "",),
+                  Text(title ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'), semanticsLabel: "",),
                 )
               ),
-              // Styles().images?.getImage('images/chevron-right.png', excludeFromSemantics: true)
+              // Styles().images.getImage('images/chevron-right.png', excludeFromSemantics: true)
               ((loading == true)
                 ? Padding(padding: EdgeInsets.all(16), child:
                     SizedBox(height: 16, width: 16, child:
-                      CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2),
+                      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2),
                     )
                 )
                 : HomeFavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, prompt: kReleaseMode)
@@ -563,7 +563,7 @@ class HomeCommandButton extends StatelessWidget {
             ],),
             StringUtils.isNotEmpty(description)
               ? Padding(padding: EdgeInsets.only(top: 5, right: 16), child:
-                  Text(description ?? '', style: Styles().textStyles?.getTextStyle("widget.info.regular.thin"), semanticsLabel: "",),
+                  Text(description ?? '', style: Styles().textStyles.getTextStyle("widget.info.regular.thin"), semanticsLabel: "",),
                 )
               : Container(),
         ],),),),
@@ -591,18 +591,18 @@ class HomeMessageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
       Semantics(child:Container(padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+        decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         child: Column(children: <Widget>[
           StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
             Expanded(child:
               Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
-                Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.card.title.medium.fat"))
+                Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.card.title.medium.fat"))
               ),
             )
           ]) : Container(),
           StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
             Expanded(child:
-              Text(message ?? '', style: Styles().textStyles?.getTextStyle("widget.card.detail.regular"))
+              Text(message ?? '', style: Styles().textStyles.getTextStyle("widget.card.detail.regular"))
             )
           ]) : Container(),
         ]),
@@ -619,29 +619,31 @@ class HomeMessageHtmlCard extends StatelessWidget {
   final String? title;
   final String? message;
   final EdgeInsetsGeometry margin;
+  final EdgeInsetsGeometry padding;
+  final Color? linkColor;
   final void Function(String? url)? onTapLink;
 
   HomeMessageHtmlCard({Key? key,
-    this.title,
-    this.message,
+    this.title, this.message,
     this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-    this.onTapLink
+    this.padding = const EdgeInsets.all(16),
+    this.linkColor, this.onTapLink
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
-      Container(padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      Container(padding: padding,
+        decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         child: Column(children: <Widget>[
           StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
             Expanded(child:
               Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
                 HtmlWidget(
                     StringUtils.ensureNotEmpty(title),
-                    onTapUrl : (url) {_onTapLink(url); return true;},
-                    textStyle:  Styles().textStyles?.getTextStyle("widget.card.title.medium.fat"),
-                    customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondary ?? Colors.blue)} : null
+                    onTapUrl : (url) { _onTapLink(url); return true; },
+                    textStyle:  Styles().textStyles.getTextStyle("widget.card.title.medium.fat"),
+                    customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(linkColor ?? Styles().colors.fillColorSecondary)} : null
                 )
               ),
             )
@@ -650,9 +652,9 @@ class HomeMessageHtmlCard extends StatelessWidget {
             Expanded(child:
                 HtmlWidget(
                   StringUtils.ensureNotEmpty(message),
-                  onTapUrl : (url) {_onTapLink(url); return true;},
-                  textStyle:  Styles().textStyles?.getTextStyle("widget.card.detail.regular"),
-                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondary ?? Colors.blue)} : null
+                  onTapUrl : (url) { _onTapLink(url); return true; },
+                  textStyle:  Styles().textStyles.getTextStyle("widget.card.detail.regular"),
+                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(linkColor ?? Styles().colors.fillColorSecondary)} : null
                )
             )
           ]) : Container(),
@@ -689,7 +691,7 @@ class HomeProgressWidget extends StatelessWidget {
     return Padding(padding: padding, child:
       Center(child:
         Container(width: progessSize.width, height: progessSize.height, child:
-          CircularProgressIndicator(strokeWidth: progessWidth, valueColor: AlwaysStoppedAnimation<Color?>(progressColor ?? Styles().colors?.fillColorSecondary), )
+          CircularProgressIndicator(strokeWidth: progessWidth, valueColor: AlwaysStoppedAnimation<Color?>(progressColor ?? Styles().colors.fillColorSecondary), )
         ),
       ),
     );

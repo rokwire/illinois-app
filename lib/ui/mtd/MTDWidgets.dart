@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Favorite.dart';
@@ -68,12 +69,12 @@ class MTDStopCard extends StatelessWidget {
         description = pointsDescription;
       }
 
-      titleStyle = Styles().textStyles?.getTextStyle("widget.title.large.extra_fat");
+      titleStyle = Styles().textStyles.getTextStyle("widget.title.large.extra_fat");
       titlePadding = EdgeInsets.only(top: 12);
       favoritePadding = EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8);
     }
     else {
-      titleStyle = Styles().textStyles?.getTextStyle("widget.title.regular.fat");
+      titleStyle = Styles().textStyles.getTextStyle("widget.title.regular.fat");
       titlePadding = EdgeInsets.only(top: 16);
       favoritePadding = EdgeInsets.all(16);
     }
@@ -81,7 +82,7 @@ class MTDStopCard extends StatelessWidget {
     return Padding(padding: EdgeInsets.only(bottom: 4), child:
       InkWell(onTap: () => _onTapDetail(stop), child:
         Container(
-          decoration: BoxDecoration(color: Styles().colors?.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),),
+          decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
           padding: EdgeInsets.only(left: 16,),
           child: Column(children: [
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -103,7 +104,7 @@ class MTDStopCard extends StatelessWidget {
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Expanded(child:
                   Padding(padding: EdgeInsets.only(top: 4, bottom: 8), child:
-                    Text(description, style: Styles().textStyles?.getTextStyle("widget.info.regular.thin"), maxLines: 1, overflow: TextOverflow.ellipsis,)
+                    Text(description, style: Styles().textStyles.getTextStyle("widget.info.regular.thin"), maxLines: 1, overflow: TextOverflow.ellipsis,)
                   )
                 ),
                 Semantics(
@@ -115,8 +116,8 @@ class MTDStopCard extends StatelessWidget {
                         SizedBox(width: 18, height: 18, child:
                           Center(child:
                             _isExpanded ?
-                            Styles().images?.getImage('chevron-up', excludeFromSemantics: true) :
-                            Styles().images?.getImage('chevron-down', excludeFromSemantics: true)
+                            Styles().images.getImage('chevron-up', excludeFromSemantics: true) :
+                            Styles().images.getImage('chevron-down', excludeFromSemantics: true)
                           ),
                         )
                       ),
@@ -268,21 +269,21 @@ class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> implements No
     Color? headerColor = widget.stop.favoriteHeaderColor;
     String? title = widget.stop.favoriteTitle;
     String? cardDetailText = widget.stop.favoriteDetailText;
-    Color? cardDetailTextColor = widget.stop.favoriteDetailTextColor ?? Styles().colors?.textBackground;
+    Color? cardDetailTextColor = widget.stop.favoriteDetailTextColor ?? Styles().colors.textBackground;
     Widget? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? widget.stop.favoriteDetailIcon : null;
     bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
     return GestureDetector(onTap: widget.onTap, child:
       Semantics(label: title, child:
         Column(children: <Widget>[
           Container(height: 7, color: headerColor,),
-          Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
+          Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
             Column(children: [
               Padding(padding: EdgeInsets.all(16), child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Flex(direction: Axis.vertical, children: <Widget>[
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
                       Expanded(child:
-                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.title.large")),
+                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.title.large")),
                       ),
                       Visibility(visible: Auth2().canFavorite && (favoriteStarIcon != null), child:
                         GestureDetector(behavior: HitTestBehavior.opaque, onTap: _onTapFavoriteStar, child:
@@ -308,16 +309,16 @@ class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> implements No
                           Row(children: <Widget>[
                             Padding(padding: EdgeInsets.only(right: 10), child: cardDetailImage,),
                             Expanded(child:
-                              Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.item.regular")?.copyWith(color: cardDetailTextColor)),
+                              Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.item.regular")?.copyWith(color: cardDetailTextColor)),
                             )
                           ],) :
-                          Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.item.regular")?.copyWith(color: cardDetailTextColor)),
+                          Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.item.regular")?.copyWith(color: cardDetailTextColor)),
                       ),
                     ),
                   ),
                 ]),
               ),
-              Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,),
+              Divider(height: 1, color: Styles().colors.fillColorPrimaryTransparent03,),
               Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0), child:
                 _buildDepartures(),
               ),
@@ -347,7 +348,7 @@ class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> implements No
     return Center(child:
       Padding(padding: EdgeInsets.all(16), child:
         SizedBox(width: 24, height: 24, child:
-          CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2, )
+          CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2, )
         )
       )
 
@@ -360,7 +361,7 @@ class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> implements No
         Row(children: [
           Expanded(child:
             Text(error ?? '', style:
-              Styles().textStyles?.getTextStyle("widget.message.regular"), textAlign: TextAlign.center,),
+              Styles().textStyles.getTextStyle("widget.message.regular"), textAlign: TextAlign.center,),
           ),
         ],)
       )
@@ -373,7 +374,7 @@ class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> implements No
     for (int index = 0; index < departuresCount; index++) {
       MTDDeparture departure = _departures![index];
       if (contentList.isNotEmpty) {
-        contentList.add(Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,));
+        contentList.add(Divider(height: 1, color: Styles().colors.fillColorPrimaryTransparent03,));
       }
       contentList.add(MTDDepartureCard(
         departure: departure,
@@ -411,11 +412,13 @@ class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> implements No
       _refreshingDepartures = true;
       MTD().getDepartures(stopId: widget.stop.id!, previewTime: 1440).then((List<MTDDeparture>? departures) {
         //debugPrint('Did refresh departures for ${widget.stop.name}: ${departures?.length}');
-        _refreshingDepartures = false;
-        if (mounted && (departures != null)) {
-          setState(() {
-            _departures = departures;
-          });
+        if (_refreshingDepartures) {
+          _refreshingDepartures = false;
+          if (mounted && (departures != null) && !DeepCollectionEquality().equals(_departures, departures)) {
+            setState(() {
+              _departures = departures;
+            });
+          }
         }
       });
     }
@@ -481,23 +484,23 @@ class MTDDepartureCard extends StatelessWidget {
         Container(width: circleSize, height: circleSize,
           decoration: BoxDecoration(
             color: departure.route?.color,
-            border: Border.all(color: Styles().colors!.surfaceAccentTransparent15!, width: 1),
+            border: Border.all(color: Styles().colors.surfaceAccentTransparent15, width: 1),
             shape: BoxShape.circle),
           child: Center(child:
-            Text(departure.route?.shortName ?? '', overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("widget.detail.large.thin")?.copyWith(color: departure.route?.textColor))
+            Text(departure.route?.shortName ?? '', overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("widget.detail.large.thin")?.copyWith(color: departure.route?.textColor))
           )
         ),
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
             Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(departure.headsign ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular")?.copyWith(fontSize: textSize)),
-                Text(desciption, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")?.copyWith(fontSize: textSize))
+                Text(departure.headsign ?? '', style: Styles().textStyles.getTextStyle("widget.item.regular")?.copyWith(fontSize: textSize)),
+                Text(desciption, style: Styles().textStyles.getTextStyle("widget.item.regular.thin")?.copyWith(fontSize: textSize))
             ],)
           )
         ),
         Column(mainAxisSize: MainAxisSize.min, children: [
-          Text(expectedTimeString1 ?? '', style: Styles().textStyles?.getTextStyle("widget.detail.extra_large")?.copyWith(fontSize: timeSize1)),
-          Text(expectedTimeString2 ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")?.copyWith(fontSize: timeSize2)),
+          Text(expectedTimeString1 ?? '', style: Styles().textStyles.getTextStyle("widget.detail.extra_large")?.copyWith(fontSize: timeSize1)),
+          Text(expectedTimeString2 ?? '', style: Styles().textStyles.getTextStyle("widget.item.regular.thin")?.copyWith(fontSize: timeSize2)),
         ],)
       ],)
     ),));

@@ -6,17 +6,16 @@ import 'package:illinois/model/Questionnaire.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Questionnaire.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginNetIdPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailStatementPanel.dart';
 
-import 'Storage.dart';
 
 class Onboarding2 with Service {
 
@@ -33,10 +32,6 @@ class Onboarding2 with Service {
   Onboarding2 get instance {
     return _instance;
   }
-
-  Auth2AccountScope get loginAccountScope => Auth2AccountScope(
-    prefs: { Auth2UserPrefsScope.privacyLevel, Auth2UserPrefsScope.roles }
-  );
 
   void finalize(BuildContext context) {
     _proceedToNotificationsAuthIfNeeded(context);

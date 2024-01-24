@@ -77,7 +77,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
         title: Localization().getStringEx('panel.canvas_calendar.header.title', 'Calendar'),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors!.white,
+      backgroundColor: Styles().colors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -130,7 +130,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 28),
             child: Text(_errorMessage,
-                textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
+                textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildEmptyContent() {
@@ -138,7 +138,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 28),
             child: Text(_emptyMessage,
-                textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
+                textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.message.medium.thin"))));
   }
 
   String get _errorMessage {
@@ -215,13 +215,13 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
                           textAlign: TextAlign.start,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: Styles().textStyles?.getTextStyle("widget.label.regular.fat")),
+                          style: Styles().textStyles.getTextStyle("widget.label.regular.fat")),
                       Text(StringUtils.ensureNotEmpty(event.title),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: Styles().textStyles?.getTextStyle("widget.title.medium.fat")),
+                          style: Styles().textStyles.getTextStyle("widget.title.medium.fat")),
                       Text(StringUtils.ensureNotEmpty(event.startAtDisplayDate),
-                          style: Styles().textStyles?.getTextStyle("widget.title.disabled.medium.fat"))
+                          style: Styles().textStyles.getTextStyle("widget.title.disabled.medium.fat"))
                     ]))
                   ])),
                   Image.asset('images/chevron-right.png')
@@ -258,7 +258,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
   }
 
   Widget _buildEventDelimiter() {
-    return Container(color: Styles().colors!.lightGray, height: 1);
+    return Container(color: Styles().colors.lightGray, height: 1);
   }
 
   void _onTapEvent(CanvasCalendarEvent event) {
@@ -322,13 +322,13 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
         height: 48,
         decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Styles().colors!.lightGray!, width: 1),
+            border: Border.all(color: Styles().colors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),
             child: DropdownButtonHideUnderline(
                 child: DropdownButton(
-              style: Styles().textStyles?.getTextStyle("panel.canvas.item.regular"),
+              style: Styles().textStyles.getTextStyle("panel.canvas.item.regular"),
               items: _buildYearDropDownItems,
               value: _selectedDate.year,
               onChanged: (year) => _onYearChanged(year),
@@ -355,13 +355,13 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
         height: 48,
         decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Styles().colors!.lightGray!, width: 1),
+            border: Border.all(color: Styles().colors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),
             child: DropdownButtonHideUnderline(
                 child: DropdownButton(
-              style: Styles().textStyles?.getTextStyle("panel.canvas.item.large.fat"),
+              style: Styles().textStyles.getTextStyle("panel.canvas.item.large.fat"),
               items: _buildMonthDropDownItems,
               value: _selectedDate.month,
               onChanged: (month) => _onMonthChanged(month),
@@ -385,13 +385,13 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
         height: 48,
         decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Styles().colors!.lightGray!, width: 1),
+            border: Border.all(color: Styles().colors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),
             child: DropdownButtonHideUnderline(
                 child: DropdownButton(
-              style: Styles().textStyles?.getTextStyle("panel.canvas.item.regular"),
+              style: Styles().textStyles.getTextStyle("panel.canvas.item.regular"),
               items: _buildTypeDropDownItems,
               value: _selectedType,
               onChanged: (type) => _onTypeChanged(type),
@@ -415,18 +415,18 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
   }
 
   Widget _buildCourseDropDown() {
-    double height = MediaQuery.of(context).textScaleFactor * 62;
+    double height = MediaQuery.of(context).textScaler.scale(62);
     return Container(
         height: height,
         decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Styles().colors!.lightGray!, width: 1),
+            border: Border.all(color: Styles().colors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),
             child: DropdownButtonHideUnderline(
                 child: DropdownButton(
-                    style: Styles().textStyles?.getTextStyle("panel.canvas.item.regular.fat"),
+                    style: Styles().textStyles.getTextStyle("panel.canvas.item.regular.fat"),
                     items: _buildCourseDropDownItems,
                     value: _selectedCourseId,
                     itemHeight: null,
@@ -444,12 +444,12 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
       items.add(DropdownMenuItem(
           value: currentCourse.id,
           child: Text(StringUtils.ensureNotEmpty(currentCourse.name),
-              style: ((_selectedCourseId == currentCourse.id) ? Styles().textStyles?.getTextStyle("panel.canvas.item.regular.fat") :  Styles().textStyles?.getTextStyle("panel.canvas.item.regular")))));
+              style: ((_selectedCourseId == currentCourse.id) ? Styles().textStyles.getTextStyle("panel.canvas.item.regular.fat") :  Styles().textStyles.getTextStyle("panel.canvas.item.regular")))));
     }
     items.add(DropdownMenuItem(
         value: null,
         child: Text(Localization().getStringEx('panel.canvas.common.all_courses.label', 'All Courses'),
-            style: (_selectedCourseId == null) ? Styles().textStyles?.getTextStyle("panel.canvas.item.regular.fat") :  Styles().textStyles?.getTextStyle("panel.canvas.item.regular"))));
+            style: (_selectedCourseId == null) ? Styles().textStyles.getTextStyle("panel.canvas.item.regular.fat") :  Styles().textStyles.getTextStyle("panel.canvas.item.regular"))));
     return items;
   }
 
@@ -489,20 +489,20 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
           onTap: () => _onTapWeekDay(i),
           child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
             Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(currentWeekDate, format: 'E')),
-                style: Styles().textStyles?.getTextStyle("widget.title.small.fat")),
+                style: Styles().textStyles.getTextStyle("widget.title.small.fat")),
             Padding(
                 padding: EdgeInsets.only(top: 3),
                 child: Container(
                     padding: EdgeInsets.all(10),
                     decoration: _weekDayBoxDecoration(currentWeekDate),
                     child: Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(currentWeekDate, format: 'd')),
-                        style: Styles().textStyles?.getTextStyle("widget.title.medium")?.copyWith(color: _weekDayTextColor(currentWeekDate))))),
+                        style: Styles().textStyles.getTextStyle("widget.title.medium")?.copyWith(color: _weekDayTextColor(currentWeekDate))))),
             Visibility(
                 visible: _hasEvent(currentWeekDate),
                 child: Padding(
                     padding: EdgeInsets.only(top: 5),
                     child: Container(
-                        decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, shape: BoxShape.circle), width: 6, height: 6)))
+                        decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, shape: BoxShape.circle), width: 6, height: 6)))
           ]));
       dayWidgetList.add(dayWidget);
       currentWeekDate = currentWeekDate.add(Duration(days: 1));
@@ -515,13 +515,13 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
     bool isSelectedDate = _isSelectedDay(date);
 
     return BoxDecoration(
-        color: (isToday ? Styles().colors!.fillColorPrimary : null),
+        color: (isToday ? Styles().colors.fillColorPrimary : null),
         shape: BoxShape.circle,
-        border: Border.all(color: (isSelectedDate ? Styles().colors!.fillColorPrimary! : Colors.transparent), width: 2));
+        border: Border.all(color: (isSelectedDate ? Styles().colors.fillColorPrimary : Colors.transparent), width: 2));
   }
 
   Color _weekDayTextColor(DateTime date) {
-    return _isToday(date) ? Styles().colors!.white! : Styles().colors!.fillColorPrimary!;
+    return _isToday(date) ? Styles().colors.white : Styles().colors.fillColorPrimary;
   }
 
   bool _isToday(DateTime currentDate) {

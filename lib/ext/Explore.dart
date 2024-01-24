@@ -40,6 +40,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:geolocator/geolocator.dart' as Core;
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'dart:math' as math;
 
 import 'package:sprintf/sprintf.dart';
@@ -245,7 +246,7 @@ extension ExploreExt on Explore {
     //else if (this is WellnessBuilding) {}
     //else if (this is Appointment) {}
     else {
-      return Styles().colors?.accentColor2;
+      return Styles().colors.accentColor2;
     }
   }
 
@@ -276,7 +277,12 @@ extension ExploreExt on Explore {
       }
     }
     else if (this is Event2) {
-        route = CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: this as Event2, userLocation: initialLocationData,));
+        Event2 event2 = (this as Event2);
+        if (event2.hasGame) {
+          route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event2.game));
+        } else {
+          route = CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event2, userLocation: initialLocationData,));
+        }
     }
     else if (this is Dining) {
       route = CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: this as Dining, initialLocationData: initialLocationData),);
@@ -318,13 +324,13 @@ extension ExploreExt on Explore {
 extension ExploreMap on Explore {
 
   Color? get mapMarkerColor => uiColor ?? unknownMarkerColor;
-  static Color? get unknownMarkerColor => Styles().colors?.accentColor2;
+  static Color? get unknownMarkerColor => Styles().colors.accentColor2;
 
   Color? get mapMarkerBorderColor => unknownMarkerBorderColor;
-  static Color? get unknownMarkerBorderColor => Styles().colors?.fillColorPrimary;
+  static Color? get unknownMarkerBorderColor => Styles().colors.fillColorPrimary;
 
   Color? get mapMarkerTextColor => unknownMarkerTextColor;
-  static Color? get unknownMarkerTextColor => Styles().colors?.background;
+  static Color? get unknownMarkerTextColor => Styles().colors.background;
 
   String? get mapMarkerTitle {
     return exploreTitle;
@@ -569,6 +575,8 @@ extension ExploreLocationExp on ExploreLocation {
     return displayText;
   }
 
+  String? get displayDescription => StringUtils.isNotEmpty(description) ? description : null;
+
   String? get displayCoordinates =>
     isLocationCoordinateValid ? "[${latitude?.toStringAsFixed(6)}, ${longitude?.toStringAsFixed(6)}]" : null;
 }
@@ -578,5 +586,5 @@ extension ExploreLocationMap on ExploreLocation {
 }
 
 extension ExplorePOIExt on ExplorePOI {
-  Color? get uiColor => Styles().colors?.accentColor3;
+  Color? get uiColor => Styles().colors.accentColor3;
 }

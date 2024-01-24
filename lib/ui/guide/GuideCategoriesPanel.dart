@@ -109,7 +109,7 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
           ),
           uiuc.TabBar(),
         ],),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
     );
   }
 
@@ -134,7 +134,7 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
     else {
       return Padding(padding: EdgeInsets.all(32), child:
         Center(child:
-          Text(Localization().getStringEx('panel.guide_categories.label.content.empty', 'Empty guide content'), style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"))
+          Text(Localization().getStringEx('panel.guide_categories.label.content.empty', 'Empty guide content'), style: Styles().textStyles.getTextStyle("widget.message.regular.fat"))
         ,)
       );
     }
@@ -148,7 +148,7 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
       Semantics(hint: "Heading", child:
         Row(children: [
           Expanded(child:
-            Text(category, style: Styles().textStyles?.getTextStyle("widget.title.large.fat"))
+            Text(category, style: Styles().textStyles.getTextStyle("widget.title.large.fat"))
           ),
           ],),
         )
@@ -159,14 +159,14 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
   Widget _buildEntry(GuideSection section, { String? category }) {
     return GestureDetector(onTap: () => _onTapSection(section, category: category), child:
       Padding(padding: EdgeInsets.only(left:16, right: 16, top: 4), child:
-        Container(color: Styles().colors!.fillColorPrimary, child:
+        Container(color: Styles().colors.fillColorPrimary, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
             Semantics(button: true, child:
               Row(children: [
                 Expanded(child:
-                  Text(section.name ?? '', style: Styles().textStyles?.getTextStyle("widget.title.light.regular.fat"))
+                  Text(section.name ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"))
                 ),
-                Styles().images?.getImage('chevron-right-white', excludeFromSemantics: true) ?? Container(),
+                Styles().images.getImage('chevron-right-white', excludeFromSemantics: true) ?? Container(),
             ],)),
           ),
         ),

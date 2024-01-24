@@ -48,7 +48,7 @@ class _AthleticsTeamsPanelState extends State<AthleticsTeamsPanel> {
             ),
           ]),
         ),
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         bottomNavigationBar: uiuc.TabBar(),
         );
   }

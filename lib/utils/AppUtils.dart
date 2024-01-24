@@ -32,7 +32,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class AppAlert {
   
-  static Future<bool?> showDialogResult(BuildContext context, String? message, { String? buttonTitle }) async {
+  static Future<bool?> showDialogResult(BuildContext context, String? message, { String? buttonTitle, Function? onConfirm}) async {
     return await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -45,6 +45,7 @@ class AppAlert {
                 onPressed: () {
                   Analytics().logAlert(text: message, selection: displayButtonTitle);
                   Navigator.pop(context, true);
+                  onConfirm?.call();
                 }
             ) //return dismissed 'true'
           ],
@@ -68,7 +69,7 @@ class AppAlert {
     return showDialog(context: context, builder: (context) {
       return AlertDialog(
         content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.medium")),
+          Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.medium")),
           Container(height:16),
           Text(message!, textAlign: TextAlign.center,),
         ],),
@@ -107,13 +108,13 @@ class AppAlert {
   static Future<void> showPopup(BuildContext context, String? message) async {
     return showDialog(context: context, builder: (context) {
       return AlertDialog(contentPadding: EdgeInsets.zero, content:
-        Container(decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)), child:
+        Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)), child:
           Stack(alignment: Alignment.center, children: [
             Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32), child:
               Column(mainAxisSize: MainAxisSize.min, children: [
-                Styles().images?.getImage('university-logo', excludeFromSemantics: true) ?? Container(),
+                Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container(),
                 Padding(padding: EdgeInsets.only(top: 18), child:
-                  Text(message ?? '', textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.small"))
+                  Text(message ?? '', textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle("widget.detail.small"))
                 ),
               ])
             ),
@@ -124,7 +125,7 @@ class AppAlert {
                   Navigator.of(context).pop();
                   }, child:
                   Padding(padding: EdgeInsets.all(16), child:
-                    Styles().images?.getImage('close', excludeFromSemantics: true)
+                    Styles().images.getImage('close', excludeFromSemantics: true)
                   )
                 )
               )
@@ -223,8 +224,8 @@ class AppSemantics {
     //                       "<",
     //                       semanticsLabel: "",
     //                       style: TextStyle(
-    //                         color : Styles().colors!.fillColorPrimary,
-    //                         fontFamily: Styles().fontFamilies!.bold,
+    //                         color : Styles().colors.fillColorPrimary,
+    //                         fontFamily: Styles().fontFamilies.bold,
     //                         fontSize: 26,
     //                       ),),)
     //               )
@@ -243,8 +244,8 @@ class AppSemantics {
     //                       ">",
     //                       semanticsLabel: "",
     //                       style: TextStyle(
-    //                         color : Styles().colors!.fillColorPrimary,
-    //                         fontFamily: Styles().fontFamilies!.bold,
+    //                         color : Styles().colors.fillColorPrimary,
+    //                         fontFamily: Styles().fontFamilies.bold,
     //                         fontSize: 26,
     //                       ),),)
     //               )
@@ -315,7 +316,7 @@ class AppDateTimeUtils {
     if (dateTimeUtc != null && !allDay!) {
       DateTime dateTimeToCompare = _getDateTimeToCompare(dateTimeUtc: dateTimeUtc, considerSettingsDisplayTime: considerSettingsDisplayTime)!;
       String format = (dateTimeToCompare.minute == 0) ? 'ha' : 'h:mma';
-      timeToString = AppDateTime().formatDateTime(dateTimeToCompare, format: format, ignoreTimeZone: true, showTzSuffix: !AppDateTime().useDeviceLocalTimeZone);
+      timeToString = AppDateTime().formatDateTime(dateTimeToCompare, format: format, ignoreTimeZone: true, showTzSuffix: !AppDateTime().useDeviceLocalTimeZone)?.toLowerCase();
     }
     return timeToString;
   }

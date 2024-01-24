@@ -27,13 +27,11 @@ class Event2SetupSponsorshipAndContactsPanel extends StatefulWidget {
 class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSponsorshipAndContactsPanel>  {
 
   final TextEditingController _sponsorController = TextEditingController();
-  final TextEditingController _speakerController = TextEditingController();
   late List<Event2Contact> _contacts;
 
   @override
   void initState() {
     _sponsorController.text = widget.details?.sponsor ?? '';
-    _speakerController.text = widget.details?.speaker ?? '';
     _contacts = ListUtils.from(widget.details?.contacts) ?? <Event2Contact>[];
     super.initState();
   }
@@ -41,12 +39,13 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
   @override
   void dispose() {
     _sponsorController.dispose();
-    _speakerController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // TBD: Replace with PopScope
+    // ignore: deprecated_member_use
     return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBack), child: Platform.isIOS ?
       BackGestureDetector(onBack: _onHeaderBack, child:
         _buildScaffoldContent(),
@@ -56,9 +55,9 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
   }
 
   Widget _buildScaffoldContent() => Scaffold(
-    appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.sponsorship_and_contacts.header.title", "Sponsorship And Contacts"), onLeading: _onHeaderBack,),
+    appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.sponsorship_and_contacts.header.title", "Event Host Details"), onLeading: _onHeaderBack,),
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors!.white,
+    backgroundColor: Styles().colors.white,
   );
 
   Widget _buildPanelContent() {
@@ -68,9 +67,6 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
               _buildSponsorSection()
-            ),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-              _buildSpeakerSection()
             ),
             _buildContactsSection(),
           ]),
@@ -82,16 +78,8 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
   // Sponsor
   
   Widget _buildSponsorSection() => Event2CreatePanel.buildSectionWidget(
-    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.sponsorship_and_contacts.sponsor.label.title', 'SPONSOR')),
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.sponsorship_and_contacts.sponsor.label.title', 'EVENT HOST')),
     body: Event2CreatePanel.buildTextEditWidget(_sponsorController, keyboardType: TextInputType.text),
-  );
-
-  // Speaker
-
-  Widget _buildSpeakerSection() => Event2CreatePanel.buildSectionWidget(
-    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.sponsorship_and_contacts.speaker.label.title', 'SPEAKER')),
-    body: Event2CreatePanel.buildTextEditWidget(_speakerController, keyboardType: TextInputType.text),
-    padding: EdgeInsets.zero
   );
 
   // Contacts
@@ -141,7 +129,7 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
 
   Widget _buildEmptyContactsContent() => 
     Text(Localization().getStringEx('panel.event2.setup.sponsorship_and_contacts.contacts.label.empty.title', 'No contacts defined yet.'), style:
-      Styles().textStyles?.getTextStyle('widget.description.regular'),);
+      Styles().textStyles.getTextStyle('widget.description.regular'),);
 
   Widget _buildContactsList() {
     List<Widget> contentList = <Widget>[];
@@ -201,7 +189,6 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
     Analytics().logSelect(target: 'HeaderBar: Back');
     Navigator.of(context).pop(Event2SponsorshipAndContactsDetails(
       sponsor: Event2CreatePanel.textFieldValue(_sponsorController),
-      speaker: Event2CreatePanel.textFieldValue(_speakerController),
       contacts: _contacts.isNotEmpty ? _contacts : null,
     ));
   }
@@ -210,10 +197,9 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
 
 class Event2SponsorshipAndContactsDetails {
   final String? sponsor;
-  final String? speaker;
   final List<Event2Contact>? contacts;
 
-  Event2SponsorshipAndContactsDetails({this.sponsor, this.speaker, this.contacts});
+  Event2SponsorshipAndContactsDetails({this.sponsor, this.contacts});
 }
 
 class _Event2ContactCard extends StatelessWidget {
@@ -230,7 +216,7 @@ class _Event2ContactCard extends StatelessWidget {
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Expanded(child:
           Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
-            Text(contact.fullName, style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), overflow: TextOverflow.ellipsis, maxLines: 2,)
+            Text(contact.fullName, style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'), overflow: TextOverflow.ellipsis, maxLines: 2,)
           )
         ),
         _deleteButton
@@ -260,7 +246,7 @@ class _Event2ContactCard extends StatelessWidget {
 
   Widget get _deleteButton => InkWell(onTap: onDelete, child:
     Padding(padding: EdgeInsets.all(16), child:
-      Styles().images?.getImage('trash', excludeFromSemantics: true,)
+      Styles().images.getImage('trash', excludeFromSemantics: true,)
     ),
   );
 
@@ -269,7 +255,7 @@ class _Event2ContactCard extends StatelessWidget {
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6),
   }) =>
     _buildDetailWidget(
-      Text(text, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'), overflow: TextOverflow.ellipsis, maxLines: 1),
+      Text(text, style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular'), overflow: TextOverflow.ellipsis, maxLines: 1),
       iconKey,
       contentPadding: contentPadding,
       iconPadding: iconPadding,
@@ -280,7 +266,7 @@ class _Event2ContactCard extends StatelessWidget {
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6),
   }) {
     List<Widget> contentList = <Widget>[];
-    Widget? iconWidget = Styles().images?.getImage(iconKey, excludeFromSemantics: true);
+    Widget? iconWidget = Styles().images.getImage(iconKey, excludeFromSemantics: true);
     if (iconWidget != null) {
       contentList.add(Padding(padding: iconPadding, child:
         iconWidget,

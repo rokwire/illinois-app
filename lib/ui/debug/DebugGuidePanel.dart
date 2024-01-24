@@ -54,7 +54,7 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
           ),
         ],),
       ),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
     );
   }
 
@@ -63,7 +63,7 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
     String contentLabel = (_processingContent != true) ? '$contentSource Content:' : '';
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(padding: EdgeInsets.only(bottom: 4),
-        child: Text(contentLabel, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.fillColorPrimary),),
+        child: Text(contentLabel, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.fillColorPrimary),),
       ),
       Expanded(child:
         Stack(children: <Widget>[
@@ -72,12 +72,12 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
             controller: _contentTextController,
             onChanged: _onTextContentChanged,
             decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-            style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground,),
+            style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground,),
           ),
           Visibility(visible: (_processingContent == true),
             child: Align(alignment: Alignment.center,
               child: SizedBox(height: 32, width: 32,
-                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
               ),
             ),
           ),
@@ -96,7 +96,7 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
         GestureDetector(onTap: _nop,
           child: Container(width: 36, height: 36,
             child: Align(alignment: Alignment.center,
-              child: Styles().images?.getImage('share', excludeFromSemantics: true),
+              child: Styles().images.getImage('share', excludeFromSemantics: true),
             ),
           ),
         ),
@@ -105,7 +105,7 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
         GestureDetector(onTap: _nop,
           child: Container(width: 36, height: 36,
             child: Align(alignment: Alignment.center,
-              child: Text('X', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary,),), // Image.asset('images/icon-refresh.png'),
+              child: Text('X', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.fillColorPrimary,),), // Image.asset('images/icon-refresh.png'),
             ),
           ),
         ),
@@ -121,10 +121,10 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
       Row(children: <Widget>[
         Expanded(child: RoundedButton(
           label: "Init From Assets",
-          textColor: Styles().colors!.surfaceAccent,
-          borderColor: Styles().colors!.surfaceAccent,
-          backgroundColor: Styles().colors!.white,
-          fontFamily: Styles().fontFamilies!.bold,
+          textColor: Styles().colors.surfaceAccent,
+          borderColor: Styles().colors.surfaceAccent,
+          backgroundColor: Styles().colors.white,
+          fontFamily: Styles().fontFamilies.bold,
           fontSize: 16,
           borderWidth: 2,
           onTap:() { _onInitFromAssets();  }
@@ -132,10 +132,10 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
         Container(width: 8,),
         Expanded(child: RoundedButton(
           label: "Init From Net",
-          textColor: Styles().colors!.fillColorPrimary, // Styles().colors!.surfaceAccent,
-          borderColor: Styles().colors!.fillColorSecondary, // Styles().colors!.surfaceAccent,
-          backgroundColor: Styles().colors!.white,
-          fontFamily: Styles().fontFamilies!.bold,
+          textColor: Styles().colors.fillColorPrimary, // Styles().colors.surfaceAccent,
+          borderColor: Styles().colors.fillColorSecondary, // Styles().colors.surfaceAccent,
+          backgroundColor: Styles().colors.white,
+          fontFamily: Styles().fontFamilies.bold,
           fontSize: 16,
           borderWidth: 2,
           onTap:() { _onInitFromNet();  }
@@ -147,10 +147,10 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
       Row(children: <Widget>[
         Expanded(child: RoundedButton(
           label: "Apply",
-          textColor: applyEnabled ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
-          borderColor: applyEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-          backgroundColor: Styles().colors!.white,
-          fontFamily: Styles().fontFamilies!.bold,
+          textColor: applyEnabled ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
+          borderColor: applyEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+          backgroundColor: Styles().colors.white,
+          fontFamily: Styles().fontFamilies.bold,
           fontSize: 16,
           borderWidth: 2,
           onTap:() { _onApply();  }
@@ -158,10 +158,10 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
         Container(width: 8,),
         Expanded(child: RoundedButton(
           label: "Preview",
-          textColor: previewEnabled ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
-          borderColor: previewEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-          backgroundColor: Styles().colors!.white,
-          fontFamily: Styles().fontFamilies!.bold,
+          textColor: previewEnabled ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
+          borderColor: previewEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+          backgroundColor: Styles().colors.white,
+          fontFamily: Styles().fontFamilies.bold,
           fontSize: 16,
           borderWidth: 2,
           onTap:() { _onPreview();  }

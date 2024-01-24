@@ -124,16 +124,16 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         appBar: _headerBar,
         body: Column(children: <Widget>[
           Container(
-            color: _healthScreenerSelected ? Styles().colors?.fillColorPrimaryVariant : Styles().colors?.background,
+            color: _healthScreenerSelected ? Styles().colors.fillColorPrimaryVariant : Styles().colors.background,
             padding: EdgeInsets.only(left: 16, top: 16, right: 16),
             child: Semantics(
               hint:  Localization().getStringEx("dropdown.hint", "DropDown"),
               container: true,
               child: RibbonButton(
-                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
-                  backgroundColor: Styles().colors!.white,
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+                  backgroundColor: Styles().colors.white,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
-                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                   rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
                   label: _getContentLabel(_selectedContent),
                   onTap: _changeSettingsContentValuesVisibility
@@ -149,7 +149,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
             _buildContentValuesContainer()
           ]))
         ]),
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         bottomNavigationBar: _navigationBar);
   }
 
@@ -176,12 +176,12 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
                     _contentValuesVisible = false;
                   });
                 },
-                child: Container(color: Styles().colors!.blackTransparent06))));
+                child: Container(color: Styles().colors.blackTransparent06))));
   }
 
   Widget _buildContentValuesWidget() {
     List<Widget> sectionList = <Widget>[];
-    sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
+    sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
 
     if (CollectionUtils.isNotEmpty(_contentValues)) {
       for (WellnessContent content in _contentValues!) {
@@ -195,8 +195,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
 
   Widget _buildContentItem(WellnessContent contentItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors!.white,
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        backgroundColor: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentItem),
         onTap: () => _onTapContentItem(contentItem));
@@ -305,14 +305,14 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         return WellnessHealthScreenerHomeWidget(_contentScrollController);
       case WellnessContent.podcast:
         String? guideId = _loadWellcomeResourceGuideId('podcast');
-        return (guideId != null) ? GuideDetailWidget(key: _podcastKey, guideEntryId: guideId, headingColor: Styles().colors?.background) : Container();
+        return (guideId != null) ? GuideDetailWidget(key: _podcastKey, guideEntryId: guideId, headingColor: Styles().colors.background) : Container();
       case WellnessContent.resources:
         return WellnessResourcesContentWidget();
       case WellnessContent.mentalHealth:
         return WellnessMentalHealthContentWidget();
       case WellnessContent.struggling:
         String? guideId = _loadWellcomeResourceGuideId('where_to_start');
-        return (guideId != null) ? GuideDetailWidget(key: _strugglingKey, guideEntryId: guideId, headingColor: Styles().colors?.background) : Container();
+        return (guideId != null) ? GuideDetailWidget(key: _strugglingKey, guideEntryId: guideId, headingColor: Styles().colors.background) : Container();
       default:
         return Container();
     }

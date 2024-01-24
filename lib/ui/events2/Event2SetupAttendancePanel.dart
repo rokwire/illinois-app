@@ -16,6 +16,7 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
 
 class Event2SetupAttendancePanel extends StatefulWidget {
   final Event2? event;
@@ -70,6 +71,8 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   @override
   Widget build(BuildContext context) {
+    // TBD: Replace with PopScope
+    // ignore: deprecated_member_use
     return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBarBack), child: Platform.isIOS ?
       BackGestureDetector(onBack: _onHeaderBarBack, child:
         _buildScaffoldContent(),
@@ -81,7 +84,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors!.white,
+    backgroundColor: Styles().colors.white,
   );
 
   Widget _buildPanelContent() {
@@ -93,7 +96,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
               Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildScanSection()),
               Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildManualSection()),
               _isEditing ? _buildAttendanceTakerSection() : Container(),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildAttendanceTakersSection()),
+              _isEditing ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildAttendanceTakersSection()) : Container(),
             ]),
           )
 
@@ -104,7 +107,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   //EdgeInsetsGeometry get _togglePadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 12);
   //EdgeInsetsGeometry get _toggleDescriptionPadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 5);
-  //BoxBorder get _toggleBorder => Border.all(color: Styles().colors!.surfaceAccent!, width: 1);
+  //BoxBorder get _toggleBorder => Border.all(color: Styles().colors.surfaceAccent, width: 1);
   //BorderRadius get _toggleBorderRadius => BorderRadius.all(Radius.circular(4));
 
   // Scan
@@ -119,7 +122,6 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     hint: Localization().getStringEx("panel.event2.setup.attendance.scan.toggle.hint", ""),
     child: ToggleRibbonButton(
       label: Localization().getStringEx("panel.event2.setup.attendance.scan.toggle.title", "Scan Illini ID"),
-      description: Localization().getStringEx("panel.event2.setup.attendance.scan.toggle.description", "Does not require advance registration."),
       toggled: _scanningEnabled,
       onTap: _onTapScan,
       padding: EdgeInsets.zero,
@@ -157,11 +159,10 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     );
 
   Widget _buildManualToggle() => Semantics(toggled: _manualCheckEnabled, excludeSemantics: true, 
-    label: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.title", "Allow manual attendance check"),
+    label: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.title", "Allow manual attendance taking"),
     hint: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.hint", ""),
     child: ToggleRibbonButton(
-      label: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.title", "Allow manual attendance check"),
-      description: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.description", "Requires advance registration."),
+      label: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.title", "Allow manual attendance taking"),
       toggled: _manualCheckEnabled,
       onTap: _onTapManual,
       padding: EdgeInsets.zero,
@@ -197,11 +198,11 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildAttendanceTakerSection() {
     return Padding(padding: Event2CreatePanel.sectionPadding, child:
       Column(children: [
-        Divider(color: Styles().colors?.dividerLineAccent, thickness: 1),
+        Divider(color: Styles().colors.dividerLineAccent, thickness: 1),
         Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
           Event2AttendanceTakerWidget(_event, updateController: _updateController,),
         ),
-        Divider(color: Styles().colors?.dividerLineAccent, thickness: 1),
+        Divider(color: Styles().colors.dividerLineAccent, thickness: 1),
       ],),
     );
   }
@@ -213,30 +214,18 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     body: Event2CreatePanel.buildTextEditWidget(_attendanceTakersController, keyboardType: TextInputType.text, maxLines: null),
     trailing: Column(children: [
       _buildAttendanceTakersHint(),
-      _buildAttendanceTakersInfo(),
     ]),
   );
 
   Widget _buildAttendanceTakersHint() => Padding(padding: EdgeInsets.only(top: 2), child:
     Row(children: [
       Expanded(child:
-        Text(Localization().getStringEx('panel.event2.setup.attendance.takers.label.hint', 'A space or comma separated list of Net IDs.'), style: _infoTextStype,),
+        Text(Localization().getStringEx('panel.event2.setup.attendance.takers.label.hint', 'A space- or comma-separated list of NetIDs.'), style: _infoTextStype,),
       )
     ],),
   );
 
-  Widget _buildAttendanceTakersInfo() => Padding(padding: EdgeInsets.only(top: 12), child:
-    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Styles().images?.getImage('info') ?? Container(),
-      Expanded(child:
-        Padding(padding: EdgeInsets.only(left: 6), child:
-          Text(Localization().getStringEx('panel.event2.setup.attendance.takers.label.info', 'To check in a specific attendee, the individual must be accounted for in your total number of registrants within the Illinois app. No personal attendee information may be entered as part of taking attendance in the Illinois app.'), style: _infoTextStype,)
-        ),
-      ),
-    ],),
-  );
-
-  TextStyle? get _infoTextStype => Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
+  TextStyle? get _infoTextStype => Styles().textStyles.getTextStyle('widget.item.small.thin.italic');
 
   Future<void> _onRefresh() async {
     _updateController.add(Event2AttendanceTakerWidget.notifyRefresh);
@@ -301,8 +290,11 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Event2AttendanceDetails _buildAttendanceDetails() => Event2AttendanceDetails(
       scanningEnabled: _scanningEnabled,
       manualCheckEnabled: _manualCheckEnabled,
-      attendanceTakers: ListUtils.notEmpty(ListUtils.stripEmptyStrings(_attendanceTakersController.text.split(RegExp(r'[\s,;]+')))),
+      attendanceTakers: _buildAttendanceTakers(),
   );
+
+  List<String>? _buildAttendanceTakers() =>
+    ListUtils.notEmpty(ListUtils.stripEmptyStrings(_attendanceTakersController.text.split(RegExp(r'[\s,;]+'))));
 
   void _updateEventAttendanceDetails({required Event2AttendanceDetails attendanceDetails, void Function(bool)? progress, void Function(Event2)? success }) {
     if ((_updatingAttendance != true) && mounted) {
@@ -336,13 +328,56 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     }
   }
 
-  void _onTapApply() {
+  Future<List<String>?> _checkForInvalidAttendanceTakers({void Function(bool)? progress}) async {
+    String? eventId = widget.eventId;
+    List<String>? attendanceTakers = _buildAttendanceTakers();
+    if ((eventId != null) && (attendanceTakers != null) && attendanceTakers.isNotEmpty) {
+      setStateIfMounted(() {
+        if (progress != null) {
+          progress(true);
+        }
+      });
+
+      Event2PersonsResult? persons = await Events2().loadEventPeople(eventId);
+      
+      setStateIfMounted(() {
+        if (progress != null) {
+          progress(false);
+        }
+      });
+
+      Set<String>? registrants = Event2Person.netIdsFromList(persons?.registrants);
+      if ((registrants != null) && registrants.isNotEmpty) {
+        List<String> invalidAttendanceTakers = <String>[];
+        for (String attendanceTaker in attendanceTakers) {
+          if (registrants.contains(attendanceTaker)) {
+            invalidAttendanceTakers.add(attendanceTaker);
+          }
+        }
+        return invalidAttendanceTakers;
+      }
+    }
+    return null;
+  }
+
+  void _onTapApply() async {
     Analytics().logSelect(target: 'HeaderBar: Apply');
-    _updateEventAttendanceDetails(
-      attendanceDetails: _buildAttendanceDetails(),
+    List<String>? invalidAttendanceTakers = await _checkForInvalidAttendanceTakers(
       progress: (bool value) => (_applyProgress = value),
-      success: (Event2 event) => _applyEventDetails(event)
     );
+    if (mounted) {
+      if ((invalidAttendanceTakers != null) && invalidAttendanceTakers.isNotEmpty) {
+        String msg = sprintf(Localization().getStringEx('panel.event2.setup.attendance.takers.duplicated_netids.error.msg', 'Registrants with the following NetIDs cannot be added as attendance takers until they unregister for the event:\n\n %s'), [ invalidAttendanceTakers.join(', ') ]);
+        Event2Popup.showMessage(context, title: Localization().getStringEx("panel.event2.setup.attendance.header.title", "Event Attendance"), message: msg);
+      }
+      else {
+        _updateEventAttendanceDetails(
+            attendanceDetails: _buildAttendanceDetails(),
+            progress: (bool value) => (_applyProgress = value),
+            success: (Event2 event) => _applyEventDetails(event)
+        );
+      }
+    }
   }
 
   void _onHeaderBarBack() {

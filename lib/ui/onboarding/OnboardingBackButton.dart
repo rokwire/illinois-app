@@ -39,7 +39,7 @@ class OnboardingBackButton extends StatelessWidget {
           child: Container(
               height: 32,
               width: 32,
-              child: Styles().images?.getImage(imageKey, excludeFromSemantics: true)
+              child: Styles().images.getImage(imageKey, excludeFromSemantics: true)
           ),
         ),
       )

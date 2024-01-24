@@ -35,7 +35,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
         'panel.onboarding.location.button.dont_allow.title',
         'Not right now');
     return Scaffold(
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         body: SwipeDetector(
             onSwipeLeft: () => _goNext(context),
             onSwipeRight: () => _goBack(context),
@@ -45,7 +45,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                   Column(mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Stack(children: <Widget>[
-                      Styles().images?.getImage(
+                      Styles().images.getImage(
                         'header-location',
                         fit: BoxFit.fitWidth,
                         width: MediaQuery.of(context).size.width,
@@ -70,9 +70,9 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                               child: Text(titleText,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    fontFamily: Styles().fontFamilies!.bold,
+                                    fontFamily: Styles().fontFamilies.bold,
                                     fontSize: 32,
-                                    color: Styles().colors!.fillColorPrimary),
+                                    color: Styles().colors.fillColorPrimary),
                               )),
                         )),
                     Container(
@@ -88,9 +88,9 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                               "Share your location to know what's nearest to you while on campus."),
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontFamily: Styles().fontFamilies!.regular,
+                              fontFamily: Styles().fontFamilies.regular,
                               fontSize: 20,
-                              color: Styles().colors!.fillColorPrimary),
+                              color: Styles().colors.fillColorPrimary),
                         ),
                       )),
                     ]),
@@ -107,9 +107,9 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                       hint: Localization().getStringEx(
                           'panel.onboarding.location.button.allow.hint',
                           ''),
-                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-                      borderColor: Styles().colors!.fillColorSecondary,
-                      backgroundColor: Styles().colors!.background,
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                      borderColor: Styles().colors.fillColorSecondary,
+                      backgroundColor: Styles().colors.background,
                       onTap: () => _requestLocation(context),
                     ),
                     GestureDetector(
@@ -129,11 +129,11 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                               child: Text(
                                 notRightNow,
                                 style: TextStyle(
-                                    fontFamily: Styles().fontFamilies!.medium,
+                                    fontFamily: Styles().fontFamilies.medium,
                                     fontSize: 16,
-                                    color: Styles().colors!.fillColorPrimary,
+                                    color: Styles().colors.fillColorPrimary,
                                     decoration: TextDecoration.underline,
-                                    decorationColor: Styles().colors!.fillColorSecondary,
+                                    decorationColor: Styles().colors.fillColorSecondary,
                                     decorationThickness: 1,
                                     decorationStyle:
                                         TextDecorationStyle.solid),
@@ -186,7 +186,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                 message,
                 textAlign: TextAlign.left,
                 style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.medium,
+                    fontFamily: Styles().fontFamilies.medium,
                     fontSize: 16,
                     color: Colors.black),
               ),
