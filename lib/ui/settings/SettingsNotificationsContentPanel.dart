@@ -122,7 +122,7 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
       FirebaseMessaging.payloadTypePoll,
       FirebaseMessaging.payloadTypeProfileMy,
       FirebaseMessaging.payloadTypeProfileWhoAreYou,
-      FirebaseMessaging.payloadTypeProfilePrivacy,
+      FirebaseMessaging.payloadTypeProfileLogin,
       FirebaseMessaging.payloadTypeSettingsSections,
       FirebaseMessaging.payloadTypeSettingsInterests,
       FirebaseMessaging.payloadTypeSettingsFoodFilters,

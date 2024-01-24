@@ -1734,6 +1734,7 @@
 	"panel.settings.profile.content.profile.label": "我的个人资料",
 	"panel.settings.profile.content.who_are_you.label": "你是誰",
 	"panel.settings.profile.content.privacy.label": "我的应用隐私设置",
+	"panel.settings.profile.content.login.label": "Sign In/Sign Out",
 	"panel.settings.profile.header.profile.label": "个人资料",
 
 	"panel.settings.notifications.content.notifications.all.label": "所有通知",

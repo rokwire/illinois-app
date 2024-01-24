@@ -155,7 +155,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyWellnessToDoItemNotification,
       FirebaseMessaging.notifyProfileMyNotification,
       FirebaseMessaging.notifyProfileWhoAreYouNotification,
-      FirebaseMessaging.notifyProfilePrivacyNotification,
+      FirebaseMessaging.notifyProfileLoginNotification,
       FirebaseMessaging.notifySettingsSectionsNotification,
       FirebaseMessaging.notifySettingsInterestsNotification,
       FirebaseMessaging.notifySettingsFoodFiltersNotification,
@@ -423,8 +423,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyProfileWhoAreYouNotification) {
       _onFirebaseProfileNotification(profileContent: ProfileContent.who_are_you);
     }
-    else if (name == FirebaseMessaging.notifyProfilePrivacyNotification) {
-      _onFirebaseProfileNotification(profileContent: ProfileContent.privacy);
+    else if (name == FirebaseMessaging.notifyProfileLoginNotification) {
+      _onFirebaseProfileNotification(profileContent: ProfileContent.login);
     }
     else if (name == FirebaseMessaging.notifySettingsSectionsNotification) {
       _onFirebaseSettingsNotification(settingsContent: SettingsContent.sections);

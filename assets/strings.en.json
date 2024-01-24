@@ -1748,6 +1748,7 @@
     "panel.settings.profile.content.profile.label": "My Profile",
     "panel.settings.profile.content.who_are_you.label": "Who Are You",
     "panel.settings.profile.content.privacy.label": "My App Privacy Settings",
+    "panel.settings.profile.content.login.label": "Sign In/Sign Out",
     "panel.settings.profile.header.profile.label": "Profile",
 
     "panel.settings.notifications.content.notifications.all.label": "All Notifications",

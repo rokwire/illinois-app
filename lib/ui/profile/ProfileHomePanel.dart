@@ -18,14 +18,14 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/profile/ProfileDetailsPage.dart';
-import 'package:illinois/ui/settings/SettingsPrivacyCenterContentWidget.dart';
+import 'package:illinois/ui/profile/ProfileLoginPage.dart';
 import 'package:illinois/ui/profile/ProfileRolesPage.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum ProfileContent { profile, who_are_you, privacy }
+enum ProfileContent { profile, who_are_you, login }
 
 class ProfileHomePanel extends StatefulWidget {
   static final String routeName = 'settings_profile_content_panel';
@@ -151,13 +151,21 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
 
   Widget _buildContent() {
-    return Stack(children: [Padding(padding: EdgeInsets.all(16), child: _contentWidget), _buildContentValuesContainer()]);
+    return Stack(children: [
+      Padding(padding: EdgeInsets.all(16), child: _contentWidget),
+      _buildContentValuesContainer()
+    ]);
   }
 
   Widget _buildContentValuesContainer() {
-    return Visibility(
-        visible: _contentValuesVisible,
-        child: Positioned.fill(child: Stack(children: <Widget>[_buildContentDismissLayer(), _buildContentValuesWidget()])));
+    return Visibility(visible: _contentValuesVisible, child:
+      Positioned.fill(child:
+        Stack(children: <Widget>[
+          _buildContentDismissLayer(),
+          _buildContentValuesWidget()
+        ])
+      )
+    );
   }
 
   Widget _buildContentDismissLayer() {
@@ -183,7 +191,11 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
         contentList.add(_buildContentItem(contentItem));
       }
     }
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: contentList)));
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      SingleChildScrollView(child:
+        Column(children: contentList)
+      )
+    );
   }
 
   Widget _buildContentItem(ProfileContent contentItem) {
@@ -201,7 +213,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
       _lastSelectedContent = null;
     }
     _selectedContent =
-        widget.content ?? (_lastSelectedContent ?? (Auth2().isLoggedIn ? ProfileContent.profile : ProfileContent.privacy));
+        widget.content ?? (_lastSelectedContent ?? (Auth2().isLoggedIn ? ProfileContent.profile : ProfileContent.login));
   }
 
   void _onTapContentItem(ProfileContent contentItem) {
@@ -223,8 +235,8 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
         return ProfileDetailsPage(parentRouteName: ProfileHomePanel.routeName,);
       case ProfileContent.who_are_you:
         return ProfileRolesPage();
-      case ProfileContent.privacy:
-        return SettingsPrivacyCenterContentWidget();
+      case ProfileContent.login:
+        return ProfileLoginPage();
       default:
         return Container();
     }
@@ -243,8 +255,8 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
         return Localization().getStringEx('panel.settings.profile.content.profile.label', 'My Profile');
       case ProfileContent.who_are_you:
         return Localization().getStringEx('panel.settings.profile.content.who_are_you.label', 'Who Are You');
-      case ProfileContent.privacy:
-        return Localization().getStringEx('panel.settings.profile.content.privacy.label', 'My App Privacy Settings');
+      case ProfileContent.login:
+        return Localization().getStringEx('panel.settings.profile.content.login.label', 'Sign In/Sign Out');
     }
   }
 
@@ -255,7 +267,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     if (name == Auth2.notifyLoginChanged) {
       if ((_selectedContent == ProfileContent.profile) && !Auth2().isLoggedIn) {
         // Do not allow not logged in users to view "Profile" content
-        _selectedContent = _lastSelectedContent = ProfileContent.privacy;
+        _selectedContent = _lastSelectedContent = ProfileContent.login;
       }
       if (mounted) {
         setState(() {});

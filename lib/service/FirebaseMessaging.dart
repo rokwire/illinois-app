@@ -98,7 +98,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyWellnessToDoItemNotification               = "$notifyBase.wellness.to_do";
   static const String notifyProfileMyNotification                      = "$notifyBase.profile.my";
   static const String notifyProfileWhoAreYouNotification               = "$notifyBase.profile.who_are_you";
-  static const String notifyProfilePrivacyNotification                 = "$notifyBase.profile.privacy";
+  static const String notifyProfileLoginNotification                 = "$notifyBase.profile.privacy";
   static const String notifySettingsSectionsNotification               = "$notifyBase.settings.sections";
   static const String notifySettingsInterestsNotification              = "$notifyBase.settings.interests";
   static const String notifySettingsFoodFiltersNotification            = "$notifyBase.settings.food_filters";
@@ -232,7 +232,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypePoll = 'poll';
   static const String payloadTypeProfileMy = 'profile.my';
   static const String payloadTypeProfileWhoAreYou = 'profile.who_are_you';
-  static const String payloadTypeProfilePrivacy = 'profile.privacy';
+  static const String payloadTypeProfileLogin = 'profile.login';
   static const String payloadTypeSettingsSections = 'settings.sections';
   static const String payloadTypeSettingsInterests = 'settings.interests';
   static const String payloadTypeSettingsFoodFilters = 'settings.food_filters';
@@ -519,8 +519,8 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     else if (type == payloadTypeProfileWhoAreYou) {
       NotificationService().notify(notifyProfileWhoAreYouNotification, data);
     }
-    else if (type == payloadTypeProfilePrivacy) {
-      NotificationService().notify(notifyProfilePrivacyNotification, data);
+    else if (type == payloadTypeProfileLogin) {
+      NotificationService().notify(notifyProfileLoginNotification, data);
     }
     else if (type == payloadTypeSettingsSections) {
       NotificationService().notify(notifySettingsSectionsNotification, data);
