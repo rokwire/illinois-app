@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/athletics/AthleticsEventsContentWidget.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDayContentWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsContentWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -242,6 +243,8 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
         return AthleticsEventsContentWidget();
       case AthleticsContent.news:
         return AthleticsNewsContentWidget();
+      case AthleticsContent.game_day:
+        return AthleticsGameDayContentWidget();
       case AthleticsContent.teams:
         return AthleticsTeamsContentWidget();
       default:

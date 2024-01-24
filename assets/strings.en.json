@@ -623,6 +623,9 @@
     "panel.athletics.content.news.empty.message": "There are no news.",
     "panel.athletics.content.news.failed.message": "Failed to load news.",
 
+    "panel.athletics.content.game_day.empty.message": "There are no games today.",
+    "panel.athletics.content.game_day.failed.message": "Failed to load today's games.",
+
     "panel.onboarding.button.continue.title":"Continue",
     "panel.onboarding.button.continue.hint":"",
 
