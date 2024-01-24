@@ -25,17 +25,19 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class SettingsProfileContentPanel extends StatefulWidget {
+enum ProfileContent { profile, who_are_you, privacy }
+
+class ProfileHomePanel extends StatefulWidget {
   static final String routeName = 'settings_profile_content_panel';
 
-  final SettingsProfileContent? content;
+  final ProfileContent? content;
 
-  SettingsProfileContentPanel._({this.content});
+  ProfileHomePanel._({this.content});
 
   @override
-  _SettingsProfileContentPanelState createState() => _SettingsProfileContentPanelState();
+  _ProfileHomePanelState createState() => _ProfileHomePanelState();
 
-  static void present(BuildContext context, {SettingsProfileContent? content}) {
+  static void present(BuildContext context, {ProfileContent? content}) {
     if (ModalRoute.of(context)?.settings.name != routeName) {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
@@ -50,7 +52,7 @@ class SettingsProfileContentPanel extends StatefulWidget {
         constraints: BoxConstraints(maxHeight: height, minHeight: height),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
         builder: (context) {
-          return SettingsProfileContentPanel._(content: content);
+          return ProfileHomePanel._(content: content);
         }
       );
 
@@ -64,9 +66,9 @@ class SettingsProfileContentPanel extends StatefulWidget {
   }
 }
 
-class _SettingsProfileContentPanelState extends State<SettingsProfileContentPanel> implements NotificationsListener {
-  static SettingsProfileContent? _lastSelectedContent;
-  late SettingsProfileContent _selectedContent;
+class _ProfileHomePanelState extends State<ProfileHomePanel> implements NotificationsListener {
+  static ProfileContent? _lastSelectedContent;
+  late ProfileContent _selectedContent;
   bool _contentValuesVisible = false;
 
   @override
@@ -173,8 +175,8 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
   Widget _buildContentValuesWidget() {
     List<Widget> contentList = <Widget>[];
     contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (SettingsProfileContent contentItem in SettingsProfileContent.values) {
-      if ((contentItem == SettingsProfileContent.profile) && !Auth2().isLoggedIn) {
+    for (ProfileContent contentItem in ProfileContent.values) {
+      if ((contentItem == ProfileContent.profile) && !Auth2().isLoggedIn) {
         continue;
       }
       if ((_selectedContent != contentItem)) {
@@ -184,7 +186,7 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: contentList)));
   }
 
-  Widget _buildContentItem(SettingsProfileContent contentItem) {
+  Widget _buildContentItem(ProfileContent contentItem) {
     return RibbonButton(
         backgroundColor: Styles().colors.white,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
@@ -195,14 +197,14 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
 
   void _initInitialContent() {
     // Do not allow not logged in users to view "Profile" content
-    if (!Auth2().isLoggedIn && (_lastSelectedContent == SettingsProfileContent.profile)) {
+    if (!Auth2().isLoggedIn && (_lastSelectedContent == ProfileContent.profile)) {
       _lastSelectedContent = null;
     }
     _selectedContent =
-        widget.content ?? (_lastSelectedContent ?? (Auth2().isLoggedIn ? SettingsProfileContent.profile : SettingsProfileContent.privacy));
+        widget.content ?? (_lastSelectedContent ?? (Auth2().isLoggedIn ? ProfileContent.profile : ProfileContent.privacy));
   }
 
-  void _onTapContentItem(SettingsProfileContent contentItem) {
+  void _onTapContentItem(ProfileContent contentItem) {
     Analytics().logSelect(target: contentItem.toString(), source: widget.runtimeType.toString());
     _selectedContent = _lastSelectedContent = contentItem;
     _changeSettingsContentValuesVisibility();
@@ -217,11 +219,11 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
 
   Widget get _contentWidget {
     switch (_selectedContent) {
-      case SettingsProfileContent.profile:
-        return SettingsPersonalInfoContentWidget(parentRouteName: SettingsProfileContentPanel.routeName,);
-      case SettingsProfileContent.who_are_you:
+      case ProfileContent.profile:
+        return SettingsPersonalInfoContentWidget(parentRouteName: ProfileHomePanel.routeName,);
+      case ProfileContent.who_are_you:
         return SettingsRolesContentWidget();
-      case SettingsProfileContent.privacy:
+      case ProfileContent.privacy:
         return SettingsPrivacyCenterContentWidget();
       default:
         return Container();
@@ -235,13 +237,13 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
 
   // Utilities
 
-  String _getContentLabel(SettingsProfileContent content) {
+  String _getContentLabel(ProfileContent content) {
     switch (content) {
-      case SettingsProfileContent.profile:
+      case ProfileContent.profile:
         return Localization().getStringEx('panel.settings.profile.content.profile.label', 'My Profile');
-      case SettingsProfileContent.who_are_you:
+      case ProfileContent.who_are_you:
         return Localization().getStringEx('panel.settings.profile.content.who_are_you.label', 'Who Are You');
-      case SettingsProfileContent.privacy:
+      case ProfileContent.privacy:
         return Localization().getStringEx('panel.settings.profile.content.privacy.label', 'My App Privacy Settings');
     }
   }
@@ -251,9 +253,9 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
   @override
   void onNotification(String name, param) {
     if (name == Auth2.notifyLoginChanged) {
-      if ((_selectedContent == SettingsProfileContent.profile) && !Auth2().isLoggedIn) {
+      if ((_selectedContent == ProfileContent.profile) && !Auth2().isLoggedIn) {
         // Do not allow not logged in users to view "Profile" content
-        _selectedContent = _lastSelectedContent = SettingsProfileContent.privacy;
+        _selectedContent = _lastSelectedContent = ProfileContent.privacy;
       }
       if (mounted) {
         setState(() {});
@@ -262,5 +264,3 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
   }
   
 }
-
-enum SettingsProfileContent { profile, who_are_you, privacy }

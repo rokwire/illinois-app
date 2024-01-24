@@ -21,7 +21,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/WPGUFMRadio.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
-import 'package:illinois/ui/settings/SettingsProfileContentPanel.dart';
+import 'package:illinois/ui/profile/SettingsProfileContentPanel.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -453,9 +453,9 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 
   void _onTapPersonalInformation() {
     String? currentRouteName = ModalRoute.of(context)?.settings.name;
-    if (currentRouteName != SettingsProfileContentPanel.routeName) {
+    if (currentRouteName != ProfileHomePanel.routeName) {
       Analytics().logSelect(target: "Personal Information");
-      SettingsProfileContentPanel.present(context);
+      ProfileHomePanel.present(context);
     }
   }
 }

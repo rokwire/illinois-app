@@ -37,7 +37,7 @@ import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/polls/PollDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
-import 'package:illinois/ui/settings/SettingsProfileContentPanel.dart';
+import 'package:illinois/ui/profile/SettingsProfileContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
@@ -418,13 +418,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onFirebaseWellnessToDoItemNotification(param);
     }
     else if (name == FirebaseMessaging.notifyProfileMyNotification) {
-      _onFirebaseProfileNotification(profileContent: SettingsProfileContent.profile);
+      _onFirebaseProfileNotification(profileContent: ProfileContent.profile);
     }
     else if (name == FirebaseMessaging.notifyProfileWhoAreYouNotification) {
-      _onFirebaseProfileNotification(profileContent: SettingsProfileContent.who_are_you);
+      _onFirebaseProfileNotification(profileContent: ProfileContent.who_are_you);
     }
     else if (name == FirebaseMessaging.notifyProfilePrivacyNotification) {
-      _onFirebaseProfileNotification(profileContent: SettingsProfileContent.privacy);
+      _onFirebaseProfileNotification(profileContent: ProfileContent.privacy);
     }
     else if (name == FirebaseMessaging.notifySettingsSectionsNotification) {
       _onFirebaseSettingsNotification(settingsContent: SettingsContent.sections);
@@ -1047,8 +1047,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     _onGuideDetail(param);
   }
 
-  void _onFirebaseProfileNotification({required SettingsProfileContent profileContent}) {
-    SettingsProfileContentPanel.present(context, content: profileContent);
+  void _onFirebaseProfileNotification({required ProfileContent profileContent}) {
+    ProfileHomePanel.present(context, content: profileContent);
   }
 
   void _onFirebaseSettingsNotification({required SettingsContent settingsContent}) {
