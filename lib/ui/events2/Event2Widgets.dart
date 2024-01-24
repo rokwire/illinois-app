@@ -837,6 +837,7 @@ class Event2Popup {
   
   static Future<void> showMessage(BuildContext context, { String? title, String? message}) =>
     showDialog(context: context, builder: (BuildContext context) => AlertDialog(
+      surfaceTintColor: Styles().colors.surface,
       content: Column(mainAxisSize: MainAxisSize.min, children: [
         (title != null) ? Text(title, style: Styles().textStyles.getTextStyle("widget.card.title.regular.fat"),) : Container(),
         (message != null) ? Padding(padding: (title != null) ? EdgeInsets.only(top: 12) : EdgeInsets.zero, child:
@@ -867,6 +868,7 @@ class Event2Popup {
     String? negativeButtonTitle, String? negativeAnalyticsTitle,
   }) async {
     return showDialog<bool?>(context: context, builder: (BuildContext context) => AlertDialog(
+      surfaceTintColor: Styles().colors.surface,
       content: Column(mainAxisSize: MainAxisSize.min, children: [
         Text(title, style: Styles().textStyles.getTextStyle("widget.card.title.regular.fat"),),
         (message != null) ? Padding(padding: EdgeInsets.only(top: 12), child:

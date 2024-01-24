@@ -20,12 +20,13 @@ import 'package:sprintf/sprintf.dart';
 
 class Event2SetupAttendancePanel extends StatefulWidget {
   final Event2? event;
-  final Event2AttendanceDetails? attendanceDetails;
-  
-  Event2SetupAttendancePanel({Key? key, this.event, this.attendanceDetails}) : super(key: key);
-  
+  final Event2AttendanceDetails? _attendanceDetails;
+
+  Event2SetupAttendancePanel({ super.key, this.event, Event2AttendanceDetails? attendanceDetails, Event2RegistrationDetails? registrationDetails }) :
+    _attendanceDetails = attendanceDetails;
+
   String? get eventId => event?.id;
-  Event2AttendanceDetails? get details => (eventId != null) ? event?.attendanceDetails : attendanceDetails;
+  Event2AttendanceDetails? get attendanceDetails => (eventId != null) ? event?.attendanceDetails : _attendanceDetails;
 
   @override
   State<StatefulWidget> createState() => _Event2SetupAttendancePanelState();
@@ -56,7 +57,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   @override
   void initState() {
     _event = widget.event;
-    _initDetails(widget.details);
+    _initDetails(widget.attendanceDetails);
     if (_isEditing) {
       _attendanceTakersController.addListener(_checkModified);
     }
