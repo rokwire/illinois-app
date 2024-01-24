@@ -49,7 +49,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class SettingsSectionsContentWidget extends StatefulWidget {
+class SettingsSectionsContentWidget extends StatefulWidget {// TBD REMOVE
 
   @override
   _SettingsSectionsContentWidgetState createState() => _SettingsSectionsContentWidgetState();

@@ -29,6 +29,8 @@ import 'package:illinois/ui/settings/SettingsFoodFiltersContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsICardContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsInterestsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsLanguageContentWidget.dart';
+import 'package:illinois/ui/settings/SettingsNotificationPreferencesContentWidget.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyCenterContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsSectionsContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -40,9 +42,22 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum SettingsContent { sections, interests, food_filters, sports, favorites, assessments, calendar, appointments, i_card, language }
+enum SettingsContent { sections, interests, food_filters, sports, favorites, assessments, calendar, appointments, i_card, language, contact, maps, research, privacy, notifications}
 
 class SettingsHomeContentPanel extends StatefulWidget {
+  static final List<SettingsContent> _dropdownSettings = [ //SettingsContent visible in the dropdown. Some can be accessed only from outside. Example: SettingsHomeContentPanel.present(context, content: SettingsContent.food_filters);
+    SettingsContent.contact,
+    SettingsContent.maps,
+    SettingsContent.appointments,
+    SettingsContent.assessments,
+    SettingsContent.research,
+    SettingsContent.calendar,
+    SettingsContent.language,
+    SettingsContent.privacy,
+    SettingsContent.notifications,
+    SettingsContent.i_card,
+  ];
+
   static final String routeName = 'settings_home_content_panel';
   
   final SettingsContent? content;
@@ -92,7 +107,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
       MobileAccess.notifyMobileStudentIdChanged,
       Localization.notifyLocaleChanged,
     ]);
-    _selectedContent = widget.content ?? (_lastSelectedContent ?? SettingsContent.sections);
+    _selectedContent = widget.content ?? (_lastSelectedContent ?? SettingsContent.contact);
   }
 
   @override
@@ -217,7 +232,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   Widget _buildContentValuesWidget() {
     List<Widget> sectionList = <Widget>[];
     sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (SettingsContent section in SettingsContent.values) {
+    for (SettingsContent section in SettingsHomeContentPanel._dropdownSettings) {
       if ((_selectedContent != section)) {
         // Add i_card content only if icard mobile is available
         if ((section != SettingsContent.i_card) || (MobileAccess().isMobileAccessAvailable)) {
@@ -263,7 +278,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
 
   Widget get _contentWidget {
     switch (_selectedContent) {
-      case SettingsContent.sections:
+      case SettingsContent.sections: //TBD remove and use profile.login instead
         return SettingsSectionsContentWidget();
       case SettingsContent.interests:
         return SettingsInterestsContentWidget();
@@ -274,7 +289,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
       case SettingsContent.calendar:
         return SettingsCalendarContentWidget();
       case SettingsContent.appointments:
-        return SettingsAppointmentsContentWidget();
+        return SettingsAppointmentsContentWidget(); //TBD Update content
       case SettingsContent.favorites:
         return Container();
       case SettingsContent.assessments:
@@ -283,6 +298,19 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
         return SettingsICardContentWidget();
       case SettingsContent.language:
         return SettingsLanguageContentWidget();
+      case SettingsContent.contact:
+        // TBD: New
+        return Container(child: Center(child: Text("TBD"),));
+      case SettingsContent.maps:
+        //TBD: Moved from profile?
+        return Container(child: Center(child: Text("TBD"),));
+      case SettingsContent.research:
+        // TODO: Moved from profile?
+        return Container(child: Center(child: Text("TBD"),));
+      case SettingsContent.privacy:
+        return SettingsPrivacyCenterContentWidget();
+      case SettingsContent.notifications:
+       return SettingsNotificationPreferencesContentWidget();
     }
   }
 
@@ -302,7 +330,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
 
   String _getContentLabel(SettingsContent section) {
     switch (section) {
-      case SettingsContent.sections:
+      case SettingsContent.sections: //TBD remove and use profile.login instead
         return Localization().getStringEx('panel.settings.home.settings.sections.section.label', 'Sign In/Sign Out');
       case SettingsContent.interests:
         return Localization().getStringEx('panel.settings.home.settings.sections.interests.label', 'My Interests');
@@ -313,7 +341,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
       case SettingsContent.calendar:
         return Localization().getStringEx('panel.settings.home.settings.sections.calendar.label', 'Add to My Device\'s Calendar');
       case SettingsContent.appointments:
-        return Localization().getStringEx('panel.settings.home.settings.sections.appointments.label', 'MyMcKinley Appointments');
+        return Localization().getStringEx('panel.settings.home.settings.sections.appointments.label', 'My Success Team & Appointments');
       case SettingsContent.favorites:
         return Localization().getStringEx('panel.settings.home.settings.sections.favorites.label', 'Customize Favorites');
       case SettingsContent.assessments:
@@ -322,6 +350,16 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
         return Localization().getStringEx('panel.settings.home.settings.sections.i_card.label', 'Illini ID');
       case SettingsContent.language:
         return Localization().getStringEx('panel.settings.home.settings.sections.language.label', 'My Language');
+      case SettingsContent.contact:
+        return Localization().getStringEx('panel.settings.home.settings.sections.contact.label', 'Contact Us'); //TBD to localizations
+      case SettingsContent.maps:
+        return Localization().getStringEx('panel.settings.home.settings.sections.maps.label', 'Maps & Wayfinding'); //TBD to localizations
+      case SettingsContent.research:
+        return Localization().getStringEx('panel.settings.home.settings.sections.research.label', 'My Participation in Research'); //TBD to localizations
+      case SettingsContent.privacy:
+        return Localization().getStringEx('panel.settings.home.settings.sections.privacy.label', 'My App Privacy Settings'); //TBD to localizations
+      case SettingsContent.notifications:
+        return Localization().getStringEx('panel.settings.home.settings.sections.notifications.label', 'My Notification Preferences'); //TBD to localizations
     }
   }
 
