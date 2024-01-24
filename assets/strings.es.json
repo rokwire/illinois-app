@@ -276,7 +276,7 @@
     "panel.browse.section.app_help.description": "Mire tutoriales en video y proporcione comentarios sobre su experiencia con la aplicación de {{app_title}}.",
     "panel.browse.section.appointments.title": "Citas",
     "panel.browse.section.appointments.description": "Vea, programe o cancele sus diversas citas en el campus.",
-    "panel.browse.section.athletics.title": "Atletismo",
+    "panel.browse.section.athletics.title": "Los 10 grandes atletismo",
     "panel.browse.section.athletics.description": "Disfrute de sus equipos de atletismo favoritos de {{app_title}} con horarios, actualizaciones en vivo, noticias, listas y más.",
     "panel.browse.section.safer.title": "Acceso al edificio",
     "panel.browse.section.safer.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
@@ -329,11 +329,12 @@
 
     "panel.browse.entry.appointments.appointments.title": "Citas",
 
-    "panel.browse.entry.athletics.sport_events.title": "Eventos del Big 10",
+    "panel.browse.entry.athletics.sport_events.title": "Eventos",
     "panel.browse.entry.athletics.sport_news.title": "Noticias",
+    "panel.browse.entry.athletics.sport_teams.title": "Equipos",
     "panel.browse.entry.athletics.my_athletics.title": "Mis Eventos del Big 10",
-    "panel.browse.entry.athletics.my_news.title": "Mis Noticias del Big 10",
-    "panel.browse.entry.athletics.my_game_day.title": "Mi Día de Juegos",
+    "panel.browse.entry.athletics.my_news.title": "Mis noticias",
+    "panel.browse.entry.athletics.my_game_day.title": "¡Es el día del juego!",
 
     "panel.browse.entry.safer.building_access.title": "Acceso al edificio",
     "panel.browse.entry.safer.test_locations.title": "Ubicaciones de prueba",
@@ -496,7 +497,6 @@
 
     "panel.athletics_teams.header.title": "Equipos",
 
-    "panel.athletics_team.header.title": "Equipo",
     "panel.athletics_team.button.favorite_team.title": "Equipos favoritos",
     "panel.athletics_team.button.favorite_team.hint": "",
     "panel.athletics_team.label.record.title": "Registros",
@@ -596,6 +596,34 @@
     "panel.athletics_news_list.label.filter_by": "Filtrar por",
 
     "panel.athletics_news_article.header.title": "NOTICIAS",
+
+    "panel.athletics.content.home.title.label": "Atletismo",
+    "panel.athletics.content.common.filter.teams.label": "Equipos",
+    "panel.athletics.content.common.filter.label": "Filtrar:",
+    "panel.athletics.content.common.filter.value.none.label": "Ninguno",
+
+    "panel.athletics.content.section.events.label": "10 grandes eventos",
+    "panel.athletics.content.section.game_day.label": "¡Es el día del juego!",
+    "panel.athletics.content.section.my_events.label": "Mis 10 grandes eventos",
+    "panel.athletics.content.section.my_news.label": "Mis noticias",
+    "panel.athletics.content.section.news.label": "10 grandes noticias",
+    "panel.athletics.content.section.teams.label": "10 grandes equipos",
+
+    "panel.athletics.content.events.unknown_error.message": "Se produjo un error desconocido",
+    "panel.athletics.content.events.empty.message": "No hay eventos.",
+
+    "panel.athletics.content.my_teams.header.title": "Mis 10 grandes equipos",
+    "panel.athletics.content.my_teams.all.select.label": "Seleccionar todo",
+    "panel.athletics.content.my_teams.all.clear.label": "Limpiar todo",
+
+    "panel.athletics.content.teams.empty.message": "No hay equipos.",
+    "panel.athletics.content.teams.unknown_error.message": "Se produjo un error desconocido.",
+
+    "panel.athletics.content.news.empty.message": "No hay novedades.",
+    "panel.athletics.content.news.failed.message": "No se pudieron cargar las noticias.",
+
+    "panel.athletics.content.game_day.empty.message": "Hoy no hay juegos.",
+    "panel.athletics.content.game_day.failed.message": "No se pudieron cargar los juegos de hoy.",
 
     "panel.onboarding.button.continue.title":"Continuar",
     "panel.onboarding.button.continue.hint":"",

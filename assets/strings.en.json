@@ -277,7 +277,7 @@
     "panel.browse.section.app_help.description": "Watch video tutorials and provide feedback on your {{app_title}} app experience.",
     "panel.browse.section.appointments.title": "Appointments",
     "panel.browse.section.appointments.description": "View, schedule, or cancel your various appointments around campus.",
-    "panel.browse.section.athletics.title": "Athletics",
+    "panel.browse.section.athletics.title": "Big 10 Athletics",
     "panel.browse.section.athletics.description": "Enjoy your favorite {{app_title}} athletics teams with schedules, live updates, news, rosters, and more.",
     "panel.browse.section.safer.title": "Building Access",
     "panel.browse.section.safer.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
@@ -330,11 +330,12 @@
 
     "panel.browse.entry.appointments.appointments.title": "Appointments",
 
-    "panel.browse.entry.athletics.sport_events.title": "Big 10 Events",
+    "panel.browse.entry.athletics.sport_events.title": "Events",
     "panel.browse.entry.athletics.sport_news.title": "News",
+    "panel.browse.entry.athletics.sport_teams.title": "Teams",
     "panel.browse.entry.athletics.my_athletics.title": "My Big 10 Events",
-    "panel.browse.entry.athletics.my_news.title": "My Big 10 News",
-    "panel.browse.entry.athletics.my_game_day.title": "My Game Day",
+    "panel.browse.entry.athletics.my_news.title": "My News",
+    "panel.browse.entry.athletics.my_game_day.title": "It's Game Day!",
 
     "panel.browse.entry.safer.building_access.title": "Building Access",
     "panel.browse.entry.safer.test_locations.title": "Test Locations",
@@ -497,7 +498,6 @@
 
     "panel.athletics_teams.header.title": "Teams",
 
-    "panel.athletics_team.header.title": "Team",
     "panel.athletics_team.button.favorite_team.title": "Favorite Teams",
     "panel.athletics_team.button.favorite_team.hint": "",
     "panel.athletics_team.label.record.title": "Records",
@@ -597,6 +597,34 @@
     "panel.athletics_news_list.label.filter_by": "Filter by",
 
     "panel.athletics_news_article.header.title": "NEWS",
+
+    "panel.athletics.content.home.title.label": "Athletics",
+    "panel.athletics.content.common.filter.teams.label": "Teams",
+    "panel.athletics.content.common.filter.label": "Filter:",
+    "panel.athletics.content.common.filter.value.none.label": "None",
+
+    "panel.athletics.content.section.events.label": "Big 10 Events",
+    "panel.athletics.content.section.game_day.label": "It's Game Day!",
+    "panel.athletics.content.section.my_events.label": "My Big 10 Events",
+    "panel.athletics.content.section.my_news.label": "My News",
+    "panel.athletics.content.section.news.label": "Big 10 News",
+    "panel.athletics.content.section.teams.label": "Big 10 Teams",
+
+    "panel.athletics.content.events.unknown_error.message": "Unknown Error Occurred",
+    "panel.athletics.content.events.empty.message": "There are no events.",
+
+    "panel.athletics.content.my_teams.header.title": "My Big 10 Teams",
+    "panel.athletics.content.my_teams.all.select.label": "Select All",
+    "panel.athletics.content.my_teams.all.clear.label": "Clear All",
+
+    "panel.athletics.content.teams.empty.message": "There are no teams.",
+    "panel.athletics.content.teams.unknown_error.message": "Unknown Error Occurred.",
+
+    "panel.athletics.content.news.empty.message": "There are no news.",
+    "panel.athletics.content.news.failed.message": "Failed to load news.",
+
+    "panel.athletics.content.game_day.empty.message": "There are no games today.",
+    "panel.athletics.content.game_day.failed.message": "Failed to load today's games.",
 
     "panel.onboarding.button.continue.title":"Continue",
     "panel.onboarding.button.continue.hint":"",

@@ -667,21 +667,12 @@ class Sports with Service implements NotificationsListener {
 
       final response = await Network().get(newsUrl, auth: Auth2());
       String? responseBody = response?.body;
-      if ((response != null) && (response.statusCode == 200)) {
+      int? responseCode = response?.statusCode;
+      if (responseCode == 200) {
         List<dynamic>? jsonData = JsonUtils.decode(responseBody);
-        if (CollectionUtils.isNotEmpty(jsonData)) {
-          List<News> newsList = <News>[];
-          for (dynamic jsonEntry in jsonData!) {
-            News? news = News.fromJson(JsonUtils.mapValue(jsonEntry));
-            if (news != null) {
-              newsList.add(news);
-            }
-          }
-          return newsList;
-        }
+        return News.listFromJson(jsonData);
       } else {
-        Log.e('Failed to load news');
-        Log.e(responseBody);
+        Log.e('Failed to load news. Reason: $responseCode, $responseBody');
       }
     }
     return null;

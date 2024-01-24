@@ -29,6 +29,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
@@ -448,7 +449,7 @@ class ExplorePanelState extends State<ExplorePanel>
   /// Load athletics games if "All Categories" or "Big 10 Athletics" categories are selected
   ///
   bool _shouldLoadGames(Set<String?>? selectedCategories) {
-    return CollectionUtils.isEmpty(selectedCategories) || selectedCategories!.contains('Big 10 Athletics');
+    return CollectionUtils.isEmpty(selectedCategories) || selectedCategories!.contains(Events2.sportEventCategory);
   }
 
   ///
