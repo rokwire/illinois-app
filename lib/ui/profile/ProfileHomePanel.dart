@@ -19,7 +19,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/profile/ProfileDetailsPage.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterContentWidget.dart';
-import 'package:illinois/ui/settings/SettingsRolesContentWidget.dart';
+import 'package:illinois/ui/profile/ProfileRolesPage.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -222,7 +222,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
       case ProfileContent.profile:
         return ProfileDetailsPage(parentRouteName: ProfileHomePanel.routeName,);
       case ProfileContent.who_are_you:
-        return SettingsRolesContentWidget();
+        return ProfileRolesPage();
       case ProfileContent.privacy:
         return SettingsPrivacyCenterContentWidget();
       default:

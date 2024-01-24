@@ -26,11 +26,11 @@ import 'package:illinois/ui/widgets/RoleGridButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class SettingsRolesContentWidget extends StatefulWidget {
-  _SettingsRolesContentWidgetState createState() => _SettingsRolesContentWidgetState();
+class ProfileRolesPage extends StatefulWidget {
+  _ProfileRolesPageState createState() => _ProfileRolesPageState();
 }
 
-class _SettingsRolesContentWidgetState extends State<SettingsRolesContentWidget> {
+class _ProfileRolesPageState extends State<ProfileRolesPage> {
   Set<UserRole>? _selectedRoles;
 
   Timer? _saveRolesTimer;
