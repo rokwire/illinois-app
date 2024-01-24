@@ -15,6 +15,7 @@ class Content{
   final Reference? reference;
   final List<Content>? linkedContent;
   bool isComplete;
+  bool isExpanded =false;
 
 
   Content({this.id, this.name, this.key, this.courseKey, this.moduleKey, this.unitKey, this.type, this.details, this.reference, this.linkedContent, this.isComplete = false});

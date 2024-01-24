@@ -3,13 +3,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/courses/Content.dart';
 import 'package:illinois/model/courses/Module.dart';
+import 'package:illinois/model/courses/Reference.dart';
 import 'package:illinois/ui/academics/courses/AssignmentPanel.dart';
+import 'package:illinois/ui/academics/courses/ResourcesPanel.dart';
 import 'package:illinois/ui/academics/courses/UnitInfoPanel.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 import '../../model/courses/Course.dart';
 import '../../model/courses/Unit.dart';
+import 'courses/StreakPanel.dart';
 
 
 
@@ -84,6 +87,66 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         details: "Try to nod affirmatively during 3 conversations"
     );
 
+    Reference pdfRef = Reference(
+        name: "PDF",
+        type: "pdf"
+    );
+
+    Content pdfResource = Content(
+        name: "PDF resource",
+        type: "resource",
+        details: "Try to nod affirmatively during 3 conversations",
+        reference: pdfRef
+    );
+
+    Reference textRef = Reference(
+        name: "text",
+        type: "text"
+    );
+
+    Content textResource = Content(
+        name: "Text resource",
+        type: "resource",
+        details: "text",
+        reference: textRef
+    );
+
+    Reference linkRef = Reference(
+        name: "External Link Reference",
+        type: "link"
+    );
+
+    Content linkResource = Content(
+        name: "External link resource",
+        type: "resource",
+        details: "text",
+        reference: linkRef
+    );
+
+    Reference ppRef = Reference(
+        name: "External Link Reference",
+        type: "powerpoint"
+    );
+
+    Content ppResource = Content(
+        name: "Power Point resource",
+        type: "resource",
+        details: "text",
+        reference: ppRef
+    );
+
+    Reference vidRef = Reference(
+        name: "External Link Reference",
+        type: "video"
+    );
+
+    Content videoResource = Content(
+        name: "Video resource",
+        type: "resource",
+        details: "text",
+        reference: vidRef
+    );
+
     List<Content>? contentList = <Content>[];
     contentList.add(skillsHelpContent);
     contentList.add(skillsHelpInfoVideoContent);
@@ -93,7 +156,11 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     contentList.add(lesson4);
     contentList.add(lesson5);
     contentList.add(lesson6);
-
+    contentList.add(pdfResource);
+    contentList.add(textResource);
+    contentList.add(linkResource);
+    contentList.add(ppResource);
+    contentList.add(videoResource);
 
     Unit unit1 = Unit(
       name: "The physical side of communication",
@@ -348,7 +415,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   List<Widget> _buildModuleUnitWidgets(Color? color, Color? colorAccent, int moduleNumber){
     List<Widget> moduleUnitWidgets = <Widget>[];
     for(int i =0; i<(_course.modules?[moduleNumber].units?.length ?? 0); i++ ){
-      moduleUnitWidgets.add(_buildUnitInfoWidget(color, colorAccent, i, moduleNumber));
+      moduleUnitWidgets.add(_buildUnitInfoWidget(color, colorAccent, i, moduleNumber, _course.modules?[moduleNumber].units?[i]));
       moduleUnitWidgets.add(Container(height: 16,));
       moduleUnitWidgets.add(_buildUnitHelpButtons(_course.modules?[moduleNumber].units?[i].contentItems ?? <Content>[], color, colorAccent));
       //TODO delete below checkmark widget only after integration
@@ -379,7 +446,6 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
               // elevated button
               child: ElevatedButton(
                 onPressed: () {
-
                   Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentPanel(content: contentList[i], color: color, colorAccent:colorAccent, isActivityComplete: true, helpContent: helpContent,)));
                 },
                 // icon of the button
@@ -475,7 +541,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     return unitWidgets;
   }
 
-  Widget _buildUnitInfoWidget(Color? color, Color? colorAccent, int unitNumber, int moduleNumber){
+  Widget _buildUnitInfoWidget(Color? color, Color? colorAccent, int unitNumber, int moduleNumber, Unit? unit){
     return Container(
       color: colorAccent,
       child: Row(
@@ -504,7 +570,13 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                   padding: EdgeInsets.only(top: 4),
                   child: ElevatedButton(
                     onPressed: () {
-
+                      List<Content>? resourceContentItems = <Content>[];
+                      for(int i = 0; i < (unit?.contentItems?.length ?? 0); i++){
+                        if(unit?.contentItems?[i].type == "resource"){
+                          resourceContentItems.add(unit!.contentItems![i]);
+                        }
+                      }
+                      Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourcesPanel( color: color, colorAccent:colorAccent, unitNumber: unitNumber, contentItems: resourceContentItems, unitName: unit?.name ?? "no name")));
                     },
                     // icon of the button
                     child: Icon(
@@ -546,7 +618,13 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             size: 30.0,
           ),
           Container(width: 8,),
-          Text('2 Day Streak!',style: Styles().textStyles!.getTextStyle("widget.title.light.small.fat"),),
+          TextButton(
+            onPressed: () {
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => StreakPanel()));
+            },
+            child: Text('2 Day Streak!',style: Styles().textStyles!.getTextStyle("widget.title.light.small.fat"),),
+          ),
+
         ],
       ),
     );
