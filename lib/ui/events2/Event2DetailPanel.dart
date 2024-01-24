@@ -1072,12 +1072,12 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onSettingSurvey(){
     Analytics().logSelect(target: "Event Survey");
-    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(
+    Event2SetupSurveyPanel.push(context,
       surveyParam: Event2SetupSurveyParam(
         event: _event,
         survey: _survey,
       ),
-    ))).then((Event2SetupSurveyParam? surveyParam) {
+    ).then((Event2SetupSurveyParam? surveyParam) {
       if (surveyParam != null) {
         setStateIfMounted(() {
           if (surveyParam.event != null) {

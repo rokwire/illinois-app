@@ -276,7 +276,7 @@
 	"panel.browse.section.app_help.description": "觀看視頻教程並就您的{{app_title}}應用體驗提供反饋。",
 	"panel.browse.section.appointments.title": "約會",
 	"panel.browse.section.appointments.description": "查看、安排或取消您在校園內的各種約會。",
-	"panel.browse.section.athletics.title": "競技",
+	"panel.browse.section.athletics.title": "十大田徑運動",
 	"panel.browse.section.athletics.description": "享受您最喜愛的{{app_title}}田徑隊的賽程、實時更新、新聞、名冊等。",
 	"panel.browse.section.safer.title": "建築物訪問",
 	"panel.browse.section.safer.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
@@ -329,11 +329,12 @@
 
 	"panel.browse.entry.appointments.appointments.title": "約會",
 
-	"panel.browse.entry.athletics.sport_events.title": "Big 10 Events",
+	"panel.browse.entry.athletics.sport_events.title": "活動",
 	"panel.browse.entry.athletics.sport_news.title": "消息",
+	"panel.browse.entry.athletics.sport_teams.title": "團隊",
 	"panel.browse.entry.athletics.my_athletics.title": "My Big 10 Events",
-	"panel.browse.entry.athletics.my_news.title": "My Big 10 News",
-	"panel.browse.entry.athletics.my_game_day.title": "My Game Day",
+	"panel.browse.entry.athletics.my_news.title": "我的消息",
+	"panel.browse.entry.athletics.my_game_day.title": "今天是比賽日！",
 
 	"panel.browse.entry.safer.building_access.title": "建築物訪問",
 	"panel.browse.entry.safer.test_locations.title": "測試地點",
@@ -496,7 +497,6 @@
 
 	"panel.athletics_teams.header.title":"队伍",
 
-	"panel.athletics_team.header.title":"队伍",
 	"panel.athletics_team.button.favorite_team.title":"收藏团队",
 	"panel.athletics_team.button.favorite_team.hint":"",
 	"panel.athletics_team.label.record.title":"记录",
@@ -596,6 +596,34 @@
 	"panel.athletics_news_list.label.filter_by":"筛选",
 
 	"panel.athletics_news_article.header.title":"新闻",
+
+	"panel.athletics.content.home.title.label": "競技",
+	"panel.athletics.content.common.filter.teams.label": "團隊",
+	"panel.athletics.content.common.filter.label": "篩選：",
+	"panel.athletics.content.common.filter.value.none.label": "沒有任何",
+
+	"panel.athletics.content.section.events.label": "十大活動",
+	"panel.athletics.content.section.game_day.label": "今天是比賽日！",
+	"panel.athletics.content.section.my_events.label": "我的十大事件",
+	"panel.athletics.content.section.my_news.label": "我的消息",
+	"panel.athletics.content.section.news.label": "十大新聞",
+	"panel.athletics.content.section.teams.label": "十大球隊",
+
+	"panel.athletics.content.events.unknown_error.message": "發生未知錯誤",
+	"panel.athletics.content.events.empty.message": "沒有事件。",
+
+	"panel.athletics.content.my_teams.header.title": "我的十大團隊",
+	"panel.athletics.content.my_teams.all.select.label": "全選",
+	"panel.athletics.content.my_teams.all.clear.label": "全部清除",
+
+	"panel.athletics.content.teams.empty.message": "沒有團隊。",
+	"panel.athletics.content.teams.unknown_error.message": "發生未知錯誤。",
+
+	"panel.athletics.content.news.empty.message": "目前還沒有消息。",
+	"panel.athletics.content.news.failed.message": "加載新聞失敗。",
+
+	"panel.athletics.content.game_day.empty.message": "今天沒有比賽。",
+	"panel.athletics.content.game_day.failed.message": "無法載入今天的遊戲。",
 
 	"panel.onboarding.button.continue.title":"继续",
 	"panel.onboarding.button.continue.hint":"",
@@ -1193,6 +1221,8 @@
 	"panel.event2.create.button.sponsorship_and_contacts.label.sponsor": "Event Host: ",
 	"panel.event2.create.button.sponsorship_and_contacts.label.speaker": "演讲人： ",
 	"panel.event2.create.button.sponsorship_and_contacts.label.contacts": "联络信息： ",
+	"panel.event2.create.button.groups.title": "EVENT GROUPS",
+ 	"panel.event2.create.button.groups.description": "Publish your events in group(s) that you administer.",
 	"panel.event2.create.button.survey.title": "关注未来活动信息",
 	"panel.event2.create.button.survey.description": "活动意见反馈。",
 	"panel.event2.create.button.survey.confirmation": "活动意见问卷。",
@@ -1207,7 +1237,7 @@
 	"panel.event2.create.location.longitude.title": "目的地座标经度",
 	"panel.event2.create.location.button.select.title": "在地图上选择地点",
 	"panel.event2.create.location.button.select.hint": "",
-	"panel.event2.create.free.toggle.title": "是免费活动吗？",
+	"panel.event2.create.free.toggle.title": "List event as free",
 	"panel.event2.create.free.toggle.hint": "",
 	"panel.event2.create.label.cost.title": "成本细节信息",
 	"panel.event2.create.label.cost.description": " (eg: $10, 建议捐款额)",
@@ -1257,7 +1287,7 @@
 	"panel.event2.setup.registration.require.toggle.title": "必须透过应用程序注册",
 	"panel.event2.setup.registration.require.toggle.hint": "",
 	"panel.event2.setup.registration.capacity.label.title": "活动规模",
-	"panel.event2.setup.registration.registrants.label.title": "新增NetIDs至与会人名单",
+	"panel.event2.setup.registration.registrants.label.title": "ADD AND REGISTER NETID(S)",
 	"panel.event2.setup.registration.registrants.label.hint": "逗号或空白分开的NetIDs名单。",
 	"panel.event2.setup.registration.label.label.title": "添加注册标记",
 	"panel.event2.setup.registration.link.label.title": "添加外部连结",
@@ -1282,7 +1312,8 @@
 	"panel.event2.setup.survey.hours.title": "请问需要在活动结束后多少小时之前发送问卷？",
 	"panel.event2.setup.survey.survey.title": "问卷",
 	"panel.event2.setup.survey.preview.title": "预览问卷",
-	"panel.event2.setup.survey.preview.subtitle": "选填：通过填写以下示例尝试这份问卷。",
+	"panel.event2.setup.survey.preview.subtitle": "Try out the survey by filling out a sample.",
+	"panel.event2.setup.survey.preview.headerbar.title": "{{survey_title}} Preview",
 	"panel.event2.setup.survey.preview.continue.message": "感谢您测试您的活动会后问卷。问卷将被提交，您之后可以在活动管理员的设定选项里浏览其结果。",
 	"panel.event2.setup.survey.apply.button": "申请",
 	"panel.event2.setup.survey.hours.invalid.msg": "请填入大于零的数字",
@@ -1315,6 +1346,10 @@
 	"panel.event2.setup.sponsorship_and_contacts.contacts.button.create.hint": "请点选建立新的联络信息",
 	"panel.event2.setup.sponsorship_and_contacts.contacts.label.empty.title": "尚无联络信息。",
 	"panel.event2.setup.sponsorship_and_contacts.contacts.prompt.confirm.delete.title": "删除联络信息 {{name}}？ 。",
+
+	"panel.event2.setup.groups.header.title": "Select Groups",
+	"panel.event2.setup.groups.content.failed": "Failed to load user's groups",
+	"panel.event2.setup.groups.content.empty": "There are no user's groups",
 
 	"panel.event2.setup.contact.header.title": "活动主要联络人信息",
 	"panel.event2.setup.contact.first_name.label.title": "名字",
@@ -1386,7 +1421,7 @@
 	"panel.event2.detail.attendance.attendees.empty.text": "尚未有使用者注册或参加此活动。",
 	"panel.event2.detail.attendance.attendees.failed.text": "无法加载活动与会人员名单。",
 	"panel.event2.detail.attendance.scan.button": "扫描Illini ID",
-	"panel.event2.detail.attendance.manual.netid.label": "新增NetID至与会人名单A：",
+	"panel.event2.detail.attendance.manual.netid.label": "Add NetID(s) as attended:",
 	"panel.event2.detail.attendance.message.not_available.title": "无法提供",
 	"panel.event2.detail.attendance.manual_check.disabled": "此活动无法使用人工签到。",
 	"panel.event2.detail.attendance.scan.disabled": "此活动无法扫描Illini ID。",

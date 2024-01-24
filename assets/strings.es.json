@@ -276,7 +276,7 @@
     "panel.browse.section.app_help.description": "Mire tutoriales en video y proporcione comentarios sobre su experiencia con la aplicación de {{app_title}}.",
     "panel.browse.section.appointments.title": "Citas",
     "panel.browse.section.appointments.description": "Vea, programe o cancele sus diversas citas en el campus.",
-    "panel.browse.section.athletics.title": "Atletismo",
+    "panel.browse.section.athletics.title": "Los 10 grandes atletismo",
     "panel.browse.section.athletics.description": "Disfrute de sus equipos de atletismo favoritos de {{app_title}} con horarios, actualizaciones en vivo, noticias, listas y más.",
     "panel.browse.section.safer.title": "Acceso al edificio",
     "panel.browse.section.safer.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
@@ -329,11 +329,12 @@
 
     "panel.browse.entry.appointments.appointments.title": "Citas",
 
-    "panel.browse.entry.athletics.sport_events.title": "Eventos del Big 10",
+    "panel.browse.entry.athletics.sport_events.title": "Eventos",
     "panel.browse.entry.athletics.sport_news.title": "Noticias",
+    "panel.browse.entry.athletics.sport_teams.title": "Equipos",
     "panel.browse.entry.athletics.my_athletics.title": "Mis Eventos del Big 10",
-    "panel.browse.entry.athletics.my_news.title": "Mis Noticias del Big 10",
-    "panel.browse.entry.athletics.my_game_day.title": "Mi Día de Juegos",
+    "panel.browse.entry.athletics.my_news.title": "Mis noticias",
+    "panel.browse.entry.athletics.my_game_day.title": "¡Es el día del juego!",
 
     "panel.browse.entry.safer.building_access.title": "Acceso al edificio",
     "panel.browse.entry.safer.test_locations.title": "Ubicaciones de prueba",
@@ -496,7 +497,6 @@
 
     "panel.athletics_teams.header.title": "Equipos",
 
-    "panel.athletics_team.header.title": "Equipo",
     "panel.athletics_team.button.favorite_team.title": "Equipos favoritos",
     "panel.athletics_team.button.favorite_team.hint": "",
     "panel.athletics_team.label.record.title": "Registros",
@@ -596,6 +596,34 @@
     "panel.athletics_news_list.label.filter_by": "Filtrar por",
 
     "panel.athletics_news_article.header.title": "NOTICIAS",
+
+    "panel.athletics.content.home.title.label": "Atletismo",
+    "panel.athletics.content.common.filter.teams.label": "Equipos",
+    "panel.athletics.content.common.filter.label": "Filtrar:",
+    "panel.athletics.content.common.filter.value.none.label": "Ninguno",
+
+    "panel.athletics.content.section.events.label": "10 grandes eventos",
+    "panel.athletics.content.section.game_day.label": "¡Es el día del juego!",
+    "panel.athletics.content.section.my_events.label": "Mis 10 grandes eventos",
+    "panel.athletics.content.section.my_news.label": "Mis noticias",
+    "panel.athletics.content.section.news.label": "10 grandes noticias",
+    "panel.athletics.content.section.teams.label": "10 grandes equipos",
+
+    "panel.athletics.content.events.unknown_error.message": "Se produjo un error desconocido",
+    "panel.athletics.content.events.empty.message": "No hay eventos.",
+
+    "panel.athletics.content.my_teams.header.title": "Mis 10 grandes equipos",
+    "panel.athletics.content.my_teams.all.select.label": "Seleccionar todo",
+    "panel.athletics.content.my_teams.all.clear.label": "Limpiar todo",
+
+    "panel.athletics.content.teams.empty.message": "No hay equipos.",
+    "panel.athletics.content.teams.unknown_error.message": "Se produjo un error desconocido.",
+
+    "panel.athletics.content.news.empty.message": "No hay novedades.",
+    "panel.athletics.content.news.failed.message": "No se pudieron cargar las noticias.",
+
+    "panel.athletics.content.game_day.empty.message": "Hoy no hay juegos.",
+    "panel.athletics.content.game_day.failed.message": "No se pudieron cargar los juegos de hoy.",
 
     "panel.onboarding.button.continue.title":"Continuar",
     "panel.onboarding.button.continue.hint":"",
@@ -1196,6 +1224,8 @@
     "panel.event2.create.button.sponsorship_and_contacts.label.sponsor": "Patrocinador del Evento: ",
     "panel.event2.create.button.sponsorship_and_contacts.label.speaker": "Orador/a: ",
     "panel.event2.create.button.sponsorship_and_contacts.label.contacts": "Contactos: ",
+    "panel.event2.create.button.groups.title": "EVENT GROUPS",
+    "panel.event2.create.button.groups.description": "Publish your events in group(s) that you administer.",
     "panel.event2.create.button.survey.title": "ENCUESTA DE SEGUIMIENTO DEL EVENTO",
     "panel.event2.create.button.survey.description": "Recibe comentarios sobre tu evento.",
     "panel.event2.create.button.survey.confirmation": "La configuración de encuesta de seguimiento.",
@@ -1217,7 +1247,7 @@
     "panel.event2.create.location.longitude.field": "CAMPO DE LA LONGITUD DEL SITIO",
     "panel.event2.create.location.button.select.title": "Elige la Ubicación en un Mapa",
     "panel.event2.create.location.button.select.hint": "",
-    "panel.event2.create.free.toggle.title": "¿Este evento es gratuito?",
+    "panel.event2.create.free.toggle.title": "List event as free",
     "panel.event2.create.free.toggle.hint": "",
     "panel.event2.create.label.cost.title": "DESCRIPCIÓN DEL COSTO",
     "panel.event2.create.label.cost.description": " (p.ej.: $10, donación sugerida)",
@@ -1268,8 +1298,7 @@
     "panel.event2.setup.registration.require.toggle.hint": "",
     "panel.event2.setup.registration.capacity.label.title": "CAPACIDAD DEL EVENTO",
     "panel.event2.setup.registration.capacity.field.label": "EVENT CAPACITY FIELD",
-    "panel.event2.setup.registration.registrants.label.title": "AGREGAR LOS NETID(S) A LA LISTA DE INVITADOS",
-    "panel.event2.setup.registration.registrants.field.label": "ADD NETID(S) TO THE GUEST LIST FIELD",
+    "panel.event2.setup.registration.registrants.label.title": "ADD AND REGISTER NETID(S)",
     "panel.event2.setup.registration.registrants.label.hint": "Una lista de NetIDs separados por espacios o comas.",
     "panel.event2.setup.registration.label.label.title": "AGREGAR UNA ETIQUETA DE REGISTRO",
     "panel.event2.setup.registration.label.field.label": "ADD REGISTRATION LABEL FIELD",
@@ -1295,7 +1324,8 @@
     "panel.event2.setup.survey.has_survey.toggle.title": "ENVIAR LA ENCUESTA DE SEGUIMIENTO",
     "panel.event2.setup.survey.hours.title": "¿Cuántas horas después de finalizar el evento se enviará esta encuesta a los asistentes?",
     "panel.event2.setup.survey.preview.title": "Vista Preliminar de la Encuesta",
-    "panel.event2.setup.survey.preview.subtitle": "Opcional: Prueba la encuesta por llenar el ejemplo a continuación.",
+    "panel.event2.setup.survey.preview.subtitle": "Try out the survey by filling out a sample.",
+    "panel.event2.setup.survey.preview.headerbar.title": "{{survey_title}} Preview",
     "panel.event2.setup.survey.preview.continue.message": "Gracias por probar la encuesta de seguimiento de tu evento. En este punto, la encuesta se enviaría y los resultados estarían disponibles para ver en la configuración de administrador del evento.",
     "panel.event2.setup.survey.survey.title": "ENCUESTA",
     "panel.event2.setup.survey.apply.button": "Aplicar",
@@ -1329,6 +1359,10 @@
     "panel.event2.setup.sponsorship_and_contacts.contacts.button.create.hint": "Toca para crear un contacto",
     "panel.event2.setup.sponsorship_and_contacts.contacts.label.empty.title": "Aún no hay contactos definidos.",
     "panel.event2.setup.sponsorship_and_contacts.contacts.prompt.confirm.delete.title": "¿Quieres eliminar el contacto {{name}}?.",
+
+    "panel.event2.setup.groups.header.title": "Select Groups",
+    "panel.event2.setup.groups.content.failed": "Failed to load user's groups",
+    "panel.event2.setup.groups.content.empty": "There are no user's groups",
 
     "panel.event2.setup.contact.header.title": "Contacto del Evento",
     "panel.event2.setup.contact.first_name.label.title": "NOMBRE",
@@ -1399,7 +1433,7 @@
     "panel.event2.detail.attendance.attendees.capacity.exceeded.text": "Se ha superado la capacidad del evento",
     "panel.event2.detail.attendance.attendees.empty.text": "Aún no hay usuarios registrados ni asistentes a este evento.",
     "panel.event2.detail.attendance.attendees.failed.text": "Error al cargar la lista de asistentes.",
-    "panel.event2.detail.attendance.manual.netid.label": "Agregar NetID a la lista de invitados:",
+    "panel.event2.detail.attendance.manual.netid.label": "Add NetID(s) as attended:",
     "panel.event2.detail.attendance.scan.button": "Escanear la Illini ID",
     "panel.event2.detail.attendance.message.not_available.title": "No disponible",
     "panel.event2.detail.attendance.manual_check.disabled": "La verificación manual no está activada para este evento.",

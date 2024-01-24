@@ -9,9 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
-import 'package:illinois/model/News.dart';
 import 'package:illinois/model/Video.dart';
-import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
@@ -26,8 +24,8 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/academics/AcademicsAppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
+import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
-import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
@@ -548,6 +546,7 @@ class _BrowseEntry extends StatelessWidget {
       case "athletics.sport_events":         _onTapSportEvents(context); break;
       case "athletics.my_athletics":         _onTapMyAthletics(context); break;
       case "athletics.sport_news":           _onTapSportNews(context); break;
+      case "athletics.sport_teams":          _onTapSportTeams(context); break;
       case "athletics.my_news":              _onTapMyNews(context); break;
 
       case "safer.building_access":          _onTapBuildingAccess(context); break;
@@ -785,13 +784,18 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   void _onTapSportEvents(BuildContext context) {
-    Analytics().logSelect(target: "Athletics Events");
-    Event2HomePanel.present(context, attributes: Event2HomePanel.athleticsCategoryAttributes);
+    Analytics().logSelect(target: "Events");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.events)));
   }
 
   void _onTapSportNews(BuildContext context) {
-    Analytics().logSelect(target: "Athletics News");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsListPanel()));
+    Analytics().logSelect(target: "News");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.news)));
+  }
+
+  void _onTapSportTeams(BuildContext context) {
+    Analytics().logSelect(target: "Teams");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.teams)));
   }
 
   void _onTapBuildingAccess(BuildContext context) {
@@ -995,8 +999,8 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   void _onTapMyGameDay(BuildContext context) {
-    Analytics().logSelect(target: "My Game Day");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
+    Analytics().logSelect(target: "It's Game Day");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.game_day)));
   }
 
   void _onTapMyDinings(BuildContext context) {
@@ -1005,13 +1009,13 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   void _onTapMyAthletics(BuildContext context) {
-    Analytics().logSelect(target: "My Athletics");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [Game.favoriteKeyName]); } ));
+    Analytics().logSelect(target: "My Big 10 Events");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.my_events)));
   }
 
   void _onTapMyNews(BuildContext context) {
     Analytics().logSelect(target: "My News");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [News.favoriteKeyName]); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.my_news)));
   }
 
   void _onTapMyLaundry(BuildContext context) {
