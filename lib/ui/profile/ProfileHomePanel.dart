@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileDetailsPage.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
 import 'package:illinois/ui/profile/ProfileRolesPage.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -110,6 +114,13 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
             Padding(padding: EdgeInsets.only(left: 16), child:
               Text(Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),)
             )
+          ),
+          Visibility(visible: (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)), child:
+            InkWell(onTap : _onTapDebug, child:
+              Container(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
+                Styles().images.getImage('bug', excludeFromSemantics: true),
+              ),
+            ),
           ),
           Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
             InkWell(onTap : _onTapClose, child:
@@ -243,6 +254,12 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     }
   }
 
+  void _onTapDebug() {
+    Analytics().logSelect(target: 'Debug', source: widget.runtimeType.toString());
+    if (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
+    }
+  }
   void _onTapClose() {
     Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
     Navigator.of(context).pop();

@@ -2,11 +2,12 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsLinkedAccountPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
@@ -18,6 +19,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -94,6 +96,10 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       else if (code == 'linked') {
         contentList.add(_buildLinked());
       }
+    }
+
+    if (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
+      contentList.add(_buildDebug());
     }
 
     contentList.add(Container(height: 48,),);
@@ -726,6 +732,21 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
   void _onTapAlternatePhone(Auth2Type linked) {
     Analytics().logSelect(target: "Alternate Phone");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedAccountPanel(linkedAccount: linked, mode: LinkAccountMode.phone,)));
+  }
+
+  // Debug
+
+  Widget _buildDebug() => Padding(padding: EdgeInsets.only(top: 24), child:
+    RibbonButton(
+      border: _allBorder,
+      borderRadius: _allRounding,
+      label: Localization().getStringEx("panel.profile_info.button.debug.title", "Debug"),
+      onTap: _onDebugClicked)
+    );
+
+  void _onDebugClicked() {
+    Analytics().logSelect(target: "Debug");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
   }
 
   // App Info
