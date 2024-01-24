@@ -140,7 +140,7 @@ class Event2HomePanel extends StatefulWidget {
 
   static String url = "${DeepLink().appUrl}/events2";
 
-  static Map<String, dynamic> athleticsCategoryAttributes = {'category': 'Big 10 Athletics'};
+  static Map<String, dynamic> athleticsCategoryAttributes = {'category': Events2.sportEventCategory};
 
   static Future<bool> _onTapLinkUrl(BuildContext context, String urlParam) async {
     if (urlParam == url) {

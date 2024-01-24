@@ -277,8 +277,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   }
 
   Map<String, dynamic> _buildQueryAttributes() {
-    //TBD: DD - store Big 10 Athletics category in a single place
-    Map<String, dynamic> attributes = {'category': 'Big 10 Athletics'};
+    Map<String, dynamic> attributes = {'category': Events2.sportEventCategory};
     if (CollectionUtils.isNotEmpty(_teamsFilter)) {
       late dynamic sportAttribute;
       if (_teamsFilter!.length == 1) {
