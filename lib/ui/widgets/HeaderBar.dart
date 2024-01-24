@@ -21,7 +21,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/WPGUFMRadio.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
-import 'package:illinois/ui/profile/SettingsProfileContentPanel.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';

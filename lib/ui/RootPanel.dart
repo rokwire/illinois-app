@@ -37,7 +37,7 @@ import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/polls/PollDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
-import 'package:illinois/ui/profile/SettingsProfileContentPanel.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
