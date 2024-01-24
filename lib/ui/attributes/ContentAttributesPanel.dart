@@ -373,8 +373,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
         ));
       }
       else if (_canClear) {
-        actions.add(RoundedButton(
-          label:  Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
+        actions.add(_buildHeaderBarButton(
+          title:  Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
           onTap: _onTapClear,
         ));
       }

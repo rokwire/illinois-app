@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Fixed Clear header bar button in Content Attributes panel [#3828](https://github.com/rokwire/illinois-app/issues/3828).
+### Changed
+- Implemented various issues for event creation [#3876](https://github.com/rokwire/illinois-app/issues/3876).
+
 ## [5.1.12] - 2024-01-22
 ### Changed
 - Added Clear Attributes button in content attributes panel [#3828](https://github.com/rokwire/illinois-app/issues/3828).
