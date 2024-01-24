@@ -40,15 +40,15 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class SettingsPersonalInfoContentWidget extends StatefulWidget {
+class ProfileDetailsPage extends StatefulWidget {
   final String? parentRouteName;
 
-  SettingsPersonalInfoContentWidget({Key? key, this.parentRouteName}) : super(key: key);
+  ProfileDetailsPage({Key? key, this.parentRouteName}) : super(key: key);
 
-  _SettingsPersonalInfoContentWidgetState createState() => _SettingsPersonalInfoContentWidgetState();
+  _ProfileDetailsPageState createState() => _ProfileDetailsPageState();
 }
 
-class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfoContentWidget> implements NotificationsListener {
+class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements NotificationsListener {
 
   TextEditingController? _nameController;
   TextEditingController? _emailController;

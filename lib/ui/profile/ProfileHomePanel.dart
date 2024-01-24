@@ -17,7 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/ui/settings/SettingsPersonalInfoContentWidget.dart';
+import 'package:illinois/ui/profile/ProfileDetailsPage.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsRolesContentWidget.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -220,7 +220,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   Widget get _contentWidget {
     switch (_selectedContent) {
       case ProfileContent.profile:
-        return SettingsPersonalInfoContentWidget(parentRouteName: ProfileHomePanel.routeName,);
+        return ProfileDetailsPage(parentRouteName: ProfileHomePanel.routeName,);
       case ProfileContent.who_are_you:
         return SettingsRolesContentWidget();
       case ProfileContent.privacy:
