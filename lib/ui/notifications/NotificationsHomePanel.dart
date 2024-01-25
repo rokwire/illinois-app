@@ -19,7 +19,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/ui/notifications/NotificationsInboxPage.dart';
-import 'package:illinois/ui/settings/SettingsNotificationPreferencesContentWidget.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -29,7 +29,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum NotificationsContent { all, unread, preferences }
+enum NotificationsContent { all, unread }
 
 class NotificationsHomePanel extends StatefulWidget {
   static final String routeName = 'settings_notifications_content_panel';
@@ -39,10 +39,10 @@ class NotificationsHomePanel extends StatefulWidget {
   NotificationsHomePanel._({this.content});
 
   static void present(BuildContext context, {NotificationsContent? content}) {
-    if (isInboxContent(content) && Connectivity().isOffline) {
+    if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.inbox', 'Notifications are not available while offline.'));
     }
-    else if (isInboxContent(content) && !Auth2().isOidcLoggedIn) {
+    else if (!Auth2().isOidcLoggedIn) {
       AppAlert.showMessage(context,Localization().getStringEx('panel.browse.label.logged_out.inbox', 'You need to be logged in with your NetID to access Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
     }
     else if (ModalRoute.of(context)?.settings.name != routeName) {
@@ -134,33 +134,41 @@ class NotificationsHomePanel extends StatefulWidget {
     });
   }
 
-  static bool isInboxContent(NotificationsContent? content) {
-    return (content != NotificationsContent.preferences);
-  }
-
   @override
   _NotificationsHomePanelState createState() => _NotificationsHomePanelState();
 }
 
 class _NotificationsHomePanelState extends State<NotificationsHomePanel> implements NotificationsListener {
-  static final double _defaultPadding = 16;
+  late NotificationsContent? _selectedContent;
   static NotificationsContent? _lastSelectedContent;
-  late NotificationsContent _selectedContent;
+  bool _contentValuesVisible = false;
+
   final GlobalKey _allContentKey = GlobalKey();
   final GlobalKey _unreadContentKey = GlobalKey();
   final GlobalKey _sheetHeaderKey = GlobalKey();
   final GlobalKey _contentDropDownKey = GlobalKey();
   double _contentWidgetHeight = 300; // default value
-  bool _contentValuesVisible = false;
+
+  static final double _defaultPadding = 16;
 
   @override
   void initState() {
     NotificationService().subscribe(this, [Auth2.notifyLoginChanged]);
     
-    _initInitialContent();
+    if (_isContentItemEnabled(widget.content)) {
+      _selectedContent = _lastSelectedContent = widget.content;
+    }
+    else if (_isContentItemEnabled(_lastSelectedContent)) {
+      _selectedContent = _lastSelectedContent;
+    }
+    else  {
+      _selectedContent = _initialSelectedContent;
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalContentWidgetHeight();
     });
+
     super.initState();
   }
 
@@ -168,6 +176,15 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
   void dispose() {
     NotificationService().unsubscribe(this);
     super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Auth2.notifyLoginChanged) {
+      _updateContentItemIfNeeded();
+    }
   }
 
   @override
@@ -232,11 +249,11 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
             borderRadius: BorderRadius.all(Radius.circular(5)),
             border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-            label: _getContentLabel(_selectedContent),
+            label: _getContentItemName(_selectedContent),
             onTap: _changeSettingsContentValuesVisibility
           )
         ),
-        Container(height: (_isInboxContent ? _contentWidgetHeight : null), child:
+        Container(height: _contentWidgetHeight, child:
           Stack(children: [
             Padding(padding: EdgeInsets.all(_defaultPadding), child: _contentWidget),
             _buildContentValuesContainer()
@@ -273,10 +290,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
     List<Widget> contentList = <Widget>[];
     contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
     for (NotificationsContent contentItem in NotificationsContent.values) {
-      if (_isInboxContent && !Auth2().isLoggedIn) {
-        continue;
-      }
-      if ((_selectedContent != contentItem)) {
+      if (_isContentItemEnabled(contentItem) && (_selectedContent != contentItem)) {
         contentList.add(_buildContentItem(contentItem));
       }
     }
@@ -288,17 +302,8 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
         backgroundColor: Styles().colors.white,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
-        label: _getContentLabel(contentItem),
+        label: _getContentItemName(contentItem),
         onTap: () => _onTapContentItem(contentItem));
-  }
-
-  void _initInitialContent() {
-    // Do not allow not logged in users to view "Notifications" content
-    if (!Auth2().isLoggedIn && (_lastSelectedContent != NotificationsContent.preferences)) {
-      _lastSelectedContent = null;
-    }
-    _selectedContent = widget.content ??
-        (_lastSelectedContent ?? (Auth2().isLoggedIn ? NotificationsContent.all : NotificationsContent.preferences));
   }
 
   void _onTapContentItem(NotificationsContent contentItem) {
@@ -340,19 +345,6 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
     }
   }
 
-  Widget get _contentWidget {
-    switch (_selectedContent) {
-      case NotificationsContent.all:
-        return NotificationsInboxPage(key: _allContentKey, onTapBanner: _onTapPausedBanner,);
-      case NotificationsContent.unread:
-        return NotificationsInboxPage(unread: true, key: _unreadContentKey, onTapBanner: _onTapPausedBanner);
-      case NotificationsContent.preferences:
-        return SettingsNotificationPreferencesContentWidget();
-    }
-  }
-
-  bool get _isInboxContent => NotificationsHomePanel.isInboxContent(_selectedContent);
-
   void _onTapClose() {
     Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
     Navigator.of(context).pop();
@@ -361,35 +353,53 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
   void _onTapPausedBanner() {
     Analytics().logSelect(target: 'Notifications Paused', source: widget.runtimeType.toString());
     if (mounted) {
-      setState(() {
-        _selectedContent = _lastSelectedContent = NotificationsContent.preferences;
-      });
+      SettingsHomeContentPanel.present(context, content: SettingsContent.notifications);
     }
   }
 
   // Utilities
 
-  String _getContentLabel(NotificationsContent content) {
+  Widget? get _contentWidget {
+    switch (_selectedContent) {
+      case NotificationsContent.all: return NotificationsInboxPage(key: _allContentKey, onTapBanner: _onTapPausedBanner,);
+      case NotificationsContent.unread: return NotificationsInboxPage(unread: true, key: _unreadContentKey, onTapBanner: _onTapPausedBanner);
+      default: return null;
+    }
+  }
+
+  String? _getContentItemName(NotificationsContent? content) {
     switch (content) {
       case NotificationsContent.all: return Localization().getStringEx('panel.settings.notifications.content.notifications.all.label', 'All Notifications');
       case NotificationsContent.unread: return Localization().getStringEx('panel.settings.notifications.content.notifications.unread.label', 'Unread Notifications');
-      case NotificationsContent.preferences: return Localization().getStringEx('panel.settings.notifications.content.preferences.label', 'My Notification Preferences');
+      default: return null;
     }
   }
 
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, param) {
-    if (name == Auth2.notifyLoginChanged) {
-      if ((_selectedContent != NotificationsContent.preferences) && !Auth2().isLoggedIn) {
-        // Do not allow not logged in users to view "Notifications" content
-        _selectedContent = _lastSelectedContent = NotificationsContent.preferences;
-      }
-      if (mounted) {
-        setState(() {});
-      }
+  bool _isContentItemEnabled(NotificationsContent? contentItem) {
+    switch (contentItem) {
+      case NotificationsContent.all: return Auth2().isLoggedIn;
+      case NotificationsContent.unread: return Auth2().isLoggedIn;
+      default: return false;
     }
   }
 
+  NotificationsContent? get _initialSelectedContent {
+    for (NotificationsContent contentItem in NotificationsContent.values) {
+      if (_isContentItemEnabled(contentItem)) {
+        return contentItem;
+      }
+    }
+    return null;
+  }
+
+  void _updateContentItemIfNeeded() {
+    if ((_selectedContent == null) || !_isContentItemEnabled(_selectedContent)) {
+      NotificationsContent? selectedContent = _isContentItemEnabled(_lastSelectedContent) ? _lastSelectedContent : _initialSelectedContent;
+      if ((selectedContent != null) && (selectedContent != _selectedContent) && mounted) {
+        setState(() {
+          _selectedContent = selectedContent;
+        });
+      }
+    }
+  }
 }
