@@ -45,6 +45,20 @@ class Course{
     }
     return courses;
   }
+
+  dynamic searchByKey({String? moduleKey, String? unitKey, String? contentKey}) {
+    if (moduleKey != null) {
+      return modules?.firstWhere((module) => module.key == moduleKey);
+    } else if (unitKey != null || contentKey != null) {
+      for (Module module in modules ?? []) {
+        dynamic item = module.searchByKey(unitKey: unitKey, contentKey: contentKey);
+        if (item != null) {
+          return item;
+        }
+      }
+    }
+    return null;
+  }
 }
 
 class UserCourse {
@@ -131,6 +145,19 @@ class UserCourse {
     json.removeWhere((key, value) => (value == null));
     return json;
   }
+
+  static List<UserCourse> listFromJson(List<dynamic> json) {
+    List<UserCourse> userCourses = [];
+    for (dynamic userCourseJson in json) {
+      if (userCourseJson is Map<String, dynamic>) {
+        UserCourse? userCourse = fromJson(userCourseJson);
+        if (userCourse != null) {
+          userCourses.add(userCourse);
+        }
+      }
+    }
+    return userCourses;
+  }
 }
 
 class Module{
@@ -184,6 +211,20 @@ class Module{
       }
     }
     return jsonList;
+  }
+
+  dynamic searchByKey({String? unitKey, String? contentKey}) {
+    if (unitKey != null) {
+      return units?.firstWhere((unit) => unit.key == unitKey);
+    } else if (contentKey != null) {
+      for (Unit unit in units ?? []) {
+        Content? content = unit.searchByKey(contentKey: contentKey);
+        if (content != null) {
+          return content;
+        }
+      }
+    }
+    return null;
   }
 }
 
@@ -241,6 +282,13 @@ class Unit{
     }
     return jsonList;
   }
+
+  dynamic searchByKey({String? contentKey}) {
+    if (contentKey != null) {
+      return contentItems?.firstWhere((content) => content.key == contentKey);
+    }
+    return null;
+  }
 }
 
 class UserUnit {
@@ -287,17 +335,30 @@ class UserUnit {
     json.removeWhere((key, value) => (value == null));
     return json;
   }
+
+  static List<UserUnit> listFromJson(List<dynamic> json) {
+    List<UserUnit> userUnits = [];
+    for (dynamic userUnitJson in json) {
+      if (userUnitJson is Map<String, dynamic>) {
+        UserUnit? userUnit = fromJson(userUnitJson);
+        if (userUnit != null) {
+          userUnits.add(userUnit);
+        }
+      }
+    }
+    return userUnits;
+  }
 }
 
 class ScheduleItem{
   final String? name;
   final int? duration;
-  final List<UserReference>? userReferences;
+  final List<UserContent>? userContent;
   
   final DateTime? dateStarted;
   final DateTime? dateCompleted;
 
-  ScheduleItem({this.name, this.duration, this.userReferences, this.dateStarted, this.dateCompleted});
+  ScheduleItem({this.name, this.duration, this.userContent, this.dateStarted, this.dateCompleted});
 
   static ScheduleItem? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -306,7 +367,7 @@ class ScheduleItem{
     return ScheduleItem(
       name: JsonUtils.stringValue(json['name']),
       duration: JsonUtils.intValue(json['duration']),
-      userReferences: UserReference.listFromJson(JsonUtils.listValue(json['user_content'])),
+      userContent: UserContent.listFromJson(JsonUtils.listValue(json['user_content'])),
       dateStarted: AppDateTime().dateTimeLocalFromJson(json['date_started']),
       dateCompleted: AppDateTime().dateTimeLocalFromJson(json['date_completed']),
     );
@@ -316,7 +377,7 @@ class ScheduleItem{
     Map<String, dynamic> json = {
       'name': name,
       'duration': duration,
-      'user_content': UserReference.listToJson(userReferences),
+      'user_content': UserContent.listToJson(userContent),
       'date_started': AppDateTime().dateTimeLocalToJson(dateStarted),
       'date_completed': AppDateTime().dateTimeLocalToJson(dateCompleted),
     };
@@ -345,45 +406,47 @@ class ScheduleItem{
     }
     return jsonList;
   }
+
+  bool get isComplete => dateCompleted != null;
 }
 
-class UserReference{
-  final Reference? reference;
+class UserContent{
+  final String? contentKey;
   final Map<String,dynamic>? userData;
 
-  UserReference({this.reference, this.userData,});
+  UserContent({this.contentKey, this.userData,});
 
-  static UserReference? fromJson(Map<String, dynamic>? json) {
+  static UserContent? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
-    return UserReference(
-      reference: Reference.fromJson(JsonUtils.mapValue('reference')),
+    return UserContent(
+      contentKey: JsonUtils.stringValue('content_key'),
       userData: json['user_data'],
     );
   }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {
-      'reference': reference?.toJson(),
+      'content_key': contentKey,
       'user_data': userData,
     };
     json.removeWhere((key, value) => (value == null));
     return json;
   }
 
-  static List<UserReference>? listFromJson(List<dynamic>? jsonList) {
-    List<UserReference>? result;
+  static List<UserContent>? listFromJson(List<dynamic>? jsonList) {
+    List<UserContent>? result;
     if (jsonList != null) {
-      result = <UserReference>[];
+      result = <UserContent>[];
       for (dynamic jsonEntry in jsonList) {
-        ListUtils.add(result, UserReference.fromJson(JsonUtils.mapValue(jsonEntry)));
+        ListUtils.add(result, UserContent.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
   }
 
-  static List<dynamic>? listToJson(List<UserReference>? contentList) {
+  static List<dynamic>? listToJson(List<UserContent>? contentList) {
     List<dynamic>? jsonList;
     if (contentList != null) {
       jsonList = <dynamic>[];
@@ -432,10 +495,8 @@ class Content{
   final String? details;
   final Reference? reference;
   final List<String>? linkedContent;
-  bool isComplete;
 
-
-  Content({this.id, this.name, this.key, this.type, this.details, this.reference, this.linkedContent, this.isComplete = false});
+  Content({this.id, this.name, this.key, this.type, this.details, this.reference, this.linkedContent});
 
   static Content? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -485,5 +546,32 @@ class Content{
       }
     }
     return jsonList;
+  }
+}
+
+// CourseConfig
+
+class CourseConfig {
+  final String? id;
+  final String? courseKey;
+  final int? initialPauses;
+  final int? maxPauses;
+  final int? pauseRewardStreak;
+  final int? streaksProcessTime;
+
+  CourseConfig({this.id, this.courseKey, this.initialPauses, this.maxPauses, this.pauseRewardStreak, this.streaksProcessTime});
+
+  static CourseConfig? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return CourseConfig(
+      id: JsonUtils.stringValue(json['id']),
+      courseKey: JsonUtils.stringValue(json['course_key']),
+      initialPauses: JsonUtils.intValue(json['initial_pauses']),
+      maxPauses: JsonUtils.intValue(json['max_pauses']),
+      pauseRewardStreak: JsonUtils.intValue(json['pause_reward_streak']),
+      streaksProcessTime: JsonUtils.intValue(json['streaks_notifications_config']?['streaks_process_time']),
+    );
   }
 }

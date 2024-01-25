@@ -24,6 +24,7 @@ import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/MobileAccess.dart';
@@ -139,6 +140,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       CheckList(CheckList.giesOnboarding),
       CheckList(CheckList.uiucOnboarding),
       Canvas(),
+      CustomCourses(),
       Rewards(),
       OnCampus(),
       Wellness(),

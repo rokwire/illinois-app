@@ -20,11 +20,9 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -35,12 +33,9 @@ import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class CustomCourses with Service implements NotificationsListener {
-
-  static const String notifyCoursesUpdated  = "edu.illinois.rokwire.canvas.courses.updated";
-
-  static const String _canvasCoursesCacheFileName = "canvasCourses.json";
-
   List<Course>? _courses;
+  late String _timezoneName;
+  late int _timezoneOffset;
 
   DateTime? _pausedDateTime;
   
@@ -63,11 +58,14 @@ class CustomCourses with Service implements NotificationsListener {
     super.createService();
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
-      Auth2.notifyLoginChanged,
-      Connectivity.notifyStatusChanged,
-      Storage.notifySettingChanged,
       DeepLink.notifyUri,
     ]);
+  }
+
+  @override
+  Future<void> initService() async {
+    _getTimezoneInfo();
+    super.initService();
   }
 
   @override
@@ -91,7 +89,7 @@ class CustomCourses with Service implements NotificationsListener {
 
   Future<List<Course>?> loadCourses() async {
     if (_courses == null) {
-      if (Auth2().isLoggedIn &&  _isLmsAvailable) {
+      if (Auth2().isLoggedIn && _isLmsAvailable) {
         String? url = '${Config().lmsUrl}/custom/courses';
         http.Response? response = await Network().get(url, auth: Auth2());
         String? responseString = response?.statusCode == 200 ? response?.body : null;
@@ -111,11 +109,155 @@ class CustomCourses with Service implements NotificationsListener {
     return _courses;
   }
 
-  // UserCourses
+	// UserCourses
 
+  Future<List<UserCourse>?> loadUserCourses({List<String>? ids, List<String>? names, List<String>? keys}) async {
+    if (Auth2().isLoggedIn && _isLmsAvailable) {
+      Map<String, String> queryParams = {};
+      if (CollectionUtils.isNotEmpty(ids)) {
+        queryParams['ids'] = ids!.join(',');
+      }
+      if (CollectionUtils.isNotEmpty(names)) {
+        queryParams['names'] = names!.join(',');
+      }
+      if (CollectionUtils.isNotEmpty(keys)) {
+        queryParams['keys'] = keys!.join(',');
+      }
 
+      String url = '${Config().lmsUrl}/users/courses';
+      if (queryParams.isNotEmpty) {
+        url = UrlUtils.addQueryParameters(url, queryParams);
+      }
+      http.Response? response = await Network().get(url, auth: Auth2());
+      String? responseString = response?.statusCode == 200 ? response?.body : null;
+      List<dynamic>? userCourseList = JsonUtils.decodeList(responseString);
+
+      if (userCourseList != null) {
+        return UserCourse.listFromJson(userCourseList);
+      }
+
+      debugPrint('Failed to load user courses from net. Reason: $url ${response?.statusCode} $responseString');
+    }
+    return null;
+  }
+
+  Future<UserCourse?> loadUserCourse(String key) async {
+    if (Auth2().isLoggedIn && _isLmsAvailable) {
+      String? url = '${Config().lmsUrl}/users/courses/$key';
+      http.Response? response = await Network().get(url, auth: Auth2());
+      String? responseString = response?.statusCode == 200 ? response?.body : null;
+      Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
+      if (responseJson != null) {
+        return UserCourse.fromJson(responseJson);
+      }
+
+      debugPrint('Failed to load user course for key $key from net. Reason: $url ${response?.statusCode} $responseString');
+    }
+    return null;
+  }
+
+  Future<UserCourse?> createUserCourse(String key) async {
+    if (Auth2().isLoggedIn && _isLmsAvailable) {
+      String? url = '${Config().lmsUrl}/users/courses/$key';
+      String? post = JsonUtils.encode({
+        'timezone_name': _timezoneName,
+        'timezone_offset': _timezoneOffset,
+      });
+      http.Response? response = await Network().post(url, auth: Auth2(), body: post);
+      String? responseString = response?.statusCode == 200 ? response?.body : null;
+      Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
+      if (responseJson != null) {
+        return UserCourse.fromJson(responseJson);
+      }
+
+      debugPrint('Failed to create user course for key $key. Reason: $url ${response?.statusCode} $responseString');
+    }
+    return null;
+  }
+
+  Future<bool?> deleteUserCourse(String key) async {
+    if (Auth2().isLoggedIn && _isLmsAvailable) {
+      String? url = '${Config().lmsUrl}/users/courses/$key';
+      http.Response? response = await Network().delete(url, auth: Auth2());
+      if (response?.statusCode == 200) {
+        return true;
+      }
+
+      debugPrint('Failed to delete user course for key $key. Reason: $url ${response?.statusCode} ${response?.body}');
+      return false;
+    }
+    return null;
+  }
+
+  Future<bool?> dropUserCourse(String key) async {
+    if (Auth2().isLoggedIn && _isLmsAvailable) {
+      String? url = '${Config().lmsUrl}/users/courses/$key?drop=true';
+      http.Response? response = await Network().put(url, auth: Auth2());
+      if (response?.statusCode == 200) {
+        return true;
+      }
+
+      debugPrint('Failed to drop user course for key $key. Reason: $url ${response?.statusCode} ${response?.body}');
+      return false;
+    }
+    return null;
+  }
 
   // UserUnits
+
+  Future<Unit?> updateUserCourseProgress(Unit unit, {required String courseKey, required String unitKey}) async {
+    if (Auth2().isLoggedIn && _isLmsAvailable) {
+      String? url = '${Config().lmsUrl}/users/courses/$courseKey/unit/$unitKey';
+      String? post = JsonUtils.encode({
+        'timezone_name': _timezoneName,
+        'timezone_offset': _timezoneOffset,
+        'unit': unit.toJson(),
+      });
+      http.Response? response = await Network().put(url, auth: Auth2(), body: post);
+      String? responseString = response?.statusCode == 200 ? response?.body : null;
+      Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
+      if (responseJson != null) {
+        return Unit.fromJson(responseJson);
+      }
+
+      debugPrint('Failed to update user course progress for course $courseKey unit $unitKey. Reason: $url ${response?.statusCode} $responseString');
+    }
+    return null;
+  }
+
+  Future<List<UserUnit>?> loadUserCourseUnits(String courseKey) async {
+    if (Auth2().isLoggedIn && _isLmsAvailable) {
+      String? url = '${Config().lmsUrl}/users/units/$courseKey';
+      http.Response? response = await Network().get(url, auth: Auth2());
+      String? responseString = response?.statusCode == 200 ? response?.body : null;
+      List<dynamic>? userUnitList = JsonUtils.decodeList(responseString);
+
+      if (userUnitList != null) {
+        return UserUnit.listFromJson(userUnitList);
+      }
+
+      debugPrint('Failed to load user units for course key $courseKey from net. Reason: $url ${response?.statusCode} $responseString');
+    }
+    return null;
+  }
+
+  // CourseConfig
+
+  // use this to load information about rewards, pauses, and task schedule timing
+  Future<CourseConfig?> loadCourseConfig(String key) async {
+    if (Auth2().isLoggedIn && _isLmsAvailable) {
+      String? url = '${Config().lmsUrl}/custom/course-configs/$key';
+      http.Response? response = await Network().get(url, auth: Auth2());
+      String? responseString = response?.statusCode == 200 ? response?.body : null;
+      Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
+      if (responseJson != null) {
+        return CourseConfig.fromJson(responseJson);
+      }
+
+      debugPrint('Failed to load course config for course $key from net. Reason: $url ${response?.statusCode} $responseString');
+    }
+    return null;
+  }
 
   // Event Detail Deep Links
 
@@ -127,34 +269,31 @@ class CustomCourses with Service implements NotificationsListener {
 
   @override
   void onNotification(String name, dynamic param) {
-    // if (name == AppLivecycle.notifyStateChanged) {
-    //   _onAppLivecycleStateChanged(param);
-    // } else if (name == Auth2.notifyLoginChanged) {
-    //   _updateCourses();
-    // } else if (name == Connectivity.notifyStatusChanged) {
-    //   if (Connectivity().isNotOffline) {
-    //     _updateCourses();
-    //   }
-    // } else if (name == Storage.notifySettingChanged) {
-    //   if (param == Storage.debugUseCanvasLmsKey) {
-    //     _updateCourses();
-    //   }
-    // } else if (name == DeepLink.notifyUri) {
+    if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+    // else if (name == DeepLink.notifyUri) {
     //   _onDeepLinkUri(param);
     // }
   }
 
-  // void _onAppLivecycleStateChanged(AppLifecycleState? state) {
-  //   if (state == AppLifecycleState.paused) {
-  //     _pausedDateTime = DateTime.now();
-  //   }
-  //   else if (state == AppLifecycleState.resumed) {
-  //     if (_pausedDateTime != null) {
-  //       Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
-  //       if (Config().refreshTimeout < pausedDuration.inSeconds) {
-  //         _updateCourses();
-  //       }
-  //     }
-  //   }
-  // }
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _getTimezoneInfo();
+        }
+      }
+    }
+  }
+
+  void _getTimezoneInfo() {
+    DateTime now = DateTime.now();
+    _timezoneName = now.timeZoneName;
+    _timezoneOffset = now.timeZoneOffset.inSeconds;
+  }
 }

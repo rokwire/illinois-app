@@ -2,10 +2,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
+import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/ui/academics/courses/AssignmentPanel.dart';
 import 'package:illinois/ui/academics/courses/UnitInfoPanel.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 
 class EssentialSkillsCoachDashboardPanel extends StatefulWidget {
@@ -16,11 +18,12 @@ class EssentialSkillsCoachDashboardPanel extends StatefulWidget {
 }
 
 class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoachDashboardPanel> implements NotificationsListener {
+  static const String essentialSkillsCoachKey  = "essential_skills_coach"; //TODO: move to config?
 
   final PageController controller = PageController();
   List<String> moduleIconNames = ["skills-social-button", "skills-management-button", "skills-cooperation-button", "skills-emotional-button", "skills-innovation-button"];
   int moduleNumber = 0;
-  late Course _course;
+  Course? _course;
 
   String? _selectedTimeframe = "Social Engagement Skills";
   final List<String> _timeframes = ["Social Engagement Skills", "Self Management Skills",
@@ -28,205 +31,16 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
 
   @override
   void initState() {
+    if (CollectionUtils.isNotEmpty(CustomCourses().courses)) {
+      _course = CustomCourses().courses!.firstWhere((course) => course.key == essentialSkillsCoachKey);
+    } else {
+      CustomCourses().loadCourses().then((courses) {
+        setState(() {
+          _course = courses?.firstWhere((course) => course.key == essentialSkillsCoachKey);
+        });
+      });
+    }
     super.initState();
-
-    Content skillsHelpContent = Content(
-        name: "Soften",
-        type: "info",
-        details: "(smile, open posture, forward lean, touch, eye contact, nod)",
-    );
-
-    Content skillsHelpInfoVideoContent = Content(
-        name: "Soften",
-        type: "infoVideo",
-        details: "(smile, open posture, forward lean, touch, eye contact, nod)"
-    );
-
-    Content lesson1 = Content(
-        name: "Arm Position in Conversations",
-        type: "assignment",
-        details: "Make a note of holding your arms in a relaxed position at your side when talking to a colleague",
-        isComplete: true
-    );
-
-    Content lesson2 = Content(
-        name: "Try to smile during three conversations",
-        type: "assignment",
-        details: "Try to smile during three conversations"
-    );
-
-    Content lesson3 = Content(
-        name: "Make a note of looking your conversational partners in the eyes while talking to them",
-        type: "assignment",
-        details: "Make a note of looking your conversational partners in the eyes while talking to them"
-    );
-
-    Content lesson4 = Content(
-        name: "Make a note of leaning forward while having a conversation (while sitting).",
-        type: "assignment",
-        details: "Make a note of leaning forward while having a conversation (while sitting)."
-    );
-
-    Content lesson5 = Content(
-        name: "Try to touch conversational partners in a non-threatening fashion–on the back of the arm.",
-        type: "assignment",
-        details: "Try to touch conversational partners in a non-threatening fashion–on the back of the arm."
-    );
-
-    Content lesson6 = Content(
-        name: "Try to nod affirmatively during 3 conversations",
-        type: "assignment",
-        details: "Try to nod affirmatively during 3 conversations"
-    );
-
-    List<Content>? contentList = <Content>[];
-    contentList.add(skillsHelpContent);
-    contentList.add(skillsHelpInfoVideoContent);
-    contentList.add(lesson1);
-    contentList.add(lesson2);
-    contentList.add(lesson3);
-    contentList.add(lesson4);
-    contentList.add(lesson5);
-    contentList.add(lesson6);
-
-
-    Unit unit1 = Unit(
-      name: "The physical side of communication",
-      contentItems: contentList,
-
-    );
-
-    Content skillsHelpContent2 = Content(
-        name: "ART",
-        type: "info",
-        details: "Ask an open-ended question, Tell them that their answer is interesting/good/compelling, Respond with relevant story about yourself and Repeat"
-    );
-
-    Content lesson7 = Content(
-        name: "Arm Position in Conversations",
-        type: "assignment",
-        details: "Make a note of holding your arms in a relaxed position at your side when talking to a colleague"
-    );
-
-    Content lesson8 = Content(
-        name: "Try to smile during three conversations",
-        type: "assignment",
-        details: "Try to smile during three conversations"
-    );
-
-    Content lesson9 = Content(
-        name: "Make a note of looking your conversational partners in the eyes while talking to them",
-        type: "assignment",
-        details: "Make a note of looking your conversational partners in the eyes while talking to them"
-    );
-
-    Content lesson10 = Content(
-        name: "Make a note of leaning forward while having a conversation (while sitting).",
-        type: "assignment",
-        details: "Make a note of leaning forward while having a conversation (while sitting)."
-    );
-
-    List<Content>? contentList2 = <Content>[];
-    contentList2.add(skillsHelpContent2);
-    contentList2.add(lesson7);
-    contentList2.add(lesson8);
-    contentList2.add(lesson9);
-    contentList2.add(lesson10);
-
-
-    Unit unit2 = Unit(
-      name: "Asking questions that promote conversations",
-      contentItems: contentList2,
-
-    );
-
-
-    Content skillsHelpContent3 = Content(
-      name: "Soften",
-      type: "info",
-      details: "How to begin: \n1. Ask a question \n2. Voice an opinion \n3. State a fact \n4. Follow up with how, why, and in what way questions",
-    );
-
-    Content lesson11 = Content(
-        name: "Observe at least 2 strangers and note things about them or the situation that you could use to start a conversation.",
-        type: "assignment",
-        details: "Observe at least 2 strangers and note things about them or the situation that you could use to start a conversation."
-    );
-
-    Content lesson12 = Content(
-        name: "Practice introducing yourself to a stranger",
-        type: "assignment",
-        details: "Practice introducing yourself to a stranger"
-    );
-
-    Content lesson13 = Content(
-        name: "Talk to a stranger about the stranger",
-        type: "assignment",
-        details: "Talk to a stranger about the stranger"
-    );
-
-    Content lesson14 = Content(
-        name: "Talk to a stranger about the situation",
-        type: "assignment",
-        details: "Talk to a stranger about the situation"
-    );
-
-    List<Content>? contentList3 = <Content>[];
-    contentList3.add(skillsHelpContent3);
-    contentList3.add(lesson11);
-    contentList3.add(lesson12);
-    contentList3.add(lesson13);
-    contentList3.add(lesson14);
-
-    Unit unit3 = Unit(
-      name: "Starting and maintaining conversations",
-      contentItems: contentList3,
-
-    );
-
-    List<Unit>? unitList = <Unit>[];
-    unitList.add(unit1);
-    unitList.add(unit2);
-    unitList.add(unit3);
-
-    Module socialModule = Module(
-      name: "Social Engagement Skills",
-      units: unitList
-    );
-
-    Module managementModule = Module(
-        name: "Self Management Skills",
-        units: unitList
-    );
-
-    Module coopModule = Module(
-        name: "Cooperation Skills",
-        units: unitList
-    );
-
-    Module emotionalModule = Module(
-        name: "Emotional Resilience Skills",
-        units: unitList
-    );
-
-    Module innovationModule = Module(
-        name: "Innovation Skills",
-        units: unitList
-    );
-
-    List<Module>? moduleList = <Module>[];
-    moduleList.add(socialModule);
-    moduleList.add(managementModule);
-    moduleList.add(coopModule);
-    moduleList.add(emotionalModule);
-    moduleList.add(innovationModule);
-
-    _course = Course(
-      modules: moduleList
-    );
-
-    // String? courseJson = JsonUtils.encode(_course.toJson());
-    // debugPrint(courseJson);
   }
 
   @override
@@ -344,13 +158,13 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
 
   List<Widget> _buildModuleUnitWidgets(Color? color, Color? colorAccent, int moduleNumber){
     List<Widget> moduleUnitWidgets = <Widget>[];
-    for(int i =0; i<(_course.modules?[moduleNumber].units?.length ?? 0); i++ ){
+    for(int i =0; i<(_course?.modules?[moduleNumber].units?.length ?? 0); i++ ){
       moduleUnitWidgets.add(_buildUnitInfoWidget(color, colorAccent, i, moduleNumber));
       moduleUnitWidgets.add(Container(height: 16,));
-      moduleUnitWidgets.add(_buildUnitHelpButtons(_course.modules?[moduleNumber].units?[i].contentItems ?? <Content>[], color, colorAccent));
+      moduleUnitWidgets.add(_buildUnitHelpButtons(_course?.modules?[moduleNumber].units?[i].contentItems ?? <Content>[], color, colorAccent));
       //TODO delete below checkmark widget only after integration
       moduleUnitWidgets.add(Container(height: 16,));
-      moduleUnitWidgets.addAll(_buildUnitWidgets(color, colorAccent, _course.modules?[moduleNumber].units?[i].contentItems ?? <Content>[], moduleNumber));
+      moduleUnitWidgets.addAll(_buildUnitWidgets(color, colorAccent, _course?.modules?[moduleNumber].units?[i].contentItems ?? <Content>[], moduleNumber));
     }
     return moduleUnitWidgets;
 
@@ -370,29 +184,29 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     Content helpContent = Content();
     for(int i =0; i< contentList.length; i++ ){
       if(contentList[i].type != "info" && contentList[i].type != "infoVideo"){
-        if(contentList[i].isComplete){
-          unitWidgets.add(
-            Center(
-              // elevated button
-              child: ElevatedButton(
-                onPressed: () {
-
-                  Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentPanel(content: contentList[i], color: color, colorAccent:colorAccent, isActivityComplete: true, helpContent: helpContent,)));
-                },
-                // icon of the button
-                child: Styles().images?.getImage("skills-check") ?? Container(),
-                // styling the button
-                style: ElevatedButton.styleFrom(
-                  shape: CircleBorder(),
-                  padding: EdgeInsets.all(10),
-                  // Button color
-                  backgroundColor: Colors.green,
-                ),
-              ),
-            ),
-          );
-          unitWidgets.add(Container(height: 16,));
-        }else{
+        // if(contentList[i].isComplete){
+        //   unitWidgets.add(
+        //     Center(
+        //       // elevated button
+        //       child: ElevatedButton(
+        //         onPressed: () {
+        //
+        //           Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentPanel(content: contentList[i], color: color, colorAccent:colorAccent, isActivityComplete: true, helpContent: helpContent,)));
+        //         },
+        //         // icon of the button
+        //         child: Styles().images?.getImage("skills-check") ?? Container(),
+        //         // styling the button
+        //         style: ElevatedButton.styleFrom(
+        //           shape: CircleBorder(),
+        //           padding: EdgeInsets.all(10),
+        //           // Button color
+        //           backgroundColor: Colors.green,
+        //         ),
+        //       ),
+        //     ),
+        //   );
+        //   unitWidgets.add(Container(height: 16,));
+        // }else{
           if(!isOpaqe){
             unitWidgets.add(Center(
               // elevated button
@@ -405,7 +219,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                       onPressed: () {
                         setState(() {
                           Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentPanel(content: contentList[i], color: color, colorAccent:colorAccent, isActivityComplete: false, helpContent: helpContent,)));
-                          contentList[i].isComplete = true;
+                          // contentList[i].isComplete = true;
 
                         });
                         // Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentPanel(content: contentList[i], color: color, colorAccent:colorAccent, isActivityComplete: false, helpContent: helpContent,)));
@@ -460,7 +274,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             ),);
           }
           unitWidgets.add(Container(height: 16,));
-        }
+        // }
 
       }else{
         if(contentList[i].type != "info"){
@@ -487,7 +301,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                 Text('Unit ' + (unitNumber + 1).toString(), style: Styles().textStyles?.getTextStyle("widget.title.light.huge.fat")),
                 Container(
                   width: 200,
-                  child: Text(_course.modules?[moduleNumber].units?[unitNumber].name ?? "No name", style: Styles().textStyles?.getTextStyle("widget.title.light.regular.fat")),
+                  child: Text(_course?.modules?[moduleNumber].units?[unitNumber].name ?? "No name", style: Styles().textStyles?.getTextStyle("widget.title.light.regular.fat")),
                 )
               ],
             ),
