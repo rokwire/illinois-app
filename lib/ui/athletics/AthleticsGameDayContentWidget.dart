@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Sports.dart';
@@ -67,10 +66,10 @@ class _AthleticsGameDayContentWidgetState extends State<AthleticsGameDayContentW
     setStateIfMounted(() {
       _loading = true;
     });
-    Sports().loadTopScheduleGames().then((List<Game>? games) {
+    Sports().loadPreferredTodayGames().then((List<Game>? games) {
       setStateIfMounted(() {
-        _todayGames = Sports().getTodayGames(games);
         _loading = false;
+        _todayGames = games;
       });
     });
   }
@@ -92,8 +91,11 @@ class _AthleticsGameDayContentWidgetState extends State<AthleticsGameDayContentW
   }
 
   Widget _buildEmptyContent() {
-    return _buildCenteredWidget(Text(Localization().getStringEx('panel.athletics.content.game_day.empty.message', 'There are no games today.'),
-        textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat')));
+    return _buildCenteredWidget(Text(
+        Localization()
+            .getStringEx('panel.athletics.content.game_day.empty.message', 'There are no available gameday guides for the selected teams.'),
+        textAlign: TextAlign.center,
+        style: Styles().textStyles.getTextStyle('widget.item.medium.fat')));
   }
 
   Widget _buildErrorContent() {

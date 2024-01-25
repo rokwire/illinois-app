@@ -610,19 +610,19 @@
 	"panel.athletics.content.section.teams.label": "十大球隊",
 
 	"panel.athletics.content.events.unknown_error.message": "發生未知錯誤",
-	"panel.athletics.content.events.empty.message": "沒有事件。",
+	"panel.athletics.content.events.empty.message": "所選團隊沒有任何活動。",
 
 	"panel.athletics.content.my_teams.header.title": "我的十大團隊",
 	"panel.athletics.content.my_teams.all.select.label": "全選",
 	"panel.athletics.content.my_teams.all.clear.label": "全部清除",
 
-	"panel.athletics.content.teams.empty.message": "沒有團隊。",
+	"panel.athletics.content.teams.empty.message": "選擇您最喜歡的球隊並在此處顯示。",
 	"panel.athletics.content.teams.unknown_error.message": "發生未知錯誤。",
 
-	"panel.athletics.content.news.empty.message": "目前還沒有消息。",
+	"panel.athletics.content.news.empty.message": "目前還沒有選定球隊的消息。",
 	"panel.athletics.content.news.failed.message": "加載新聞失敗。",
 
-	"panel.athletics.content.game_day.empty.message": "今天沒有比賽。",
+	"panel.athletics.content.game_day.empty.message": "所選球隊沒有可用的比賽日指南。",
 	"panel.athletics.content.game_day.failed.message": "無法載入今天的遊戲。",
 
 	"panel.onboarding.button.continue.title":"继续",
