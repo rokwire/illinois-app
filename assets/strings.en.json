@@ -611,7 +611,7 @@
     "panel.athletics.content.section.teams.label": "Big 10 Teams",
 
     "panel.athletics.content.events.unknown_error.message": "Unknown Error Occurred",
-    "panel.athletics.content.events.empty.message": "There are no events.",
+    "panel.athletics.content.events.empty.message": "There are no events for the selected teams.",
 
     "panel.athletics.content.my_teams.header.title": "My Big 10 Teams",
     "panel.athletics.content.my_teams.all.select.label": "Select All",

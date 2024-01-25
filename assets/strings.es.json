@@ -610,7 +610,7 @@
     "panel.athletics.content.section.teams.label": "10 grandes equipos",
 
     "panel.athletics.content.events.unknown_error.message": "Se produjo un error desconocido",
-    "panel.athletics.content.events.empty.message": "No hay eventos.",
+    "panel.athletics.content.events.empty.message": "No hay eventos para los equipos seleccionados.",
 
     "panel.athletics.content.my_teams.header.title": "Mis 10 grandes equipos",
     "panel.athletics.content.my_teams.all.select.label": "Seleccionar todo",
