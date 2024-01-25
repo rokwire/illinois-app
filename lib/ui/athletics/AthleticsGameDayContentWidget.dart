@@ -91,8 +91,11 @@ class _AthleticsGameDayContentWidgetState extends State<AthleticsGameDayContentW
   }
 
   Widget _buildEmptyContent() {
-    return _buildCenteredWidget(Text(Localization().getStringEx('panel.athletics.content.game_day.empty.message', 'There are no games today.'),
-        textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat')));
+    return _buildCenteredWidget(Text(
+        Localization()
+            .getStringEx('panel.athletics.content.game_day.empty.message', 'There are no available gameday guides for the selected teams.'),
+        textAlign: TextAlign.center,
+        style: Styles().textStyles.getTextStyle('widget.item.medium.fat')));
   }
 
   Widget _buildErrorContent() {

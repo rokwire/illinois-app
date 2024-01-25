@@ -622,7 +622,7 @@
 	"panel.athletics.content.news.empty.message": "目前還沒有消息。",
 	"panel.athletics.content.news.failed.message": "加載新聞失敗。",
 
-	"panel.athletics.content.game_day.empty.message": "今天沒有比賽。",
+	"panel.athletics.content.game_day.empty.message": "所選球隊沒有可用的比賽日指南。",
 	"panel.athletics.content.game_day.failed.message": "無法載入今天的遊戲。",
 
 	"panel.onboarding.button.continue.title":"继续",

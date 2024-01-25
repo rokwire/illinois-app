@@ -622,7 +622,7 @@
     "panel.athletics.content.news.empty.message": "No hay novedades.",
     "panel.athletics.content.news.failed.message": "No se pudieron cargar las noticias.",
 
-    "panel.athletics.content.game_day.empty.message": "Hoy no hay juegos.",
+    "panel.athletics.content.game_day.empty.message": "No hay guías del día del partido disponibles para los equipos seleccionados.",
     "panel.athletics.content.game_day.failed.message": "No se pudieron cargar los juegos de hoy.",
 
     "panel.onboarding.button.continue.title":"Continuar",
