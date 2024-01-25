@@ -68,7 +68,18 @@
     "saferLocationWaitTimeColorRed"        :"#ff0000",
     "saferLocationWaitTimeColorYellow"     :"#ffff00",
     "saferLocationWaitTimeColorGreen"      :"#00ff00",
-    "saferLocationWaitTimeColorGrey"       :"#808080"
+    "saferLocationWaitTimeColorGrey"       :"#808080",
+
+    "essentialSkillsCoachPurple"            :"#602f8c",
+    "essentialSkillsCoachPurpleAccent"      :"#ae89cf",
+    "essentialSkillsCoachBlue"            :"#479ccf",
+    "essentialSkillsCoachBlueAccent"      :"#146a9e",
+    "essentialSkillsCoachRed"            :"#e84a27",
+    "essentialSkillsCoachRedAccent"      :"#a52a0e",
+    "essentialSkillsCoachOrange"            :"#f29936",
+    "essentialSkillsCoachOrangeAccent"      :"#d06d00",
+    "essentialSkillsCoachGreen"            :"#247c03",
+    "essentialSkillsCoachGreenAccent"      :"#6aa554"
   },
   "font_family": {
     "black": "ProximaNovaBlack",
@@ -188,6 +199,7 @@
     "widget.title.tiny.highlight": {"extends" : "widget.title.tiny", "color": "white"},
     "widget.title.tiny.extra_fat": {"font_family": "extra_bold", "size": 12.0, "color": "fillColorPrimary"},
     "widget.title.tiny.extra_fat.highlight": {"extends": "widget.title.tiny.extra_fat", "color": "white"},
+    "widget.title.light.huge.fat": {"font_family": "bold", "size": 32.0, "color": "textColorPrimary"},
     "widget.title.light.medium_large.extra_fat": {"font_family": "extra_bold", "size": 22.0, "color": "textColorPrimary"},
     "widget.title.light.large.extra_fat": { "font_family": "extra_bold", "size": 20.0, "color": "textColorPrimary"},
     "widget.title.light.large.fat": { "font_family": "bold", "size": 20.0, "color": "textColorPrimary"},
@@ -985,6 +997,27 @@
     "icon-delete-record": {"src": "images/icon-delete-record.png", "type": "flutter.asset", "size": 18},
     "icon-soundbyte": {"src": "images/icon-soundbyte.png", "type": "flutter.asset", "size": 18},
 
-    "course-detail-default": {"src": "images/course-detail-default.png", "type": "flutter.asset"}
+    "course-detail-default": {"src": "images/course-detail-default.png", "type": "flutter.asset"},
+
+    "skills-social": {"src": "images/skills_social.png", "type": "flutter.asset"},
+    "skills-play": {"src": "images/play.png", "type": "flutter.asset", "size": 60},
+    "skills-question": {"src": "images/question.png", "type": "flutter.asset", "size": 60},
+    "skills-check": {"src": "images/check.png", "type": "flutter.asset", "size": 60},
+    "skills-management": {"src": "images/management.png", "type": "flutter.asset"},
+    "skills-cooperation": {"src": "images/cooperation.png", "type": "flutter.asset"},
+    "skills-emotional": {"src": "images/emotional_skills.png", "type": "flutter.asset"},
+    "skills-innovation": {"src": "images/innovation.png", "type": "flutter.asset"},
+    "skills-social-button": {"src": "images/skills_social_button.png", "type": "flutter.asset", "size": 50},
+    "skills-management-button": {"src": "images/management_button.png", "type": "flutter.asset", "size": 50},
+    "skills-cooperation-button": {"src": "images/cooperation_button.png", "type": "flutter.asset", "size": 50},
+    "skills-emotional-button": {"src": "images/emotional_skills_button.png", "type": "flutter.asset", "size": 50},
+    "skills-innovation-button": {"src": "images/innovation_button.png", "type": "flutter.asset", "size": 50},
+    "skills-mic": {"src": "images/mic.png", "type": "flutter.asset", "size": 25},
+    "text-icon": {"src": "images/text-icon.png", "type": "flutter.asset", "size": 35},
+    "link-icon": {"src": "images/external-link-icon.png", "type": "flutter.asset", "size": 35},
+    "pdf-icon": {"src": "images/pdf-icon.png", "type": "flutter.asset", "size": 35},
+    "powerpoint-icon": {"src": "images/powerpoint.png", "type": "flutter.asset", "size": 35},
+    "video-icon": {"src": "images/blue-play.png", "type": "flutter.asset", "size": 25},
+    "streak": {"src": "images/streak.png", "type": "flutter.asset", "size": 193}
   }
 }

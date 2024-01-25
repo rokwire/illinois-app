@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/wellness/ToDo.dart';
+import 'package:illinois/model/wellness/WellnessToDo.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -28,7 +28,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class WellnessManageToDoCategoriesPanel extends StatefulWidget {
-  final ToDoCategory? category;
+  final WellnessToDoCategory? category;
   WellnessManageToDoCategoriesPanel({this.category});
 
   @override
@@ -38,8 +38,8 @@ class WellnessManageToDoCategoriesPanel extends StatefulWidget {
 class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCategoriesPanel> implements NotificationsListener {
   static final List<String> _availableCategoryHexColors = ['#E45434', '#F5821E', '#54A747', '#009FD4', '#1D58A7', '#662d91'];
 
-  ToDoCategory? _category;
-  List<ToDoCategory>? _categories;
+  WellnessToDoCategory? _category;
+  List<WellnessToDoCategory>? _categories;
   Color? _selectedColor;
   TextEditingController _nameController = TextEditingController();
   bool _loading = false;
@@ -182,7 +182,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
     if (_loading) {
       widgetList.add(CircularProgressIndicator());
     } else if (CollectionUtils.isNotEmpty(_categories)) {
-      for (ToDoCategory category in _categories!) {
+      for (WellnessToDoCategory category in _categories!) {
         widgetList.add(Padding(padding: EdgeInsets.only(top: 7), child: _buildCategoryCard(category)));
       }
     } else {
@@ -194,7 +194,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
     return widgetList;
   }
 
-  Widget _buildCategoryCard(ToDoCategory category) {
+  Widget _buildCategoryCard(WellnessToDoCategory category) {
     return GestureDetector(
         onTap: () => _onTapEditCategory(category),
         child: Container(
@@ -209,7 +209,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
             ])));
   }
 
-  void _onTapEditCategory(ToDoCategory category) {
+  void _onTapEditCategory(WellnessToDoCategory category) {
     Analytics().logSelect(target: "Edit ${category.name}");
     _category = category;
     _nameController.text = StringUtils.ensureNotEmpty(_category?.name);
@@ -233,7 +233,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
         positiveCallback: () => _deleteCategory(_category!));
   }
 
-  void _deleteCategory(ToDoCategory category) {
+  void _deleteCategory(WellnessToDoCategory category) {
     _setLoading(true);
     Wellness().deleteToDoCategory(category.id!).then((success) {
       late String msg;
@@ -258,7 +258,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
       return;
     }
     _setLoading(true);
-    ToDoCategory cat = ToDoCategory(id: _category?.id, name: name, colorHex: UiColors.toHex(_selectedColor));
+    WellnessToDoCategory cat = WellnessToDoCategory(id: _category?.id, name: name, colorHex: UiColors.toHex(_selectedColor));
     Wellness().saveToDoCategory(cat).then((success) {
       late String msg;
       if (success) {

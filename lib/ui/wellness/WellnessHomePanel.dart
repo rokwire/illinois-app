@@ -154,7 +154,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
   }
 
   Widget _buildScrollableContentWidget({required Widget child}) {
-    if (_selectedContent == WellnessContent.appointments) {
+    if (_selectedContent == WellnessContent.appointments || _selectedContent == WellnessContent.todo) {
       return Container(child: child);
     } else {
       return SingleChildScrollView(controller: _contentScrollController, child: child);

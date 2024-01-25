@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Essential Skills Coach Dashboard [#3425](https://github.com/rokwire/illinois-app/issues/3425).
 
 ## [5.1.13] - 2024-01-24
 ### Fixed
@@ -355,6 +357,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [5.0.44] - 2023-08-10
 ### Changed
 - Cleaned up and polished the UI for super & recurring events [#3513](https://github.com/rokwire/illinois-app/issues/3513).
+- Recurring TODO list tasks [#3409](https://github.com/rokwire/illinois-app/issues/3409)
 
 ## [5.0.43] - 2023-08-09
 ### Changed
@@ -362,6 +365,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bring back College and Department attributes for Event2 and remove University Affiliation [#3500](https://github.com/rokwire/illinois-app/issues/3500)
 - Do not require at least one attribute set when creating groups [#3500](https://github.com/rokwire/illinois-app/issues/3500).
 ### Added
+- Illinois Assistant chatbot integration [#3220](https://github.com/rokwire/illinois-app/issues/3220)
 - Added initial implementation of super & recurring events [#3513](https://github.com/rokwire/illinois-app/issues/3513).
 
 ## [5.0.42] - 2023-08-08
@@ -598,6 +602,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Illinois Assistant chatbot integration [#3220](https://github.com/rokwire/illinois-app/issues/3220).
 - Initial preview of new Events interface [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+>>>>>>> 0ef3b534c72362c5d54c9539391663a69c96c8a8
 
 ## [5.0.7] - 2023-06-12
 ### Added
