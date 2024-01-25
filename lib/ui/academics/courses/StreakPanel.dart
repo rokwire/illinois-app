@@ -1,12 +1,9 @@
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:table_calendar/table_calendar.dart';
-
-import '../../widgets/HeaderBar.dart';
 
 class StreakPanel extends StatefulWidget {
   

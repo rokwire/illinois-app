@@ -100,53 +100,38 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         child: Column(
           children: [
             _buildStreakWidget(),
-            GestureDetector(
-              onHorizontalDragEnd: (details) {
-                if (details.primaryVelocity! > 0 && moduleNumber != 0) {
-                  setState(() {
-                    moduleNumber= moduleNumber-1;
-                  });
-                }
+            Container(
+              height: 170,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(8),
+                    child:  Container(
+                      child: Styles().images?.getImage(moduleType) ?? Container(),
+                    ),
 
-                if (details.primaryVelocity! < 0 && moduleNumber != 4) {
-                  setState(() {
-                    moduleNumber= moduleNumber+1;
-                  });
-                }
-              },
-              child: Container(
-                height: 170,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(8),
-                      child:  Container(
-                        child: Styles().images?.getImage(moduleType) ?? Container(),
+                  ),
+                  Padding(padding: EdgeInsets.only(left: 16, right: 16,bottom: 16),
+                    child:  Center(
+                      child: DropdownButton(
+                          value: _selectedTimeframe,
+                          iconDisabledColor: Colors.white,
+                          iconEnabledColor: Colors.white,
+                          focusColor: Colors.white,
+                          dropdownColor: colorAccent,
+                          isExpanded: true,
+                          items: DropdownBuilder.getItems(_timeframes, style: Styles().textStyles?.getTextStyle("widget.title.light.large.fat")),
+                          onChanged: (String? selected) {
+                            setState(() {
+                              _selectedTimeframe = selected;
+                            });
+                          }
                       ),
-
-                    ),
-                    Padding(padding: EdgeInsets.only(left: 16, right: 16,bottom: 16),
-                      child:  Center(
-                        child: DropdownButton(
-                            value: _selectedTimeframe,
-                            iconDisabledColor: Colors.white,
-                            iconEnabledColor: Colors.white,
-                            focusColor: Colors.white,
-                            dropdownColor: colorAccent,
-                            isExpanded: true,
-                            items: DropdownBuilder.getItems(_timeframes, style: Styles().textStyles?.getTextStyle("widget.title.light.large.fat")),
-                            onChanged: (String? selected) {
-                              setState(() {
-                                _selectedTimeframe = selected;
-                              });
-                            }
-                        ),
-                      )
-                    ),
-                    // Text(_course.modules?[moduleNumber].name ?? "No name",style: Styles().textStyles?.getTextStyle("widget.title.light.large.fat")),
-                  ],
-                ),
+                    )
+                  ),
+                  // Text(_course.modules?[moduleNumber].name ?? "No name",style: Styles().textStyles?.getTextStyle("widget.title.light.large.fat")),
+                ],
               ),
             ),
             Column(

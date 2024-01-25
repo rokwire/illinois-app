@@ -1,11 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/CustomCourses.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-
-import '../../../model/courses/Content.dart';
-import '../../widgets/HeaderBar.dart';
 
 class ResourcesPanel extends StatefulWidget {
   final List<Content>? contentItems;
@@ -97,9 +95,9 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
     }
     return ExpansionPanelList(
       expansionCallback: (int index, bool isExpanded) {
-        setState(() {
-          filteredContentItems[index].isExpanded = !filteredContentItems[index].isExpanded;
-        });
+        // setState(() {
+        //   filteredContentItems[index].isExpanded = !filteredContentItems[index].isExpanded;
+        // });
       },
       children: filteredContentItems.map<ExpansionPanel>((Content item) {
         return ExpansionPanel(
@@ -113,7 +111,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
           body: ListTile(
               title: Text(item.details ?? ""),
         ),
-            isExpanded: item.isExpanded
+            // isExpanded: item.isExpanded
         );
       }).toList(),
     );
