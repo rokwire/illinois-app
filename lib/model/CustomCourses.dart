@@ -166,7 +166,9 @@ class Module{
   final String? key;
   final List<Unit>? units;
 
-  Module({this.id, this.name, this.key, this.units});
+  final CourseDisplay? display;
+
+  Module({this.id, this.name, this.key, this.units, this.display});
 
 
   static Module? fromJson(Map<String, dynamic>? json) {
@@ -178,6 +180,7 @@ class Module{
         name: JsonUtils.stringValue(json['name']),
         key: JsonUtils.stringValue(json['key']),
         units: Unit.listFromJson(JsonUtils.listValue(json['units'])),
+        display: CourseDisplay.fromJson(JsonUtils.mapValue(json['display'])),
     );
   }
 
@@ -577,6 +580,27 @@ class CourseConfig {
       maxPauses: JsonUtils.intValue(json['max_pauses']),
       pauseRewardStreak: JsonUtils.intValue(json['pause_reward_streak']),
       streaksProcessTime: JsonUtils.intValue(json['streaks_notifications_config']?['streaks_process_time']),
+    );
+  }
+}
+
+// CourseDisplay
+
+class CourseDisplay {
+  final String? primaryColor;
+  final String? accentColor;
+  final String? image;
+
+  CourseDisplay({this.primaryColor, this.accentColor, this.image});
+
+  static CourseDisplay? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return CourseDisplay(
+      primaryColor: JsonUtils.stringValue(json['primary_color']),
+      accentColor: JsonUtils.stringValue(json['accent_color']),
+      image: JsonUtils.stringValue(json['image']),
     );
   }
 }

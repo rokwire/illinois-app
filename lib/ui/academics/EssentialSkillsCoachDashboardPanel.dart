@@ -29,14 +29,13 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   Course? _course;
   List<UserUnit>? _userCourseUnits;
 
-  String? _selectedTimeframe = "Social Engagement Skills";
-  final List<String> _timeframes = ["Social Engagement Skills", "Self Management Skills",
-    "Cooperation Skills", "Emotional Resilience Skills", "Innovation Skills"];
+  String? _selectedModuleKey;
 
   @override
   void initState() {
-    if (CollectionUtils.isNotEmpty(CustomCourses().courses)) {
+    if (CustomCourses().userCourses?.isNotEmpty ?? false) {
       _course = CustomCourses().courses!.firstWhere((course) => course.key == essentialSkillsCoachKey);
+      _selectedModuleKey ??= CollectionUtils.isNotEmpty(_course!.modules) ? _course!.modules![0].key : null;
     } else {
       _loadCourseAndUnits();
     }
@@ -51,51 +50,23 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
 
   @override
   Widget build(BuildContext context) {
-
-    return SingleChildScrollView(
-      child: _buildModuleView(_selectedTimeframe!),
-    );
+    Module? selectedModule = _course?.searchByKey(moduleKey: _selectedModuleKey);
+    if (selectedModule != null) {
+      Color? primaryColor = selectedModule.display?.primaryColor != null ? Styles().colors.getColor(selectedModule.display!.primaryColor!) : Styles().colors.fillColorPrimary;
+      Color? accentColor = selectedModule.display?.accentColor != null ? Styles().colors.getColor(selectedModule.display!.accentColor!) : Styles().colors.fillColorPrimary;
+      return SingleChildScrollView(
+        child: Container(
+          color: primaryColor,
+          child: _buildModuleInfoView(selectedModule.display?.image ?? 'skills-question', primaryColor, accentColor),
+        ),
+      );
+    }
+    return Container();
   }
 
   @override
   void onNotification(String name, param) {
     // TODO: implement onNotification
-  }
-
-
-  Widget _buildModuleView(String module){
-    switch (module){
-      case "Social Engagement Skills":
-        return Container(
-          color: Styles().colors.getColor("essentialSkillsCoachPurple"),
-          child: _buildModuleInfoView("skills-social", Styles().colors.getColor("essentialSkillsCoachPurple"), Styles().colors.getColor("essentialSkillsCoachPurpleAccent")),
-        );
-      case "Self Management Skills":
-        return Container(
-          color: Styles().colors.getColor("essentialSkillsCoachBlue"),
-          child: _buildModuleInfoView("skills-management", Styles().colors.getColor("essentialSkillsCoachBlue"), Styles().colors.getColor("essentialSkillsCoachBlueAccent")),
-
-        );
-      case "Cooperation Skills":
-        return Container(
-          color: Styles().colors.getColor("essentialSkillsCoachRed"),
-          child: _buildModuleInfoView("skills-cooperation", Styles().colors.getColor("essentialSkillsCoachRed"), Styles().colors.getColor("essentialSkillsCoachRedAccent")),
-
-        );
-      case "Emotional Resilience Skills":
-        return Container(
-          color: Styles().colors.getColor("essentialSkillsCoachOrange"),
-          child: _buildModuleInfoView("skills-emotional", Styles().colors.getColor("essentialSkillsCoachOrange"), Styles().colors.getColor("essentialSkillsCoachOrangeAccent")),
-
-        );
-      case "Innovation Skills":
-        return Container(
-          color: Styles().colors.getColor("essentialSkillsCoachGreen"),
-          child: _buildModuleInfoView("skills-innovation", Styles().colors.getColor("essentialSkillsCoachGreen"), Styles().colors.getColor("essentialSkillsCoachGreenAccent")),
-        );
-      default:
-        return Container();
-    }
   }
 
   Widget _buildModuleInfoView(String moduleType, Color? color, Color? colorAccent,){
@@ -119,16 +90,16 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                   Padding(padding: EdgeInsets.only(left: 16, right: 16,bottom: 16),
                     child:  Center(
                       child: DropdownButton(
-                          value: _selectedTimeframe,
+                          value: _selectedModuleKey,
                           iconDisabledColor: Colors.white,
                           iconEnabledColor: Colors.white,
                           focusColor: Colors.white,
                           dropdownColor: colorAccent,
                           isExpanded: true,
-                          items: DropdownBuilder.getItems(_timeframes, style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")),
+                          items: _moduleDropdownItems(style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")),
                           onChanged: (String? selected) {
                             setState(() {
-                              _selectedTimeframe = selected;
+                              _selectedModuleKey = selected;
                             });
                           }
                       ),
@@ -175,28 +146,28 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     Content helpContent = Content();
     for(int i =0; i< contentList.length; i++ ){
       if(contentList[i].type != "info" && contentList[i].type != "infoVideo"){
-        // if(contentList[i].isComplete){
-        //   unitWidgets.add(
-        //     Center(
-        //       // elevated button
-        //       child: ElevatedButton(
-        //         onPressed: () {
-        //           Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentPanel(content: contentList[i], color: color, colorAccent:colorAccent, isActivityComplete: true, helpContent: helpContent,)));
-        //         },
-        //         // icon of the button
-        //         child: Styles().images.getImage("skills-check") ?? Container(),
-        //         // styling the button
-        //         style: ElevatedButton.styleFrom(
-        //           shape: CircleBorder(),
-        //           padding: EdgeInsets.all(10),
-        //           // Button color
-        //           backgroundColor: Colors.green,
-        //         ),
-        //       ),
-        //     ),
-        //   );
-        //   unitWidgets.add(Container(height: 16,));
-        // }else{
+        if(contentList[i].isComplete){
+          unitWidgets.add(
+            Center(
+              // elevated button
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentPanel(content: contentList[i], color: color, colorAccent:colorAccent, isActivityComplete: true, helpContent: helpContent,)));
+                },
+                // icon of the button
+                child: Styles().images.getImage("skills-check") ?? Container(),
+                // styling the button
+                style: ElevatedButton.styleFrom(
+                  shape: CircleBorder(),
+                  padding: EdgeInsets.all(10),
+                  // Button color
+                  backgroundColor: Colors.green,
+                ),
+              ),
+            ),
+          );
+          unitWidgets.add(Container(height: 16,));
+        }else{
           if(!isOpaqe){
             unitWidgets.add(Center(
               // elevated button
@@ -264,7 +235,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             ),);
           }
           unitWidgets.add(Container(height: 16,));
-        // }
+        }
 
       }else{
         if(contentList[i].type != "info"){
@@ -467,6 +438,19 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     }
   }
 
+  List<DropdownMenuItem<String>> _moduleDropdownItems({String? nullOption, TextStyle? style}) {
+    List<DropdownMenuItem<String>> dropDownItems = <DropdownMenuItem<String>>[];
+    if (nullOption != null) {
+      dropDownItems.add(DropdownMenuItem(value: null, child: Text(nullOption, style: style ?? Styles().textStyles.getTextStyle("widget.detail.regular"))));
+    }
+    for (Module module in _course?.modules ?? []) {
+      if (module.key != null && module.name != null) {
+        dropDownItems.add(DropdownMenuItem(value: module.key, child: Text(module.name!, style: style ?? Styles().textStyles.getTextStyle("widget.detail.regular"))));
+      }
+    }
+    return dropDownItems;
+  }
+
   Future<void> _loadCourseAndUnits() async {
     List<Course>? courses = await CustomCourses().loadCourses();
     setStateIfMounted(() {
@@ -474,20 +458,8 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     });
 
     if (_course != null) {
+      _selectedModuleKey ??= CollectionUtils.isNotEmpty(_course!.modules) ? _course!.modules![0].key : null;
       List<UserUnit>? userUnits = await CustomCourses().loadUserCourseUnits(essentialSkillsCoachKey);
     }
-  }
-}
-
-class DropdownBuilder {
-  static List<DropdownMenuItem<T>> getItems<T>(List<T> options, {String? nullOption, TextStyle? style}) {
-    List<DropdownMenuItem<T>> dropDownItems = <DropdownMenuItem<T>>[];
-    if (nullOption != null) {
-      dropDownItems.add(DropdownMenuItem(value: null, child: Text(nullOption, style: style ?? Styles().textStyles.getTextStyle("widget.detail.regular"))));
-    }
-    for (T option in options) {
-      dropDownItems.add(DropdownMenuItem(value: option, child: Text(option.toString(), style: style ?? Styles().textStyles.getTextStyle("widget.detail.regular"))));
-    }
-    return dropDownItems;
   }
 }
