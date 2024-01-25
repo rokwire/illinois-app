@@ -19,6 +19,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileDetailsPage.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
@@ -29,7 +30,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum ProfileContent { profile, who_are_you, login }
+enum ProfileContent { login, profile, who_are_you, }
 
 class ProfileHomePanel extends StatefulWidget {
   static final String routeName = 'settings_profile_content_panel';
@@ -71,8 +72,8 @@ class ProfileHomePanel extends StatefulWidget {
 }
 
 class _ProfileHomePanelState extends State<ProfileHomePanel> implements NotificationsListener {
+  ProfileContent? _selectedContent;
   static ProfileContent? _lastSelectedContent;
-  late ProfileContent _selectedContent;
   bool _contentValuesVisible = false;
   final GlobalKey _pageKey = GlobalKey();
   final GlobalKey _pageHeadingKey = GlobalKey();
@@ -80,8 +81,12 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Auth2.notifyLoginChanged]);
-    _initInitialContent();
+    NotificationService().subscribe(this, [
+      Auth2.notifyLoginChanged,
+      FlexUI.notifyChanged,
+    ]);
+
+    _selectedContent = widget.content ?? _initialSelectedContent;
   }
 
   @override
@@ -90,6 +95,16 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     super.dispose();
   }
 
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, param) {
+    if ((name == Auth2.notifyLoginChanged) ||
+        (name == FlexUI.notifyChanged)) {
+      _updateContentItemIfNeeded();
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     //return _buildScaffold(context);
@@ -151,8 +166,8 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
                 borderRadius: BorderRadius.all(Radius.circular(5)),
                 border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                 rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-                label: _getContentLabel(_selectedContent),
-                onTap: _changeSettingsContentValuesVisibility
+                label: _getContentItemName(_selectedContent) ?? '',
+                onTap: _onTapContentSwitch
               )
             ),
             _buildContent()
@@ -196,10 +211,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     List<Widget> contentList = <Widget>[];
     contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
     for (ProfileContent contentItem in ProfileContent.values) {
-      if ((contentItem == ProfileContent.profile) && !Auth2().isLoggedIn) {
-        continue;
-      }
-      if ((_selectedContent != contentItem)) {
+      if (_isContentItemEnabled(contentItem) && (_selectedContent != contentItem)) {
         contentList.add(_buildContentItem(contentItem));
       }
     }
@@ -215,43 +227,17 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
         backgroundColor: Styles().colors.white,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
-        label: _getContentLabel(contentItem),
+        label: _getContentItemName(contentItem),
         onTap: () => _onTapContentItem(contentItem));
-  }
-
-  void _initInitialContent() {
-    // Do not allow not logged in users to view "Profile" content
-    if (!Auth2().isLoggedIn && (_lastSelectedContent == ProfileContent.profile)) {
-      _lastSelectedContent = null;
-    }
-    _selectedContent =
-        widget.content ?? (_lastSelectedContent ?? (Auth2().isLoggedIn ? ProfileContent.profile : ProfileContent.login));
   }
 
   void _onTapContentItem(ProfileContent contentItem) {
     Analytics().logSelect(target: contentItem.toString(), source: widget.runtimeType.toString());
-    _selectedContent = _lastSelectedContent = contentItem;
-    _changeSettingsContentValuesVisibility();
-  }
-
-  void _changeSettingsContentValuesVisibility() {
-    _contentValuesVisible = !_contentValuesVisible;
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  Widget get _contentWidget {
-    switch (_selectedContent) {
-      case ProfileContent.profile:
-        return ProfileDetailsPage(parentRouteName: ProfileHomePanel.routeName,);
-      case ProfileContent.who_are_you:
-        return ProfileRolesPage();
-      case ProfileContent.login:
-        return ProfileLoginPage();
-      default:
-        return Container();
-    }
+    setState(() {
+      _lastSelectedContent = _selectedContent;
+      _selectedContent = contentItem;
+      _contentValuesVisible = !_contentValuesVisible;
+    });
   }
 
   void _onTapDebug() {
@@ -263,6 +249,12 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   void _onTapClose() {
     Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
     Navigator.of(context).pop();
+  }
+
+  void _onTapContentSwitch() {
+    setState(() {
+      _contentValuesVisible = !_contentValuesVisible;
+    });
   }
 
   void _onTapDismissLayer() {
@@ -283,30 +275,51 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     return ((pageHeight != null) && (pageHeaderHeight != null)) ? (pageHeight - pageHeaderHeight) : null;
   }
 
-  String _getContentLabel(ProfileContent content) {
-    switch (content) {
-      case ProfileContent.profile:
-        return Localization().getStringEx('panel.settings.profile.content.profile.label', 'My Profile');
-      case ProfileContent.who_are_you:
-        return Localization().getStringEx('panel.settings.profile.content.who_are_you.label', 'Who Are You');
-      case ProfileContent.login:
-        return Localization().getStringEx('panel.settings.profile.content.login.label', 'Sign In/Sign Out');
+  Widget? get _contentWidget {
+    switch (_selectedContent) {
+      case ProfileContent.profile: return ProfileDetailsPage(parentRouteName: ProfileHomePanel.routeName,);
+      case ProfileContent.who_are_you: return ProfileRolesPage();
+      case ProfileContent.login: return ProfileLoginPage();
+      default: return null;
     }
   }
 
-  // NotificationsListener
+  String? _getContentItemName(ProfileContent? contentItem) {
+    switch (contentItem) {
+      case ProfileContent.profile: return Localization().getStringEx('panel.settings.profile.content.profile.label', 'My Profile');
+      case ProfileContent.who_are_you: return Localization().getStringEx('panel.settings.profile.content.who_are_you.label', 'Who Are You');
+      case ProfileContent.login: return Localization().getStringEx('panel.settings.profile.content.login.label', 'Sign In/Sign Out');
+      default: return null;
+    }
+  }
 
-  @override
-  void onNotification(String name, param) {
-    if (name == Auth2.notifyLoginChanged) {
-      if ((_selectedContent == ProfileContent.profile) && !Auth2().isLoggedIn) {
-        // Do not allow not logged in users to view "Profile" content
-        _selectedContent = _lastSelectedContent = ProfileContent.login;
+  bool _isContentItemEnabled(ProfileContent? contentItem) {
+    switch (contentItem) {
+      case ProfileContent.profile: return Auth2().isLoggedIn;
+      case ProfileContent.who_are_you: return true;
+      case ProfileContent.login: return FlexUI().hasFeature('authentication');
+      default: return false;
+    }
+  }
+
+  ProfileContent? get _initialSelectedContent {
+    for (ProfileContent contentItem in ProfileContent.values) {
+      if (_isContentItemEnabled(contentItem)) {
+        return contentItem;
       }
-      if (mounted) {
-        setState(() {});
+    }
+    return null;
+  }
+
+  void _updateContentItemIfNeeded() {
+    if ((_selectedContent == null) || !_isContentItemEnabled(_selectedContent)) {
+      ProfileContent? selectedContent = _isContentItemEnabled(_lastSelectedContent) ? _lastSelectedContent : _initialSelectedContent;
+      if ((selectedContent != null) && (selectedContent != _selectedContent) && mounted) {
+        setState(() {
+          _selectedContent = selectedContent;
+          _lastSelectedContent = null;
+        });
       }
     }
   }
-  
 }
