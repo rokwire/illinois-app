@@ -167,7 +167,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         ]));
   }
 
-  Widget _buildClearCompletedItemsButton() {
+  /* Unused: Widget _buildClearCompletedItemsButton() {
     return Visibility(
         visible: _clearCompletedItemsButtonVisible,
         child: Padding(
@@ -179,7 +179,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                 contentWeight: 0.75,
                 padding: EdgeInsets.symmetric(vertical: 8),
                 onTap: _onTapClearCompletedItems)));
-  }
+  }*/
 
   Widget _buildCalendarWidget() {
     if (_selectedTab != _ToDoTab.weekly) {
@@ -330,7 +330,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
           child: Column(children: contentList),
         ),
       );
-      return Column(children: contentList);
+      //Dead code: return Column(children: contentList);
     } else {
       return _buildEmptyContent();
     }
@@ -414,7 +414,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     }
   }
 
-  void _onTapClearCompletedItems() {
+  /* Unused: void _onTapClearCompletedItems() {
     Analytics().logSelect(target: 'Clear Completed Items', source: widget.runtimeType.toString());
     if (CollectionUtils.isEmpty(_todoItems)) {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.todo.items.no_items.msg', 'There are no To-Do items.'));
@@ -425,9 +425,9 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         message: Localization().getStringEx(
             'panel.wellness.todo.item.completed.delete.confirmation.msg', 'Are you sure that you want to delete all completed To-Do items?'),
         positiveCallback: () => _deleteCompletedItems());
-  }
+  } */
 
-  void _deleteCompletedItems() {
+  /* Unused: void _deleteCompletedItems() {
     Analytics().logWellness(
       category: Analytics.LogWellnessCategoryToDo,
       action: Analytics.LogWellnessActionClear,
@@ -453,7 +453,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       AppAlert.showDialogResult(context, msg);
       _setItemsLoading(false);
     });
-  }
+  } */
 
   void _onTapPreviousWeek() {
     Analytics().logSelect(target: "Previous Week", source: widget.runtimeType.toString());
@@ -512,7 +512,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     if (CollectionUtils.isEmpty(_todoItems)) {
       return;
     }
-    _todoItems!.sort((ToDoItem first, ToDoItem second) {
+    _todoItems.sort((ToDoItem first, ToDoItem second) {
       if ((first.dueDateTime == null) && (second.dueDateTime != null)) {
         return -1;
       } else if ((first.dueDateTime != null) && (second.dueDateTime == null)) {
@@ -551,7 +551,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
     Map<String, List<ToDoItem>> itemsMap = {};
     List<ToDoItem>? categoryItems;
-    for (ToDoItem item in _todoItems!) {
+    for (ToDoItem item in _todoItems) {
       String itemKey = _getItemKeyByTab(item)!;
       categoryItems = itemsMap[itemKey];
       if (categoryItems == null) {
@@ -580,26 +580,24 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   List<ToDoItem>? _getItemsForDate(DateTime date) {
     List<ToDoItem>? dayItems;
-    if (_todoItems != null) {
-      for (ToDoItem item in _todoItems!) {
-        DateTime? itemDueDate = item.dueDateTime;
-        if (itemDueDate != null) {
-          if ((itemDueDate.year == date.year) && (itemDueDate.month == date.month) && (itemDueDate.day == date.day)) {
-            if (dayItems == null) {
-              dayItems = <ToDoItem>[];
-            }
-            dayItems.add(item);
+    for (ToDoItem item in _todoItems) {
+      DateTime? itemDueDate = item.dueDateTime;
+      if (itemDueDate != null) {
+        if ((itemDueDate.year == date.year) && (itemDueDate.month == date.month) && (itemDueDate.day == date.day)) {
+          if (dayItems == null) {
+            dayItems = <ToDoItem>[];
           }
+          dayItems.add(item);
         }
       }
     }
     return dayItems;
   }
 
-  void _setItemsLoading(bool loading) {
+  /* Unused void _setItemsLoading(bool loading) {
     _itemsLoading = loading;
     _updateState();
-  }
+  } */
 
   void _updateState() {
     if (mounted) {
@@ -607,35 +605,35 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     }
   }
 
-  List<String>? get _completedItemIds {
+  /* Ununsed List<String>? get _completedItemIds {
     if (CollectionUtils.isEmpty(_todoItems)) {
       return null;
     }
     List<String> completedItemsIds = <String>[];
-    for (ToDoItem item in _todoItems!) {
+    for (ToDoItem item in _todoItems) {
       if (item.isCompleted) {
         completedItemsIds.add(item.id!);
       }
     }
     return completedItemsIds;
-  }
+  } */
 
-  List<String>? get _completedItemNames {
+  /* Ununsed List<String>? get _completedItemNames {
     if (CollectionUtils.isEmpty(_todoItems)) {
       return null;
     }
     List<String> completedItemsNames = <String>[];
-    for (ToDoItem item in _todoItems!) {
+    for (ToDoItem item in _todoItems) {
       if (item.isCompleted) {
         completedItemsNames.add(item.name!);
       }
     }
     return completedItemsNames;
-  }
+  } */
 
-  bool get _clearCompletedItemsButtonVisible {
+  /* Ununsed bool get _clearCompletedItemsButtonVisible {
     return (_completedItemIds?.length ?? 0) > 0;
-  }
+  } */
 
   String get _formattedCalendarMonthLabel {
     if (_calendarStartDate.month != _calendarEndDate.month) {
@@ -665,7 +663,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     List<ToDoItem>? responses = await Wellness().loadToDoItems(limit, offset);
     if (mounted && responses != null) {
       setState(() {
-        _todoItems?.addAll(responses.where((a) => _todoItems.every((b) => a.id != b.id)));
+        _todoItems.addAll(responses.where((a) => _todoItems.every((b) => a.id != b.id)));
         // _todoItems?.addAll(responses);
         _recurringTodoItems.addAll(_todoItems.where((element) => element.recurrenceType != null && element.recurrenceType != "none" && element.recurrenceId == null));
         _fillRecurringTodos();
@@ -680,7 +678,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       List<ToDoItem> recurringItems = [];
       while(_todoItems.length + recurringItems.length < _limit){
         for(ToDoItem item in _recurringTodoItems){
-          if(date!.isBefore(item?.dueDateTimeUtc ?? DateTime.now())
+          if(date!.isBefore(item.dueDateTimeUtc ?? DateTime.now())
               || _isSameDate(item.dueDateTimeUtc, date)
               || _isRecurringDayCompleted(item, date)
           ){
@@ -691,7 +689,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
               ToDoItem toDoItem = ToDoItem(
                   name: item.name,
                   category: item.category,
-                  dueDateTimeUtc: new DateTime.utc(date!.year, date!.month, date!.day, item.dueDateTimeUtc?.hour ?? 0, item.dueDateTimeUtc?.minute ?? 0),
+                  dueDateTimeUtc: new DateTime.utc(date.year, date.month, date.day, item.dueDateTimeUtc?.hour ?? 0, item.dueDateTimeUtc?.minute ?? 0),
                   hasDueTime:  item.hasDueTime,
                   reminderType:  item.reminderType,
                   reminderDateTimeUtc: item.reminderDateTimeUtc,
@@ -710,7 +708,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                 ToDoItem toDoItem = ToDoItem(
                     name: item.name,
                     category: item.category,
-                    dueDateTimeUtc: new DateTime.utc(date!.year, date!.month, date!.day, item.dueDateTimeUtc?.hour ?? 0, item.dueDateTimeUtc?.minute ?? 0),
+                    dueDateTimeUtc: new DateTime.utc(date.year, date.month, date.day, item.dueDateTimeUtc?.hour ?? 0, item.dueDateTimeUtc?.minute ?? 0),
                     hasDueTime:  item.hasDueTime,
                     reminderType:  item.reminderType,
                     reminderDateTimeUtc: item.reminderDateTimeUtc,
@@ -731,7 +729,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                   ToDoItem toDoItem = ToDoItem(
                       name: item.name,
                       category: item.category,
-                      dueDateTimeUtc: new DateTime.utc(date!.year, date!.month, date!.day, item.dueDateTimeUtc?.hour ?? 0, item.dueDateTimeUtc?.minute ?? 0),
+                      dueDateTimeUtc: new DateTime.utc(date.year, date.month, date.day, item.dueDateTimeUtc?.hour ?? 0, item.dueDateTimeUtc?.minute ?? 0),
                       hasDueTime:  item.hasDueTime,
                       reminderType:  item.reminderType,
                       reminderDateTimeUtc: item.reminderDateTimeUtc,
@@ -754,7 +752,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                         ToDoItem toDoItem = ToDoItem(
                             name: item.name,
                             category: item.category,
-                            dueDateTimeUtc: new DateTime.utc(date!.year, date!.month, date!.day, item.dueDateTimeUtc?.hour ?? 0, item.dueDateTimeUtc?.minute ?? 0),
+                            dueDateTimeUtc: new DateTime.utc(date.year, date.month, date.day, item.dueDateTimeUtc?.hour ?? 0, item.dueDateTimeUtc?.minute ?? 0),
                             hasDueTime:  item.hasDueTime,
                             reminderType:  item.reminderType,
                             reminderDateTimeUtc: item.reminderDateTimeUtc,
@@ -809,7 +807,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   bool _isRecurringDayCompleted(ToDoItem recurringItem, DateTime? date){
     for(ToDoItem item in _todoItems){
-      if(_isSameDate(item.dueDateTimeUtc, date) && (item?.recurrenceId ?? "") == recurringItem.id){
+      if(_isSameDate(item.dueDateTimeUtc, date) && (item.recurrenceId ?? "") == recurringItem.id){
         return true;
       }
     }

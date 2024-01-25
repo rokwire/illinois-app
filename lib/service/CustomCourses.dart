@@ -15,13 +15,9 @@
  */
 
 import 'dart:core';
-import 'dart:io';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -261,9 +257,9 @@ class CustomCourses with Service implements NotificationsListener {
 
   // Event Detail Deep Links
 
-  void _onDeepLinkUri(Uri? uri) {
+  /* Unused: void _onDeepLinkUri(Uri? uri) {
     //TODO
-  }
+  }*/
 
   // NotificationsListener
 

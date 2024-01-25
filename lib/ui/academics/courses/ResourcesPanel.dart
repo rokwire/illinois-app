@@ -32,17 +32,17 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
   void initState() {
     _color = widget.color!;
     _colorAccent = widget.colorAccent!;
-    _unitNumber = widget.unitNumber!;
+    _unitNumber = widget.unitNumber;
     _contentItems = widget.contentItems!;
-    _unitName = widget.unitName!;
-
+    _unitName = widget.unitName;
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('', 'Resources'),
-        textStyle: Styles().textStyles?.getTextStyle('header_bar'),),
+        textStyle: Styles().textStyles.getTextStyle('header_bar'),),
       body: SingleChildScrollView(
         child: _buildUnitResourcesWidgets(),
       ),
@@ -104,7 +104,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
 
           headerBuilder: (BuildContext context, bool isExpanded) {
             return ListTile(
-                leading: Styles().images?.getImage((item.reference?.type ?? "item") + "-icon") ?? Container(),
+                leading: Styles().images.getImage((item.reference?.type ?? "item") + "-icon") ?? Container(),
                 title: Text(item.name ?? ""),
             );
           },
@@ -127,7 +127,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
               focusColor: Colors.white,
               dropdownColor: _color,
               isExpanded: true,
-              items: DropdownBuilder.getItems(_resourceTypes, style: Styles().textStyles?.getTextStyle("widget.title.light.large.fat")),
+              items: DropdownBuilder.getItems(_resourceTypes, style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")),
               onChanged: (String? selected) {
                 setState(() {
                   _selectedResourceType = selected;
@@ -150,10 +150,10 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Unit ' + (_unitNumber + 1).toString(), style: Styles().textStyles?.getTextStyle("widget.title.light.huge.fat")),
+                Text('Unit ' + (_unitNumber + 1).toString(), style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")),
                 Container(
                   width: 200,
-                  child: Text(_unitName, style: Styles().textStyles?.getTextStyle("widget.title.light.regular.fat")),
+                  child: Text(_unitName, style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat")),
                 )
               ],
             ),
@@ -187,10 +187,10 @@ class DropdownBuilder {
   static List<DropdownMenuItem<T>> getItems<T>(List<T> options, {String? nullOption, TextStyle? style}) {
     List<DropdownMenuItem<T>> dropDownItems = <DropdownMenuItem<T>>[];
     if (nullOption != null) {
-      dropDownItems.add(DropdownMenuItem(value: null, child: Text(nullOption, style: style ?? Styles().textStyles?.getTextStyle("widget.detail.regular"))));
+      dropDownItems.add(DropdownMenuItem(value: null, child: Text(nullOption, style: style ?? Styles().textStyles.getTextStyle("widget.detail.regular"))));
     }
     for (T option in options) {
-      dropDownItems.add(DropdownMenuItem(value: option, child: Text(option.toString(), style: style ?? Styles().textStyles?.getTextStyle("widget.detail.regular"))));
+      dropDownItems.add(DropdownMenuItem(value: option, child: Text(option.toString(), style: style ?? Styles().textStyles.getTextStyle("widget.detail.regular"))));
     }
     return dropDownItems;
   }

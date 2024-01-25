@@ -31,7 +31,7 @@ class _AssignmentCompletePanelState extends State<AssignmentCompletePanel> imple
     _color = widget.color!;
     _colorAccent = widget.colorAccent!;
     _confettiController = ConfettiController(duration: const Duration(seconds: 3));
-
+    super.initState();
   }
 
   @override
@@ -39,7 +39,7 @@ class _AssignmentCompletePanelState extends State<AssignmentCompletePanel> imple
     _confettiController.play();
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('', 'Daily Activities'),
-        textStyle: Styles().textStyles?.getTextStyle('header_bar'),),
+        textStyle: Styles().textStyles.getTextStyle('header_bar'),),
       body: Column(
         children: _buildAssignmentCompleteWidgets(),
       ),
@@ -65,7 +65,7 @@ class _AssignmentCompletePanelState extends State<AssignmentCompletePanel> imple
                 ),
               ),
               Center(
-                child: Text("Keep up the \ngood work!", style: Styles().textStyles?.getTextStyle("widget.title.light.huge.fat"),),
+                child: Text("Keep up the \ngood work!", style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat"),),
               ),
             ],
           )
@@ -76,7 +76,7 @@ class _AssignmentCompletePanelState extends State<AssignmentCompletePanel> imple
       Padding(padding: EdgeInsets.all(16),
           child: RoundedButton(
               label: Localization().getStringEx('panel.trial.button.continue.label', 'Continue'),
-              textStyle: Styles().textStyles?.getTextStyle("widget.title.light.regular.fat"),
+              textStyle: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"),
               backgroundColor: _colorAccent,
               borderColor: _colorAccent,
               onTap: ()=> Navigator.pop(context))

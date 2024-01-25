@@ -108,7 +108,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                   Padding(
                     padding: EdgeInsets.all(8),
                     child:  Container(
-                      child: Styles().images?.getImage(moduleType) ?? Container(),
+                      child: Styles().images.getImage(moduleType) ?? Container(),
                     ),
 
                   ),
@@ -121,7 +121,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                           focusColor: Colors.white,
                           dropdownColor: colorAccent,
                           isExpanded: true,
-                          items: DropdownBuilder.getItems(_timeframes, style: Styles().textStyles?.getTextStyle("widget.title.light.large.fat")),
+                          items: DropdownBuilder.getItems(_timeframes, style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")),
                           onChanged: (String? selected) {
                             setState(() {
                               _selectedTimeframe = selected;
@@ -130,7 +130,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                       ),
                     )
                   ),
-                  // Text(_course.modules?[moduleNumber].name ?? "No name",style: Styles().textStyles?.getTextStyle("widget.title.light.large.fat")),
+                  // Text(_course.modules?[moduleNumber].name ?? "No name",style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")),
                 ],
               ),
             ),
@@ -180,7 +180,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         //           Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentPanel(content: contentList[i], color: color, colorAccent:colorAccent, isActivityComplete: true, helpContent: helpContent,)));
         //         },
         //         // icon of the button
-        //         child: Styles().images?.getImage("skills-check") ?? Container(),
+        //         child: Styles().images.getImage("skills-check") ?? Container(),
         //         // styling the button
         //         style: ElevatedButton.styleFrom(
         //           shape: CircleBorder(),
@@ -213,7 +213,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                       // icon of the button
                       child: Padding(
                         padding: EdgeInsets.all(4),
-                        child: Styles().images?.getImage(moduleIconNames[moduleNumber]) ?? Container(),
+                        child: Styles().images.getImage(moduleIconNames[moduleNumber]) ?? Container(),
                       ),
                       // styling the button
                       style: ElevatedButton.styleFrom(
@@ -244,7 +244,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                       // icon of the button
                       child: Padding(
                         padding: EdgeInsets.all(4),
-                        child: Styles().images?.getImage(moduleIconNames[moduleNumber]) ?? Container(),
+                        child: Styles().images.getImage(moduleIconNames[moduleNumber]) ?? Container(),
                       ),
                       // styling the button
                       style: ElevatedButton.styleFrom(
@@ -284,10 +284,10 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Unit ' + (unitNumber + 1).toString(), style: Styles().textStyles?.getTextStyle("widget.title.light.huge.fat")),
+                Text('Unit ' + (unitNumber + 1).toString(), style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")),
                 Container(
                   width: 200,
-                  child: Text(_course?.modules?[moduleNumber].units?[unitNumber].name ?? "No name", style: Styles().textStyles?.getTextStyle("widget.title.light.regular.fat")),
+                  child: Text(_course?.modules?[moduleNumber].units?[unitNumber].name ?? "No name", style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat")),
                 )
               ],
             ),
@@ -326,7 +326,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                 ),
                 Padding(
                   padding: EdgeInsets.all(4),
-                  child: Text('Resources', style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat")),
+                  child: Text('Resources', style: Styles().textStyles.getTextStyle("widget.title.light.small.fat")),
                 ),
               ],
             ),
@@ -339,7 +339,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   Widget _buildStreakWidget(){
     return Container(
       height: 48,
-      color: Styles().colors!.fillColorPrimary,
+      color: Styles().colors.fillColorPrimary,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -353,7 +353,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             onPressed: () {
               Navigator.push(context, CupertinoPageRoute(builder: (context) => StreakPanel()));
             },
-            child: Text('2 Day Streak!',style: Styles().textStyles!.getTextStyle("widget.title.light.small.fat"),),
+            child: Text('2 Day Streak!',style: Styles().textStyles.getTextStyle("widget.title.light.small.fat"),),
           ),
 
         ],
@@ -366,7 +366,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     bool isHelpContentPresent = false;
     bool isHelpVideoContentPresent = false;
     Content? helpContent;
-    Content? helpVideoContent;
+    //Unused: Content? helpVideoContent;
     for(final content in contentItems){
       if(content.type == "info"){
         isHelpContentPresent = true;
@@ -375,7 +375,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
 
       if(content.type == "infoVideo"){
         isHelpVideoContentPresent = true;
-        helpVideoContent = content;
+        //Unused: helpVideoContent = content;
       }
     }
 
@@ -390,7 +390,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                 Navigator.push(context, CupertinoPageRoute(builder: (context) => UnitInfoPanel(content: helpContent, color: color, colorAccent:colorAccent,)));
               },
               // icon of the button
-              child: Styles().images?.getImage("skills-question") ?? Container(),
+              child: Styles().images.getImage("skills-question") ?? Container(),
               // styling the button
               style: ElevatedButton.styleFrom(
                 shape: CircleBorder(),
@@ -408,7 +408,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
               // icon of the button
               child: Padding(
                 padding: EdgeInsets.only(left: 4),
-                child: Styles().images?.getImage("skills-play") ?? Container(),
+                child: Styles().images.getImage("skills-play") ?? Container(),
               ),
               // styling the button
               style: ElevatedButton.styleFrom(
@@ -431,7 +431,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             Navigator.push(context, CupertinoPageRoute(builder: (context) => UnitInfoPanel(content: helpContent, color: color, colorAccent:colorAccent,)));
           },
           // icon of the button
-          child: Styles().images?.getImage("skills-question") ?? Container(),
+          child: Styles().images.getImage("skills-question") ?? Container(),
           // styling the button
           style: ElevatedButton.styleFrom(
             shape: CircleBorder(),
@@ -449,7 +449,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
           // icon of the button
           child: Padding(
             padding: EdgeInsets.only(left: 4),
-            child: Styles().images?.getImage("skills-play") ?? Container(),
+            child: Styles().images.getImage("skills-play") ?? Container(),
           ),
           // styling the button
           style: ElevatedButton.styleFrom(
@@ -472,10 +472,10 @@ class DropdownBuilder {
   static List<DropdownMenuItem<T>> getItems<T>(List<T> options, {String? nullOption, TextStyle? style}) {
     List<DropdownMenuItem<T>> dropDownItems = <DropdownMenuItem<T>>[];
     if (nullOption != null) {
-      dropDownItems.add(DropdownMenuItem(value: null, child: Text(nullOption, style: style ?? Styles().textStyles?.getTextStyle("widget.detail.regular"))));
+      dropDownItems.add(DropdownMenuItem(value: null, child: Text(nullOption, style: style ?? Styles().textStyles.getTextStyle("widget.detail.regular"))));
     }
     for (T option in options) {
-      dropDownItems.add(DropdownMenuItem(value: option, child: Text(option.toString(), style: style ?? Styles().textStyles?.getTextStyle("widget.detail.regular"))));
+      dropDownItems.add(DropdownMenuItem(value: option, child: Text(option.toString(), style: style ?? Styles().textStyles.getTextStyle("widget.detail.regular"))));
     }
     return dropDownItems;
   }

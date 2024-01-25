@@ -42,7 +42,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     _colorAccent = widget.colorAccent!;
     _helpContent = widget.helpContent!;
     _controller = TextEditingController();
-
+    super.initState();
   }
 
   @override
@@ -50,7 +50,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: HeaderBar(title: Localization().getStringEx('', 'Daily Activities'),
-        textStyle: Styles().textStyles?.getTextStyle('header_bar'),),
+        textStyle: Styles().textStyles.getTextStyle('header_bar'),),
       body: Column(
         children: _buildAssignmentActivity(),
       ),
@@ -63,7 +63,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
 
     widgets.add(Padding(
       padding: EdgeInsets.all(24),
-      child: Text(_content.details ?? "Name", style: Styles().textStyles?.getTextStyle("widget.title.light.large")),
+      child: Text(_content.details ?? "Name", style: Styles().textStyles.getTextStyle("widget.title.light.large")),
     ));
 
     widgets.add(
@@ -81,7 +81,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
         Padding(
           padding: EdgeInsets.all(16),
           child: Text("Did you complete this task?",
-            style: Styles().textStyles?.getTextStyle("widget.title.light.regular"),
+            style: Styles().textStyles.getTextStyle("widget.title.light.regular"),
           ),
         )
     );
@@ -99,7 +99,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                   child:RoundedButton(
                       label: Localization().getStringEx('', 'Yes'),
                       leftIconPadding: EdgeInsets.only(left: 15),
-                      textStyle: Styles().textStyles?.getTextStyle("widget.title.light.large.fat"),
+                      textStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),
                       backgroundColor: _isActivityComplete ? _colorAccent : _color,
                       borderColor: _colorAccent,
                       leftIcon: Icon(
@@ -128,7 +128,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                 child:RoundedButton(
                     label: Localization().getStringEx('', 'No'),
                     leftIconPadding: EdgeInsets.only(left: 15),
-                    textStyle: Styles().textStyles?.getTextStyle("widget.title.light.large.fat"),
+                    textStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),
                     backgroundColor:  _isActivityNotCompleted ? _colorAccent : _color,
                     borderColor: _colorAccent,
                     leftIcon: Icon(
@@ -154,7 +154,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
           Padding(
             padding: EdgeInsets.all(16),
             child: Text("How did it go?",
-              style: Styles().textStyles?.getTextStyle("widget.title.light.regular"),
+              style: Styles().textStyles.getTextStyle("widget.title.light.regular"),
             ),
           )
       );
@@ -176,7 +176,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                             color: Colors.white,
                             size: 25,
                           ),
-                          textStyle: Styles().textStyles?.getTextStyle("widget.title.light.large.fat"),
+                          textStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),
                           backgroundColor: _isGood ? _colorAccent : _color,
                           borderColor: _colorAccent,
                           onTap: (){
@@ -197,7 +197,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                               color: Colors.white,
                               size: 25,
                             ),
-                            textStyle: Styles().textStyles?.getTextStyle("widget.title.light.large.fat"),
+                            textStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),
                             backgroundColor:  _isBad ? _colorAccent : _color,
                             borderColor: _colorAccent,
                             onTap: (){
@@ -218,11 +218,11 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
             child: Row(
               children: [
                 Text("Describe your experience.",
-                  style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat"),
+                  style: Styles().textStyles.getTextStyle("widget.title.light.small.fat"),
                 ),
                 Expanded(child: Container(),),
                 IconButton(
-                  icon: Styles().images?.getImage("skills-mic") ?? Container(),
+                  icon: Styles().images.getImage("skills-mic") ?? Container(),
                   onPressed: () {
                     //TODO voice to text
                   },
@@ -237,11 +237,11 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
             child: Row(
               children: [
                 Text("Why not? What got in your way?",
-                  style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat"),
+                  style: Styles().textStyles.getTextStyle("widget.title.light.small.fat"),
                 ),
                 Expanded(child: Container(),),
                 IconButton(
-                  icon: Styles().images?.getImage("skills-mic") ?? Container(),
+                  icon: Styles().images.getImage("skills-mic") ?? Container(),
                   onPressed: () {
                     //TODO voice to text
                   },
@@ -256,11 +256,11 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
             child: Row(
               children: [
                 Text("Notes",
-                  style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat"),
+                  style: Styles().textStyles.getTextStyle("widget.title.light.small.fat"),
                 ),
                 Expanded(child: Container(),),
                 IconButton(
-                  icon: Styles().images?.getImage("skills-mic") ?? Container(),
+                  icon: Styles().images.getImage("skills-mic") ?? Container(),
                   onPressed: () {
                     //TODO voice to text
 
@@ -307,7 +307,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
               return ListTile(
                 iconColor: Colors.white,
                 title: Center(
-                  child:Text("Helpful Information", style:Styles().textStyles?.getTextStyle("widget.title.light.large.fat")),
+                  child:Text("Helpful Information", style:Styles().textStyles.getTextStyle("widget.title.light.large.fat")),
                 )
               );
             },
@@ -315,10 +315,10 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(padding: EdgeInsets.all(8),
-                    child: Text("- " + (_helpContent.name ?? "Name") + ": " + (_helpContent.details ?? " "), style:Styles().textStyles?.getTextStyle("widget.title.light.small")),
+                    child: Text("- " + (_helpContent.name ?? "Name") + ": " + (_helpContent.details ?? " "), style:Styles().textStyles.getTextStyle("widget.title.light.small")),
                 ),
                 Padding(padding: EdgeInsets.all(8),
-                  child: Text("- " + "Link to other resources or more text", style:Styles().textStyles?.getTextStyle("widget.title.light.small")),
+                  child: Text("- " + "Link to other resources or more text", style:Styles().textStyles.getTextStyle("widget.title.light.small")),
                 ),
               ],
             ),

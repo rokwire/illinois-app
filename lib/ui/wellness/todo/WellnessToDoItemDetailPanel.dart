@@ -292,12 +292,12 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                   child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                       decoration:
-                      BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),
+                      BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
                       child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                         Text(StringUtils.ensureNotEmpty(_formattedEndDate),
-                            style: Styles().textStyles?.getTextStyle("panel.wellness.todo.item_detail.title")),
+                            style: Styles().textStyles.getTextStyle("panel.wellness.todo.item_detail.title")),
                         Expanded(child: Container()),
-                        Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
+                        Styles().images.getImage('calendar', excludeFromSemantics: true) ?? Container(),
                       ])))
             ])
         )
@@ -310,9 +310,9 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
         child: Padding(
             padding: EdgeInsets.only(top: 17),
             child: WeekdaySelector(
-              color:  Styles().colors!.mediumGray!,
-              selectedFillColor: Styles().colors!.fillColorPrimary,
-              selectedColor: Styles().colors!.fillColorSecondary,
+              color:  Styles().colors.mediumGray,
+              selectedFillColor: Styles().colors.fillColorPrimary,
+              selectedColor: Styles().colors.fillColorSecondary,
               onChanged: (int day) {
                 setState(() {
                   final index = day % 7;
@@ -336,18 +336,18 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
               child: _buildFieldLabel(label: Localization().getStringEx('', 'RECURRENCE TYPE'))),
           Container(
             decoration: BoxDecoration(
-              border: Border.all(color: Styles().colors!.mediumGray!, width: 1),
-              color: Styles().colors!.white,
+              border: Border.all(color: Styles().colors.mediumGray, width: 1),
+              color: Styles().colors.white,
             ),
             child: Padding(
               padding: EdgeInsets.only(right: 5, left: 5),
               child: DropdownButton(
                   value: _selectedRecurringType,
-                  dropdownColor: Styles().colors!.white,
+                  dropdownColor: Styles().colors.white,
                   isExpanded: true,
-                  icon: Styles().images?.getImage(_reminderTypeDropDownValuesVisible ? 'chevron-up' : 'chevron-down'),
-                  style: Styles().textStyles?.getTextStyle("panel.wellness.todo.item_detail.title"),
-                  items: DropdownBuilder.getItems(_recurringTypes, style: Styles().textStyles?.getTextStyle("panel.wellness.todo.item_detail.title")),
+                  icon: Styles().images.getImage(_reminderTypeDropDownValuesVisible ? 'chevron-up' : 'chevron-down'),
+                  style: Styles().textStyles.getTextStyle("panel.wellness.todo.item_detail.title"),
+                  items: DropdownBuilder.getItems(_recurringTypes, style: Styles().textStyles.getTextStyle("panel.wellness.todo.item_detail.title")),
                   onChanged: (String? selected) {
                     setState(() {
                       _selectedRecurringType = selected;
@@ -942,7 +942,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   }
 
   void _onSaveCompleted(bool success) {
-    late String msg;
+    //Unused: late String msg;
       _decreaseProgress();
     Navigator.of(context).pop();
   }
@@ -1101,10 +1101,10 @@ class DropdownBuilder {
   static List<DropdownMenuItem<T>> getItems<T>(List<T> options, {String? nullOption, TextStyle? style}) {
     List<DropdownMenuItem<T>> dropDownItems = <DropdownMenuItem<T>>[];
     if (nullOption != null) {
-      dropDownItems.add(DropdownMenuItem(value: null, child: Text(nullOption, style: style ?? Styles().textStyles?.getTextStyle("widget.detail.regular"))));
+      dropDownItems.add(DropdownMenuItem(value: null, child: Text(nullOption, style: style ?? Styles().textStyles.getTextStyle("widget.detail.regular"))));
     }
     for (T option in options) {
-      dropDownItems.add(DropdownMenuItem(value: option, child: Text(option.toString(), style: style ?? Styles().textStyles?.getTextStyle("widget.detail.regular"))));
+      dropDownItems.add(DropdownMenuItem(value: option, child: Text(option.toString(), style: style ?? Styles().textStyles.getTextStyle("widget.detail.regular"))));
     }
     return dropDownItems;
   }

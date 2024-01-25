@@ -293,7 +293,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     http.Response? response = await Network().get(url, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
-    if (url != null && url.isNotEmpty) {
+    if (url.isNotEmpty) {
       Map<String, String> queryParams = {};
       if (limit != null) {
         queryParams['limit'] = limit.toString();

@@ -27,14 +27,14 @@ class _UnitInfoPanelState extends State<UnitInfoPanel> implements NotificationsL
     _content = widget.content!;
     _color = widget.color!;
     _colorAccent = widget.colorAccent!;
-
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('', 'Daily Activities'),
-        textStyle: Styles().textStyles?.getTextStyle('header_bar'),),
+        textStyle: Styles().textStyles.getTextStyle('header_bar'),),
       body: Column(
         children: _buildUnitInfoWidgets(),
       ),
@@ -72,7 +72,7 @@ class _UnitInfoPanelState extends State<UnitInfoPanel> implements NotificationsL
                         // icon of the button
                         child: Padding(
                           padding: EdgeInsets.all(4),
-                          child: Styles().images?.getImage("skills-question") ?? Container(),
+                          child: Styles().images.getImage("skills-question") ?? Container(),
                         ),
                         // styling the button
                         style: ElevatedButton.styleFrom(
@@ -89,13 +89,13 @@ class _UnitInfoPanelState extends State<UnitInfoPanel> implements NotificationsL
               Center(
                 child: Padding(
                   padding: EdgeInsets.all(16),
-                  child: Text(_content.name?.toUpperCase() ?? "Name", style: Styles().textStyles?.getTextStyle("widget.title.light.huge.fat")),
+                  child: Text(_content.name?.toUpperCase() ?? "Name", style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")),
                 )
               ),
               Center(
                   child: Padding(
                     padding: EdgeInsets.all(16),
-                    child: Text(_content.details ?? "details", style: Styles().textStyles?.getTextStyle("widget.title.light.large")),
+                    child: Text(_content.details ?? "details", style: Styles().textStyles.getTextStyle("widget.title.light.large")),
                   )
               ),
               //TODO other content to be added here
@@ -111,7 +111,7 @@ class _UnitInfoPanelState extends State<UnitInfoPanel> implements NotificationsL
         padding: EdgeInsets.all(16),
         child: RoundedButton(
             label: Localization().getStringEx('panel.trial.button.continue.label', 'Continue'),
-            textStyle: Styles().textStyles?.getTextStyle("widget.title.light.regular.fat"),
+            textStyle: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"),
             backgroundColor: _colorAccent,
             borderColor: _colorAccent,
             onTap: ()=> Navigator.pop(context)),
