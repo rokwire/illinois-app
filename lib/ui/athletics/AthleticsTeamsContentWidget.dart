@@ -100,7 +100,7 @@ class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidge
   }
 
   Widget _buildEmptyContent() {
-    return _buildCenteredWidget(Text(Localization().getStringEx('panel.athletics.content.teams.empty.message', 'There are no teams.'),
+    return _buildCenteredWidget(Text(Localization().getStringEx('panel.athletics.content.teams.empty.message', 'Select your favorite teams to display here.'),
         textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat')));
   }
 
@@ -131,7 +131,7 @@ class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidge
         }
       }
     } else {
-      _teams = Sports().sports;
+      _teams = <SportDefinition>[];
     }
   }
 

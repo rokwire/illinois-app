@@ -85,7 +85,11 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
 
   void _buildDisplayNews() {
     Set<String>? favoriteSports = Auth2().prefs?.sportsInterests;
-    if (CollectionUtils.isNotEmpty(favoriteSports) && CollectionUtils.isNotEmpty(_news)) {
+    if (CollectionUtils.isEmpty(favoriteSports)) {
+      _displayNews = <News>[];
+    } else if (_news == null) {
+      _displayNews = null;
+    } else {
       _displayNews = <News>[];
       for (News article in _news!) {
         String? articleSport = article.sportKey;
@@ -93,8 +97,6 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
           _displayNews!.add(article);
         }
       }
-    } else {
-      _displayNews = _news;
     }
   }
 
@@ -115,7 +117,7 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
   }
 
   Widget _buildEmptyContent() {
-    return _buildCenteredWidget(Text(Localization().getStringEx('panel.athletics.content.news.empty.message', 'There are no news.'),
+    return _buildCenteredWidget(Text(Localization().getStringEx('panel.athletics.content.news.empty.message', 'There is no news for the selected teams.'),
         textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat')));
   }
 

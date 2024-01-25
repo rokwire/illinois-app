@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/wallet/ICardHomeContentPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -14,7 +15,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/SavedPanel.dart';
-import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
@@ -331,7 +331,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateAthletics() {
     Analytics().logSelect(target: "Athletics");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.events)));
   }
 
   void _navigateBusPass() {

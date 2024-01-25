@@ -487,6 +487,26 @@ class Sports with Service implements NotificationsListener {
     }
   }
 
+  Future<List<Game>?> loadPreferredTodayGames() async {
+    Set<String>? preferredSports = Auth2().prefs?.sportsInterests;
+    if (CollectionUtils.isEmpty(preferredSports)) {
+      return <Game>[];
+    }
+    List<Game>? gamesList = await loadGames();
+    if (gamesList == null) {
+      return null;
+    }
+    List<Game> todayGames = <Game>[];
+    for (Game game in gamesList) {
+      String? sportKey = game.sport?.shortName;
+      if ((game.isGameDay) && (sportKey != null) && preferredSports!.contains(sportKey)) {
+        todayGames.add(game);
+      }
+    }
+    _sortTodayGames(todayGames);
+    return todayGames;
+  }
+
   Future<List<Game>?> loadTopScheduleGames() async {
     List<Game>? gamesList = await loadGames();
     return getTopScheduleGamesFromList(gamesList);

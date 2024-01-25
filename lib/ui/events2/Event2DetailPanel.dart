@@ -1048,25 +1048,27 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onSettingEventRegistration(){
     Analytics().logSelect(target: "Event Registration");
-    Navigator.push<Event2?>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(
+    Navigator.push<dynamic>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(
       event: _event,
-    ))).then((Event2? event) {
-      if (event != null)
-      setStateIfMounted(() {
-        _event = event;
-      });
+    ))).then((dynamic event) {
+      if (event is Event2) {
+          setStateIfMounted(() {
+           _event = event;
+         });
+       }
     });
   }
 
   void _onSettingAttendance(){
     Analytics().logSelect(target: "Event Attendance");
-    Navigator.push<Event2?>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(
+    Navigator.push<dynamic>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(
       event: _event,
-    ))).then((Event2? event) {
-      if (event != null)
-      setStateIfMounted(() {
-        _event = event;
-      });
+    ))).then((dynamic event) {
+      if (event is Event2) {
+        setStateIfMounted(() {
+         _event = event;
+       });
+       }
     });
   }
 
