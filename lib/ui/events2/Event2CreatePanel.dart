@@ -1363,14 +1363,18 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
   void _onEventRegistration() {
     Analytics().logSelect(target: "Event Registration");
     Event2CreatePanel.hideKeyboard(context);
-    Navigator.push<Event2RegistrationDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(
+    Navigator.push<dynamic>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(
+      event: widget.event,
       registrationDetails: _registrationDetails,
-    ))).then((Event2RegistrationDetails? result) {
-      if ((result != null) && mounted) {
-        setState(() {
+    ))).then((dynamic result) {
+      setStateIfMounted(() {
+        if (result is Event2RegistrationDetails) {
           _registrationDetails = result;
-        });
-      }
+        }
+        else if (result is Event2) {
+          _registrationDetails = result.registrationDetails;
+        }
+      });
     });
   }
 
