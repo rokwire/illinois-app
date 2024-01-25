@@ -37,12 +37,20 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       _course = CustomCourses().courses!.firstWhere((course) => course.key == essentialSkillsCoachKey);
     } else {
       CustomCourses().loadCourses().then((courses) {
-        setState(() {
-          _course = courses?.firstWhere((course) => course.key == essentialSkillsCoachKey);
-        });
+        if (mounted) {
+          setState(() {
+            _course = courses?.firstWhere((course) => course.key == essentialSkillsCoachKey);
+          });
+        }
       });
     }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override

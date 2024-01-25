@@ -35,6 +35,12 @@ class _AssignmentCompletePanelState extends State<AssignmentCompletePanel> imple
   }
 
   @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     _confettiController.play();
     return Scaffold(

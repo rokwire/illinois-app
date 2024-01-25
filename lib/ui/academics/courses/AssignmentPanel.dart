@@ -46,6 +46,12 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
