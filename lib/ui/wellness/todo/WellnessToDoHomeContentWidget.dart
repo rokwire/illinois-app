@@ -18,7 +18,7 @@ import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/wellness/ToDo.dart';
+import 'package:illinois/model/wellness/WellnessToDo.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Wellness.dart';
@@ -43,8 +43,8 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   static final String _unAssignedLabel =
       Localization().getStringEx('panel.wellness.todo.items.unassigned.category.label', 'Unassigned Items');
   late _ToDoTab _selectedTab;
-  List<ToDoItem> _todoItems = [];
-  List<ToDoItem> _recurringTodoItems = [];
+  List<WellnessToDoItem> _todoItems = [];
+  List<WellnessToDoItem> _recurringTodoItems = [];
   late DateTime _calendarStartDate;
   late DateTime _calendarEndDate;
   bool _itemsLoading = false;
@@ -277,9 +277,9 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     DateTime currentDate = DateTime.fromMillisecondsSinceEpoch(_calendarStartDate.millisecondsSinceEpoch);
     while (currentDate.isBefore(_calendarEndDate)) {
       List<Widget> dayItemWidgets = <Widget>[];
-      List<ToDoItem>? dayItems = _getItemsForDate(currentDate);
+      List<WellnessToDoItem>? dayItems = _getItemsForDate(currentDate);
       if (CollectionUtils.isNotEmpty(dayItems)) {
-        for (ToDoItem item in dayItems!) {
+        for (WellnessToDoItem item in dayItems!) {
           dayItemWidgets.add(Padding(padding: EdgeInsets.only(top: 7), child: _buildCalendarToDoItem(item)));
         }
       }
@@ -296,7 +296,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         padding: EdgeInsets.only(top: 34), child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: scrollWidgets));
   }
 
-  Widget _buildCalendarToDoItem(ToDoItem? item) {
+  Widget _buildCalendarToDoItem(WellnessToDoItem? item) {
     double widgetSize = 30;
     bool hasReminder = (item?.reminderDateTimeUtc != null);
     return  GestureDetector(
@@ -315,10 +315,10 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     if (_sortedItemsMap != null) {
       List<Widget> contentList = <Widget>[];
       for (String key in _sortedItemsMap!.keys) {
-        List<ToDoItem>? items = _sortedItemsMap![key];
+        List<WellnessToDoItem>? items = _sortedItemsMap![key];
         if (CollectionUtils.isNotEmpty(items)) {
           contentList.add(_buildSectionWidget(key));
-          for (ToDoItem item in items!) {
+          for (WellnessToDoItem item in items!) {
             contentList.add(Padding(padding: EdgeInsets.only(top: 10), child: _ToDoItemCard(item: item)));
           }
         }
@@ -471,7 +471,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     _updateState();
   }
 
-  void _onTapCalendarItem(ToDoItem? item) async {
+  void _onTapCalendarItem(WellnessToDoItem? item) async {
     Analytics().logSelect(target: "Calendar", source: widget.runtimeType.toString());
     if (item == null) {
       return;
@@ -512,7 +512,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     if (CollectionUtils.isEmpty(_todoItems)) {
       return;
     }
-    _todoItems.sort((ToDoItem first, ToDoItem second) {
+    _todoItems.sort((WellnessToDoItem first, WellnessToDoItem second) {
       if ((first.dueDateTime == null) && (second.dueDateTime != null)) {
         return -1;
       } else if ((first.dueDateTime != null) && (second.dueDateTime == null)) {
@@ -525,7 +525,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     });
   }
 
-  String? _getItemKeyByTab(ToDoItem item) {
+  String? _getItemKeyByTab(WellnessToDoItem item) {
     String? key;
     switch (_selectedTab) {
       case _ToDoTab.daily:
@@ -544,18 +544,18 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     return key;
   }
 
-  Map<String, List<ToDoItem>>? get _sortedItemsMap {
+  Map<String, List<WellnessToDoItem>>? get _sortedItemsMap {
     if (CollectionUtils.isEmpty(_todoItems)) {
       return null;
     }
 
-    Map<String, List<ToDoItem>> itemsMap = {};
-    List<ToDoItem>? categoryItems;
-    for (ToDoItem item in _todoItems) {
+    Map<String, List<WellnessToDoItem>> itemsMap = {};
+    List<WellnessToDoItem>? categoryItems;
+    for (WellnessToDoItem item in _todoItems) {
       String itemKey = _getItemKeyByTab(item)!;
       categoryItems = itemsMap[itemKey];
       if (categoryItems == null) {
-        categoryItems = <ToDoItem>[];
+        categoryItems = <WellnessToDoItem>[];
       }
       categoryItems.add(item);
       itemsMap[itemKey] = categoryItems;
@@ -566,7 +566,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     if (_selectedTab != _ToDoTab.category) {
       return itemsMap;
     }
-    SplayTreeMap<String, List<ToDoItem>> sortedMap = SplayTreeMap<String, List<ToDoItem>>.from(itemsMap, (first, second) {
+    SplayTreeMap<String, List<WellnessToDoItem>> sortedMap = SplayTreeMap<String, List<WellnessToDoItem>>.from(itemsMap, (first, second) {
       if ((first == _unAssignedLabel) && (second != _unAssignedLabel)) {
         return -1;
       } else if ((first != _unAssignedLabel) && (second == _unAssignedLabel)) {
@@ -578,14 +578,14 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     return sortedMap;
   }
 
-  List<ToDoItem>? _getItemsForDate(DateTime date) {
-    List<ToDoItem>? dayItems;
-    for (ToDoItem item in _todoItems) {
+  List<WellnessToDoItem>? _getItemsForDate(DateTime date) {
+    List<WellnessToDoItem>? dayItems;
+    for (WellnessToDoItem item in _todoItems) {
       DateTime? itemDueDate = item.dueDateTime;
       if (itemDueDate != null) {
         if ((itemDueDate.year == date.year) && (itemDueDate.month == date.month) && (itemDueDate.day == date.day)) {
           if (dayItems == null) {
-            dayItems = <ToDoItem>[];
+            dayItems = <WellnessToDoItem>[];
           }
           dayItems.add(item);
         }
@@ -660,7 +660,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   Future<int> _loadTodos({required int limit, required int offset}) async {
-    List<ToDoItem>? responses = await Wellness().loadToDoItems(limit, offset);
+    List<WellnessToDoItem>? responses = await Wellness().loadToDoItems(limit, offset);
     if (mounted && responses != null) {
       setState(() {
         _todoItems.addAll(responses.where((a) => _todoItems.every((b) => a.id != b.id)));
@@ -675,9 +675,9 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   void _fillRecurringTodos(){
     if(_recurringTodoItems.isNotEmpty){
       DateTime? date = _recurringTodoItems[0].dueDateTimeUtc ?? DateTime.now();
-      List<ToDoItem> recurringItems = [];
+      List<WellnessToDoItem> recurringItems = [];
       while(_todoItems.length + recurringItems.length < _limit){
-        for(ToDoItem item in _recurringTodoItems){
+        for(WellnessToDoItem item in _recurringTodoItems){
           if(date!.isBefore(item.dueDateTimeUtc ?? DateTime.now())
               || _isSameDate(item.dueDateTimeUtc, date)
               || _isRecurringDayCompleted(item, date)
@@ -686,7 +686,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
           }else{
             //daily
             if(item.recurrenceType?.substring((item.recurrenceType?.length ?? 0) -5, (item.recurrenceType?.length ?? 0)) == "* * *"){
-              ToDoItem toDoItem = ToDoItem(
+              WellnessToDoItem toDoItem = WellnessToDoItem(
                   name: item.name,
                   category: item.category,
                   dueDateTimeUtc: new DateTime.utc(date.year, date.month, date.day, item.dueDateTimeUtc?.hour ?? 0, item.dueDateTimeUtc?.minute ?? 0),
@@ -705,7 +705,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
             }else if(item.recurrenceType?.substring((item.recurrenceType?.length ?? 0) -5, (item.recurrenceType?.length ?? 0)) == "* ? *"){
               List<String>? result = item.recurrenceType?.split(' ');
               if(result != null && int.parse(result[3]) == date.day) {
-                ToDoItem toDoItem = ToDoItem(
+                WellnessToDoItem toDoItem = WellnessToDoItem(
                     name: item.name,
                     category: item.category,
                     dueDateTimeUtc: new DateTime.utc(date.year, date.month, date.day, item.dueDateTimeUtc?.hour ?? 0, item.dueDateTimeUtc?.minute ?? 0),
@@ -726,7 +726,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
               if(result != null){
                 //weekly
                 if(!result[5].contains(",") && _convertDayString(result[5]) == date.weekday){
-                  ToDoItem toDoItem = ToDoItem(
+                  WellnessToDoItem toDoItem = WellnessToDoItem(
                       name: item.name,
                       category: item.category,
                       dueDateTimeUtc: new DateTime.utc(date.year, date.month, date.day, item.dueDateTimeUtc?.hour ?? 0, item.dueDateTimeUtc?.minute ?? 0),
@@ -749,7 +749,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                   if(dayStrings != null){
                     for(String day in dayStrings){
                       if(_convertDayString(day) == date.weekday){
-                        ToDoItem toDoItem = ToDoItem(
+                        WellnessToDoItem toDoItem = WellnessToDoItem(
                             name: item.name,
                             category: item.category,
                             dueDateTimeUtc: new DateTime.utc(date.year, date.month, date.day, item.dueDateTimeUtc?.hour ?? 0, item.dueDateTimeUtc?.minute ?? 0),
@@ -805,8 +805,8 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     return item?.month == date?.month && item?.day == date?.day;
   }
 
-  bool _isRecurringDayCompleted(ToDoItem recurringItem, DateTime? date){
-    for(ToDoItem item in _todoItems){
+  bool _isRecurringDayCompleted(WellnessToDoItem recurringItem, DateTime? date){
+    for(WellnessToDoItem item in _todoItems){
       if(_isSameDate(item.dueDateTimeUtc, date) && (item.recurrenceId ?? "") == recurringItem.id){
         return true;
       }
@@ -817,7 +817,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 }
 
 class _ToDoItemCard extends StatefulWidget {
-  final ToDoItem item;
+  final WellnessToDoItem item;
   _ToDoItemCard({required this.item});
 
   @override
@@ -886,7 +886,7 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
     _setLoading(false);
   }
 
-  void _onTapEdit(ToDoItem item) {
+  void _onTapEdit(WellnessToDoItem item) {
     Analytics().logSelect(target: "Edit Item", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(item: item)));
   }
@@ -958,7 +958,7 @@ class _TabButton extends StatelessWidget {
 }
 
 class _ToDoItemReminderDialog extends StatefulWidget {
-  final ToDoItem item;
+  final WellnessToDoItem item;
   _ToDoItemReminderDialog({required this.item});
 
   @override
@@ -967,7 +967,7 @@ class _ToDoItemReminderDialog extends StatefulWidget {
 }
 
 class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
-  late ToDoItem _item;
+  late WellnessToDoItem _item;
   late DateTime _reminderDateTime;
   bool _loading = false;
 
@@ -1081,7 +1081,7 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
     );
     _setLoading(true);
     _item.reminderDateTimeUtc = _reminderDateTime.toUtc();
-    _item.reminderType = ToDoReminderType.specific_time;
+    _item.reminderType = WellnessToDoReminderType.specific_time;
     Wellness().updateToDoItem(_item).then((success) {
       _setLoading(false);
       if (!success) {

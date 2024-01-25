@@ -18,7 +18,7 @@ import 'dart:core';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/StudentCourse.dart';
-import 'package:illinois/model/wellness/ToDo.dart';
+import 'package:illinois/model/wellness/WellnessToDo.dart';
 import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Gateway.dart';
@@ -142,7 +142,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
 
   // ToDo List
 
-  Future<List<ToDoCategory>?> loadToDoCategories() async {
+  Future<List<WellnessToDoCategory>?> loadToDoCategories() async {
     if (!isEnabled) {
       Log.w('Failed to load wellness todo categories. Missing wellness url.');
       return null;
@@ -152,7 +152,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
-      List<ToDoCategory>? categories = ToDoCategory.listFromJson(JsonUtils.decodeList(responseString));
+      List<WellnessToDoCategory>? categories = WellnessToDoCategory.listFromJson(JsonUtils.decodeList(responseString));
       return categories;
     } else {
       Log.w('Failed to load wellness todo categories. Response:\n$responseCode: $responseString');
@@ -160,7 +160,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
-  Future<bool> saveToDoCategory(ToDoCategory category) async {
+  Future<bool> saveToDoCategory(WellnessToDoCategory category) async {
     if (!isEnabled) {
       Log.w('Failed to save wellness todo category. Missing wellness url.');
       return false;
@@ -206,7 +206,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
-  Future<bool> createToDoItem(ToDoItem item) async {
+  Future<bool> createToDoItem(WellnessToDoItem item) async {
     if (!isEnabled) {
       Log.w('Failed to create wellness todo item. Missing wellness url.');
       return false;
@@ -226,7 +226,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
-  Future<bool> updateToDoItem(ToDoItem item) async {
+  Future<bool> updateToDoItem(WellnessToDoItem item) async {
     if (!isEnabled) {
       Log.w('Failed to update wellness todo item. Missing wellness url.');
       return false;
@@ -284,7 +284,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
-  Future<List<ToDoItem>?> loadToDoItems(int? limit, int? offset,) async {
+  Future<List<WellnessToDoItem>?> loadToDoItems(int? limit, int? offset,) async {
     if (!isEnabled) {
       Log.w('Failed to load wellness todo items. Missing wellness url.');
       return null;
@@ -309,7 +309,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
 
     }
     if (responseCode == 200) {
-      List<ToDoItem>? items = ToDoItem.listFromJson(JsonUtils.decodeList(responseString));
+      List<WellnessToDoItem>? items = WellnessToDoItem.listFromJson(JsonUtils.decodeList(responseString));
 
       return items;
     } else {
@@ -318,7 +318,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
-  Future<ToDoItem?> loadToDoItem(String? itemId) async {
+  Future<WellnessToDoItem?> loadToDoItem(String? itemId) async {
     if (StringUtils.isEmpty(itemId)) {
       Log.w('Failed to load wellness todo item. Missing id.');
       return null;
@@ -332,7 +332,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
-      ToDoItem? item = ToDoItem.fromJson(JsonUtils.decodeMap(responseString));
+      WellnessToDoItem? item = WellnessToDoItem.fromJson(JsonUtils.decodeMap(responseString));
       return item;
     } else {
       Log.w('Failed to load wellness todo item. Response:\n$responseCode: $responseString');

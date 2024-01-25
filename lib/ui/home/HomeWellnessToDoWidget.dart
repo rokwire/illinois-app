@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/wellness/ToDo.dart';
+import 'package:illinois/model/wellness/WellnessToDo.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
@@ -36,7 +36,7 @@ class HomeWellnessToDoWidget extends StatefulWidget {
 
 class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> implements NotificationsListener {
 
-  List<ToDoItem>? _toDoItems;
+  List<WellnessToDoItem>? _toDoItems;
   bool _loading = false;
 
   @override
@@ -115,10 +115,10 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
   }
 
   Widget _buildTodayItemsWidget() {
-    List<ToDoItem>? todayItems = _buildTodayItems();
+    List<WellnessToDoItem>? todayItems = _buildTodayItems();
     List<Widget> widgetList = <Widget>[];
     if (CollectionUtils.isNotEmpty(todayItems)) {
-      for (ToDoItem item in todayItems!) {
+      for (WellnessToDoItem item in todayItems!) {
         widgetList.add(_buildToDoItemWidget(item));
       }
     } else {
@@ -128,10 +128,10 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
   }
 
   Widget _buildUnAssignedItemsWidget() {
-    List<ToDoItem>? unAssignedItems = _buildUnAssignedItems();
+    List<WellnessToDoItem>? unAssignedItems = _buildUnAssignedItems();
     List<Widget> widgetList = <Widget>[];
     if (CollectionUtils.isNotEmpty(unAssignedItems)) {
-      for (ToDoItem item in unAssignedItems!) {
+      for (WellnessToDoItem item in unAssignedItems!) {
         widgetList.add(_buildToDoItemWidget(item));
       }
     } else {
@@ -140,7 +140,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
     return Padding(padding: EdgeInsets.only(top: 2), child: Column(children: widgetList));
   }
 
-  Widget _buildToDoItemWidget(ToDoItem item) {
+  Widget _buildToDoItemWidget(WellnessToDoItem item) {
     Widget? completedWidget = Styles().images.getImage(item.isCompleted ? 'check-circle-outline-gray-white' : 'circle-outline-white', color: Styles().colors.fillColorSecondary , excludeFromSemantics: true);
     return GestureDetector(onTap: () => _onTapToDoItem(item), child: Padding(padding: EdgeInsets.only(top: 10), child: Container(color: Colors.transparent, child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
       Padding(padding: EdgeInsets.only(right: 10), child: completedWidget),
@@ -148,7 +148,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
     ]))));
   }
 
-  void _onTapToDoItem(ToDoItem item) {
+  void _onTapToDoItem(WellnessToDoItem item) {
     Analytics().logWellnessToDo(
       action: item.isCompleted ? Analytics.LogWellnessActionUncomplete : Analytics.LogWellnessActionComplete,
       source: widget.runtimeType.toString(),
@@ -197,12 +197,12 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
     }
   }
 
-  List<ToDoItem>? _buildTodayItems() {
-    List<ToDoItem>? todayItems;
+  List<WellnessToDoItem>? _buildTodayItems() {
+    List<WellnessToDoItem>? todayItems;
     if (CollectionUtils.isNotEmpty(_toDoItems)) {
       DateTime now = DateTime.now();
-      todayItems = <ToDoItem>[];
-      for (ToDoItem item in _toDoItems!) {
+      todayItems = <WellnessToDoItem>[];
+      for (WellnessToDoItem item in _toDoItems!) {
         DateTime? dueDate = item.dueDateTime;
         if (dueDate != null) {
           if ((dueDate.year == now.year) && (dueDate.month == now.month) && (dueDate.day == now.day)) {
@@ -217,11 +217,11 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
     return todayItems;
   }
 
-  List<ToDoItem>? _buildUnAssignedItems() {
-    List<ToDoItem>? unAssignedItems;
+  List<WellnessToDoItem>? _buildUnAssignedItems() {
+    List<WellnessToDoItem>? unAssignedItems;
     if (CollectionUtils.isNotEmpty(_toDoItems)) {
-      unAssignedItems = <ToDoItem>[];
-      for (ToDoItem item in _toDoItems!) {
+      unAssignedItems = <WellnessToDoItem>[];
+      for (WellnessToDoItem item in _toDoItems!) {
         if (item.category == null) {
             unAssignedItems.add(item);
             if (unAssignedItems.length == 3) { // return max 3 items

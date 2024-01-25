@@ -16,7 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/wellness/ToDo.dart';
+import 'package:illinois/model/wellness/WellnessToDo.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Wellness.dart';
@@ -33,7 +33,7 @@ import 'package:weekday_selector/weekday_selector.dart';
 
 class WellnessToDoItemDetailPanel extends StatefulWidget  implements AnalyticsPageAttributes {
   final String? itemId;
-  final ToDoItem? item;
+  final WellnessToDoItem? item;
   final bool? optionalFieldsExpanded;
   WellnessToDoItemDetailPanel({this.itemId, this.item, this.optionalFieldsExpanded});
 
@@ -56,16 +56,16 @@ class WellnessToDoItemDetailPanel extends StatefulWidget  implements AnalyticsPa
 class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPanel> implements NotificationsListener {
   static final String _workDayFormat = 'yyyy-MM-dd';
 
-  ToDoItem? _item;
-  ToDoCategory? _category;
-  List<ToDoCategory>? _categories;
+  WellnessToDoItem? _item;
+  WellnessToDoCategory? _category;
+  List<WellnessToDoCategory>? _categories;
   TextEditingController _nameController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _locationController = TextEditingController();
   DateTime? _dueDate;
   TimeOfDay? _dueTime;
   DateTime? _endDate;
-  ToDoReminderType? _selectedReminderType;
+  WellnessToDoReminderType? _selectedReminderType;
   DateTime? _reminderDateTime;
   List<DateTime>? _workDays;
   late bool _optionalFieldsVisible;
@@ -89,7 +89,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
       if (_item != null) {
         _populateItemFields();
       } else {
-        _selectedReminderType = ToDoReminderType.none;
+        _selectedReminderType = WellnessToDoReminderType.none;
       }
     }
     _optionalFieldsVisible = widget.optionalFieldsExpanded ?? false;
@@ -224,8 +224,8 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     if (CollectionUtils.isNotEmpty(_categories)) {
       widgetList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
       widgetList.add(_buildCategoryItem(null)); // "None"
-      widgetList.add(_buildCategoryItem(ToDoCategory())); // "Create a Category"
-      for (ToDoCategory category in _categories!) {
+      widgetList.add(_buildCategoryItem(WellnessToDoCategory())); // "Create a Category"
+      for (WellnessToDoCategory category in _categories!) {
         widgetList.add(_buildCategoryItem(category));
       }
     }
@@ -233,7 +233,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
         visible: _categoriesDropDownVisible, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgetList));
   }
 
-  Widget _buildCategoryItem(ToDoCategory? category) {
+  Widget _buildCategoryItem(WellnessToDoCategory? category) {
     bool isSelected = (category == _category);
     late String categoryName;
     if (category == null) {
@@ -432,13 +432,13 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   Widget _buildReminderTypeDropDownItemsWidget() {
     List<Widget> sectionList = <Widget>[];
     sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (ToDoReminderType type in ToDoReminderType.values) {
+    for (WellnessToDoReminderType type in WellnessToDoReminderType.values) {
       sectionList.add(_buildReminderTypeItem(type));
     }
     return Column(children: sectionList);
   }
 
-  Widget _buildReminderTypeItem(ToDoReminderType type) {
+  Widget _buildReminderTypeItem(WellnessToDoReminderType type) {
     bool isSelected = (type == _selectedReminderType);
     BorderSide borderSide = BorderSide(color: Styles().colors.fillColorPrimary, width: 1);
     return GestureDetector(
@@ -581,7 +581,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     _updateState();
   }
 
-  void _onTapCategory(ToDoCategory? category) {
+  void _onTapCategory(WellnessToDoCategory? category) {
     _hideKeyboard();
     if ((category != null) && (category.id == null)) {
       Analytics().logSelect(target: 'Create a Category');
@@ -601,7 +601,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     _updateState();
   }
 
-  void _onTapReminderType(ToDoReminderType type) {
+  void _onTapReminderType(WellnessToDoReminderType type) {
     Analytics().logSelect(target: 'Reminder Type: $type');
     _hideKeyboard();
     if (_reminderTypeDropDownValuesVisible) {
@@ -618,7 +618,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     DateTime? resultDate = await _pickDate();
     if (resultDate != null) {
       _dueDate = resultDate;
-      if (_selectedReminderType != ToDoReminderType.specific_time) {
+      if (_selectedReminderType != WellnessToDoReminderType.specific_time) {
         _populateReminderDateTime();
       }
       _updateState();
@@ -631,7 +631,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     DateTime? resultDate = await _pickDate();
     if (resultDate != null) {
       _endDate = resultDate;
-      if (_selectedReminderType != ToDoReminderType.specific_time) {
+      if (_selectedReminderType != WellnessToDoReminderType.specific_time) {
         _populateReminderDateTime();
       }
       _updateState();
@@ -753,7 +753,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     }
     String? location = StringUtils.isNotEmpty(_locationController.text) ? _locationController.text : null;
     String? description = StringUtils.isNotEmpty(_descriptionController.text) ? _descriptionController.text : null;
-    ToDoItem? itemToSave = ToDoItem(
+    WellnessToDoItem? itemToSave = WellnessToDoItem(
           id: _item?.id,
           name: name,
           category: _category,
@@ -962,7 +962,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
       if (_item != null) {
         _populateItemFields();
       } else {
-        _selectedReminderType = ToDoReminderType.none;
+        _selectedReminderType = WellnessToDoReminderType.none;
       }
       _decreaseProgress();
     });
@@ -973,7 +973,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     _nameController.text = StringUtils.ensureNotEmpty(_item?.name);
     _descriptionController.text = StringUtils.ensureNotEmpty(_item?.description);
     _locationController.text = StringUtils.ensureNotEmpty(_item?.location);
-    _selectedReminderType = _item?.reminderType ?? ToDoReminderType.none;
+    _selectedReminderType = _item?.reminderType ?? WellnessToDoReminderType.none;
     _dueDate = _item?.dueDateTime;
     _reminderDateTime = _item?.reminderDateTime;
     _selectedRecurringType = _generateStringFromCronExpression(_item?.recurrenceType ?? "");
@@ -997,17 +997,17 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
       return;
     }
     switch (_selectedReminderType) {
-      case ToDoReminderType.none:
+      case WellnessToDoReminderType.none:
         _reminderDateTime = null;
         break;
-      case ToDoReminderType.morning_of:
+      case WellnessToDoReminderType.morning_of:
         _reminderDateTime = DateTime(_dueDate!.year, _dueDate!.month, _dueDate!.day, 8); // 8:00 AM in the morning
         break;
-      case ToDoReminderType.night_before:
+      case WellnessToDoReminderType.night_before:
         _reminderDateTime =
             DateTime(_dueDate!.year, _dueDate!.month, (_dueDate!.day), 21).subtract(Duration(days: 1)); // 9:00 PM the night before
         break;
-      case ToDoReminderType.specific_time:
+      case WellnessToDoReminderType.specific_time:
         TimeOfDay? pickedTime = await _pickTime();
         if (pickedTime == null) {
           return;
@@ -1046,9 +1046,9 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     }
   }
 
-  String? _getReminderTypeLabel(ToDoReminderType? type) {
-    String? typeLabel = ToDoItem.reminderTypeToDisplayString(type);
-    if ((type == ToDoReminderType.specific_time) && (_reminderDateTime != null)) {
+  String? _getReminderTypeLabel(WellnessToDoReminderType? type) {
+    String? typeLabel = WellnessToDoItem.reminderTypeToDisplayString(type);
+    if ((type == WellnessToDoReminderType.specific_time) && (_reminderDateTime != null)) {
       typeLabel = typeLabel! + ' (${AppDateTime().formatDateTime(_reminderDateTime, format: 'h:mm a', ignoreTimeZone: true)})';
     }
     return typeLabel;
