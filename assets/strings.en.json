@@ -617,7 +617,7 @@
     "panel.athletics.content.my_teams.all.select.label": "Select All",
     "panel.athletics.content.my_teams.all.clear.label": "Clear All",
 
-    "panel.athletics.content.teams.empty.message": "There are no teams.",
+    "panel.athletics.content.teams.empty.message": "Select your favorite teams to display here.",
     "panel.athletics.content.teams.unknown_error.message": "Unknown Error Occurred.",
 
     "panel.athletics.content.news.empty.message": "There is no news for the selected teams.",

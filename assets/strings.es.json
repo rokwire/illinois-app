@@ -616,7 +616,7 @@
     "panel.athletics.content.my_teams.all.select.label": "Seleccionar todo",
     "panel.athletics.content.my_teams.all.clear.label": "Limpiar todo",
 
-    "panel.athletics.content.teams.empty.message": "No hay equipos.",
+    "panel.athletics.content.teams.empty.message": "Seleccione sus equipos favoritos para mostrarlos aquí.",
     "panel.athletics.content.teams.unknown_error.message": "Se produjo un error desconocido.",
 
     "panel.athletics.content.news.empty.message": "No hay novedades para los equipos seleccionados.",

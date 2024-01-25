@@ -616,7 +616,7 @@
 	"panel.athletics.content.my_teams.all.select.label": "全選",
 	"panel.athletics.content.my_teams.all.clear.label": "全部清除",
 
-	"panel.athletics.content.teams.empty.message": "沒有團隊。",
+	"panel.athletics.content.teams.empty.message": "選擇您最喜歡的球隊並在此處顯示。",
 	"panel.athletics.content.teams.unknown_error.message": "發生未知錯誤。",
 
 	"panel.athletics.content.news.empty.message": "目前還沒有選定球隊的消息。",
