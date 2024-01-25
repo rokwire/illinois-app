@@ -29,16 +29,16 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum SettingsNotificationsContent { all, unread, preferences }
+enum NotificationsContent { all, unread, preferences }
 
-class SettingsNotificationsContentPanel extends StatefulWidget {
+class NotificationsHomePanel extends StatefulWidget {
   static final String routeName = 'settings_notifications_content_panel';
 
-  final SettingsNotificationsContent? content;
+  final NotificationsContent? content;
 
-  SettingsNotificationsContentPanel._({this.content});
+  NotificationsHomePanel._({this.content});
 
-  static void present(BuildContext context, {SettingsNotificationsContent? content}) {
+  static void present(BuildContext context, {NotificationsContent? content}) {
     if (isInboxContent(content) && Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.inbox', 'Notifications are not available while offline.'));
     }
@@ -59,7 +59,7 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
         constraints: BoxConstraints(maxHeight: height, minHeight: height),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
         builder: (context) {
-          return SettingsNotificationsContentPanel._(content: content);
+          return NotificationsHomePanel._(content: content);
         }
       );
 
@@ -134,18 +134,18 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
     });
   }
 
-  static bool isInboxContent(SettingsNotificationsContent? content) {
-    return (content != SettingsNotificationsContent.preferences);
+  static bool isInboxContent(NotificationsContent? content) {
+    return (content != NotificationsContent.preferences);
   }
 
   @override
-  _SettingsNotificationsContentPanelState createState() => _SettingsNotificationsContentPanelState();
+  _NotificationsHomePanelState createState() => _NotificationsHomePanelState();
 }
 
-class _SettingsNotificationsContentPanelState extends State<SettingsNotificationsContentPanel> implements NotificationsListener {
+class _NotificationsHomePanelState extends State<NotificationsHomePanel> implements NotificationsListener {
   static final double _defaultPadding = 16;
-  static SettingsNotificationsContent? _lastSelectedContent;
-  late SettingsNotificationsContent _selectedContent;
+  static NotificationsContent? _lastSelectedContent;
+  late NotificationsContent _selectedContent;
   final GlobalKey _allContentKey = GlobalKey();
   final GlobalKey _unreadContentKey = GlobalKey();
   final GlobalKey _sheetHeaderKey = GlobalKey();
@@ -247,9 +247,14 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   }
 
   Widget _buildContentValuesContainer() {
-    return Visibility(
-        visible: _contentValuesVisible,
-        child: Positioned.fill(child: Stack(children: <Widget>[_buildContentDismissLayer(), _buildContentValuesWidget()])));
+    return Visibility(visible: _contentValuesVisible, child:
+      Positioned.fill(child:
+        Stack(children: <Widget>[
+          _buildContentDismissLayer(),
+          _buildContentValuesWidget()
+        ])
+      )
+    );
   }
 
   Widget _buildContentDismissLayer() {
@@ -267,7 +272,7 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   Widget _buildContentValuesWidget() {
     List<Widget> contentList = <Widget>[];
     contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (SettingsNotificationsContent contentItem in SettingsNotificationsContent.values) {
+    for (NotificationsContent contentItem in NotificationsContent.values) {
       if (_isInboxContent && !Auth2().isLoggedIn) {
         continue;
       }
@@ -278,7 +283,7 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
     return Padding(padding: EdgeInsets.symmetric(horizontal: _defaultPadding), child: SingleChildScrollView(child: Column(children: contentList)));
   }
 
-  Widget _buildContentItem(SettingsNotificationsContent contentItem) {
+  Widget _buildContentItem(NotificationsContent contentItem) {
     return RibbonButton(
         backgroundColor: Styles().colors.white,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
@@ -289,14 +294,14 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
 
   void _initInitialContent() {
     // Do not allow not logged in users to view "Notifications" content
-    if (!Auth2().isLoggedIn && (_lastSelectedContent != SettingsNotificationsContent.preferences)) {
+    if (!Auth2().isLoggedIn && (_lastSelectedContent != NotificationsContent.preferences)) {
       _lastSelectedContent = null;
     }
     _selectedContent = widget.content ??
-        (_lastSelectedContent ?? (Auth2().isLoggedIn ? SettingsNotificationsContent.all : SettingsNotificationsContent.preferences));
+        (_lastSelectedContent ?? (Auth2().isLoggedIn ? NotificationsContent.all : NotificationsContent.preferences));
   }
 
-  void _onTapContentItem(SettingsNotificationsContent contentItem) {
+  void _onTapContentItem(NotificationsContent contentItem) {
     Analytics().logSelect(target: contentItem.toString(), source: widget.runtimeType.toString());
     _selectedContent = _lastSelectedContent = contentItem;
     _changeSettingsContentValuesVisibility();
@@ -337,16 +342,16 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
 
   Widget get _contentWidget {
     switch (_selectedContent) {
-      case SettingsNotificationsContent.all:
+      case NotificationsContent.all:
         return SettingsInboxHomeContentWidget(key: _allContentKey, onTapBanner: _onTapPausedBanner,);
-      case SettingsNotificationsContent.unread:
+      case NotificationsContent.unread:
         return SettingsInboxHomeContentWidget(unread: true, key: _unreadContentKey, onTapBanner: _onTapPausedBanner);
-      case SettingsNotificationsContent.preferences:
+      case NotificationsContent.preferences:
         return SettingsNotificationPreferencesContentWidget();
     }
   }
 
-  bool get _isInboxContent => SettingsNotificationsContentPanel.isInboxContent(_selectedContent);
+  bool get _isInboxContent => NotificationsHomePanel.isInboxContent(_selectedContent);
 
   void _onTapClose() {
     Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
@@ -357,21 +362,18 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
     Analytics().logSelect(target: 'Notifications Paused', source: widget.runtimeType.toString());
     if (mounted) {
       setState(() {
-        _selectedContent = _lastSelectedContent = SettingsNotificationsContent.preferences;
+        _selectedContent = _lastSelectedContent = NotificationsContent.preferences;
       });
     }
   }
 
   // Utilities
 
-  String _getContentLabel(SettingsNotificationsContent content) {
+  String _getContentLabel(NotificationsContent content) {
     switch (content) {
-      case SettingsNotificationsContent.all:
-        return Localization().getStringEx('panel.settings.notifications.content.notifications.all.label', 'All Notifications');
-      case SettingsNotificationsContent.unread:
-        return Localization().getStringEx('panel.settings.notifications.content.notifications.unread.label', 'Unread Notifications');
-      case SettingsNotificationsContent.preferences:
-        return Localization().getStringEx('panel.settings.notifications.content.preferences.label', 'My Notification Preferences');
+      case NotificationsContent.all: return Localization().getStringEx('panel.settings.notifications.content.notifications.all.label', 'All Notifications');
+      case NotificationsContent.unread: return Localization().getStringEx('panel.settings.notifications.content.notifications.unread.label', 'Unread Notifications');
+      case NotificationsContent.preferences: return Localization().getStringEx('panel.settings.notifications.content.preferences.label', 'My Notification Preferences');
     }
   }
 
@@ -380,9 +382,9 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   @override
   void onNotification(String name, param) {
     if (name == Auth2.notifyLoginChanged) {
-      if ((_selectedContent != SettingsNotificationsContent.preferences) && !Auth2().isLoggedIn) {
+      if ((_selectedContent != NotificationsContent.preferences) && !Auth2().isLoggedIn) {
         // Do not allow not logged in users to view "Notifications" content
-        _selectedContent = _lastSelectedContent = SettingsNotificationsContent.preferences;
+        _selectedContent = _lastSelectedContent = NotificationsContent.preferences;
       }
       if (mounted) {
         setState(() {});

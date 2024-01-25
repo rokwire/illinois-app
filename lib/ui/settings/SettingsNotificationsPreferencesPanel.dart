@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
+import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/settings/SettingsBluetoothPanel.dart';
@@ -80,7 +80,7 @@ class SettingsNotificationsPreferencesPanel extends StatelessWidget{
 
   void _onTapNotifications(BuildContext context) {
     Analytics().logSelect(target: "Notifications");
-    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.preferences);
+    NotificationsHomePanel.present(context, content: NotificationsContent.preferences);
   }
 
   void _onTapBluetooth(BuildContext context) {

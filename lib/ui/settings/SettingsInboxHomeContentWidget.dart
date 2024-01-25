@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
+import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/widgets/UnderlinedButton.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -199,7 +199,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
 
   void _handleRedirectTap(InboxMessage message) {
     Analytics().logSelect(target: message.subject);
-    SettingsNotificationsContentPanel.launchMessageDetail(message);
+    NotificationsHomePanel.launchMessageDetail(message);
   }
   
   // Banner

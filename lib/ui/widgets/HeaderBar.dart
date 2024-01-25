@@ -20,7 +20,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/WPGUFMRadio.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
-import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
+import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -444,10 +444,10 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 
   void _onTapNotifications() {
     String? currentRouteName = ModalRoute.of(context)?.settings.name;
-    if (currentRouteName != SettingsNotificationsContentPanel.routeName) {
+    if (currentRouteName != NotificationsHomePanel.routeName) {
       Analytics().logSelect(target: "Notifications");
-      SettingsNotificationsContentPanel.present(context,
-          content: (Inbox().unreadMessagesCount > 0) ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
+      NotificationsHomePanel.present(context,
+          content: (Inbox().unreadMessagesCount > 0) ? NotificationsContent.unread : NotificationsContent.all);
     }
   }
 

@@ -9,7 +9,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsInboxHomeContentWidget.dart';
-import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
+import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -306,18 +306,18 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
     Uri? uri = (url != null) ? Uri.tryParse(url) : null;
     if (uri?.scheme == localScheme) {
       if (uri?.host.toLowerCase() == allNotificationsHost.toLowerCase()) {
-        SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.all);
+        NotificationsHomePanel.present(context, content: NotificationsContent.all);
       }
     }
   }
 
   void _onTapMessage(InboxMessage message) {
     Analytics().logSelect(target: message.subject);
-    SettingsNotificationsContentPanel.launchMessageDetail(message);
+    NotificationsHomePanel.launchMessageDetail(message);
   }
 
   void _onTapSeeAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    SettingsNotificationsContentPanel.present(context, content: (_unread == true) ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
+    NotificationsHomePanel.present(context, content: (_unread == true) ? NotificationsContent.unread : NotificationsContent.all);
   }
 }
