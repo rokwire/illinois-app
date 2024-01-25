@@ -103,7 +103,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
       if (game != null) {
         cardsList.add(Padding(
             padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0),
-            child: AthleticsEventCard(game: game, onTap: () => _onTapGame(game), showImage: true)));
+            child: AthleticsEventCard(sportEvent: event, onTap: () => _onTapGame(game), showImage: true)));
       }
     }
     if (_extendingEvents) {
