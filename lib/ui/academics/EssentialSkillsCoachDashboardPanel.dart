@@ -146,28 +146,28 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     Content helpContent = Content();
     for(int i =0; i< contentList.length; i++ ){
       if(contentList[i].type != "info" && contentList[i].type != "infoVideo"){
-        if(contentList[i].isComplete){
-          unitWidgets.add(
-            Center(
-              // elevated button
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentPanel(content: contentList[i], color: color, colorAccent:colorAccent, isActivityComplete: true, helpContent: helpContent,)));
-                },
-                // icon of the button
-                child: Styles().images.getImage("skills-check") ?? Container(),
-                // styling the button
-                style: ElevatedButton.styleFrom(
-                  shape: CircleBorder(),
-                  padding: EdgeInsets.all(10),
-                  // Button color
-                  backgroundColor: Colors.green,
-                ),
-              ),
-            ),
-          );
-          unitWidgets.add(Container(height: 16,));
-        }else{
+        // if(contentList[i].isComplete){
+        //   unitWidgets.add(
+        //     Center(
+        //       // elevated button
+        //       child: ElevatedButton(
+        //         onPressed: () {
+        //           Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentPanel(content: contentList[i], color: color, colorAccent:colorAccent, isActivityComplete: true, helpContent: helpContent,)));
+        //         },
+        //         // icon of the button
+        //         child: Styles().images.getImage("skills-check") ?? Container(),
+        //         // styling the button
+        //         style: ElevatedButton.styleFrom(
+        //           shape: CircleBorder(),
+        //           padding: EdgeInsets.all(10),
+        //           // Button color
+        //           backgroundColor: Colors.green,
+        //         ),
+        //       ),
+        //     ),
+        //   );
+        //   unitWidgets.add(Container(height: 16,));
+        // }else{
           if(!isOpaqe){
             unitWidgets.add(Center(
               // elevated button
@@ -235,7 +235,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             ),);
           }
           unitWidgets.add(Container(height: 16,));
-        }
+        // }
 
       }else{
         if(contentList[i].type != "info"){
@@ -444,7 +444,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       dropDownItems.add(DropdownMenuItem(value: null, child: Text(nullOption, style: style ?? Styles().textStyles.getTextStyle("widget.detail.regular"))));
     }
     for (Module module in _course?.modules ?? []) {
-      if (module.key != null && module.name != null) {
+      if (module.key != null && module.name != null && CollectionUtils.isNotEmpty(module.units)) {
         dropDownItems.add(DropdownMenuItem(value: module.key, child: Text(module.name!, style: style ?? Styles().textStyles.getTextStyle("widget.detail.regular"))));
       }
     }
