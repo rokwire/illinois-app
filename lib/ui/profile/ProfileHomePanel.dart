@@ -75,6 +75,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   ProfileContent? _selectedContent;
   static ProfileContent? _lastSelectedContent;
   bool _contentValuesVisible = false;
+
   final GlobalKey _pageKey = GlobalKey();
   final GlobalKey _pageHeadingKey = GlobalKey();
 
@@ -86,7 +87,15 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
       FlexUI.notifyChanged,
     ]);
 
-    _selectedContent = widget.content ?? _initialSelectedContent;
+    if (_isContentItemEnabled(widget.content)) {
+      _selectedContent = _lastSelectedContent = widget.content;
+    }
+    else if (_isContentItemEnabled(_lastSelectedContent)) {
+      _selectedContent = _lastSelectedContent;
+    }
+    else  {
+      _selectedContent = _initialSelectedContent;
+    }
   }
 
   @override
@@ -170,7 +179,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
                 onTap: _onTapContentSwitch
               )
             ),
-            _buildContent()
+            _buildContent(),
           ])
         )
       )
@@ -234,8 +243,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   void _onTapContentItem(ProfileContent contentItem) {
     Analytics().logSelect(target: contentItem.toString(), source: widget.runtimeType.toString());
     setState(() {
-      _lastSelectedContent = _selectedContent;
-      _selectedContent = contentItem;
+      _selectedContent = _lastSelectedContent = contentItem;
       _contentValuesVisible = !_contentValuesVisible;
     });
   }
@@ -317,7 +325,6 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
       if ((selectedContent != null) && (selectedContent != _selectedContent) && mounted) {
         setState(() {
           _selectedContent = selectedContent;
-          _lastSelectedContent = null;
         });
       }
     }
