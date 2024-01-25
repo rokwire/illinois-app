@@ -18,15 +18,15 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
-class SettingsInboxHomeContentWidget extends StatefulWidget {
+class NotificationsInboxPage extends StatefulWidget {
   final bool? unread;
   final void Function()? onTapBanner;
-  SettingsInboxHomeContentWidget({Key? key, this.unread, this.onTapBanner}) : super(key: key);
+  NotificationsInboxPage({Key? key, this.unread, this.onTapBanner}) : super(key: key);
 
-  _SettingsInboxHomeContentWidgetState createState() => _SettingsInboxHomeContentWidgetState();
+  _NotificationsInboxPageState createState() => _NotificationsInboxPageState();
 }
 
-class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeContentWidget> implements NotificationsListener {
+class _NotificationsInboxPageState extends State<NotificationsInboxPage> implements NotificationsListener {
 
   final List<_FilterEntry> _mutedValues = [
     _FilterEntry(name: Localization().getStringEx("panel.inbox.label.muted.show", "Show Muted"), value: null),  // Show both muted and not muted messages

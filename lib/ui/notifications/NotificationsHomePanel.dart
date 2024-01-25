@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:illinois/ui/settings/SettingsInboxHomeContentWidget.dart';
+import 'package:illinois/ui/notifications/NotificationsInboxPage.dart';
 import 'package:illinois/ui/settings/SettingsNotificationPreferencesContentWidget.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -343,9 +343,9 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
   Widget get _contentWidget {
     switch (_selectedContent) {
       case NotificationsContent.all:
-        return SettingsInboxHomeContentWidget(key: _allContentKey, onTapBanner: _onTapPausedBanner,);
+        return NotificationsInboxPage(key: _allContentKey, onTapBanner: _onTapPausedBanner,);
       case NotificationsContent.unread:
-        return SettingsInboxHomeContentWidget(unread: true, key: _unreadContentKey, onTapBanner: _onTapPausedBanner);
+        return NotificationsInboxPage(unread: true, key: _unreadContentKey, onTapBanner: _onTapPausedBanner);
       case NotificationsContent.preferences:
         return SettingsNotificationPreferencesContentWidget();
     }
