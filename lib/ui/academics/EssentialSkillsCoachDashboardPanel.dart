@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/ui/academics/courses/AssignmentPanel.dart';
+import 'package:illinois/ui/academics/courses/ResourcesPanel.dart';
+import 'package:illinois/ui/academics/courses/StreakPanel.dart';
 import 'package:illinois/ui/academics/courses/UnitInfoPanel.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -159,7 +161,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   List<Widget> _buildModuleUnitWidgets(Color? color, Color? colorAccent, int moduleNumber){
     List<Widget> moduleUnitWidgets = <Widget>[];
     for(int i =0; i<(_course?.modules?[moduleNumber].units?.length ?? 0); i++ ){
-      moduleUnitWidgets.add(_buildUnitInfoWidget(color, colorAccent, i, moduleNumber));
+      moduleUnitWidgets.add(_buildUnitInfoWidget(color, colorAccent, i, moduleNumber, _course?.modules?[moduleNumber].units?[i]));
       moduleUnitWidgets.add(Container(height: 16,));
       moduleUnitWidgets.add(_buildUnitHelpButtons(_course?.modules?[moduleNumber].units?[i].contentItems ?? <Content>[], color, colorAccent));
       //TODO delete below checkmark widget only after integration
@@ -190,7 +192,6 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         //       // elevated button
         //       child: ElevatedButton(
         //         onPressed: () {
-        //
         //           Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentPanel(content: contentList[i], color: color, colorAccent:colorAccent, isActivityComplete: true, helpContent: helpContent,)));
         //         },
         //         // icon of the button
@@ -286,7 +287,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     return unitWidgets;
   }
 
-  Widget _buildUnitInfoWidget(Color? color, Color? colorAccent, int unitNumber, int moduleNumber){
+  Widget _buildUnitInfoWidget(Color? color, Color? colorAccent, int unitNumber, int moduleNumber, Unit? unit){
     return Container(
       color: colorAccent,
       child: Row(
@@ -315,7 +316,13 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                   padding: EdgeInsets.only(top: 4),
                   child: ElevatedButton(
                     onPressed: () {
-
+                      List<Content>? resourceContentItems = <Content>[];
+                      for(int i = 0; i < (unit?.contentItems?.length ?? 0); i++){
+                        if(unit?.contentItems?[i].type == "resource"){
+                          resourceContentItems.add(unit!.contentItems![i]);
+                        }
+                      }
+                      Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourcesPanel( color: color, colorAccent:colorAccent, unitNumber: unitNumber, contentItems: resourceContentItems, unitName: unit?.name ?? "no name")));
                     },
                     // icon of the button
                     child: Icon(
@@ -357,7 +364,13 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             size: 30.0,
           ),
           Container(width: 8,),
-          Text('2 Day Streak!',style: Styles().textStyles!.getTextStyle("widget.title.light.small.fat"),),
+          TextButton(
+            onPressed: () {
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => StreakPanel()));
+            },
+            child: Text('2 Day Streak!',style: Styles().textStyles!.getTextStyle("widget.title.light.small.fat"),),
+          ),
+
         ],
       ),
     );
