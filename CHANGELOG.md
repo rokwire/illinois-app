@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Essential Skills Coach Dashboard [#3425](https://github.com/rokwire/illinois-app/issues/3425).
+### Fixed
+- Tuned up Event2SetupRegistrationPanel when called from different locations [#3876](https://github.com/rokwire/illinois-app/issues/3876).
 
 ## [5.1.13] - 2024-01-24
 ### Fixed

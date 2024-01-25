@@ -22,11 +22,12 @@ import 'package:url_launcher/url_launcher.dart';
 
 class Event2SetupRegistrationPanel extends StatefulWidget {
   final Event2? event;
-  final Event2RegistrationDetails? registrationDetails;
+  final Event2RegistrationDetails? _registrationDetails;
   
-  Event2SetupRegistrationPanel({Key? key, this.event, this.registrationDetails}) : super(key: key);
+  Event2SetupRegistrationPanel({super.key, this.event, Event2RegistrationDetails? registrationDetails}) :
+    _registrationDetails = registrationDetails;
 
-  Event2RegistrationDetails? get details => (event?.id != null) ? event?.registrationDetails : registrationDetails;
+  Event2RegistrationDetails? get registrationDetails => _registrationDetails ?? event?.registrationDetails;
   
   @override
   State<StatefulWidget> createState() => _Event2SetupRegistrationPanelState();
@@ -58,12 +59,12 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   
   @override
   void initState() {
-    _registrationType = _initialRegistrationType = widget.details?.type ?? Event2RegistrationType.none;
+    _registrationType = _initialRegistrationType = widget.registrationDetails?.type ?? Event2RegistrationType.none;
     
-    _labelController.text = _initialLabel = ((_registrationType == Event2RegistrationType.external) && (widget.details?.label != null)) ? '${widget.details?.label}' : '';
-    _linkController.text = _initialLink = ((_registrationType == Event2RegistrationType.external) && (widget.details?.externalLink != null)) ? '${widget.details?.externalLink}' : '';
-    _capacityController.text = _initialCapacity = ((_registrationType == Event2RegistrationType.internal) && (widget.details?.eventCapacity != null)) ? '${widget.details?.eventCapacity}' : '';
-    _registrantsController.text = _initialRegistrants = ((_registrationType == Event2RegistrationType.internal) && (widget.details?.registrants != null)) ? (widget.details?.registrants?.join(' ') ?? '')  : '';
+    _labelController.text = _initialLabel = ((_registrationType == Event2RegistrationType.external) && (widget.registrationDetails?.label != null)) ? '${widget.registrationDetails?.label}' : '';
+    _linkController.text = _initialLink = ((_registrationType == Event2RegistrationType.external) && (widget.registrationDetails?.externalLink != null)) ? '${widget.registrationDetails?.externalLink}' : '';
+    _capacityController.text = _initialCapacity = ((_registrationType == Event2RegistrationType.internal) && (widget.registrationDetails?.eventCapacity != null)) ? '${widget.registrationDetails?.eventCapacity}' : '';
+    _registrantsController.text = _initialRegistrants = ((_registrationType == Event2RegistrationType.internal) && (widget.registrationDetails?.registrants != null)) ? (widget.registrationDetails?.registrants?.join(' ') ?? '')  : '';
 
     if (_isEditing) {
       _labelController.addListener(_checkModified);
@@ -396,11 +397,12 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   );
 
   void _updateEventRegistrationDetails(Event2RegistrationDetails? registrationDetails) {
-    if (_isEditing && (_updatingRegistration != true)) {
+    String? eventId = widget.event?.id;
+    if ((eventId != null) && (_updatingRegistration != true)) {
       setState(() {
         _updatingRegistration = true;
       });
-      Events2().updateEventRegistrationDetails(widget.event?.id ?? '', registrationDetails).then((result) {
+      Events2().updateEventRegistrationDetails(eventId, registrationDetails).then((result) {
         if (mounted) {
           setState(() {
             _updatingRegistration = false;
@@ -413,7 +415,6 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
         else {
           Event2Popup.showErrorResult(context, result);
         }
-
       });
     }
   }
