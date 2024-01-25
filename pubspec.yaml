@@ -60,6 +60,7 @@ dependencies:
   in_app_review: ^2.0.4
   speech_to_text: ^6.1.1
   visibility_detector: ^0.4.0+2
+  table_calendar: ^3.0.9
   flutter_beep: ^1.0.0
   font_awesome_flutter: '>= 4.7.0' # comment if published plugin is used
 # google_maps_flutter: ^2.2.5
@@ -78,12 +79,14 @@ dependencies:
       path: packages/google_maps_flutter/google_maps_flutter
       ref: google_maps_flutter/add-poi-click-callback-60695
   record: ^4.4.4
+  weekday_selector: ^1.1.0
 
 # google_maps_flutter:
 #   git:
 #     url: https://github.com/flutter/packages.git
 #     path: packages/google_maps_flutter/google_maps_flutter
 #     ref: google_maps_flutter-v2.2.5
+
 
 # google_maps_flutter:
 #   git:
