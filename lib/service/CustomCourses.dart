@@ -30,6 +30,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class CustomCourses with Service implements NotificationsListener {
   List<Course>? _courses;
+  Map<String, UserCourse>? _userCourses;
+  Map<String, List<UserUnit>>? _userUnits;
   late String _timezoneName;
   late int _timezoneOffset;
 
@@ -66,6 +68,9 @@ class CustomCourses with Service implements NotificationsListener {
 
   @override
   void destroyService() {
+    _courses?.clear();
+    _userCourses?.clear();
+    _userUnits?.clear();
     NotificationService().unsubscribe(this);
     super.destroyService();
   }
@@ -80,6 +85,8 @@ class CustomCourses with Service implements NotificationsListener {
   bool get _isLmsAvailable => StringUtils.isNotEmpty(Config().lmsUrl);
 
   List<Course>? get courses => _courses;
+  Map<String, UserCourse>? get userCourses => _userCourses;
+  Map<String, List<UserUnit>>? get userCourseUnits => _userUnits;
 
   // Courses
 
@@ -129,7 +136,14 @@ class CustomCourses with Service implements NotificationsListener {
       List<dynamic>? userCourseList = JsonUtils.decodeList(responseString);
 
       if (userCourseList != null) {
-        return UserCourse.listFromJson(userCourseList);
+        List<UserCourse> userCourses = UserCourse.listFromJson(userCourseList);
+        _userCourses ??= {};
+        for (UserCourse uc in userCourses) {
+          if (uc.course?.key != null) {
+            _userCourses![uc.course!.key!] = uc;
+          }
+        }
+        return userCourses;
       }
 
       debugPrint('Failed to load user courses from net. Reason: $url ${response?.statusCode} $responseString');
@@ -144,7 +158,12 @@ class CustomCourses with Service implements NotificationsListener {
       String? responseString = response?.statusCode == 200 ? response?.body : null;
       Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
       if (responseJson != null) {
-        return UserCourse.fromJson(responseJson);
+        UserCourse? userCourse = UserCourse.fromJson(responseJson);
+        if (userCourse != null) {
+          _userCourses ??= {};
+          _userCourses![key] = userCourse;
+        }
+        return userCourse;
       }
 
       debugPrint('Failed to load user course for key $key from net. Reason: $url ${response?.statusCode} $responseString');
@@ -201,13 +220,13 @@ class CustomCourses with Service implements NotificationsListener {
 
   // UserUnits
 
-  Future<Unit?> updateUserCourseProgress(Unit unit, {required String courseKey, required String unitKey}) async {
+  Future<Unit?> updateUserCourseProgress(List<UserContent> userContent, {required String courseKey, required String unitKey}) async {
     if (Auth2().isLoggedIn && _isLmsAvailable) {
       String? url = '${Config().lmsUrl}/users/courses/$courseKey/unit/$unitKey';
       String? post = JsonUtils.encode({
         'timezone_name': _timezoneName,
         'timezone_offset': _timezoneOffset,
-        'unit': unit.toJson(),
+        'user_content': UserContent.listToJson(userContent),
       });
       http.Response? response = await Network().put(url, auth: Auth2(), body: post);
       String? responseString = response?.statusCode == 200 ? response?.body : null;
@@ -229,7 +248,10 @@ class CustomCourses with Service implements NotificationsListener {
       List<dynamic>? userUnitList = JsonUtils.decodeList(responseString);
 
       if (userUnitList != null) {
-        return UserUnit.listFromJson(userUnitList);
+        List<UserUnit> userUnits = UserUnit.listFromJson(userUnitList);
+        _userUnits ??= {};
+        _userUnits![courseKey] = userUnits;
+        return userUnits;
       }
 
       debugPrint('Failed to load user units for course key $courseKey from net. Reason: $url ${response?.statusCode} $responseString');

@@ -7,6 +7,7 @@ import 'package:illinois/ui/academics/courses/AssignmentPanel.dart';
 import 'package:illinois/ui/academics/courses/ResourcesPanel.dart';
 import 'package:illinois/ui/academics/courses/StreakPanel.dart';
 import 'package:illinois/ui/academics/courses/UnitInfoPanel.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -26,6 +27,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   List<String> moduleIconNames = ["skills-social-button", "skills-management-button", "skills-cooperation-button", "skills-emotional-button", "skills-innovation-button"];
   int moduleNumber = 0;
   Course? _course;
+  List<UserUnit>? _userCourseUnits;
 
   String? _selectedTimeframe = "Social Engagement Skills";
   final List<String> _timeframes = ["Social Engagement Skills", "Self Management Skills",
@@ -36,13 +38,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     if (CollectionUtils.isNotEmpty(CustomCourses().courses)) {
       _course = CustomCourses().courses!.firstWhere((course) => course.key == essentialSkillsCoachKey);
     } else {
-      CustomCourses().loadCourses().then((courses) {
-        if (mounted) {
-          setState(() {
-            _course = courses?.firstWhere((course) => course.key == essentialSkillsCoachKey);
-          });
-        }
-      });
+      _loadCourseAndUnits();
     }
     super.initState();
   }
@@ -469,12 +465,19 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         ),
       );
     }
-
   }
 
+  Future<void> _loadCourseAndUnits() async {
+    List<Course>? courses = await CustomCourses().loadCourses();
+    setStateIfMounted(() {
+      _course = courses?.firstWhere((course) => course.key == essentialSkillsCoachKey);
+    });
+
+    if (_course != null) {
+      List<UserUnit>? userUnits = await CustomCourses().loadUserCourseUnits(essentialSkillsCoachKey);
+    }
+  }
 }
-
-
 
 class DropdownBuilder {
   static List<DropdownMenuItem<T>> getItems<T>(List<T> options, {String? nullOption, TextStyle? style}) {

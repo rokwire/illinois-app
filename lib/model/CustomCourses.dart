@@ -232,10 +232,11 @@ class Unit{
   final String? id;
   final String? name;
   final String? key;
+  final int? scheduleStart;
   final List<ScheduleItem>? scheduleItems;
   final List<Content>? contentItems;
 
-  Unit({this.id, this.name, this.key, this.scheduleItems, this.contentItems});
+  Unit({this.id, this.name, this.key, this.scheduleStart, this.scheduleItems, this.contentItems});
 
   static Unit? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -245,6 +246,7 @@ class Unit{
       id: JsonUtils.stringValue(json['id']),
       name: JsonUtils.stringValue(json['name']),
       key: JsonUtils.stringValue(json['key']),
+      scheduleStart: JsonUtils.intValue(json['schedule_start']),
       scheduleItems: ScheduleItem.listFromJson(JsonUtils.listValue(json['schedule'])),
       contentItems: Content.listFromJson(JsonUtils.listValue(json['content'])),
     );
@@ -254,6 +256,7 @@ class Unit{
     Map<String, dynamic> json = {
       'name': name,
       'key': key,
+      'schedule_start': scheduleStart,
       'schedule': ScheduleItem.listToJson(scheduleItems),
       'content': Content.listToJson(contentItems),
     };
@@ -456,6 +459,8 @@ class UserContent{
     }
     return jsonList;
   }
+
+  bool get isComplete => userData != null;
 }
 
 class Reference{
