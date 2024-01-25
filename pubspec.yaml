@@ -87,6 +87,7 @@ dependencies:
 #     path: packages/google_maps_flutter/google_maps_flutter
 #     ref: google_maps_flutter-v2.2.5
 
+
 # google_maps_flutter:
 #   git:
 #     url: https://github.com/riccardo-runci/google_maps_flutter.git
@@ -99,6 +100,11 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+# comment the override below if published plugin is used
+dependency_overrides:
+  font_awesome_flutter:
+    path: plugin/plugins/font_awesome_flutter
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
