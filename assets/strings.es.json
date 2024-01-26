@@ -601,6 +601,7 @@
     "panel.athletics.content.common.filter.teams.label": "Equipos",
     "panel.athletics.content.common.filter.label": "Filtrar:",
     "panel.athletics.content.common.filter.value.none.label": "Ninguno",
+    "panel.athletics.content.common.filter.value.starred.label": "Sembrado de estrellas",
 
     "panel.athletics.content.section.events.label": "10 grandes eventos",
     "panel.athletics.content.section.game_day.label": "¡Es el día del juego!",

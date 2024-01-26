@@ -602,6 +602,7 @@
     "panel.athletics.content.common.filter.teams.label": "Teams",
     "panel.athletics.content.common.filter.label": "Filter:",
     "panel.athletics.content.common.filter.value.none.label": "None",
+    "panel.athletics.content.common.filter.value.starred.label": "Starred",
 
     "panel.athletics.content.section.events.label": "Big 10 Events",
     "panel.athletics.content.section.game_day.label": "It's Game Day!",
