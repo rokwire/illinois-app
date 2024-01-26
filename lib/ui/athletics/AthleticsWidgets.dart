@@ -361,9 +361,10 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
 }
 
 class AthleticsTeamsFilterWidget extends StatefulWidget {
+  final bool? hideFilter;
   final bool? hideFilterDescription;
 
-  AthleticsTeamsFilterWidget({this.hideFilterDescription});
+  AthleticsTeamsFilterWidget({this.hideFilter, this.hideFilterDescription});
 
   @override
   State<AthleticsTeamsFilterWidget> createState() => _AthleticsTeamsFilterWidgetState();
@@ -385,7 +386,7 @@ class _AthleticsTeamsFilterWidgetState extends State<AthleticsTeamsFilterWidget>
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      Container(
+      Visibility(visible: !_hideFilter, child: Container(
           color: _showFilterDescription ? Styles().colors.white : null,
           decoration: !_showFilterDescription ? _filterDecoration : null,
           child: Padding(
@@ -409,7 +410,7 @@ class _AthleticsTeamsFilterWidgetState extends State<AthleticsTeamsFilterWidget>
                               Styles().images.getImage('chevron-right-gray') ?? Container()
                             ])))),
                 Expanded(child: Container())
-              ]))),
+              ])))),
       Visibility(
           visible: _showFilterDescription,
           child: Column(children: [
@@ -447,9 +448,17 @@ class _AthleticsTeamsFilterWidgetState extends State<AthleticsTeamsFilterWidget>
         }
       }
       teamsFilterDisplayString = sports.map((team) => team.name).toList().join(', ');
+      if (_hideFilter) {
+        teamsFilterDisplayString +=
+            ', ' + Localization().getStringEx('panel.athletics.content.common.filter.value.starred.label', 'Starred');
+      }
+    } else if (_hideFilter) {
+      teamsFilterDisplayString = Localization().getStringEx('panel.athletics.content.common.filter.value.starred.label', 'Starred');
     }
     return '$filterPrefix $teamsFilterDisplayString';
   }
+
+  bool get _hideFilter => (widget.hideFilter == true);
 
   bool get _showFilterDescription => (_filterApplied || (widget.hideFilterDescription != true));
 
