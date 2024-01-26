@@ -57,7 +57,7 @@ class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidge
         color: Styles().colors.white,
         child: Column(children: [
           AthleticsTeamsFilterWidget(hideFilterDescription: true),
-          Expanded(child: SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child: _buildContent()))
+          Expanded(child: _buildContent())
         ]));
   }
 
@@ -96,7 +96,7 @@ class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidge
                         ]))))));
       }
     }
-    return Padding(padding: EdgeInsets.all(16), child: Column(children: cardsList));
+    return SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child: Padding(padding: EdgeInsets.all(16), child: Column(children: cardsList)));
   }
 
   Widget _buildEmptyContent() {
@@ -112,7 +112,7 @@ class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidge
   }
 
   Widget _buildCenteredWidget(Widget child) {
-    return Center(child: Column(children: <Widget>[Container(height: _screenHeight / 5), child, Container(height: _screenHeight / 5 * 3)]));
+    return Center(child: child);
   }
 
   void _onTapTeam(SportDefinition sport) {
@@ -134,8 +134,6 @@ class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidge
       _teams = <SportDefinition>[];
     }
   }
-
-  double get _screenHeight => MediaQuery.of(context).size.height;
 
   // Notifications Listener
 

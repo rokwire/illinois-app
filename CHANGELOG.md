@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [5.1.15] - 2024-01-26
+### Added
+- Athletics UI Cleanup - in progress [#3867](https://github.com/rokwire/illinois-app/issues/3867).
+
 ## [5.1.14] - 2024-01-25
 ### Added
 - Essential Skills Coach Dashboard [#3425](https://github.com/rokwire/illinois-app/issues/3425).

@@ -36,7 +36,9 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class AthleticsEventsContentWidget extends StatefulWidget {
-  AthleticsEventsContentWidget();
+  final bool? showFavorites;
+
+  AthleticsEventsContentWidget({this.showFavorites});
 
   @override
   State<AthleticsEventsContentWidget> createState() => _AthleticsEventsContentWidgetState();
@@ -59,7 +61,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Events2.notifyChanged, Auth2UserPrefs.notifyInterestsChanged]);
+    NotificationService().subscribe(this, [Events2.notifyChanged, Auth2UserPrefs.notifyInterestsChanged, Auth2UserPrefs.notifyFavoritesChanged]);
     _scrollController.addListener(_scrollListener);
     _loadEvents();
   }
@@ -71,17 +73,18 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   }
 
   @override
+  void didUpdateWidget(AthleticsEventsContentWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.showFavorites != oldWidget.showFavorites) {
+      setState(() {
+        _loadEvents();
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      AthleticsTeamsFilterWidget(),
-      Expanded(child: RefreshIndicator(
-          onRefresh: _onRefresh,
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            physics: AlwaysScrollableScrollPhysics(),
-            child: _buildContent(),
-          )))
-    ]);
+    return Column(children: [AthleticsTeamsFilterWidget(hideFilter: _favoritesMode), Expanded(child: _buildContent())]);
   }
 
   Widget _buildContent() {
@@ -109,7 +112,12 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
     if (_extendingEvents) {
       cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child: _buildExtendingWidget()));
     }
-    return Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Column(children: cardsList));
+    return RefreshIndicator(
+        onRefresh: _onRefresh,
+        child: SingleChildScrollView(
+            controller: _scrollController,
+            physics: AlwaysScrollableScrollPhysics(),
+            child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Column(children: cardsList))));
   }
 
   Widget _buildLoadingContent() {
@@ -132,7 +140,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   }
 
   Widget _buildCenteredWidget(Widget child) {
-    return Center(child: Column(children: <Widget>[Container(height: _screenHeight / 5), child, Container(height: _screenHeight / 5 * 3)]));
+    return Center(child: child);
   }
 
   Widget _buildExtendingWidget() {
@@ -158,6 +166,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
       limit: limit,
       timeFilter: Event2TimeFilter.upcoming,
       attributes: _buildQueryAttributes(),
+      types: _favoritesMode ? {Event2TypeFilter.favorite} : null,
       sortType: Event2SortType.dateTime,
       sortOrder: Event2SortOrder.ascending
     );
@@ -303,7 +312,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
     return attributes;
   }
 
-  double get _screenHeight => MediaQuery.of(context).size.height;
+  bool get _favoritesMode => (widget.showFavorites == true);
 
   // Notifications Listener
 
@@ -313,6 +322,10 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
       _reloadEvents();
     } else if (name == Auth2UserPrefs.notifyInterestsChanged) {
       _loadEvents();
+    } else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      if (_favoritesMode) {
+        _reloadEvents();
+      }
     }
   }
 }
