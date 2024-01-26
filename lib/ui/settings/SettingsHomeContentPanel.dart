@@ -25,12 +25,15 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/settings/SettingsAppointmentsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsAssessmentsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsCalendarContentWidget.dart';
+import 'package:illinois/ui/settings/SettingsContactsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsFoodFiltersContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsICardContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsInterestsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsLanguageContentWidget.dart';
+import 'package:illinois/ui/settings/SettingsMapsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsNotificationPreferencesContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterContentWidget.dart';
+import 'package:illinois/ui/settings/SettingsResearchContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsSectionsContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -172,24 +175,26 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   Widget _buildPage(BuildContext context) {
     return Column(children: <Widget>[
       Expanded(child:
-        SingleChildScrollView(physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null), child:
-          Container(color: Styles().colors.background, child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
-                RibbonButton(
-                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-                  backgroundColor: Styles().colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-                  rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-                  label: _getContentLabel(_selectedContent),
-                  onTap: _onTapContentDropdown
-                )
-              ),
-              _buildContent()
-            ]),
+        Container(color: Styles().colors.background, child:
+          SingleChildScrollView(physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null), child:
+            Container(color: Styles().colors.background, child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
+                  RibbonButton(
+                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+                    backgroundColor: Styles().colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                    rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
+                    label: _getContentLabel(_selectedContent),
+                    onTap: _onTapContentDropdown
+                  )
+                ),
+                _buildContent()
+              ]),
+            ),
           ),
-        ),
+        )
       ),
     ]);
   }
@@ -289,7 +294,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
       case SettingsContent.calendar:
         return SettingsCalendarContentWidget();
       case SettingsContent.appointments:
-        return SettingsAppointmentsContentWidget(); //TBD Update content
+        return SettingsAppointmentsContentWidget();
       case SettingsContent.favorites:
         return Container();
       case SettingsContent.assessments:
@@ -299,14 +304,11 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
       case SettingsContent.language:
         return SettingsLanguageContentWidget();
       case SettingsContent.contact:
-        // TBD: New
-        return Container(child: Center(child: Text("TBD"),));
+        return SettingsContactsContentWidget();
       case SettingsContent.maps:
-        //TBD: Moved from profile?
-        return Container(child: Center(child: Text("TBD"),));
+        return SettingsMapsContentWidget();
       case SettingsContent.research:
-        // TODO: Moved from profile?
-        return Container(child: Center(child: Text("TBD"),));
+        return SettingsResearchContentWidget(parentRouteName: SettingsHomeContentPanel.routeName);
       case SettingsContent.privacy:
         return SettingsPrivacyCenterContentWidget();
       case SettingsContent.notifications:
