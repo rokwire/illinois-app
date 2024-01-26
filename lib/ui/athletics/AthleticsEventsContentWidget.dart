@@ -84,16 +84,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      AthleticsTeamsFilterWidget(hideFilter: _favoritesMode),
-      Expanded(child: RefreshIndicator(
-          onRefresh: _onRefresh,
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            physics: AlwaysScrollableScrollPhysics(),
-            child: _buildContent(),
-          )))
-    ]);
+    return Column(children: [AthleticsTeamsFilterWidget(hideFilter: _favoritesMode), Expanded(child: _buildContent())]);
   }
 
   Widget _buildContent() {
@@ -121,7 +112,12 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
     if (_extendingEvents) {
       cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child: _buildExtendingWidget()));
     }
-    return Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Column(children: cardsList));
+    return RefreshIndicator(
+        onRefresh: _onRefresh,
+        child: SingleChildScrollView(
+            controller: _scrollController,
+            physics: AlwaysScrollableScrollPhysics(),
+            child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Column(children: cardsList))));
   }
 
   Widget _buildLoadingContent() {
@@ -144,7 +140,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   }
 
   Widget _buildCenteredWidget(Widget child) {
-    return Center(child: Column(children: <Widget>[Container(height: _screenHeight / 5), child, Container(height: _screenHeight / 5 * 3)]));
+    return Center(child: child);
   }
 
   Widget _buildExtendingWidget() {
@@ -315,8 +311,6 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
     }
     return attributes;
   }
-
-  double get _screenHeight => MediaQuery.of(context).size.height;
 
   bool get _favoritesMode => (widget.showFavorites == true);
 
