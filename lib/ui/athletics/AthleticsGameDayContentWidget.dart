@@ -58,7 +58,7 @@ class _AthleticsGameDayContentWidgetState extends State<AthleticsGameDayContentW
         color: Styles().colors.white,
         child: Column(children: [
           AthleticsTeamsFilterWidget(),
-          Expanded(child: SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child: _buildContent()))
+          Expanded(child: _buildContent())
         ]));
   }
 
@@ -106,7 +106,7 @@ class _AthleticsGameDayContentWidgetState extends State<AthleticsGameDayContentW
   }
 
   Widget _buildCenteredWidget(Widget child) {
-    return Center(child: Column(children: <Widget>[Container(height: _screenHeight / 5), child, Container(height: _screenHeight / 5 * 3)]));
+    return Center(child: child);
   }
 
   Widget _buildGameDayContent() {
@@ -117,10 +117,8 @@ class _AthleticsGameDayContentWidgetState extends State<AthleticsGameDayContentW
     for (Game game in _todayGames!) {
       gameDayWidgets.add(AthleticsGameDetailHeading(game: game));
     }
-    return Column(children: gameDayWidgets);
+    return SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child: Column(children: gameDayWidgets));
   }
-
-  double get _screenHeight => MediaQuery.of(context).size.height;
 
   // Notifications Listener
 
