@@ -29,7 +29,7 @@ import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class CustomCourses with Service implements NotificationsListener {
-  List<Course>? _courses;
+  Map<String, Course>? _courses;
   Map<String, UserCourse>? _userCourses;
   Map<String, List<UserUnit>>? _userUnits;
   late String _timezoneName;
@@ -84,32 +84,55 @@ class CustomCourses with Service implements NotificationsListener {
 
   bool get _isLmsAvailable => StringUtils.isNotEmpty(Config().lmsUrl);
 
-  List<Course>? get courses => _courses;
+  Map<String, Course>? get courses => _courses;
   Map<String, UserCourse>? get userCourses => _userCourses;
   Map<String, List<UserUnit>>? get userCourseUnits => _userUnits;
 
   // Courses
 
-  Future<List<Course>?> loadCourses() async {
-    if (_courses == null) {
-      if (Auth2().isLoggedIn && _isLmsAvailable) {
-        String? url = '${Config().lmsUrl}/custom/courses';
-        http.Response? response = await Network().get(url, auth: Auth2());
-        String? responseString = response?.statusCode == 200 ? response?.body : null;
-        List<dynamic>? courseList = JsonUtils.decodeList(responseString);
-
-        if (courseList != null) {
-          _courses?.clear();
-          _courses ??= [];
-          _courses!.addAll(Course.listFromJson(courseList));
-          return _courses;
-        } else {
-          debugPrint('Failed to load custom courses from net. Reason: $url ${response?.statusCode} $responseString');
+  Future<Course?> loadCourse(String key) async {
+    if (Auth2().isLoggedIn && _isLmsAvailable) {
+      String? url = '${Config().lmsUrl}/custom/courses/$key';
+      http.Response? response = await Network().get(url, auth: Auth2());
+      String? responseString = response?.statusCode == 200 ? response?.body : null;
+      Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
+      if (responseJson != null) {
+        Course? course = Course.fromJson(responseJson);
+        if (course != null) {
+          _courses ??= {};
+          _courses![key] = course;
         }
+        return course;
       }
-      return null;
+
+      if (response?.statusCode != 200) {
+        debugPrint('Failed to load custom course $key from net. Reason: $url ${response?.statusCode} $responseString');
+      }
     }
-    return _courses;
+    return null;
+  }
+
+  Future<List<Course>?> loadCourses() async {
+    if (Auth2().isLoggedIn && _isLmsAvailable) {
+      String? url = '${Config().lmsUrl}/custom/courses';
+      http.Response? response = await Network().get(url, auth: Auth2());
+      String? responseString = response?.statusCode == 200 ? response?.body : null;
+      List<dynamic>? courseList = JsonUtils.decodeList(responseString);
+
+      if (courseList != null) {
+        List<Course> courses = Course.listFromJson(courseList);
+        _courses ??= {};
+        for (Course course in courses) {
+          if (course.key != null) {
+            _courses![course.key!] = course;
+          }
+        }
+        return courses;
+      }
+
+      debugPrint('Failed to load courses from net. Reason: $url ${response?.statusCode} $responseString');
+    }
+    return null;
   }
 
 	// UserCourses
@@ -166,7 +189,9 @@ class CustomCourses with Service implements NotificationsListener {
         return userCourse;
       }
 
-      debugPrint('Failed to load user course for key $key from net. Reason: $url ${response?.statusCode} $responseString');
+      if (response?.statusCode != 200) {
+        debugPrint('Failed to load user course for key $key from net. Reason: $url ${response?.statusCode} $responseString');
+      }
     }
     return null;
   }

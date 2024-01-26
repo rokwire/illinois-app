@@ -504,7 +504,9 @@ class Content{
   final Reference? reference;
   final List<String>? linkedContent;
 
-  Content({this.id, this.name, this.key, this.type, this.details, this.reference, this.linkedContent});
+  final CourseDisplay? display;
+
+  Content({this.id, this.name, this.key, this.type, this.details, this.reference, this.linkedContent, this.display});
 
   static Content? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -518,6 +520,7 @@ class Content{
       details: JsonUtils.stringValue(json['details']),
       reference: Reference.fromJson(JsonUtils.mapValue('reference')),
       linkedContent: JsonUtils.stringListValue(json['linked_content']),
+      display: CourseDisplay.fromJson(JsonUtils.mapValue(json['display'])),
     );
   }
 
@@ -589,9 +592,9 @@ class CourseConfig {
 class CourseDisplay {
   final String? primaryColor;
   final String? accentColor;
-  final String? image;
+  final String? icon;
 
-  CourseDisplay({this.primaryColor, this.accentColor, this.image});
+  CourseDisplay({this.primaryColor, this.accentColor, this.icon});
 
   static CourseDisplay? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -600,7 +603,7 @@ class CourseDisplay {
     return CourseDisplay(
       primaryColor: JsonUtils.stringValue(json['primary_color']),
       accentColor: JsonUtils.stringValue(json['accent_color']),
-      image: JsonUtils.stringValue(json['image']),
+      icon: JsonUtils.stringValue(json['icon']),
     );
   }
 }

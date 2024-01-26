@@ -24,21 +24,17 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   static const String essentialSkillsCoachKey  = "essential_skills_coach"; //TODO: move to config?
 
   final PageController controller = PageController();
-  List<String> moduleIconNames = ["skills-social-button", "skills-management-button", "skills-cooperation-button", "skills-emotional-button", "skills-innovation-button"];
-  int moduleNumber = 0;
+  // List<String> moduleIconNames = ["skills-social-button", "skills-management-button", "skills-cooperation-button", "skills-emotional-button", "skills-innovation-button"];
   Course? _course;
+  UserCourse? _userCourse;
   List<UserUnit>? _userCourseUnits;
 
   String? _selectedModuleKey;
 
   @override
   void initState() {
-    if (CustomCourses().userCourses?.isNotEmpty ?? false) {
-      _course = CustomCourses().courses!.firstWhere((course) => course.key == essentialSkillsCoachKey);
-      _selectedModuleKey ??= CollectionUtils.isNotEmpty(_course!.modules) ? _course!.modules![0].key : null;
-    } else {
-      _loadCourseAndUnits();
-    }
+    _loadCourseAndUnits();
+
     super.initState();
   }
 
@@ -57,12 +53,14 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       return SingleChildScrollView(
         child: Container(
           color: primaryColor,
-          child: _buildModuleInfoView(selectedModule.display?.image ?? 'skills-question', primaryColor, accentColor),
+          child: _buildModuleInfoView(selectedModule.display?.icon ?? 'skills-question', primaryColor, accentColor),
         ),
       );
     }
     return Container();
   }
+
+  bool get _hasStartedSkillsCoach => _userCourse != null;
 
   @override
   void onNotification(String name, param) {
@@ -110,7 +108,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
               ),
             ),
             Column(
-                children:_buildModuleUnitWidgets(color, colorAccent, moduleNumber)
+                children:_buildModuleUnitWidgets(color, colorAccent, 0)
             ),
           ],
         ),
@@ -188,7 +186,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                       // icon of the button
                       child: Padding(
                         padding: EdgeInsets.all(4),
-                        child: Styles().images.getImage(moduleIconNames[moduleNumber]) ?? Container(),
+                        child: Styles().images.getImage(contentList[i].display?.icon) ?? Container(),
                       ),
                       // styling the button
                       style: ElevatedButton.styleFrom(
@@ -219,7 +217,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                       // icon of the button
                       child: Padding(
                         padding: EdgeInsets.all(4),
-                        child: Styles().images.getImage(moduleIconNames[moduleNumber]) ?? Container(),
+                        child: Styles().images.getImage(contentList[i].display?.icon) ?? Container(),
                       ),
                       // styling the button
                       style: ElevatedButton.styleFrom(
@@ -452,14 +450,51 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   }
 
   Future<void> _loadCourseAndUnits() async {
-    List<Course>? courses = await CustomCourses().loadCourses();
-    setStateIfMounted(() {
-      _course = courses?.firstWhere((course) => course.key == essentialSkillsCoachKey);
-    });
+    _userCourse ??= CustomCourses().userCourses?[essentialSkillsCoachKey];
+    if (_userCourse == null) {
+      UserCourse? userCourse = await CustomCourses().loadUserCourse(essentialSkillsCoachKey);
+      if (userCourse != null) {
+        await _loadUserCourseUnits();
+        setStateIfMounted(() {
+          _userCourse = userCourse;
+          _selectedModuleKey ??= CollectionUtils.isNotEmpty(userCourse.course?.modules) ? userCourse.course!.modules![0].key : null;
+        });
+      } else {
+        await _loadCourse();
+      }
+    } else {
+      await _loadUserCourseUnits();
+    }
+  }
 
-    if (_course != null) {
-      _selectedModuleKey ??= CollectionUtils.isNotEmpty(_course!.modules) ? _course!.modules![0].key : null;
+  Future<void> _loadCourse() async {
+    _course ??= CustomCourses().courses?[essentialSkillsCoachKey];
+    if (_course == null) {
+      Course? course = await CustomCourses().loadCourse(essentialSkillsCoachKey);
+      if (course != null) {
+        setStateIfMounted(() {
+          _course = course;
+          _selectedModuleKey ??= CollectionUtils.isNotEmpty(course.modules) ? course.modules![0].key : null;
+        });
+      }
+    } else {
+      setStateIfMounted(() {
+        _selectedModuleKey ??= CollectionUtils.isNotEmpty(_course!.modules) ? _course!.modules![0].key : null;
+      });
+    }
+  }
+
+  Future<void> _loadUserCourseUnits() async {
+    _userCourseUnits ??= CustomCourses().userCourseUnits?[essentialSkillsCoachKey];
+    if (_userCourseUnits == null) {
       List<UserUnit>? userUnits = await CustomCourses().loadUserCourseUnits(essentialSkillsCoachKey);
+      if (userUnits != null) {
+        setStateIfMounted(() {
+          _userCourseUnits = userUnits;
+        });
+      }
+    } else {
+      setStateIfMounted(() {});
     }
   }
 }
