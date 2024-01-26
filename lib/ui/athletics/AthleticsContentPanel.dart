@@ -245,6 +245,8 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
         return AthleticsEventsContentWidget(showFavorites: true);
       case AthleticsContent.news:
         return AthleticsNewsContentWidget();
+      case AthleticsContent.my_news:
+        return AthleticsNewsContentWidget(showFavorites: true);
       case AthleticsContent.game_day:
         return AthleticsGameDayContentWidget();
       case AthleticsContent.teams:

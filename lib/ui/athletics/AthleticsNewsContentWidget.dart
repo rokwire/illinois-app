@@ -15,6 +15,8 @@
  */
 
 
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -35,7 +37,9 @@ import 'AthleticsNewsArticlePanel.dart';
 
 class AthleticsNewsContentWidget extends StatefulWidget {
 
-  AthleticsNewsContentWidget();
+  final bool? showFavorites;
+
+  AthleticsNewsContentWidget({this.showFavorites});
 
   @override
   _AthleticsNewsContentWidgetState createState() => _AthleticsNewsContentWidgetState();
@@ -50,7 +54,7 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Auth2UserPrefs.notifyInterestsChanged]);
+    NotificationService().subscribe(this, [Auth2UserPrefs.notifyInterestsChanged, Auth2UserPrefs.notifyFavoritesChanged]);
     _loadNews();
   }
 
@@ -61,12 +65,22 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
   }
 
   @override
+  void didUpdateWidget(AthleticsNewsContentWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.showFavorites != oldWidget.showFavorites) {
+      setState(() {
+        _buildDisplayNews();
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
         color: Styles().colors.white,
         child: Column(children: [
-          AthleticsTeamsFilterWidget(),
-          Expanded(child: SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child: _buildContent()))
+          AthleticsTeamsFilterWidget(hideFilter: _favoritesMode),
+          Expanded(child: _buildContent())
         ]));
   }
 
@@ -91,10 +105,16 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
       _displayNews = null;
     } else {
       _displayNews = <News>[];
+      LinkedHashSet<String>? favoriteIds = Auth2().account?.prefs?.getFavorites(News.favoriteKeyName);
+      bool hasFavorites = CollectionUtils.isNotEmpty(favoriteIds);
       for (News article in _news!) {
         String? articleSport = article.sportKey;
+        String? articleId = article.id;
         if ((articleSport != null) && favoriteSports!.contains(articleSport)) {
-          _displayNews!.add(article);
+          bool includeArticle = _favoritesMode ? (hasFavorites && favoriteIds!.contains(articleId)) : true;
+          if (includeArticle) {
+            _displayNews!.add(article);
+          }
         }
       }
     }
@@ -129,7 +149,7 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
   }
 
   Widget _buildCenteredWidget(Widget child) {
-    return Center(child: Column(children: <Widget>[Container(height: _screenHeight / 5), child, Container(height: _screenHeight / 5 * 3)]));
+    return Center(child: child);
   }
 
   Widget _buildNewsContent() {
@@ -151,7 +171,7 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
       }
       articleWidgets.add(Padding(padding: EdgeInsets.only(bottom: 16), child: card));
     }
-    return Column(children: articleWidgets);
+    return SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child: Column(children: articleWidgets));
   }
 
   Widget _buildAthleticsNewsCard(News news) {
@@ -164,7 +184,7 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(article: article)));
   }
 
-  double get _screenHeight => MediaQuery.of(context).size.height;
+  bool get _favoritesMode => (widget.showFavorites == true);
 
   // Notifications Listener
 
@@ -174,6 +194,10 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
       setStateIfMounted(() {
         _buildDisplayNews();
       });
+    } else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      if (_favoritesMode) {
+        _buildDisplayNews();
+      }
     }
   }
 }
