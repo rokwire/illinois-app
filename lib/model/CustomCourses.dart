@@ -67,38 +67,18 @@ class UserCourse {
   final int? timezoneOffset;
   final int? streak;
   final List<DateTime>? streakResets;
+  final List<DateTime>? streakRestarts;
   final int? pauses;
   final List<DateTime>? pauseUses;
 
   final Course? course;
   final DateTime? dateDropped;
 
-  UserCourse({this.id, this.timezoneName, this.timezoneOffset, this.streak, this.streakResets, this.pauses, this.pauseUses, this.course, this.dateDropped});
+  UserCourse({this.id, this.timezoneName, this.timezoneOffset, this.streak, this.streakResets, this.streakRestarts, this.pauses, this.pauseUses, this.course, this.dateDropped});
 
   static UserCourse? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
-    }
-
-    List<DateTime>? streakResets;
-    for (dynamic reset in JsonUtils.listValue(json['streak_resets']) ?? []) {
-      if (reset is String) {
-        streakResets ??= [];
-        DateTime? resetTime = AppDateTime().getDeviceTimeFromUtcTime(DateTimeUtils.dateTimeFromString(reset));
-        if (resetTime != null) {
-          streakResets.add(resetTime);
-        }
-      }
-    }
-    List<DateTime>? pauseUses;
-    for (dynamic use in JsonUtils.listValue(json['pause_uses']) ?? []) {
-      if (use is String) {
-        pauseUses ??= [];
-        DateTime? useTime = AppDateTime().getDeviceTimeFromUtcTime(DateTimeUtils.dateTimeFromString(use));
-        if (useTime != null) {
-          pauseUses.add(useTime);
-        }
-      }
     }
 
     return UserCourse(
@@ -106,39 +86,24 @@ class UserCourse {
       timezoneName: JsonUtils.stringValue(json['timezone_name']),
       timezoneOffset: JsonUtils.intValue(json['timezone_offset']),
       streak: JsonUtils.intValue(json['streak']),
-      streakResets: streakResets,
+      streakResets: deviceTimeListFromJson(json['streak_resets']),
+      streakRestarts: deviceTimeListFromJson(json['streak_restarts']),
       pauses: JsonUtils.intValue(json['pauses']),
-      pauseUses: pauseUses,
+      pauseUses: deviceTimeListFromJson(json['pause_uses']),
       course: Course.fromJson(json['course']),
       dateDropped: AppDateTime().dateTimeLocalFromJson(json['date_dropped']),
     );
   }
 
   Map<String, dynamic> toJson() {
-    List<String>? streakResetsJson;
-    for (DateTime reset in streakResets ?? []) {
-      streakResetsJson ??= [];
-      String? resetJson = AppDateTime().dateTimeLocalToJson(reset);
-      if (resetJson != null) {
-        streakResetsJson.add(resetJson);
-      }
-    }
-    List<String>? pauseUsesJson;
-    for (DateTime use in pauseUses ?? []) {
-      pauseUsesJson ??= [];
-      String? useJson = AppDateTime().dateTimeLocalToJson(use);
-      if (useJson != null) {
-        pauseUsesJson.add(useJson);
-      }
-    }
-
     Map<String, dynamic> json = {
       'timezone_name': timezoneName,
       'timezone_offset': timezoneOffset,
       'streak': streak,
-      'streak_resets': streakResetsJson,
+      'streak_resets': deviceTimeListToJson(streakResets),
+      'streak_restarts': deviceTimeListToJson(streakRestarts),
       'pauses': pauses,
-      'pause_uses': pauseUsesJson,
+      'pause_uses': deviceTimeListToJson(pauseUses),
       'course': course?.toJson(),
       'date_dropped': AppDateTime().dateTimeLocalToJson(dateDropped),
     };
@@ -157,6 +122,36 @@ class UserCourse {
       }
     }
     return userCourses;
+  }
+
+  static List<DateTime>? deviceTimeListFromJson(dynamic value) {
+    if (value != null) {
+      List<DateTime> times = [];
+      for (dynamic timeJson in JsonUtils.listValue(value) ?? []) {
+        if (timeJson is String) {
+          DateTime? time = AppDateTime().getDeviceTimeFromUtcTime(DateTimeUtils.dateTimeFromString(timeJson));
+          if (time != null) {
+            times.add(time);
+          }
+        }
+      }
+      return times;
+    }
+    return null;
+  }
+
+  List<String>? deviceTimeListToJson(List<DateTime>? times) {
+    if (times != null) {
+      List<String> timesJson = [];
+      for (DateTime time in times) {
+        String? timeJson = AppDateTime().dateTimeLocalToJson(time);
+        if (timeJson != null) {
+          timesJson.add(timeJson);
+        }
+      }
+      return timesJson;
+    }
+    return null;
   }
 }
 
