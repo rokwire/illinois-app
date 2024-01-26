@@ -61,8 +61,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
     super.initState();
     NotificationService().subscribe(this, [Events2.notifyChanged, Auth2UserPrefs.notifyInterestsChanged]);
     _scrollController.addListener(_scrollListener);
-    _buildTeamsFilter();
-    _reload();
+    _loadEvents();
   }
 
   @override
@@ -104,7 +103,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
       if (game != null) {
         cardsList.add(Padding(
             padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0),
-            child: AthleticsEventCard(game: game, onTap: () => _onTapGame(game), showImage: true)));
+            child: AthleticsEventCard(sportEvent: event, onTap: () => _onTapGame(game), showImage: true)));
       }
     }
     if (_extendingEvents) {
@@ -118,8 +117,10 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   }
 
   Widget _buildEmptyContent() {
-    return _buildCenteredWidget(Text(Localization().getStringEx('panel.athletics.content.events.empty.message', 'There are no events.'),
-        textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat')));
+    return _buildCenteredWidget(Text(
+        Localization().getStringEx('panel.athletics.content.events.empty.message', 'There are no events for the selected teams.'),
+        textAlign: TextAlign.center,
+        style: Styles().textStyles.getTextStyle('widget.item.medium.fat')));
   }
 
   Widget _buildErrorContent() {
@@ -162,7 +163,18 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
     );
   }
 
-  Future<void> _reload({ int limit = _eventsPageLength }) async {
+  void _loadEvents() {
+    _buildTeamsFilter();
+    if (CollectionUtils.isNotEmpty(_teamsFilter)) {
+      _reloadEvents();
+    } else {
+      setState(() {
+        _events = <Event2>[];
+      });
+    }
+  }
+
+  Future<void> _reloadEvents({ int limit = _eventsPageLength }) async {
     if (!_loadingEvents && !_refreshingEvents) {
       setStateIfMounted(() {
         _loadingEvents = true;
@@ -298,10 +310,9 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   @override
   void onNotification(String name, param) {
     if (name == Events2.notifyChanged) {
-      _reload();
+      _reloadEvents();
     } else if (name == Auth2UserPrefs.notifyInterestsChanged) {
-      _buildTeamsFilter();
-      _reload();
+      _loadEvents();
     }
   }
 }

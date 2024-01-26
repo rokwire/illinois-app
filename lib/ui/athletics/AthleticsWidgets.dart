@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Game.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
@@ -28,6 +29,7 @@ import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -38,7 +40,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class AthleticsEventCard extends StatefulWidget {
-  final Game game;
+  final Event2 sportEvent;
   final GestureTapCallback? onTap;
   final EdgeInsetsGeometry margin;
   final bool showImage;
@@ -50,7 +52,7 @@ class AthleticsEventCard extends StatefulWidget {
   static const EdgeInsetsGeometry regularMargin = const EdgeInsets.only(left: 20, right: 20, top: 20);
 
   AthleticsEventCard(
-      {required this.game,
+      {required this.sportEvent,
       this.onTap,
       EdgeInsetsGeometry? margin,
       this.showImage = false,
@@ -95,16 +97,17 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
 
   @override
   Widget build(BuildContext context) {
-    String? sportKey = widget.game.sport?.shortName;
+    Game? game = widget.sportEvent.hasGame ? widget.sportEvent.game : null;
+    String? sportKey = game?.sport?.shortName;
     SportDefinition? sport = Sports().getSportByShortName(sportKey);
     String sportName = sport?.name ?? '';
     bool isTicketedSport = sport?.ticketed ?? false;
-    bool showImage = widget.showImage && StringUtils.isNotEmpty(widget.game.imageUrl) && isTicketedSport;
-    bool isGetTicketsVisible = widget.showGetTickets && StringUtils.isNotEmpty(widget.game.links?.tickets) && isTicketedSport;
-    bool isFavorite = Auth2().isFavorite(widget.game);
+    bool showImage = widget.showImage && StringUtils.isNotEmpty(game?.imageUrl) && isTicketedSport;
+    bool isGetTicketsVisible = widget.showGetTickets && StringUtils.isNotEmpty(game?.links?.tickets) && isTicketedSport;
+    bool isFavorite = Auth2().isFavorite(widget.sportEvent);
     String? interestsLabelValue = _getInterestsLabelValue();
     bool showInterests = StringUtils.isNotEmpty(interestsLabelValue);
-    String? description = widget.game.description;
+    String? description = game?.description;
     bool showDescription = widget.showDescription && StringUtils.isNotEmpty(description);
 
     return GestureDetector(
@@ -116,8 +119,8 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
               showImage
                   ? Positioned(
                       child: InkWell(
-                          onTap: () => _onTapCardImage(widget.game.imageUrl!),
-                          child: Image.network(widget.game.imageUrl!, semanticLabel: "Sports")))
+                          onTap: () => _onTapCardImage(game!.imageUrl!),
+                          child: Image.network(game!.imageUrl!, semanticLabel: "Sports")))
                   : Container(),
               showImage
                   ? Container(
@@ -183,7 +186,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
                               ])),
                           Padding(
                               padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                              child: Text(widget.game.title, style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))),
+                              child: Text(StringUtils.ensureNotEmpty(game?.title), style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))),
                           _athleticsDetails(),
                           Visibility(
                               visible: showDescription,
@@ -224,7 +227,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
   }
 
   void _onTapGetTickets() {
-    Analytics().logSelect(target: "AthleticsEventCard: Item:${widget.game.title} - Get Tickets");
+    Analytics().logSelect(target: "AthleticsEventCard: Item:${_game?.title} - Get Tickets");
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
         _showTicketsPanel();
@@ -247,7 +250,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
   }
 
   void _showTicketsPanel() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: widget.game.links?.tickets)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: _game?.links?.tickets)));
   }
 
   Widget _athleticsDetails() {
@@ -271,7 +274,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
   }
 
   Widget? _athleticsTimeDetail() {
-    String? displayTime = widget.game.displayTime;
+    String? displayTime = _game?.displayTime;
     if (StringUtils.isNotEmpty(displayTime)) {
       return Padding(
         padding: _detailPadding,
@@ -294,7 +297,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
   }
 
   Widget? _athleticsLocationDetail() {
-    String? locationText = widget.game.location?.location;
+    String? locationText = _game?.location?.location;
     if ((locationText != null) && locationText.isNotEmpty) {
       return Padding(
         padding: _detailPadding,
@@ -332,12 +335,12 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
   }
 
   void _onTapSave() {
-    Analytics().logSelect(target: "Favorite: ${widget.game.title}");
-    Auth2().prefs?.toggleFavorite(widget.game);
+    Analytics().logSelect(target: "Favorite: ${_game?.title}");
+    Auth2().prefs?.toggleFavorite(widget.sportEvent);
   }
 
   void _onTapSportCategory(SportDefinition? sport) {
-    Analytics().logSelect(target: "AthleticsEventCard: Item:${widget.game.title} - category: ${sport?.name}");
+    Analytics().logSelect(target: "AthleticsEventCard: Item:${_game?.title} - category: ${sport?.name}");
     if (sport != null) {
       if (Connectivity().isNotOffline) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamPanel(sport)));
@@ -349,10 +352,12 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
   }
 
   String? _getInterestsLabelValue() {
-    String? sportName = widget.game.sport?.shortName;
+    String? sportName = _game?.sport?.shortName;
     bool isSportFavorite = Auth2().prefs?.hasSportInterest(sportName) ?? false;
     return isSportFavorite ? Sports().getSportByShortName(sportName)?.customName : null;
   }
+
+  Game? get _game => (widget.sportEvent.hasGame ? widget.sportEvent.game : null);
 }
 
 class AthleticsTeamsFilterWidget extends StatefulWidget {
