@@ -1,4 +1,5 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -48,7 +49,13 @@ class Course{
 
   dynamic searchByKey({String? moduleKey, String? unitKey, String? contentKey}) {
     if (moduleKey != null) {
-      return modules?.firstWhere((module) => module.key == moduleKey);
+      try {
+        return modules?.firstWhere((module) => module.key == moduleKey);
+      } catch (e) {
+        if (e is! StateError) {
+          debugPrint(e.toString());
+        }
+      }
     } else if (unitKey != null || contentKey != null) {
       for (Module module in modules ?? []) {
         dynamic item = module.searchByKey(unitKey: unitKey, contentKey: contentKey);
@@ -213,7 +220,13 @@ class Module{
 
   dynamic searchByKey({String? unitKey, String? contentKey}) {
     if (unitKey != null) {
-      return units?.firstWhere((unit) => unit.key == unitKey);
+      try {
+        return units?.firstWhere((unit) => unit.key == unitKey);
+      } catch (e) {
+        if (e is! StateError) {
+          debugPrint(e.toString());
+        }
+      }
     } else if (contentKey != null) {
       for (Unit unit in units ?? []) {
         Content? content = unit.searchByKey(contentKey: contentKey);
@@ -286,17 +299,25 @@ class Unit{
 
   dynamic searchByKey({String? contentKey}) {
     if (contentKey != null) {
-      return contentItems?.firstWhere((content) => content.key == contentKey);
+      try {
+        return contentItems?.firstWhere((content) => content.key == contentKey);
+      } catch (e) {
+        if (e is! StateError) {
+          debugPrint(e.toString());
+        }
+      }
     }
     return null;
   }
+
+  List<Content>? get resourceContent => contentItems?.where((item) => item.type == 'resource').toList();
 }
 
 class UserUnit {
   final String? id;
   final String? courseKey;
-  final int? completed;
-  final bool? current;
+  final int completed;
+  final bool current;
 
   final Unit? unit;
 
@@ -304,7 +325,11 @@ class UserUnit {
   final DateTime? dateCreated;
   final DateTime? dateUpdated;
 
-  UserUnit({this.id, this.courseKey, this.completed, this.current, this.unit, this.lastCompleted, this.dateCreated, this.dateUpdated});
+  UserUnit({this.id, this.courseKey, this.completed = 0, this.current = false, this.unit, this.lastCompleted, this.dateCreated, this.dateUpdated});
+
+  factory UserUnit.emptyFromUnit(Unit unit, String courseKey) {
+    return UserUnit(courseKey: courseKey, completed: unit.scheduleStart ?? 0, unit: unit);
+  }
 
   static UserUnit? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -313,14 +338,13 @@ class UserUnit {
     return UserUnit(
       id: JsonUtils.stringValue(json['id']),
       courseKey: JsonUtils.stringValue(json['course_key']),
-      completed: JsonUtils.intValue(json['completed']),
-      current: JsonUtils.boolValue(json['current']),
+      completed: JsonUtils.intValue(json['completed']) ?? 0,
+      current: JsonUtils.boolValue(json['current']) ?? false,
       unit: Unit.fromJson(json['unit']),
       lastCompleted: AppDateTime().dateTimeLocalFromJson(json['last_completed']),
       dateCreated: AppDateTime().dateTimeLocalFromJson(json['date_created']),
       dateUpdated: AppDateTime().dateTimeLocalFromJson(json['date_updated']),
     );
-
   }
 
   Map<String, dynamic> toJson() {
@@ -422,7 +446,7 @@ class UserContent{
       return null;
     }
     return UserContent(
-      contentKey: JsonUtils.stringValue('content_key'),
+      contentKey: JsonUtils.stringValue(json['content_key']),
       userData: json['user_data'],
     );
   }
@@ -458,7 +482,7 @@ class UserContent{
     return jsonList;
   }
 
-  bool get isComplete => userData != null;
+  bool get hasData => userData != null;
 }
 
 class Reference{
@@ -587,9 +611,10 @@ class CourseConfig {
 class CourseDisplay {
   final String? primaryColor;
   final String? accentColor;
+  final String? completedColor;
   final String? icon;
 
-  CourseDisplay({this.primaryColor, this.accentColor, this.icon});
+  CourseDisplay({this.primaryColor, this.accentColor, this.completedColor, this.icon});
 
   static CourseDisplay? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -598,6 +623,7 @@ class CourseDisplay {
     return CourseDisplay(
       primaryColor: JsonUtils.stringValue(json['primary_color']),
       accentColor: JsonUtils.stringValue(json['accent_color']),
+      completedColor: JsonUtils.stringValue(json['completed_color']),
       icon: JsonUtils.stringValue(json['icon']),
     );
   }
