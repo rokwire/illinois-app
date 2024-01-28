@@ -258,12 +258,13 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         Navigator.push(context, CupertinoPageRoute(builder: (context) => !required ? UnitInfoPanel(
           content: content,
           color: _selectedModulePrimaryColor,
-          colorAccent:_selectedModuleAccentColor,
+          colorAccent: _selectedModuleAccentColor,
         ) : AssignmentPanel(
           content: content,
           color: _selectedModulePrimaryColor,
           colorAccent: _selectedModuleAccentColor,
           isActivityComplete: isCompletedWithData,
+          isCurrent: isCurrent,
           // helpContent: helpContent,
         )
         ));

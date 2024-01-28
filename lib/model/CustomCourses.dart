@@ -316,6 +316,7 @@ class Unit{
 class UserUnit {
   final String? id;
   final String? courseKey;
+  final String? moduleKey;
   final int completed;
   final bool current;
 
@@ -325,7 +326,7 @@ class UserUnit {
   final DateTime? dateCreated;
   final DateTime? dateUpdated;
 
-  UserUnit({this.id, this.courseKey, this.completed = 0, this.current = false, this.unit, this.lastCompleted, this.dateCreated, this.dateUpdated});
+  UserUnit({this.id, this.courseKey, this.moduleKey, this.completed = 0, this.current = false, this.unit, this.lastCompleted, this.dateCreated, this.dateUpdated});
 
   factory UserUnit.emptyFromUnit(Unit unit, String courseKey) {
     return UserUnit(courseKey: courseKey, completed: unit.scheduleStart ?? 0, unit: unit);
@@ -338,6 +339,7 @@ class UserUnit {
     return UserUnit(
       id: JsonUtils.stringValue(json['id']),
       courseKey: JsonUtils.stringValue(json['course_key']),
+      moduleKey: JsonUtils.stringValue(json['module_key']),
       completed: JsonUtils.intValue(json['completed']) ?? 0,
       current: JsonUtils.boolValue(json['current']) ?? false,
       unit: Unit.fromJson(json['unit']),
@@ -350,6 +352,7 @@ class UserUnit {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {
       'course_key': courseKey,
+      'module_key': moduleKey,
       'completed': completed,
       'current': current,
       'unit': unit?.toJson(),
@@ -482,7 +485,7 @@ class UserContent{
     return jsonList;
   }
 
-  bool get hasData => userData != null;
+  bool get hasData => userData?.isNotEmpty ?? false;
 }
 
 class Reference{

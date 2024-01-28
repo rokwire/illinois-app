@@ -14,8 +14,9 @@ class AssignmentPanel extends StatefulWidget {
   final Color? color;
   final Color? colorAccent;
   final bool isActivityComplete;
+  final bool isCurrent;
   final Content? helpContent;
-  const AssignmentPanel({required this.content, required this.color, required this.colorAccent, required this.isActivityComplete, this.helpContent});
+  const AssignmentPanel({required this.content, required this.color, required this.colorAccent, required this.isActivityComplete, required this.isCurrent, this.helpContent});
 
   @override
   State<AssignmentPanel> createState() => _AssignmentPanelState();
@@ -113,6 +114,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                         color: _isActivityComplete ? _color : _colorAccent,
                         size: 20,
                       ),
+                      //TODO: use widget.isCurrent to enable/disable tap
                       onTap: (){
                         if(_isActivityComplete){
                           setState(() {
