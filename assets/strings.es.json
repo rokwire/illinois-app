@@ -1308,6 +1308,8 @@
     "panel.event2.setup.registration.description.label.title": "El registro por la aplicación Illinois App requiere que el usuario inicie sesión con un NetID.",
     "panel.event2.setup.registration.guest.empty.text": "Aún no hay usuarios registrados para este evento.",
     "panel.event2.setup.registration.guest.failed.text": "Error al cargar la lista de invitados.",
+    "panel.event2.setup.registration.internal.capacity.empty": "Event registration via the app requires a valid event capacity.",
+    "panel.event2.setup.registration.external.link.empty": "Event registration via external link requires a valid link URL.",
 
     "panel.event2.setup.attendance.header.title": "Asistencia al Evento",
     "panel.event2.setup.attendance.scan.toggle.title": "Escanear Illini ID",
