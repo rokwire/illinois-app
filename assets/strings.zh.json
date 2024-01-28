@@ -1295,6 +1295,8 @@
 	"panel.event2.setup.registration.description.label.title": "透过Illinois应用程序注册需要提供NetIDs",
 	"panel.event2.setup.registration.guest.empty.text": "尚未有使用者注册此活动。",
 	"panel.event2.setup.registration.guest.failed.text": "无法加載与会人名单。",
+	"panel.event2.setup.registration.internal.capacity.empty": "Event registration via the app requires a valid event capacity.",
+	"panel.event2.setup.registration.external.link.empty": "Event registration via external link requires a valid link URL.",
 
 	"panel.event2.setup.attendance.header.title": "活动出席纪录",
 	"panel.event2.setup.attendance.scan.toggle.title": "扫Illini ID",
