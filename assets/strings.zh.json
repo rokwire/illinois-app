@@ -314,6 +314,7 @@
 	"panel.browse.entry.academics.gies_checklist.title": "iDegrees 新學生清單",
 	"panel.browse.entry.academics.new_student_checklist.title": "新學生清單",
 	"panel.browse.entry.academics.skills_self_evaluation.title": "技能自我評估",
+	"panel.browse.entry.academics.essential_skills_coach.title": "Essential Skills Coach",
 	"panel.browse.entry.academics.canvas_courses.title": "我的 Gies 帆布課程",
 	"panel.browse.entry.academics.student_courses.title": "我的課程",
 	"panel.browse.entry.academics.my_illini.title": "MyIllini",
@@ -458,6 +459,7 @@
 	"panel.academics.section.student_courses.label": "我的課程",
 	"panel.academics.section.medicine_courses.label": "我的醫學院合規",
 	"panel.academics.section.skills_self_evaluation.label": "技能自我評估",
+	"panel.academics.section.essential_skills_coach.label": "Essential Skills Coach",
 	"panel.academics.section.todo_list.label": "待辦事項清單",
 	"panel.academics.section.due_date_catalog.label": "到期日目錄",
 	"panel.academics.section.appointments.label": "約會",
@@ -3742,6 +3744,7 @@
 	"widget.appointment.card.cancelled.label": "取消",
 
 	"widget.access.academics.skills_self_evaluation.name": "技能自我評估",
+	"widget.access.academics.essential_skills_coach.name": "Essential Skills Coach",
 	"widget.access.polls.name": "快速投票",
 	"widget.access.wellness.appointments.name": "MyMckinley預約",
 	"widget.access.wellness.health_screener.name": "Illinois Health Screener",

@@ -314,6 +314,7 @@
     "panel.browse.entry.academics.gies_checklist.title": "Lista de verificación para nuevos estudiantes de iDegrees",
     "panel.browse.entry.academics.new_student_checklist.title": "Lista de verificación para nuevos estudiantes",
     "panel.browse.entry.academics.skills_self_evaluation.title": "Autoevaluación de habilidades",
+    "panel.browse.entry.academics.essential_skills_coach.title": "Essential Skills Coach",
     "panel.browse.entry.academics.canvas_courses.title": "Mis cursos Gies Canvas",
     "panel.browse.entry.academics.student_courses.title": "Mis cursos",
     "panel.browse.entry.academics.my_illini.title": "myIllini",
@@ -458,6 +459,7 @@
     "panel.academics.section.medicine_courses.label": "Cumplimiento de mi facultad de medicina",
     "panel.academics.section.student_courses.label": "Mis cursos",
     "panel.academics.section.skills_self_evaluation.label": "Autoevaluación de habilidades",
+    "panel.academics.section.essential_skills_coach.label": "Essential Skills Coach",
     "panel.academics.section.todo_list.label": "Lista de quehaceres",
     "panel.academics.section.due_date_catalog.label": "Catálogo de fecha de vencimiento",
     "panel.academics.section.my_illini.label": "myIllini",
@@ -3761,6 +3763,7 @@
     "widget.appointment.card.cancelled.label": "Cancelado",
 
     "widget.access.academics.skills_self_evaluation.name": "Autoevaluación de habilidades",
+    "widget.access.academics.essential_skills_coach.name": "Essential Skills Coach",
     "widget.access.polls.name": "Encuestas",
     "widget.access.wellness.appointments.name": "Citas MyMcKinley",
     "widget.access.wellness.health_screener.name": "Illinois Health Screener",
