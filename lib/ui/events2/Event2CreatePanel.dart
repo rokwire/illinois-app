@@ -2027,6 +2027,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     (_free || _costController.text.isNotEmpty) &&
     (Events2().contentAttributes?.isSelectionValid(_attributes) ?? false) &&
     ((_registrationDetails?.type != Event2RegistrationType.external) || (_registrationDetails?.externalLink?.isNotEmpty ?? false)) &&
+    ((_registrationDetails?.type != Event2RegistrationType.internal) || ((_registrationDetails?.eventCapacity ?? 0) > 0)) &&
     (!_hasSurvey || _hasAttendanceDetails)
   );
 

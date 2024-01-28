@@ -249,7 +249,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
       Padding(padding: Event2CreatePanel.sectionPadding, child:
         Row(children: [
           Padding(padding: EdgeInsets.only(right: 6), child:
-            Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.registration.capacity.label.title', 'EVENT CAPACITY')),
+            Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.registration.capacity.label.title', 'EVENT CAPACITY'), required: true),
           ),
           Expanded(child:
             Event2CreatePanel.buildTextEditWidget(_capacityController, keyboardType: TextInputType.number, semanticsLabel: Localization().getStringEx("panel.event2.setup.registration.capacity.field.label", "EVENT CAPACITY FIELD",)),
@@ -301,7 +301,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   // External Link
   
   Widget _buildLinkSection() => Event2CreatePanel.buildSectionWidget(
-    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.link.label.title', 'ADD EXTERNAL LINK FOR REGISTRATION'), suffixImageKey: 'external-link'),
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.link.label.title', 'ADD EXTERNAL LINK FOR REGISTRATION'), suffixImageKey: 'external-link', required: true),
     body: Event2CreatePanel.buildTextEditWidget(_linkController, keyboardType: TextInputType.url, maxLines: 1, semanticsHint: Localization().getStringEx("panel.event2.setup.registration.link.field.label", "ADD EXTERNAL LINK FOR REGISTRATION FIELD",)),
     trailing: _buildConfirmUrlLink(onTap: (_onConfirmLink)),
     padding: EdgeInsets.zero
@@ -385,6 +385,21 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
         });
       }
     }
+  }
+
+  String? get _registrationDetailsErrorText {
+    if (_registrationType == Event2RegistrationType.internal) {
+      int? capacity = Event2CreatePanel.textFieldIntValue(_capacityController);
+      if ((capacity == null) || (capacity <= 0)) {
+        return Localization().getStringEx("panel.event2.setup.registration.internal.capacity.empty", "Event registration via the app requires a valid event capacity.");
+      }
+    }
+    else if (_registrationType == Event2RegistrationType.external) {
+      if (_linkController.text.isEmpty) {
+        return Localization().getStringEx("panel.event2.setup.registration.external.link.empty", "Event registration via external link requires a valid link URL.");
+      }
+    }
+    return null;
   }
 
   // For new registration details we must return non-zero instance, for update we 
@@ -511,12 +526,29 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
 
   void _onHeaderBarApply() {
     Analytics().logSelect(target: 'HeaderBar: Apply');
-    _updateEventRegistrationDetails((_registrationType != Event2RegistrationType.none) ? _buildRegistrationDetails() : null);
+    String? errorText = _registrationDetailsErrorText;
+    if (errorText != null) {
+      AppAlert.showMessage(context, errorText);
+    }
+    else {
+      _updateEventRegistrationDetails((_registrationType != Event2RegistrationType.none) ? _buildRegistrationDetails() : null);
+    }
   }
 
   void _onHeaderBarBack() {
     Analytics().logSelect(target: 'HeaderBar: Back');
-    Navigator.of(context).pop(_isCreating ? _buildRegistrationDetails() : null);
+    if (_isCreating) {
+      String? errorText = _registrationDetailsErrorText;
+      if (errorText != null) {
+        AppAlert.showMessage(context, errorText);
+      }
+      else {
+        Navigator.of(context).pop(_buildRegistrationDetails());
+      }
+    }
+    else {
+      Navigator.of(context).pop(null);
+    }
   }
 }
 

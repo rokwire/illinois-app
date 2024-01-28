@@ -1311,6 +1311,8 @@
     "panel.event2.setup.registration.description.label.title": "Registration within the Illinois app requires the user to sign in with a NetID.",
     "panel.event2.setup.registration.guest.empty.text": "There are no users registered for this event yet.",
     "panel.event2.setup.registration.guest.failed.text": "Failed to load guest list.",
+    "panel.event2.setup.registration.internal.capacity.empty": "Event registration via the app requires a valid event capacity.",
+    "panel.event2.setup.registration.external.link.empty": "Event registration via external link requires a valid link URL.",
 
     "panel.event2.setup.attendance.header.title": "Event Attendance",
     "panel.event2.setup.attendance.scan.toggle.title": "Scan Illini ID",
