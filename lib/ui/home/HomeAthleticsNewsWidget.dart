@@ -8,9 +8,9 @@ import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Sports.dart';
+import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
-import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -34,7 +34,7 @@ class HomeAthliticsNewsWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home.athletics_news.text.title', 'Athletics News');
+  static String get title => Localization().getStringEx('widget.home.athletics_news.text.title', 'Big 10 News');
 
   State<HomeAthliticsNewsWidget> createState() => _HomeAthleticsNewsWidgetState();
 }
@@ -121,7 +121,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
   @override
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
-        title: Localization().getStringEx('widget.home.athletics_news.text.title', 'Athletics News'),
+        title: Localization().getStringEx('widget.home.athletics_news.text.title', 'Big 10 News'),
         titleIconKey: 'news',
         child: _buildContent(),
     );
@@ -131,7 +131,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
     if (Connectivity().isOffline) {
       return HomeMessageCard(
         title: Localization().getStringEx("common.message.offline", "You appear to be offline"),
-        message: Localization().getStringEx("widget.home.athletics_news.text.offline", "Athletics News are not available while offline"),
+        message: Localization().getStringEx("widget.home.athletics_news.text.offline", "Big 10 News is not available while offline."),
       );
     }
     else if (_loadingNews) {
@@ -139,7 +139,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
     }
     else if (CollectionUtils.isEmpty(_news)) {
       return HomeMessageCard(
-        message: Localization().getStringEx("widget.home.athletics_news.text.empty.description", "No Athletics News are available right now."),
+        message: Localization().getStringEx("widget.home.athletics_news.text.empty.description", "Big 10 News is not available right now."),
       );
     }
     else {
@@ -203,7 +203,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
 
   void _onTapSeeAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsListPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.news)));
   }
 
   void _refreshNews({bool showProgress = false}) {
