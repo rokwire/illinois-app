@@ -3826,6 +3826,7 @@
 	"model.event2.event_type.hybrid": "现场与在线",
 	"model.event2.event_type.public": "公开",
 	"model.event2.event_type.private": "私人",
+	"model.event2.event_type.group_members": "僅限團體成員",
 	"model.event2.event_type.nearby": "附近",
 	"model.event2.event_type.super_event": "多人",
 	"model.event2.event_type.admin": "行政",

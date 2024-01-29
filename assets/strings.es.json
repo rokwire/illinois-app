@@ -3847,6 +3847,7 @@
     "model.event2.event_type.hybrid": "Híbrido",
     "model.event2.event_type.public": "Público",
     "model.event2.event_type.private": "Privado",
+    "model.event2.event_type.group_members": "Solo miembros del grupo",
     "model.event2.event_type.nearby": "Cerca",
     "model.event2.event_type.super_event": "Multi-evento",
     "model.event2.event_type.admin": "Administrador",
