@@ -86,11 +86,18 @@ class _EssentialSkillsCoachState extends State<EssentialSkillsCoach> {
     ]);
   }
 
-  void _onTapStartSkillsCoach() {
+  void _onTapStartSkillsCoach() async {
     //TODO: begin skills coach onboarding, for now create user course and immediately start
-    Future? result = AccessDialog.show(context: context, resource: 'academics.essential_skills_coach');
-    if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey) && result == null) {
-      widget.onStartCourse();
+    Future<bool?>? result = AccessDialog.show(context: context, resource: 'academics.essential_skills_coach');
+    if (result == null) {
+      if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
+        widget.onStartCourse();
+      }
+    } else {
+      bool? accessResult = await result;
+      if (accessResult == true) {
+        widget.onStartCourse();
+      }
     }
   }
 

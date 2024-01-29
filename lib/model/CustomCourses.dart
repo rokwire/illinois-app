@@ -328,8 +328,8 @@ class UserUnit {
 
   UserUnit({this.id, this.courseKey, this.moduleKey, this.completed = 0, this.current = false, this.unit, this.lastCompleted, this.dateCreated, this.dateUpdated});
 
-  factory UserUnit.emptyFromUnit(Unit unit, String courseKey) {
-    return UserUnit(courseKey: courseKey, completed: unit.scheduleStart ?? 0, unit: unit);
+  factory UserUnit.emptyFromUnit(Unit unit, String courseKey, {bool current = false}) {
+    return UserUnit(courseKey: courseKey, completed: unit.scheduleStart ?? 0, unit: unit, current: current);
   }
 
   static UserUnit? fromJson(Map<String, dynamic>? json) {

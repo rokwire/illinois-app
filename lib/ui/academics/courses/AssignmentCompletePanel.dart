@@ -3,7 +3,6 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
@@ -20,17 +19,16 @@ class AssignmentCompletePanel extends StatefulWidget {
   State<AssignmentCompletePanel> createState() => _AssignmentCompletePanelState();
 }
 
-class _AssignmentCompletePanelState extends State<AssignmentCompletePanel> implements NotificationsListener {
+class _AssignmentCompletePanelState extends State<AssignmentCompletePanel> {
 
-  late Color? _color;
-  late Color? _colorAccent;
-  late ConfettiController _confettiController;
+  Color? _color;
+  Color? _colorAccent;
+  ConfettiController _confettiController = ConfettiController(duration: const Duration(seconds: 3));
 
   @override
   void initState() {
-    _color = widget.color!;
-    _colorAccent = widget.colorAccent!;
-    _confettiController = ConfettiController(duration: const Duration(seconds: 3));
+    _color = widget.color;
+    _colorAccent = widget.colorAccent;
     super.initState();
   }
 
@@ -54,9 +52,7 @@ class _AssignmentCompletePanelState extends State<AssignmentCompletePanel> imple
   }
 
   List<Widget> _buildAssignmentCompleteWidgets() {
-    List<Widget> widgets = <Widget>[];
-
-    widgets.add(
+    return [
       Expanded(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -75,10 +71,7 @@ class _AssignmentCompletePanelState extends State<AssignmentCompletePanel> imple
               ),
             ],
           )
-      )
-    );
-
-    widgets.add(
+      ),
       Padding(padding: EdgeInsets.all(16),
           child: RoundedButton(
               label: Localization().getStringEx('panel.trial.button.continue.label', 'Continue'),
@@ -86,17 +79,7 @@ class _AssignmentCompletePanelState extends State<AssignmentCompletePanel> imple
               backgroundColor: _colorAccent,
               borderColor: _colorAccent,
               onTap: ()=> Navigator.pop(context))
-      )
-    );
-
-    return widgets;
+      ),
+    ];
   }
-
-
-
-  @override
-  void onNotification(String name, param) {
-    // TODO: implement onNotification
-  }
-
 }
