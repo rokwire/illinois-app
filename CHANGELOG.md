@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Make event capacity and external link required field of event registration (depending on registration type) [#3849](https://github.com/rokwire/illinois-app/issues/3849).
+- Match Athletics widget names to Browse -> Athletics listing [#3809](https://github.com/rokwire/illinois-app/issues/3809).
 ### Changed
 - Replace "Private" with "Group Members Only" for group event visibility [#3895](https://github.com/rokwire/illinois-app/issues/3895).
+### Added
+- Athletics UI Cleanup - in progress [#3867](https://github.com/rokwire/illinois-app/issues/3867).
 
 ## [5.1.15] - 2024-01-26
 ### Added
