@@ -130,9 +130,30 @@ class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidge
           _teams!.add(sport);
         }
       }
+      _sortTeams();
     } else {
       _teams = <SportDefinition>[];
     }
+  }
+
+  void _sortTeams() {
+    _teams?.sort((SportDefinition first, SportDefinition second) {
+      String? firstCustomName = first.customName;
+      String? secondCustomName = second.customName;
+      if (firstCustomName == secondCustomName) {
+        if (first.name != null) {
+          return (second.name != null) ? first.name!.compareTo(second.name!) : 1;
+        } else {
+          return (second.name != null) ? -1 : 0;
+        }
+      } else {
+        if (firstCustomName != null) {
+          return (secondCustomName != null) ? firstCustomName.compareTo(secondCustomName) : 1;
+        } else {
+          return (secondCustomName != null) ? -1 : 0;
+        }
+      }
+    });
   }
 
   // Notifications Listener
