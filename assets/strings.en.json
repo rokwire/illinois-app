@@ -3844,6 +3844,7 @@
     "model.event2.event_type.hybrid": "Hybrid",
     "model.event2.event_type.public": "Public",
     "model.event2.event_type.private": "Private",
+    "model.event2.event_type.group_members": "Group Members Only",
     "model.event2.event_type.nearby": "Nearby",
     "model.event2.event_type.super_event": "Multi-event",
     "model.event2.event_type.admin": "Admin",
