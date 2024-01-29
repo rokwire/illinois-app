@@ -21,6 +21,7 @@ import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
+import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/GestureDetector.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -1614,7 +1615,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
                     icon: Styles().images.getImage('chevron-down'),
                     isExpanded: true,
                     style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
-                    hint: Text(_event2VisibilityToDisplayString(_visibility),),
+                    hint: Text(_event2VisibilityToDisplayString(_visibility, _isGroupEvent),),
                     items: _buildVisibilityDropDownItems(),
                     onChanged: _onVisibilityChanged
                   ),
@@ -1632,7 +1633,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     for (_Event2Visibility value in _Event2Visibility.values) {
       menuItems.add(DropdownMenuItem<_Event2Visibility>(
         value: value,
-        child: Text(_event2VisibilityToDisplayString(value),),
+        child: Text(_event2VisibilityToDisplayString(value, _isGroupEvent),),
       ));
     }
     return menuItems;
@@ -2014,6 +2015,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   bool get _private => (_visibility == _Event2Visibility.private);
 
+  bool get _isGroupEvent => (CollectionUtils.isNotEmpty(_selectedGroupIds) || (widget.eventSelector is GroupEventSelector));
+
   bool get _hasSurvey => (_survey != null) || (_surveyDetails?.isNotEmpty ?? false);
 
   bool _canCreateEvent() => (
@@ -2179,10 +2182,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
 enum _Event2Visibility { public, private }
 
-String _event2VisibilityToDisplayString(_Event2Visibility value) {
-  switch(value) {
-    case _Event2Visibility.public: return Localization().getStringEx('model.event2.event_type.public', 'Public');
-    case _Event2Visibility.private: return Localization().getStringEx('model.event2.event_type.private', 'Private');
+String _event2VisibilityToDisplayString(_Event2Visibility value, bool isGroupEvent) {
+  switch (value) {
+    case _Event2Visibility.public:
+      return Localization().getStringEx('model.event2.event_type.public', 'Public');
+    case _Event2Visibility.private:
+      return isGroupEvent
+          ? Localization().getStringEx('model.event2.event_type.group_members', 'Group Members Only')
+          : Localization().getStringEx('model.event2.event_type.private', 'Private');
   }
 }
 

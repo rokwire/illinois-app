@@ -106,7 +106,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
     bool isGetTicketsVisible = widget.showGetTickets && StringUtils.isNotEmpty(game?.links?.tickets) && isTicketedSport;
     bool isFavorite = Auth2().isFavorite(widget.sportEvent);
     String? interestsLabelValue = _getInterestsLabelValue();
-    bool showInterests = StringUtils.isNotEmpty(interestsLabelValue);
+    bool showInterests = StringUtils.isNotEmpty(interestsLabelValue) && widget.showInterests;
     String? description = game?.description;
     bool showDescription = widget.showDescription && StringUtils.isNotEmpty(description);
 
