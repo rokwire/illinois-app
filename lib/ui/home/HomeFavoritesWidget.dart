@@ -27,6 +27,7 @@ import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -611,8 +612,11 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     Analytics().logSelect(target: 'View All', source: '${widget.runtimeType.toString()}(${widget.favoriteKey})');
     if ((widget.favoriteKey == MTDStop.favoriteKeyName) || (widget.favoriteKey == ExplorePOI.favoriteKeyName)) {
       FavoriteExt.launchHome(context, key: widget.favoriteKey);
-    }
-    else {
+    } else if(widget.favoriteKey == Game.favoriteKeyName) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.my_events)));
+    } else if(widget.favoriteKey == News.favoriteKeyName) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.my_news)));
+    } else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [widget.favoriteKey]); } ));
     }
   }
