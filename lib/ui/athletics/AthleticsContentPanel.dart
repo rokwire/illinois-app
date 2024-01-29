@@ -241,8 +241,12 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
     switch (_selectedContent) {
       case AthleticsContent.events:
         return AthleticsEventsContentWidget();
+      case AthleticsContent.my_events:
+        return AthleticsEventsContentWidget(showFavorites: true);
       case AthleticsContent.news:
         return AthleticsNewsContentWidget();
+      case AthleticsContent.my_news:
+        return AthleticsNewsContentWidget(showFavorites: true);
       case AthleticsContent.game_day:
         return AthleticsGameDayContentWidget();
       case AthleticsContent.teams:
