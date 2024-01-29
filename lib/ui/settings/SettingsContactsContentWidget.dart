@@ -1,4 +1,14 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:in_app_review/in_app_review.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class SettingsContactsContentWidget extends StatefulWidget{
   @override
@@ -7,11 +17,108 @@ class SettingsContactsContentWidget extends StatefulWidget{
 }
 
 class _SettingsContactsContentWidgetState extends State<SettingsContactsContentWidget> {
-  // TBD: New widget content
+
+  static BorderRadius _bottomRounding = BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10));
+  static BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10));
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return Container(child: Center(child: Text("TBD"),));
+    return Column(
+      children: [
+        _buildLinkButton(label: Localization().getStringEx("", "CONTACT HELP DESK"),
+            onTap: _onFeedback,
+            borderRadius: _topRounding),
+        _buildLinkButton(label: Localization().getStringEx("", "SHARE FEEDBACK & IDEAS"),
+            onTap: _onFeedback),
+        _buildLinkButton(label: Localization().getStringEx("", "DEVELOP CODE WITH ROKWIRE"),
+            onTap: _onFeedback),
+        _buildLinkButton(label: Localization().getStringEx("", "PARTNER WITH US"),
+          onTap: _onFeedback),
+        _buildLinkButton(label: Localization().getStringEx("", "REVIEW APP"),
+            borderRadius: _bottomRounding,
+            onTap: _onReviewClicked),
+        _feedbackDescriptionWidget,
+        Container(color: Styles().colors.surfaceAccent, height: 1,),
+        _contactInfoWidget
+      ],
+    );
+  }
+
+  Widget _buildLinkButton({String? label, Function? onTap, BorderRadius? borderRadius}) =>
+      RibbonButton(
+          backgroundColor: Styles().colors.white,
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+          rightIconKey: "external-link-medium",
+          borderRadius: borderRadius,
+          label: label,
+          onTap: () => onTap?.call()
+      );
+
+  Widget get _feedbackDescriptionWidget {//TBD localization
+    final String rokwirePlatformUrlMacro = '{{rokwire_platform_url}}';
+    final String universityUrlMacro = '{{university_url}}';
+    final String shciUrlMacro = '{{shci_url}}';
+    final String externalLinIconMacro = '{{external_link_icon}}';
+    String descriptionHtml = Localization().getStringEx("",
+        "The Illinois app is the official campus app of the <a href='$universityUrlMacro'> University of Illinois Urbana Champaign</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>. The app is built on the <a href='$rokwirePlatformUrlMacro'>Rokwire</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='$shciUrlMacro'>Smart, Healthy Communities Initiative</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> in the office of the Provost at the University of Illinois.");
+    descriptionHtml = descriptionHtml.replaceAll(rokwirePlatformUrlMacro, Config().rokwirePlatformUrl ?? '');
+    descriptionHtml = descriptionHtml.replaceAll(shciUrlMacro, Config().smartHealthyInitiativeUrl ?? '');
+    descriptionHtml = descriptionHtml.replaceAll(universityUrlMacro, 'https://app.illinois.edu/'); //TBD get from Config
+    descriptionHtml = descriptionHtml.replaceAll(externalLinIconMacro, 'images/external-link.png');
+
+    return  Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 20), child:
+      HtmlWidget(
+        StringUtils.ensureNotEmpty(descriptionHtml),
+        onTapUrl : (url) {_processUrl(url); return true;},
+        textStyle:  Styles().textStyles.getTextStyle("widget.item.regular.thin"),
+        customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.textBackground)} : null
+    ));
+  }
+
+  Widget get _contactInfoWidget => //TBD localization
+    Container(padding: EdgeInsets.symmetric(vertical: 20), child:
+      Column(children: [
+        Container(
+          padding: const EdgeInsets.all(6),
+          child: SizedBox(width: 32, height: 32, child:
+          Styles().images.getImage('university-logo'),
+          ),
+        ),
+        Text( Localization().getStringEx("", "Smart, Healthy Communities Initiative | Rokwire"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.fat")),
+        Text( Localization().getStringEx("", "Grainger Engineering Library, Room 333 \n 1301 West Springfield Avenue; Urbana, IL 61801"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.thin")),
+        RichText(textAlign: TextAlign.left, text:
+          TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children:[
+              TextSpan(text: Localization().getStringEx("","rokwire@illinois.edu"),
+                  style: Styles().textStyles.getTextStyle("widget.item.regular_underline.thin"),
+                  recognizer: TapGestureRecognizer()..onTap = () => _processUrl("mailto:rokwire@illinois.edu")),
+              TextSpan(text: " • "),
+              TextSpan(text: Localization().getStringEx("","app.illinois.edu"),
+                style: Styles().textStyles.getTextStyle("widget.item.regular_underline.thin"),
+                recognizer: TapGestureRecognizer()..onTap = () => _processUrl("app.illinois.edu")),
+          ]))
+      ],)
+    );
+
+  void _onReviewClicked() {
+    Analytics().logSelect(target: "Provide Review");
+    InAppReview.instance.openStoreListing(appStoreId: Config().appStoreId);
+  }
+
+  void _onFeedback() {
+    String email = Uri.encodeComponent(Auth2().email ?? '');
+    String name = Uri.encodeComponent(Auth2().fullName ?? '');
+    String phone = Uri.encodeComponent(Auth2().phone ?? '');
+    String feedbackUrl = "${Config().feedbackUrl}?email=$email&phone=$phone&name=$name";
+
+    _processUrl(feedbackUrl);
+  }
+
+  void _processUrl(String? url) {
+    if (StringUtils.isNotEmpty(url)) {
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        UrlUtils.launchExternal(url);
+      }
+    }
   }
 }

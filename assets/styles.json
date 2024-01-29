@@ -265,6 +265,7 @@
     "widget.item.regular.extra_fat": { "font_family": "extra_bold", "size": 16.0, "color": "textBackground"},
     "widget.item.regular.fat": { "font_family": "bold", "size": 16.0, "color": "textBackground"},
     "widget.item.regular.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground"},
+    "widget.item.regular_underline.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground", "decoration": "underline"},
     "widget.item.regular": { "font_family": "medium", "size": 16.0, "color": "textBackground"},
     "widget.item.small.fat": { "font_family": "bold", "size": 14.0, "color": "textBackground"},
     "widget.item.small": { "font_family": "medium", "size": 14.0, "color": "textBackground"},
@@ -1018,6 +1019,9 @@
     "pdf-icon": {"src": "images/pdf-icon.png", "type": "flutter.asset", "size": 35},
     "powerpoint-icon": {"src": "images/powerpoint.png", "type": "flutter.asset", "size": 35},
     "video-icon": {"src": "images/blue-play.png", "type": "flutter.asset", "size": 25},
-    "streak": {"src": "images/streak.png", "type": "flutter.asset", "size": 193}
+    "streak": {"src": "images/streak.png", "type": "flutter.asset", "size": 193},
+
+    "external-link-small": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "wrong size"},
+    "external-link-medium": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 20, "todo": "wrong size"}
   }
 }
