@@ -33,7 +33,7 @@ class _StreakPanelState extends State<StreakPanel> implements NotificationsListe
       ),
     );
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx('', 'Streak'),
+      appBar: HeaderBar(title: Localization().getStringEx('panel.essential_skills_coach.streak.header.title', 'Streak'),
         textStyle: Styles().textStyles.getTextStyle('header_bar'),),
       body: SingleChildScrollView(
         child: Column(
@@ -62,7 +62,7 @@ class _StreakPanelState extends State<StreakPanel> implements NotificationsListe
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 8),
-                        child: Text("Day Streak!", style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")),
+                        child: Text(Localization().getStringEx('panel.essential_skills_coach.streak.days.suffix', "Day Streak!"), style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")),
                       )
                     ],
                   ),
@@ -76,7 +76,7 @@ class _StreakPanelState extends State<StreakPanel> implements NotificationsListe
 
             Padding(
               padding:EdgeInsets.only(left: 24, top: 16),
-              child:Text("Calender", style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")),
+              child:Text(Localization().getStringEx('panel.essential_skills_coach.streak.calendar.header', "Calender"), style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")),
 
             ),
             Padding(
@@ -127,7 +127,7 @@ class _StreakPanelState extends State<StreakPanel> implements NotificationsListe
 
             Padding(
               padding:EdgeInsets.only(left: 24, top: 16),
-              child:Text("Pauses", style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")),
+              child:Text(Localization().getStringEx('panel.essential_skills_coach.streak.pauses.header', "Pauses"), style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")),
 
             ),
           ],

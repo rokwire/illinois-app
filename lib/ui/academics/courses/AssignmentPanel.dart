@@ -75,7 +75,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
       onPopInvoked: _saveProgress,
       child: Scaffold(
         resizeToAvoidBottomInset: true,
-        appBar: HeaderBar(title: Localization().getStringEx('', 'Daily Activities'),
+        appBar: HeaderBar(title: Localization().getStringEx('panel.essential_skills_coach.assignment.header.title', 'Daily Activities'),
           textStyle: Styles().textStyles.getTextStyle('header_bar'), onLeading: () => _saveProgress(false),),
         body: Column(
           children: [
@@ -99,7 +99,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                     return ListTile(
                         iconColor: Colors.white,
                         title: Center(
-                          child:Text("Helpful Information", style:Styles().textStyles.getTextStyle("widget.title.light.large.fat")),
+                          child:Text(Localization().getStringEx('panel.essential_skills_coach.assignment.help.header.title', "Helpful Information"), style:Styles().textStyles.getTextStyle("widget.title.light.large.fat")),
                         )
                     );
                   },
@@ -109,9 +109,9 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                       Padding(padding: EdgeInsets.all(8),
                         child: Text("- " + (_helpContent?.name ?? "Name") + ": " + (_helpContent?.details ?? " "), style:Styles().textStyles.getTextStyle("widget.title.light.small")),
                       ),
-                      Padding(padding: EdgeInsets.all(8),
-                        child: Text("- " + "Link to other resources or more text", style:Styles().textStyles.getTextStyle("widget.title.light.small")),
-                      ),
+                      // Padding(padding: EdgeInsets.all(8),
+                      //   child: Text("- Link to other resources or more text", style:Styles().textStyles.getTextStyle("widget.title.light.small")),
+                      // ),
                     ],
                   ),
                 )
@@ -130,7 +130,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
       noteWidgets.addAll([
         Padding(
           padding: EdgeInsets.all(16),
-          child: Text("How did it go?",
+          child: Text(Localization().getStringEx('panel.essential_skills_coach.assignment.experience.selection.header.', "How did it go?"),
             style: Styles().textStyles.getTextStyle("widget.title.light.regular"),
           ),
         ),
@@ -183,7 +183,9 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
       ]);
     }
 
-    String notesHeaderText = isComplete ? "Describe your experience." : (isNotComplete ? "Why not? What got in your way?" : "Notes");
+    String notesHeaderText = isComplete ? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.good.notes.header.', "Describe your experience.") :
+      (isNotComplete ? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.bad.notes.header.', "Why not? What got in your way?") :
+        Localization().getStringEx('panel.essential_skills_coach.assignment.experience.notes.header.', "Notes"));
     noteWidgets.add(
         Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
           child: Row(
@@ -199,12 +201,12 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     return [
       Padding(
         padding: EdgeInsets.all(24),
-        child: Text(_content.details ?? "Name", style: Styles().textStyles.getTextStyle("widget.title.light.large")),
+        child: Text(_content.details ?? "", style: Styles().textStyles.getTextStyle("widget.title.light.large")),
       ),
       Divider(color: _colorAccent, thickness: 2, indent: 24.0, endIndent: 24.0,),
       Padding(
         padding: EdgeInsets.all(16),
-        child: Text("Did you complete this task?",
+        child: Text(Localization().getStringEx('panel.essential_skills_coach.assignment.completion.selection.header', "Did you complete this task?"),
           style: Styles().textStyles.getTextStyle("widget.title.light.regular"),
         ),
       ),
@@ -216,7 +218,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
             Container(
               width: 150,
               child:RoundedButton(
-                  label: Localization().getStringEx('', 'Yes'),
+                  label: Localization().getStringEx('panel.essential_skills_coach.assignment.completion.button.yes.label', 'Yes'),
                   leftIconPadding: EdgeInsets.only(left: 15),
                   textStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),
                   backgroundColor: isComplete ? _colorAccent : _color,
@@ -240,7 +242,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
             Container(
                 width: 150,
                 child:RoundedButton(
-                    label: Localization().getStringEx('', 'No'),
+                    label: Localization().getStringEx('panel.essential_skills_coach.assignment.completion.button.no.label', 'No'),
                     leftIconPadding: EdgeInsets.only(left: 15),
                     textStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),
                     backgroundColor:  isNotComplete ?  _colorAccent : _color,

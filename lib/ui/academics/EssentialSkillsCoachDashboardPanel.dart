@@ -54,7 +54,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         );
       }
       return Center(
-        child: Text(Localization().getStringEx('', 'Course content could not be loaded. Please try again later.'))
+        child: Text(Localization().getStringEx('panel.essential_skills_coach.dashboard.content.missing.text', 'Course content could not be loaded. Please try again later.'))
       );
     }
 
@@ -120,7 +120,11 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             ),
             SizedBox(width: 8,),
             //TODO: update 'No Streak' string
-            Text((_userCourse?.streak ?? 0) > 0 ? '${_userCourse!.streak} Day Streak!' : 'No Streak', style: Styles().textStyles.getTextStyle("widget.title.light.small.fat"),)
+            Text(
+              (_userCourse?.streak ?? 0) > 0 ? '${_userCourse!.streak} ' + Localization().getStringEx('panel.essential_skills_coach.streak.days.suffix', "Day Streak!") :
+                Localization().getStringEx('panel.essential_skills_coach.dashboard.no_streak.text', 'No Streak'),
+              style: Styles().textStyles.getTextStyle("widget.title.light.small.fat"),
+            )
           ],
         ),
       ),
@@ -161,7 +165,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text('Unit $displayNumber', style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")),
-                  Text(unit.name ?? "Unknown", style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"))
+                  Text(unit.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"))
                 ],
               ),
             ),
@@ -182,7 +186,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                             colorAccent: _selectedModuleAccentColor,
                             unitNumber: displayNumber,
                             contentItems: unit.resourceContent,
-                            unitName: unit.name ?? "Unknown"
+                            unitName: unit.name ?? ""
                         )));
                       },
                       child: Icon(
@@ -197,7 +201,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                       ),
                     ),
                   ),
-                  Text('Resources', style: Styles().textStyles.getTextStyle("widget.title.light.small.fat")),
+                  Text(Localization().getStringEx('panel.essential_skills_coach.dashboard.resources.button.label', 'Resources'), style: Styles().textStyles.getTextStyle("widget.title.light.small.fat")),
                 ],
               ),
             ),

@@ -42,7 +42,7 @@ class _AssignmentCompletePanelState extends State<AssignmentCompletePanel> {
   Widget build(BuildContext context) {
     _confettiController.play();
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx('', 'Daily Activities'),
+      appBar: HeaderBar(title: Localization().getStringEx('panel.essential_skills_coach.assignment.header.title', 'Daily Activities'),
         textStyle: Styles().textStyles.getTextStyle('header_bar'),),
       body: Column(
         children: _buildAssignmentCompleteWidgets(),
@@ -58,23 +58,19 @@ class _AssignmentCompletePanelState extends State<AssignmentCompletePanel> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Center(
-                child: ConfettiWidget(
-                  confettiController: _confettiController,
-                  numberOfParticles: 300,
-                  blastDirectionality: BlastDirectionality.explosive,
-                  shouldLoop: false,
-                ),
+              ConfettiWidget(
+                confettiController: _confettiController,
+                numberOfParticles: 300,
+                blastDirectionality: BlastDirectionality.explosive,
+                shouldLoop: false,
               ),
-              Center(
-                child: Text("Keep up the \ngood work!", style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat"),),
-              ),
+              Text(Localization().getStringEx('panel.essential_skills_coach.assignment.complete.message', "Keep up the \ngood work!"), style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat"),),
             ],
           )
       ),
       Padding(padding: EdgeInsets.all(16),
           child: RoundedButton(
-              label: Localization().getStringEx('panel.trial.button.continue.label', 'Continue'),
+              label: Localization().getStringEx('panel.essential_skills_coach.assignment.complete.button.continue.label', 'Continue'),
               textStyle: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"),
               backgroundColor: _colorAccent,
               borderColor: _colorAccent,

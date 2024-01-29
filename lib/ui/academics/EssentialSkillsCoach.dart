@@ -14,10 +14,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Occupations.dart';
-import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsPanel.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
-import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -98,24 +95,6 @@ class _EssentialSkillsCoachState extends State<EssentialSkillsCoach> {
       if (accessResult == true) {
         widget.onStartCourse();
       }
-    }
-  }
-
-  Widget _buildOfflineWidget() {
-    return Padding(padding: EdgeInsets.all(28), child:
-      Center(child:
-        Text(
-          Localization().getStringEx('panel.essential_skills_coach.get_started.offline.error.msg', 'Skills Self-Evaluation is not available while offline.'),
-          textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.content.title')
-        )
-      ),
-    );
-  }
-
-  void _gotoResults(dynamic response) {
-    if (response is SurveyResponse) {
-      Occupations().postResults(surveyResponse: response);
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel(latestResponse: response)));
     }
   }
 }
