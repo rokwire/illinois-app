@@ -164,6 +164,11 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifySettingsAssessmentsNotification,
       FirebaseMessaging.notifySettingsCalendarNotification,
       FirebaseMessaging.notifySettingsAppointmentsNotification,
+      FirebaseMessaging.notifySettingsMapsNotification,
+      FirebaseMessaging.notifySettingsContactsNotification,
+      FirebaseMessaging.notifySettingsResearchNotification,
+      FirebaseMessaging.notifySettingsPrivacyNotification,
+      FirebaseMessaging.notifySettingsNotificationsNotification,
       FirebaseMessaging.notifyGuideArticleDetailNotification,
       LocalNotifications.notifyLocalNotificationTapped,
       Alerts.notifyAlert,
@@ -449,6 +454,21 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifySettingsAppointmentsNotification) {
       _onFirebaseSettingsNotification(settingsContent: SettingsContent.appointments);
+    }
+    else if (name == FirebaseMessaging.notifySettingsMapsNotification) {
+      _onFirebaseSettingsNotification(settingsContent: SettingsContent.maps);
+    }
+    else if (name == FirebaseMessaging.notifySettingsContactsNotification) {
+      _onFirebaseSettingsNotification(settingsContent: SettingsContent.contact);
+    }
+    else if (name == FirebaseMessaging.notifySettingsResearchNotification) {
+      _onFirebaseSettingsNotification(settingsContent: SettingsContent.research);
+    }
+    else if (name == FirebaseMessaging.notifySettingsPrivacyNotification) {
+      _onFirebaseSettingsNotification(settingsContent: SettingsContent.privacy);
+    }
+    else if (name == FirebaseMessaging.notifySettingsNotificationsNotification) {
+      _onFirebaseSettingsNotification(settingsContent: SettingsContent.notifications);
     }
     else if (name == FirebaseMessaging.notifyGuideArticleDetailNotification) {
       _onFirebaseGuideArticleNotification(param);
