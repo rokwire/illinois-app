@@ -127,7 +127,7 @@ class _SettingsMapsContentWidgetState extends State<SettingsMapsContentWidget> i
             ),
             Padding(padding: EdgeInsets.only(left: 5), child:
             Styles().images.getImage(
-                selected ? 'check-circle-filled' : 'check-circle-outline-gray',
+                selected ?  'radio-button-on' : 'radio-button-off',
                 excludeFromSemantics: true)
             )
           ])
