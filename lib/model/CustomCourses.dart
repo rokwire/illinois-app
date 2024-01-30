@@ -79,9 +79,11 @@ class UserCourse {
   final List<DateTime>? pauseUses;
 
   final Course? course;
+  final DateTime? dateCreated;
+  final DateTime? dateUpdated;
   final DateTime? dateDropped;
 
-  UserCourse({this.id, this.timezoneName, this.timezoneOffset, this.streak, this.streakResets, this.streakRestarts, this.pauses, this.pauseUses, this.course, this.dateDropped});
+  UserCourse({this.id, this.timezoneName, this.timezoneOffset, this.streak, this.streakResets, this.streakRestarts, this.pauses, this.pauseUses, this.course, this.dateCreated, this.dateUpdated, this.dateDropped});
 
   static UserCourse? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -98,6 +100,8 @@ class UserCourse {
       pauses: JsonUtils.intValue(json['pauses']),
       pauseUses: deviceTimeListFromJson(json['pause_uses']),
       course: Course.fromJson(json['course']),
+      dateCreated: AppDateTime().dateTimeLocalFromJson(json['date_created']),
+      dateUpdated: AppDateTime().dateTimeLocalFromJson(json['date_updated']),
       dateDropped: AppDateTime().dateTimeLocalFromJson(json['date_dropped']),
     );
   }
@@ -112,6 +116,8 @@ class UserCourse {
       'pauses': pauses,
       'pause_uses': deviceTimeListToJson(pauseUses),
       'course': course?.toJson(),
+      'date_created': AppDateTime().dateTimeLocalToJson(dateCreated),
+      'date_updated': AppDateTime().dateTimeLocalToJson(dateUpdated),
       'date_dropped': AppDateTime().dateTimeLocalToJson(dateDropped),
     };
     json.removeWhere((key, value) => (value == null));

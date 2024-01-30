@@ -107,9 +107,9 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       height: 48,
       color: Styles().colors.fillColorPrimaryVariant,
       child: TextButton(
-        onPressed: () {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => StreakPanel()));
-        },
+        onPressed: _userCourse != null ? () {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => StreakPanel(userCourse: _userCourse!)));
+        } : null,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

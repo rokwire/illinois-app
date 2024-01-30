@@ -3094,6 +3094,8 @@
 	"panel.essential_skills_coach.streak.days.suffix": "Day Streak!",
 	"panel.essential_skills_coach.streak.calendar.header": "Calender",
 	"panel.essential_skills_coach.streak.pauses.header": "Pauses",
+	"panel.essential_skills_coach.pauses.missing.text": "Your number of pauses could not be determined.",
+	"panel.essential_skills_coach.pauses_reward.missing.text": "Pauses can be earned by responding to tasks daily. Check in daily to keep your streak going!",
 	"panel.essential_skills_coach.resources.header.title": "Resources",
 	"panel.essential_skills_coach.unit_info.header.title": "Unit Information",
 	"panel.essential_skills_coach.unit_info.button.continue.label": "Continue",
