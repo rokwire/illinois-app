@@ -1,4 +1,5 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -48,7 +49,13 @@ class Course{
 
   dynamic searchByKey({String? moduleKey, String? unitKey, String? contentKey}) {
     if (moduleKey != null) {
-      return modules?.firstWhere((module) => module.key == moduleKey);
+      try {
+        return modules?.firstWhere((module) => module.key == moduleKey);
+      } catch (e) {
+        if (e is! StateError) {
+          debugPrint(e.toString());
+        }
+      }
     } else if (unitKey != null || contentKey != null) {
       for (Module module in modules ?? []) {
         dynamic item = module.searchByKey(unitKey: unitKey, contentKey: contentKey);
@@ -67,38 +74,20 @@ class UserCourse {
   final int? timezoneOffset;
   final int? streak;
   final List<DateTime>? streakResets;
+  final List<DateTime>? streakRestarts;
   final int? pauses;
   final List<DateTime>? pauseUses;
 
   final Course? course;
+  final DateTime? dateCreated;
+  final DateTime? dateUpdated;
   final DateTime? dateDropped;
 
-  UserCourse({this.id, this.timezoneName, this.timezoneOffset, this.streak, this.streakResets, this.pauses, this.pauseUses, this.course, this.dateDropped});
+  UserCourse({this.id, this.timezoneName, this.timezoneOffset, this.streak, this.streakResets, this.streakRestarts, this.pauses, this.pauseUses, this.course, this.dateCreated, this.dateUpdated, this.dateDropped});
 
   static UserCourse? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
-    }
-
-    List<DateTime>? streakResets;
-    for (dynamic reset in JsonUtils.listValue(json['streak_resets']) ?? []) {
-      if (reset is String) {
-        streakResets ??= [];
-        DateTime? resetTime = AppDateTime().getDeviceTimeFromUtcTime(DateTimeUtils.dateTimeFromString(reset));
-        if (resetTime != null) {
-          streakResets.add(resetTime);
-        }
-      }
-    }
-    List<DateTime>? pauseUses;
-    for (dynamic use in JsonUtils.listValue(json['pause_uses']) ?? []) {
-      if (use is String) {
-        pauseUses ??= [];
-        DateTime? useTime = AppDateTime().getDeviceTimeFromUtcTime(DateTimeUtils.dateTimeFromString(use));
-        if (useTime != null) {
-          pauseUses.add(useTime);
-        }
-      }
     }
 
     return UserCourse(
@@ -106,40 +95,29 @@ class UserCourse {
       timezoneName: JsonUtils.stringValue(json['timezone_name']),
       timezoneOffset: JsonUtils.intValue(json['timezone_offset']),
       streak: JsonUtils.intValue(json['streak']),
-      streakResets: streakResets,
+      streakResets: deviceTimeListFromJson(json['streak_resets']),
+      streakRestarts: deviceTimeListFromJson(json['streak_restarts']),
       pauses: JsonUtils.intValue(json['pauses']),
-      pauseUses: pauseUses,
+      pauseUses: deviceTimeListFromJson(json['pause_uses']),
       course: Course.fromJson(json['course']),
+      dateCreated: AppDateTime().dateTimeLocalFromJson(json['date_created']),
+      dateUpdated: AppDateTime().dateTimeLocalFromJson(json['date_updated']),
       dateDropped: AppDateTime().dateTimeLocalFromJson(json['date_dropped']),
     );
   }
 
   Map<String, dynamic> toJson() {
-    List<String>? streakResetsJson;
-    for (DateTime reset in streakResets ?? []) {
-      streakResetsJson ??= [];
-      String? resetJson = AppDateTime().dateTimeLocalToJson(reset);
-      if (resetJson != null) {
-        streakResetsJson.add(resetJson);
-      }
-    }
-    List<String>? pauseUsesJson;
-    for (DateTime use in pauseUses ?? []) {
-      pauseUsesJson ??= [];
-      String? useJson = AppDateTime().dateTimeLocalToJson(use);
-      if (useJson != null) {
-        pauseUsesJson.add(useJson);
-      }
-    }
-
     Map<String, dynamic> json = {
       'timezone_name': timezoneName,
       'timezone_offset': timezoneOffset,
       'streak': streak,
-      'streak_resets': streakResetsJson,
+      'streak_resets': deviceTimeListToJson(streakResets),
+      'streak_restarts': deviceTimeListToJson(streakRestarts),
       'pauses': pauses,
-      'pause_uses': pauseUsesJson,
+      'pause_uses': deviceTimeListToJson(pauseUses),
       'course': course?.toJson(),
+      'date_created': AppDateTime().dateTimeLocalToJson(dateCreated),
+      'date_updated': AppDateTime().dateTimeLocalToJson(dateUpdated),
       'date_dropped': AppDateTime().dateTimeLocalToJson(dateDropped),
     };
     json.removeWhere((key, value) => (value == null));
@@ -158,6 +136,36 @@ class UserCourse {
     }
     return userCourses;
   }
+
+  static List<DateTime>? deviceTimeListFromJson(dynamic value) {
+    if (value != null) {
+      List<DateTime> times = [];
+      for (dynamic timeJson in JsonUtils.listValue(value) ?? []) {
+        if (timeJson is String) {
+          DateTime? time = AppDateTime().getDeviceTimeFromUtcTime(DateTimeUtils.dateTimeFromString(timeJson));
+          if (time != null) {
+            times.add(time);
+          }
+        }
+      }
+      return times;
+    }
+    return null;
+  }
+
+  List<String>? deviceTimeListToJson(List<DateTime>? times) {
+    if (times != null) {
+      List<String> timesJson = [];
+      for (DateTime time in times) {
+        String? timeJson = AppDateTime().dateTimeLocalToJson(time);
+        if (timeJson != null) {
+          timesJson.add(timeJson);
+        }
+      }
+      return timesJson;
+    }
+    return null;
+  }
 }
 
 class Module{
@@ -166,7 +174,9 @@ class Module{
   final String? key;
   final List<Unit>? units;
 
-  Module({this.id, this.name, this.key, this.units});
+  final CourseDisplay? display;
+
+  Module({this.id, this.name, this.key, this.units, this.display});
 
 
   static Module? fromJson(Map<String, dynamic>? json) {
@@ -178,6 +188,7 @@ class Module{
         name: JsonUtils.stringValue(json['name']),
         key: JsonUtils.stringValue(json['key']),
         units: Unit.listFromJson(JsonUtils.listValue(json['units'])),
+        display: CourseDisplay.fromJson(JsonUtils.mapValue(json['display'])),
     );
   }
 
@@ -215,7 +226,13 @@ class Module{
 
   dynamic searchByKey({String? unitKey, String? contentKey}) {
     if (unitKey != null) {
-      return units?.firstWhere((unit) => unit.key == unitKey);
+      try {
+        return units?.firstWhere((unit) => unit.key == unitKey);
+      } catch (e) {
+        if (e is! StateError) {
+          debugPrint(e.toString());
+        }
+      }
     } else if (contentKey != null) {
       for (Unit unit in units ?? []) {
         Content? content = unit.searchByKey(contentKey: contentKey);
@@ -232,10 +249,11 @@ class Unit{
   final String? id;
   final String? name;
   final String? key;
+  final int? scheduleStart;
   final List<ScheduleItem>? scheduleItems;
   final List<Content>? contentItems;
 
-  Unit({this.id, this.name, this.key, this.scheduleItems, this.contentItems});
+  Unit({this.id, this.name, this.key, this.scheduleStart, this.scheduleItems, this.contentItems});
 
   static Unit? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -245,6 +263,7 @@ class Unit{
       id: JsonUtils.stringValue(json['id']),
       name: JsonUtils.stringValue(json['name']),
       key: JsonUtils.stringValue(json['key']),
+      scheduleStart: JsonUtils.intValue(json['schedule_start']),
       scheduleItems: ScheduleItem.listFromJson(JsonUtils.listValue(json['schedule'])),
       contentItems: Content.listFromJson(JsonUtils.listValue(json['content'])),
     );
@@ -254,6 +273,7 @@ class Unit{
     Map<String, dynamic> json = {
       'name': name,
       'key': key,
+      'schedule_start': scheduleStart,
       'schedule': ScheduleItem.listToJson(scheduleItems),
       'content': Content.listToJson(contentItems),
     };
@@ -285,17 +305,26 @@ class Unit{
 
   dynamic searchByKey({String? contentKey}) {
     if (contentKey != null) {
-      return contentItems?.firstWhere((content) => content.key == contentKey);
+      try {
+        return contentItems?.firstWhere((content) => content.key == contentKey);
+      } catch (e) {
+        if (e is! StateError) {
+          debugPrint(e.toString());
+        }
+      }
     }
     return null;
   }
+
+  List<Content>? get resourceContent => contentItems?.where((item) => item.type == 'resource').toList();
 }
 
 class UserUnit {
   final String? id;
   final String? courseKey;
-  final int? completed;
-  final bool? current;
+  final String? moduleKey;
+  final int completed;
+  final bool current;
 
   final Unit? unit;
 
@@ -303,7 +332,11 @@ class UserUnit {
   final DateTime? dateCreated;
   final DateTime? dateUpdated;
 
-  UserUnit({this.id, this.courseKey, this.completed, this.current, this.unit, this.lastCompleted, this.dateCreated, this.dateUpdated});
+  UserUnit({this.id, this.courseKey, this.moduleKey, this.completed = 0, this.current = false, this.unit, this.lastCompleted, this.dateCreated, this.dateUpdated});
+
+  factory UserUnit.emptyFromUnit(Unit unit, String courseKey, {bool current = false}) {
+    return UserUnit(courseKey: courseKey, completed: unit.scheduleStart ?? 0, unit: unit, current: current);
+  }
 
   static UserUnit? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -312,19 +345,20 @@ class UserUnit {
     return UserUnit(
       id: JsonUtils.stringValue(json['id']),
       courseKey: JsonUtils.stringValue(json['course_key']),
-      completed: JsonUtils.intValue(json['completed']),
-      current: JsonUtils.boolValue(json['current']),
+      moduleKey: JsonUtils.stringValue(json['module_key']),
+      completed: JsonUtils.intValue(json['completed']) ?? 0,
+      current: JsonUtils.boolValue(json['current']) ?? false,
       unit: Unit.fromJson(json['unit']),
       lastCompleted: AppDateTime().dateTimeLocalFromJson(json['last_completed']),
       dateCreated: AppDateTime().dateTimeLocalFromJson(json['date_created']),
       dateUpdated: AppDateTime().dateTimeLocalFromJson(json['date_updated']),
     );
-
   }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {
       'course_key': courseKey,
+      'module_key': moduleKey,
       'completed': completed,
       'current': current,
       'unit': unit?.toJson(),
@@ -421,7 +455,7 @@ class UserContent{
       return null;
     }
     return UserContent(
-      contentKey: JsonUtils.stringValue('content_key'),
+      contentKey: JsonUtils.stringValue(json['content_key']),
       userData: json['user_data'],
     );
   }
@@ -456,6 +490,8 @@ class UserContent{
     }
     return jsonList;
   }
+
+  bool get hasData => userData?.isNotEmpty ?? false;
 }
 
 class Reference{
@@ -496,7 +532,9 @@ class Content{
   final Reference? reference;
   final List<String>? linkedContent;
 
-  Content({this.id, this.name, this.key, this.type, this.details, this.reference, this.linkedContent});
+  final CourseDisplay? display;
+
+  Content({this.id, this.name, this.key, this.type, this.details, this.reference, this.linkedContent, this.display});
 
   static Content? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -510,6 +548,7 @@ class Content{
       details: JsonUtils.stringValue(json['details']),
       reference: Reference.fromJson(JsonUtils.mapValue('reference')),
       linkedContent: JsonUtils.stringListValue(json['linked_content']),
+      display: CourseDisplay.fromJson(JsonUtils.mapValue(json['display'])),
     );
   }
 
@@ -572,6 +611,29 @@ class CourseConfig {
       maxPauses: JsonUtils.intValue(json['max_pauses']),
       pauseRewardStreak: JsonUtils.intValue(json['pause_reward_streak']),
       streaksProcessTime: JsonUtils.intValue(json['streaks_notifications_config']?['streaks_process_time']),
+    );
+  }
+}
+
+// CourseDisplay
+
+class CourseDisplay {
+  final String? primaryColor;
+  final String? accentColor;
+  final String? completedColor;
+  final String? icon;
+
+  CourseDisplay({this.primaryColor, this.accentColor, this.completedColor, this.icon});
+
+  static CourseDisplay? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return CourseDisplay(
+      primaryColor: JsonUtils.stringValue(json['primary_color']),
+      accentColor: JsonUtils.stringValue(json['accent_color']),
+      completedColor: JsonUtils.stringValue(json['completed_color']),
+      icon: JsonUtils.stringValue(json['icon']),
     );
   }
 }
