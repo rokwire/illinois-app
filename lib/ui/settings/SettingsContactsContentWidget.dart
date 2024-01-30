@@ -25,20 +25,20 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _buildLinkButton(label: Localization().getStringEx("", "CONTACT HELP DESK"),
+        _buildLinkButton(label: Localization().getStringEx("panel.settings.contacts.button.help_desk.title", "CONTACT HELP DESK"),
             onTap: _onFeedback,
             borderRadius: _topRounding),
-        _buildLinkButton(label: Localization().getStringEx("", "SHARE FEEDBACK & IDEAS"),
+        _buildLinkButton(label: Localization().getStringEx("panel.settings.contacts.button.share_feedback.title", "SHARE FEEDBACK & IDEAS"),
             onTap: _onFeedback),
-        _buildLinkButton(label: Localization().getStringEx("", "DEVELOP CODE WITH ROKWIRE"),
+        _buildLinkButton(label: Localization().getStringEx("panel.settings.contacts.button.develop_code.title", "DEVELOP CODE WITH ROKWIRE"),
             onTap: _onFeedback),
-        _buildLinkButton(label: Localization().getStringEx("", "PARTNER WITH US"),
+        _buildLinkButton(label: Localization().getStringEx("panel.settings.partners.button.help_desk.title", "PARTNER WITH US"),
           onTap: _onFeedback),
-        _buildLinkButton(label: Localization().getStringEx("", "REVIEW APP"),
+        _buildLinkButton(label: Localization().getStringEx("panel.settings.review.button.help_desk.title", "REVIEW APP"),
             borderRadius: _bottomRounding,
             onTap: _onReviewClicked),
         _feedbackDescriptionWidget,
-        Container(color: Styles().colors.surfaceAccent, height: 1,),
+        _dividerWidget,
         _contactInfoWidget
       ],
     );
@@ -54,7 +54,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
           onTap: () => onTap?.call()
       );
 
-  Widget get _feedbackDescriptionWidget {//TBD localization
+  Widget get _feedbackDescriptionWidget {
     final String rokwirePlatformUrlMacro = '{{rokwire_platform_url}}';
     final String universityUrlMacro = '{{university_url}}';
     final String shciUrlMacro = '{{shci_url}}';
@@ -63,7 +63,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
         "The Illinois app is the official campus app of the <a href='$universityUrlMacro'> University of Illinois Urbana Champaign</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>. The app is built on the <a href='$rokwirePlatformUrlMacro'>Rokwire</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='$shciUrlMacro'>Smart, Healthy Communities Initiative</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> in the office of the Provost at the University of Illinois.");
     descriptionHtml = descriptionHtml.replaceAll(rokwirePlatformUrlMacro, Config().rokwirePlatformUrl ?? '');
     descriptionHtml = descriptionHtml.replaceAll(shciUrlMacro, Config().smartHealthyInitiativeUrl ?? '');
-    descriptionHtml = descriptionHtml.replaceAll(universityUrlMacro, 'https://app.illinois.edu/'); //TBD get from Config
+    descriptionHtml = descriptionHtml.replaceAll(universityUrlMacro, 'https://app.illinois.edu/'); //TBD get from Config. Confirm this is the correct url
     descriptionHtml = descriptionHtml.replaceAll(externalLinIconMacro, 'images/external-link.png');
 
     return  Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 20), child:
@@ -75,7 +75,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
     ));
   }
 
-  Widget get _contactInfoWidget => //TBD localization
+  Widget get _contactInfoWidget =>
     Container(padding: EdgeInsets.symmetric(vertical: 20), child:
       Column(children: [
         Container(
@@ -84,20 +84,23 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
           Styles().images.getImage('university-logo'),
           ),
         ),
-        Text( Localization().getStringEx("", "Smart, Healthy Communities Initiative | Rokwire"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.fat")),
-        Text( Localization().getStringEx("", "Grainger Engineering Library, Room 333 \n 1301 West Springfield Avenue; Urbana, IL 61801"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.thin")),
+        Text( Localization().getStringEx("panel.settings.contact.info.row1", "Smart, Healthy Communities Initiative | Rokwire"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.fat")),
+        Text( Localization().getStringEx("panel.settings.contact.info.row2", "Grainger Engineering Library, Room 333 \n 1301 West Springfield Avenue; Urbana, IL 61801"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.thin")),
         RichText(textAlign: TextAlign.left, text:
           TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children:[
-              TextSpan(text: Localization().getStringEx("","rokwire@illinois.edu"),
+              TextSpan(text: "rokwire@illinois.edu",
                   style: Styles().textStyles.getTextStyle("widget.item.regular_underline.thin"),
                   recognizer: TapGestureRecognizer()..onTap = () => _processUrl("mailto:rokwire@illinois.edu")),
               TextSpan(text: " • "),
-              TextSpan(text: Localization().getStringEx("","app.illinois.edu"),
+              TextSpan(text: "app.illinois.edu",
                 style: Styles().textStyles.getTextStyle("widget.item.regular_underline.thin"),
                 recognizer: TapGestureRecognizer()..onTap = () => _processUrl("app.illinois.edu")),
           ]))
       ],)
     );
+
+  Widget get _dividerWidget =>
+      Container(color: Styles().colors.surfaceAccent, height: 1,);
 
   void _onReviewClicked() {
     Analytics().logSelect(target: "Provide Review");

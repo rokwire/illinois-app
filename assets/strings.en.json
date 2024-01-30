@@ -1589,6 +1589,15 @@
 
     "panel.settings.privacy_statement.label.title": "Privacy Statement",
 
+    "panel.settings.contacts.button.help_desk.title": "CONTACT HELP DESK",
+    "panel.settings.contacts.button.share_feedback.title": "SHARE FEEDBACK & IDEAS",
+    "panel.settings.contacts.button.develop_code.title": "DEVELOP CODE WITH ROKWIRE",
+    "panel.settings.partners.button.help_desk.title": "PARTNER WITH US",
+    "panel.settings.review.button.help_desk.title": "REVIEW APP",
+    "panel.settings.contact.info.row1": "Smart, Healthy Communities Initiative | Rokwire",
+    "panel.settings.contact.info.row2": "Grainger Engineering Library, Room 333 \n 1301 West Springfield Avenue; Urbana, IL 61801",
+    "panel.settings.contact.feedback.app.description.format": "The Illinois app is the official campus app of the <a href='{{university_url}}'> University of Illinois Urbana-Champaign</>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>. The app is built on the <a href='{{rokwire_platform_url}}'>Rokwire</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='{{shci_url}}'>Smart, Healthy Communities Initiative</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> in the office of the Provost at the University of Illinois.",
+
     "panel.saved.header.label": "Saved",
     "panel.saved.label.events": "My Events",
     "panel.saved.label.events2": "My Events",
@@ -1714,6 +1723,11 @@
     "panel.settings.home.settings.sections.assessments.label": "My Assessments",
     "panel.settings.home.settings.sections.i_card.label": "Illini ID",
     "panel.settings.home.settings.sections.language.label": "My Language",
+    "panel.settings.home.settings.sections.contact.label": "Contact Us",
+    "panel.settings.home.settings.sections.maps.label": "Maps & Wayfinding",
+    "panel.settings.home.settings.sections.research.label": "My Participation in Research",
+    "panel.settings.home.settings.sections.privacy.label": "My App Privacy Settings",
+    "panel.settings.home.settings.sections.notifications.label": "My Notification Preferences",
 
     "panel.settings.home.connect.not_logged_in.title":"Sign In to {{app_title}}",
     "panel.settings.home.connect.not_logged_in.netid.description.part_1": "Are you a ",

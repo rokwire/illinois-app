@@ -353,15 +353,15 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
       case SettingsContent.language:
         return Localization().getStringEx('panel.settings.home.settings.sections.language.label', 'My Language');
       case SettingsContent.contact:
-        return Localization().getStringEx('panel.settings.home.settings.sections.contact.label', 'Contact Us'); //TBD to localizations
+        return Localization().getStringEx('panel.settings.home.settings.sections.contact.label', 'Contact Us');
       case SettingsContent.maps:
-        return Localization().getStringEx('panel.settings.home.settings.sections.maps.label', 'Maps & Wayfinding'); //TBD to localizations
+        return Localization().getStringEx('panel.settings.home.settings.sections.maps.label', 'Maps & Wayfinding');
       case SettingsContent.research:
-        return Localization().getStringEx('panel.settings.home.settings.sections.research.label', 'My Participation in Research'); //TBD to localizations
+        return Localization().getStringEx('panel.settings.home.settings.sections.research.label', 'My Participation in Research');
       case SettingsContent.privacy:
-        return Localization().getStringEx('panel.settings.home.settings.sections.privacy.label', 'My App Privacy Settings'); //TBD to localizations
+        return Localization().getStringEx('panel.settings.home.settings.sections.privacy.label', 'My App Privacy Settings');
       case SettingsContent.notifications:
-        return Localization().getStringEx('panel.settings.home.settings.sections.notifications.label', 'My Notification Preferences'); //TBD to localizations
+        return Localization().getStringEx('panel.settings.home.settings.sections.notifications.label', 'My Notification Preferences');
     }
   }
 
