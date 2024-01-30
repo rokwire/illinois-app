@@ -355,7 +355,9 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   void _refreshFavorites({bool showProgress = true}) {
     if (Connectivity().isOnline) {
-      LinkedHashSet<String> refFavoriteIds = Auth2().prefs?.getFavorites(widget.favoriteKey) ?? LinkedHashSet<String>();
+      // Games are loaded from Events2, so use events key.
+      String? favoritesKey = (widget.favoriteKey == Game.favoriteKeyName) ? Event2.favoriteKeyName : widget.favoriteKey;
+      LinkedHashSet<String> refFavoriteIds = Auth2().prefs?.getFavorites(favoritesKey) ?? LinkedHashSet<String>();
       if (!DeepCollectionEquality().equals(_favoriteIds, refFavoriteIds)) {
         _initFavorites(refFavoriteIds, showProgress: showProgress);
       }
@@ -459,7 +461,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Dinings().loadBackendDinings(false, null, null), favoriteIds) : null;
 
   Future<List<Favorite>?> _loadFavoriteGames(LinkedHashSet<String>? favoriteIds) async =>
-    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Sports().loadGames(), favoriteIds) : null;
+    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Events2().loadEventsList(Events2Query(ids: favoriteIds, attributes: {'category': Events2.sportEventCategory})), favoriteIds) : null;
 
   Future<List<Favorite>?> _loadFavoriteNews(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Sports().loadNews(null, 0), favoriteIds) : null;
