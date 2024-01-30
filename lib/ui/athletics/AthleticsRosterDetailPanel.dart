@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/model/sport/Roster.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -93,7 +93,7 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
                         children: <Widget>[
                           HtmlWidget(
                               StringUtils.ensureNotEmpty(widget.roster.htmlBio),
-                              onTapUrl : (url) {_launchUrl(url, context: context); return true;},
+                              onTapUrl : (url) {_launchUrl(url); return true;},
                               textStyle:  Styles().textStyles.getTextStyle("widget.detail.regular"),
                           )
                         ]
@@ -139,15 +139,11 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
     else{return Container();}
   }
 
-  void _launchUrl(String? url, {BuildContext? context}) {
+  void _launchUrl(String? url) {
     if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      } else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri);
-        }
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
       }
     }
   }

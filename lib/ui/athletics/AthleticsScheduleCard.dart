@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -27,11 +29,11 @@ import 'package:illinois/service/Sports.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AthleticsScheduleCard extends StatefulWidget {
   final Game? _game;
@@ -298,15 +300,21 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
 
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
-        _pushTicketsWebPanel();
+        _openTicketsUrl();
       });
     } else {
-      _pushTicketsWebPanel();
+      _openTicketsUrl();
     }
   }
 
-  void _pushTicketsWebPanel() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: widget._game!.links!.tickets)));
+  void _openTicketsUrl() {
+    String? url = widget._game!.links!.tickets;
+    if (StringUtils.isNotEmpty(url)) {
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
+      }
+    }
   }
 
   bool _hasTickets() {
