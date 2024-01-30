@@ -75,8 +75,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
       onPopInvoked: _saveProgress,
       child: Scaffold(
         resizeToAvoidBottomInset: true,
-        appBar: HeaderBar(title: Localization().getStringEx('panel.essential_skills_coach.assignment.header.title', 'Daily Activities'),
-          textStyle: Styles().textStyles.getTextStyle('header_bar'), onLeading: () => _saveProgress(false),),
+        appBar: HeaderBar(title: _content.name, textStyle: Styles().textStyles.getTextStyle('header_bar'), onLeading: () => _saveProgress(false),),
         body: Column(
           children: [
             Expanded(
@@ -233,7 +232,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                       complete = isComplete ? null : true;
                     });
                     if (isComplete) {
-                      Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentCompletePanel( color: _color, colorAccent: _colorAccent,)));
+                      Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentCompletePanel(contentName: _content.name ?? '', color: _color, colorAccent: _colorAccent,)));
                     }
                   } : null
               ),

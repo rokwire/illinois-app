@@ -8,11 +8,11 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 
 class AssignmentCompletePanel extends StatefulWidget {
-
+  final String contentName;
   final Color? color;
   final Color? colorAccent;
 
-  const AssignmentCompletePanel({required this.color, required this.colorAccent});
+  const AssignmentCompletePanel({required this.contentName, required this.color, required this.colorAccent});
 
 
   @override
@@ -42,8 +42,7 @@ class _AssignmentCompletePanelState extends State<AssignmentCompletePanel> {
   Widget build(BuildContext context) {
     _confettiController.play();
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx('panel.essential_skills_coach.assignment.header.title', 'Daily Activities'),
-        textStyle: Styles().textStyles.getTextStyle('header_bar'),),
+      appBar: HeaderBar(title: widget.contentName, textStyle: Styles().textStyles.getTextStyle('header_bar'),),
       body: Column(
         children: _buildAssignmentCompleteWidgets(),
       ),
