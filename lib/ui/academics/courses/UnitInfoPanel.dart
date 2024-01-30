@@ -33,7 +33,7 @@ class _UnitInfoPanelState extends State<UnitInfoPanel> implements NotificationsL
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx('', 'Daily Activities'),
+      appBar: HeaderBar(title: Localization().getStringEx('panel.essential_skills_coach.unit_info.header.title', 'Unit Information'),
         textStyle: Styles().textStyles.getTextStyle('header_bar'),),
       body: Column(
         children: _buildUnitInfoWidgets(),
@@ -89,13 +89,13 @@ class _UnitInfoPanelState extends State<UnitInfoPanel> implements NotificationsL
               Center(
                 child: Padding(
                   padding: EdgeInsets.all(16),
-                  child: Text(_content.name?.toUpperCase() ?? "Name", style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")),
+                  child: Text(_content.name?.toUpperCase() ?? "", style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")),
                 )
               ),
               Center(
                   child: Padding(
                     padding: EdgeInsets.all(16),
-                    child: Text(_content.details ?? "details", style: Styles().textStyles.getTextStyle("widget.title.light.large")),
+                    child: Text(_content.details ?? "", style: Styles().textStyles.getTextStyle("widget.title.light.large")),
                   )
               ),
               //TODO other content to be added here
@@ -110,7 +110,7 @@ class _UnitInfoPanelState extends State<UnitInfoPanel> implements NotificationsL
       Padding(
         padding: EdgeInsets.all(16),
         child: RoundedButton(
-            label: Localization().getStringEx('panel.trial.button.continue.label', 'Continue'),
+            label: Localization().getStringEx('panel.essential_skills_coach.unit_info.button.continue.label', 'Continue'),
             textStyle: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"),
             backgroundColor: _colorAccent,
             borderColor: _colorAccent,

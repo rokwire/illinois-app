@@ -107,12 +107,12 @@ class AccessDialog extends StatefulWidget {
   @override
   _AccessDialogState createState() => _AccessDialogState();
 
-  static Future<void>? show({
+  static Future<bool?>? show({
     required String resource,
     required BuildContext context,
 
     bool barrierDismissible = true,
-  }) => _AccessContent.mayAccessResource(resource) ? null : showDialog(
+  }) => _AccessContent.mayAccessResource(resource) ? null : showDialog<bool>(
     context: context,
     barrierDismissible: barrierDismissible,
     routeSettings: RouteSettings(name: routeName),
@@ -163,7 +163,7 @@ class _AccessDialogState extends State<AccessDialog> implements NotificationsLis
         Navigator.popUntil(context, (route) {
           return route.settings.name == AccessDialog.routeName;
         });
-        Navigator.pop(context);
+        Navigator.pop(context, true);
         return;
       }
       setState(() {});

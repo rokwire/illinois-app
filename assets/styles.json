@@ -674,6 +674,12 @@
     "panel.skills_self_evaluation.content.link":  {"font_family": "regular", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
     "panel.skills_self_evaluation.content.link.fat":  {"font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
 
+    "panel.essential_skills_coach.get_started.header": {"font_family": "extra_bold", "size": 28.0, "color": "surface"},
+    "panel.essential_skills_coach.header.description": {"font_family": "regular", "size": 16.0, "color": "surface"},
+    "panel.essential_skills_coach.auth_dialog.text": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimaryVariant"},
+    "panel.essential_skills_coach.auth_dialog.link": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
+    "panel.essential_skills_coach.content.title":  {"font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant"},
+
     "panel.wellness_appointments.button.title.underline":  {"extends": "widget.button.title.regular.thin.underline", "decoration_color":  "fillColorPrimary"},
     "panel.wellness_appointments.title.large":  {"extends": "widget.title.medium_large.extra_fat", "color": "blackTransparent06"},
 
@@ -1022,6 +1028,9 @@
     "streak": {"src": "images/streak.png", "type": "flutter.asset", "size": 193},
 
     "external-link-small": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "wrong size"},
-    "external-link-medium": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 20, "todo": "wrong size"}
+    "external-link-medium": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 20, "todo": "wrong size"},
+
+    "pause-filled-blue": {"src": "images/pause-filled-blue.png", "type": "flutter.asset", "size": 32},
+    "pause-empty-blue": {"src": "images/pause-empty-blue.png", "type": "flutter.asset", "size": 32}
   }
 }

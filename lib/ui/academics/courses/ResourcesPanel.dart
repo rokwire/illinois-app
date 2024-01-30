@@ -41,7 +41,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx('', 'Resources'),
+      appBar: HeaderBar(title: Localization().getStringEx('panel.essential_skills_coach.resources.header.title', 'Resources'),
         textStyle: Styles().textStyles.getTextStyle('header_bar'),),
       body: SingleChildScrollView(
         child: _buildUnitResourcesWidgets(),

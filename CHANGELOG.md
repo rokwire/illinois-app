@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Integrate Essential Skills Coach with LMS [#3891](https://github.com/rokwire/illinois-app/issues/3891).
+- Athletics UI Cleanup - done [#3867](https://github.com/rokwire/illinois-app/issues/3867).
 
 ## [5.1.16] - 2024-01-29
 ### Fixed
