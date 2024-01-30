@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Integrate Essential Skills Coach with LMS [#3891](https://github.com/rokwire/illinois-app/issues/3891).
 - Athletics UI Cleanup - done [#3867](https://github.com/rokwire/illinois-app/issues/3867).
+### Fixed
+- Athletics: Open urls outside the app [#3893](https://github.com/rokwire/illinois-app/issues/3893).
 
 ## [5.1.16] - 2024-01-29
 ### Fixed
