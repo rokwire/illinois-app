@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -33,13 +35,13 @@ import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AthleticsGameDetailHeading extends StatefulWidget {
   final Game? game;
@@ -263,7 +265,8 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                         title: Localization().getStringEx('widget.game_detail_heading.button.live_stats.title', 'Live Stats'),
                         hint: Localization().getStringEx('widget.game_detail_heading.button.live_stats.hint', ''),
                         onTap: () {
-                          Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: liveStatsUrl)));
+                          Analytics().logSelect(target: "Live Stats");
+                          _launchUrl(liveStatsUrl);
                         },
                       ),
                 StringUtils.isEmpty(liveStatsUrl)
@@ -452,34 +455,36 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   }
 
   void _showTicketsPanel() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: widget.game?.links!.tickets)));
+    Analytics().logSelect(target: "Tickets");
+    _launchUrl(widget.game?.links!.tickets);
   }
 
   void _onTapParking() {
     Analytics().logSelect(target: "Parking");
-
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: widget.game?.parkingUrl)));
+    _launchUrl(widget.game?.parkingUrl);
   }
 
   void _onTapGameDayGuide() {
     Analytics().logSelect(target: "Game Day");
-    String? url = _gameDayGuideUrl;
-    if (url != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-    }
+    _launchUrl(_gameDayGuideUrl);
   }
 
   void _onTapListen(String? audioUrl) {
     Analytics().logSelect(target: "Listen");
-    if (StringUtils.isNotEmpty(audioUrl)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: audioUrl)));
-    }
+    _launchUrl(audioUrl);
   }
 
   void _onTapWatch(String? videoUrl) {
     Analytics().logSelect(target: "Watch");
-    if (StringUtils.isNotEmpty(videoUrl)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: videoUrl)));
+    _launchUrl(videoUrl);
+  }
+
+  void _launchUrl(String? url) {
+    if (StringUtils.isNotEmpty(url)) {
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
+      }
     }
   }
 

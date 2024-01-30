@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -40,12 +42,12 @@ import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsCoachDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsCoachListPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsScheduleCard.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AthleticsTeamPanel extends StatefulWidget {
   final SportDefinition? sport;
@@ -670,14 +672,12 @@ class _TeamSocialCell extends StatelessWidget {
   }
 
   void _onTap(BuildContext context) {
-    Analytics().logSelect(target:"Social: "+name!);
+    Analytics().logSelect(target: "Social: " + name!);
     if (StringUtils.isNotEmpty(webUrl)) {
-      Navigator.push(
-          context,
-          CupertinoPageRoute(
-              builder: (context) =>
-                  WebPanel(
-                      url: webUrl, title: name!.toUpperCase(),)));
+      Uri? uri = Uri.tryParse(webUrl!);
+      if (uri != null) {
+        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
+      }
     }
   }
 }
