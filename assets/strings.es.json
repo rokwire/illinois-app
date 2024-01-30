@@ -1590,6 +1590,15 @@
 
     "panel.settings.privacy_statement.label.title": "Declaración de privacidad",
 
+    "panel.settings.contacts.button.help_desk.title": "CONTACT HELP DESK",
+    "panel.settings.contacts.button.share_feedback.title": "SHARE FEEDBACK & IDEAS",
+    "panel.settings.contacts.button.develop_code.title": "DEVELOP CODE WITH ROKWIRE",
+    "panel.settings.partners.button.help_desk.title": "PARTNER WITH US",
+    "panel.settings.review.button.help_desk.title": "REVIEW APP",
+    "panel.settings.contact.info.row1": "Smart, Healthy Communities Initiative | Rokwire",
+    "panel.settings.contact.info.row2": "Grainger Engineering Library, Room 333 \n 1301 West Springfield Avenue; Urbana, IL 61801",
+    "panel.settings.contact.feedback.app.description.format": "The Illinois app is the official campus app of the <a href='{{university_url}}'> University of Illinois Urbana-Champaign</>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>. The app is built on the <a href='{{rokwire_platform_url}}'>Rokwire</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='{{shci_url}}'>Smart, Healthy Communities Initiative</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> in the office of the Provost at the University of Illinois.",
+
     "panel.saved.header.label": "Guardado",
     "panel.saved.label.events": "Mis Eventos",
     "panel.saved.label.events2": "Mis Eventos",
@@ -1710,11 +1719,16 @@
     "panel.settings.home.settings.sections.food_filter.label": "Mi Filtro de Comida",
     "panel.settings.home.settings.sections.sports.label": "Mis Equipos Deportivos",
     "panel.settings.home.settings.sections.calendar.label": "Configuración de Mi Calendario",
-    "panel.settings.home.settings.sections.appointments.label": "Mis Citas en MyMcKinley",
+    "panel.settings.home.settings.sections.appointments.label": "My Success Team & Appointments",
     "panel.settings.home.settings.sections.favorites.label": "Personalizar Mis Favoritos",
     "panel.settings.home.settings.sections.assessments.label": "Mis Evaluaciones",
     "panel.settings.home.settings.sections.i_card.label": "Illini ID",
     "panel.settings.home.settings.sections.language.label": "Mi Idioma",
+    "panel.settings.home.settings.sections.contact.label": "Contact Us",
+    "panel.settings.home.settings.sections.maps.label": "Maps & Wayfinding",
+    "panel.settings.home.settings.sections.research.label": "My Participation in Research",
+    "panel.settings.home.settings.sections.privacy.label": "My App Privacy Settings",
+    "panel.settings.home.settings.sections.notifications.label": "My Notification Preferences",
 
     "panel.settings.home.connect.not_logged_in.title":"Inicia sesión en {{app_title}}",
     "panel.settings.home.connect.not_logged_in.netid.description.part_1": "Eres un ",
@@ -1780,6 +1794,7 @@
     "panel.settings.profile.content.profile.label": "Mi perfil",
     "panel.settings.profile.content.who_are_you.label": "Quién eres tú",
     "panel.settings.profile.content.privacy.label": "Configuración de privacidad de mi aplicación",
+    "panel.settings.profile.content.login.label": "Sign In/Sign Out",
     "panel.settings.profile.header.profile.label": "Perfil",
 
     "panel.settings.notifications.content.notifications.all.label": "Todas las notificaciones",

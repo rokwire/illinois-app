@@ -103,10 +103,18 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
     BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5));
     List<Widget> widgets = [];
 
-    
+    widgets.add(_CustomToggleButton(
+        enabled: _notificationsEnabled,
+        borderRadius: _topRounding,
+        label: Localization().getStringEx("panel.settings.notifications.pause_notifications", "Pause all notifications"),
+        toggled: FirebaseMessaging().notificationsPaused,
+        onTap: _notificationsEnabled? _onPauseNotificationsToggled : (){},
+        textStyle: _notificationsEnabled? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
+    ));
+    widgets.add(Container(color:Styles().colors.surfaceAccent,height: 1,));
     widgets.add(_CustomToggleButton(
           enabled: _appointmentsNotificationsEnabled,
-          borderRadius: _topRounding,
+          borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.appointments.new", "New MyMcKinley Appointment"),
           toggled: (Appointments().account?.notificationsAppointmentNew == true),
           onTap: _appointmentsNotificationsEnabled ? _onNewAppointmentToggled : (){},
@@ -245,15 +253,6 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           textStyle: _groupsSubNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       )
     ]))))]));
-    widgets.add(Container(color:Styles().colors.surfaceAccent,height: 1,));
-    widgets.add(_CustomToggleButton(
-        enabled: _notificationsEnabled,
-        borderRadius: BorderRadius.zero,
-        label: Localization().getStringEx("panel.settings.notifications.pause_notifications", "Pause all notifications"),
-        toggled: FirebaseMessaging().notificationsPaused,
-        onTap: _notificationsEnabled? _onPauseNotificationsToggled : (){},
-        textStyle: _notificationsEnabled? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
-      ));
 //    widgets.add(_CustomToggleButton(
 //          enabled: _notificationsEnabled,
 //          borderRadius: _bottomRounding,

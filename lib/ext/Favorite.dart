@@ -29,7 +29,7 @@ import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
+import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -219,7 +219,7 @@ extension FavoriteExt on Favorite {
       (this as ExplorePOI).launchDirections();
     }
     else if (this is InboxMessage) {
-      SettingsNotificationsContentPanel.launchMessageDetail(this as InboxMessage);
+      NotificationsHomePanel.launchMessageDetail(this as InboxMessage);
     }
   }
   

@@ -409,19 +409,19 @@ class AppPopScope {
 
 extension StateExt on State {
   @protected
-  void setStateIfMounted(VoidCallback fn) {
+  void setStateIfMounted([VoidCallback? fn]) {
     if (mounted) {
       // ignore: invalid_use_of_protected_member
-      setState(fn);
+      setState(fn ?? (){});
     }
   }
 
   @protected
-  void setStateDelayedIfMounted(VoidCallback fn, { Duration duration = Duration.zero }) {
+  void setStateDelayedIfMounted(VoidCallback? fn, { Duration duration = Duration.zero }) {
     Future.delayed(duration, () {
       if (mounted) {
         // ignore: invalid_use_of_protected_member
-        setState(fn);
+        setState(fn ?? (){});
       }
     });
   }

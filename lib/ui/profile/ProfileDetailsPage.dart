@@ -19,14 +19,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/OnCampus.dart';
-import 'package:illinois/service/Questionnaire.dart';
-import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
 import 'package:illinois/ui/settings/SettingsVoiceRecordigWidgets.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
-import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -40,15 +35,15 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class SettingsPersonalInfoContentWidget extends StatefulWidget {
+class ProfileDetailsPage extends StatefulWidget {
   final String? parentRouteName;
 
-  SettingsPersonalInfoContentWidget({Key? key, this.parentRouteName}) : super(key: key);
+  ProfileDetailsPage({Key? key, this.parentRouteName}) : super(key: key);
 
-  _SettingsPersonalInfoContentWidgetState createState() => _SettingsPersonalInfoContentWidgetState();
+  _ProfileDetailsPageState createState() => _ProfileDetailsPageState();
 }
 
-class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfoContentWidget> implements NotificationsListener {
+class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements NotificationsListener {
 
   TextEditingController? _nameController;
   TextEditingController? _emailController;
@@ -106,9 +101,6 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     return Column(children: <Widget>[
       _buildProfilePicture(),
       _buildInfoContent(),
-      _buildOnCampusSettings(),
-      _buildAdaSettings(),
-      _buildQuestionnaireOptions(),
       _buildAccountManagementOptions(),
       _buildDeleteMyAccount()
     ]);
@@ -268,226 +260,6 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
               value: Auth2().account?.authType?.email ?? ""),
         ],
       );
-  }
-
-  Widget _buildAdaSettings() {
-    return Padding(padding: EdgeInsets.only(top: 25), child:
-      Column(children:<Widget>[
-        Row(children: [
-          Expanded(child:
-            Text(Localization().getStringEx('panel.settings.home.calendar.ada.title', 'Accessibility Needs'), style:
-            Styles().textStyles.getTextStyle("widget.title.large.fat")
-            ),
-          ),
-        ]),
-        Container(height: 4),
-        ToggleRibbonButton(
-          label: Localization().getStringEx('panel.settings.home.calendar.ada.toggle.title', 'Display ADA accessible building entrances for My Courses'),
-          border: Border.all(color: Styles().colors.surfaceAccent),
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-          toggled: StudentCourses().requireAda,
-          onTap: _onRequireAdaToggled)
-      ]),
-    );
-  }
-
-  Widget _buildQuestionnaireOptions() {
-    return Padding(padding: EdgeInsets.only(top: 25), child:
-      Column(children:<Widget>[
-        Row(children: [
-          Expanded(child:
-            Text(Localization().getStringEx('panel.settings.home.calendar.research.title', 'Research at Illinois'), style:
-            Styles().textStyles.getTextStyle("widget.title.large.fat")
-            ),
-          ),
-        ]),
-        Container(height: 4),
-        ToggleRibbonButton(
-          label: Localization().getStringEx('panel.settings.home.calendar.research.toggle.title', 'Participate in research'),
-          border: Border.all(color: Styles().colors.surfaceAccent),
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-          toggled: Questionnaires().participateInResearch == true,
-          onTap: _onResearchQuestionnaireToggled
-        ),
-        Container(height: 4),
-        RibbonButton(
-          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-          label: Localization().getStringEx("panel.settings.home.calendar.research.questionnaire.title", "Research interest form"),
-          textStyle:  (Questionnaires().participateInResearch == true) ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
-          rightIconKey: Questionnaires().participateInResearch ?? false ? 'chevron-right-bold' : 'chevron-right-gray',
-          onTap: _onResearchQuestionnaireClicked
-        ),
-      ]),
-    );
-  }
-  
-
-  //OnCampus Settings
-
-  Widget _buildOnCampusSettings() {
-    bool onCampusRegionMonitorEnabled = OnCampus().enabled;
-    bool onCampusRegionMonitorSelected = OnCampus().monitorEnabled;
-
-    bool campusRegionManualInsideSelected = OnCampus().monitorManualInside;
-    bool onCampusSelected = !onCampusRegionMonitorSelected && campusRegionManualInsideSelected;
-    bool offCampusSelected = !onCampusRegionMonitorSelected && !campusRegionManualInsideSelected;
-
-    String onCampusRegionMonitorInfo = onCampusRegionMonitorEnabled ?
-      Localization().getStringEx('panel.settings.home.calendar.on_campus.location_services.required.label', 'requires location services') :
-      Localization().getStringEx('panel.settings.home.calendar.on_campus.location_services.not_available.label', 'not available');
-    String autoOnCampusInfo = Localization().getStringEx('panel.settings.home.calendar.on_campus.radio_button.auto.title', 'Automatically detect when I am on Campus') + '\n($onCampusRegionMonitorInfo)';
-
-    return Padding(padding: EdgeInsets.only(top: 25), child:
-      Column(children:<Widget>[
-        Row(children: [
-          Expanded(child:
-            Text(Localization().getStringEx('panel.settings.home.calendar.on_campus.title', 'On Campus'), style:
-              Styles().textStyles.getTextStyle("widget.title.large.fat")
-            ),
-          ),
-        ]),
-        _buildOnCampusRadioItem(
-            label: autoOnCampusInfo,
-            enabled: onCampusRegionMonitorEnabled,
-            selected: onCampusRegionMonitorSelected,
-            onTap: _onTapOnCampusAuto),
-        _buildOnCampusRadioItem(
-            label: Localization().getStringEx('panel.settings.home.calendar.on_campus.radio_button.on.title', 'Always make me on campus'),
-            selected: onCampusSelected,
-            onTap: _onTapOnCampusOn),
-        _buildOnCampusRadioItem(
-            label: Localization().getStringEx('panel.settings.home.calendar.on_campus.radio_button.off.title', 'Always make me off campus'),
-            selected: offCampusSelected,
-            onTap: _onTapOnCampusOff),
-      ]),
-    );
-  }
-
-  Widget _buildOnCampusRadioItem({required String label, bool enabled = true, required bool selected, VoidCallback? onTap}) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(height: 4),
-      GestureDetector(onTap: onTap, child:
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          decoration: BoxDecoration(
-            color: Styles().colors.white,
-            border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
-            borderRadius: BorderRadius.all(Radius.circular(4))),
-          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Expanded(child:
-              Text(label, style: enabled ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled")
-              )
-            ),
-            Padding(padding: EdgeInsets.only(left: 5), child:
-              Styles().images.getImage(selected ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true)
-            )
-          ])
-        )
-      )
-    ]);
-  }
-
-  void _onRequireAdaToggled() {
-    Analytics().logSelect(target: 'I require ADA entrances');
-    setStateIfMounted(() {
-      StudentCourses().requireAda = !StudentCourses().requireAda;
-    });
-  }
-
-  void _onResearchQuestionnaireToggled() {
-    Analytics().logSelect(target: 'Participate in research');
-    if (Questionnaires().participateInResearch == true) {
-      _promptTurnOffParticipateInResearch().then((bool? result) {
-        if (result == true) {
-          setState(() {
-            Questionnaires().participateInResearch = false;
-          });
-        }
-      });
-    }
-    else {
-      setState(() {
-        Questionnaires().participateInResearch = true;
-      });
-    }
-  }
-
-  Future<bool?> _promptTurnOffParticipateInResearch() async {
-    String promptEn = 'Please confirm that you wish to no longer participate in Research at Illinois. All information filled out in your questionnaire will be deleted.';
-    return await AppAlert.showCustomDialog(context: context,
-      contentWidget:
-        Text(Localization().getStringEx('panel.settings.home.calendar.research.prompt.title', promptEn),
-          style: Styles().textStyles.getTextStyle("widget.message.regular"),
-        ),
-      actions: [
-        TextButton(
-          child: Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
-          onPressed: () { Analytics().logAlert(text: promptEn, selection: 'Yes'); Navigator.of(context).pop(true); }
-        ),
-        TextButton(
-          child: Text(Localization().getStringEx('dialog.no.title', 'No')),
-          onPressed: () { Analytics().logAlert(text: promptEn, selection: 'No'); Navigator.of(context).pop(false); }
-        )
-    ]);
-  }
-
-  void _onResearchQuestionnaireClicked() {
-    Analytics().logSelect(target: 'Research Questionnaire');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnairePanel(onboardingContext: {
-      "onContinueAction": () {
-        _didResearchQuestionnaire();
-      }
-    },)));
-  }
-
-  void _didResearchQuestionnaire() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnaireAcknowledgementPanel(onboardingContext: {
-      "onContinueAction": () {
-        _didAcknowledgeResearchQuestionnaire();
-      }
-    },)));
-  }
-
-  void _didAcknowledgeResearchQuestionnaire() {
-    if (widget.parentRouteName != null) {
-      Navigator.of(context).popUntil((Route route){
-        return route.settings.name == widget.parentRouteName;
-      });
-    }
-    else {
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
-    }
-  }
-
-  void _onTapOnCampusAuto() {
-    if (OnCampus().enabled && !OnCampus().monitorEnabled) {
-      Analytics().logSelect(target: 'Automatically detect when I am on Campus');
-      setState(() {
-        OnCampus().monitorEnabled = true;
-      });
-    }
-  }
-
-  void _onTapOnCampusOn() {
-    if ((OnCampus().monitorEnabled || !OnCampus().monitorManualInside)) {
-      Analytics().logSelect(target: 'Always make me on campus');
-      setState(() {
-        OnCampus().monitorEnabled = false;
-        OnCampus().monitorManualInside = true;
-      });
-    }
-  }
-
-  void _onTapOnCampusOff() {
-    if ((OnCampus().monitorEnabled || OnCampus().monitorManualInside)) {
-      Analytics().logSelect(target: 'Always make me off campus');
-      setState(() {
-        OnCampus().monitorEnabled = false;
-        OnCampus().monitorManualInside = false;
-      });
-    }
   }
 
   //AccountManagementOptions
