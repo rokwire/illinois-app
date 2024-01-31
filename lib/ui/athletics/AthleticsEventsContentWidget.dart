@@ -84,7 +84,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [AthleticsTeamsFilterWidget(), Expanded(child: _buildContent())]);
+    return Column(children: [AthleticsTeamsFilterWidget(favoritesMode: _favoritesMode), Expanded(child: _buildContent())]);
   }
 
   Widget _buildContent() {

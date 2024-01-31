@@ -79,7 +79,7 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
     return Container(
         color: Styles().colors.white,
         child: Column(children: [
-          AthleticsTeamsFilterWidget(),
+          AthleticsTeamsFilterWidget(favoritesMode: _favoritesMode),
           Expanded(child: _buildContent())
         ]));
   }
