@@ -109,6 +109,8 @@ class Config extends rokwire.Config {
   String? get smartHealthyInitiativeUrl  => JsonUtils.stringValue(otherUniversityServices['smart_healthy_initiative_url']);
   String? get dailyIlliniFeedUrl     => JsonUtils.stringValue(otherUniversityServices['daily_illini_feed_url']);
   String? get eventAttendanceUrl     => JsonUtils.stringValue(otherUniversityServices['event_attendance_url']);
+  String? get eventsPublishingInfoUrl => JsonUtils.stringValue(otherUniversityServices['events_publishing_info_url']); // ?? 'edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=addingevents';
+
 
   // Getters: Platform Building Blocks
   String? get gatewayUrl             => JsonUtils.stringValue(platformBuildingBlocks['gateway_url']);

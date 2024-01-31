@@ -1192,6 +1192,7 @@
     "panel.events2.home.attributes.launch.header.description": "Personaliza tu canal de eventos por configurar los filtros a continuación o <a href='{{events2_url}}'>ver todos los eventos ahora<a> y elije tus filtros de eventos más tarde.",
     "panel.events2.home.attributes.launch.apply.title": "Crear Mi Canal de Eventos",
     "panel.events2.home.attributes.launch.continue.title": "Configurar Más Tarde",
+    "panel.events2.home.attributes.footer.text": "How are events published in the {{app_title}} app?",
     "panel.events2.home.attributes.event_type.title": "Tipo de Evento",
     "panel.events2.home.attributes.event_type.hint": "Elige el tipo de evento por el que se pueden filtrar tus eventos.",
     "panel.events2.home.attributes.event_type.hint.empty": "Elegir un tipo de evento",
