@@ -482,7 +482,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     return Visibility(
         visible: _hasGroupEventOptions,
         child: Semantics(
-            label: Localization().getStringEx('panel.group_detail.label.options', 'Options'),
+            label: Localization().getStringEx('widget.event2.card.detail.group.options.label', 'Options'),
             button: true,
             child: InkWell(
                 onTap: _onTapGroupEventOptions,
@@ -627,14 +627,14 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
 
     if (_canEditGroupEvent) {
       options.add(RibbonButton(
-          label: Localization().getStringEx('panel.group_detail.button.edit_event.title', "Edit Event"),
+          label: Localization().getStringEx('widget.event2.card.detail.group.edit_event.label', 'Edit Event'),
           leftIconKey: 'edit',
           onTap: _onEditGroupEventTap));
     }
 
     if (_canDeleteGroupEvent) {
       options.add(RibbonButton(
-          label: Localization().getStringEx('panel.group_detail.button.delete_event.title', 'Remove group event'),
+          label: Localization().getStringEx('widget.event2.card.detail.group.delete_event.label', 'Remove group event'),
           leftIconKey: 'trash',
           onTap: () {
             Analytics().logSelect(target: 'Remove Group Event (Option)');
@@ -658,8 +658,8 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   Widget _buildRemoveEventDialog(BuildContext context) {
     return GroupsConfirmationDialog(
         message: Localization().getStringEx(
-            'panel.group_detail.message.remove_event.title', 'Are you sure you want to remove this event from your group page?'),
-        buttonTitle: Localization().getStringEx('panel.group_detail.button.remove.title', 'Remove'),
+            'widget.event2.card.detail.group.delete_event.message', 'Are you sure you want to remove this event from your group page?'),
+        buttonTitle: Localization().getStringEx('widget.event2.card.detail.group.delete_event.delete.button', 'Remove'),
         onConfirmTap: () {
           _onTapRemoveGroupEvent(context);
         });
@@ -671,7 +671,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
       if (value) {
         Navigator.of(context).pop();
       } else {
-        AppAlert.showDialogResult(context, Localization().getStringEx('tbd.key', 'Failed to remove the event from group page.'));
+        AppAlert.showDialogResult(context, Localization().getStringEx('widget.event2.card.detail.group.delete_event.delete.failed.message', 'Failed to remove the event from group page.'));
       }
     });
   }

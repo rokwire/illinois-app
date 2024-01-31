@@ -3838,6 +3838,12 @@
     "widget.event2.card.detail.super_event.label": "Evento Múltiple",
     "widget.event2.card.detail.in_person.label": "En Persona",
     "widget.event2.card.detail.online.label": "En Línea",
+    "widget.event2.card.detail.group.options.label": "Opciones",
+    "widget.event2.card.detail.group.edit_event.label": "Editar evento",
+    "widget.event2.card.detail.group.delete_event.label": "Eliminar evento de grupo",
+    "widget.event2.card.detail.group.delete_event.message": "¿Estás seguro de que deseas eliminar este evento de la página de tu grupo?",
+    "widget.event2.card.detail.group.delete_event.delete.button": "Eliminar",
+    "widget.event2.card.detail.group.delete_event.delete.failed.message": "No se pudo eliminar el evento de la página del grupo.",
 
     "model.group.updated.now": "Actualizado ahora",
     "model.group.updated.minute": "Actualizado hace un minuto",

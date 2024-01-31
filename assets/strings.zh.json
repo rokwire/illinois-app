@@ -3819,6 +3819,12 @@
 	"widget.event2.card.detail.super_event.label": "多个活动",
 	"widget.event2.card.detail.in_person.label": "实体",
 	"widget.event2.card.detail.online.label": "在线",
+	"widget.event2.card.detail.group.options.label": "選項",
+	"widget.event2.card.detail.group.edit_event.label": "編輯事件",
+	"widget.event2.card.detail.group.delete_event.label": "刪除群組事件",
+	"widget.event2.card.detail.group.delete_event.message": "您確定要從群組頁面中刪除此活動嗎？",
+	"widget.event2.card.detail.group.delete_event.delete.button": "消除",
+	"widget.event2.card.detail.group.delete_event.delete.failed.message": "無法從群組頁面刪除事件。",
 
 	"model.group.updated.now": "已更新",
 	"model.group.updated.minute": "约一分钟前更新",
