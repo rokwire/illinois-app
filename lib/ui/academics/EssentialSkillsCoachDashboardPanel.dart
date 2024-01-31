@@ -28,6 +28,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   Course? _course;
   UserCourse? _userCourse;
   List<UserUnit>? _userCourseUnits;
+  CourseConfig? _courseConfig;
   bool _loading = false;
 
   String? _selectedModuleKey;
@@ -35,7 +36,8 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   @override
   void initState() {
     _loadCourseAndUnits();
-    //TODO: load course config if needed (check ESC onboarding completed, _hasStartedSkillsCoach, completed BESSI)
+    _loadCourseConfig();
+    //TODO: check ESC onboarding completed, _hasStartedSkillsCoach, completed BESSI for onboarding sequence
 
     super.initState();
   }
@@ -95,7 +97,11 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       color: Styles().colors.fillColorPrimaryVariant,
       child: TextButton(
         onPressed: _userCourse != null ? () {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => StreakPanel(userCourse: _userCourse!, firstScheduleItemCompleted: UserUnit.firstScheduleItemCompletionFromList(_userCourseUnits ?? []),)));
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => StreakPanel(
+            userCourse: _userCourse!,
+            courseConfig: _courseConfig,
+            firstScheduleItemCompleted: UserUnit.firstScheduleItemCompletionFromList(_userCourseUnits ?? []),
+          )));
         } : null,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -163,69 +169,75 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       ) ?? UserUnit.emptyFromUnit(unit, Config().essentialSkillsCoachKey ?? '', current: i == 0);
       moduleUnitWidgets.add(Padding(
         padding: const EdgeInsets.only(bottom: 16.0),
-        child: _buildUnitInfoWidget(showUnit.unit!, i+1),
+        child: _buildUnitInfoWidget(showUnit, i+1),
       ));
       if (CollectionUtils.isNotEmpty(showUnit.unit!.scheduleItems)) {
-        moduleUnitWidgets.addAll(_buildUnitWidgets(showUnit.unit!, showUnit.completed, showUnit.current));
+        moduleUnitWidgets.addAll(_buildUnitWidgets(showUnit));
       }
     }
     return moduleUnitWidgets;
   }
 
-  Widget _buildUnitInfoWidget(Unit unit, int displayNumber){
+  Widget _buildUnitInfoWidget(UserUnit userUnit, int displayNumber){
     return Container(
       color: _selectedModuleAccentColor,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         children: [
-          Flexible(
-            flex: 2,
-            child: Padding(
-              padding: EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Unit $displayNumber', style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")),
-                  Text(unit.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"))
-                ],
-              ),
+          if (!userUnit.current)
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: Text(Localization().getStringEx('', 'Complete Unit ${displayNumber-1} to unlock'), style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat")),
             ),
-          ),
-          Flexible(
-            flex: 1,
-            child: Padding(
-              padding: EdgeInsets.all(24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 4),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourcesPanel(
-                            color: _selectedModulePrimaryColor,
-                            colorAccent: _selectedModuleAccentColor,
-                            unitNumber: displayNumber,
-                            contentItems: unit.resourceContent,
-                            unitName: unit.name ?? ""
-                        )));
-                      },
-                      child: Icon(
-                        Icons.menu_book_rounded,
-                        color: _selectedModulePrimaryColor,
-                        size: 30.0,
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        shape: CircleBorder(),
-                        padding: EdgeInsets.all(16),
-                        backgroundColor: Colors.white,
-                      ),
-                    ),
+          Padding(
+            padding: EdgeInsets.all(24),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Unit $displayNumber', style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")),
+                      Text(userUnit.unit?.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"))
+                    ],
                   ),
-                  Text(Localization().getStringEx('panel.essential_skills_coach.dashboard.resources.button.label', 'Resources'), style: Styles().textStyles.getTextStyle("widget.title.light.small.fat")),
-                ],
-              ),
+                ),
+                Flexible(
+                  flex: 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 4),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourcesPanel(
+                                color: _selectedModulePrimaryColor,
+                                colorAccent: _selectedModuleAccentColor,
+                                unitNumber: displayNumber,
+                                contentItems: userUnit.unit?.resourceContent,
+                                unitName: userUnit.unit?.name ?? ""
+                            )));
+                          },
+                          child: Icon(
+                            Icons.menu_book_rounded,
+                            color: _selectedModulePrimaryColor,
+                            size: 30.0,
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            shape: CircleBorder(),
+                            padding: EdgeInsets.all(16),
+                            backgroundColor: Colors.white,
+                          ),
+                        ),
+                      ),
+                      Text(Localization().getStringEx('panel.essential_skills_coach.dashboard.resources.button.label', 'Resources'), style: Styles().textStyles.getTextStyle("widget.title.light.small.fat")),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -233,17 +245,16 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     );
   }
 
-  List<Widget> _buildUnitWidgets(Unit unit, int? completed, bool current){
+  List<Widget> _buildUnitWidgets(UserUnit userUnit){
     List<Widget> unitWidgets = [];
-    int scheduleStart = unit.scheduleStart ?? 0;
-    for (int i = 0; i < (unit.scheduleItems?.length ?? 0); i++) {
-      ScheduleItem item = unit.scheduleItems![i];
+    for (int i = 0; i < (userUnit.unit?.scheduleItems?.length ?? 0); i++) {
+      ScheduleItem item = userUnit.unit!.scheduleItems![i];
       if ((item.userContent?.length ?? 0) > 1) {
         List<Widget> contentButtons = [];
         for (UserContent userContent in item.userContent!) {
-          Content? content = unit.searchByKey(contentKey: userContent.contentKey);
-          if (content != null && StringUtils.isNotEmpty(unit.key)) {
-            contentButtons.add(_buildContentWidget(unit.key!, current, userContent, content, i, scheduleStart, completed ?? scheduleStart));
+          Content? content = userUnit.unit?.searchByKey(contentKey: userContent.contentKey);
+          if (content != null && StringUtils.isNotEmpty(userUnit.unit?.key)) {
+            contentButtons.add(_buildContentWidget(userUnit, userContent, content, i));
           }
         }
         unitWidgets.add(Row(
@@ -251,9 +262,9 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
           children: contentButtons,
         ));
       } else if ((item.userContent?.length ?? 0) == 1) {
-        Content? content = unit.searchByKey(contentKey: item.userContent![0].contentKey);
-        if (content != null && StringUtils.isNotEmpty(unit.key)) {
-          unitWidgets.add(_buildContentWidget(unit.key!, current, item.userContent![0], content, i, scheduleStart, completed ?? scheduleStart));
+        Content? content = userUnit.unit?.searchByKey(contentKey: item.userContent![0].contentKey);
+        if (content != null && StringUtils.isNotEmpty(userUnit.unit?.key)) {
+          unitWidgets.add(_buildContentWidget(userUnit, item.userContent![0], content, i));
         }
       }
 
@@ -262,21 +273,64 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     return unitWidgets;
   }
 
-  Widget _buildContentWidget(String unitKey, bool currentUnit, UserContent userContent, Content content, int scheduleIndex, int scheduleStart, int completed) {
+  Widget _buildContentWidget(UserUnit userUnit, UserContent userContent, Content content, int scheduleIndex) {
+    Unit unit = userUnit.unit!;
+    int scheduleStart = unit.scheduleStart!;
+
     bool required = scheduleIndex >= scheduleStart;
-    bool isCompleted = scheduleIndex < completed;
-    bool isCurrent = (scheduleIndex == completed) && currentUnit;
+    bool isCompleted = (scheduleIndex < userUnit.completed) && userUnit.current;
+    bool isCurrent = (scheduleIndex == userUnit.completed) && userUnit.current;
+    bool isNextWithCurrentComplete = (scheduleIndex == userUnit.completed + 1) && userUnit.current && (unit.scheduleItems?[userUnit.completed].isComplete ?? false);
     bool isCompletedOrCurrent = isCompleted || isCurrent;
+    bool shouldHighlight = ((isCurrent || !required) && !userContent.hasData) || isNextWithCurrentComplete;
 
     Color? contentColor = content.display?.primaryColor != null ? Styles().colors.getColor(content.display!.primaryColor!) : Styles().colors.fillColorSecondary;
     Color? completedColor = content.display?.completeColor != null ? Styles().colors.getColor(content.display!.completeColor!) : Colors.green;
     // Color? incompleteColor = content.display?.incompleteColor != null ? Styles().colors.getColor(content.display!.incompleteColor!) : Colors.grey[700];
+
+    double? size = shouldHighlight ? 24.0 : null;
+    Widget icon = Padding(
+      padding: shouldHighlight ? EdgeInsets.zero : EdgeInsets.all(8.0),
+      child: (userContent.hasData ? Styles().images.getImage("skills-check", size: size) : Styles().images.getImage(content.display?.icon, size: size)) ?? Container()
+    );
+    Widget contentWidget = icon;
+    if (shouldHighlight) {
+      contentWidget = Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  icon,
+                  SizedBox(width: 16.0),
+                  Text(
+                    content.reference?.highlightDisplayText() ?? Localization().getStringEx('panel.essential_skills_coach.dashboard.activity.button.label', 'Activity') + ' ${scheduleIndex - scheduleStart + 1}',
+                    style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")
+                  )
+                ]
+              ),
+            ),
+            Text(
+              content.reference?.highlightActionText() ?? Localization().getStringEx('panel.essential_skills_coach.dashboard.activity.button.action.label', 'GET STARTED'),
+              style: Styles().textStyles.getTextStyle("widget.title.light.medium.fat")
+            )
+          ]
+        ),
+      );
+    }
+
     Widget contentButton = Opacity(
       opacity: isCompletedOrCurrent ? 1 : 0.3,
       child: ElevatedButton(
         onPressed: isCompletedOrCurrent ? () {
           Navigator.push(context, CupertinoPageRoute(builder: (context) => !required ? UnitInfoPanel(
               content: content,
+              data: userContent.userData,
               color: _selectedModulePrimaryColor,
               colorAccent: _selectedModuleAccentColor,
             ) : AssignmentPanel(
@@ -285,20 +339,17 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
               color: _selectedModulePrimaryColor,
               colorAccent: _selectedModuleAccentColor,
               isCurrent: isCurrent,
-              // helpContent: helpContent,
+              helpContent: (_userCourse?.course ?? _course) != null ? content.getLinkedContent(_userCourse?.course ?? _course) : null,
             )
           )).then((result) {
-            if (result is Map<String, dynamic> && StringUtils.isNotEmpty(userContent.contentKey)) {
-              _updateProgress(unitKey, userContent.contentKey!, result);
+            if (result is Map<String, dynamic> && StringUtils.isNotEmpty(content.key)) {
+              _updateProgress(unit.key!, content.key!, result);
             }
           });
         } : null,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: userContent.hasData ? Styles().images.getImage("skills-check") : Styles().images.getImage(content.display?.icon),
-        ),
+        child: contentWidget,
         style: ElevatedButton.styleFrom(
-          shape: CircleBorder(),
+          shape: shouldHighlight ? RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))) : CircleBorder(),
           side: isCurrent && !userContent.hasData ? BorderSide(color: Styles().colors.surface, width: 6.0, strokeAlign: BorderSide.strokeAlignOutside) : null,
           padding: EdgeInsets.all(8.0),
           backgroundColor: !required || userContent.hasData ? completedColor : contentColor,
@@ -387,6 +438,21 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     _setLoading(false);
   }
 
+  Future<void> _loadCourseConfig() async {
+    if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
+      _setLoading(true);
+      CourseConfig? courseConfig = await CustomCourses().loadCourseConfig(Config().essentialSkillsCoachKey!);
+      if (courseConfig != null) {
+        setStateIfMounted(() {
+          _courseConfig = courseConfig;
+          _loading = false;
+        });
+      } else {
+        _setLoading(false);
+      }
+    }
+  }
+
   Future<void> _startCourse() async {
     await _loadCourseAndUnits();
     if (_userCourse == null && StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
@@ -407,7 +473,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     if (updatedUserUnit != null) {
       if (CollectionUtils.isNotEmpty(_userCourseUnits)) {
         int unitIndex = _userCourseUnits!.indexWhere((userUnit) => userUnit.id != null && userUnit.id == updatedUserUnit.id);
-        if (unitIndex > 0) {
+        if (unitIndex >= 0) {
           setStateIfMounted(() {
             _userCourseUnits![unitIndex] = updatedUserUnit;
           });

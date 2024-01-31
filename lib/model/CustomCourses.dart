@@ -167,25 +167,25 @@ class UserCourse {
     return null;
   }
 
-  bool isDateStreak(DateTime date, DateTime? firstScheduleItemCompleted, Duration startOfDay, {bool includeToday = false}) {
+  bool isDateStreak(DateTime date, DateTime? firstScheduleItemCompleted, Duration startOfDayOffset, {bool includeToday = false}) {
     if (firstScheduleItemCompleted != null) {
-      DateTime normalizedFirstCompleted = firstScheduleItemCompleted.subtract(startOfDay);
-      DateTime normalizedNow = DateTime.now().subtract(startOfDay);
+      DateTime normalizedFirstCompleted = firstScheduleItemCompleted.subtract(startOfDayOffset);
+      DateTime normalizedNow = DateTime.now().subtract(startOfDayOffset);
       if (!includeToday) {
         normalizedNow = normalizedNow.subtract(const Duration(days: 1));
       }
       if ((_isSameDay(date, normalizedFirstCompleted) || date.isAfter(normalizedFirstCompleted)) && (_isSameDay(date, normalizedNow) || date.isBefore(normalizedNow))) {
-        for (DateTime restart in normalizeDateTimes(streakRestarts ?? [], startOfDay)) {
+        for (DateTime restart in normalizeDateTimes(streakRestarts ?? [], startOfDayOffset)) {
           if (_isSameDay(restart, date)) {
             return true;  // part of a streak if a streak was restarted on this day
           }
         }
-        for (DateTime reset in normalizeDateTimes(streakResets ?? [], startOfDay)) {
+        for (DateTime reset in normalizeDateTimes(streakResets ?? [], startOfDayOffset, onHour: true)) {
           if (_isSameDay(reset, date)) {
             return false; // not part of streak if a streak was reset on this day
           }
         }
-        for (DateTime use in normalizeDateTimes(pauseUses ?? [], startOfDay)) {
+        for (DateTime use in normalizeDateTimes(pauseUses ?? [], startOfDayOffset, onHour: true)) {
           if (_isSameDay(use, date)) {
             return false; // not part of streak if a pause was used on this day
           }
@@ -198,13 +198,13 @@ class UserCourse {
     return false; // not part of a streak if missing firstScheduleItemCompleted or not between firstScheduleItemCompleted and now
   }
 
-  bool isDatePauseUse(DateTime date, Duration startOfDay, {bool includeToday = false}) {
-    DateTime normalizedNow = DateTime.now().subtract(startOfDay);
+  bool isDatePauseUse(DateTime date, Duration startOfDayOffset, {bool includeToday = false}) {
+    DateTime normalizedNow = DateTime.now().subtract(startOfDayOffset);
     if (!includeToday && _isSameDay(date, normalizedNow)) {
       return false;
     }
 
-    for (DateTime use in normalizeDateTimes(pauseUses ?? [], startOfDay)) {
+    for (DateTime use in normalizeDateTimes(pauseUses ?? [], startOfDayOffset)) {
       if (_isSameDay(use, date)) {
         return true;
       }
@@ -217,8 +217,11 @@ class UserCourse {
     return date.year == other.year && date.month == other.month && date.day == other.day;
   }
 
-  static List<DateTime> normalizeDateTimes(List<DateTime> dateTimes, Duration startOfDay) {
-    return List.generate(dateTimes.length, (index) => dateTimes[index].subtract(startOfDay));
+  static List<DateTime> normalizeDateTimes(List<DateTime> dateTimes, Duration startOfDayOffset, {bool onHour = false}) {
+    return List.generate(dateTimes.length, (index) {
+      DateTime dt = dateTimes[index].subtract(startOfDayOffset);
+      return onHour ? DateTime(dt.year, dt.month, dt.day, dt.hour) : dt;
+    });
   }
 }
 
@@ -510,7 +513,7 @@ class ScheduleItem{
     return jsonList;
   }
 
-  bool get isComplete => dateCompleted != null;
+  bool get isComplete => dateCompleted != null || (userContent?.every((uc) => uc.hasData) ?? false);
 }
 
 class UserContent{
@@ -563,9 +566,11 @@ class UserContent{
   bool get hasData => userData?.isNotEmpty ?? false;
 }
 
+enum ReferenceType { video, keyTerm, pdf, uri, none }
+
 class Reference{
   final String? name;
-  final String? type;
+  final ReferenceType? type;
   final String? referenceKey;
 
   Reference({this.name, this.type, this.referenceKey});
@@ -576,7 +581,7 @@ class Reference{
     }
     return Reference(
       name: JsonUtils.stringValue(json['name']),
-      type: JsonUtils.stringValue(json['type']),
+      type: typeFromString(JsonUtils.stringValue(json['type']) ?? ''),
       referenceKey: JsonUtils.stringValue(json['reference_key']),
     );
   }
@@ -584,11 +589,54 @@ class Reference{
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {
       'name': name,
-      'type': type,
+      'type': stringFromType(),
       'reference_key': referenceKey
     };
     json.removeWhere((key, value) => (value == null));
     return json;
+  }
+
+  static ReferenceType typeFromString(String value) {
+    switch (value) {
+      case 'video': return ReferenceType.video;
+      case 'keyTerm': return ReferenceType.keyTerm;
+      case 'key_term': return ReferenceType.keyTerm;
+      case 'pdf': return ReferenceType.pdf;
+      case 'uri': return ReferenceType.uri;
+      default: return ReferenceType.none;
+    }
+  }
+
+  String stringFromType() {
+    switch (type) {
+      case ReferenceType.video: return 'video';
+      case ReferenceType.keyTerm: return 'keyTerm';
+      case ReferenceType.pdf: return 'pdf';
+      case ReferenceType.uri: return 'uri';
+      default: return '';
+    }
+  }
+
+  String? highlightDisplayText() {
+    //TODO: move this to backend?
+    switch (type) {
+      case ReferenceType.video: return 'Video';
+      case ReferenceType.keyTerm: return 'Key Term';
+      case ReferenceType.pdf: return 'File';
+      case ReferenceType.uri: return 'Web Link';
+      default: return null;
+    }
+  }
+
+  String? highlightActionText() {
+    //TODO: move this to backend?
+    switch (type) {
+      case ReferenceType.video: return 'WATCH NOW';
+      case ReferenceType.keyTerm: return 'LEARN NOW';
+      case ReferenceType.pdf: return 'VIEW NOW';
+      case ReferenceType.uri: return 'OPEN NOW';
+      default: return null;
+    }
   }
 }
 
@@ -615,7 +663,7 @@ class Content{
       key: JsonUtils.stringValue(json['key']),
       type: JsonUtils.stringValue(json['type']),
       details: JsonUtils.stringValue(json['details']),
-      reference: Reference.fromJson(JsonUtils.mapValue('reference')),
+      reference: Reference.fromJson(JsonUtils.mapValue(json['reference'])),
       linkedContent: JsonUtils.stringListValue(json['linked_content']),
       display: CourseDisplay.fromJson(JsonUtils.mapValue(json['display'])),
     );
@@ -654,6 +702,20 @@ class Content{
       }
     }
     return jsonList;
+  }
+
+  List<Content>? getLinkedContent(Course? course) {
+    if (course != null) {
+      List<Content> linkedContentItems = [];
+      for (String linkedContentKey in linkedContent ?? []) {
+        Content? linked = course.searchByKey(contentKey: linkedContentKey);
+        if (linked != null) {
+          linkedContentItems.add(linked);
+        }
+      }
+      return linkedContentItems;
+    }
+    return null;
   }
 }
 

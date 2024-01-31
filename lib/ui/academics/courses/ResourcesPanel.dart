@@ -104,7 +104,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
 
           headerBuilder: (BuildContext context, bool isExpanded) {
             return ListTile(
-                leading: Styles().images.getImage((item.reference?.type ?? "item") + "-icon") ?? Container(),
+                leading: Styles().images.getImage((item.reference?.stringFromType() ?? "item") + "-icon") ?? Container(),
                 title: Text(item.name ?? ""),
             );
           },
