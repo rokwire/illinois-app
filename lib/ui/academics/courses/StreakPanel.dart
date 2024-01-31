@@ -127,10 +127,7 @@ class _StreakPanelState extends State<StreakPanel> {
                       ),
                     ),
                     child: TableCalendar(
-                      selectedDayPredicate: (day) {
-                        Duration startOfDayWithTolerance = Duration(minutes: 5, seconds: _courseConfig?.streaksProcessTime ?? 0);
-                        return widget.userCourse.isDateStreak(day, widget.firstScheduleItemCompleted, startOfDayWithTolerance);
-                      },
+                      selectedDayPredicate: _isStreak,
                       holidayPredicate: (day) {
                         Duration startOfDayWithTolerance = Duration(minutes: 5, seconds: _courseConfig?.streaksProcessTime ?? 0);
                         return widget.userCourse.isDatePauseUse(day, startOfDayWithTolerance);
@@ -159,15 +156,15 @@ class _StreakPanelState extends State<StreakPanel> {
                         weekendStyle: Styles().textStyles.getTextStyle("widget.title.light.small.fat") ?? TextStyle(),
                       ),
                       calendarStyle: CalendarStyle(
-                        // outsideDaysVisible: false,
+                        cellMargin: EdgeInsets.zero,
                         defaultTextStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat") ?? TextStyle(),
-                        holidayTextStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat") ?? TextStyle(),  // used for pauses
-                        holidayDecoration: BoxDecoration(color: Styles().colors.fillColorPrimary, border: Border.all(color: Styles().colors.gradientColorPrimary, width: 2.0), shape: BoxShape.circle),  // used for pauses
                         weekendTextStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat") ?? TextStyle(),
-                        todayDecoration: BoxDecoration(color: Styles().colors.surfaceAccent, shape: BoxShape.circle),
-                        todayTextStyle: Styles().textStyles.getTextStyle("widget.detail.large.fat") ?? TextStyle(),
-                        selectedTextStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat") ?? TextStyle(),
-                        selectedDecoration: BoxDecoration(color: Styles().colors.gradientColorPrimary, shape: BoxShape.rectangle),
+                        tablePadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      ),
+                      calendarBuilders: CalendarBuilders(
+                        selectedBuilder: _buildSelected,
+                        holidayBuilder: _buildHoliday,
+                        todayBuilder: _buildToday,
                       ),
                       firstDay: widget.userCourse.dateCreated ?? DateTime(2024, 2, 1),
                       lastDay: DateTime.now().add(Duration(days: 365)),
@@ -221,24 +218,84 @@ class _StreakPanelState extends State<StreakPanel> {
     );
   }
 
-  // Widget? _buildToday(BuildContext context, DateTime day, DateTime focusedDay) {
-  //   return Center(
-  //     child: Stack(
-  //       alignment: AlignmentDirectional.center,
-  //       children: [
-  //         Container(
-  //           width: 32,
-  //           height: 32,
-  //           decoration: new BoxDecoration(
-  //             color: Colors.white,
-  //             shape: BoxShape.circle,
-  //           ),
-  //         ),
-  //         Text(day.day.toString(), style: Styles().textStyles.getTextStyle("widget.detail.small.fat"), textAlign: TextAlign.center,)
-  //       ],
-  //     ),
-  //   );
-  // }
+  Widget? _buildSelected(BuildContext context, DateTime day, DateTime focusedDay) {
+    double radius = 20.0;
+    double cellWidth = 54.0;
+    BoxDecoration singleDecoration = BoxDecoration(color: Styles().colors.gradientColorPrimary, shape: BoxShape.circle);
+    BoxDecoration rangeMiddleDecoration = BoxDecoration(color: Styles().colors.gradientColorPrimary, shape: BoxShape.rectangle);
+    BoxDecoration rangeStartDecoration = BoxDecoration(color: Styles().colors.gradientColorPrimary, borderRadius: BorderRadius.only(topLeft: Radius.circular(radius), bottomLeft: Radius.circular(radius)));
+    BoxDecoration rangeEndDecoration = BoxDecoration(color: Styles().colors.gradientColorPrimary, borderRadius: BorderRadius.only(topRight: Radius.circular(radius), bottomRight: Radius.circular(radius)));
+
+    DateTime dayBefore = day.subtract(const Duration(days: 1));
+    DateTime dayAfter = day.add(const Duration(days: 1));
+    BoxDecoration decoration = singleDecoration;
+    bool wide = false;
+    if ((_isStreak(dayBefore) && !_isStreak(dayAfter) && day.weekday != DateTime.sunday) || _isStreak(dayBefore) && _isStreak(dayAfter) && day.weekday == DateTime.saturday) {
+      decoration = rangeEndDecoration;
+      wide = true;
+    } else if ((!_isStreak(dayBefore) && _isStreak(dayAfter) && day.weekday != DateTime.saturday) || _isStreak(dayBefore) && _isStreak(dayAfter) && day.weekday == DateTime.sunday) {
+      decoration = rangeStartDecoration;
+      wide = true;
+    } else if (_isStreak(dayBefore) && _isStreak(dayAfter) && day.weekday != DateTime.saturday && day.weekday != DateTime.sunday) {
+      decoration = rangeMiddleDecoration;
+      wide = true;
+    }
+
+    return Center(
+      child: Stack(
+        alignment: AlignmentDirectional.center,
+        children: [
+          Container(
+            width: wide ? cellWidth : 2 * radius,
+            height: 2 * radius,
+            decoration: decoration,
+          ),
+          Text(day.day.toString(), style: Styles().textStyles.getTextStyle("widget.title.light.large.fat"), textAlign: TextAlign.center,)
+        ],
+      ),
+    );
+  }
+
+  Widget? _buildHoliday(BuildContext context, DateTime day, DateTime focusedDay) {
+    return Center(
+      child: Stack(
+        alignment: AlignmentDirectional.center,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, border: Border.all(color: Styles().colors.gradientColorPrimary, width: 2.0), shape: BoxShape.circle),
+          ),
+          Align(
+            alignment: AlignmentDirectional.bottomCenter,
+            child: Styles().images.getImage('pause-filled-blue', size: 16.0),
+          ),
+          Text(day.day.toString(), style: Styles().textStyles.getTextStyle("widget.title.light.large.fat"), textAlign: TextAlign.center,)
+        ],
+      ),
+    );
+  }
+
+  Widget? _buildToday(BuildContext context, DateTime day, DateTime focusedDay) {
+    return Center(
+      child: Stack(
+        alignment: AlignmentDirectional.center,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(color: Styles().colors.surfaceAccent, shape: BoxShape.circle),
+          ),
+          Text(day.day.toString(), style: Styles().textStyles.getTextStyle("widget.detail.large.fat"), textAlign: TextAlign.center,)
+        ],
+      ),
+    );
+  }
+
+  bool _isStreak(DateTime date) {
+    Duration startOfDayWithTolerance = Duration(minutes: 5, seconds: _courseConfig?.streaksProcessTime ?? 0);
+    return widget.userCourse.isDateStreak(date, widget.firstScheduleItemCompleted, startOfDayWithTolerance);
+  }
 
   Future<void> _loadCourseConfig() async {
     if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
