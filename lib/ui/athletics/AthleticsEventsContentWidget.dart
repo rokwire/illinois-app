@@ -84,7 +84,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [AthleticsTeamsFilterWidget(hideFilter: _favoritesMode), Expanded(child: _buildContent())]);
+    return Column(children: [AthleticsTeamsFilterWidget(favoritesMode: _favoritesMode), Expanded(child: _buildContent())]);
   }
 
   Widget _buildContent() {
@@ -125,10 +125,8 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   }
 
   Widget _buildEmptyContent() {
-    return _buildCenteredWidget(Text(
-        Localization().getStringEx('panel.athletics.content.events.empty.message', 'There are no events for the selected teams.'),
-        textAlign: TextAlign.center,
-        style: Styles().textStyles.getTextStyle('widget.item.medium.fat')));
+    return _buildCenteredWidget(
+        Text(_emptyMessage, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat')));
   }
 
   Widget _buildErrorContent() {
@@ -313,6 +311,12 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   }
 
   bool get _favoritesMode => (widget.showFavorites == true);
+
+  String get _emptyMessage {
+    return _favoritesMode
+        ? Localization().getStringEx('panel.athletics.content.events.my.empty.message', 'There are no starred events for the selected teams.')
+        : Localization().getStringEx('panel.athletics.content.events.empty.message', 'There are no events for the selected teams.');
+  }
 
   // Notifications Listener
 

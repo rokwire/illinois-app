@@ -618,6 +618,7 @@
 
     "panel.athletics.content.events.unknown_error.message": "Se produjo un error desconocido",
     "panel.athletics.content.events.empty.message": "No hay eventos para los equipos seleccionados.",
+    "panel.athletics.content.events.my.empty.message": "No hay eventos destacados para los equipos seleccionados.",
 
     "panel.athletics.content.my_teams.header.title": "Mis 10 grandes equipos",
     "panel.athletics.content.my_teams.all.select.label": "Seleccionar todo",
@@ -627,6 +628,7 @@
     "panel.athletics.content.teams.unknown_error.message": "Se produjo un error desconocido.",
 
     "panel.athletics.content.news.empty.message": "No hay novedades para los equipos seleccionados.",
+    "panel.athletics.content.news.my.empty.message": "No hay novedades destacadas para los equipos seleccionados.",
     "panel.athletics.content.news.failed.message": "No se pudieron cargar las noticias.",
 
     "panel.athletics.content.game_day.empty.message": "No hay guías del día del partido disponibles para los equipos seleccionados.",

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix StreakPanel calendar UI [#3910](https://github.com/rokwire/illinois-app/issues/3910).
 - Show "Group Members Only" label for group events [#3912](https://github.com/rokwire/illinois-app/issues/3912).
+- Show "Teams" filter in Athletics "My" sections [#3909](https://github.com/rokwire/illinois-app/issues/3909).
 ### Changed
 - Updated display strings when linking event to a group, polished GroupsSelectionPopup UI [#3905](https://github.com/rokwire/illinois-app/issues/3905).
 - Make group event to have the same UI as regular event [#3914](https://github.com/rokwire/illinois-app/issues/3914).

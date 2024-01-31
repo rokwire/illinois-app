@@ -618,6 +618,7 @@
 
 	"panel.athletics.content.events.unknown_error.message": "發生未知錯誤",
 	"panel.athletics.content.events.empty.message": "所選團隊沒有任何活動。",
+	"panel.athletics.content.events.my.empty.message": "所選團隊沒有加星號的賽事。",
 
 	"panel.athletics.content.my_teams.header.title": "我的十大團隊",
 	"panel.athletics.content.my_teams.all.select.label": "全選",
@@ -627,6 +628,7 @@
 	"panel.athletics.content.teams.unknown_error.message": "發生未知錯誤。",
 
 	"panel.athletics.content.news.empty.message": "目前還沒有選定球隊的消息。",
+	"panel.athletics.content.news.my.empty.message": "入選球隊沒有加星號的新聞。",
 	"panel.athletics.content.news.failed.message": "加載新聞失敗。",
 
 	"panel.athletics.content.game_day.empty.message": "所選球隊沒有可用的比賽日指南。",
