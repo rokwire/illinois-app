@@ -11,6 +11,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
@@ -136,6 +137,38 @@ class Event2HomePanel extends StatefulWidget {
         ),
       ],)
     );
+  }
+
+  static Widget? _buildFiltersFooter(BuildContext context) {
+    Widget? infoIcon = Styles().images.getImage('info');
+    return (Config().eventsPublishingInfoUrl?.isNotEmpty == true) ? InkWell(onTap: _onTapFilterFooter, child:
+      Padding(padding: const EdgeInsets.symmetric(vertical: 8), child:
+        Row(children: [
+          if (infoIcon != null)
+            Padding(padding: const EdgeInsets.only(right: 4), child:
+                infoIcon,
+            ),
+          Expanded(child:
+            Text(Localization().getStringEx('panel.events2.home.attributes.footer.text', 'How are events published in the {{app_title}} app?').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+              style: Styles().textStyles.getTextStyle('widget.description.regular.underline'),
+            )
+          )
+        ],)
+      )
+    ) : null;
+  }
+  
+  static void _onTapFilterFooter() {
+    String? url = Config().eventsPublishingInfoUrl;
+    if (DeepLink().isAppUrl(url)) {
+      DeepLink().launchUrl(url);
+    }
+    else if (url != null) {
+      Uri? uri = Uri.tryParse(url);
+      if (uri != null) {
+        launchUrl(uri);
+      }
+    }
   }
 
   static String url = "${DeepLink().appUrl}/events2";
@@ -280,6 +313,7 @@ class Event2HomePanel extends StatefulWidget {
         sortType: ContentAttributesSortType.native,
         filtersMode: true,
         handleAttributeValue: handleAttributeValue,
+        footerBuilder: _buildFiltersFooter,
       )));
 
       selection = JsonUtils.mapValue(result);
