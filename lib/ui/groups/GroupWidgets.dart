@@ -2789,7 +2789,17 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> imple
 class GroupsSelectionPopup extends StatefulWidget {
   final List<Group>? groups;
 
-  GroupsSelectionPopup({this.groups});
+  final String? title;
+  final String? description;
+
+
+  GroupsSelectionPopup({super.key, this.groups, this.title, this.description});
+
+  String get _displayTitle => title ?? _defaultTitle;
+  String get _displayDescription => description ?? _defaultDescription;
+
+  static final String _defaultTitle = Localization().getStringEx("widget.groups.post.selection.heading", "Select Group");
+  static final String _defaultDescription = Localization().getStringEx("widget.groups.post.selection.message", "Also send this post to these selected groups:");
 
   @override
   _GroupsSelectionPopupState createState() => _GroupsSelectionPopupState();
@@ -2820,7 +2830,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
             ),
             Expanded(child:
               Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
-                Text(Localization().getStringEx("widget.groups.selection.heading", "Select Group"), textAlign: TextAlign.center,
+                Text(widget._displayTitle, textAlign: TextAlign.center,
                     style: Styles().textStyles.getTextStyle("widget.dialog.message.large.thin")
                 )
               )
@@ -2851,8 +2861,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
                       onTap: _onTapSelectAll,
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                          color: Colors.white,
-                          child: Text( 'Select All', //TBD localize
+                          child: Text( Localization().getStringEx('dialog.select_all.title', 'Select All'),
                             style:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat.underline")),
                       )
                     )
@@ -2866,8 +2875,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
                         onTap: _onTapClearSelection,
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                          color: Colors.white,
-                          child:Text('Deselect All', //TBD localize
+                          child:Text(Localization().getStringEx('dialog.deselect_all.title', 'Deselect All'),
                             textAlign: TextAlign.left,
                             style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.underline"))),
 
@@ -2915,8 +2923,8 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
     List<Widget> groupWidgetList = [];
 
     groupWidgetList.add(Container(
-      padding: EdgeInsets.only(top:10), //TBD localize
-      child: Text(Localization().getStringEx("widget.groups.selection.message", "Also send this post to these selected groups:"), textAlign: TextAlign.center,
+      padding: EdgeInsets.symmetric(vertical: 12), //TBD localize
+      child: Text(widget._displayDescription, textAlign: TextAlign.center,
           style: Styles().textStyles.getTextStyle("widget.message.regular.fat")),
     ),);
 

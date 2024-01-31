@@ -2106,7 +2106,16 @@ class GroupEventSelector extends Event2Selector{
     if (CollectionUtils.isEmpty(data.membersSelection)) { //Do not allow to save to other groups if membersSelection is performed. Causes a bug that these members may not be also members of the rest of the groups
       if(data.group?.id != null) {
         List<Group>? otherAdminGroups = await Groups().loadAdminUserGroups(excludeIds: [data.group!.id!]);
-        List<Group>? otherSelectedGroups = await showDialog(context: state.context, barrierDismissible: true, builder: (_) => GroupsSelectionPopup(groups: otherAdminGroups));
+        List<Group>? otherSelectedGroups = await showDialog(
+            context: state.context,
+            barrierDismissible: true,
+            builder: (_) => GroupsSelectionPopup(
+              groups: otherAdminGroups,
+              title: Localization().getStringEx('widget.groups.event.selection.heading', '{{app_title}} App Groups').
+                replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+              description: Localization().getStringEx('widget.groups.event.selection.message', 'Publish your event to Group(s) that you administer.'),
+            )
+        );
         state.setStateIfMounted(() {data.adminGroupsSelection = otherSelectedGroups;});
       }
     }
