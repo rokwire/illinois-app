@@ -303,10 +303,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ...?_speakerDetailWidget,
       ...?_priceDetailWidget,
       ...?_privacyDetailWidget,
+      ...?_publishedDetailWidget,
       ...?_superEventDetailWidget,
       ...?_promoteButton,
       ...?_addToCalendarButton,
-      ...?_adminSettingsButtonWidget,
+      ...?_adminCommandsButton,
       ...?_attendanceDetailWidget,
       ...?_contactsDetailWidget,
       ...?_detailsInfoWidget,
@@ -424,15 +425,25 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     return details;
   }
 
-  List<Widget>? get _privacyDetailWidget {
-    String privacyTypeTitle = _event?.private == true
-        ? (_isGroupEvent
-            ? Localization().getStringEx('panel.explore_detail.label.privacy.group_members.title', 'Group Members Only')
-            : Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event'))
-        : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
+  List<Widget>? get _privacyDetailWidget => [
+    _buildTextDetailWidget(_privacyStatus, "privacy"),
+    _detailSpacerWidget,
+  ];
 
-    return [_buildTextDetailWidget(privacyTypeTitle, "privacy"), _detailSpacerWidget];
-  }
+  String get _privacyStatus => (_event?.private == true)
+    ? (_isGroupEvent
+        ? Localization().getStringEx('panel.explore_detail.label.privacy.group_members.title', 'Group Members Only')
+        : Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event'))
+    : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
+
+  List<Widget>? get _publishedDetailWidget => _isAdmin ? <Widget>[
+    _buildTextDetailWidget(_publishedStatus, 'eye'),
+    _detailSpacerWidget
+  ] : null;
+
+  String get _publishedStatus => (_event?.published == true) ?
+    Localization().getStringEx('panel.event2.detail.general.published.title', 'Published') :
+    Localization().getStringEx('panel.event2.detail.general.unpublished.title', 'Unpublished');
 
   List<Widget>? get _superEventDetailWidget => (_superEvent != null) ? <Widget> [
     InkWell(onTap: _onSuperEvent, child:
@@ -561,8 +572,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     return contactList;
   }
 
-  List<Widget>? get _adminSettingsButtonWidget => _isAdmin? <Widget>[
-    InkWell(onTap: _onAdminSettings, child:
+  List<Widget>? get _adminCommandsButton => _isAdmin? <Widget>[
+    InkWell(onTap: _onAdminCommands, child:
        _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.admin_settings.title', 'Event Admin Settings'), 'settings', underlined: true)),
     _detailSpacerWidget
   ] : null;
@@ -1022,7 +1033,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
   }
 
-  void _onAdminSettings(){
+  void _onAdminCommands(){
     Analytics().logSelect(target: "Admin settings");
     showModalBottomSheet(
         context: context,

@@ -29,6 +29,10 @@
     "dialog.send.hint":"",
     "dialog.show.title":"Show",
     "dialog.show.hint":"",
+    "dialog.select_all.title":"Select All",
+    "dialog.select_all.hint":"",
+    "dialog.deselect_all.title":"Deselect All",
+    "dialog.deselect_all.hint":"",
 
     "tabbar.home.title":"Home",
     "tabbar.home.hint":"Home Page",
@@ -1389,6 +1393,8 @@
     "panel.event2.detail.general.in_person.title": "In Person",
     "panel.event2.detail.general.free.title": "Free",
     "panel.event2.detail.general.contacts.title": "Contacts",
+    "panel.event2.detail.general.published.title": "Published",
+    "panel.event2.detail.general.unpublished.title": "Unpublished",
     "panel.event2.detail.general.admin_settings.title": "Event Admin Settings",
     "panel.event2.detail.general.add_to_calendar.title": "Add to Calendar",
     "panel.event2.detail.general.add_to_calendar.succeeded.message": "Added to Calendar",
@@ -3749,7 +3755,10 @@
     "widget.group.member.card.attended.label": "ATTENDED",
 
     "widget.groups.selection.button.select.label": "Select",
-    "widget.groups.selection.heading": "Select Group",
+    "widget.groups.post.selection.heading": "Select Group",
+    "widget.groups.post.selection.message": "Also send this post to these selected groups:",
+    "widget.groups.event.selection.heading": "{{app_title}} App Groups",
+    "widget.groups.event.selection.message": "Publish your event to Group(s) that you administer.",
 
     "widget.gies.title": "iDegrees New Student Checklist",
     "widget.gies.button.notes": "Notes",

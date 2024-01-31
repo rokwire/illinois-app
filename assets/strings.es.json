@@ -29,6 +29,10 @@
     "dialog.send.hint":"",
     "dialog.show.title":"Show",
     "dialog.show.hint":"",
+    "dialog.select_all.title":"Select All",
+    "dialog.select_all.hint":"",
+    "dialog.deselect_all.title":"Deselect All",
+    "dialog.deselect_all.hint":"",
 
     "tabbar.home.title":"Inicio",
     "tabbar.home.hint":"Página de inicio",
@@ -1388,6 +1392,8 @@
     "panel.event2.detail.general.in_person.title": "En Persona",
     "panel.event2.detail.general.free.title": "Gratis",
     "panel.event2.detail.general.contacts.title": "Contactos",
+    "panel.event2.detail.general.published.title": "Published",
+    "panel.event2.detail.general.unpublished.title": "Unpublished",
     "panel.event2.detail.general.admin_settings.title": "Configuración del Administrador del Evento",
     "panel.event2.detail.general.add_to_calendar.title": "Agregar al Calendario",
     "panel.event2.detail.general.add_to_calendar.succeeded.message": "Added to Calendar",
@@ -3752,7 +3758,8 @@
     "widget.group.member.card.attended.label": "ASISTIÓ",
 
     "widget.groups.selection.button.select.label": "Seleccione",
-    "widget.groups.selection.heading": "Selecciona grupo",
+    "widget.groups.post.selection.heading": "Selecciona grupo",
+    "widget.groups.post.selection.message": "Also send this post to these selected groups:",
 
     "widget.gies.title": "Lista de verificación para estudiantes nuevos de iDegrees",
     "widget.gies.button.notes": "Notas",
