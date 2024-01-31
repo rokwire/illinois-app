@@ -1393,6 +1393,8 @@
     "panel.event2.detail.general.in_person.title": "In Person",
     "panel.event2.detail.general.free.title": "Free",
     "panel.event2.detail.general.contacts.title": "Contacts",
+    "panel.event2.detail.general.published.title": "Published",
+    "panel.event2.detail.general.unpublished.title": "Unpublished",
     "panel.event2.detail.general.admin_settings.title": "Event Admin Settings",
     "panel.event2.detail.general.add_to_calendar.title": "Add to Calendar",
     "panel.event2.detail.general.add_to_calendar.succeeded.message": "Added to Calendar",

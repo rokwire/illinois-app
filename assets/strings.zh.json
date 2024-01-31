@@ -1379,6 +1379,8 @@
 	"panel.event2.detail.general.in_person.title": "线下实体",
 	"panel.event2.detail.general.free.title": "免费",
 	"panel.event2.detail.general.contacts.title": "联络信息",
+	"panel.event2.detail.general.published.title": "Published",
+ "panel.event2.detail.general.unpublished.title": "Unpublished",
 	"panel.event2.detail.general.admin_settings.title": "活动管理员设定",
 	"panel.event2.detail.general.add_to_calendar.title": "加入日历",
 	"panel.event2.detail.general.add_to_calendar.succeeded.message": "Added to Calendar",
