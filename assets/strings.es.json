@@ -1392,6 +1392,8 @@
     "panel.event2.detail.general.in_person.title": "En Persona",
     "panel.event2.detail.general.free.title": "Gratis",
     "panel.event2.detail.general.contacts.title": "Contactos",
+    "panel.event2.detail.general.published.title": "Published",
+    "panel.event2.detail.general.unpublished.title": "Unpublished",
     "panel.event2.detail.general.admin_settings.title": "Configuración del Administrador del Evento",
     "panel.event2.detail.general.add_to_calendar.title": "Agregar al Calendario",
     "panel.event2.detail.general.add_to_calendar.succeeded.message": "Added to Calendar",
