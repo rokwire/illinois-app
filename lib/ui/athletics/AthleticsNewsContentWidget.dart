@@ -79,7 +79,7 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
     return Container(
         color: Styles().colors.white,
         child: Column(children: [
-          AthleticsTeamsFilterWidget(hideFilter: _favoritesMode),
+          AthleticsTeamsFilterWidget(),
           Expanded(child: _buildContent())
         ]));
   }
@@ -137,7 +137,7 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
   }
 
   Widget _buildEmptyContent() {
-    return _buildCenteredWidget(Text(Localization().getStringEx('panel.athletics.content.news.empty.message', 'There is no news for the selected teams.'),
+    return _buildCenteredWidget(Text(_emptyMessage,
         textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat')));
   }
 
@@ -185,6 +185,12 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
   }
 
   bool get _favoritesMode => (widget.showFavorites == true);
+
+  String get _emptyMessage {
+    return _favoritesMode
+        ? Localization().getStringEx('panel.athletics.content.news.my.empty.message', 'There is no starred news for the selected teams.')
+        : Localization().getStringEx('panel.athletics.content.news.empty.message', 'There is no news for the selected teams.');
+  }
 
   // Notifications Listener
 
