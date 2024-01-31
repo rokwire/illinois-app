@@ -29,6 +29,10 @@
 	"dialog.send.hint":"",
 	"dialog.show.title":"Show",
 	"dialog.show.hint":"",
+	"dialog.select_all.title":"Select All",
+	"dialog.select_all.hint":"",
+	"dialog.deselect_all.title":"Deselect All",
+	"dialog.deselect_all.hint":"",
 
 	"tabbar.home.title":"主页",
 	"tabbar.home.hint":"主页",
@@ -3733,7 +3737,8 @@
 	"widget.group.member.card.attended.label": "已参加",
 
 	"widget.groups.selection.button.select.label": "選擇",
-	"widget.groups.selection.heading": "選擇組",
+	"widget.groups.post.selection.heading": "選擇組",
+	"widget.groups.post.selection.message": "Also send this post to these selected groups:",
 
 	"widget.gies.title": "iDegrees 新生清單",
 	"widget.gies.notes.title": "要記住的事情",
