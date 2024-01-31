@@ -270,7 +270,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
 
     Color? contentColor = content.display?.primaryColor != null ? Styles().colors.getColor(content.display!.primaryColor!) : Styles().colors.fillColorSecondary;
     Color? completedColor = content.display?.completeColor != null ? Styles().colors.getColor(content.display!.completeColor!) : Colors.green;
-    Color? incompleteColor = content.display?.incompleteColor != null ? Styles().colors.getColor(content.display!.incompleteColor!) : Colors.grey[700];
+    // Color? incompleteColor = content.display?.incompleteColor != null ? Styles().colors.getColor(content.display!.incompleteColor!) : Colors.grey[700];
     Widget contentButton = Opacity(
       opacity: isCompletedOrCurrent ? 1 : 0.3,
       child: ElevatedButton(
