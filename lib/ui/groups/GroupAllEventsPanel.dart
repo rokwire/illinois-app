@@ -64,7 +64,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
 
     if (_events != null) {
       for (Event2 groupEvent in _events!) {
-        content.add(Padding(padding: EdgeInsets.only(bottom: 16), child: Event2Card(groupEvent, onTap: () => _onTapEvent(groupEvent))));
+        content.add(Padding(padding: EdgeInsets.only(bottom: 16), child: Event2Card(groupEvent, group: widget.group, onTap: () => _onTapEvent(groupEvent))));
       }
 
       if (_extendingEvents) {

@@ -892,7 +892,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     if (CollectionUtils.isNotEmpty(_groupEvents)) {
       for (Event2 groupEvent in _groupEvents!) {
-        content.add(Padding(padding: EdgeInsets.only(bottom: 16), child: Event2Card(groupEvent, onTap: () => _onTapEvent(groupEvent))));
+        content.add(Padding(padding: EdgeInsets.only(bottom: 16), child: Event2Card(groupEvent, group: _group, onTap: () => _onTapEvent(groupEvent))));
       }
 
       content.add(Padding(padding: EdgeInsets.only(top: 16), child:

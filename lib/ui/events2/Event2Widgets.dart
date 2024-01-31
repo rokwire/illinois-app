@@ -9,15 +9,21 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/groups/GroupDetailPanel.dart';
+import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/events2.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 import '../home/HomeWidgets.dart';
@@ -134,6 +140,7 @@ class Event2ImageCommandButton extends StatelessWidget {
 
 class Event2Card extends StatefulWidget {
   final Event2 event;
+  final Group? group;
   final Event2CardDisplayMode displayMode;
   final Event2GroupingType? linkType;
   final Position? userLocation;
@@ -141,7 +148,7 @@ class Event2Card extends StatefulWidget {
   
   final List<String>? displayCategories;
   
-  Event2Card(this.event, { Key? key, this.displayMode = Event2CardDisplayMode.list, this.linkType, this.userLocation, this.onTap}) :
+  Event2Card(this.event, { Key? key, this.group, this.displayMode = Event2CardDisplayMode.list, this.linkType, this.userLocation, this.onTap}) :
     displayCategories = Events2().contentAttributes?.displaySelectedLabelsFromSelection(event.attributes, usage: ContentAttributeUsage.category),
     super(key: key);
 
@@ -278,7 +285,8 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
               ],),
             ),
           ),
-          _favoriteButton
+          _favoriteButton,
+          _groupOptionsButton
         ],)
       ),
     );
@@ -297,7 +305,8 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
                 ],),
               ),
             ),
-            _favoriteButton
+            _favoriteButton,
+            _groupOptionsButton
           ],)
         ),
       ),
@@ -397,6 +406,12 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
 
   bool get _hasImage => StringUtils.isNotEmpty(widget.event.imageUrl);
 
+  bool get _hasGroup => (widget.group != null);
+  bool get _isGroupAdmin => (widget.group?.currentMember?.isAdmin ?? false);
+  bool get _canEditGroupEvent => _isGroupAdmin && (widget.event.canUserEdit == true);
+  bool get _canDeleteGroupEvent => _isGroupAdmin;
+  bool get _hasGroupEventOptions => _hasGroup && (_canEditGroupEvent || _canDeleteGroupEvent);
+
   Widget get _imageHeadingWidget => Visibility(visible: _hasImage, child:
     Container(decoration: _imageHeadingDecoration, child:
       AspectRatio(aspectRatio: 2.5, child:
@@ -419,7 +434,8 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
           widget.hasDisplayCategories ? _categoriesContentWidget : _titleContentWidget
         ),
       ),
-      _favoriteButton
+      _favoriteButton,
+      _groupOptionsButton
     ]);
 
   Widget get _categoriesContentWidget =>
@@ -460,6 +476,17 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
         ),
       )
     );
+  }
+
+  Widget get _groupOptionsButton {
+    return Visibility(
+        visible: _hasGroupEventOptions,
+        child: Semantics(
+            label: Localization().getStringEx('panel.group_detail.label.options', 'Options'),
+            button: true,
+            child: InkWell(
+                onTap: _onTapGroupEventOptions,
+                child: Container(padding: EdgeInsets.only(top: 16, right: 16, bottom: 16), alignment: Alignment.center, child: Styles().images.getImage('more')))));
   }
 
   Widget get _titleWidget => widget.hasDisplayCategories ? 
@@ -591,6 +618,74 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   void _onFavorite() {
     Analytics().logSelect(target: "Favorite: ${widget.event.name}");
     Auth2().prefs?.toggleFavorite(widget.event);
+  }
+
+  void _onTapGroupEventOptions() {
+    Analytics().logSelect(target: 'Group Event Options');
+
+    List<Widget> options = <Widget>[];
+
+    if (_canEditGroupEvent) {
+      options.add(RibbonButton(
+          label: Localization().getStringEx('panel.group_detail.button.edit_event.title', "Edit Event"),
+          leftIconKey: 'edit',
+          onTap: _onEditGroupEventTap));
+    }
+
+    if (_canDeleteGroupEvent) {
+      options.add(RibbonButton(
+          label: Localization().getStringEx('panel.group_detail.button.delete_event.title', 'Remove group event'),
+          leftIconKey: 'trash',
+          onTap: () {
+            Analytics().logSelect(target: 'Remove Group Event (Option)');
+            showDialog(context: context, builder: (context) => _buildRemoveEventDialog(context)).then((value) => Navigator.pop(context));
+          }));
+    }
+
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        builder: (context) {
+          return Container(
+              padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+              child: Column(mainAxisSize: MainAxisSize.min, children: options));
+        });
+  }
+
+  Widget _buildRemoveEventDialog(BuildContext context) {
+    return GroupsConfirmationDialog(
+        message: Localization().getStringEx(
+            'panel.group_detail.message.remove_event.title', 'Are you sure you want to remove this event from your group page?'),
+        buttonTitle: Localization().getStringEx('panel.group_detail.button.remove.title', 'Remove'),
+        onConfirmTap: () {
+          _onTapRemoveGroupEvent(context);
+        });
+  }
+
+  void _onTapRemoveGroupEvent(BuildContext context) {
+    Analytics().logSelect(target: 'Remove Group Event');
+    Groups().deleteEventForGroupV3(eventId: widget.event.id, groupId: widget.group?.id).then((bool value) {
+      if (value) {
+        Navigator.of(context).pop();
+      } else {
+        AppAlert.showDialogResult(context, Localization().getStringEx('tbd.key', 'Failed to remove the event from group page.'));
+      }
+    });
+  }
+
+  void _onEditGroupEventTap() {
+    Analytics().logSelect(target: 'Update Group Event');
+    Navigator.pop(context);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Event2CreatePanel(
+                event: widget.event,
+                eventSelector: GroupEventSelector(GroupEventData(group: widget.group, event: widget.event),
+                    showSelectionButton: false, padding: EdgeInsets.only(top: 16)))));
   }
 }
 
