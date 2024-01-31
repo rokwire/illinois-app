@@ -1035,5 +1035,8 @@
 
     "pause-filled-blue": {"src": "images/pause-filled-blue.png", "type": "flutter.asset", "size": 32},
     "pause-empty-blue": {"src": "images/pause-empty-blue.png", "type": "flutter.asset", "size": 32}
+    "course-detail-default": {"src": "images/course-detail-default.png", "type": "flutter.asset"},
+
+    "default-profile-photo": {"src": "images/default-profile-photo.png", "type": "flutter.asset"}
   }
 }

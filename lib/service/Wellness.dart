@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'dart:convert';
 import 'dart:core';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Guide.dart';
+import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -35,6 +37,8 @@ import 'package:http/http.dart' as http;
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+
+import '../model/wellness/SuccessTeam.dart';
 
 class Wellness with Service implements NotificationsListener, ContentItemCategoryClient {
   static const String notifyToDoCategoryChanged = "edu.illinois.rokwire.wellness.todo.category.changed";
@@ -337,6 +341,38 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     } else {
       Log.w('Failed to load wellness todo item. Response:\n$responseCode: $responseString');
       return null;
+    }
+  }
+
+  // Success Team
+
+  Future<List<SuccessTeamMember?>> getPrimaryCareProviders() async {
+    String url = '${Config().gatewayUrl}/successteam/pcp?id=${Auth2().uin}';
+    http.Response? response = await Network().get(url, auth: Auth2(), headers: {'External-Authorization': Auth2().uiucToken!.accessToken});
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<dynamic> responseList = json.decode(responseString!);
+      List<SuccessTeamMember?> primaryCareProviders = responseList.map((e) => SuccessTeamMember(firstName: e['first_name'], lastName: e['last_name'], email: e['email'], image: e['image'])).toList();
+      return primaryCareProviders;
+    } else {
+      Log.w('Failed to load primary care providers. Response:\n$responseCode: $responseString');
+      return [];
+    }
+  }
+
+  Future<List<SuccessTeamMember?>> getAcademicAdvisors() async {
+    String url = '${Config().gatewayUrl}/successteam/advisors?id=${Auth2().uin}&unitid=${IlliniCash().studentClassification!.collegeName == "The Grainger College of Engineering" ? "1933" : ""}';
+    http.Response? response = await Network().get(url, auth: Auth2(), headers: {'External-Authorization': Auth2().uiucToken!.accessToken});
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<dynamic> responseList = json.decode(responseString!);
+      List<SuccessTeamMember?> academicAdvisors = responseList.map((e) => SuccessTeamMember(firstName: e['first_name'], lastName: e['last_name'], email: e['email'], image: e['image'])).toList();
+      return academicAdvisors;
+    } else {
+      Log.w('Failed to load academic advisors. Response:\n$responseCode: $responseString');
+      return [];
     }
   }
 
