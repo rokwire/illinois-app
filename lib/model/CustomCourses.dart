@@ -73,10 +73,10 @@ class UserCourse {
   final String? timezoneName;
   final int? timezoneOffset;
   final int? streak;
-  final List<DateTime>? streakResets;
-  final List<DateTime>? streakRestarts;
+  List<DateTime>? streakResets;
+  List<DateTime>? streakRestarts;
   final int? pauses;
-  final List<DateTime>? pauseUses;
+  List<DateTime>? pauseUses;
 
   final Course? course;
   final DateTime? dateCreated;
@@ -165,6 +165,60 @@ class UserCourse {
       return timesJson;
     }
     return null;
+  }
+
+  bool isDateStreak(DateTime date, DateTime? firstScheduleItemCompleted, Duration startOfDay, {bool includeToday = false}) {
+    if (firstScheduleItemCompleted != null) {
+      DateTime normalizedFirstCompleted = firstScheduleItemCompleted.subtract(startOfDay);
+      DateTime normalizedNow = DateTime.now().subtract(startOfDay);
+      if (!includeToday) {
+        normalizedNow = normalizedNow.subtract(const Duration(days: 1));
+      }
+      if ((_isSameDay(date, normalizedFirstCompleted) || date.isAfter(normalizedFirstCompleted)) && (_isSameDay(date, normalizedNow) || date.isBefore(normalizedNow))) {
+        for (DateTime restart in normalizeDateTimes(streakRestarts ?? [], startOfDay)) {
+          if (_isSameDay(restart, date)) {
+            return true;  // part of a streak if a streak was restarted on this day
+          }
+        }
+        for (DateTime reset in normalizeDateTimes(streakResets ?? [], startOfDay)) {
+          if (_isSameDay(reset, date)) {
+            return false; // not part of streak if a streak was reset on this day
+          }
+        }
+        for (DateTime use in normalizeDateTimes(pauseUses ?? [], startOfDay)) {
+          if (_isSameDay(use, date)) {
+            return false; // not part of streak if a pause was used on this day
+          }
+        }
+
+        return true;  // part of a streak if not in any of the above lists
+      }
+    }
+
+    return false; // not part of a streak if missing firstScheduleItemCompleted or not between firstScheduleItemCompleted and now
+  }
+
+  bool isDatePauseUse(DateTime date, Duration startOfDay, {bool includeToday = false}) {
+    DateTime normalizedNow = DateTime.now().subtract(startOfDay);
+    if (!includeToday && _isSameDay(date, normalizedNow)) {
+      return false;
+    }
+
+    for (DateTime use in normalizeDateTimes(pauseUses ?? [], startOfDay)) {
+      if (_isSameDay(use, date)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  bool _isSameDay(DateTime date, DateTime other) {
+    return date.year == other.year && date.month == other.month && date.day == other.day;
+  }
+
+  static List<DateTime> normalizeDateTimes(List<DateTime> dateTimes, Duration startOfDay) {
+    return List.generate(dateTimes.length, (index) => dateTimes[index].subtract(startOfDay));
   }
 }
 
@@ -381,6 +435,21 @@ class UserUnit {
       }
     }
     return userUnits;
+  }
+
+  static DateTime? firstScheduleItemCompletionFromList(List<UserUnit> userUnits) {
+    DateTime? firstCompleted;
+    for (UserUnit userUnit in userUnits) {
+      for (ScheduleItem item in userUnit.unit?.scheduleItems ?? []) {
+        if (item.dateCompleted != null) {
+          firstCompleted ??= item.dateCompleted;
+          if (item.dateCompleted!.isBefore(firstCompleted!)) {
+            firstCompleted = item.dateCompleted;
+          }
+        }
+      }
+    }
+    return firstCompleted;
   }
 }
 
@@ -620,10 +689,11 @@ class CourseConfig {
 class CourseDisplay {
   final String? primaryColor;
   final String? accentColor;
-  final String? completedColor;
+  final String? completeColor;
+  final String? incompleteColor;
   final String? icon;
 
-  CourseDisplay({this.primaryColor, this.accentColor, this.completedColor, this.icon});
+  CourseDisplay({this.primaryColor, this.accentColor, this.completeColor, this.incompleteColor, this.icon});
 
   static CourseDisplay? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -632,7 +702,8 @@ class CourseDisplay {
     return CourseDisplay(
       primaryColor: JsonUtils.stringValue(json['primary_color']),
       accentColor: JsonUtils.stringValue(json['accent_color']),
-      completedColor: JsonUtils.stringValue(json['completed_color']),
+      completeColor: JsonUtils.stringValue(json['complete_color']),
+      incompleteColor: JsonUtils.stringValue(json['incomplete_color']),
       icon: JsonUtils.stringValue(json['icon']),
     );
   }

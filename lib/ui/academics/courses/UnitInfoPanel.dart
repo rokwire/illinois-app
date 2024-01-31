@@ -7,7 +7,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class UnitInfoPanel extends StatefulWidget {
-  final Content? content;
+  final Content content;
   final Color? color;
   final Color? colorAccent;
   const UnitInfoPanel({required this.content, required this.color, required this.colorAccent});
@@ -17,14 +17,13 @@ class UnitInfoPanel extends StatefulWidget {
 }
 
 class _UnitInfoPanelState extends State<UnitInfoPanel> implements NotificationsListener {
-
   late Content _content;
-  late Color? _color;
-  late Color? _colorAccent;
+  Color? _color;
+  Color? _colorAccent;
 
   @override
   void initState() {
-    _content = widget.content!;
+    _content = widget.content;
     _color = widget.color!;
     _colorAccent = widget.colorAccent!;
     super.initState();
@@ -33,8 +32,7 @@ class _UnitInfoPanelState extends State<UnitInfoPanel> implements NotificationsL
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx('panel.essential_skills_coach.unit_info.header.title', 'Unit Information'),
-        textStyle: Styles().textStyles.getTextStyle('header_bar'),),
+      appBar: HeaderBar(title: _content.name, textStyle: Styles().textStyles.getTextStyle('header_bar'),),
       body: Column(
         children: _buildUnitInfoWidgets(),
       ),

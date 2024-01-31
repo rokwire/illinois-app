@@ -79,7 +79,9 @@
     "essentialSkillsCoachOrange"            :"#f29936",
     "essentialSkillsCoachOrangeAccent"      :"#d06d00",
     "essentialSkillsCoachGreen"            :"#247c03",
-    "essentialSkillsCoachGreenAccent"      :"#6aa554"
+    "essentialSkillsCoachGreenAccent"      :"#6aa554",
+    "essentialSkillsCoachCompleteGreen"    :"#64a70b",
+    "essentialSkillsCoachIncompleteGrey"    :"#5c5c5c"
   },
   "font_family": {
     "black": "ProximaNovaBlack",
@@ -1014,11 +1016,11 @@
     "skills-cooperation": {"src": "images/cooperation.png", "type": "flutter.asset"},
     "skills-emotional": {"src": "images/emotional_skills.png", "type": "flutter.asset"},
     "skills-innovation": {"src": "images/innovation.png", "type": "flutter.asset"},
-    "skills-social-button": {"src": "images/skills_social_button.png", "type": "flutter.asset", "size": 50},
-    "skills-management-button": {"src": "images/management_button.png", "type": "flutter.asset", "size": 50},
-    "skills-cooperation-button": {"src": "images/cooperation_button.png", "type": "flutter.asset", "size": 50},
-    "skills-emotional-button": {"src": "images/emotional_skills_button.png", "type": "flutter.asset", "size": 50},
-    "skills-innovation-button": {"src": "images/innovation_button.png", "type": "flutter.asset", "size": 50},
+    "skills-social-button": {"src": "images/skills_social_button.png", "type": "flutter.asset", "size": 60},
+    "skills-management-button": {"src": "images/management_button.png", "type": "flutter.asset", "size": 60},
+    "skills-cooperation-button": {"src": "images/cooperation_button.png", "type": "flutter.asset", "size": 60},
+    "skills-emotional-button": {"src": "images/emotional_skills_button.png", "type": "flutter.asset", "size": 60},
+    "skills-innovation-button": {"src": "images/innovation_button.png", "type": "flutter.asset", "size": 60},
     "skills-mic": {"src": "images/mic.png", "type": "flutter.asset", "size": 25},
     "text-icon": {"src": "images/text-icon.png", "type": "flutter.asset", "size": 35},
     "link-icon": {"src": "images/external-link-icon.png", "type": "flutter.asset", "size": 35},
