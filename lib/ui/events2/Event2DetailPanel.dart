@@ -22,6 +22,7 @@ import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
 import 'package:illinois/ui/events2/Event2SurveyResponsesPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -423,10 +424,12 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     return details;
   }
 
-  List<Widget>? get _privacyDetailWidget{
-    String privacyTypeTitle = _event?.private == true ?
-      Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event') :
-      Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
+  List<Widget>? get _privacyDetailWidget {
+    String privacyTypeTitle = _event?.private == true
+        ? (_isGroupEvent
+            ? Localization().getStringEx('panel.explore_detail.label.privacy.group_members.title', 'Group Members Only')
+            : Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event'))
+        : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
 
     return [_buildTextDetailWidget(privacyTypeTitle, "privacy"), _detailSpacerWidget];
   }
@@ -1396,6 +1399,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   bool? get _hasMoreLinkedEvents => (_totalLinkedEventsCount != null) ? ((_linkedEvents?.length ?? 0) < _totalLinkedEventsCount!) : _lastPageLoadedAllLinkedEvents;
 
   String? get _eventId => widget.event?.id ?? widget.eventId;
+
+  bool get _isGroupEvent => (widget.eventSelector is GroupEventSelector);
 
   //Event to Group Binding support
   @override
