@@ -8,9 +8,10 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class UnitInfoPanel extends StatefulWidget {
   final Content content;
+  final Map<String, dynamic>? data;
   final Color? color;
   final Color? colorAccent;
-  const UnitInfoPanel({required this.content, required this.color, required this.colorAccent});
+  const UnitInfoPanel({required this.content, required this.data, required this.color, required this.colorAccent});
 
   @override
   State<UnitInfoPanel> createState() => _UnitInfoPanelState();
@@ -18,12 +19,14 @@ class UnitInfoPanel extends StatefulWidget {
 
 class _UnitInfoPanelState extends State<UnitInfoPanel> implements NotificationsListener {
   late Content _content;
+  Map<String, dynamic>? _data;
   Color? _color;
   Color? _colorAccent;
 
   @override
   void initState() {
     _content = widget.content;
+    _data = widget.data != null ? Map.of(widget.data!) : null;
     _color = widget.color!;
     _colorAccent = widget.colorAccent!;
     super.initState();
@@ -31,12 +34,16 @@ class _UnitInfoPanelState extends State<UnitInfoPanel> implements NotificationsL
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: HeaderBar(title: _content.name, textStyle: Styles().textStyles.getTextStyle('header_bar'),),
-      body: Column(
-        children: _buildUnitInfoWidgets(),
-      ),
-      backgroundColor: _color,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: _saveProgress,
+      child: Scaffold(
+        appBar: HeaderBar(title: _content.name, textStyle: Styles().textStyles.getTextStyle('header_bar'), onLeading: () => _saveProgress(false),),
+        body: Column(
+          children: _buildUnitInfoWidgets(),
+        ),
+        backgroundColor: _color,
+      )
     );
   }
 
@@ -59,7 +66,6 @@ class _UnitInfoPanelState extends State<UnitInfoPanel> implements NotificationsL
           child: Column(
             children: [
               Center(
-                // elevated button
                 child: Stack(
                   children: [
                     bigCircle,
@@ -67,16 +73,13 @@ class _UnitInfoPanelState extends State<UnitInfoPanel> implements NotificationsL
                       padding: EdgeInsets.only(top: 4, left: 4),
                       child: ElevatedButton(
                         onPressed: () {},
-                        // icon of the button
                         child: Padding(
                           padding: EdgeInsets.all(4),
-                          child: Styles().images.getImage("skills-question") ?? Container(),
+                          child: Styles().images.getImage(_content.display?.icon) ?? Container(),
                         ),
-                        // styling the button
                         style: ElevatedButton.styleFrom(
                           shape: CircleBorder(),
                           padding: EdgeInsets.all(8),
-                          // Button color
                           backgroundColor: _colorAccent,
                         ),
                       ),
@@ -112,12 +115,23 @@ class _UnitInfoPanelState extends State<UnitInfoPanel> implements NotificationsL
             textStyle: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"),
             backgroundColor: _colorAccent,
             borderColor: _colorAccent,
-            onTap: ()=> Navigator.pop(context)),
+            onTap: () => _saveProgress(false)),
       )
     );
 
     //TODO add any extra content i.e. videos and files
     return widgets;
+  }
+
+  void _saveProgress(bool didPop) async {
+    bool returnData = (_data?['complete'] != true);
+    if (returnData) {
+      _data ??= {};
+      _data!['complete'] = true;
+    }
+    if (!didPop) {
+      Navigator.pop(context, returnData ? _data : null);
+    }
   }
 
   @override
