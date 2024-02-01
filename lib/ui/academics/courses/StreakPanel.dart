@@ -8,6 +8,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class StreakPanel extends StatefulWidget {
@@ -67,14 +68,14 @@ class _StreakPanelState extends State<StreakPanel> {
     String earnedPausesText = Localization().getStringEx('panel.essential_skills_coach.pauses.missing.text', 'Your number of pauses could not be determined.');
     if (_pauses != null) {
       if (_courseConfig?.maxPauses != null) {
-        earnedPausesText = 'You have earned $_pauses of ${_courseConfig!.maxPauses} pauses.';
+        earnedPausesText = sprintf(Localization().getStringEx('panel.essential_skills_coach.pauses.ratio.text', 'You have earned %d of %d pauses.'), [_pauses, _courseConfig!.maxPauses]);
       } else {
-        earnedPausesText = 'You have earned $_pauses ${_pauses! == 1 ? 'pause' : 'pauses'}.';
+        earnedPausesText = sprintf(Localization().getStringEx('panel.essential_skills_coach.pauses.text', 'You have earned %d %s.'), [_pauses, _pauses! == 1 ? 'pause' : 'pauses']);
       }
     }
     String pauseRewardText = Localization().getStringEx('panel.essential_skills_coach.pauses_reward.missing.text', 'Pauses can be earned by responding to tasks daily. Check in daily to keep your streak going!');
     if (_courseConfig?.pauseRewardStreak != null) {
-      pauseRewardText = 'Pauses can be earned by responding to a task for ${_courseConfig!.pauseRewardStreak} consecutive days. Check in daily to keep your streak going!';
+      pauseRewardText = sprintf(Localization().getStringEx('panel.essential_skills_coach.pauses_reward.text', 'Pauses can be earned by responding to a task for %d consecutive days. Check in daily to keep your streak going!'), [_courseConfig!.pauseRewardStreak]);
     }
 
     return Scaffold(
@@ -166,9 +167,9 @@ class _StreakPanelState extends State<StreakPanel> {
                         holidayBuilder: _buildHoliday,
                         todayBuilder: _buildToday,
                       ),
-                      firstDay: widget.userCourse.dateCreated ?? DateTime(2024, 2, 1),
+                      firstDay: widget.userCourse.dateCreated ?? widget.firstScheduleItemCompleted ?? DateTime(2024, 2, 1),
                       lastDay: DateTime.now().add(Duration(days: 365)),
-                      focusedDay: DateTime(2024 ,2, 1),
+                      focusedDay: DateTime.now(),
                     ),
                   ),
                 ),
@@ -293,8 +294,8 @@ class _StreakPanelState extends State<StreakPanel> {
   }
 
   bool _isStreak(DateTime date) {
-    Duration startOfDayWithTolerance = Duration(minutes: 5, seconds: _courseConfig?.streaksProcessTime ?? 0);
-    return widget.userCourse.isDateStreak(date, widget.firstScheduleItemCompleted, startOfDayWithTolerance);
+    Duration startOfDayOffset = Duration(seconds: _courseConfig?.streaksProcessTime ?? 0);
+    return widget.userCourse.isDateStreak(date, widget.firstScheduleItemCompleted, startOfDayOffset);
   }
 
   Future<void> _loadCourseConfig() async {

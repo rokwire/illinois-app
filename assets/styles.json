@@ -1022,21 +1022,21 @@
     "skills-cooperation-button": {"src": "images/cooperation_button.png", "type": "flutter.asset", "size": 60},
     "skills-emotional-button": {"src": "images/emotional_skills_button.png", "type": "flutter.asset", "size": 60},
     "skills-innovation-button": {"src": "images/innovation_button.png", "type": "flutter.asset", "size": 60},
-    "skills-mic": {"src": "images/mic.png", "type": "flutter.asset", "size": 25},
+    "skills-speech-mic": {"src": "0xf130", "type": "fa.icon", "weight": "solid", "size": 25},
+    "skills-speech-pause": {"src": "0xf04c", "type": "fa.icon", "weight": "solid", "size": 25},
     "text-icon": {"src": "images/text-icon.png", "type": "flutter.asset", "size": 35},
     "link-icon": {"src": "images/external-link-icon.png", "type": "flutter.asset", "size": 35},
     "pdf-icon": {"src": "images/pdf-icon.png", "type": "flutter.asset", "size": 35},
     "powerpoint-icon": {"src": "images/powerpoint.png", "type": "flutter.asset", "size": 35},
     "video-icon": {"src": "images/blue-play.png", "type": "flutter.asset", "size": 25},
     "streak": {"src": "images/streak.png", "type": "flutter.asset", "size": 193},
+    "pause-filled-blue": {"src": "images/pause-filled-blue.png", "type": "flutter.asset", "size": 32},
+    "pause-empty-blue": {"src": "images/pause-empty-blue.png", "type": "flutter.asset", "size": 32},
 
     "external-link-small": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "wrong size"},
     "external-link-medium": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 20, "todo": "wrong size"},
 
-    "pause-filled-blue": {"src": "images/pause-filled-blue.png", "type": "flutter.asset", "size": 32},
-    "pause-empty-blue": {"src": "images/pause-empty-blue.png", "type": "flutter.asset", "size": 32}
     "course-detail-default": {"src": "images/course-detail-default.png", "type": "flutter.asset"},
-
     "default-profile-photo": {"src": "images/default-profile-photo.png", "type": "flutter.asset"}
   }
 }

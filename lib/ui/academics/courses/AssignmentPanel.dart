@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
+import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/academics/courses/AssignmentCompletePanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -16,7 +17,7 @@ class AssignmentPanel extends StatefulWidget {
   final Color? color;
   final Color? colorAccent;
   final bool isCurrent;
-  final Content? helpContent;
+  final List<Content>? helpContent;
   AssignmentPanel({required this.content, required this.data, required this.color, required this.colorAccent, required this.isCurrent, this.helpContent});
 
   @override
@@ -27,15 +28,21 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
 
   late Content _content;
   Map<String, dynamic>? _data;
-  Content? _helpContent;
+  List<Content>? _helpContent;
   Color? _color;
   Color? _colorAccent;
   TextEditingController _controller = TextEditingController();
   ScrollController _scrollController = ScrollController();
   List<bool> _isOpen = [false];
 
+  bool _listening = false;
+
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      SpeechToText.notifyError,
+    ]);
+
     _content = widget.content;
     _data = widget.data != null ? Map.of(widget.data!) : null;
     _controller.text = userNotes ?? '';
@@ -47,6 +54,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -70,6 +78,15 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> helpContentWidgets = [];
+    for (Content help in _helpContent ?? []) {
+      helpContentWidgets.add(
+        //TODO: make this tappable to link to ResourcesPanel
+        Padding(padding: EdgeInsets.all(8),
+          child: Text("- " + (help.name ?? "") + ": " + (help.details ?? ""), style:Styles().textStyles.getTextStyle("widget.title.light.small")),
+        )
+      );
+    }
     return PopScope(
       canPop: false,
       onPopInvoked: _saveProgress,
@@ -86,36 +103,30 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                 ),
               ),
             ),
-            ExpansionPanelList(
-              expandIconColor: Colors.white,
-              expansionCallback: (i, isOpen) =>
-                  setState(() => _isOpen[i] = !isOpen),
-              children: [
-                ExpansionPanel(
-                  backgroundColor: _colorAccent,
-                  isExpanded: _isOpen[0],
-                  headerBuilder: (BuildContext context, bool isExpanded) {
-                    return ListTile(
-                        iconColor: Colors.white,
-                        title: Center(
-                          child:Text(Localization().getStringEx('panel.essential_skills_coach.assignment.help.header.title', "Helpful Information"), style:Styles().textStyles.getTextStyle("widget.title.light.large.fat")),
-                        )
-                    );
-                  },
-                  body: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(padding: EdgeInsets.all(8),
-                        child: Text("- " + (_helpContent?.name ?? "Name") + ": " + (_helpContent?.details ?? " "), style:Styles().textStyles.getTextStyle("widget.title.light.small")),
-                      ),
-                      // Padding(padding: EdgeInsets.all(8),
-                      //   child: Text("- Link to other resources or more text", style:Styles().textStyles.getTextStyle("widget.title.light.small")),
-                      // ),
-                    ],
-                  ),
-                )
-              ],
-            ),
+            if (helpContentWidgets.isNotEmpty)
+              ExpansionPanelList(
+                expandIconColor: Colors.white,
+                expansionCallback: (i, isOpen) =>
+                    setState(() => _isOpen[i] = !isOpen),
+                children: [
+                  ExpansionPanel(
+                    backgroundColor: _colorAccent,
+                    isExpanded: _isOpen[0],
+                    headerBuilder: (BuildContext context, bool isExpanded) {
+                      return ListTile(
+                          iconColor: Colors.white,
+                          title: Center(
+                            child:Text(Localization().getStringEx('panel.essential_skills_coach.assignment.help.header.title', "Helpful Information"), style:Styles().textStyles.getTextStyle("widget.title.light.large.fat")),
+                          )
+                      );
+                    },
+                    body: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: helpContentWidgets,
+                    ),
+                  )
+                ],
+              ),
           ],
         ),
         backgroundColor: _color,
@@ -191,7 +202,10 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(notesHeaderText, style: Styles().textStyles.getTextStyle("widget.title.light.small.fat"),),
-              _buildSpeechToTextButton(),
+              Visibility(
+                visible: widget.isCurrent && SpeechToText().isEnabled,
+                child: _buildSpeechToTextButton(),
+              )
             ],
           ),
         )
@@ -267,6 +281,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
             controller: _controller,
             maxLines: 10,
             readOnly: !widget.isCurrent,
+            textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
@@ -280,9 +295,19 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     ];
   }
 
-  Widget _buildSpeechToTextButton({Function()? onPressed}) => IconButton(
-    icon: Styles().images.getImage("skills-mic") ?? Container(),
-    onPressed: onPressed,
+  Widget _buildSpeechToTextButton() => Material(
+    color: _color,
+    child: IconButton(
+      icon: Styles().images.getImage(_listening ? "skills-speech-pause" :"skills-speech-mic") ?? Container(),
+      color: _colorAccent,
+      onPressed: () {
+        if (_listening) {
+          _stopListening();
+        } else {
+          _startListening();
+        }
+      },
+    ),
   );
 
   void _saveProgress(bool didPop) async {
@@ -292,8 +317,37 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     }
   }
 
+  void _startListening() {
+    SpeechToText().listen(onResult: _onSpeechResult);
+    setState(() {
+      _listening = true;
+    });
+  }
+
+  void _stopListening() async {
+    await SpeechToText().stopListening();
+    setState(() {
+      _listening = false;
+    });
+  }
+
+  void _onSpeechResult(String result, bool finalResult) {
+    setState(() {
+      if (widget.isCurrent) {
+        _controller.text = result;
+      }
+      if (finalResult) {
+        _listening = false;
+      }
+    });
+  }
+
   @override
   void onNotification(String name, param) {
-    // TODO: implement onNotification
+    if (name == SpeechToText.notifyError) {
+      setState(() {
+        _listening = false;
+      });
+    }
   }
 }
