@@ -395,7 +395,7 @@ String? event2TypeFilterToDisplayString(Event2TypeFilter? value) {
     case Event2TypeFilter.online: return Localization().getStringEx('model.event2.event_type.online', 'Online');
     case Event2TypeFilter.hybrid: return Localization().getStringEx('model.event2.event_type.hybrid', 'Hybrid');
     case Event2TypeFilter.public: return Localization().getStringEx('model.event2.event_type.public', 'Public');
-    case Event2TypeFilter.private: return Localization().getStringEx('model.event2.event_type.private', 'Private');
+    case Event2TypeFilter.private: return Localization().getStringEx('model.event2.event_type.private', 'Uploaded Guest List Only');
     case Event2TypeFilter.nearby: return Localization().getStringEx('model.event2.event_type.nearby', 'Nearby');
     case Event2TypeFilter.superEvent: return Localization().getStringEx('model.event2.event_type.super_event', 'Multi-event');
     case Event2TypeFilter.favorite: return Localization().getStringEx('model.event2.event_type.favorite', 'Starred');

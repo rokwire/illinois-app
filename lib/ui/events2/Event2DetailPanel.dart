@@ -433,7 +433,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   String get _privacyStatus => (_event?.private == true)
     ? (_isGroupEvent
         ? Localization().getStringEx('panel.explore_detail.label.privacy.group_members.title', 'Group Members Only')
-        : Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event'))
+        : Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Uploaded Guest List Only'))
     : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
 
   List<Widget>? get _publishedDetailWidget => _isAdmin ? <Widget>[
