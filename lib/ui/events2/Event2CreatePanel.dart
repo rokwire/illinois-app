@@ -1538,8 +1538,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   Widget _buildGroupsButtonSection() => widget.isCreate ? Event2CreatePanel.buildButtonSectionWidget(
     heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
-      title: Localization().getStringEx('panel.event2.create.button.groups.title', 'EVENT GROUPS'),
-      subTitle: Localization().getStringEx('panel.event2.create.button.groups.description', 'Publish your events in group(s) that you administer.'),
+      title: Localization().getStringEx('panel.event2.create.button.groups.title', '{{app_title}} APP GROUPS').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois').toUpperCase()),
+      subTitle: Localization().getStringEx('panel.event2.create.button.groups.description', 'Publish your event in group(s) that you administer.'),
       onTap: _onGroups,
     ),
     body: _buildGroupsSectionBody()
