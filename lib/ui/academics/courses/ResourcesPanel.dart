@@ -1,9 +1,22 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:http/http.dart' as http;
+import 'package:rokwire_plugin/service/content.dart' as con;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:video_player/video_player.dart';
+
+
+import 'PDFScreen.dart';
+import 'VideoPlayer.dart';
 
 class ResourcesPanel extends StatefulWidget {
   final List<Content>? contentItems;
@@ -23,6 +36,10 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
   late int _unitNumber;
   late List<Content> _contentItems;
   late String _unitName;
+  String urlPDFPath = "";
+  bool _isExpanded = false;
+  late VideoPlayerController _controller;
+  late Future<void> _initializeVideoPlayerFuture;
 
   String? _selectedResourceType = "View All Resources";
   final List<String> _resourceTypes = ["View All Resources", "View All PDFs",
@@ -30,16 +47,21 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
 
   @override
   void initState() {
+
     _color = widget.color!;
     _colorAccent = widget.colorAccent!;
     _unitNumber = widget.unitNumber;
     _contentItems = widget.contentItems!;
     _unitName = widget.unitName;
     super.initState();
+    
+    // _loadDataContentItem( key: 'resource_text');
+
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('', 'Resources'),
         textStyle: Styles().textStyles.getTextStyle('header_bar'),),
@@ -93,27 +115,108 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
         filteredContentItems = _filterContentItems("powerpoint");
         break;
     }
-    return ExpansionPanelList(
-      expansionCallback: (int index, bool isExpanded) {
-        // setState(() {
-        //   filteredContentItems[index].isExpanded = !filteredContentItems[index].isExpanded;
-        // });
-      },
-      children: filteredContentItems.map<ExpansionPanel>((Content item) {
-        return ExpansionPanel(
 
-          headerBuilder: (BuildContext context, bool isExpanded) {
-            return ListTile(
-                leading: Styles().images.getImage((item.reference?.type ?? "item") + "-icon") ?? Container(),
-                title: Text(item.name ?? ""),
-            );
-          },
-          body: ListTile(
-              title: Text(item.details ?? ""),
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          child: ListView.builder(
+              padding: const EdgeInsets.all(4),
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: filteredContentItems.length,
+              itemBuilder: (BuildContext context, int index) {
+
+
+                if(filteredContentItems[index].reference?.type == "text"){
+                  return Center(
+                    child: Card(
+                      clipBehavior: Clip.antiAlias,
+                      child: ExpansionTile(
+                        leading: Styles().images.getImage((filteredContentItems[index].reference?.type ?? "item") + "-icon") ?? Container(),
+                        title: Text(filteredContentItems[index].name ?? "", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),),
+                        subtitle: Text(filteredContentItems[index].details ?? ""),
+                        children: [
+                         Padding(
+                           padding: const EdgeInsets.all(8.0),
+                           child: Center(
+                             child: Text("Soften", style: Styles().textStyles.getTextStyle("widget.message.large"),),
+                           ),
+                         ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
+                            child: Center(
+                              child: Text("(smile, open posture, forward lean, touch, eye contact, nod)", style: Styles().textStyles.getTextStyle("widget.message.regular"),),
+                            ),
+                          ),
+                        ],
+                        onExpansionChanged: (bool expanded){
+                          setState(() {
+                            _isExpanded = expanded;
+                          });
+                        },
+                      ),
+                    ),
+                  );
+                }else{
+                  return Center(
+                    child: Card(
+                      clipBehavior: Clip.hardEdge,
+                      child: InkWell(
+                        onTap: (){
+                          if(filteredContentItems[index].reference?.type == "video"){
+                            con.Content.internal().getFileContentItem(filteredContentItems[index].reference?.referenceKey ?? "", "test" ).then((
+                                value) => {
+                              setState(() {
+                                if (value != null) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          VideoPlayerScreen(file: value, color: _color,),
+                                    ),
+                                  );
+                                }
+                              })
+                            });
+                          }else if(filteredContentItems[index].reference?.type == "link"){
+                            Uri uri = Uri.parse(filteredContentItems[index].reference?.referenceKey ?? " ");
+                            _launchUrl(uri);
+                          } else{
+                            con.Content.internal().getFileContentItem(filteredContentItems[index].reference?.referenceKey ?? "", "test" ).then((
+                                value) => {
+                              setState(() {
+                                if (value != null) {
+                                  urlPDFPath = value.path;
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          PDFScreen(path: urlPDFPath, color: _color,),
+                                    ),
+                                  );
+                                }
+                              })
+                            });
+                          }
+                        },
+                        child: ListTile(
+                          leading: Styles().images.getImage((filteredContentItems[index].reference?.type ?? "item") + "-icon") ?? Container(),
+                          title: Text(filteredContentItems[index].name ?? "", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),),
+                          subtitle: Text(filteredContentItems[index].details ?? ""),
+                          trailing: Icon(
+                            Icons.chevron_right_rounded,
+                            size: 25.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+              }
+          ),
         ),
-            // isExpanded: item.isExpanded
-        );
-      }).toList(),
+      ],
     );
   }
 
@@ -171,6 +274,12 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
     );
   }
 
+  Future<void> _launchUrl(Uri url) async {
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
   @override
   void onNotification(String name, param) {
     // TODO: implement onNotification
@@ -180,6 +289,12 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
     List<Content> filteredContentItems =  _contentItems.where((i) => i.reference?.type == filter).toList();
     return filteredContentItems;
   }
+
+  // //TODO fix data parsing
+  // void _loadDataContentItem({required String key}) async{
+  //   Map<String, dynamic>? response = await con.Content.internal().getDataContentItem(key);
+  //
+  // }
 
 }
 

@@ -62,6 +62,7 @@ dependencies:
   visibility_detector: ^0.4.0+2
   table_calendar: ^3.0.9
   flutter_beep: ^1.0.0
+  flutter_pdfview: ^1.2.7
   font_awesome_flutter: '>= 4.7.0' # comment if published plugin is used
 # google_maps_flutter: ^2.2.5
 
@@ -102,9 +103,9 @@ dev_dependencies:
     sdk: flutter
 
 # comment the override below if published plugin is used
-dependency_overrides:
-  font_awesome_flutter:
-    path: plugin/plugins/font_awesome_flutter
+#dependency_overrides:
+#  font_awesome_flutter:
+#    path: plugin/plugins/font_awesome_flutter
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

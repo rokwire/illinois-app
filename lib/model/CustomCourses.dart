@@ -498,6 +498,7 @@ class Content{
   final String? details;
   final Reference? reference;
   final List<String>? linkedContent;
+  bool isExpanded = false;
 
   final CourseDisplay? display;
 
@@ -513,7 +514,7 @@ class Content{
       key: JsonUtils.stringValue(json['key']),
       type: JsonUtils.stringValue(json['type']),
       details: JsonUtils.stringValue(json['details']),
-      reference: Reference.fromJson(JsonUtils.mapValue('reference')),
+      reference: Reference.fromJson(json['reference']),
       linkedContent: JsonUtils.stringListValue(json['linked_content']),
       display: CourseDisplay.fromJson(JsonUtils.mapValue(json['display'])),
     );
