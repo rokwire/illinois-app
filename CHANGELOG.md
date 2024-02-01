@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Group event visibility wording [#3906](https://github.com/rokwire/illinois-app/issues/3906).
 - Text updates in EVENT GROUPS section from Event2CreatePanel  [#3905](https://github.com/rokwire/illinois-app/issues/3905).
+- Switched to Xcode 15.2 and CocoaPods 1.15.0.
 
 ## [5.1.18] - 2024-01-31
 ### Fixed
