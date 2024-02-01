@@ -9,9 +9,10 @@ import 'package:rokwire_plugin/service/styles.dart';
 import '../../widgets/HeaderBar.dart';
 
 class PDFScreen extends StatefulWidget {
+  final String? resourceName;
   final String? path;
   final Color? color;
-  PDFScreen({Key? key, this.path, required this.color}) : super(key: key);
+  PDFScreen({Key? key, this.resourceName, this.path, required this.color}) : super(key: key);
 
   _PDFScreenState createState() => _PDFScreenState();
 }
@@ -30,7 +31,7 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
 
     return Scaffold(
       backgroundColor: color,
-      appBar: HeaderBar(title: Localization().getStringEx('', 'PDF View'),
+      appBar: HeaderBar(title: widget.resourceName ?? Localization().getStringEx('', 'PDF View'),
         textStyle: Styles().textStyles.getTextStyle('header_bar'),),
       body: Stack(
         children: <Widget>[

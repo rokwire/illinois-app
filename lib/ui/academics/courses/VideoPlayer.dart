@@ -1,17 +1,16 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:video_player/video_player.dart';
 
-import '../../widgets/HeaderBar.dart';
-
 class VideoPlayerScreen extends StatefulWidget {
+  final String? resourceName;
   final File file;
   final Color? color;
-  VideoPlayerScreen({Key? key, required this.file, required this.color}) : super(key: key);
+  VideoPlayerScreen({Key? key, this.resourceName, required this.file, required this.color}) : super(key: key);
 
   @override
   State<VideoPlayerScreen> createState() => _VideoPlayerScreenState();
@@ -44,7 +43,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _color,
-      appBar: HeaderBar(title: Localization().getStringEx('', 'Video View'),
+      appBar: HeaderBar(title: widget.resourceName ?? Localization().getStringEx('', 'Video View'),
         textStyle: Styles().textStyles.getTextStyle('header_bar'),),
       body: Column(
         children: [
