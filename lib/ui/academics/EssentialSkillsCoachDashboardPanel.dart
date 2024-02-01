@@ -15,6 +15,9 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
+
+import '../../service/AppDateTime.dart';
 
 
 class EssentialSkillsCoachDashboardPanel extends StatefulWidget {
@@ -282,7 +285,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     bool isCurrent = (scheduleIndex == userUnit.completed) && userUnit.current;
     bool isNextWithCurrentComplete = (scheduleIndex == userUnit.completed + 1) && userUnit.current && (unit.scheduleItems?[userUnit.completed].isComplete ?? false);
     bool isCompletedOrCurrent = isCompleted || isCurrent;
-    bool shouldHighlight = ((isCurrent || !required) && !userContent.hasData) || isNextWithCurrentComplete;
+    bool shouldHighlight = (isCurrent && !userContent.hasData) || isNextWithCurrentComplete;
 
     Color? contentColor = content.display?.primaryColor != null ? Styles().colors.getColor(content.display!.primaryColor!) : Styles().colors.fillColorSecondary;
     Color? completedColor = content.display?.completeColor != null ? Styles().colors.getColor(content.display!.completeColor!) : Colors.green;
@@ -291,10 +294,17 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     double? size = shouldHighlight ? 24.0 : null;
     Widget icon = Padding(
       padding: shouldHighlight ? EdgeInsets.zero : EdgeInsets.all(8.0),
-      child: (userContent.hasData ? Styles().images.getImage("skills-check", size: size) : Styles().images.getImage(content.display?.icon, size: size)) ?? Container()
+      child: (userContent.hasData && required ? Styles().images.getImage("skills-check", size: size) : Styles().images.getImage(content.display?.icon, size: size)) ?? Container()
     );
     Widget contentWidget = icon;
     if (shouldHighlight) {
+      String? unlockTimeText;
+      if (isNextWithCurrentComplete && _courseConfig != null) {
+        DateTime? unlockTimeUtc = _userCourse?.nextScheduleItemUnlockTimeUtc(_courseConfig!);
+        if (unlockTimeUtc != null) {
+          unlockTimeText = '${AppDateTime().getDisplayDay(dateTimeUtc: unlockTimeUtc, includeAtSuffix: true)} ${AppDateTime().getDisplayTime(dateTimeUtc: unlockTimeUtc)}';
+        }
+      }
       contentWidget = Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
@@ -316,7 +326,9 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
               ),
             ),
             Text(
-              content.reference?.highlightActionText() ?? Localization().getStringEx('panel.essential_skills_coach.dashboard.activity.button.action.label', 'GET STARTED'),
+              content.reference?.highlightActionText() ?? (isNextWithCurrentComplete ?
+                sprintf(Localization().getStringEx('panel.essential_skills_coach.dashboard.activity.button.action.unlock.label', 'Unlocks %s'), [unlockTimeText ?? 'tomorrow']) :
+                  Localization().getStringEx('panel.essential_skills_coach.dashboard.activity.button.action.label', 'GET STARTED')),
               style: Styles().textStyles.getTextStyle("widget.title.light.medium.fat")
             )
           ]

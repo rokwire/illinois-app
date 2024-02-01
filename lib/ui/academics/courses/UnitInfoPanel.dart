@@ -115,7 +115,7 @@ class _UnitInfoPanelState extends State<UnitInfoPanel> implements NotificationsL
             textStyle: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"),
             backgroundColor: _colorAccent,
             borderColor: _colorAccent,
-            onTap: ()=> Navigator.pop(context)),
+            onTap: () => _saveProgress(false)),
       )
     );
 

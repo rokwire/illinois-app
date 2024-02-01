@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:timezone/timezone.dart' as timezone;
 import 'package:rokwire_plugin/utils/utils.dart';
 
 
@@ -223,6 +224,32 @@ class UserCourse {
       return onHour ? DateTime(dt.year, dt.month, dt.day, dt.hour) : dt;
     });
   }
+
+  DateTime? nextScheduleItemUnlockTimeUtc(CourseConfig config) {
+    if (config.streaksProcessTime != null) {
+      timezone.Location location = DateTimeLocal.timezoneLocal;
+      DateTime now = DateTime.now();
+      if (!config.usesUserTimezone) {
+        if (StringUtils.isNotEmpty(config.timezoneName)) {
+          return null;
+        }
+        location = timezone.getLocation(config.timezoneName!);
+        now = DateTimeUtils.nowTimezone(location);
+      }
+      int nowLocalSeconds = 3600*now.hour + 60*now.minute + now.second;
+
+      int hour = config.streaksProcessTime! ~/ 3600;
+      int minute = (config.streaksProcessTime! % 60) ~/ 60;
+      int second = (config.streaksProcessTime! % 60) % 60;
+      DateTime nextUnlockUtc = timezone.TZDateTime(location, now.year, now.month, now.day, hour, minute, second).toUtc();
+      if (nowLocalSeconds > config.streaksProcessTime!) {
+        // go forward one day if the current moment is after the unlock time in the current day
+        nextUnlockUtc = nextUnlockUtc.add(Duration(days: 1));
+      }
+      return nextUnlockUtc;
+    }
+    return null;
+  }
 }
 
 class Module{
@@ -392,7 +419,7 @@ class UserUnit {
   UserUnit({this.id, this.courseKey, this.moduleKey, this.completed = 0, this.current = false, this.unit, this.lastCompleted, this.dateCreated, this.dateUpdated});
 
   factory UserUnit.emptyFromUnit(Unit unit, String courseKey, {bool current = false}) {
-    return UserUnit(courseKey: courseKey, completed: unit.scheduleStart ?? 0, unit: unit, current: current);
+    return UserUnit(courseKey: courseKey, completed: 0, unit: unit, current: current);
   }
 
   static UserUnit? fromJson(Map<String, dynamic>? json) {
@@ -727,9 +754,14 @@ class CourseConfig {
   final int? initialPauses;
   final int? maxPauses;
   final int? pauseRewardStreak;
-  final int? streaksProcessTime;
 
-  CourseConfig({this.id, this.courseKey, this.initialPauses, this.maxPauses, this.pauseRewardStreak, this.streaksProcessTime});
+  final int? streaksProcessTime;
+  final String? timezoneName;
+  final int? timezoneOffset;
+
+  CourseConfig({this.id, this.courseKey, this.initialPauses, this.maxPauses, this.pauseRewardStreak, this.streaksProcessTime, this.timezoneName, this.timezoneOffset});
+
+  static const String userTimezone = "user";
 
   static CourseConfig? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -742,8 +774,12 @@ class CourseConfig {
       maxPauses: JsonUtils.intValue(json['max_pauses']),
       pauseRewardStreak: JsonUtils.intValue(json['pause_reward_streak']),
       streaksProcessTime: JsonUtils.intValue(json['streaks_notifications_config']?['streaks_process_time']),
+      timezoneName: JsonUtils.stringValue(json['streaks_notifications_config']?['timezone_name']),
+      timezoneOffset: JsonUtils.intValue(json['streaks_notifications_config']?['timezone_offset']),
     );
   }
+
+  bool get usesUserTimezone => timezoneName == userTimezone;
 }
 
 // CourseDisplay
