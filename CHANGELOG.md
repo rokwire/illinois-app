@@ -5,6 +5,41 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Essential Skills Coach Dashboard [#3425](https://github.com/rokwire/illinois-app/issues/3425).
+- Primary care provider and academic advisors [#3925](https://github.com/rokwire/illinois-app/issues/3925).
+### Changed
+- Group event visibility wording [#3906](https://github.com/rokwire/illinois-app/issues/3906).
+- Text updates in EVENT GROUPS section from Event2CreatePanel  [#3905](https://github.com/rokwire/illinois-app/issues/3905).
+
+## [5.1.18] - 2024-01-31
+### Fixed
+- Fix StreakPanel calendar UI [#3910](https://github.com/rokwire/illinois-app/issues/3910).
+- Show "Group Members Only" label for group events [#3912](https://github.com/rokwire/illinois-app/issues/3912).
+- Show "Teams" filter in Athletics "My" sections [#3909](https://github.com/rokwire/illinois-app/issues/3909).
+### Changed
+- Updated display strings when linking event to a group, polished GroupsSelectionPopup UI [#3905](https://github.com/rokwire/illinois-app/issues/3905).
+- Make group event to have the same UI as regular event [#3914](https://github.com/rokwire/illinois-app/issues/3914).
+### Added
+- Show published status in event detail panel for admins only [#3908](https://github.com/rokwire/illinois-app/issues/3908).
+- Added published info link in Events filters panel [#3886](https://github.com/rokwire/illinois-app/issues/3886).
+
+## [5.1.17] - 2024-01-30
+### Added
+- Integrate Essential Skills Coach with LMS [#3891](https://github.com/rokwire/illinois-app/issues/3891).
+- Athletics UI Cleanup - done [#3867](https://github.com/rokwire/illinois-app/issues/3867).
+### Fixed
+- Athletics: Open urls outside the app [#3893](https://github.com/rokwire/illinois-app/issues/3893).
+- Show "My Courses" regardless the role [#3844](https://github.com/rokwire/illinois-app/issues/3844).
+
+## [5.1.16] - 2024-01-29
+### Fixed
+- Make event capacity and external link required field of event registration (depending on registration type) [#3849](https://github.com/rokwire/illinois-app/issues/3849).
+- Match Athletics widget names to Browse -> Athletics listing [#3809](https://github.com/rokwire/illinois-app/issues/3809).
+### Changed
+- Replace "Private" with "Group Members Only" for group event visibility [#3895](https://github.com/rokwire/illinois-app/issues/3895).
+### Added
+- Athletics UI Cleanup - in progress [#3867](https://github.com/rokwire/illinois-app/issues/3867).
 
 ## [5.1.15] - 2024-01-26
 ### Added

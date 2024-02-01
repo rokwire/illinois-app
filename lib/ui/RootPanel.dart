@@ -36,8 +36,8 @@ import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/polls/PollDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
-import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
-import 'package:illinois/ui/settings/SettingsProfileContentPanel.dart';
+import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
@@ -155,8 +155,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyWellnessToDoItemNotification,
       FirebaseMessaging.notifyProfileMyNotification,
       FirebaseMessaging.notifyProfileWhoAreYouNotification,
-      FirebaseMessaging.notifyProfilePrivacyNotification,
-      FirebaseMessaging.notifySettingsSectionsNotification,
+      FirebaseMessaging.notifyProfileLoginNotification,
+      FirebaseMessaging.notifySettingsSectionsNotification, //TBD deprecate. Use notifyProfileLoginNotification
       FirebaseMessaging.notifySettingsInterestsNotification,
       FirebaseMessaging.notifySettingsFoodFiltersNotification,
       FirebaseMessaging.notifySettingsSportsNotification,
@@ -164,6 +164,11 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifySettingsAssessmentsNotification,
       FirebaseMessaging.notifySettingsCalendarNotification,
       FirebaseMessaging.notifySettingsAppointmentsNotification,
+      FirebaseMessaging.notifySettingsMapsNotification,
+      FirebaseMessaging.notifySettingsContactsNotification,
+      FirebaseMessaging.notifySettingsResearchNotification,
+      FirebaseMessaging.notifySettingsPrivacyNotification,
+      FirebaseMessaging.notifySettingsNotificationsNotification,
       FirebaseMessaging.notifyGuideArticleDetailNotification,
       LocalNotifications.notifyLocalNotificationTapped,
       Alerts.notifyAlert,
@@ -418,15 +423,15 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onFirebaseWellnessToDoItemNotification(param);
     }
     else if (name == FirebaseMessaging.notifyProfileMyNotification) {
-      _onFirebaseProfileNotification(profileContent: SettingsProfileContent.profile);
+      _onFirebaseProfileNotification(profileContent: ProfileContent.profile);
     }
     else if (name == FirebaseMessaging.notifyProfileWhoAreYouNotification) {
-      _onFirebaseProfileNotification(profileContent: SettingsProfileContent.who_are_you);
+      _onFirebaseProfileNotification(profileContent: ProfileContent.who_are_you);
     }
-    else if (name == FirebaseMessaging.notifyProfilePrivacyNotification) {
-      _onFirebaseProfileNotification(profileContent: SettingsProfileContent.privacy);
+    else if (name == FirebaseMessaging.notifyProfileLoginNotification) {
+      _onFirebaseProfileNotification(profileContent: ProfileContent.login);
     }
-    else if (name == FirebaseMessaging.notifySettingsSectionsNotification) {
+    else if (name == FirebaseMessaging.notifySettingsSectionsNotification) { //TBD deprecate use notifyProfileLoginNotification instead
       _onFirebaseSettingsNotification(settingsContent: SettingsContent.sections);
     }
     else if (name == FirebaseMessaging.notifySettingsInterestsNotification) {
@@ -449,6 +454,21 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifySettingsAppointmentsNotification) {
       _onFirebaseSettingsNotification(settingsContent: SettingsContent.appointments);
+    }
+    else if (name == FirebaseMessaging.notifySettingsMapsNotification) {
+      _onFirebaseSettingsNotification(settingsContent: SettingsContent.maps);
+    }
+    else if (name == FirebaseMessaging.notifySettingsContactsNotification) {
+      _onFirebaseSettingsNotification(settingsContent: SettingsContent.contact);
+    }
+    else if (name == FirebaseMessaging.notifySettingsResearchNotification) {
+      _onFirebaseSettingsNotification(settingsContent: SettingsContent.research);
+    }
+    else if (name == FirebaseMessaging.notifySettingsPrivacyNotification) {
+      _onFirebaseSettingsNotification(settingsContent: SettingsContent.privacy);
+    }
+    else if (name == FirebaseMessaging.notifySettingsNotificationsNotification) {
+      _onFirebaseSettingsNotification(settingsContent: SettingsContent.notifications);
     }
     else if (name == FirebaseMessaging.notifyGuideArticleDetailNotification) {
       _onFirebaseGuideArticleNotification(param);
@@ -1001,8 +1021,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onFirebaseInboxNotification() {
-    SettingsNotificationsContentPanel.present(context,
-        content: (Inbox().unreadMessagesCount > 0) ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
+    NotificationsHomePanel.present(context,
+        content: (Inbox().unreadMessagesCount > 0) ? NotificationsContent.unread : NotificationsContent.all);
   }
 
   void _onFirebasePollNotification(dynamic param) {
@@ -1047,8 +1067,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     _onGuideDetail(param);
   }
 
-  void _onFirebaseProfileNotification({required SettingsProfileContent profileContent}) {
-    SettingsProfileContentPanel.present(context, content: profileContent);
+  void _onFirebaseProfileNotification({required ProfileContent profileContent}) {
+    ProfileHomePanel.present(context, content: profileContent);
   }
 
   void _onFirebaseSettingsNotification({required SettingsContent settingsContent}) {

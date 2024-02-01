@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -35,9 +37,9 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
-import 'package:rokwire_plugin/ui/panels/web_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AthleticsEventCard extends StatefulWidget {
   final Event2 sportEvent;
@@ -106,7 +108,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
     bool isGetTicketsVisible = widget.showGetTickets && StringUtils.isNotEmpty(game?.links?.tickets) && isTicketedSport;
     bool isFavorite = Auth2().isFavorite(widget.sportEvent);
     String? interestsLabelValue = _getInterestsLabelValue();
-    bool showInterests = StringUtils.isNotEmpty(interestsLabelValue);
+    bool showInterests = StringUtils.isNotEmpty(interestsLabelValue) && widget.showInterests;
     String? description = game?.description;
     bool showDescription = widget.showDescription && StringUtils.isNotEmpty(description);
 
@@ -250,7 +252,13 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
   }
 
   void _showTicketsPanel() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: _game?.links?.tickets)));
+    String? url = _game?.links?.tickets;
+    if (StringUtils.isNotEmpty(url)) {
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
+      }
+    }
   }
 
   Widget _athleticsDetails() {
@@ -361,10 +369,10 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
 }
 
 class AthleticsTeamsFilterWidget extends StatefulWidget {
-  final bool? hideFilter;
+  final bool? favoritesMode;
   final bool? hideFilterDescription;
 
-  AthleticsTeamsFilterWidget({this.hideFilter, this.hideFilterDescription});
+  AthleticsTeamsFilterWidget({this.favoritesMode, this.hideFilterDescription});
 
   @override
   State<AthleticsTeamsFilterWidget> createState() => _AthleticsTeamsFilterWidgetState();
@@ -386,7 +394,7 @@ class _AthleticsTeamsFilterWidgetState extends State<AthleticsTeamsFilterWidget>
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      Visibility(visible: !_hideFilter, child: Container(
+      Container(
           color: _showFilterDescription ? Styles().colors.white : null,
           decoration: !_showFilterDescription ? _filterDecoration : null,
           child: Padding(
@@ -410,7 +418,7 @@ class _AthleticsTeamsFilterWidgetState extends State<AthleticsTeamsFilterWidget>
                               Styles().images.getImage('chevron-right-gray') ?? Container()
                             ])))),
                 Expanded(child: Container())
-              ])))),
+              ]))),
       Visibility(
           visible: _showFilterDescription,
           child: Column(children: [
@@ -448,17 +456,17 @@ class _AthleticsTeamsFilterWidgetState extends State<AthleticsTeamsFilterWidget>
         }
       }
       teamsFilterDisplayString = sports.map((team) => team.name).toList().join(', ');
-      if (_hideFilter) {
+      if (_favoritesMode) {
         teamsFilterDisplayString +=
             ', ' + Localization().getStringEx('panel.athletics.content.common.filter.value.starred.label', 'Starred');
       }
-    } else if (_hideFilter) {
+    } else if (_favoritesMode) {
       teamsFilterDisplayString = Localization().getStringEx('panel.athletics.content.common.filter.value.starred.label', 'Starred');
     }
     return '$filterPrefix $teamsFilterDisplayString';
   }
 
-  bool get _hideFilter => (widget.hideFilter == true);
+  bool get _favoritesMode => (widget.favoritesMode == true);
 
   bool get _showFilterDescription => (_filterApplied || (widget.hideFilterDescription != true));
 

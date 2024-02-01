@@ -51,7 +51,7 @@ import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
-import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
+import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialListPanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/wallet/ICardHomeContentPanel.dart';
@@ -944,7 +944,7 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapNotifications(BuildContext context, {bool? unread}) {
     bool isUnread = (unread == true);
     Analytics().logSelect(target: isUnread ? "Unread Notifications" : "All Notifications");
-    SettingsNotificationsContentPanel.present(context, content: isUnread ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
+    NotificationsHomePanel.present(context, content: isUnread ? NotificationsContent.unread : NotificationsContent.all);
   }
 
   void _onTapEventFeed(BuildContext context) {

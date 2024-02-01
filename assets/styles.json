@@ -79,7 +79,9 @@
     "essentialSkillsCoachOrange"            :"#f29936",
     "essentialSkillsCoachOrangeAccent"      :"#d06d00",
     "essentialSkillsCoachGreen"            :"#247c03",
-    "essentialSkillsCoachGreenAccent"      :"#6aa554"
+    "essentialSkillsCoachGreenAccent"      :"#6aa554",
+    "essentialSkillsCoachCompleteGreen"    :"#64a70b",
+    "essentialSkillsCoachIncompleteGrey"    :"#5c5c5c"
   },
   "font_family": {
     "black": "ProximaNovaBlack",
@@ -244,6 +246,7 @@
     "widget.description.regular.thin": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
     "widget.description.regular": { "font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
     "widget.description.regular.highlight": { "extends": "widget.description.regular", "color": "white"},
+    "widget.description.regular.underline": { "extends": "widget.description.regular", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.description.regular.fat": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.description.small": { "font_family": "medium", "size": 14.0, "color": "fillColorPrimary"},
     "widget.description.small_underline": { "font_family": "medium", "size": 14.0, "decoration": "underline"},
@@ -265,6 +268,7 @@
     "widget.item.regular.extra_fat": { "font_family": "extra_bold", "size": 16.0, "color": "textBackground"},
     "widget.item.regular.fat": { "font_family": "bold", "size": 16.0, "color": "textBackground"},
     "widget.item.regular.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground"},
+    "widget.item.regular_underline.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground", "decoration": "underline"},
     "widget.item.regular": { "font_family": "medium", "size": 16.0, "color": "textBackground"},
     "widget.item.small.fat": { "font_family": "bold", "size": 14.0, "color": "textBackground"},
     "widget.item.small": { "font_family": "medium", "size": 14.0, "color": "textBackground"},
@@ -673,6 +677,12 @@
     "panel.skills_self_evaluation.content.link":  {"font_family": "regular", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
     "panel.skills_self_evaluation.content.link.fat":  {"font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
 
+    "panel.essential_skills_coach.get_started.header": {"font_family": "extra_bold", "size": 28.0, "color": "surface"},
+    "panel.essential_skills_coach.header.description": {"font_family": "regular", "size": 16.0, "color": "surface"},
+    "panel.essential_skills_coach.auth_dialog.text": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimaryVariant"},
+    "panel.essential_skills_coach.auth_dialog.link": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
+    "panel.essential_skills_coach.content.title":  {"font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant"},
+
     "panel.wellness_appointments.button.title.underline":  {"extends": "widget.button.title.regular.thin.underline", "decoration_color":  "fillColorPrimary"},
     "panel.wellness_appointments.title.large":  {"extends": "widget.title.medium_large.extra_fat", "color": "blackTransparent06"},
 
@@ -1007,17 +1017,25 @@
     "skills-cooperation": {"src": "images/cooperation.png", "type": "flutter.asset"},
     "skills-emotional": {"src": "images/emotional_skills.png", "type": "flutter.asset"},
     "skills-innovation": {"src": "images/innovation.png", "type": "flutter.asset"},
-    "skills-social-button": {"src": "images/skills_social_button.png", "type": "flutter.asset", "size": 50},
-    "skills-management-button": {"src": "images/management_button.png", "type": "flutter.asset", "size": 50},
-    "skills-cooperation-button": {"src": "images/cooperation_button.png", "type": "flutter.asset", "size": 50},
-    "skills-emotional-button": {"src": "images/emotional_skills_button.png", "type": "flutter.asset", "size": 50},
-    "skills-innovation-button": {"src": "images/innovation_button.png", "type": "flutter.asset", "size": 50},
-    "skills-mic": {"src": "images/mic.png", "type": "flutter.asset", "size": 25},
+    "skills-social-button": {"src": "images/skills_social_button.png", "type": "flutter.asset", "size": 60},
+    "skills-management-button": {"src": "images/management_button.png", "type": "flutter.asset", "size": 60},
+    "skills-cooperation-button": {"src": "images/cooperation_button.png", "type": "flutter.asset", "size": 60},
+    "skills-emotional-button": {"src": "images/emotional_skills_button.png", "type": "flutter.asset", "size": 60},
+    "skills-innovation-button": {"src": "images/innovation_button.png", "type": "flutter.asset", "size": 60},
+    "skills-speech-mic": {"src": "0xf130", "type": "fa.icon", "weight": "solid", "size": 25},
+    "skills-speech-pause": {"src": "0xf04c", "type": "fa.icon", "weight": "solid", "size": 25},
     "text-icon": {"src": "images/text-icon.png", "type": "flutter.asset", "size": 35},
     "link-icon": {"src": "images/external-link-icon.png", "type": "flutter.asset", "size": 35},
     "pdf-icon": {"src": "images/pdf-icon.png", "type": "flutter.asset", "size": 35},
     "powerpoint-icon": {"src": "images/powerpoint.png", "type": "flutter.asset", "size": 35},
     "video-icon": {"src": "images/blue-play.png", "type": "flutter.asset", "size": 25},
-    "streak": {"src": "images/streak.png", "type": "flutter.asset", "size": 193}
+    "streak": {"src": "images/streak.png", "type": "flutter.asset", "size": 193},
+    "pause-filled-blue": {"src": "images/pause-filled-blue.png", "type": "flutter.asset", "size": 32},
+    "pause-empty-blue": {"src": "images/pause-empty-blue.png", "type": "flutter.asset", "size": 32},
+
+    "external-link-small": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "wrong size"},
+    "external-link-medium": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 20, "todo": "wrong size"},
+
+    "default-profile-photo": {"src": "images/default-profile-photo.png", "type": "flutter.asset"}
   }
 }

@@ -25,6 +25,7 @@ class ContentAttributesPanel extends StatefulWidget {
   final TextStyle? sectionTitleTextStyle;
   final TextStyle? sectionDescriptionTextStyle;
   final TextStyle? sectionRequiredMarkTextStyle;
+  final Widget? Function(BuildContext context)? footerBuilder;
   final String? applyTitle;
   final Widget Function(BuildContext context, bool enabled, void Function() onTap)? applyBuilder;
   final String? continueTitle;
@@ -44,6 +45,7 @@ class ContentAttributesPanel extends StatefulWidget {
   ContentAttributesPanel({Key? key, this.title, this.bgImageKey,
     this.description, this.descriptionBuilder, this.descriptionTextStyle,
     this.sectionTitleTextStyle, this.sectionDescriptionTextStyle, this.sectionRequiredMarkTextStyle,
+    this.footerBuilder,
     this.applyTitle, this.applyBuilder,
     this.continueTitle, this.continueTextStyle,
     this.contentAttributes, this.selection,
@@ -103,6 +105,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               ..._buildAttributesContent(),
               _buildClearAttributes(),
+              _buildFooter(),
+              Padding(padding: const EdgeInsets.only(top: 24)),
             ]),
           ),
         ),
@@ -427,7 +431,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
   Widget _buildClearAttributes() {
     bool canClearAttributes = _isSelectionNotEmpty;
-    return Padding(padding: EdgeInsets.only(top: 16, bottom: 24), child:
+    return Padding(padding: EdgeInsets.only(top: 16), child:
       Row(children: <Widget>[
         Expanded(flex: 1, child: Container()),
         Expanded(flex: 2, child: RoundedButton(
@@ -443,6 +447,12 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
         Expanded(flex: 1, child: Container()),
       ],),
     );
+  }
+
+  Widget _buildFooter() {
+    Widget? Function(BuildContext context)? footerBuilder = widget.footerBuilder;
+    Widget? footerWidget = (footerBuilder != null) ? footerBuilder(context) : null;
+    return (footerWidget != null) ? Padding(padding: EdgeInsets.only(top: 24), child: footerWidget) : Container();
   }
 
   Widget _buildApply() {

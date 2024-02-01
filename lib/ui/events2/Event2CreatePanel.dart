@@ -21,6 +21,7 @@ import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
+import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/GestureDetector.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -1537,8 +1538,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   Widget _buildGroupsButtonSection() => widget.isCreate ? Event2CreatePanel.buildButtonSectionWidget(
     heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
-      title: Localization().getStringEx('panel.event2.create.button.groups.title', 'EVENT GROUPS'),
-      subTitle: Localization().getStringEx('panel.event2.create.button.groups.description', 'Publish your events in group(s) that you administer.'),
+      title: Localization().getStringEx('panel.event2.create.button.groups.title', '{{app_title}} APP GROUPS').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois').toUpperCase()),
+      subTitle: Localization().getStringEx('panel.event2.create.button.groups.description', 'Publish your event in group(s) that you administer.'),
       onTap: _onGroups,
     ),
     body: _buildGroupsSectionBody()
@@ -1614,7 +1615,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
                     icon: Styles().images.getImage('chevron-down'),
                     isExpanded: true,
                     style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
-                    hint: Text(_event2VisibilityToDisplayString(_visibility),),
+                    hint: Text(_event2VisibilityToDisplayString(_visibility, _isGroupEvent),),
                     items: _buildVisibilityDropDownItems(),
                     onChanged: _onVisibilityChanged
                   ),
@@ -1632,7 +1633,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     for (_Event2Visibility value in _Event2Visibility.values) {
       menuItems.add(DropdownMenuItem<_Event2Visibility>(
         value: value,
-        child: Text(_event2VisibilityToDisplayString(value),),
+        child: Text(_event2VisibilityToDisplayString(value, _isGroupEvent),),
       ));
     }
     return menuItems;
@@ -2014,6 +2015,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   bool get _private => (_visibility == _Event2Visibility.private);
 
+  bool get _isGroupEvent => (CollectionUtils.isNotEmpty(_selectedGroupIds) || (widget.eventSelector is GroupEventSelector));
+
   bool get _hasSurvey => (_survey != null) || (_surveyDetails?.isNotEmpty ?? false);
 
   bool _canCreateEvent() => (
@@ -2027,6 +2030,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     (_free || _costController.text.isNotEmpty) &&
     (Events2().contentAttributes?.isSelectionValid(_attributes) ?? false) &&
     ((_registrationDetails?.type != Event2RegistrationType.external) || (_registrationDetails?.externalLink?.isNotEmpty ?? false)) &&
+    ((_registrationDetails?.type != Event2RegistrationType.internal) || ((_registrationDetails?.eventCapacity ?? 0) > 0)) &&
     (!_hasSurvey || _hasAttendanceDetails)
   );
 
@@ -2178,10 +2182,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
 enum _Event2Visibility { public, private }
 
-String _event2VisibilityToDisplayString(_Event2Visibility value) {
-  switch(value) {
-    case _Event2Visibility.public: return Localization().getStringEx('model.event2.event_type.public', 'Public');
-    case _Event2Visibility.private: return Localization().getStringEx('model.event2.event_type.private', 'Private');
+String _event2VisibilityToDisplayString(_Event2Visibility value, bool isGroupEvent) {
+  switch (value) {
+    case _Event2Visibility.public:
+      return Localization().getStringEx('model.event2.event_type.public', 'Public');
+    case _Event2Visibility.private:
+      return isGroupEvent
+          ? Localization().getStringEx('model.event2.event_type.group_members', 'Group Members Only')
+          : Localization().getStringEx('model.event2.event_type.private', 'Uploaded Guest List Only');
   }
 }
 

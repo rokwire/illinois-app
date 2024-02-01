@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/log.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/model/sport/Coach.dart';
@@ -81,7 +81,7 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
                     child: Visibility(visible: StringUtils.isNotEmpty(widget.coach.htmlBio), child: Container(
                       child: HtmlWidget(
                           StringUtils.ensureNotEmpty(widget.coach.htmlBio),
-                          onTapUrl : (url) {_launchUrl(url, context: context); return true;},
+                          onTapUrl : (url) {_launchUrl(url); return true;},
                           textStyle:  Styles().textStyles.getTextStyle("widget.detail.regular")
                       )
                     ))
@@ -96,15 +96,11 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
     );
   }
 
-  void _launchUrl(String? url, {BuildContext? context}) {
+  void _launchUrl(String? url) {
     if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      } else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri);
-        }
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
       }
     }
   }

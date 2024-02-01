@@ -18,9 +18,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -41,6 +43,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
 import 'package:illinois/ui/groups/GroupPollListPanel.dart';
@@ -888,8 +891,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 //    }
 
     if (CollectionUtils.isNotEmpty(_groupEvents)) {
-      for (Event2? groupEvent in _groupEvents!) {
-        content.add(GroupEventCard(groupEvent: groupEvent, group: _group));
+      for (Event2 groupEvent in _groupEvents!) {
+        content.add(Padding(padding: EdgeInsets.only(bottom: 16), child: Event2Card(groupEvent, group: _group, onTap: () => _onTapEvent(groupEvent))));
       }
 
       content.add(Padding(padding: EdgeInsets.only(top: 16), child:
@@ -1452,6 +1455,23 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                         })),
               ]));
         });
+  }
+
+  void _onTapEvent(Event2 event) {
+    Analytics().logSelect(target: 'Group Event: ${event.name}');
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (context) => event.hasGame == true
+                ? AthleticsGameDetailPanel(
+                    game: event.game,
+                    eventSelector:
+                        _group != null ? GroupEventSelector(GroupEventData(group: _group, event: event), showSelectionButton: false) : null)
+                : Event2DetailPanel(
+                    event: event,
+                    eventSelector: _group != null
+                        ? GroupEventSelector(GroupEventData(group: _group, event: event), showSelectionButton: false)
+                        : null)));
   }
 
   void _onTapEventOptions() {
@@ -2106,7 +2126,16 @@ class GroupEventSelector extends Event2Selector{
     if (CollectionUtils.isEmpty(data.membersSelection)) { //Do not allow to save to other groups if membersSelection is performed. Causes a bug that these members may not be also members of the rest of the groups
       if(data.group?.id != null) {
         List<Group>? otherAdminGroups = await Groups().loadAdminUserGroups(excludeIds: [data.group!.id!]);
-        List<Group>? otherSelectedGroups = await showDialog(context: state.context, barrierDismissible: true, builder: (_) => GroupsSelectionPopup(groups: otherAdminGroups));
+        List<Group>? otherSelectedGroups = await showDialog(
+            context: state.context,
+            barrierDismissible: true,
+            builder: (_) => GroupsSelectionPopup(
+              groups: otherAdminGroups,
+              title: Localization().getStringEx('widget.groups.event.selection.heading', '{{app_title}} App Groups').
+                replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+              description: Localization().getStringEx('widget.groups.event.selection.message', 'Publish your event to Group(s) that you administer.'),
+            )
+        );
         state.setStateIfMounted(() {data.adminGroupsSelection = otherSelectedGroups;});
       }
     }

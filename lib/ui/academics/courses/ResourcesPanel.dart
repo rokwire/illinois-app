@@ -47,23 +47,21 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
 
   @override
   void initState() {
-
     _color = widget.color!;
     _colorAccent = widget.colorAccent!;
     _unitNumber = widget.unitNumber;
     _contentItems = widget.contentItems!;
     _unitName = widget.unitName;
     super.initState();
-    
+
     // _loadDataContentItem( key: 'resource_text');
 
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx('', 'Resources'),
+      appBar: HeaderBar(title: Localization().getStringEx('panel.essential_skills_coach.resources.header.title', 'Resources'),
         textStyle: Styles().textStyles.getTextStyle('header_bar'),),
       body: SingleChildScrollView(
         child: _buildUnitResourcesWidgets(),
