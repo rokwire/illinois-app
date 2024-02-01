@@ -2189,7 +2189,7 @@ String _event2VisibilityToDisplayString(_Event2Visibility value, bool isGroupEve
     case _Event2Visibility.private:
       return isGroupEvent
           ? Localization().getStringEx('model.event2.event_type.group_members', 'Group Members Only')
-          : Localization().getStringEx('model.event2.event_type.private', 'Private');
+          : Localization().getStringEx('model.event2.event_type.private', 'Uploaded Guest List Only');
   }
 }
 
