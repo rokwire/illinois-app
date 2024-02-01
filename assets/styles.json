@@ -1034,6 +1034,9 @@
     "pause-empty-blue": {"src": "images/pause-empty-blue.png", "type": "flutter.asset", "size": 32},
 
     "external-link-small": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "wrong size"},
-    "external-link-medium": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 20, "todo": "wrong size"}
+    "external-link-medium": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 20, "todo": "wrong size"},
+
+    "course-detail-default": {"src": "images/course-detail-default.png", "type": "flutter.asset"},
+    "default-profile-photo": {"src": "images/default-profile-photo.png", "type": "flutter.asset"}
   }
 }

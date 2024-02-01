@@ -414,6 +414,7 @@
     "panel.browse.entry.wellness.wellness_health_screener.title": "Illinois Health Screener",
     "panel.browse.entry.wellness.wellness_resources.title": "Resources",
     "panel.browse.entry.wellness.wellness_mental_health.title": "Mental Health Resources",
+    "panel.browse.entry.wellness.wellness_success_team.title": "My Success Team",
 
     "panel.assistant.header.title": "Assistant",
     "panel.assistant.label.disclaimer.title": "The Illinois Assistant is an experimental feature. Some results may be inaccurate; verify the answer information with other official university sources. Your questions and feedback will be stored and analyzed to improve quality.",
@@ -2267,6 +2268,7 @@
     "panel.wellness.section.screener.label": "Illinois Health Screener",
     "panel.wellness.section.resources.label": "Wellness Resources",
     "panel.wellness.section.mental_health.label": "Mental Health Resources",
+    "panel.wellness.section.success_team.label": "My Success Team",
     "panel.wellness.section.podcast.label": "Healthy Illini Podcast",
     "panel.wellness.section.struggling.label": "I'm Struggling",
 
@@ -2372,6 +2374,9 @@
     "panel.wellness.appointments.home.display.nothing.msg": "There is nothing to display as you have chosen not to display any past or future appointments.",
     "panel.wellness.appointments.home.display.settings.on.label": "Display My Appointments",
     "panel.wellness.appointments.home.display.settings.off.label": "Don't Display My Appointments",
+
+    "panel.wellness.successteam.pcp.info.description": "A primary care provider (PCP) provides essential\nhealthcare services, promotes your overall wellbeing,\nand can refer you to services such as internal medicine,\nfamily practice, psychiatry, and gynecology.",
+    "panel.wellness.successteam.advisor.info.description": "An academic advisor is your go-to person for course\nregistration, degree planning, and academic support\nservices.",
 
     "panel.academics.appointments.home.header.title": "Appointments",
     "panel.academics.appointments.home.message.providers.failed": "Failed to load providers.",
