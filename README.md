@@ -7,9 +7,9 @@ The official mobile app of the University of Illinois. Powered by the [Rokwire P
 
 ### [Android Studio](https://developer.android.com/studio) 2021.3.1+
 
-### [xCode](https://apps.apple.com/us/app/xcode/id497799835) 14.2
+### [xCode](https://apps.apple.com/us/app/xcode/id497799835) 15.2
 
-### [CocoaPods](https://guides.cocoapods.org/using/getting-started.html) 1.11.3+
+### [CocoaPods](https://guides.cocoapods.org/using/getting-started.html) 1.15.0+
 
 
 ## Build
