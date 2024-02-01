@@ -1,22 +1,14 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:illinois/model/CustomCourses.dart';
+import 'package:illinois/ui/academics/courses/PDFScreen.dart';
+import 'package:illinois/ui/academics/courses/VideoPlayer.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:http/http.dart' as http;
 import 'package:rokwire_plugin/service/content.dart' as con;
 import 'package:url_launcher/url_launcher.dart';
-import 'package:video_player/video_player.dart';
 
-
-import 'PDFScreen.dart';
-import 'VideoPlayer.dart';
 
 class ResourcesPanel extends StatefulWidget {
   final List<Content>? contentItems;
@@ -37,9 +29,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
   late List<Content> _contentItems;
   late String _unitName;
   String urlPDFPath = "";
-  bool _isExpanded = false;
-  late VideoPlayerController _controller;
-  late Future<void> _initializeVideoPlayerFuture;
+  // bool _isExpanded = false;
 
   String? _selectedResourceType = "View All Resources";
   final List<String> _resourceTypes = ["View All Resources", "View All PDFs",
@@ -131,7 +121,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
                     child: Card(
                       clipBehavior: Clip.antiAlias,
                       child: ExpansionTile(
-                        leading: Styles().images.getImage((filteredContentItems[index].reference?.type ?? "item") + "-icon") ?? Container(),
+                        leading: Styles().images.getImage("${filteredContentItems[index].reference?.stringFromType()}-icon") ?? Container(),
                         title: Text(filteredContentItems[index].name ?? "", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),),
                         subtitle: Text(filteredContentItems[index].details ?? ""),
                         children: [
@@ -148,11 +138,11 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
                             ),
                           ),
                         ],
-                        onExpansionChanged: (bool expanded){
-                          setState(() {
-                            _isExpanded = expanded;
-                          });
-                        },
+                        // onExpansionChanged: (bool expanded){
+                        //   setState(() {
+                        //     _isExpanded = expanded;
+                        //   });
+                        // },
                       ),
                     ),
                   );
@@ -163,7 +153,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
                       child: InkWell(
                         onTap: (){
                           if(filteredContentItems[index].reference?.type == "video"){
-                            con.Content.internal().getFileContentItem(filteredContentItems[index].reference?.referenceKey ?? "", "test" ).then((
+                            con.Content().getFileContentItem(filteredContentItems[index].reference?.referenceKey ?? "", "test" ).then((
                                 value) => {
                               setState(() {
                                 if (value != null) {
@@ -181,7 +171,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
                             Uri uri = Uri.parse(filteredContentItems[index].reference?.referenceKey ?? " ");
                             _launchUrl(uri);
                           } else{
-                            con.Content.internal().getFileContentItem(filteredContentItems[index].reference?.referenceKey ?? "", "test" ).then((
+                            con.Content().getFileContentItem(filteredContentItems[index].reference?.referenceKey ?? "", "test" ).then((
                                 value) => {
                               setState(() {
                                 if (value != null) {
@@ -199,7 +189,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
                           }
                         },
                         child: ListTile(
-                          leading: Styles().images.getImage((filteredContentItems[index].reference?.type ?? "item") + "-icon") ?? Container(),
+                          leading: Styles().images.getImage("${filteredContentItems[index].reference?.stringFromType()}-icon") ?? Container(),
                           title: Text(filteredContentItems[index].name ?? "", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),),
                           subtitle: Text(filteredContentItems[index].details ?? ""),
                           trailing: Icon(
@@ -290,7 +280,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
 
   // //TODO fix data parsing
   // void _loadDataContentItem({required String key}) async{
-  //   Map<String, dynamic>? response = await con.Content.internal().getDataContentItem(key);
+  //   Map<String, dynamic>? response = await con.Content().getDataContentItem(key);
   //
   // }
 

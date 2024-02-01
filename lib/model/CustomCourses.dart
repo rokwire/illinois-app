@@ -593,7 +593,7 @@ class UserContent{
   bool get hasData => userData?.isNotEmpty ?? false;
 }
 
-enum ReferenceType { video, keyTerm, pdf, uri, none }
+enum ReferenceType { video, text, pdf, powerpoint, uri, none }
 
 class Reference{
   final String? name;
@@ -626,8 +626,8 @@ class Reference{
   static ReferenceType typeFromString(String value) {
     switch (value) {
       case 'video': return ReferenceType.video;
-      case 'keyTerm': return ReferenceType.keyTerm;
-      case 'key_term': return ReferenceType.keyTerm;
+      case 'text': return ReferenceType.text;
+      case 'powerpoint': return ReferenceType.powerpoint;
       case 'pdf': return ReferenceType.pdf;
       case 'uri': return ReferenceType.uri;
       default: return ReferenceType.none;
@@ -637,7 +637,8 @@ class Reference{
   String stringFromType() {
     switch (type) {
       case ReferenceType.video: return 'video';
-      case ReferenceType.keyTerm: return 'keyTerm';
+      case ReferenceType.text: return 'text';
+      case ReferenceType.powerpoint: return 'powerpoint';
       case ReferenceType.pdf: return 'pdf';
       case ReferenceType.uri: return 'uri';
       default: return '';
@@ -648,8 +649,9 @@ class Reference{
     //TODO: move this to backend?
     switch (type) {
       case ReferenceType.video: return 'Video';
-      case ReferenceType.keyTerm: return 'Key Term';
-      case ReferenceType.pdf: return 'File';
+      case ReferenceType.text: return 'Key Term';
+      case ReferenceType.powerpoint: return 'Powerpoint';
+      case ReferenceType.pdf: return 'PDF';
       case ReferenceType.uri: return 'Web Link';
       default: return null;
     }
@@ -659,7 +661,8 @@ class Reference{
     //TODO: move this to backend?
     switch (type) {
       case ReferenceType.video: return 'WATCH NOW';
-      case ReferenceType.keyTerm: return 'LEARN NOW';
+      case ReferenceType.text: return 'LEARN NOW';
+      case ReferenceType.powerpoint: return 'VIEW NOW';
       case ReferenceType.pdf: return 'VIEW NOW';
       case ReferenceType.uri: return 'OPEN NOW';
       default: return null;
