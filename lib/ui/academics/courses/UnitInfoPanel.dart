@@ -58,8 +58,8 @@ class _UnitInfoPanelState extends State<UnitInfoPanel> implements NotificationsL
     );
 
 
-    List<Widget> widgets = <Widget>[];
-    widgets.add(
+    //TODO add any extra content i.e. videos and files
+    return [
       SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16),
@@ -103,11 +103,8 @@ class _UnitInfoPanelState extends State<UnitInfoPanel> implements NotificationsL
             ],
           ),
         ),
-      )
-    );
-
-    widgets.add(Expanded(child: Container(),));
-    widgets.add(
+      ),
+      Expanded(child: Container(),),
       Padding(
         padding: EdgeInsets.all(16),
         child: RoundedButton(
@@ -116,11 +113,8 @@ class _UnitInfoPanelState extends State<UnitInfoPanel> implements NotificationsL
             backgroundColor: _colorAccent,
             borderColor: _colorAccent,
             onTap: () => _saveProgress(false)),
-      )
-    );
-
-    //TODO add any extra content i.e. videos and files
-    return widgets;
+      ),
+    ];
   }
 
   void _saveProgress(bool didPop) async {

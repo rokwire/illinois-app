@@ -544,6 +544,12 @@ class ScheduleItem{
 }
 
 class UserContent{
+  static const String completeKey = 'complete';
+  static const String experienceKey = 'experience';
+  static const String goodExperience = 'good';
+  static const String badExperience = 'bad';
+  static const String notesKey = 'notes';
+
   final String? contentKey;
   final Map<String,dynamic>? userData;
 
@@ -591,6 +597,8 @@ class UserContent{
   }
 
   bool get hasData => userData?.isNotEmpty ?? false;
+  bool get isComplete => userData?[completeKey] == true;
+  bool get isNotComplete => !isComplete;
 }
 
 enum ReferenceType { video, keyTerm, pdf, uri, none }

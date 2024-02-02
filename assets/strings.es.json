@@ -3127,6 +3127,8 @@
     "panel.essential_skills_coach.assignment.completion.selection.header": "Did you complete this task?",
     "panel.essential_skills_coach.assignment.completion.button.yes.label": "Yes",
     "panel.essential_skills_coach.assignment.completion.button.no.label": "No",
+    "panel.essential_skills_coach.assignment.button.save.label": "Save",
+    "panel.essential_skills_coach.assignment.complete.earned_pause.message": "You earned a pause!\nYou now have %d pauses.",
     "panel.essential_skills_coach.assignment.complete.message": "Keep up the \ngood work!",
     "panel.essential_skills_coach.assignment.complete.button.continue.label": "Continue",
     "panel.essential_skills_coach.streak.header.title": "Streak",

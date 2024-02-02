@@ -8,6 +8,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/ui/academics/EssentialSkillsCoach.dart';
 import 'package:illinois/ui/academics/courses/AssignmentPanel.dart';
+import 'package:illinois/ui/academics/courses/AssignmentCompletePanel.dart';
 import 'package:illinois/ui/academics/courses/ResourcesPanel.dart';
 import 'package:illinois/ui/academics/courses/StreakPanel.dart';
 import 'package:illinois/ui/academics/courses/UnitInfoPanel.dart';
@@ -368,8 +369,8 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             helpContent: (_userCourse?.course ?? _course) != null ? content.getLinkedContent(_userCourse?.course ?? _course) : null,
           )
         )).then((result) {
-          if (result is Map<String, dynamic> && StringUtils.isNotEmpty(content.key)) {
-            _updateProgress(unit.key!, content.key!, result);
+          if (result is Map<String, dynamic>) {
+            _updateProgress(unit.key!, userContent, content, result);
           }
         });
       } : null,
@@ -495,9 +496,9 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     _setLoading(false);
   }
 
-  Future<void> _updateProgress(String unitKey, String contentKey, Map<String, dynamic> result) async {
+  Future<void> _updateProgress(String unitKey, UserContent current, Content content, Map<String, dynamic> updatedData) async {
     _setLoading(true);
-    UserUnit? updatedUserUnit = await CustomCourses().updateUserCourseProgress(UserContent(contentKey: contentKey, userData: result), courseKey: _userCourse!.course!.key!, unitKey: unitKey);
+    UserUnit? updatedUserUnit = await CustomCourses().updateUserCourseProgress(UserContent(contentKey: current.contentKey, userData: updatedData), courseKey: _userCourse!.course!.key!, unitKey: unitKey);
     if (updatedUserUnit != null) {
       if (CollectionUtils.isNotEmpty(_userCourseUnits)) {
         int unitIndex = _userCourseUnits!.indexWhere((userUnit) => userUnit.id != null && userUnit.id == updatedUserUnit.id);
@@ -513,14 +514,28 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         });
       }
 
+      bool earnedPause = false;
+      bool extendedStreak = false;
       UserCourse? userCourse = await CustomCourses().loadUserCourse(Config().essentialSkillsCoachKey!);
       if (userCourse != null) {
+        earnedPause = (userCourse.pauses ?? 0) > (_userCourse?.pauses ?? 0);
+        extendedStreak = (userCourse.streak ?? 0) > (_userCourse?.streak ?? 0);
         setStateIfMounted(() {
           _userCourse = userCourse;
           _loading = false;
         });
       } else {
         _setLoading(false);
+      }
+
+      // if the current task was just completed and it extended the user's streak
+      if (extendedStreak && current.isNotComplete && updatedData[UserContent.completeKey] == true) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentCompletePanel(
+          contentName: content.name ?? '',
+          pauses: earnedPause ? _userCourse?.pauses : null,
+          color: _selectedModulePrimaryColor,
+          colorAccent: _selectedModuleAccentColor,
+        )));
       }
     } else {
       _setLoading(false);

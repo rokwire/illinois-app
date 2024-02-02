@@ -1,11 +1,9 @@
 
 import 'package:collection/collection.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/academics/courses/AssignmentCompletePanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -60,21 +58,21 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     super.dispose();
   }
 
-  bool get isComplete => _data?['complete'] == true;
-  bool get isNotComplete => _data?['complete'] == false;
+  bool get isComplete => _data?[UserContent.completeKey] == true;
+  bool get isNotComplete => _data?[UserContent.completeKey] == false;
   set complete(bool? value) {
     _data ??= {};
-    _data!['complete'] = value;
+    _data![UserContent.completeKey] = value;
   }
 
-  bool get isGoodExperience => _data?['experience'] == 'good';
-  bool get isBadExperience => _data?['experience'] == 'bad';
+  bool get isGoodExperience => _data?[UserContent.experienceKey] == UserContent.goodExperience;
+  bool get isBadExperience => _data?[UserContent.experienceKey] == UserContent.badExperience;
   set experience(String? value) {
     _data ??= {};
-    _data!['experience'] = value;
+    _data![UserContent.experienceKey] = value;
   }
 
-  String? get userNotes => _data?['notes'].toString();
+  String? get userNotes => _data?[UserContent.notesKey].toString();
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +100,15 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                   children: _buildAssignmentActivityWidgets(),
                 ),
               ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: RoundedButton(
+                  label: Localization().getStringEx('panel.essential_skills_coach.assignment.button.save.label', 'Save'),
+                  textStyle: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"),
+                  backgroundColor: _colorAccent,
+                  borderColor: _colorAccent,
+                  onTap: () => _saveProgress(false)),
             ),
             if (helpContentWidgets.isNotEmpty)
               ExpansionPanelList(
@@ -241,13 +248,10 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                     color: isComplete ? _color : _colorAccent,
                     size: 20,
                   ),
-                  onTap: widget.isCurrent ? () {
+                  onTap: widget.isCurrent && widget.data?[UserContent.completeKey] != true ? () {
                     setState(() {
                       complete = isComplete ? null : true;
                     });
-                    if (isComplete) {
-                      Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentCompletePanel(contentName: _content.name ?? '', color: _color, colorAccent: _colorAccent,)));
-                    }
                   } : null
               ),
             ),
@@ -265,7 +269,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                       color: isNotComplete ? _color : _colorAccent,
                       size: 20,
                     ),
-                    onTap: widget.isCurrent ? (){
+                    onTap: widget.isCurrent && widget.data?[UserContent.completeKey] != true ? (){
                       setState(() {
                         complete = isNotComplete ? null : false;
                       });

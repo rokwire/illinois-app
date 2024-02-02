@@ -5,14 +5,16 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:sprintf/sprintf.dart';
 
 
 class AssignmentCompletePanel extends StatefulWidget {
   final String contentName;
+  final int? pauses;
   final Color? color;
   final Color? colorAccent;
 
-  const AssignmentCompletePanel({required this.contentName, required this.color, required this.colorAccent});
+  const AssignmentCompletePanel({required this.contentName, this.pauses, required this.color, required this.colorAccent});
 
 
   @override
@@ -63,6 +65,11 @@ class _AssignmentCompletePanelState extends State<AssignmentCompletePanel> {
                 blastDirectionality: BlastDirectionality.explosive,
                 shouldLoop: false,
               ),
+              if (widget.pauses != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: Text(sprintf(Localization().getStringEx('panel.essential_skills_coach.assignment.complete.earned_pause.message', "You earned a pause!\nYou now have %d pauses."), [widget.pauses]), style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat"),),
+                ),
               Text(Localization().getStringEx('panel.essential_skills_coach.assignment.complete.message', "Keep up the \ngood work!"), style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat"),),
             ],
           )
