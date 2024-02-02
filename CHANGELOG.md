@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [5.1.20] - 2024-01-02
 ### Fixed
 - List only groups where the user is admin when adding event to groups [#3921](https://github.com/rokwire/illinois-app/issues/3921).
 - Added new iOS 17 calendar usage descriptions [#3789](https://github.com/rokwire/illinois-app/issues/3789).
