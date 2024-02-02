@@ -64,6 +64,10 @@
 	<string>Your bluetooth will be used for the maps to scan for nearby beacons.</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Save favorite events</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Save favorite events</string>
+	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+	<string>Save favorite events</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Your camera will be used for scanning QR codes or taking pictures for profile images, group or event touts and posts.</string>
 	<key>NSContactsUsageDescription</key>
