@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - List only groups where the user is admin when adding event to groups [#3921](https://github.com/rokwire/illinois-app/issues/3921).
+- Added new iOS 17 calendar usage descriptions [#3789](https://github.com/rokwire/illinois-app/issues/3789).
 
 ## [5.1.19] - 2024-01-01
 ### Added
