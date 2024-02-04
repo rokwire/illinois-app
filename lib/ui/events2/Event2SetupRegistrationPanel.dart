@@ -22,11 +22,12 @@ import 'package:url_launcher/url_launcher.dart';
 
 class Event2SetupRegistrationPanel extends StatefulWidget {
   final Event2? event;
-  final Event2RegistrationDetails? registrationDetails;
+  final Event2RegistrationDetails? _registrationDetails;
   
-  Event2SetupRegistrationPanel({Key? key, this.event, this.registrationDetails}) : super(key: key);
+  Event2SetupRegistrationPanel({super.key, this.event, Event2RegistrationDetails? registrationDetails}) :
+    _registrationDetails = registrationDetails;
 
-  Event2RegistrationDetails? get details => (event?.id != null) ? event?.registrationDetails : registrationDetails;
+  Event2RegistrationDetails? get registrationDetails => _registrationDetails ?? event?.registrationDetails;
   
   @override
   State<StatefulWidget> createState() => _Event2SetupRegistrationPanelState();
@@ -58,12 +59,12 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   
   @override
   void initState() {
-    _registrationType = _initialRegistrationType = widget.details?.type ?? Event2RegistrationType.none;
+    _registrationType = _initialRegistrationType = widget.registrationDetails?.type ?? Event2RegistrationType.none;
     
-    _labelController.text = _initialLabel = ((_registrationType == Event2RegistrationType.external) && (widget.details?.label != null)) ? '${widget.details?.label}' : '';
-    _linkController.text = _initialLink = ((_registrationType == Event2RegistrationType.external) && (widget.details?.externalLink != null)) ? '${widget.details?.externalLink}' : '';
-    _capacityController.text = _initialCapacity = ((_registrationType == Event2RegistrationType.internal) && (widget.details?.eventCapacity != null)) ? '${widget.details?.eventCapacity}' : '';
-    _registrantsController.text = _initialRegistrants = ((_registrationType == Event2RegistrationType.internal) && (widget.details?.registrants != null)) ? (widget.details?.registrants?.join(' ') ?? '')  : '';
+    _labelController.text = _initialLabel = ((_registrationType == Event2RegistrationType.external) && (widget.registrationDetails?.label != null)) ? '${widget.registrationDetails?.label}' : '';
+    _linkController.text = _initialLink = ((_registrationType == Event2RegistrationType.external) && (widget.registrationDetails?.externalLink != null)) ? '${widget.registrationDetails?.externalLink}' : '';
+    _capacityController.text = _initialCapacity = ((_registrationType == Event2RegistrationType.internal) && (widget.registrationDetails?.eventCapacity != null)) ? '${widget.registrationDetails?.eventCapacity}' : '';
+    _registrantsController.text = _initialRegistrants = ((_registrationType == Event2RegistrationType.internal) && (widget.registrationDetails?.registrants != null)) ? (widget.registrationDetails?.registrants?.join(' ') ?? '')  : '';
 
     if (_isEditing) {
       _labelController.addListener(_checkModified);
@@ -110,6 +111,8 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
 
   @override
   Widget build(BuildContext context) {
+    // TBD: Replace with PopScope
+    // ignore: deprecated_member_use
     return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBarBack), child: Platform.isIOS ?
       BackGestureDetector(onBack: _onHeaderBarBack, child:
         _buildScaffoldContent(),
@@ -121,7 +124,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors!.white,
+    backgroundColor: Styles().colors.white,
   );
 
   Widget _buildPanelContent() {
@@ -163,9 +166,9 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
               Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
                 DropdownButtonHideUnderline(child:
                   DropdownButton<Event2RegistrationType>(
-                    icon: Styles().images?.getImage('chevron-down'),
+                    icon: Styles().images.getImage('chevron-down'),
                     isExpanded: true,
-                    style: Styles().textStyles?.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                    style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
                     hint: Text(event2RegistrationToDisplayString(_registrationType)),
                     items: _buildRegistrationTypeDropDownItems(),
                     onChanged: _onRegistrationTypeChanged
@@ -222,7 +225,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   }
 
 
-  TextStyle? get _infoTextStype => Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
+  TextStyle? get _infoTextStype => Styles().textStyles.getTextStyle('widget.item.small.thin.italic');
 
 
   // Internal Details
@@ -246,7 +249,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
       Padding(padding: Event2CreatePanel.sectionPadding, child:
         Row(children: [
           Padding(padding: EdgeInsets.only(right: 6), child:
-            Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.registration.capacity.label.title', 'EVENT CAPACITY')),
+            Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.registration.capacity.label.title', 'EVENT CAPACITY'), required: true),
           ),
           Expanded(child:
             Event2CreatePanel.buildTextEditWidget(_capacityController, keyboardType: TextInputType.number, semanticsLabel: Localization().getStringEx("panel.event2.setup.registration.capacity.field.label", "EVENT CAPACITY FIELD",)),
@@ -258,7 +261,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   // Event Registrants
 
   Widget _buildRegistrantsSection() => Event2CreatePanel.buildSectionWidget(
-    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.registrants.label.title', 'ADD NETID(S) TO THE GUEST LIST')),
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.registrants.label.title', 'ADD AND REGISTER NETID(S)')),
     body: Event2CreatePanel.buildTextEditWidget(_registrantsController, keyboardType: TextInputType.text, maxLines: null,
       semanticsLabel: Localization().getStringEx('panel.event2.setup.registration.link.field.label', 'ADD NETID(S) TO THE GUEST LIST FIELD'),
       semanticsHint: Localization().getStringEx('panel.event2.setup.registration.registrants.label.hint', 'A space- or comma-separated list of NetIDs.')
@@ -298,7 +301,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   // External Link
   
   Widget _buildLinkSection() => Event2CreatePanel.buildSectionWidget(
-    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.link.label.title', 'ADD EXTERNAL LINK FOR REGISTRATION'), suffixImageKey: 'external-link'),
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.link.label.title', 'ADD EXTERNAL LINK FOR REGISTRATION'), suffixImageKey: 'external-link', required: true),
     body: Event2CreatePanel.buildTextEditWidget(_linkController, keyboardType: TextInputType.url, maxLines: 1, semanticsHint: Localization().getStringEx("panel.event2.setup.registration.link.field.label", "ADD EXTERNAL LINK FOR REGISTRATION FIELD",)),
     trailing: _buildConfirmUrlLink(onTap: (_onConfirmLink)),
     padding: EdgeInsets.zero
@@ -384,6 +387,21 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     }
   }
 
+  String? get _registrationDetailsErrorText {
+    if (_registrationType == Event2RegistrationType.internal) {
+      int? capacity = Event2CreatePanel.textFieldIntValue(_capacityController);
+      if ((capacity == null) || (capacity <= 0)) {
+        return Localization().getStringEx("panel.event2.setup.registration.internal.capacity.empty", "Event registration via the app requires a valid event capacity.");
+      }
+    }
+    else if (_registrationType == Event2RegistrationType.external) {
+      if (_linkController.text.isEmpty) {
+        return Localization().getStringEx("panel.event2.setup.registration.external.link.empty", "Event registration via external link requires a valid link URL.");
+      }
+    }
+    return null;
+  }
+
   // For new registration details we must return non-zero instance, for update we 
   Event2RegistrationDetails _buildRegistrationDetails() => Event2RegistrationDetails(
     type: _registrationType,
@@ -394,11 +412,12 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   );
 
   void _updateEventRegistrationDetails(Event2RegistrationDetails? registrationDetails) {
-    if (_isEditing && (_updatingRegistration != true)) {
+    String? eventId = widget.event?.id;
+    if ((eventId != null) && (_updatingRegistration != true)) {
       setState(() {
         _updatingRegistration = true;
       });
-      Events2().updateEventRegistrationDetails(widget.event?.id ?? '', registrationDetails).then((result) {
+      Events2().updateEventRegistrationDetails(eventId, registrationDetails).then((result) {
         if (mounted) {
           setState(() {
             _updatingRegistration = false;
@@ -411,7 +430,6 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
         else {
           Event2Popup.showErrorResult(context, result);
         }
-
       });
     }
   }
@@ -446,7 +464,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
         continue;
 
       if (contentList.isNotEmpty) {
-        contentList.add(Divider(color: Styles().colors?.dividerLineAccent, thickness: 1, height: 1,));
+        contentList.add(Divider(color: Styles().colors.dividerLineAccent, thickness: 1, height: 1,));
       }
       contentList.add(_GuestListItemWidget(displayPerson, enabled: true, highlighted: false,));
     }
@@ -454,7 +472,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
       return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
         Center(child:
           SizedBox(width: 24, height: 24, child:
-            CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,)
+            CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,)
           ),
         ),
       );
@@ -469,7 +487,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
         Text(_hasError ?
         Localization().getStringEx("panel.event2.setup.registration.guest.failed.text", "Failed to load guests list.") :
         Localization().getStringEx("panel.event2.setup.registration.guest.empty.text", "There are no users registered for this event yet."),
-          textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.small.thin.italic'),),
+          textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.small.thin.italic'),),
         )
       ],)
       );
@@ -477,7 +495,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   }
 
   Widget _buildUploadGuestsDescription() {
-    TextStyle? mainStyle = Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
+    TextStyle? mainStyle = Styles().textStyles.getTextStyle('widget.item.small.thin.italic');
     final Color defaultStyleColor = Colors.red;
     final String? eventAttendanceUrl = Config().eventAttendanceUrl;
     final String eventAttendanceUrlMacro = '{{event_attendance_url}}';
@@ -487,11 +505,11 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     return Visibility(visible: StringUtils.isNotEmpty(eventAttendanceUrl), child:
       Padding(padding: EdgeInsets.only(top: 12), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Styles().images?.getImage('info') ?? Container(),
+          Styles().images.getImage('info') ?? Container(),
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 6), child:
               HtmlWidget(contentHtml, onTapUrl: _onTapHtmlLink, textStyle: mainStyle,
-                customStylesBuilder: (element) => (element.localName == "a") ? { "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor), "text-decoration-color": ColorUtils.toHex(Styles().colors?.fillColorSecondary ?? defaultStyleColor)} : null,
+                customStylesBuilder: (element) => (element.localName == "a") ? { "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor), "text-decoration-color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null,
               )
             ),
           ),
@@ -508,12 +526,29 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
 
   void _onHeaderBarApply() {
     Analytics().logSelect(target: 'HeaderBar: Apply');
-    _updateEventRegistrationDetails((_registrationType != Event2RegistrationType.none) ? _buildRegistrationDetails() : null);
+    String? errorText = _registrationDetailsErrorText;
+    if (errorText != null) {
+      AppAlert.showMessage(context, errorText);
+    }
+    else {
+      _updateEventRegistrationDetails((_registrationType != Event2RegistrationType.none) ? _buildRegistrationDetails() : null);
+    }
   }
 
   void _onHeaderBarBack() {
     Analytics().logSelect(target: 'HeaderBar: Back');
-    Navigator.of(context).pop(_isCreating ? _buildRegistrationDetails() : null);
+    if (_isCreating) {
+      String? errorText = _registrationDetailsErrorText;
+      if (errorText != null) {
+        AppAlert.showMessage(context, errorText);
+      }
+      else {
+        Navigator.of(context).pop(_buildRegistrationDetails());
+      }
+    }
+    else {
+      Navigator.of(context).pop(null);
+    }
   }
 }
 
@@ -543,11 +578,11 @@ class _GuestListItemWidget extends StatelessWidget {
   Widget get _nameWidget {
     String? registrantNetId = registrant.identifier?.netId;
     String textStyleKey = (enabled ? (highlighted ? 'widget.label.regular.fat' : 'widget.card.title.small.fat') : 'widget.card.title.small.fat.variant3');
-    return Text(registrantNetId ?? '', style: Styles().textStyles?.getTextStyle(textStyleKey));
+    return Text(registrantNetId ?? '', style: Styles().textStyles.getTextStyle(textStyleKey));
   }
 
   Widget get _typeWidget {
     String type = event2UserRegistrationToDisplayString(registrant.registrationType) ?? Localization().getStringEx('model.event2.registrant_type.unknown', 'Unknown');
-    return Text(type, style: Styles().textStyles?.getTextStyle('widget.detail.light.regular'), textAlign: TextAlign.end,);
+    return Text(type, style: Styles().textStyles.getTextStyle('widget.detail.light.regular'), textAlign: TextAlign.end,);
   }
 }

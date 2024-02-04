@@ -98,15 +98,20 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyWellnessToDoItemNotification               = "$notifyBase.wellness.to_do";
   static const String notifyProfileMyNotification                      = "$notifyBase.profile.my";
   static const String notifyProfileWhoAreYouNotification               = "$notifyBase.profile.who_are_you";
-  static const String notifyProfilePrivacyNotification                 = "$notifyBase.profile.privacy";
-  static const String notifySettingsSectionsNotification               = "$notifyBase.settings.sections";
+  static const String notifyProfileLoginNotification                 = "$notifyBase.profile.privacy"; //TBD profile.login?
+  static const String notifySettingsSectionsNotification               = "$notifyBase.settings.sections";  //TBD deprecate. Use payloadTypeProfileLogin instead
   static const String notifySettingsInterestsNotification              = "$notifyBase.settings.interests";
   static const String notifySettingsFoodFiltersNotification            = "$notifyBase.settings.food_filters";
   static const String notifySettingsSportsNotification                 = "$notifyBase.settings.sports";
   static const String notifySettingsFavoritesNotification              = "$notifyBase.settings.favorites";
   static const String notifySettingsAssessmentsNotification            = "$notifyBase.settings.assessments";
   static const String notifySettingsCalendarNotification               = "$notifyBase.settings.calendar";
-  static const String notifySettingsAppointmentsNotification           = "$notifyBase.settings.appointments";
+  static const String notifySettingsAppointmentsNotification        = "$notifyBase.settings.appointments";
+  static const String notifySettingsMapsNotification                    = "$notifyBase.settings.maps"; //TBD do we need this? Are we declaring these somewhere in the documentation?
+  static const String notifySettingsContactsNotification               = "$notifyBase.settings.contacts"; //TBD do we need this?
+  static const String notifySettingsResearchNotification              = "$notifyBase.settings.research"; //TBD do we need this?
+  static const String notifySettingsPrivacyNotification                 = "$notifyBase.settings.privacy"; //TBD do we need this?
+  static const String notifySettingsNotificationsNotification         = "$notifyBase.settings.notifications"; //TBD do we need this?
   static const String notifyGuideArticleDetailNotification             = "$notifyBase.guide.article.detail";
 
   // Topic names
@@ -232,7 +237,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypePoll = 'poll';
   static const String payloadTypeProfileMy = 'profile.my';
   static const String payloadTypeProfileWhoAreYou = 'profile.who_are_you';
-  static const String payloadTypeProfilePrivacy = 'profile.privacy';
+  static const String payloadTypeProfileLogin = 'profile.login';
   static const String payloadTypeSettingsSections = 'settings.sections';
   static const String payloadTypeSettingsInterests = 'settings.interests';
   static const String payloadTypeSettingsFoodFilters = 'settings.food_filters';
@@ -241,6 +246,11 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeSettingsAssessments = 'settings.assessments';
   static const String payloadTypeSettingsCalendar = 'settings.calendar';
   static const String payloadTypeSettingsAppointments = 'settings.appointments';
+  static const String payloadTypeSettingsMaps = 'settings.maps';
+  static const String payloadTypeSettingsContacts = 'settings.contacts';
+  static const String payloadTypeSettingsResearch = 'settings.research';
+  static const String payloadTypeSettingsNotifications = 'settings.notifications';
+  static const String payloadTypeSettingsPrivacy = 'settings.privacy';
   static const String payloadTypeGuideArticleDetail= 'guide.article.detail';
 
   DateTime? _pausedDateTime;
@@ -519,10 +529,10 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     else if (type == payloadTypeProfileWhoAreYou) {
       NotificationService().notify(notifyProfileWhoAreYouNotification, data);
     }
-    else if (type == payloadTypeProfilePrivacy) {
-      NotificationService().notify(notifyProfilePrivacyNotification, data);
+    else if (type == payloadTypeProfileLogin) {
+      NotificationService().notify(notifyProfileLoginNotification, data);
     }
-    else if (type == payloadTypeSettingsSections) {
+    else if (type == payloadTypeSettingsSections) { //TBD deprecate. Use payloadTypeProfileLogin instead
       NotificationService().notify(notifySettingsSectionsNotification, data);
     }
     else if (type == payloadTypeSettingsInterests) {
@@ -548,6 +558,21 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
     else if (type == payloadTypeSettingsAppointments) {
       NotificationService().notify(notifySettingsAppointmentsNotification, data);
+    }
+    else if (type == payloadTypeSettingsMaps) {
+      NotificationService().notify(notifySettingsMapsNotification, data);
+    }
+    else if (type == payloadTypeSettingsContacts) {
+      NotificationService().notify(notifySettingsContactsNotification, data);
+    }
+    else if (type == payloadTypeSettingsResearch) {
+      NotificationService().notify(notifySettingsResearchNotification, data);
+    }
+    else if (type == payloadTypeSettingsPrivacy) {
+      NotificationService().notify(notifySettingsPrivacyNotification, data);
+    }
+    else if (type == payloadTypeSettingsNotifications) {
+      NotificationService().notify(notifySettingsNotificationsNotification, data);
     }
     else if (type == payloadTypeGuideArticleDetail) {
       NotificationService().notify(notifyGuideArticleDetailNotification, data);

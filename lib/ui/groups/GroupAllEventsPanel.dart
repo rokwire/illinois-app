@@ -1,4 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -9,7 +13,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/ui/groups/GroupWidgets.dart';
 
 class GroupAllEventsPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group? group;
@@ -52,7 +55,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
               Container(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18), child: _loadingEvents ? _loadingIndicator : _buildEvents())
             ])),
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         bottomNavigationBar: uiuc.TabBar());
   }
 
@@ -60,8 +63,8 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
     List<Widget> content = <Widget>[];
 
     if (_events != null) {
-      for (Event2? groupEvent in _events!) {
-        content.add(GroupEventCard(groupEvent: groupEvent, group: widget.group));
+      for (Event2 groupEvent in _events!) {
+        content.add(Padding(padding: EdgeInsets.only(bottom: 16), child: Event2Card(groupEvent, group: widget.group, onTap: () => _onTapEvent(groupEvent))));
       }
 
       if (_extendingEvents) {
@@ -77,7 +80,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
         padding: EdgeInsets.only(top: 150),
         child: Center(
             child: SizedBox(
-                width: 32, height: 32, child: CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3))));
+                width: 32, height: 32, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3))));
   }
 
   Widget get _extendingIndicator => Container(
@@ -88,7 +91,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
               width: 24,
               height: 24,
               child: CircularProgressIndicator(
-                  strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary)))));
+                  strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)))));
 
   void _load() {
     if (!_loadingEvents) {
@@ -146,6 +149,18 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
         });
       }
     }
+  }
+
+  void _onTapEvent(Event2 event) {
+    Analytics().logSelect(target: 'Group Event: ${event.name}');
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (context) => Event2DetailPanel(
+                event: event,
+                eventSelector: widget.group != null
+                    ? GroupEventSelector(GroupEventData(group: widget.group, event: event), showSelectionButton: false)
+                    : null)));
   }
 
   bool? get _hasMoreEvents => (_totalEventsCount != null) ? ((_events?.length ?? 0) < _totalEventsCount!) : _lastPageLoadedAll;

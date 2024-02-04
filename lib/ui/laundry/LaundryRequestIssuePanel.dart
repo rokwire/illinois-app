@@ -36,7 +36,7 @@ class LaundryRequestIssuePanel extends StatefulWidget {
 }
 
 class _LaundryRequestIssuePanelState extends State<LaundryRequestIssuePanel> {
-  final Color _inputDecorationColor = Styles().colors!.mediumGray2!;
+  final Color _inputDecorationColor = Styles().colors.mediumGray2;
 
   final int _machineIdSymbolsCount = 6;
   List<TextEditingController> _symbolsControllers = [];
@@ -95,12 +95,12 @@ class _LaundryRequestIssuePanelState extends State<LaundryRequestIssuePanel> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [_buildMachineIdSection(), _buildSubmitSection(), _buildIdExampleSection()]))
         ])),
-        backgroundColor: Styles().colors?.background,
+        backgroundColor: Styles().colors.background,
         bottomNavigationBar: uiuc.TabBar());
   }
 
   Widget _buildLaundryColorSection() {
-    return Container(color: Styles().colors?.accentColor2, height: 4);
+    return Container(color: Styles().colors.accentColor2, height: 4);
   }
 
   Widget _buildMachineIdSection() {
@@ -111,11 +111,11 @@ class _LaundryRequestIssuePanelState extends State<LaundryRequestIssuePanel> {
               padding: EdgeInsets.only(bottom: 22),
               child: Text(Localization().getStringEx('panel.laundry.request_issue.machine_id.enter.label', 'Please enter the Machine ID'),
                   textAlign: TextAlign.center,
-                  style: Styles().textStyles?.getTextStyle("widget.description.extra_large"))),
+                  style: Styles().textStyles.getTextStyle("widget.description.extra_large"))),
           Container(
               padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
-                  color: Styles().colors!.white,
+                  color: Styles().colors.white,
                   borderRadius: BorderRadius.all(Radius.circular(4)),
                   boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]),
               child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: _buildMachineIdInputFields()))
@@ -160,7 +160,7 @@ class _LaundryRequestIssuePanelState extends State<LaundryRequestIssuePanel> {
                 autocorrect: false,
                 enableSuggestions: false,
                 textAlign: TextAlign.center,
-                style: Styles().textStyles?.getTextStyle("widget.input_field.enable.text.extra_large"),
+                style: Styles().textStyles.getTextStyle("widget.input_field.enable.text.extra_large"),
                 decoration: InputDecoration(border: InputBorder.none))));
   }
 
@@ -170,12 +170,12 @@ class _LaundryRequestIssuePanelState extends State<LaundryRequestIssuePanel> {
         child: Stack(alignment: Alignment.center, children: [
           RoundedButton(
               label: Localization().getStringEx('panel.laundry.request_issue.button.submit.label', 'Submit'),
-              textStyle: Styles().textStyles?.getTextStyle("widget.colourful_button.title.large.accent"),
-              backgroundColor: Styles().colors!.fillColorPrimary,
+              textStyle: Styles().textStyles.getTextStyle("widget.colourful_button.title.large.accent"),
+              backgroundColor: Styles().colors.fillColorPrimary,
               contentWeight: 0.5,
-              borderColor: Styles().colors!.fillColorPrimary,
+              borderColor: Styles().colors.fillColorPrimary,
               onTap: _onTapSubmit,
-              rightIcon: Styles().images?.getImage('chevron-right-white', excludeFromSemantics: true)),
+              rightIcon: Styles().images.getImage('chevron-right-white', excludeFromSemantics: true)),
           Visibility(visible: _isLoading, child: CircularProgressIndicator())
         ]));
   }
@@ -186,8 +186,8 @@ class _LaundryRequestIssuePanelState extends State<LaundryRequestIssuePanel> {
           padding: EdgeInsets.only(bottom: 18),
           child: Text(Localization().getStringEx('panel.laundry.request_issue.machine_id.example.label', 'Machine ID Example'),
               textAlign: TextAlign.center,
-              style: Styles().textStyles?.getTextStyle("widget.title.medium.fat"))),
-      Styles().images?.getImage('laundry-placeholder') ?? Container(),
+              style: Styles().textStyles.getTextStyle("widget.title.medium.fat"))),
+      Styles().images.getImage('laundry-placeholder') ?? Container(),
     ]);
   }
 

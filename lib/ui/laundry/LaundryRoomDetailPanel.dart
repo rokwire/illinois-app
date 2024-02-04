@@ -76,7 +76,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
     return Scaffold(
       appBar: _buildHeaderBar(),
       body: _isLoading ? _buildLoadingWidget() : _buildRoomContentWidget(),
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: !_isLoading ? uiuc.TabBar() : null,
     );
   }
@@ -85,7 +85,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
     return Column(children: <Widget>[
       Expanded(child:
         SingleChildScrollView(scrollDirection: Axis.vertical, child:
-          Container(color: Styles().colors?.background, child:
+          Container(color: Styles().colors.background, child:
             Column(children: <Widget>[
               _buildLaundryRoomCaptionSection(),
               _buildLaundryRoomInfoSection(),
@@ -110,7 +110,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
 
   Widget _buildLocationWidget() {
     return _isLocationWidgetEnabled &&  (widget.room.location?.isLocationCoordinateValid == true) ? Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-      Styles().images?.getImage('location', excludeFromSemantics: true) ?? Container(),
+      Styles().images.getImage('location', excludeFromSemantics: true) ?? Container(),
       Expanded(
           child: GestureDetector(
               onTap: _onTapViewMap,
@@ -122,13 +122,13 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
                   child: Padding(
                       padding: EdgeInsets.only(left: 10, right: 24),
                       child: Text(Localization().getStringEx('panel.laundry_detail.button.view_on_map.title', 'View on map'),
-                          style: Styles().textStyles?.getTextStyle("panel.laundry_room_detail.map_button.title.regular.underline"))))))
+                          style: Styles().textStyles.getTextStyle("panel.laundry_room_detail.map_button.title.regular.underline"))))))
     ]) : Container();
   }
 
   Widget _buildReportIssueWidget() {
     return Padding(padding: EdgeInsets.only(top: 10), child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-      Styles().images?.getImage('issue', excludeFromSemantics: true) ?? Container(),
+      Styles().images.getImage('issue', excludeFromSemantics: true) ?? Container(),
       Expanded(
           child: GestureDetector(
               onTap: _onTapReportIssue,
@@ -140,12 +140,12 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
                   child: Padding(
                       padding: EdgeInsets.only(left: 10, right: 24),
                       child: Text(Localization().getStringEx('panel.laundry_detail.button.report_issue.title', 'Report an Issue'),
-                          style: Styles().textStyles?.getTextStyle("panel.laundry_room_detail.map_button.title.regular.underline"))))))
+                          style: Styles().textStyles.getTextStyle("panel.laundry_room_detail.map_button.title.regular.underline"))))))
     ]));
   }
 
   Widget _buildLaundryRoomCaptionSection() {
-    return Container(color: Styles().colors?.accentColor2, height: 4,);
+    return Container(color: Styles().colors.accentColor2, height: 4,);
   }
 
   Widget _buildLaundryRoomInfoSection() {
@@ -167,14 +167,14 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
           Row(children: <Widget>[
             Expanded(child:
               Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-                Text(widget.room.name ?? '', style: Styles().textStyles?.getTextStyle("widget.title.medium_large.extra_fat"),),
+                Text(widget.room.name ?? '', style: Styles().textStyles.getTextStyle("widget.title.medium_large.extra_fat"),),
               ),
             ),
             Visibility(visible: Auth2().canFavorite, child:
               GestureDetector(onTap: _onTapFavorite, child:
                 Semantics(label: favoriteLabel, hint: favoriteHint, button: true, excludeSemantics: true, child:
                   Padding(padding: EdgeInsets.only(left: 12, right: 16, top: 24, bottom: 25), child:
-                    Styles().images?.getImage(favoriteIconKey, excludeFromSemantics: true)
+                    Styles().images.getImage(favoriteIconKey, excludeFromSemantics: true)
                   ),
                 ),
               ),
@@ -204,20 +204,20 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
       SingleChildScrollView(scrollDirection: Axis.horizontal, child:
         Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
           Row(children: <Widget>[
-            Styles().images?.getImage('washer-large', semanticLabel: Localization().getStringEx('panel.laundry_detail.label.washer', 'WASHER')) ?? Container(),
+            Styles().images.getImage('washer-large', semanticLabel: Localization().getStringEx('panel.laundry_detail.label.washer', 'WASHER')) ?? Container(),
             Padding(padding: EdgeInsets.only(right: 12),),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Text(Localization().getStringEx('panel.laundry_detail.label.washers', 'WASHERS'), style: Styles().textStyles?.getTextStyle("widget.title.small.fat.spaced")),
-              Text(availableWashersLabel, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")),
+              Text(Localization().getStringEx('panel.laundry_detail.label.washers', 'WASHERS'), style: Styles().textStyles.getTextStyle("widget.title.small.fat.spaced")),
+              Text(availableWashersLabel, style: Styles().textStyles.getTextStyle("widget.item.regular.thin")),
             ],)
           ],),
           Padding(padding: EdgeInsets.only(right: 16)),
           Row(children: <Widget>[
-            Styles().images?.getImage('dryer-large', semanticLabel: Localization().getStringEx('panel.laundry_detail.label.dryer', 'DRYER')) ?? Container(),
+            Styles().images.getImage('dryer-large', semanticLabel: Localization().getStringEx('panel.laundry_detail.label.dryer', 'DRYER')) ?? Container(),
             Padding(padding: EdgeInsets.only(right: 12),),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Text(Localization().getStringEx('panel.laundry_detail.label.dryers', 'DRYERS'), style: Styles().textStyles?.getTextStyle("widget.title.small.fat.spaced"),),
-              Text( availableDryersLabel, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),),
+              Text(Localization().getStringEx('panel.laundry_detail.label.dryers', 'DRYERS'), style: Styles().textStyles.getTextStyle("widget.title.small.fat.spaced"),),
+              Text( availableDryersLabel, style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),),
             ],),
           ],)
         ],),
@@ -246,7 +246,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
   }
 
   Widget _buildApplianceSeparator(BuildContext context, int index) {
-    return Container(height: 1, color: Styles().colors?.background,);
+    return Container(height: 1, color: Styles().colors.background,);
   }
 
   void _load() {
@@ -313,12 +313,12 @@ class _LaundryRoomApplianceItem extends StatelessWidget {
     return Container(color: Colors.white, child:
       Padding(padding: EdgeInsets.all(12), child:
         Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-          Styles().images?.getImage(imageKey, semanticLabel: deviceName, excludeFromSemantics: true) ?? Container(),
+          Styles().images.getImage(imageKey, semanticLabel: deviceName, excludeFromSemantics: true) ?? Container(),
           Padding(padding: EdgeInsets.only(left: 12, right: 10), child:
-            Text(appliance.label ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),),
+            Text(appliance.label ?? '', style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),),
           ),
           Expanded(child:
-            Text(StringUtils.ensureNotEmpty(_applianceStatusLabel), style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")),
+            Text(StringUtils.ensureNotEmpty(_applianceStatusLabel), style: Styles().textStyles.getTextStyle("widget.item.regular.thin")),
           )
         ],),
       ),

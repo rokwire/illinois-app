@@ -19,13 +19,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/OnCampus.dart';
-import 'package:illinois/service/Questionnaire.dart';
-import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
+import 'package:illinois/ui/settings/SettingsVoiceRecordigWidgets.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
-import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -39,15 +35,15 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class SettingsPersonalInfoContentWidget extends StatefulWidget {
+class ProfileDetailsPage extends StatefulWidget {
   final String? parentRouteName;
 
-  SettingsPersonalInfoContentWidget({Key? key, this.parentRouteName}) : super(key: key);
+  ProfileDetailsPage({Key? key, this.parentRouteName}) : super(key: key);
 
-  _SettingsPersonalInfoContentWidgetState createState() => _SettingsPersonalInfoContentWidgetState();
+  _ProfileDetailsPageState createState() => _ProfileDetailsPageState();
 }
 
-class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfoContentWidget> implements NotificationsListener {
+class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements NotificationsListener {
 
   TextEditingController? _nameController;
   TextEditingController? _emailController;
@@ -105,9 +101,6 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     return Column(children: <Widget>[
       _buildProfilePicture(),
       _buildInfoContent(),
-      _buildOnCampusSettings(),
-      _buildAdaSettings(),
-      _buildQuestionnaireOptions(),
       _buildAccountManagementOptions(),
       _buildDeleteMyAccount()
     ]);
@@ -137,6 +130,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
       _PersonalInfoEntry(
           title: Localization().getStringEx('panel.profile_info.full_name.title', 'Full Name'),
           value: Auth2().account?.authType?.uiucUser?.fullName ?? ""),
+      NamePronouncementWidget(),
       _PersonalInfoEntry(
           title: Localization().getStringEx('panel.profile_info.middle_name.title', 'Middle Name'),
           value: Auth2().account?.authType?.uiucUser?.middleName ?? ""),
@@ -165,14 +159,14 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           textField: true, excludeSemantics: true,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
+            decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
 //          height: 48,
             child: TextField(
               controller: _nameController,
               onChanged: (text) { setState(() {});},
               decoration: InputDecoration(border: InputBorder.none),
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
-              style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular")
+              style: Styles().textStyles.getTextStyle("widget.input_field.text.regular")
             ),
           )
           ),
@@ -192,14 +186,14 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
             textField: true, excludeSemantics: true,
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
+                decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
 //                height: 48,
                 child: TextField(
                   controller: _emailController,
                   onChanged: (text) { setState(() {});},
                   decoration: InputDecoration(border: InputBorder.none),
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                  style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular")
+                  style: Styles().textStyles.getTextStyle("widget.input_field.text.regular")
                 ),
               )
           ),
@@ -224,14 +218,14 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           textField: true, excludeSemantics: true,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
+            decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
 //          height: 48,
             child: TextField(
               controller: _nameController,
               onChanged: (text) { setState(() {});},
               decoration: InputDecoration(border: InputBorder.none),
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
-              style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular")
+              style: Styles().textStyles.getTextStyle("widget.input_field.text.regular")
             ),
           )
           ),
@@ -250,14 +244,14 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
             textField: true, excludeSemantics: true,
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
+                decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
 //                height: 48,
                 child: TextField(
                   controller: _phoneController,
                   onChanged: (text) { setState(() {});},
                   decoration: InputDecoration(border: InputBorder.none),
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                  style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular")
+                  style: Styles().textStyles.getTextStyle("widget.input_field.text.regular")
                 ),
               )
           ),
@@ -266,226 +260,6 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
               value: Auth2().account?.authType?.email ?? ""),
         ],
       );
-  }
-
-  Widget _buildAdaSettings() {
-    return Padding(padding: EdgeInsets.only(top: 25), child:
-      Column(children:<Widget>[
-        Row(children: [
-          Expanded(child:
-            Text(Localization().getStringEx('panel.settings.home.calendar.ada.title', 'Accessibility Needs'), style:
-            Styles().textStyles?.getTextStyle("widget.title.large.fat")
-            ),
-          ),
-        ]),
-        Container(height: 4),
-        ToggleRibbonButton(
-          label: Localization().getStringEx('panel.settings.home.calendar.ada.toggle.title', 'Display ADA accessible building entrances for My Courses'),
-          border: Border.all(color: Styles().colors!.surfaceAccent!),
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-          toggled: StudentCourses().requireAda,
-          onTap: _onRequireAdaToggled)
-      ]),
-    );
-  }
-
-  Widget _buildQuestionnaireOptions() {
-    return Padding(padding: EdgeInsets.only(top: 25), child:
-      Column(children:<Widget>[
-        Row(children: [
-          Expanded(child:
-            Text(Localization().getStringEx('panel.settings.home.calendar.research.title', 'Research at Illinois'), style:
-            Styles().textStyles?.getTextStyle("widget.title.large.fat")
-            ),
-          ),
-        ]),
-        Container(height: 4),
-        ToggleRibbonButton(
-          label: Localization().getStringEx('panel.settings.home.calendar.research.toggle.title', 'Participate in research'),
-          border: Border.all(color: Styles().colors!.surfaceAccent!),
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-          toggled: Questionnaires().participateInResearch == true,
-          onTap: _onResearchQuestionnaireToggled
-        ),
-        Container(height: 4),
-        RibbonButton(
-          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-          label: Localization().getStringEx("panel.settings.home.calendar.research.questionnaire.title", "Research interest form"),
-          textStyle:  (Questionnaires().participateInResearch == true) ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled"),
-          rightIconKey: Questionnaires().participateInResearch ?? false ? 'chevron-right-bold' : 'chevron-right-gray',
-          onTap: _onResearchQuestionnaireClicked
-        ),
-      ]),
-    );
-  }
-  
-
-  //OnCampus Settings
-
-  Widget _buildOnCampusSettings() {
-    bool onCampusRegionMonitorEnabled = OnCampus().enabled;
-    bool onCampusRegionMonitorSelected = OnCampus().monitorEnabled;
-
-    bool campusRegionManualInsideSelected = OnCampus().monitorManualInside;
-    bool onCampusSelected = !onCampusRegionMonitorSelected && campusRegionManualInsideSelected;
-    bool offCampusSelected = !onCampusRegionMonitorSelected && !campusRegionManualInsideSelected;
-
-    String onCampusRegionMonitorInfo = onCampusRegionMonitorEnabled ?
-      Localization().getStringEx('panel.settings.home.calendar.on_campus.location_services.required.label', 'requires location services') :
-      Localization().getStringEx('panel.settings.home.calendar.on_campus.location_services.not_available.label', 'not available');
-    String autoOnCampusInfo = Localization().getStringEx('panel.settings.home.calendar.on_campus.radio_button.auto.title', 'Automatically detect when I am on Campus') + '\n($onCampusRegionMonitorInfo)';
-
-    return Padding(padding: EdgeInsets.only(top: 25), child:
-      Column(children:<Widget>[
-        Row(children: [
-          Expanded(child:
-            Text(Localization().getStringEx('panel.settings.home.calendar.on_campus.title', 'On Campus'), style:
-              Styles().textStyles?.getTextStyle("widget.title.large.fat")
-            ),
-          ),
-        ]),
-        _buildOnCampusRadioItem(
-            label: autoOnCampusInfo,
-            enabled: onCampusRegionMonitorEnabled,
-            selected: onCampusRegionMonitorSelected,
-            onTap: _onTapOnCampusAuto),
-        _buildOnCampusRadioItem(
-            label: Localization().getStringEx('panel.settings.home.calendar.on_campus.radio_button.on.title', 'Always make me on campus'),
-            selected: onCampusSelected,
-            onTap: _onTapOnCampusOn),
-        _buildOnCampusRadioItem(
-            label: Localization().getStringEx('panel.settings.home.calendar.on_campus.radio_button.off.title', 'Always make me off campus'),
-            selected: offCampusSelected,
-            onTap: _onTapOnCampusOff),
-      ]),
-    );
-  }
-
-  Widget _buildOnCampusRadioItem({required String label, bool enabled = true, required bool selected, VoidCallback? onTap}) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(height: 4),
-      GestureDetector(onTap: onTap, child:
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          decoration: BoxDecoration(
-            color: Styles().colors!.white,
-            border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
-            borderRadius: BorderRadius.all(Radius.circular(4))),
-          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Expanded(child:
-              Text(label, style: enabled ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled")
-              )
-            ),
-            Padding(padding: EdgeInsets.only(left: 5), child:
-              Styles().images?.getImage(selected ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true)
-            )
-          ])
-        )
-      )
-    ]);
-  }
-
-  void _onRequireAdaToggled() {
-    Analytics().logSelect(target: 'I require ADA entrances');
-    setStateIfMounted(() {
-      StudentCourses().requireAda = !StudentCourses().requireAda;
-    });
-  }
-
-  void _onResearchQuestionnaireToggled() {
-    Analytics().logSelect(target: 'Participate in research');
-    if (Questionnaires().participateInResearch == true) {
-      _promptTurnOffParticipateInResearch().then((bool? result) {
-        if (result == true) {
-          setState(() {
-            Questionnaires().participateInResearch = false;
-          });
-        }
-      });
-    }
-    else {
-      setState(() {
-        Questionnaires().participateInResearch = true;
-      });
-    }
-  }
-
-  Future<bool?> _promptTurnOffParticipateInResearch() async {
-    String promptEn = 'Please confirm that you wish to no longer participate in Research at Illinois. All information filled out in your questionnaire will be deleted.';
-    return await AppAlert.showCustomDialog(context: context,
-      contentWidget:
-        Text(Localization().getStringEx('panel.settings.home.calendar.research.prompt.title', promptEn),
-          style: Styles().textStyles?.getTextStyle("widget.message.regular"),
-        ),
-      actions: [
-        TextButton(
-          child: Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
-          onPressed: () { Analytics().logAlert(text: promptEn, selection: 'Yes'); Navigator.of(context).pop(true); }
-        ),
-        TextButton(
-          child: Text(Localization().getStringEx('dialog.no.title', 'No')),
-          onPressed: () { Analytics().logAlert(text: promptEn, selection: 'No'); Navigator.of(context).pop(false); }
-        )
-    ]);
-  }
-
-  void _onResearchQuestionnaireClicked() {
-    Analytics().logSelect(target: 'Research Questionnaire');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnairePanel(onboardingContext: {
-      "onContinueAction": () {
-        _didResearchQuestionnaire();
-      }
-    },)));
-  }
-
-  void _didResearchQuestionnaire() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnaireAcknowledgementPanel(onboardingContext: {
-      "onContinueAction": () {
-        _didAcknowledgeResearchQuestionnaire();
-      }
-    },)));
-  }
-
-  void _didAcknowledgeResearchQuestionnaire() {
-    if (widget.parentRouteName != null) {
-      Navigator.of(context).popUntil((Route route){
-        return route.settings.name == widget.parentRouteName;
-      });
-    }
-    else {
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
-    }
-  }
-
-  void _onTapOnCampusAuto() {
-    if (OnCampus().enabled && !OnCampus().monitorEnabled) {
-      Analytics().logSelect(target: 'Automatically detect when I am on Campus');
-      setState(() {
-        OnCampus().monitorEnabled = true;
-      });
-    }
-  }
-
-  void _onTapOnCampusOn() {
-    if ((OnCampus().monitorEnabled || !OnCampus().monitorManualInside)) {
-      Analytics().logSelect(target: 'Always make me on campus');
-      setState(() {
-        OnCampus().monitorEnabled = false;
-        OnCampus().monitorManualInside = true;
-      });
-    }
-  }
-
-  void _onTapOnCampusOff() {
-    if ((OnCampus().monitorEnabled || OnCampus().monitorManualInside)) {
-      Analytics().logSelect(target: 'Always make me off campus');
-      setState(() {
-        OnCampus().monitorEnabled = false;
-        OnCampus().monitorManualInside = false;
-      });
-    }
   }
 
   //AccountManagementOptions
@@ -509,9 +283,9 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     return RoundedButton(
       label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
       hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
-      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
-      backgroundColor: Styles().colors!.background,
-      borderColor: Styles().colors!.fillColorSecondary,
+      textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+      backgroundColor: Styles().colors.background,
+      borderColor: Styles().colors.fillColorSecondary,
       borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
       onTap: _onSignOutClicked,
     );
@@ -521,10 +295,10 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     return RoundedButton(
       label: Localization().getStringEx("panel.profile_info.button.save.title", "Save Changes"),
       hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
-       textStyle: _canSave ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled"),
+       textStyle: _canSave ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
       enabled: _canSave,
-      backgroundColor: _canSave ? Styles().colors!.white : Styles().colors!.background,
-      borderColor: _canSave? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+      backgroundColor: _canSave ? Styles().colors.white : Styles().colors.background,
+      borderColor: _canSave? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
       progress: _isSaving,
       onTap: _onSaveChangesClicked,
     );
@@ -540,14 +314,14 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           children: <Widget>[
             Text(
               Localization().getStringEx("panel.profile_info.logout.title", "{{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-              style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.large"),
+              style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.large"),
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 26),
               child: Text(
                 Localization().getStringEx("panel.profile_info.logout.message", promptEn),
                 textAlign: TextAlign.left,
-                style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.regular")
+                style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.regular")
               ),
             ),
             Row(
@@ -585,7 +359,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           child: Container(decoration:
             BoxDecoration(shape: BoxShape.circle, color: Colors.white, image: DecorationImage(fit: _hasProfilePicture ? BoxFit.cover : BoxFit.contain, image: profileImage!.image))
           ),
-        ) : Styles().images?.getImage('profile-placeholder', excludeFromSemantics: true);
+        ) : Styles().images.getImage('profile-placeholder', excludeFromSemantics: true);
       contentWidget = Column(children: [
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Visibility(visible: _hasProfilePicture, child:
@@ -631,11 +405,11 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         child: GestureDetector(
         onTap: onTap,
         child: Container(
-            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1))),
+            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1))),
             padding: EdgeInsets.only(bottom: 2),
             child: Text(title,
                 semanticsLabel: "",
-                style:  Styles().textStyles?.getTextStyle("panel.settings.button.title.medium")))));
+                style:  Styles().textStyles.getTextStyle("panel.settings.button.title.medium")))));
   }
 
   void _loadUserProfilePicture() {
@@ -718,7 +492,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
                 if (result == true) {
                   Navigator.pop(context);
                 } else {
-                  AppToast.show("Unable to perform save");
+                  AppToast.showMessage("Unable to perform save");
                 }
               }
             });
@@ -730,7 +504,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         }
         else {
           setState(() { _isSaving = false; });
-          AppToast.show("Unable to perform save");
+          AppToast.showMessage("Unable to perform save");
         }
       }
     });
@@ -805,7 +579,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     AppAlert.showCustomDialog(context: context,
         contentWidget:
         Text(promptEn,
-          style: Styles().textStyles?.getTextStyle("widget.message.regular"),
+          style: Styles().textStyles.getTextStyle("widget.message.regular"),
         ),
         actions: [
           TextButton(
@@ -826,16 +600,17 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
   Widget _buildDeleteMyAccount() {
     return Padding(padding: EdgeInsets.only(top: 24, bottom: 12), child:
     RoundedButton(
-        backgroundColor: Styles().colors!.white,
-        borderColor: Styles().colors!.white,
+        backgroundColor: Styles().colors.white,
+        borderColor: Styles().colors.white,
         label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Delete My Account"),
         hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
-        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.thin.secondary"),
+        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.thin.secondary"),
         borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
         onTap: _onTapDeleteData
       )
     );
   }
+
 
   void _onTapDeleteData() async {
     final String groupsSwitchTitle = Localization().getStringEx('panel.settings.privacy_center.delete_account.contributions.delete.msg', 'Please delete all my contributions.');
@@ -846,7 +621,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         title: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.title", "Delete your account?"),
         message: [
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description1", "This will ")),
-          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: Styles().textStyles?.getTextStyle("widget.text.fat")),
+          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: Styles().textStyles.getTextStyle("widget.text.fat")),
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description3", "delete all of your information. You will not be able to retrieve your data after you have deleted it. Are you sure you want to continue?")),
           TextSpan(text: contributeInGroups?
           Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description.groups", " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, reactions and events) or leave them for others to see.") :
@@ -875,7 +650,6 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     Analytics().logAlert(text: "Remove My Information", selection: "Yes");
     await Auth2().deleteUser();
   }
-
 
   bool get _canSave{
     return _isEmailChanged || _isNameChanged;
@@ -910,7 +684,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
   }
 
   TextStyle? get _formFieldLabelTextStyle {
-    return  Styles().textStyles?.getTextStyle("widget.item.small");
+    return  Styles().textStyles.getTextStyle("widget.item.small");
   }
 }
 
@@ -927,10 +701,10 @@ class _PersonalInfoEntry extends StatelessWidget {
       Row(children: [
         Expanded(child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Text(title ?? '', style: Styles().textStyles?.getTextStyle("panel.settings.detail.title.medium")
+              Text(title ?? '', style: Styles().textStyles.getTextStyle("panel.settings.detail.title.medium")
               ),
               Container(height: 5,),
-              Text(value ?? '', style: Styles().textStyles?.getTextStyle("widget.detail.large.fat"))
+              Text(value ?? '', style: Styles().textStyles.getTextStyle("widget.detail.large.fat"))
             ],),
         )
       ],),

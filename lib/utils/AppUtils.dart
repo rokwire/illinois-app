@@ -69,7 +69,7 @@ class AppAlert {
     return showDialog(context: context, builder: (context) {
       return AlertDialog(
         content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.medium")),
+          Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.medium")),
           Container(height:16),
           Text(message!, textAlign: TextAlign.center,),
         ],),
@@ -108,13 +108,13 @@ class AppAlert {
   static Future<void> showPopup(BuildContext context, String? message) async {
     return showDialog(context: context, builder: (context) {
       return AlertDialog(contentPadding: EdgeInsets.zero, content:
-        Container(decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)), child:
+        Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)), child:
           Stack(alignment: Alignment.center, children: [
             Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32), child:
               Column(mainAxisSize: MainAxisSize.min, children: [
-                Styles().images?.getImage('university-logo', excludeFromSemantics: true) ?? Container(),
+                Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container(),
                 Padding(padding: EdgeInsets.only(top: 18), child:
-                  Text(message ?? '', textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.small"))
+                  Text(message ?? '', textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle("widget.detail.small"))
                 ),
               ])
             ),
@@ -125,7 +125,7 @@ class AppAlert {
                   Navigator.of(context).pop();
                   }, child:
                   Padding(padding: EdgeInsets.all(16), child:
-                    Styles().images?.getImage('close', excludeFromSemantics: true)
+                    Styles().images.getImage('close', excludeFromSemantics: true)
                   )
                 )
               )
@@ -224,8 +224,8 @@ class AppSemantics {
     //                       "<",
     //                       semanticsLabel: "",
     //                       style: TextStyle(
-    //                         color : Styles().colors!.fillColorPrimary,
-    //                         fontFamily: Styles().fontFamilies!.bold,
+    //                         color : Styles().colors.fillColorPrimary,
+    //                         fontFamily: Styles().fontFamilies.bold,
     //                         fontSize: 26,
     //                       ),),)
     //               )
@@ -244,8 +244,8 @@ class AppSemantics {
     //                       ">",
     //                       semanticsLabel: "",
     //                       style: TextStyle(
-    //                         color : Styles().colors!.fillColorPrimary,
-    //                         fontFamily: Styles().fontFamilies!.bold,
+    //                         color : Styles().colors.fillColorPrimary,
+    //                         fontFamily: Styles().fontFamilies.bold,
     //                         fontSize: 26,
     //                       ),),)
     //               )
@@ -409,19 +409,19 @@ class AppPopScope {
 
 extension StateExt on State {
   @protected
-  void setStateIfMounted(VoidCallback fn) {
+  void setStateIfMounted([VoidCallback? fn]) {
     if (mounted) {
       // ignore: invalid_use_of_protected_member
-      setState(fn);
+      setState(fn ?? (){});
     }
   }
 
   @protected
-  void setStateDelayedIfMounted(VoidCallback fn, { Duration duration = Duration.zero }) {
+  void setStateDelayedIfMounted(VoidCallback? fn, { Duration duration = Duration.zero }) {
     Future.delayed(duration, () {
       if (mounted) {
         // ignore: invalid_use_of_protected_member
-        setState(fn);
+        setState(fn ?? (){});
       }
     });
   }

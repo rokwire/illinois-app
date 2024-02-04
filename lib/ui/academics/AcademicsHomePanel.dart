@@ -26,6 +26,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/academics/AcademicsAppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsEventsContentWidget.dart';
+import 'package:illinois/ui/academics/EssentialSkillsCoachDashboardPanel.dart';
 import 'package:illinois/ui/academics/MedicineCoursesContentWidget.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
@@ -45,7 +46,7 @@ enum AcademicsContent { events,
   gies_checklist, uiuc_checklist,
   canvas_courses, medicine_courses, student_courses,
   skills_self_evaluation,
-  todo_list, due_date_catalog, my_illini, appointments
+  todo_list, due_date_catalog, my_illini, appointments, skills_dashboard
 }
 
 class AcademicsHomePanel extends StatefulWidget {
@@ -114,7 +115,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     return Scaffold(
         appBar: _headerBar,
         body: _bodyWidget,
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         bottomNavigationBar: _navigationBar,
       );
   }
@@ -135,16 +136,16 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   Widget get _bodyWidget {
     return Column(children: <Widget>[
       Container(
-        color: _skillsSelfEvaluationSelected ? Styles().colors?.fillColorPrimaryVariant : Styles().colors?.background,
+        color: _skillsSelfEvaluationSelected || _skillsDashboardSelected ? Styles().colors.fillColorPrimaryVariant : Styles().colors.background,
         padding: EdgeInsets.only(left: 16, top: 16, right: 16),
         child: Semantics(
           hint:  Localization().getStringEx("dropdown.hint", "DropDown"),
           container: true,
           child: RibbonButton(
-            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
-            backgroundColor: Styles().colors!.white,
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+            backgroundColor: Styles().colors.white,
             borderRadius: BorderRadius.all(Radius.circular(5)),
-            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
             label: _getContentLabel(_selectedContent),
             onTap: _onTapRibbonButton
@@ -153,7 +154,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       ),
       Expanded(child:
         Stack(children: [
-          Padding(padding: _skillsSelfEvaluationSelected ? EdgeInsets.zero : EdgeInsets.only(top: 16, left: 16, right: 16,), child:
+          Padding(padding: _skillsSelfEvaluationSelected || _skillsDashboardSelected ? EdgeInsets.zero : EdgeInsets.only(top: 16, left: 16, right: 16,), child:
             _contentWidget
           ),
           _buildContentValuesContainer()
@@ -178,12 +179,12 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
                     _contentValuesVisible = false;
                   });
                 },
-                child: Container(color: Styles().colors!.blackTransparent06))));
+                child: Container(color: Styles().colors.blackTransparent06))));
   }
 
   Widget _buildContentValuesWidget() {
     List<Widget> sectionList = <Widget>[];
-    sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
+    sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
     if (CollectionUtils.isNotEmpty(_contentValues)) {
       for (AcademicsContent section in _contentValues!) {
         if ((_selectedContent != section)) {
@@ -196,8 +197,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
 
   Widget _buildContentItem(AcademicsContent contentItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors!.white,
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        backgroundColor: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         rightIcon: _buildContentItemRightIcon(contentItem),
         label: _getContentLabel(contentItem),
@@ -208,8 +209,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     switch (contentItem) {
       case AcademicsContent.my_illini:
         return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Styles().images?.getImage('key', excludeFromSemantics: true) ?? Container(),
-          Padding(padding: EdgeInsets.only(left: 6), child: Styles().images?.getImage('external-link', excludeFromSemantics: true))
+          Styles().images.getImage('key', excludeFromSemantics: true) ?? Container(),
+          Padding(padding: EdgeInsets.only(left: 6), child: Styles().images.getImage('external-link', excludeFromSemantics: true))
         ]);
       default:
         return null;
@@ -273,6 +274,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     } else if (code == 'my_illini') {
       return AcademicsContent.my_illini;
     } else if (code == 'appointments') {
+      return AcademicsContent.skills_dashboard;
+    } else if (code == 'skills_dashboard') {
       return AcademicsContent.appointments;
     } else {
       return null;
@@ -382,6 +385,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     return ((_selectedContent == AcademicsContent.gies_checklist) ||
             (_selectedContent == AcademicsContent.uiuc_checklist) ||
             (_selectedContent == AcademicsContent.student_courses) ||
+            (_selectedContent == AcademicsContent.todo_list) ||
+            (_selectedContent == AcademicsContent.skills_dashboard) ||
             (_selectedContent == AcademicsContent.appointments) ||
             (_selectedContent == AcademicsContent.events)) ?
       _rawContentWidget :
@@ -411,9 +416,11 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return SkillsSelfEvaluation();
       case AcademicsContent.todo_list:
         return WellnessToDoHomeContentWidget();
+      case AcademicsContent.skills_dashboard:
+        return EssentialSkillsCoachDashboardPanel();
       case AcademicsContent.due_date_catalog:
         String? guideId = Guide().detailIdFromUrl(Config().dateCatalogUrl);
-        return (guideId != null) ? GuideDetailWidget(key: _dueDateCatalogKey, guideEntryId: guideId, headingColor: Styles().colors?.background) : Container();
+        return (guideId != null) ? GuideDetailWidget(key: _dueDateCatalogKey, guideEntryId: guideId, headingColor: Styles().colors.background) : Container();
       case AcademicsContent.appointments:
         return AcademicsAppointmentsContentWidget();
       default:
@@ -422,6 +429,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   }
   
   bool get _skillsSelfEvaluationSelected => _selectedContent == AcademicsContent.skills_self_evaluation;
+  bool get _skillsDashboardSelected => _selectedContent == AcademicsContent.skills_dashboard;
 
   bool _isCheckListCompleted(String contentKey) {
     int stepsCount = CheckList(contentKey).progressSteps?.length ?? 0;
@@ -455,6 +463,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return Localization().getStringEx('panel.academics.section.my_illini.label', 'myIllini');
       case AcademicsContent.appointments:
         return Localization().getStringEx('panel.academics.section.appointments.label', 'Appointments');
+      case AcademicsContent.skills_dashboard:
+        return Localization().getStringEx('', 'Essential Skills Coach');
     }
   }
 

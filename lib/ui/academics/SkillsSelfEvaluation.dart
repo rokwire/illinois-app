@@ -103,9 +103,9 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   Widget build(BuildContext context) {
     return SectionSlantHeader(
         headerWidget: _buildHeader(),
-        slantColor: Styles().colors?.gradientColorPrimary,
+        slantColor: Styles().colors.gradientColorPrimary,
         slantPainterHeadingHeight: 0,
-        backgroundColor: Styles().colors?.background,
+        backgroundColor: Styles().colors.background,
         children: _buildInfoAndSettings(),
         childrenPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         allowOverlap: false,
@@ -117,20 +117,20 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
       padding: EdgeInsets.only(top: 32, bottom: 32),
       child: Padding(padding: EdgeInsets.only(left: 24, right: 8), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Flexible(child: Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.section.title', 'Skills Self Evaluation'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.header'), textAlign: TextAlign.left,)),
+          Flexible(child: Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.section.title', 'Skills Self Evaluation'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.header'), textAlign: TextAlign.left,)),
           IconButton(
-            icon: Styles().images?.getImage('more-white', excludeFromSemantics: true) ?? Container(),
+            icon: Styles().images.getImage('more-white', excludeFromSemantics: true) ?? Container(),
             tooltip: Localization().getStringEx('panel.skills_self_evaluation.button.more.hint', 'Show more'),
             onPressed: _onTapShowBottomSheet,
             padding: EdgeInsets.zero,
           ),
         ]),
-        Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.time.description', '5 Minutes'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.time.description'), textAlign: TextAlign.left,),
+        Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.time.description', '5 Minutes'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.time.description'), textAlign: TextAlign.left,),
         Padding(padding: EdgeInsets.only(top: 24), child: _buildDescription()),
         Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
           label: Localization().getStringEx("panel.skills_self_evaluation.get_started.button.label", 'Get Started'),
-          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat.variant"),
-          backgroundColor: Styles().colors?.surface,
+          textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant"),
+          backgroundColor: Styles().colors.surface,
           onTap: _onTapStartEvaluation
         )),
       ]),),
@@ -140,8 +140,8 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Styles().colors?.fillColorPrimaryVariant ?? Colors.transparent,
-            Styles().colors?.gradientColorPrimary ?? Colors.transparent,
+            Styles().colors.fillColorPrimaryVariant,
+            Styles().colors.gradientColorPrimary,
           ]
         )
       ),
@@ -150,10 +150,10 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
 
   Widget _buildDescription() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(Localization().getStringEx("panel.skills_self_evaluation.get_started.description.title", 'Identify your strengths related to:'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'),),
+      Text(Localization().getStringEx("panel.skills_self_evaluation.get_started.description.title", 'Identify your strengths related to:'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.header.description'),),
       Padding(padding: EdgeInsets.only(top: 8), child: Text(
         Localization().getStringEx("panel.skills_self_evaluation.get_started.description.list", '\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience'),
-        style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'),
+        style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.header.description'),
       ))
     ]);
   }
@@ -165,7 +165,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
         leftIconKey: "info",
         label: saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.description", "Your results will be saved for you to revisit or compare to future results.") :
                 Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
-        textStyle: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
+        textStyle: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title'),
         backgroundColor: Colors.transparent,
         onTap: _onTapSavedResultsInfo,
       ),
@@ -173,7 +173,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
         leftIconKey: "settings",
         label: saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.label", "Don't Save My Results") :
                 Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.label", "Save My Results"),
-        textStyle: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
+        textStyle: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
         backgroundColor: Colors.transparent,
         onTap: _onTapSettings,
       ),
@@ -195,7 +195,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   void _onTapShowBottomSheet() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Styles().colors?.surface,
+      backgroundColor: Styles().colors.surface,
       isScrollControlled: true,
       isDismissible: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
@@ -208,36 +208,36 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
                   child: GestureDetector(onTap: () => Navigator.of(context).pop(),
                       child: Container(height: 8, width: 48,
                           decoration: BoxDecoration(borderRadius: BorderRadius.circular(8),
-                              color: Styles().colors?.mediumGray)))),
+                              color: Styles().colors.mediumGray)))),
               SizedBox(height: 16),
               RibbonButton(
                 rightIconKey: "chevron-right-bold",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.past_results.label", "View past results"),
-                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.variant"),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant"),
                 onTap: _onTapResults,
               ),
               RibbonButton(
                 rightIconKey: "chevron-right-bold",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.where_results_go.label", "Where do my results go?"),
-                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.variant"),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant"),
                 onTap: () => _onTapShowInfo("where_results_go"),
               ),
               RibbonButton(
                 rightIconKey: "chevron-right-bold",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.how_results_determined.label", "How are my results determined?"),
-                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.variant"),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant"),
                 onTap: () => _onTapShowInfo("how_results_determined"),
               ),
               RibbonButton(
                 rightIconKey: "chevron-right-bold",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.why_skills_matter.label", "Why do these skills matter?"),
-                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.variant"),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant"),
                 onTap: () => _onTapShowInfo("why_skills_matter"),
               ),
               RibbonButton(
                 rightIconKey: "chevron-right-bold",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.who_created_assessment.label", "Who created this assessment?"),
-                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.variant"),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant"),
                 onTap: () => _onTapShowInfo("who_created_assessment"),
               ),
             ]));
@@ -257,15 +257,15 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
       saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.dialog",
         "Your results will be saved for you to compare to future results.\n\nNo data from this assessment will be shared with other people or systems or stored outside of your Illinois app account.") :
           Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
-      style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
+      style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
       textAlign: TextAlign.center,
     );
     showDialog(context: context, builder: (_) => InfoPopup(
-      backColor: Styles().colors?.surface,
+      backColor: Styles().colors.surface,
       padding: EdgeInsets.only(left: 32, right: 32, top: 40, bottom: 32),
       alignment: Alignment.center,
       infoTextWidget: textWidget,
-      closeIcon: Styles().images?.getImage('close', excludeFromSemantics: true),
+      closeIcon: Styles().images.getImage('close', excludeFromSemantics: true),
     ),);
   }
 
@@ -278,7 +278,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
       Center(child:
         Text(
           Localization().getStringEx('panel.skills_self_evaluation.get_started.offline.error.msg', 'Skills Self-Evaluation is not available while offline.'),
-          textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title')
+          textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')
         )
       ),
     );

@@ -42,7 +42,7 @@ class _Event2FiltersPanelState extends State<Event2FiltersPanel> {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx("panel.event2.filters.header.title", "Event Filters"),),
       body: _buildPanelContent(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
     );
   }
 
@@ -55,7 +55,7 @@ class _Event2FiltersPanelState extends State<Event2FiltersPanel> {
           ),
         ),
       ),
-      // Container(height: 1, color: Styles().colors?.surfaceAccent),
+      // Container(height: 1, color: Styles().colors.surfaceAccent),
     ]) : Container();
   }
 
@@ -63,7 +63,7 @@ class _Event2FiltersPanelState extends State<Event2FiltersPanel> {
     List<Widget> conentList = <Widget>[];
 
     conentList.add(Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
-      Text('Choose one or more attributes to filter events', style: Styles().textStyles?.getTextStyle("widget.description.regular")),
+      Text('Choose one or more attributes to filter events', style: Styles().textStyles.getTextStyle("widget.description.regular")),
     ));
 
     List<ContentAttribute>? attributes = ListUtils.from<ContentAttribute>(_attributes?.attributes);
@@ -158,27 +158,27 @@ class _Event2AttributeButton extends StatelessWidget {
     ]);
   }
 
-  Color get borderColor => Styles().colors?.disabledTextColor ?? Color(0xFF717273);
+  Color get borderColor => Styles().colors.disabledTextColor;
 
   Decoration get headingDecoration => expanded ?
     BoxDecoration(
-      color: Styles().colors?.fillColorPrimary,
+      color: Styles().colors.fillColorPrimary,
       border: Border.all(color: borderColor, width: 1),
       borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
     ) :
     BoxDecoration(
-      color: Styles().colors?.white,
+      color: Styles().colors.white,
       border: Border.all(color: borderColor, width: 1),
       borderRadius: BorderRadius.circular(8),
     );
 
   TextStyle? get headingTextStyle => expanded ?
-    Styles().textStyles?.getTextStyle('widget.heading.regular.fat') :
-    Styles().textStyles?.getTextStyle('widget.button.title.medium.fat');
+    Styles().textStyles.getTextStyle('widget.heading.regular.fat') :
+    Styles().textStyles.getTextStyle('widget.button.title.medium.fat');
 
   Widget? get headingRightIcon => expanded ?
-    Styles().images?.getImage('chevron-up', color: Styles().colors?.white, excludeFromSemantics: true) :
-    Styles().images?.getImage('chevron-down', color: Styles().colors?.fillColorSecondary, excludeFromSemantics: true);
+    Styles().images.getImage('chevron-up', color: Styles().colors.white, excludeFromSemantics: true) :
+    Styles().images.getImage('chevron-down', color: Styles().colors.fillColorSecondary, excludeFromSemantics: true);
 
   List<Widget> buildValues() {
     List<Widget> widgets = <Widget>[];
@@ -196,10 +196,10 @@ class _Event2AttributeButton extends StatelessWidget {
       (isSelected ? "check-box-filled" : "box-outline-gray") : null;
     //(isSelected ? "check-circle-filled" : "circle-outline-gray") : null;
     String? title =  attribute.displayString(attributeValue.selectedLabel);
-    TextStyle? textStyle = Styles().textStyles?.getTextStyle(isSelected ? "widget.button.title.medium.fat" : "widget.button.title.medium");
+    TextStyle? textStyle = Styles().textStyles.getTextStyle(isSelected ? "widget.button.title.medium.fat" : "widget.button.title.medium");
     Decoration decoration =
       ((index + 2) < count) ? BoxDecoration(
-        color: Styles().colors?.white,
+        color: Styles().colors.white,
         border: Border(
           left: BorderSide(color: borderColor, width: 1),
           right: BorderSide(color: borderColor, width: 1),
@@ -207,13 +207,13 @@ class _Event2AttributeButton extends StatelessWidget {
         ),
       ) :
       ((index + 1) < count) ? BoxDecoration(
-        color: Styles().colors?.white,
+        color: Styles().colors.white,
         border: Border(
           left: BorderSide(color: borderColor, width: 1),
           right: BorderSide(color: borderColor, width: 1),
         ),
       ) : BoxDecoration(
-        color: Styles().colors?.white,
+        color: Styles().colors.white,
         border: Border.all(color: borderColor, width: 1),
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(8),),
       );
@@ -228,7 +228,7 @@ class _Event2AttributeButton extends StatelessWidget {
           ),
           
           Padding(padding: EdgeInsets.symmetric(horizontal: 12), child:
-            Styles().images?.getImage(imageAsset, excludeFromSemantics: true) ?? Container()
+            Styles().images.getImage(imageAsset, excludeFromSemantics: true) ?? Container()
           )
         ]),
       )

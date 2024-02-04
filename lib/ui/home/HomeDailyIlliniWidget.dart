@@ -241,12 +241,12 @@ class _MainStoryWidget extends _StoryWidget {
                 Padding(
                   padding: EdgeInsets.only(top: 12, bottom: 8, left: 20, right: 20),
                   child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
-                      style: Styles().textStyles?.getTextStyle('widget.title.extra_large.extra_fat')),
+                      style: Styles().textStyles.getTextStyle('widget.title.extra_large.extra_fat')),
                 ),
                 Padding(
                     padding: EdgeInsets.only(bottom: 6, left: 20),
                     child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
-                        style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fat"))
+                        style: Styles().textStyles.getTextStyle("widget.info.small.medium_fat"))
                 ),
               ],
             ),
@@ -270,7 +270,7 @@ class _MainStoryWidget extends _StoryWidget {
   }
 
   Widget _defaultPlaceholderImage() {
-    return Row(children: [Expanded(child: Styles().images?.getImage('news-placeholder', fit: BoxFit.fill) ?? Container())]);
+    return Row(children: [Expanded(child: Styles().images.getImage('news-placeholder', fit: BoxFit.fill) ?? Container())]);
   }
 }
 
@@ -288,16 +288,16 @@ class _MinorStoryWidget extends _StoryWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Divider(color: Styles().colors!.blackTransparent06),
+                Divider(color: Styles().colors.blackTransparent06),
                 Padding(
                   padding: EdgeInsets.only(top: 4, bottom: 8, left: 20, right: 20),
                   child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
-                      style: Styles().textStyles?.getTextStyle('widget.title.medium.extra_fat')),
+                      style: Styles().textStyles.getTextStyle('widget.title.medium.extra_fat')),
                 ),
                 Padding(
                     padding: EdgeInsets.only(bottom: 6, left: 20),
                     child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
-                        style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fat"))
+                        style: Styles().textStyles.getTextStyle("widget.info.small.medium_fat"))
                 ),
               ],
             ),

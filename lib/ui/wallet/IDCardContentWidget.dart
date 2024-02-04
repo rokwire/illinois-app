@@ -64,8 +64,8 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   final double _buildingAccessIconSize = 84;
 
   Color? _activeColor;
-  Color get _activeBorderColor{ return _activeColor ?? Styles().colors!.fillColorSecondary!; }
-  Color get _activeHeadingColor{ return _activeColor ?? Styles().colors!.fillColorPrimary!; }
+  Color get _activeBorderColor{ return _activeColor ?? Styles().colors.fillColorSecondary; }
+  Color get _activeHeadingColor{ return _activeColor ?? Styles().colors.fillColorPrimary; }
 
   MemoryImage? _photoImage;
   bool? _buildingAccess;
@@ -266,12 +266,12 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
       buildingAccessIcon = Container(width: _buildingAccessIconSize, height: _buildingAccessIconSize, child:
         Align(alignment: Alignment.center, child: 
           SizedBox(height: 42, width: 42, child:
-            CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+            CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
           )
         ,),);
     }
     else if (_buildingAccess != null) {
-      buildingAccessIcon = Styles().images?.getImage((_buildingAccess == true) ? 'building-access-granted' : 'building-access-denied', width: _buildingAccessIconSize, height: _buildingAccessIconSize, semanticLabel: "building access ${(_buildingAccess == true) ? "granted" : "denied"}",);
+      buildingAccessIcon = Styles().images.getImage((_buildingAccess == true) ? 'building-access-granted' : 'building-access-denied', width: _buildingAccessIconSize, height: _buildingAccessIconSize, semanticLabel: "building access ${(_buildingAccess == true) ? "granted" : "denied"}",);
       buildingAccessStatus = (_buildingAccess == true) ? Localization().getString('widget.id_card.label.building_access.granted', defaults: 'GRANTED', language: 'en') : Localization().getString('widget.id_card.label.building_access.denied', defaults: 'DENIED', language: 'en');
     }
     else {
@@ -292,11 +292,11 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: LinearGradient(
-                        colors: [ Styles().colors!.fillColorSecondary!, _activeBorderColor],
+                        colors: [ Styles().colors.fillColorSecondary, _activeBorderColor],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         stops: [0.0, 1.0],),
-                      color: Styles().colors!.fillColorSecondary,),
+                      color: Styles().colors.fillColorSecondary,),
                   ),
                 ),
                 _buildPhotoImage()
@@ -324,22 +324,22 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
           ),
           Align(alignment: Alignment.topCenter, child:
             Padding(padding: EdgeInsets.only(top:_photoSize - _illiniIconSize / 2 - 5, left: 3), child:
-              Styles().images?.getImage('university-logo-circle-white', excludeFromSemantics: true, width: _illiniIconSize, height: _illiniIconSize,)
+              Styles().images.getImage('university-logo-circle-white', excludeFromSemantics: true, width: _illiniIconSize, height: _illiniIconSize,)
             ),
           ),
         ],),
       ),
       Container(height: 10,),
       
-      Text(Auth2().authCard?.fullName?.trim() ?? '', style:Styles().textStyles?.getTextStyle("panel.id_card.detail.title.large")),
-      Text(roleDisplayString, style:  Styles().textStyles?.getTextStyle("panel.id_card.detail.title.regular")),
+      Text(Auth2().authCard?.fullName?.trim() ?? '', style:Styles().textStyles.getTextStyle("panel.id_card.detail.title.large")),
+      Text(roleDisplayString, style:  Styles().textStyles.getTextStyle("panel.id_card.detail.title.regular")),
       
       Container(height: 15,),
 
       Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
         
         Visibility(visible: hasQrCode, child: Column(children: [
-          Text(Auth2().authCard!.cardNumber ?? '', style: Styles().textStyles?.getTextStyle("panel.id_card.detail.title.small")),
+          Text(Auth2().authCard!.cardNumber ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.small")),
           Container(height: 8),
           showQRCode ?
             QrImageView(data: _userQRCodeContent ?? "", size: qrCodeImageSize, padding: const EdgeInsets.all(0), version: QrVersions.auto, ) :
@@ -351,23 +351,23 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
         ),
 
         Visibility(visible: hasBuildingAccess, child: Column(children: [
-          Text(Localization().getString('widget.id_card.label.building_access', defaults: 'Building Access', language: 'en')!, style: Styles().textStyles?.getTextStyle("panel.id_card.detail.title.small")),
+          Text(Localization().getString('widget.id_card.label.building_access', defaults: 'Building Access', language: 'en')!, style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.small")),
           Container(height: 8),
           buildingAccessIcon ?? Container(),
-          Text(buildingAccessStatus ?? '', textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.id_card.detail.title.large")),
+          Text(buildingAccessStatus ?? '', textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.large")),
         ],),),
 
       ],),
       Container(height: 15),
-      Text(buildingAccessTime ?? '', style: Styles().textStyles?.getTextStyle("panel.id_card.detail.title.medium")),
+      Text(buildingAccessTime ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.medium")),
       Container(height: 15),
       Semantics( container: true,
         child: Column(children: <Widget>[
-          // Text((0 < (Auth2().authCard?.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN') : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
-          Text(Auth2().authCard?.uin ?? '', style: Styles().textStyles?.getTextStyle("panel.id_card.detail.title.extra_large")),
+          // Text((0 < (Auth2().authCard?.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN') : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: Styles().fontFamilies.regular, fontSize: 14)),
+          Text(Auth2().authCard?.uin ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.extra_large")),
         ],),
       ),
-      Text(cardExpiresText, style:  Styles().textStyles?.getTextStyle("panel.id_card.detail.title.tiny")),
+      Text(cardExpiresText, style:  Styles().textStyles.getTextStyle("panel.id_card.detail.title.tiny")),
       Container(height: 30,),
       _buildMobileAccessContent()
     ]);
@@ -394,13 +394,13 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     if (!_isIcardMobileAvailable) {
       return Container();
     } else if (_isMobileAccessLoading) {
-      return Center(child: CircularProgressIndicator(color: Styles().colors?.fillColorSecondary));
+      return Center(child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary));
     } else {
       return Padding(
         padding: EdgeInsets.only(bottom: 30),
         child: Column(children: [
-          Container(color: Styles().colors!.dividerLine, height: 1),
-          Padding(padding: EdgeInsets.only(top: 20), child: Styles().images?.getImage('mobile-access-logo', excludeFromSemantics: true)),
+          Container(color: Styles().colors.dividerLine, height: 1),
+          Padding(padding: EdgeInsets.only(top: 20), child: Styles().images.getImage('mobile-access-logo', excludeFromSemantics: true)),
           (_hasMobileAccess ? _buildExistingMobileAccessContent() : _buildMissingMobileAccessContent())
         ]));
     }
@@ -428,11 +428,11 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
           child: InkWell(
               onTap: _onTapMobileAccessPermissions,
               child: Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Padding(padding: EdgeInsets.only(right: 0), child: (Styles().images?.getImage('settings') ?? Container())),
+                Padding(padding: EdgeInsets.only(right: 0), child: (Styles().images.getImage('settings') ?? Container())),
                 LinkButton(
                     title: Localization().getStringEx('widget.id_card.label.mobile_access.permissions', 'Set mobile access permissions'),
                     padding: EdgeInsets.symmetric(horizontal: 10),
-                    textStyle: Styles().textStyles?.getTextStyle('panel.id_card.detail.description.medium.underline'),
+                    textStyle: Styles().textStyles.getTextStyle('panel.id_card.detail.description.medium.underline'),
                     onTap: _onTapMobileAccessPermissions)
               ])))
     ]);
@@ -449,23 +449,23 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
               sprintf(
                   Localization().getStringEx('widget.id_card.label.mobile_access.my', 'My Mobile Access: %s'), [credentialId]),
               textAlign: TextAlign.center,
-              style: Styles().textStyles?.getTextStyle('panel.id_card.detail.title.large'))),
+              style: Styles().textStyles.getTextStyle('panel.id_card.detail.title.large'))),
       Padding(
           padding: EdgeInsets.only(bottom: 10),
           child: Text(
               sprintf(Localization().getStringEx('widget.id_card.label.mobile_access.expires', 'Expires: %s'),
                   [StringUtils.ensureNotEmpty(expirationDateString, defaultValue: '---')]),
-              style: Styles().textStyles?.getTextStyle('panel.id_card.detail.title.tiny'))),
+              style: Styles().textStyles.getTextStyle('panel.id_card.detail.title.tiny'))),
       Visibility(visible: MobileAccess().canRenewMobileId, child: Padding(
           padding: EdgeInsets.only(bottom: 10),
           child: RoundedButton(
               label: Localization().getStringEx('widget.id_card.button.mobile_access.renew', 'Renew'),
               hint: Localization().getStringEx('widget.id_card.button.mobile_access.renew.hint', ''),
-              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
               backgroundColor: Colors.white,
               contentWeight: 0.0,
               progress: _renewingMobileId,
-              borderColor: Styles().colors!.fillColorSecondary,
+              borderColor: Styles().colors.fillColorSecondary,
               onTap: _onTapRenewMobileAccessButton)))
     ]);
   }
@@ -479,29 +479,29 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
       Padding(
           padding: EdgeInsets.only(bottom: 10),
           child: Text(Localization().getStringEx('widget.id_card.label.mobile_access', 'Mobile Access'),
-              style: Styles().textStyles?.getTextStyle('panel.id_card.detail.title.extra_large'))),
+              style: Styles().textStyles.getTextStyle('panel.id_card.detail.title.extra_large'))),
       Padding(
           padding: EdgeInsets.only(bottom: 10),
           child: RoundedButton(
               label: _submitButtonLabel,
               hint: _submitButtonHint,
-              textStyle: _submitButtonEnabled ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled"),
+              textStyle: _submitButtonEnabled ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
               backgroundColor: Colors.white,
               enabled: _submitButtonEnabled,
               contentWeight: 0.0,
-              borderColor: _submitButtonEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.disabledTextColor,
+              borderColor: _submitButtonEnabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
               progress: _submittingDeviceRegistration,
               onTap: _onTapSubmitMobileAccessButton)),
       Visibility(visible: MobileAccess().isMobileAccessWaiting, child: Padding(padding: EdgeInsets.only(bottom: 10), child: Text(
           StringUtils.ensureNotEmpty(_mobileAccessWaitingLabel),
-          style: Styles().textStyles?.getTextStyle('panel.id_card.detail.title.tiny')))),
+          style: Styles().textStyles.getTextStyle('panel.id_card.detail.title.tiny')))),
       Padding(
           padding: EdgeInsets.symmetric(horizontal: 50),
           child: Text(
               Localization().getStringEx('widget.id_card.label.mobile_access.i_card.not_available',
                   'Access various services and buildings on campus with your Illini ID.'),
               textAlign: TextAlign.center,
-              style: Styles().textStyles?.getTextStyle('panel.id_card.detail.description.italic')))
+              style: Styles().textStyles.getTextStyle('panel.id_card.detail.description.italic')))
     ]);
   }
 
@@ -555,13 +555,13 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     setStateIfMounted(() {
       _renewingMobileId = true;
     });
-    MobileAccess().renewMobileId().then((studentId) {
-      bool success = (studentId != null);
+    MobileAccess().renewMobileId().then((result) {
+      bool success = (result?.isRenewed == true);
       late String msg;
       if (success) {
         msg = Localization().getStringEx('widget.id_card.mobile_access.renew.success.msg', 'Mobile Access was successfully renewed.');
       } else {
-        msg = Localization().getStringEx('widget.id_card.mobile_access.renew.fail.msg', 'Failed to renew Mobile Access.');
+        msg = sprintf(Localization().getStringEx('widget.id_card.mobile_access.renew.fail.msg', 'Failed to renew Mobile Access. Reason: %s'), [result?.resultDescription ?? 'unknown']);
       }
       setStateIfMounted(() {
         _renewingMobileId = false;

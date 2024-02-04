@@ -46,7 +46,7 @@ extension EventExt on Event {
     Analytics.LogAttributeLocation : location?.analyticsValue,
   };
 
-  Color? get uiColor => Styles().colors?.eventColor;
+  Color? get uiColor => Styles().colors.eventColor;
 
   String? get eventImageUrl => StringUtils.isNotEmpty(exploreImageURL) ? exploreImageURL : randomImageUrl;
 

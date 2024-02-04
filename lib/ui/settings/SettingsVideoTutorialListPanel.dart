@@ -38,7 +38,7 @@ class _SettingsVideoTutorialListPanelState extends State<SettingsVideoTutorialLi
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         appBar: HeaderBar(title: Localization().getStringEx("panel.settings.video_tutorials.header.title", "Video Tutorials")),
         body: _buildContent());
   }
@@ -49,7 +49,7 @@ class _SettingsVideoTutorialListPanelState extends State<SettingsVideoTutorialLi
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 32),
               child: Text(Localization().getStringEx("panel.settings.video_tutorials.empty.msg", "There are no video tutorials."),
-                  style: Styles().textStyles?.getTextStyle("widget.message.large.fat"))));
+                  style: Styles().textStyles.getTextStyle("widget.message.large.fat"))));
     }
     List<Widget> contentList = <Widget>[];
     for (Video video in widget.videoTutorials!) {
@@ -67,16 +67,16 @@ class _SettingsVideoTutorialListPanelState extends State<SettingsVideoTutorialLi
             padding: EdgeInsets.only(bottom: 10),
             child: Container(
                 decoration: BoxDecoration(
-                    color: Styles().colors!.white,
+                    color: Styles().colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(5)),
-                    border: Border.all(color: Styles().colors!.lightGray!, width: 1)),
+                    border: Border.all(color: Styles().colors.lightGray, width: 1)),
                 child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Expanded(
                       child: Padding(
                           padding: EdgeInsets.all(16),
                           child: Text(videoTitle,
-                              style: Styles().textStyles?.getTextStyle("widget.button.title.enabled")))),
-                  Padding(padding: EdgeInsets.only(right: 16, top: 18, bottom: 18), child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true))
+                              style: Styles().textStyles.getTextStyle("widget.button.title.enabled")))),
+                  Padding(padding: EdgeInsets.only(right: 16, top: 18, bottom: 18), child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true))
                 ]))));
   }
 

@@ -112,7 +112,7 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
                 padding: EdgeInsets.only(bottom: 16),
                 child: Text(
                   label,
-                  style: Styles().textStyles?.getTextStyle( "panel.wellness_appointments.button.title.underline"),
+                  style: Styles().textStyles.getTextStyle( "panel.wellness_appointments.button.title.underline"),
                   semanticsLabel: "",
                 )),
             onTap: _showRescheduleAppointmentPopup));
@@ -143,8 +143,8 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
         HtmlWidget(
             "<div style=text-align:center> $emptyUpcommingContentHtml </div>",
             onTapUrl : (url) {_onTapMcKinleyUrl(url); return true;},
-            textStyle:  Styles().textStyles?.getTextStyle("widget.title.medium"),
-            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorPrimary ?? Colors.blue)} : null
+            textStyle:  Styles().textStyles.getTextStyle("widget.title.medium"),
+            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorPrimary)} : null
         )
     );
   }
@@ -161,7 +161,7 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
                       Localization()
                           .getStringEx('panel.wellness.appointments.home.past_appointments.header.label', 'Recent Past Appointments'),
                       textAlign: TextAlign.left,
-                      style: Styles().textStyles?.getTextStyle( "panel.wellness_appointments.title.large"),
+                      style: Styles().textStyles.getTextStyle( "panel.wellness_appointments.title.large"),
                      ))
             ]))));
     if (CollectionUtils.isEmpty(_pastAppointments)) {
@@ -180,7 +180,7 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
             Localization().getStringEx('panel.wellness.appointments.home.past.list.empty.msg',
                 "You don't have recent past appointments linked within the Illinois app."),
             textAlign: TextAlign.center,
-            style:Styles().textStyles?.getTextStyle("widget.message.medium.thin")));
+            style:Styles().textStyles.getTextStyle("widget.message.medium.thin")));
   }
 
   Widget _buildPastAppointmentsDescription() {
@@ -198,8 +198,8 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
         HtmlWidget(
             "<div style=text-align:center> $descriptionHtml </div>",
             onTapUrl : (url) {_onTapMcKinleyUrl(url); return true;},
-            textStyle: Styles().textStyles?.getTextStyle("widget.description.regular"),
-            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorPrimary ?? Colors.blue)} : null
+            textStyle: Styles().textStyles.getTextStyle("widget.description.regular"),
+            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorPrimary)} : null
         )
     );
   }
@@ -222,7 +222,7 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
             Localization().getStringEx('panel.wellness.appointments.home.display.nothing.msg',
                 'There is nothing to display as you have chosen not to display any past or future appointments.'),
             textAlign: TextAlign.start,
-            style:  Styles().textStyles?.getTextStyle("widget.message.medium.semi_thin")));
+            style:  Styles().textStyles.getTextStyle("widget.message.medium.semi_thin")));
   }
 
   Widget _buildDisplayAppointmentsSettings() {
@@ -234,7 +234,7 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
         child: InkWell(
             onTap: _onTapDisplaySettings,
             child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: [
-              Padding(padding: EdgeInsets.only(right: 5), child: Styles().images?.getImage('settings', excludeFromSemantics: true)),
+              Padding(padding: EdgeInsets.only(right: 5), child: Styles().images.getImage('settings', excludeFromSemantics: true)),
               LinkButton(title: buttonTitle, padding: EdgeInsets.zero)
             ])));
   }
@@ -254,20 +254,20 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
         context: context,
         contentPadding: EdgeInsets.all(0),
         contentWidget: Container(
-            decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)),
+            decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)),
             child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
               Padding(
                   padding: EdgeInsets.all(30),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-                    Styles().images?.getImage('university-logo') ?? Container(),
+                    Styles().images.getImage('university-logo') ?? Container(),
                     Padding(
                         padding: EdgeInsets.only(top: 20),
                         child:
                         HtmlWidget(
                             rescheduleContentHtml,
                             onTapUrl : (url) {_onTapMcKinleyUrl(url); return true;},
-                            textStyle:  Styles().textStyles?.getTextStyle("widget.message.small"),
-                            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorPrimary ?? Colors.blue)} : null
+                            textStyle:  Styles().textStyles.getTextStyle("widget.message.small"),
+                            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorPrimary)} : null
                         )
                     )
                   ])
@@ -276,7 +276,7 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
                   alignment: Alignment.topRight,
                   child: InkWell(
                       onTap: _onTapCloseReschedulePopup,
-                      child: Padding(padding: EdgeInsets.all(16), child: Styles().images?.getImage('close', excludeFromSemantics: true)))))
+                      child: Padding(padding: EdgeInsets.all(16), child: Styles().images.getImage('close', excludeFromSemantics: true)))))
             ])));
   }
 

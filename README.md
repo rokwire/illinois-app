@@ -3,13 +3,13 @@ The official mobile app of the University of Illinois. Powered by the [Rokwire P
 
 ## Requirements
 
-### [Flutter](https://flutter.dev/docs/get-started/install) v3.13.7
+### [Flutter](https://flutter.dev/docs/get-started/install) v3.16.0
 
 ### [Android Studio](https://developer.android.com/studio) 2021.3.1+
 
-### [xCode](https://apps.apple.com/us/app/xcode/id497799835) 14.2
+### [xCode](https://apps.apple.com/us/app/xcode/id497799835) 15.2
 
-### [CocoaPods](https://guides.cocoapods.org/using/getting-started.html) 1.11.3+
+### [CocoaPods](https://guides.cocoapods.org/using/getting-started.html) 1.15.0+
 
 
 ## Build
@@ -32,6 +32,19 @@ Rokwire app libs directory is used by the Illinois app for private external libr
 cd illinois-app
 git clone https://github.com/rokwire/illinois-app-libs.git libs
 ```
+
+### font_awesome_flutter plugin:
+If `font_awesome_flutter` pro repo is not available then use the regular `font_awesome_flutter` plugin. Comment the lines in pubspec.yaml:
+```
+# font_awesome_flutter: '>= 4.7.0' # comment if published plugin is used
+
+...
+# dependency_overrides:
+#  font_awesome_flutter:
+#    path: plugin/plugins/font_awesome_flutter
+```
+
+For more details, please see `app-flutter-plugin`'s `README.md` file.
 
 ### Supply the following private configuration files:
 

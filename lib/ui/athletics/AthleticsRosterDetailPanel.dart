@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/model/sport/Roster.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -88,13 +88,13 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
                 ),
                 Visibility(visible: StringUtils.isNotEmpty(widget.roster.htmlBio), child: Container(
                     padding: EdgeInsets.only(top:16,left: 8,right: 8,bottom: 12),
-                    color: Styles().colors!.background,
+                    color: Styles().colors.background,
                     child: Column(
                         children: <Widget>[
                           HtmlWidget(
                               StringUtils.ensureNotEmpty(widget.roster.htmlBio),
-                              onTapUrl : (url) {_launchUrl(url, context: context); return true;},
-                              textStyle:  Styles().textStyles?.getTextStyle("widget.detail.regular"),
+                              onTapUrl : (url) {_launchUrl(url); return true;},
+                              textStyle:  Styles().textStyles.getTextStyle("widget.detail.regular"),
                           )
                         ]
                     )
@@ -104,7 +104,7 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
           ),
         ],
       ),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -139,15 +139,11 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
     else{return Container();}
   }
 
-  void _launchUrl(String? url, {BuildContext? context}) {
+  void _launchUrl(String? url) {
     if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      } else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri);
-        }
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
       }
     }
   }
@@ -182,7 +178,7 @@ class _RosterDetailHeading extends StatelessWidget{
             child: Stack(
               children: <Widget>[
                 Container(
-                  color: Styles().colors!.fillColorPrimaryVariant,
+                  color: Styles().colors.fillColorPrimaryVariant,
                   child: Container(
                     margin: EdgeInsets.only(right:(photoWidth + (photoMargin + horizontalMargin))),
                     child: Padding(
@@ -194,12 +190,12 @@ class _RosterDetailHeading extends StatelessWidget{
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                Styles().images?.getImage(sport?.iconPath, excludeFromSemantics: true) ?? Container(),
+                                Styles().images.getImage(sport?.iconPath, excludeFromSemantics: true) ?? Container(),
                                 Expanded(child:
                                   Padding(
                                     padding: EdgeInsets.only(left: 10),
                                     child: Text(StringUtils.ensureNotEmpty(sport?.name),
-                                      style: Styles().textStyles?.getTextStyle("panel.athletics.coach_detail.title.regular.accent")
+                                      style: Styles().textStyles.getTextStyle("panel.athletics.coach_detail.title.regular.accent")
                                     ),
                                   ),
                                 ),
@@ -212,11 +208,11 @@ class _RosterDetailHeading extends StatelessWidget{
                                 children: <Widget>[
                                   Expanded(
                                     child: Text(StringUtils.ensureNotEmpty(roster?.name),
-                                      style: Styles().textStyles?.getTextStyle("widget.title.light.large.fat")
+                                      style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")
                                     ),
                                   ),
                                   Text(StringUtils.ensureNotEmpty(roster?.numberString),
-                                    style: Styles().textStyles?.getTextStyle("widget.athletics.heading.regular.variant")
+                                    style: Styles().textStyles.getTextStyle("widget.athletics.heading.regular.variant")
                                   ),
                                 ],
                               ),
@@ -235,7 +231,7 @@ class _RosterDetailHeading extends StatelessWidget{
                     onTap: onTapPhoto,
                     child: Container(
                       margin: EdgeInsets.only(right: horizontalMargin + photoMargin, top: photoMargin),
-                      decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid)),
+                      decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
                       child: (StringUtils.isNotEmpty(roster?.thumbPhotoUrl) ?
                       Image.network(roster!.thumbPhotoUrl!, semanticLabel: "roster", width: photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter):
                       Container(height: 112, width: photoWidth, color: Colors.white,)
@@ -275,13 +271,13 @@ class _LineEntryWidget extends StatelessWidget{
                 width: 120.0,
                 child: Text(
                   StringUtils.ensureNotEmpty(title),
-                  style: Styles().textStyles?.getTextStyle("widget.detail.medium")
+                  style: Styles().textStyles.getTextStyle("widget.detail.medium")
                 ),
               ),
               Expanded(child:
               Text(
                 StringUtils.ensureNotEmpty(value),
-                style: Styles().textStyles?.getTextStyle("widget.detail.medium")
+                style: Styles().textStyles.getTextStyle("widget.detail.medium")
               ))
             ],
           ),

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/log.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/model/sport/Coach.dart';
@@ -71,18 +71,18 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
                 Padding(
                   padding: EdgeInsets.all(16),
                   child: Text(widget.coach.title!,
-                    style: Styles().textStyles?.getTextStyle("panel.athletics.coach_detail.title.extra_large")
+                    style: Styles().textStyles.getTextStyle("panel.athletics.coach_detail.title.extra_large")
                   ),
                 ),
 
                 Container(
                     padding: EdgeInsets.only(top:16,left: 8,right: 8,bottom: 12),
-                    color: Styles().colors!.background,
+                    color: Styles().colors.background,
                     child: Visibility(visible: StringUtils.isNotEmpty(widget.coach.htmlBio), child: Container(
                       child: HtmlWidget(
                           StringUtils.ensureNotEmpty(widget.coach.htmlBio),
-                          onTapUrl : (url) {_launchUrl(url, context: context); return true;},
-                          textStyle:  Styles().textStyles?.getTextStyle("widget.detail.regular")
+                          onTapUrl : (url) {_launchUrl(url); return true;},
+                          textStyle:  Styles().textStyles.getTextStyle("widget.detail.regular")
                       )
                     ))
                 )
@@ -91,20 +91,16 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
           ),
         ],
       ),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
-  void _launchUrl(String? url, {BuildContext? context}) {
+  void _launchUrl(String? url) {
     if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      } else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri);
-        }
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
       }
     }
   }
@@ -135,7 +131,7 @@ class _CoachDetailHeading extends StatelessWidget{
             child: Stack(
               children: <Widget>[
                 Container(
-                  color: Styles().colors!.fillColorPrimaryVariant,
+                  color: Styles().colors.fillColorPrimaryVariant,
                   child: Container(
                     margin: EdgeInsets.only(right:(_photoWidth + (_photoMargin + _horizontalMargin))),
                     child: Padding(
@@ -147,12 +143,12 @@ class _CoachDetailHeading extends StatelessWidget{
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                Styles().images?.getImage(sport!.iconPath!) ?? Container(),
+                                Styles().images.getImage(sport!.iconPath!) ?? Container(),
                                 Expanded(child:
                                   Padding(
                                     padding: EdgeInsets.only(left: 10),
                                     child: Text(sport!.name!,
-                                      style: Styles().textStyles?.getTextStyle("panel.athletics.coach_detail.title.regular.accent")
+                                      style: Styles().textStyles.getTextStyle("panel.athletics.coach_detail.title.regular.accent")
                                     ),
                                   ),
                                 )
@@ -165,7 +161,7 @@ class _CoachDetailHeading extends StatelessWidget{
                                 children: <Widget>[
                                   Expanded(
                                     child: Text(coach!.name!,
-                                      style: Styles().textStyles?.getTextStyle("widget.heading.large.fat")
+                                      style: Styles().textStyles.getTextStyle("widget.heading.large.fat")
                                     ),
                                   ),
                                 ],
@@ -185,7 +181,7 @@ class _CoachDetailHeading extends StatelessWidget{
                     onTap: onTapPhoto,
                     child: Container(
                       margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
-                      decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid)),
+                      decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
                       child: (StringUtils.isNotEmpty(coach?.thumbPhotoUrl) ?
                       Image.network(coach!.thumbPhotoUrl!, semanticLabel: "coach", width: _photoWidth,fit: BoxFit.cover, alignment: Alignment.topCenter):
                       Container(height: 112, width: _photoWidth, color: Colors.white,)

@@ -6,12 +6,13 @@
     "fillColorPrimaryTransparent09"         :"#E6002855",
     "fillColorPrimaryTransparent015"        :"#26002855",
     "textColorPrimary"                      :"#FFFFFF",
-    "textColorDisabled"                      :"#5c5c5c",
+    "textColorPrimaryVariant"               :"#FFFFFF",
+    "textColorDisabled"                     :"#5c5c5c",
     "fillColorPrimaryVariant"               :"#0F2040",
     "fillColorSecondary"                    :"#E84A27",
     "fillColorSecondaryTransparent05"       :"#80E84A27",
-    "textColorSecondary"                    :"#FFFFFF",
     "fillColorSecondaryVariant"             :"#CF3C1B",
+    "textColorSecondary"                    :"#FFFFFF",
     "textColorSecondaryVariant"             :"#FFFFFF",
     "gradientColorPrimary"                  :"#244372",
 
@@ -34,10 +35,8 @@
     "accentColor4"                          :"#9318BB",
 
     "iconColor"                             :"#E84A27",
-
     "alert"                                 :"#ff0000",
-
-    "transparentWalletColor"                : "#ff0f2040",
+    "transparentWalletColor"                :"#ff0f2040",
 
     "eventColor"                            :"#E54B30",
     "diningColor"                           :"#F09842",
@@ -51,8 +50,8 @@
     "blackTransparent06"                    :"#99000000",
     "blackTransparent018"                   :"#30000000",
     "blackTransparent038"                   :"#61000000",
-    "redTransparent01"                        :"#F4FF4336",
-    "blueShade900"                              :"#0D47A1FF",
+    "redTransparent01"                      :"#F4FF4336",
+    "blueShade900"                          :"#0D47A1FF",
 
     "mediumGray"                            :"#717372",
     "mediumGray1"                           :"#535353",
@@ -64,12 +63,25 @@
     "dividerLineAccent"                     :"#DADADA",
 
     "mango"                                 :"#f29835",
-    "greenAccent"                       :"#69F0AE",
+    "greenAccent"                           :"#69F0AE",
 
     "saferLocationWaitTimeColorRed"        :"#ff0000",
     "saferLocationWaitTimeColorYellow"     :"#ffff00",
     "saferLocationWaitTimeColorGreen"      :"#00ff00",
-    "saferLocationWaitTimeColorGrey"       :"#808080"
+    "saferLocationWaitTimeColorGrey"       :"#808080",
+
+    "essentialSkillsCoachPurple"            :"#602f8c",
+    "essentialSkillsCoachPurpleAccent"      :"#ae89cf",
+    "essentialSkillsCoachBlue"            :"#479ccf",
+    "essentialSkillsCoachBlueAccent"      :"#146a9e",
+    "essentialSkillsCoachRed"            :"#e84a27",
+    "essentialSkillsCoachRedAccent"      :"#a52a0e",
+    "essentialSkillsCoachOrange"            :"#f29936",
+    "essentialSkillsCoachOrangeAccent"      :"#d06d00",
+    "essentialSkillsCoachGreen"            :"#247c03",
+    "essentialSkillsCoachGreenAccent"      :"#6aa554",
+    "essentialSkillsCoachCompleteGreen"    :"#64a70b",
+    "essentialSkillsCoachIncompleteGrey"    :"#5c5c5c"
   },
   "font_family": {
     "black": "ProximaNovaBlack",
@@ -103,7 +115,7 @@
     "test_overrides7" : {"extends": "test_overrides4",  "font_family": "bold",  "color": "fillColorSecondary", "inherit" :  false},
     "test_overrides8" : {"extends": "test_overrides3",  "size": 24.0, "color":  "fillColorPrimary", "override" :  false},
     "test_overrides9" : {"extends": "test_overrides3", "size": 24.0, "color": "fillColorPrimary"},
-    "usage" : "Styles().textStyles?.getTextStyle()",
+    "usage" : "Styles().textStyles.getTextStyle()",
 
     "header_bar": { "font_family": "extra_bold", "size": 16.0, "color": "textColorPrimary"},
 
@@ -189,6 +201,7 @@
     "widget.title.tiny.highlight": {"extends" : "widget.title.tiny", "color": "white"},
     "widget.title.tiny.extra_fat": {"font_family": "extra_bold", "size": 12.0, "color": "fillColorPrimary"},
     "widget.title.tiny.extra_fat.highlight": {"extends": "widget.title.tiny.extra_fat", "color": "white"},
+    "widget.title.light.huge.fat": {"font_family": "bold", "size": 32.0, "color": "textColorPrimary"},
     "widget.title.light.medium_large.extra_fat": {"font_family": "extra_bold", "size": 22.0, "color": "textColorPrimary"},
     "widget.title.light.large.extra_fat": { "font_family": "extra_bold", "size": 20.0, "color": "textColorPrimary"},
     "widget.title.light.large.fat": { "font_family": "bold", "size": 20.0, "color": "textColorPrimary"},
@@ -233,6 +246,7 @@
     "widget.description.regular.thin": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
     "widget.description.regular": { "font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
     "widget.description.regular.highlight": { "extends": "widget.description.regular", "color": "white"},
+    "widget.description.regular.underline": { "extends": "widget.description.regular", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.description.regular.fat": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.description.small": { "font_family": "medium", "size": 14.0, "color": "fillColorPrimary"},
     "widget.description.small_underline": { "font_family": "medium", "size": 14.0, "decoration": "underline"},
@@ -254,6 +268,7 @@
     "widget.item.regular.extra_fat": { "font_family": "extra_bold", "size": 16.0, "color": "textBackground"},
     "widget.item.regular.fat": { "font_family": "bold", "size": 16.0, "color": "textBackground"},
     "widget.item.regular.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground"},
+    "widget.item.regular_underline.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground", "decoration": "underline"},
     "widget.item.regular": { "font_family": "medium", "size": 16.0, "color": "textBackground"},
     "widget.item.small.fat": { "font_family": "bold", "size": 14.0, "color": "textBackground"},
     "widget.item.small": { "font_family": "medium", "size": 14.0, "color": "textBackground"},
@@ -662,6 +677,12 @@
     "panel.skills_self_evaluation.content.link":  {"font_family": "regular", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
     "panel.skills_self_evaluation.content.link.fat":  {"font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
 
+    "panel.essential_skills_coach.get_started.header": {"font_family": "extra_bold", "size": 28.0, "color": "surface"},
+    "panel.essential_skills_coach.header.description": {"font_family": "regular", "size": 16.0, "color": "surface"},
+    "panel.essential_skills_coach.auth_dialog.text": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimaryVariant"},
+    "panel.essential_skills_coach.auth_dialog.link": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
+    "panel.essential_skills_coach.content.title":  {"font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant"},
+
     "panel.wellness_appointments.button.title.underline":  {"extends": "widget.button.title.regular.thin.underline", "decoration_color":  "fillColorPrimary"},
     "panel.wellness_appointments.title.large":  {"extends": "widget.title.medium_large.extra_fat", "color": "blackTransparent06"},
 
@@ -742,10 +763,12 @@
     "eye": {"src": "images/icon-eye.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "football": {"src": "images/posession.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo":  "size, color"},
     "bluetooth": {"src": "images/bluetooth.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "color issue, size issue"},
-    "academics": {"src": "images/tab-academics-selected.png", "type": "flutter.asset", "size": 18, "todo": "color issue"},
+    "academics-0": {"src": "images/tab-academics-selected.png", "type": "flutter.asset", "size": 18, "todo": "color issue"},
+    "academics": {"src": "images/tab-academics-universal.png", "type": "flutter.asset", "size": 18, "color": "fillColorSecondary"},
     "pause-circle-large": {"src": "images/icon-pause-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 34, "todo": "size issues?"},
     "play-circle-large": {"src": "images/button-play-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 34, "todo": "size issues?"},
-    "wellness": {"src": "images/tab-wellness-selected.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 28, "todo": "size issue"},
+    "wellness-0": {"src": "images/tab-wellness-selected.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 28, "todo": "size issue"},
+    "wellness": {"src": "images/tab-wellness-universal.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 24},
     "home": {"src": "images/tab-home-selected.png", "type": "flutter.asset", "size": 20, "todo": "size issue, color issue, unused?"},
     "warning": {"src": "images/warning-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 24, "todo": "wrong size"},
     "user-check": {"src": "images/user-check.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 20, "todo": "wrong size"},
@@ -826,18 +849,26 @@
     "plus-circle-white": {"src": "images/icons-control-add-small-white.png", "type": "flutter.asset", "color": "surface", "size": 18},
     "minus-circle-white": {"src": "images/group-decrease.png", "type": "flutter.asset", "color": "surface", "size": 18},
     "notification-white": {"src": "images/notifications-blue.png", "type": "flutter.asset", "color": "surface", "size": 16, "todo": "size"},
-
+    "play-circle-white": {"src": "images/icon-watch.png", "type": "flutter.asset", "color": "surface", "size": 32},
     "clock-white": {"src": "f017", "type": "fa.icon", "weight": "regular", "color": "surface", "size": 18},
+
+    "comment-vacuum-start": "Below is a sample for fa pro icons. Remove them when there is no need.",
+    "lightVacuum": {"src": "0xe04d", "type": "fa.icon", "weight": "light", "color": "fillColorSecondary", "size": 38},
+    "thinVacuum": {"src": "0xe04d", "type": "fa.icon", "weight": "thin", "color": "fillColorSecondary", "size": 38},
+    "solidVacuum": {"src": "0xe04d", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 38},
+    "comment-vacuum-end": "Above is a sample for fa pro icons. Remove them when there is no need.",
 
     "retry-gray": {"src": "0xf2f9", "type": "fa.icon", "weight": "solid", "size": 18.0, "color": "mediumGray"},
     "circle-outline-gray": {"src": "images/oval-orange.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},
     "chevron-up-gray": {"src": "images/arrow-up-orange.png", "type": "flutter.asset", "color": "mediumGray", "size": 10, "todo": "size issue?"},
     "chevron-down-gray": {"src": "images/arrow-down-orange.png", "type": "flutter.asset", "color": "mediumGray", "size": 10, "todo": "size issue?"},
     "chevron-right-gray": {"src": "images/chevron-right-gray.png", "type": "flutter.asset", "color": "mediumGray", "size": 14, "todo": "size issue?"},
-    "chevron-left-gray": {"src": "images/chevron-left-gray.png", "type": "flutter.asset", "color": "mediumGray", "size": 14, "todo": "size issue?"},
+    "chevron-left-gray": {"src": "images/chevron-left-grayx.png", "type": "flutter.asset", "color": "mediumGray", "size": 14, "todo": "size issue?"},
     "star-gray": {"src": "images/icon-star-gray.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
-    "wellness-gray": {"src": "images/tab-wellness.png", "type": "flutter.asset", "color": "mediumGray", "size": 28, "todo": "size issue"},
-    "academics-gray": {"src": "images/tab-academics.png", "type": "flutter.asset", "size": 18, "todo": "color issue"},
+    "wellness-gray-0": {"src": "images/tab-wellness.png", "type": "flutter.asset", "color": "mediumGray", "size": 28, "todo": "size issue"},
+    "wellness-gray": {"src": "images/tab-wellness-universal.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},
+    "academics-gray-0": {"src": "images/tab-academics.png", "type": "flutter.asset", "size": 18, "todo": "color issue"},
+    "academics-gray": {"src": "images/tab-academics-universal.png", "type": "flutter.asset", "size": 18, "color": "mediumGray"},
     "compass-gray": {"src": "images/tab-explore.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
     "home-gray": {"src": "images/tab-home.png", "type": "flutter.asset", "color": "mediumGray", "size": 24, "todo": "size issue, unused?"},
     "add-gray": {"src": "images/icons-control-add-blue.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
@@ -970,6 +1001,41 @@
     "event-filters-background": {"src": "images/event-filters-background.png", "type": "flutter.asset"},
     "event-onboarding-header": {"src": "images/event-onboarding-header.png", "type": "flutter.asset"},
 
-    "course-detail-default": {"src": "images/course-detail-default.png", "type": "flutter.asset"}
+    "icon-record": {"src": "images/icon-record.png", "type": "flutter.asset"},
+    "icon-recording": {"src": "images/icon-recording.png", "type": "flutter.asset"},
+    "icon-play": {"src": "images/icon-play.png", "type": "flutter.asset"},
+    "icon-delete-record": {"src": "images/icon-delete-record.png", "type": "flutter.asset", "size": 18},
+    "icon-soundbyte": {"src": "images/icon-soundbyte.png", "type": "flutter.asset", "size": 18},
+
+    "course-detail-default": {"src": "images/course-detail-default.png", "type": "flutter.asset"},
+
+    "skills-social": {"src": "images/skills_social.png", "type": "flutter.asset"},
+    "skills-play": {"src": "images/play.png", "type": "flutter.asset", "size": 60},
+    "skills-question": {"src": "images/question.png", "type": "flutter.asset", "size": 60},
+    "skills-check": {"src": "images/check.png", "type": "flutter.asset", "size": 60},
+    "skills-management": {"src": "images/management.png", "type": "flutter.asset"},
+    "skills-cooperation": {"src": "images/cooperation.png", "type": "flutter.asset"},
+    "skills-emotional": {"src": "images/emotional_skills.png", "type": "flutter.asset"},
+    "skills-innovation": {"src": "images/innovation.png", "type": "flutter.asset"},
+    "skills-social-button": {"src": "images/skills_social_button.png", "type": "flutter.asset", "size": 60},
+    "skills-management-button": {"src": "images/management_button.png", "type": "flutter.asset", "size": 60},
+    "skills-cooperation-button": {"src": "images/cooperation_button.png", "type": "flutter.asset", "size": 60},
+    "skills-emotional-button": {"src": "images/emotional_skills_button.png", "type": "flutter.asset", "size": 60},
+    "skills-innovation-button": {"src": "images/innovation_button.png", "type": "flutter.asset", "size": 60},
+    "skills-speech-mic": {"src": "0xf130", "type": "fa.icon", "weight": "solid", "size": 25},
+    "skills-speech-pause": {"src": "0xf04c", "type": "fa.icon", "weight": "solid", "size": 25},
+    "text-icon": {"src": "images/text-icon.png", "type": "flutter.asset", "size": 35},
+    "link-icon": {"src": "images/external-link-icon.png", "type": "flutter.asset", "size": 35},
+    "pdf-icon": {"src": "images/pdf-icon.png", "type": "flutter.asset", "size": 35},
+    "powerpoint-icon": {"src": "images/powerpoint.png", "type": "flutter.asset", "size": 35},
+    "video-icon": {"src": "images/blue-play.png", "type": "flutter.asset", "size": 25},
+    "streak": {"src": "images/streak.png", "type": "flutter.asset", "size": 193},
+    "pause-filled-blue": {"src": "images/pause-filled-blue.png", "type": "flutter.asset", "size": 32},
+    "pause-empty-blue": {"src": "images/pause-empty-blue.png", "type": "flutter.asset", "size": 32},
+
+    "external-link-small": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "wrong size"},
+    "external-link-medium": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 20, "todo": "wrong size"},
+
+    "default-profile-photo": {"src": "images/default-profile-photo.png", "type": "flutter.asset"}
   }
 }

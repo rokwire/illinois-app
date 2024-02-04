@@ -26,11 +26,11 @@ import 'package:illinois/ui/widgets/RoleGridButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class SettingsRolesContentWidget extends StatefulWidget {
-  _SettingsRolesContentWidgetState createState() => _SettingsRolesContentWidgetState();
+class ProfileRolesPage extends StatefulWidget {
+  _ProfileRolesPageState createState() => _ProfileRolesPageState();
 }
 
-class _SettingsRolesContentWidgetState extends State<SettingsRolesContentWidget> {
+class _ProfileRolesPageState extends State<ProfileRolesPage> {
   Set<UserRole>? _selectedRoles;
 
   Timer? _saveRolesTimer;
@@ -55,7 +55,7 @@ class _SettingsRolesContentWidgetState extends State<SettingsRolesContentWidget>
   @override
   Widget build(BuildContext context) {
     return Container(
-          color: Styles().colors!.background,
+          color: Styles().colors.background,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -64,7 +64,7 @@ class _SettingsRolesContentWidgetState extends State<SettingsRolesContentWidget>
                   padding: EdgeInsets.only(top: 16, left: 4, right: 4),
                   child: Text(
                     Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
-                    style: Styles().textStyles?.getTextStyle("widget.item.small.thin")
+                    style: Styles().textStyles.getTextStyle("widget.item.small.thin")
                   ),
                 ),
               ),
@@ -72,12 +72,12 @@ class _SettingsRolesContentWidgetState extends State<SettingsRolesContentWidget>
                 padding: EdgeInsets.only(top: 10,  left: 4, right: 4),
                 child: Text(
                     Localization().getStringEx('panel.onboarding.roles.label.description2', 'I am a...'),
-                    style: Styles().textStyles?.getTextStyle("widget.title.medium.extra_fat")
+                    style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat")
                 ),
               ),
               Padding(
                 padding: EdgeInsets.only(left: 0, top: 8, right: 8, bottom: 0),
-                child: RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton, scaleFactor: MediaQuery.of(context).textScaleFactor,),
+                child: RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton, textScaler: MediaQuery.of(context).textScaler,),
               ),
             ],
           ),

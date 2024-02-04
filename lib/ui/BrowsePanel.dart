@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
@@ -8,9 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
-import 'package:illinois/model/News.dart';
 import 'package:illinois/model/Video.dart';
-import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
@@ -25,8 +24,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/academics/AcademicsAppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
-import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
-import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
@@ -53,7 +51,7 @@ import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
-import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
+import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialListPanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/wallet/ICardHomeContentPanel.dart';
@@ -152,7 +150,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
           ),
         ]),
       ),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: null,
     );
   }
@@ -298,13 +296,13 @@ class _BrowseSection extends StatelessWidget {
     return Padding(padding: EdgeInsets.only(bottom: 4), child:
       InkWell(onTap: _onTapExpand, child:
         Container(
-          decoration: BoxDecoration(color: Styles().colors?.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),),
+          decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
           padding: EdgeInsets.only(left: 16),
           child: Column(children: [
             Row(children: [
               Expanded(child:
                 Padding(padding: EdgeInsets.only(top: 16), child:
-                  Text(_title, style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"))
+                  Text(_title, style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"))
                 )
               ),
               Opacity(opacity: _hasFavoriteContent ? 1 : 0, child:
@@ -318,7 +316,7 @@ class _BrowseSection extends StatelessWidget {
             Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
               Expanded(child:
                 Padding(padding: EdgeInsets.only(bottom: 16), child:
-                  Text(_description, style: Styles().textStyles?.getTextStyle("widget.info.regular.thin"))
+                  Text(_description, style: Styles().textStyles.getTextStyle("widget.info.regular.thin"))
                 )
               ),
               Semantics(
@@ -330,8 +328,8 @@ class _BrowseSection extends StatelessWidget {
                       Center(child:
                         _hasBrowseContent ? (
                           expanded ?
-                            Styles().images?.getImage('chevron-up', excludeFromSemantics: true) :
-                            Styles().images?.getImage('chevron-down', excludeFromSemantics: true)
+                            Styles().images.getImage('chevron-up', excludeFromSemantics: true) :
+                            Styles().images.getImage('chevron-down', excludeFromSemantics: true)
                         ) : Container()
                       ),
                     )
@@ -498,7 +496,7 @@ class _BrowseEntry extends StatelessWidget {
     return Padding(padding: EdgeInsets.only(bottom: 4), child:
       InkWell(onTap: () => _onTap(context), child:
         Container(
-          decoration: BoxDecoration(color: Styles().colors?.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),),
+          decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
           padding: EdgeInsets.zero,
           child: 
             Row(children: [
@@ -507,11 +505,11 @@ class _BrowseEntry extends StatelessWidget {
               ),
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 14), child:
-                  Text(_title, style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"),)
+                  Text(_title, style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),)
                 ),
               ),
               Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-                  child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true)),
+                  child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true)),
             ],),
         ),
       ),
@@ -547,6 +545,7 @@ class _BrowseEntry extends StatelessWidget {
       case "athletics.sport_events":         _onTapSportEvents(context); break;
       case "athletics.my_athletics":         _onTapMyAthletics(context); break;
       case "athletics.sport_news":           _onTapSportNews(context); break;
+      case "athletics.sport_teams":          _onTapSportTeams(context); break;
       case "athletics.my_news":              _onTapMyNews(context); break;
 
       case "safer.building_access":          _onTapBuildingAccess(context); break;
@@ -784,13 +783,18 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   void _onTapSportEvents(BuildContext context) {
-    Analytics().logSelect(target: "Athletics Events");
-    Event2HomePanel.present(context, attributes: Event2HomePanel.athleticsCategoryAttributes);
+    Analytics().logSelect(target: "Events");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.events)));
   }
 
   void _onTapSportNews(BuildContext context) {
-    Analytics().logSelect(target: "Athletics News");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsListPanel()));
+    Analytics().logSelect(target: "News");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.news)));
+  }
+
+  void _onTapSportTeams(BuildContext context) {
+    Analytics().logSelect(target: "Teams");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.teams)));
   }
 
   void _onTapBuildingAccess(BuildContext context) {
@@ -881,7 +885,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapAthletics(BuildContext context) {
     Analytics().logSelect(target: "Athletics");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.events)));
   }
 
   void _onTapLaundry(BuildContext context) {
@@ -940,12 +944,17 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapNotifications(BuildContext context, {bool? unread}) {
     bool isUnread = (unread == true);
     Analytics().logSelect(target: isUnread ? "Unread Notifications" : "All Notifications");
-    SettingsNotificationsContentPanel.present(context, content: isUnread ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
+    NotificationsHomePanel.present(context, content: isUnread ? NotificationsContent.unread : NotificationsContent.all);
   }
 
   void _onTapEventFeed(BuildContext context) {
     Analytics().logSelect(target: "Events Feed");
     Event2HomePanel.present(context);
+  }
+
+  void _onTapMyEvents(BuildContext context) {
+    Analytics().logSelect(target: "My Events");
+    Event2HomePanel.present(context, types: LinkedHashSet<Event2TypeFilter>.from([Event2TypeFilter.favorite]));
   }
 
   /*void _onTapSuggestedEvents(BuildContext context) {
@@ -989,13 +998,8 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   void _onTapMyGameDay(BuildContext context) {
-    Analytics().logSelect(target: "My Game Day");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
-  }
-
-  void _onTapMyEvents(BuildContext context) {
-    Analytics().logSelect(target: "My Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [Event2.favoriteKeyName]); } )); // Event.favoriteKeyName
+    Analytics().logSelect(target: "It's Game Day");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.game_day)));
   }
 
   void _onTapMyDinings(BuildContext context) {
@@ -1004,13 +1008,13 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   void _onTapMyAthletics(BuildContext context) {
-    Analytics().logSelect(target: "My Athletics");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [Game.favoriteKeyName]); } ));
+    Analytics().logSelect(target: "My Big 10 Events");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.my_events)));
   }
 
   void _onTapMyNews(BuildContext context) {
     Analytics().logSelect(target: "My News");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [News.favoriteKeyName]); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.my_news)));
   }
 
   void _onTapMyLaundry(BuildContext context) {
@@ -1203,22 +1207,22 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
         double imageWidth = MediaQuery.of(context).size.width;
         double imageHeight = imageWidth * 810 / 1080;
         return (loadingProgress != null) ?
-          Container(color: Styles().colors?.fillColorPrimary, width: imageWidth, height: imageHeight, child:
+          Container(color: Styles().colors.fillColorPrimary, width: imageWidth, height: imageHeight, child:
             Center(child:
-              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white), ) 
+              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white), )
             ),
           ) :
           AspectRatio(aspectRatio: (1080.0 / 810.0), child: 
-            Container(color: Styles().colors?.fillColorPrimary, child: child)
+            Container(color: Styles().colors.fillColorPrimary, child: child)
           );
       })),
       Positioned.fill(child:
         Align(alignment: Alignment.bottomCenter, child:
           Column(mainAxisSize: MainAxisSize.min, children: [
-            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.rightToLeft, vertDir: TriangleVertDirection.topToBottom), child:
+            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.rightToLeft, vertDir: TriangleVertDirection.topToBottom), child:
               Container(height: 40)
             ),
-            Container(height: 20, color: Styles().colors?.fillColorSecondaryTransparent05),
+            Container(height: 20, color: Styles().colors.fillColorSecondaryTransparent05),
           ],),
         ),
       ),

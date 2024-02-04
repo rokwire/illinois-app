@@ -41,19 +41,19 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
       appBar: RootHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results_detail.header.title', 'Skills Self-Evaluation'), leading: RootHeaderBarLeading.Back,),
       body: SingleChildScrollView(child: content != null ? SectionSlantHeader(
         headerWidget: content!.header != null ? _buildHeader() : null,
-        slantColor: Styles().colors?.gradientColorPrimary,
+        slantColor: Styles().colors.gradientColorPrimary,
         slantPainterHeadingHeight: 0,
-        backgroundColor: Styles().colors?.background,
+        backgroundColor: Styles().colors.background,
         children: _buildContent(context),
         childrenPadding: const EdgeInsets.only(left: 24, right: 24, bottom: 24),
         childrenAlignment: CrossAxisAlignment.start,
         allowOverlap: false,
       ) : Padding(padding: const EdgeInsets.all(24.0), child: Text(
         Localization().getStringEx("panel.skills_self_evaluation.results_detail.unavailable.message", "Detailed results content for this skill is currently unavailable."),
-        style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
+        style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title'),
         textAlign: TextAlign.center,
       ))),
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -62,11 +62,11 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
     return Container(
       padding: EdgeInsets.only(top: 100, bottom: 32),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Padding(padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16), child: Text(content!.header!.title, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.header'), textAlign: TextAlign.center,)),
+        Padding(padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16), child: Text(content!.header!.title, style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.header'), textAlign: TextAlign.center,)),
         Visibility(visible: content!.header!.moreInfo != null, child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32.0),
           child: Text(content!.header!.moreInfo ?? '', 
-            style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'), 
+            style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.header.description'),
             textAlign: TextAlign.center,
           )
         )),
@@ -77,8 +77,8 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Styles().colors?.fillColorPrimaryVariant ?? Colors.transparent,
-            Styles().colors?.gradientColorPrimary ?? Colors.transparent,
+            Styles().colors.fillColorPrimaryVariant,
+            Styles().colors.gradientColorPrimary,
           ]
         )
       ),
@@ -90,7 +90,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
     for (SkillsSelfEvaluationSection section in sections ?? content?.sections ?? []) {
       Widget titleWidget = Text(
         section.title,
-        style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
+        style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title'),
         textAlign: TextAlign.start,
       );
 
@@ -98,7 +98,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
         contentWidgets.add(titleWidget);
         contentWidgets.add(Padding(padding: const EdgeInsets.only(bottom: 16), child: Text(
           section.subtitle!,
-          style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
+          style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.body'),
           textAlign: TextAlign.start,
         )));
       } else {
@@ -114,13 +114,13 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
             if (CollectionUtils.isEmpty(matches)) {
               contentWidgets.add(Text(
                 section.body!,
-                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
+                style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.body'),
                 textAlign: TextAlign.start,
               ));
             } else if (matches.elementAt(0).start > 0) {
               contentWidgets.add(Text(
                 section.body!.substring(0, matches.elementAt(0).start),
-                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
+                style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.body'),
                 textAlign: TextAlign.start,
               ));
             }
@@ -140,10 +140,10 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
                           children: [
                             TextSpan(
                               text: linkData.text,
-                              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link'),
+                              style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.link'),
                             ),
                             WidgetSpan(
-                              child: linkData.icon != null ? Padding(padding: const EdgeInsets.only(left: 4.0), child: Styles().images?.getImage(linkData.icon, excludeFromSemantics: true)) : Container(),
+                              child: linkData.icon != null ? Padding(padding: const EdgeInsets.only(left: 4.0), child: Styles().images.getImage(linkData.icon, excludeFromSemantics: true)) : Container(),
                             ),
                           ],
                         ),
@@ -155,7 +155,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
                     if (widgetData is String) {
                       contentWidgets.add(Text(
                         widgetData,
-                        style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
+                        style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.body'),
                       ));
                     }
                     break;
@@ -165,7 +165,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
               if (match.end < section.body!.length) {
                 contentWidgets.add(Text(
                   section.body!.substring(match.end, (i+1 < matches.length) ? matches.elementAt(i+1).start : null),
-                  style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
+                  style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.body'),
                   textAlign: TextAlign.start,
                 ));
               }
@@ -195,8 +195,8 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
     final Widget emptyImagePlaceholder = Container(height: 102);
     return Container(
         decoration: BoxDecoration(
-            color: Styles().colors?.white,
-            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            color: Styles().colors.white,
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(4))),
         child: Stack(children: [
           GestureDetector(
@@ -208,7 +208,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Padding(
                             padding: EdgeInsets.only(bottom: 16),
-                            child: Text(title ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))),
+                            child: Text(title ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))),
                         Stack(alignment: Alignment.center, children: [
                           StringUtils.isNotEmpty(imageUrl)
                               ? ClipRRect(
@@ -221,7 +221,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
                           VideoPlayButton()
                         ])
                       ])))),
-          Container(color: Styles().colors?.accentColor3, height: 4)
+          Container(color: Styles().colors.accentColor3, height: 4)
         ]));
   }
 

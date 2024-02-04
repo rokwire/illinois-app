@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/wallet/ICardHomeContentPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -14,7 +15,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/SavedPanel.dart';
-import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
@@ -100,7 +100,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     return Scaffold(
       appBar: HeaderBar(title: title ?? Localization().getStringEx('panel.guide_list.label.highlights.heading', 'Campus Guide')),
       body: Column(children: _buildContent()),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
     );
   }
 
@@ -187,7 +187,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
         Expanded(child:
           Padding(padding: EdgeInsets.all(32), child:
             Center(child:
-              Text(widget.contentEmptyMessage ?? Localization().getStringEx('panel.guide_list.label.content.empty', 'Empty guide content'), textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"))
+              Text(widget.contentEmptyMessage ?? Localization().getStringEx('panel.guide_list.label.content.empty', 'Empty guide content'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.message.regular.fat"))
             ,)
           ),
         ),
@@ -199,12 +199,12 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
   }
 
   Widget _buildSectionHeading(String? title) {
-    return Container(color: Styles().colors!.fillColorPrimary, child:
+    return Container(color: Styles().colors.fillColorPrimary, child:
       Row(children: [
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
             Semantics(hint: "Heading", child:
-              Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.heading.regular.fat"))
+              Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.fat"))
             )
           ),
         )
@@ -331,7 +331,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateAthletics() {
     Analytics().logSelect(target: "Athletics");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.events)));
   }
 
   void _navigateBusPass() {
@@ -436,17 +436,17 @@ class _GuideFeatureButtonState extends State<GuideFeatureButton> {
       GestureDetector(onTap: widget.onTap ?? _nop, child:
         Container(
           decoration: BoxDecoration(
-            color: Styles().colors!.white,
-            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            color: Styles().colors.white,
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.all(Radius.circular(4)),
           ), child:
           Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 6), child:
             Column(children: <Widget>[
-              Styles().images?.getImage(widget.iconKey, excludeFromSemantics: true) ?? Container(),
+              Styles().images.getImage(widget.iconKey, excludeFromSemantics: true) ?? Container(),
               Container(height: 12),
               Row(children: [
                 Expanded(child:
-                  Text(widget.title!, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.title.regular.semi_fat")),
+                  Text(widget.title!, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.title.regular.semi_fat")),
                 ),
               ],)
 

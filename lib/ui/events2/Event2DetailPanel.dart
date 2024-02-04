@@ -5,13 +5,13 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/ext/DeviceCalendar.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Survey.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
@@ -22,11 +22,13 @@ import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
 import 'package:illinois/ui/events2/Event2SurveyResponsesPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
+import 'package:rokwire_plugin/service/device_calendar.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/events2.dart';
@@ -150,7 +152,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget get _loadingContent {
       return Center(child:
           SizedBox(width: 32, height: 32, child:
-            CircularProgressIndicator(color: Styles().colors?.fillColorSecondary,)
+            CircularProgressIndicator(color: Styles().colors.fillColorSecondary,)
           )
         );
   }
@@ -166,7 +168,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ),
       SliverList(delegate:
       SliverChildListDelegate([
-        Container(color: Styles().colors?.white, child:
+        Container(color: Styles().colors.white, child:
           Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
             _roleBadgeWidget,
             _contentHeadingWidget,
@@ -177,7 +179,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
                 _detailsWidget,
               ])
             ),
-            Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,),
+            Divider(height: 1, color: Styles().colors.fillColorPrimaryTransparent03,),
           ]),
         ),
         Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
@@ -193,9 +195,9 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget get _roleBadgeWidget {
     String? label = _isAdmin ? Localization().getStringEx('panel.event2.detail.general.admin.title', 'ADMIN') : null;
     return (label != null) ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-      Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+      Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
         Semantics(label: event2UserRoleToString(_event?.userRole), excludeSemantics: true, child:
-          Text(event2UserRoleToString(_event?.userRole)?.toUpperCase() ?? 'ADMIN', style:  Styles().textStyles?.getTextStyle('widget.heading.small'),)
+          Text(event2UserRoleToString(_event?.userRole)?.toUpperCase() ?? 'ADMIN', style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
     ))) : Container();
   }
 
@@ -215,7 +217,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     ]);
 
   Widget get _categoriesContentWidget =>
-    Text(_displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat"));
+    Text(_displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles.getTextStyle("widget.card.title.small.fat"));
 
   static List<String>? _buildDisplayCategories(Event2? event) =>
     Events2().contentAttributes?.displaySelectedLabelsFromSelection(event?.attributes, usage: ContentAttributeUsage.category);
@@ -229,9 +231,9 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       badgeLabel = Localization().getStringEx('panel.event2.detail.general.recurrence.abbreviation.title', 'Repeats');
     }
     return (badgeLabel != null) ? Padding(padding: EdgeInsets.only(top: 16), child:
-      Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+      Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
         Semantics(label: badgeLabel, excludeSemantics: true, child:
-          Text(badgeLabel, style:  Styles().textStyles?.getTextStyle('widget.heading.small'),)
+          Text(badgeLabel, style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
     ))) : Container();
   }
 
@@ -249,7 +251,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           button: true,
           child: InkWell(onTap: _onFavorite,
             child: Padding(padding: EdgeInsets.all(16),
-              child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true,)
+              child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true,)
             )
           ),
         ),
@@ -261,7 +263,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     Positioned.fill(child:
       Center(child:
         SizedBox(width: 18, height: 18, child:
-          CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2,),
+          CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,),
         ),
       ),
     ),
@@ -275,12 +277,12 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     ],) : Container();
 
   Widget get _titleContentWidget =>
-    Text(_event?.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.extra_large'));
+    Text(_event?.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.extra_large'));
 
   Widget get _sponsorWidget => StringUtils.isNotEmpty(_event?.sponsor) ? Padding(padding: EdgeInsets.only(top: 8), child:
     Row(children: [
       Expanded(child: 
-        Text(_event?.sponsor ?? '', style: Styles().textStyles?.getTextStyle('widget.item.regular.fat'), maxLines: 2,)
+        Text(_event?.sponsor ?? '', style: Styles().textStyles.getTextStyle('widget.item.regular.fat'), maxLines: 2,)
       ),
     ],),
    ) : Container();
@@ -289,7 +291,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
        HtmlWidget(
           StringUtils.ensureNotEmpty(_event?.description),
           onTapUrl : (url) { _launchUrl(url, context: context); return true; },
-          textStyle: Styles().textStyles?.getTextStyle("widget.info.regular")
+          textStyle: Styles().textStyles.getTextStyle("widget.info.regular")
       )
   ) : Container();
 
@@ -301,9 +303,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ...?_speakerDetailWidget,
       ...?_priceDetailWidget,
       ...?_privacyDetailWidget,
+      ...?_publishedDetailWidget,
       ...?_superEventDetailWidget,
+      ...?_promoteButton,
       ...?_addToCalendarButton,
-      ...?_adminSettingsButtonWidget,
+      ...?_adminCommandsButton,
       ...?_attendanceDetailWidget,
       ...?_contactsDetailWidget,
       ...?_detailsInfoWidget,
@@ -332,8 +336,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ];
 
       Widget onlineWidget = canLaunch ?
-        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles?.getTextStyle('widget.button.title.small.semi_fat.underline'),) :
-        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),);
+        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles.getTextStyle('widget.button.title.small.semi_fat.underline'),) :
+        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular'),);
       details.add(
         InkWell(onTap: canLaunch ? _onOnline : null, child:
           _buildDetailWidget(onlineWidget, 'laptop', iconVisible: false, detailPadding: EdgeInsets.zero)
@@ -351,9 +355,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
       bool canLocation = _event?.location?.isLocationCoordinateValid ?? false;
 
-      String textDetailStyleName = canLocation ?
-        'widget.explore.card.detail.regular.underline' : 'widget.explore.card.detail.regular';
-      TextStyle? textDetailStyle = Styles().textStyles?.getTextStyle(textDetailStyleName);
+      String textDetailStyleName = canLocation ? 'widget.explore.card.detail.regular.underline' : 'widget.explore.card.detail.regular';
+      TextStyle? textDetailStyle = Styles().textStyles.getTextStyle(textDetailStyleName);
       
       List<Widget> details = <Widget>[
         _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.in_person.title', 'In Person'), 'location',
@@ -361,24 +364,24 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         ),
       ];
 
-      String? locationText = _event?.location?.displayName ?? _event?.location?.displayAddress ?? _event?.location?.displayDescription; // ?? _event?.location?.displayCoordinates;
-      if (locationText != null) {
-        details.add(
-          _buildDetailWidget(Text(locationText, maxLines: 1, style: textDetailStyle), 'location',
-            iconVisible: false,
-            detailPadding: EdgeInsets.zero
-          )
-        );
+      String? displayName = _event?.location?.displayName;
+      if (displayName != null) {
+        details.add(_buildLocationTextDetailWidget(displayName, textStyle: textDetailStyle));
+      }
+
+      String? displayAddress = _event?.location?.displayAddress;
+      if ((displayAddress != null) && (displayAddress != displayName)) {
+        details.add(_buildLocationTextDetailWidget(displayAddress, textStyle: textDetailStyle));
+      }
+
+      String? displayDescription = _event?.location?.displayDescription;
+      if ((displayDescription != null) && (displayDescription != displayAddress) && (displayDescription != displayName)) {
+        details.add(_buildLocationTextDetailWidget(displayDescription, textStyle: textDetailStyle));
       }
 
       String? distanceText = _event?.getDisplayDistance(_userLocation);
       if (distanceText != null) {
-        details.add(
-          _buildDetailWidget(Text(distanceText, maxLines: 1, style: textDetailStyle,), 'location',
-            iconVisible: false,
-            detailPadding: EdgeInsets.zero
-          )
-        );
+        details.add(_buildLocationTextDetailWidget(distanceText, textStyle: textDetailStyle));
       }
 
       if (canLocation) {
@@ -408,7 +411,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       details.add(_buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.free.title', 'Free'), 'cost'));
       if (StringUtils.isNotEmpty(_event?.cost)) {
         details.add(_buildTextDetailWidget(_event?.cost ?? '', 'cost',
-          textStyle: Styles().textStyles?.getTextStyle('widget.info.regular.thin'),
+          textStyle: Styles().textStyles.getTextStyle('widget.info.regular.thin'),
           iconVisible: false,
           maxLines: 2,
           detailPadding: EdgeInsets.zero
@@ -422,13 +425,25 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     return details;
   }
 
-  List<Widget>? get _privacyDetailWidget{
-    String privacyTypeTitle = _event?.private == true ?
-      Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event') :
-      Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
+  List<Widget>? get _privacyDetailWidget => [
+    _buildTextDetailWidget(_privacyStatus, "privacy"),
+    _detailSpacerWidget,
+  ];
 
-    return [_buildTextDetailWidget(privacyTypeTitle, "privacy"), _detailSpacerWidget];
-  }
+  String get _privacyStatus => (_event?.private == true)
+    ? (_isGroupEvent
+        ? Localization().getStringEx('panel.explore_detail.label.privacy.group_members.title', 'Group Members Only')
+        : Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Uploaded Guest List Only'))
+    : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
+
+  List<Widget>? get _publishedDetailWidget => _isAdmin ? <Widget>[
+    _buildTextDetailWidget(_publishedStatus, 'eye'),
+    _detailSpacerWidget
+  ] : null;
+
+  String get _publishedStatus => (_event?.published == true) ?
+    Localization().getStringEx('panel.event2.detail.general.published.title', 'Published') :
+    Localization().getStringEx('panel.event2.detail.general.unpublished.title', 'Unpublished');
 
   List<Widget>? get _superEventDetailWidget => (_superEvent != null) ? <Widget> [
     InkWell(onTap: _onSuperEvent, child:
@@ -519,7 +534,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
     return (description != null) ?<Widget>[
       _buildTextDetailWidget(description, 'info',
-        textStyle: Styles().textStyles?.getTextStyle('widget.info.regular.thin.italic') ,
+        textStyle: Styles().textStyles.getTextStyle('widget.info.regular.thin.italic') ,
         iconPadding: const EdgeInsets.only(right: 6),
         maxLines: 5,
       ),
@@ -539,14 +554,14 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       if(StringUtils.isNotEmpty(details)){
       contactList.add(
           _buildDetailWidget(
-        // Text(details?? '', style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular.underline')),
-              RichText(textScaleFactor: MediaQuery.textScaleFactorOf(context), text:
-                TextSpan(style: Styles().textStyles?.getTextStyle("widget.explore.card.detail.regular"), children: <TextSpan>[
+        // Text(details?? '', style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular.underline')),
+              RichText(textScaler: MediaQuery.of(context).textScaler, text:
+                TextSpan(style: Styles().textStyles.getTextStyle("widget.explore.card.detail.regular"), children: <TextSpan>[
                   TextSpan(text: StringUtils.isNotEmpty(contact?.firstName)?"${contact?.firstName}, " : ""),
                   TextSpan(text: StringUtils.isNotEmpty(contact?.lastName)?"${contact?.lastName}, " : ""),
                   TextSpan(text: StringUtils.isNotEmpty(contact?.organization)?"${contact?.organization}, " : ""),
-                  TextSpan(text: StringUtils.isNotEmpty(contact?.email)?"${contact?.email}, " : "", style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular.underline'), recognizer: TapGestureRecognizer()..onTap = () => _onContactEmail(contact?.email),),
-                  TextSpan(text: StringUtils.isNotEmpty(contact?.phone)?"${contact?.phone}, " : "", style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular.underline'), recognizer: TapGestureRecognizer()..onTap = () => _onContactPhone(contact?.phone),),
+                  TextSpan(text: StringUtils.isNotEmpty(contact?.email)?"${contact?.email}, " : "", style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular.underline'), recognizer: TapGestureRecognizer()..onTap = () => _onContactEmail(contact?.email),),
+                  TextSpan(text: StringUtils.isNotEmpty(contact?.phone)?"${contact?.phone}, " : "", style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular.underline'), recognizer: TapGestureRecognizer()..onTap = () => _onContactPhone(contact?.phone),),
             ])),
             'person', iconVisible: false, detailPadding: EdgeInsets.zero));
       }
@@ -557,8 +572,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     return contactList;
   }
 
-  List<Widget>? get _adminSettingsButtonWidget => _isAdmin? <Widget>[
-    InkWell(onTap: _onAdminSettings, child:
+  List<Widget>? get _adminCommandsButton => _isAdmin? <Widget>[
+    InkWell(onTap: _onAdminCommands, child:
        _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.admin_settings.title', 'Event Admin Settings'), 'settings', underlined: true)),
     _detailSpacerWidget
   ] : null;
@@ -566,6 +581,12 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   List<Widget>? get _addToCalendarButton => <Widget>[
     InkWell(onTap: _onAddToCalendar, child:
        _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.add_to_calendar.title', 'Add to Calendar'), 'event-save-to-calendar', underlined: true)),
+    _detailSpacerWidget
+  ];
+
+  List<Widget>? get _promoteButton => <Widget>[
+    InkWell(onTap: _onPromote, child:
+       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.promote.title', 'Share this event'), 'qr', underlined: true)),
     _detailSpacerWidget
   ];
 
@@ -654,8 +675,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget get _linkedEventsWidget => (_event?.hasLinkedEvents == true) ? SectionSlantHeader(
       title: _linkedEventsSectionTitle,
       slantImageKey: "slant-dark",
-      slantColor: Styles().colors!.backgroundVariant,
-      titleTextStyle: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"),
+      slantColor: Styles().colors.backgroundVariant,
+      titleTextStyle: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),
       progressWidget: _linkedEventsProgress,
       children: !_linkedEventsLoading ? _linkedEventsContent : [Row(children: [Expanded(child: Container())],)],
   ) : Container();
@@ -674,7 +695,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   Widget? get _linkedEventsProgress => _linkedEventsLoading ? SizedBox(width: 24, height: 24, child:
-    CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,),
+    CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
   ) : null;
 
   List<Widget> get _linkedEventsContent {
@@ -719,7 +740,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24), child:
         Row(children: [
           Expanded(child:
-            Text(message, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"), textAlign: TextAlign.center,),
+            Text(message, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"), textAlign: TextAlign.center,),
           )
         ],)
       )
@@ -734,7 +755,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
               width: 24,
               height: 24,
               child: CircularProgressIndicator(
-                  strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary)))));
+                  strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)))));
 
   List<Widget>? get _selectorWidget {
       Widget? customSelectorWidget = widget.eventSelector?.buildWidget(this);
@@ -745,7 +766,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       Padding(padding: EdgeInsets.only(top: 40, bottom: 16, left: 16, right: 16), child:
         Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
           _buildSettingButton(title: "Edit event", onTap: _onSettingEditEvent),
-          _buildSettingButton(title: "Promote this event", onTap: _onSettingPromote),
           _buildSettingButton(title: "Event registration", onTap: _onSettingEventRegistration),
           _buildSettingButton(title: "Event attendance", onTap: _onSettingAttendance),
           _buildSettingButton(title: _event?.attendanceDetails?.isNotEmpty == true ? "Event follow-up survey" : null, onTap: _onSettingSurvey),
@@ -756,6 +776,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   Widget get _detailSpacerWidget => Container(height: 8,);
 
+  Widget _buildLocationTextDetailWidget(String text, { TextStyle? textStyle }) =>
+    _buildDetailWidget(Text(text, style: textStyle ?? Styles().textStyles.getTextStyle('widget.explore.card.detail.regular')), // #3842 maxLines: 1, overflow: TextOverflow.ellipsis
+      'location', iconVisible: false, detailPadding: EdgeInsets.zero
+    );
+
   Widget _buildTextDetailWidget(String text, String iconKey, {
     TextStyle? textStyle, // 'widget.info.medium' : 'widget.info.medium.underline'
     int? maxLines = 1, TextOverflow? overflow = TextOverflow.ellipsis,
@@ -765,7 +790,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }) =>
     _buildDetailWidget(
       Text(text,
-        style: textStyle ?? Styles().textStyles?.getTextStyle(underlined ? 'widget.info.medium.underline' : 'widget.info.medium'),
+        style: textStyle ?? Styles().textStyles.getTextStyle(underlined ? 'widget.info.medium.underline' : 'widget.info.medium'),
         maxLines: maxLines,
         overflow: overflow,
       ),
@@ -783,14 +808,14 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     bool showProgress = false,
   }) {
     List<Widget> contentList = <Widget>[];
-    Widget? iconWidget = Styles().images?.getImage(iconKey, excludeFromSemantics: true);
+    Widget? iconWidget = Styles().images.getImage(iconKey, excludeFromSemantics: true);
     if (iconWidget != null) {
       contentList.add(Padding(padding: iconPadding, child: showProgress ?
         Stack(children: [
           Opacity(opacity: 0, child: iconWidget),
           Positioned.fill(child:
             Padding(padding: EdgeInsets.all(2), child:
-              CircularProgressIndicator(strokeWidth: 2, color: Styles().colors?.fillColorSecondary,)
+              CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
             ),
           )
         ],) : Opacity(opacity: iconVisible ? 1 : 0, child: iconWidget),
@@ -817,10 +842,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           RoundedButton(
               label: StringUtils.ensureNotEmpty(title),
               hint: hint,
-              textStyle: enabled ? Styles().textStyles?.getTextStyle("widget.button.title.small.fat") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.small.fat"),
-              backgroundColor: enabled ? Colors.white : Styles().colors!.background,
-              borderColor: enabled ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-              rightIcon:externalLink? Styles().images?.getImage(enabled ? 'external-link' : 'external-link-dark' ) : null,
+              textStyle: enabled ? Styles().textStyles.getTextStyle("widget.button.title.small.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.small.fat"),
+              backgroundColor: enabled ? Colors.white : Styles().colors.background,
+              borderColor: enabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+              rightIcon:externalLink? Styles().images.getImage(enabled ? 'external-link' : 'external-link-dark' ) : null,
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               onTap: onTap ?? (){},
             progress: progress,
@@ -980,7 +1005,12 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
   }  
   void _onAddToCalendar(){
-      DeviceCalendar().addToCalendar(_event);
+    DeviceCalendar().addToCalendar(context, _event);
+  }
+
+  void _onPromote(){
+    Analytics().logSelect(target: "Promote Event", attributes: _event?.analyticsAttributes);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2QrCodePanel(event: _event)));
   }
 
   void _onContactEmail(String? email){
@@ -1003,7 +1033,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
   }
 
-  void _onAdminSettings(){
+  void _onAdminCommands(){
     Analytics().logSelect(target: "Admin settings");
     showModalBottomSheet(
         context: context,
@@ -1030,43 +1060,40 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     });
   }
 
-  void _onSettingPromote(){
-    Analytics().logSelect(target: "Promote Event", attributes: _event?.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2QrCodePanel(event: _event)));
-  }
-
   void _onSettingEventRegistration(){
     Analytics().logSelect(target: "Event Registration");
-    Navigator.push<Event2?>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(
+    Navigator.push<dynamic>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(
       event: _event,
-    ))).then((Event2? event) {
-      if (event != null)
-      setStateIfMounted(() {
-        _event = event;
-      });
+    ))).then((dynamic event) {
+      if (event is Event2) {
+          setStateIfMounted(() {
+           _event = event;
+         });
+       }
     });
   }
 
   void _onSettingAttendance(){
     Analytics().logSelect(target: "Event Attendance");
-    Navigator.push<Event2?>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(
+    Navigator.push<dynamic>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(
       event: _event,
-    ))).then((Event2? event) {
-      if (event != null)
-      setStateIfMounted(() {
-        _event = event;
-      });
+    ))).then((dynamic event) {
+      if (event is Event2) {
+        setStateIfMounted(() {
+         _event = event;
+       });
+       }
     });
   }
 
   void _onSettingSurvey(){
     Analytics().logSelect(target: "Event Survey");
-    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(
+    Event2SetupSurveyPanel.push(context,
       surveyParam: Event2SetupSurveyParam(
         event: _event,
         survey: _survey,
       ),
-    ))).then((Event2SetupSurveyParam? surveyParam) {
+    ).then((Event2SetupSurveyParam? surveyParam) {
       if (surveyParam != null) {
         setStateIfMounted(() {
           if (surveyParam.event != null) {
@@ -1384,6 +1411,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   String? get _eventId => widget.event?.id ?? widget.eventId;
 
+  bool get _isGroupEvent => (widget.eventSelector is GroupEventSelector);
+
   //Event to Group Binding support
   @override
   Event2SelectorData? selectorData;
@@ -1394,21 +1423,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   void set _selectorEvent(Event2 event) => selectorData?.event = event;
-}
-
-extension _Event2Ext on Event2 {
-
-  Event2Grouping? get linkedEventsGroupingQuery {
-    if (isSuperEvent) {
-      return Event2Grouping.superEvent(id);
-    }
-    else if (isRecurring) {
-      return Event2Grouping.recurrence(grouping?.recurrenceId);
-    }
-    else {
-      return null;
-    }
-  }
 }
 
 //EventSelector Interface

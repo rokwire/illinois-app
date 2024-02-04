@@ -20,50 +20,60 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class ToDoItem {
+class WellnessToDoItem {
   static final String _dateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
 
   final String? id;
   final String? name;
-  final ToDoCategory? category;
-  final DateTime? dueDateTimeUtc;
+  final WellnessToDoCategory? category;
+  DateTime? dueDateTimeUtc;
   final bool? hasDueTime;
-  ToDoReminderType? reminderType;
+  DateTime? endDateTimeUtc;
+  WellnessToDoReminderType? reminderType;
   DateTime? reminderDateTimeUtc;
   final List<String>? workDays;
   final String? location;
   final String? description;
   bool isCompleted;
+  final String? recurrenceType;
+  final String? recurrenceId;
 
-  ToDoItem(
+  WellnessToDoItem(
       {this.id,
       this.name,
       this.category,
       this.dueDateTimeUtc,
       this.hasDueTime,
+      this.endDateTimeUtc,
       this.reminderType,
       this.reminderDateTimeUtc,
       this.workDays,
       this.location,
       this.description,
-      this.isCompleted = false});
+      this.isCompleted = false,
+      this.recurrenceType,
+      this.recurrenceId});
 
-  static ToDoItem? fromJson(Map<String, dynamic>? json) {
+  static WellnessToDoItem? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
-    return ToDoItem(
+    return WellnessToDoItem(
         id: JsonUtils.stringValue(json['id']),
         name: JsonUtils.stringValue(json['title']),
-        category: ToDoCategory.fromJson(JsonUtils.mapValue(json['category'])),
+        category: WellnessToDoCategory.fromJson(JsonUtils.mapValue(json['category'])),
         dueDateTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['due_date_time']), format: _dateTimeFormat, isUtc: true),
         hasDueTime: JsonUtils.boolValue(json['has_due_time']),
+        endDateTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['end_date_time']), format: _dateTimeFormat, isUtc: true),
         reminderType: reminderTypeFromString(JsonUtils.stringValue(json['reminder_type'])),
         reminderDateTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['reminder_date_time']), format: _dateTimeFormat, isUtc: true),
         workDays: JsonUtils.listStringsValue(json['work_days']),
         location: JsonUtils.stringValue(json['location']),
         description: JsonUtils.stringValue(json['description']),
+        recurrenceType: JsonUtils.stringValue(json['recurrence_type']),
+        recurrenceId: JsonUtils.stringValue(json['recurrence_id']),
         isCompleted: JsonUtils.boolValue(json['completed']) ?? false);
+
   }
 
   Map<String, dynamic> toJson() {
@@ -73,12 +83,15 @@ class ToDoItem {
       'category': category?.toJson(),
       'due_date_time': DateTimeUtils.utcDateTimeToString(dueDateTimeUtc),
       'has_due_time': hasDueTime,
+      'end_date_time': DateTimeUtils.utcDateTimeToString(endDateTimeUtc),
       'reminder_type': reminderTypeToKeyString(reminderType),
       'reminder_date_time': DateTimeUtils.utcDateTimeToString(reminderDateTimeUtc),
       'work_days': workDays,
       'location': location,
       'description': description,
-      'completed': isCompleted
+      'completed': isCompleted,
+      'recurrence_type' : recurrenceType,
+      'recurrence_id' : recurrenceId,
     };
     json.removeWhere((key, value) => (value == null));
     return json;
@@ -100,59 +113,59 @@ class ToDoItem {
   }
 
   Color get color {
-    return category?.color ?? Styles().colors!.fillColorPrimary!;
+    return category?.color ?? Styles().colors.fillColorPrimary;
   }
 
-  static List<ToDoItem>? listFromJson(List<dynamic>? jsonList) {
-    List<ToDoItem>? items;
+  static List<WellnessToDoItem>? listFromJson(List<dynamic>? jsonList) {
+    List<WellnessToDoItem>? items;
     if (jsonList != null) {
-      items = <ToDoItem>[];
+      items = <WellnessToDoItem>[];
       for (dynamic jsonEntry in jsonList) {
-        ListUtils.add(items, ToDoItem.fromJson(jsonEntry));
+        ListUtils.add(items, WellnessToDoItem.fromJson(jsonEntry));
       }
     }
     return items;
   }
 
-  static ToDoReminderType? reminderTypeFromString(String? typeValue) {
+  static WellnessToDoReminderType? reminderTypeFromString(String? typeValue) {
     switch (typeValue) {
       case 'night_before':
-        return ToDoReminderType.night_before;
+        return WellnessToDoReminderType.night_before;
       case 'morning_of':
-        return ToDoReminderType.morning_of;
+        return WellnessToDoReminderType.morning_of;
       case 'specific_time':
-        return ToDoReminderType.specific_time;
+        return WellnessToDoReminderType.specific_time;
       case 'none':
-        return ToDoReminderType.none;
+        return WellnessToDoReminderType.none;
       default:
         return null;
     }
   }
 
-  static String? reminderTypeToKeyString(ToDoReminderType? type) {
+  static String? reminderTypeToKeyString(WellnessToDoReminderType? type) {
     switch (type) {
-      case ToDoReminderType.night_before:
+      case WellnessToDoReminderType.night_before:
         return 'night_before';
-      case ToDoReminderType.morning_of:
+      case WellnessToDoReminderType.morning_of:
         return 'morning_of';
-      case ToDoReminderType.specific_time:
+      case WellnessToDoReminderType.specific_time:
         return 'specific_time';
-      case ToDoReminderType.none:
+      case WellnessToDoReminderType.none:
         return 'none';
       default:
         return null;
     }
   }
 
-  static String? reminderTypeToDisplayString(ToDoReminderType? type) {
+  static String? reminderTypeToDisplayString(WellnessToDoReminderType? type) {
     switch (type) {
-      case ToDoReminderType.none:
+      case WellnessToDoReminderType.none:
         return Localization().getStringEx('model.wellness.todo.category.reminder.type.none.label', 'None');
-      case ToDoReminderType.morning_of:
+      case WellnessToDoReminderType.morning_of:
         return Localization().getStringEx('model.wellness.todo.category.reminder.type.morning_of.label', 'Morning Of (8:00 AM)');
-      case ToDoReminderType.night_before:
+      case WellnessToDoReminderType.night_before:
         return Localization().getStringEx('model.wellness.todo.category.reminder.type.night_before.label', 'Night Before (9:00 PM)');
-      case ToDoReminderType.specific_time:
+      case WellnessToDoReminderType.specific_time:
         return Localization().getStringEx('model.wellness.todo.category.reminder.type.specific_time.label', 'Specific Time');
       default:
         return null;
@@ -160,35 +173,35 @@ class ToDoItem {
   }
 }
 
-enum ToDoReminderType { morning_of, night_before, specific_time, none }
+enum WellnessToDoReminderType { morning_of, night_before, specific_time, none }
 
-class ToDoCategory {
+class WellnessToDoCategory {
   final String? id;
   String? name;
   String? colorHex;
 
-  ToDoCategory({this.id, this.name, this.colorHex});
+  WellnessToDoCategory({this.id, this.name, this.colorHex});
 
-  static ToDoCategory? fromJson(Map<String, dynamic>? json) {
+  static WellnessToDoCategory? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
-    return ToDoCategory(
+    return WellnessToDoCategory(
         id: JsonUtils.stringValue(json['id']),
         name: JsonUtils.stringValue(json['name']),
         colorHex: JsonUtils.stringValue(json['color']));
   }
 
   Color get color {
-    return UiColors.fromHex(colorHex) ?? Styles().colors!.fillColorPrimary!;
+    return UiColors.fromHex(colorHex) ?? Styles().colors.fillColorPrimary;
   }
 
-  static List<ToDoCategory>? listFromJson(List<dynamic>? jsonList) {
-    List<ToDoCategory>? categories;
+  static List<WellnessToDoCategory>? listFromJson(List<dynamic>? jsonList) {
+    List<WellnessToDoCategory>? categories;
     if (jsonList != null) {
-      categories = <ToDoCategory>[];
+      categories = <WellnessToDoCategory>[];
       for (dynamic jsonEntry in jsonList) {
-        ListUtils.add(categories, ToDoCategory.fromJson(jsonEntry));
+        ListUtils.add(categories, WellnessToDoCategory.fromJson(jsonEntry));
       }
     }
     return categories;

@@ -135,7 +135,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
         ]),
         
       ),
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -159,7 +159,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   Widget _buildProgress() {
     return Align(alignment: Alignment.center, child:
-      CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+      CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
     );
   }
 
@@ -167,9 +167,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     return Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:
       Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: Styles().textStyles?.getTextStyle("widget.message.large.fat"),),
+        Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: Styles().textStyles.getTextStyle("widget.message.large.fat"),),
         Container(height:8),
-        Text(Localization().getStringEx("panel.saved.message.offline", "Saved Items are not available while offline"), style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),),
+        Text(Localization().getStringEx("panel.saved.message.offline", "Saved Items are not available while offline"), style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),),
         Expanded(child: Container(), flex: 3),
     ],),);
   }
@@ -183,11 +183,11 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
             HtmlWidget(
                 "<div style=text-align:center> ${HomeFavoritesWidget.emptyMessageHtml(favoriteCategory)} </div>",
                 onTapUrl : (url) {HomeFavoritesWidget.handleLocalUrl(url, context: context, analyticsTarget: 'View Home', analyticsSource: 'SavedPanel($favoriteCategory)'); return true;},
-                textStyle: Styles().textStyles?.getTextStyle("widget.message.medium.semi_thin"),
+                textStyle: Styles().textStyles.getTextStyle("widget.message.medium.semi_thin"),
                 customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(HomeFavoritesWidget.linkColor(favoriteCategory) ?? Colors.red)} : null,
                 // renderMode: RenderMode.sliverList,
             )
-            : Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),),
+            : Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),),
         Expanded(child: Container(), flex: 3),
     ],),);
   }
@@ -379,8 +379,8 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       case Event.favoriteKeyName:         return Localization().getStringEx('panel.saved.label.events', 'My Events');
       case Event2.favoriteKeyName:        return Localization().getStringEx('panel.saved.label.events2', 'My Events');
       case Dining.favoriteKeyName:        return Localization().getStringEx('panel.saved.label.dining', "My Dining Locations");
-      case Game.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.athletics', 'My Athletics Events');
-      case News.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.news', 'My Athletics News');
+      case Game.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.athletics', 'My Big 10 Events');
+      case News.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.news', 'My Big 10 News');
       case LaundryRoom.favoriteKeyName:   return Localization().getStringEx('panel.saved.label.laundry', 'My Laundry');
       case MTDStop.favoriteKeyName:       return Localization().getStringEx('panel.saved.label.mtd_stops', 'My Bus Stops');
       case ExplorePOI.favoriteKeyName:    return Localization().getStringEx('panel.saved.label.mtd_destinations', 'My Destinations');
@@ -463,7 +463,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
             title: widget.headingTitle,
             titleIconKey: widget.headingIconKey,
             slantImageKey: widget.slantImageKey,
-            slantColor: widget.slantColor ?? Styles().colors!.fillColorPrimary,
+            slantColor: widget.slantColor ?? Styles().colors.fillColorPrimary,
             children: (0 <  widget.items!.length) ? _buildListItems(context) : _buildEmptyContent(context),),
         Visibility(visible: showMoreButton, child: Padding(padding: EdgeInsets.only(top: 8, bottom: 40), child: SmallRoundedButton(
           label: _showAll ? Localization().getStringEx('panel.saved.button.less.title', "Show Less") : Localization().getStringEx('panel.saved.button.more.title', "Show All"),
@@ -492,7 +492,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     return <Widget>[Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:
       Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")),
+        Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: Styles().textStyles.getTextStyle("widget.item.regular.thin")),
         Expanded(child: Container(), flex: 3),
     ],),)];
   
@@ -528,13 +528,13 @@ class _SavedItem extends StatelessWidget {
       Semantics(label: title, child:
         Column(children: <Widget>[
           Container(height: 7, color: headerColor,),
-          Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
+          Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Flex(direction: Axis.vertical, children: <Widget>[
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
                       Expanded(child:
-                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.card.title.medium"), ),
+                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.title.medium"), ),
                       ),
                       Visibility(visible: Auth2().canFavorite, child:
                         GestureDetector(behavior: HitTestBehavior.opaque,
@@ -565,10 +565,10 @@ class _SavedItem extends StatelessWidget {
                         Row(children: <Widget>[
                           Padding(padding: EdgeInsets.only(right: 10), child: cardDetailImage,),
                           Expanded(child:
-                            Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.card.detail.medium")),
+                            Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.detail.medium")),
                           )
                         ],) :
-                        Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.card.detail.medium")),
+                        Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.detail.medium")),
                   )),)
                 ]),
               ),
@@ -578,7 +578,7 @@ class _SavedItem extends StatelessWidget {
   }
 
   Widget _buildCompositEventCard(BuildContext context) {
-      return ExploreCard(explore: favorite as Event, showTopBorder: true, horizontalPadding: 0, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+      return ExploreCard(explore: favorite as Event, showTopBorder: true, horizontalPadding: 0, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         onTap:() => _onTapCompositeEvent(context));
   }
 

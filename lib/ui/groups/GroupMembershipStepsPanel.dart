@@ -122,7 +122,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
           _buildSubmit(),
         ],
       ),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -133,11 +133,11 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start,
           children:<Widget>[
             Row(children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: 4), child: Styles().images?.getImage('campus-tools', excludeFromSemantics: true)),
-              Text(Localization().getStringEx("panel.membership_request.button.add_steps.title", 'Add Steps'), style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
+              Padding(padding: EdgeInsets.only(right: 4), child: Styles().images.getImage('campus-tools', excludeFromSemantics: true)),
+              Text(Localization().getStringEx("panel.membership_request.button.add_steps.title", 'Add Steps'), style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
             ],),
             Padding(padding: EdgeInsets.only(top: 8), child:
-              Text(Localization().getStringEx("panel.membership_request.label.steps.description", 'Share the steps someone will need to take to become a member of your group.'), style: Styles().textStyles?.getTextStyle("widget.description.variant.regular.thin")),
+              Text(Localization().getStringEx("panel.membership_request.label.steps.description", 'Share the steps someone will need to take to become a member of your group.'), style: Styles().textStyles.getTextStyle("widget.description.variant.regular.thin")),
             ),
           ]),
       ),
@@ -164,23 +164,23 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
   Widget _buildStep({required int index}) {
     List<Widget> stepContent = [
       Padding(padding: EdgeInsets.only(bottom: 4),
-        child: Text(Localization().getStringEx("panel.membership_request.button.add_steps.step", 'STEP ') +(index+1).toString(), style: Styles().textStyles?.getTextStyle("widget.title.tiny")),
+        child: Text(Localization().getStringEx("panel.membership_request.button.add_steps.step", 'STEP ') +(index+1).toString(), style: Styles().textStyles.getTextStyle("widget.title.tiny")),
       ),
       Stack(children: <Widget>[
-        Container(color: Styles().colors!.white,
+        Container(color: Styles().colors.white,
           child: TextField(
             maxLines: 2,
             controller: _controllers![index],
             focusNode: _focusNodes![index],
             decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-            style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
+            style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
           ),
         ),
         Align(alignment: Alignment.topRight,
           child: GestureDetector(onTap: () { _removeStep(index: index); },
             child: Container(width: 36, height: 36,
               child: Align(alignment: Alignment.center,
-                child: Text('X', style: Styles().textStyles?.getTextStyle("widget.title.regular")),
+                child: Text('X', style: Styles().textStyles.getTextStyle("widget.title.regular")),
               ),
             ),
           ),
@@ -201,11 +201,11 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
     }
 
     List<Widget> commands = [
-      GroupMembershipAddButton(height: 26 + 16*MediaQuery.of(context).textScaleFactor, title:Localization().getStringEx("panel.membership_request.label.contact_event", 'Connect event'), onTap: () { _addEvent(stepIndex: index);  },),
+      GroupMembershipAddButton(height: 26 + MediaQuery.of(context).textScaler.scale(16), title:Localization().getStringEx("panel.membership_request.label.contact_event", 'Connect event'), onTap: () { _addEvent(stepIndex: index);  },),
       Container(width: 10,)
     ];
     if ((index + 1) == _steps.length) {
-      commands.add(GroupMembershipAddButton(height: 26 + 16*MediaQuery.of(context).textScaleFactor, title: Localization().getStringEx("panel.membership_request.button.add_steps.title", 'Add step'), onTap: () { _addStep();  },),);
+      commands.add(GroupMembershipAddButton(height: 26 + MediaQuery.of(context).textScaler.scale(16), title: Localization().getStringEx("panel.membership_request.button.add_steps.title", 'Add step'), onTap: () { _addStep();  },),);
     }
 
     stepContent.add(Padding(padding: EdgeInsets.only(top: 8), child: SingleChildScrollView(scrollDirection: Axis.horizontal, child:Row(children: commands,),),));
@@ -220,9 +220,9 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
         child: Row(children: <Widget>[
           Expanded(child: Container(),),
           RoundedButton(label:Localization().getStringEx("panel.membership_request.button.save.title", 'Save steps'),
-            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
-            backgroundColor: Styles().colors!.white,
-            borderColor: Styles().colors!.fillColorSecondary,
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+            backgroundColor: Styles().colors.white,
+            borderColor: Styles().colors.fillColorSecondary,
             borderWidth: 2,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             contentWeight: 0.0,
@@ -320,19 +320,19 @@ class _EventCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Container(
         decoration: BoxDecoration(
-          color: Styles().colors!.white,
-          boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+          color: Styles().colors.white,
+          boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
           borderRadius: BorderRadius.all(Radius.circular(8))
         ),
         child: Stack(children: <Widget>[
           Padding(padding: EdgeInsets.all(16),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Padding(padding: EdgeInsets.only(bottom: 8), child: 
-                Text(event!.name!,  style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")),
+                Text(event!.name!,  style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat")),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
-                Padding(padding: EdgeInsets.only(right: 8), child: Styles().images?.getImage('calendar', excludeFromSemantics: true)),
-                Text(event?.shortDisplayDate ?? '',  style: Styles().textStyles?.getTextStyle("widget.item.small.thin")),
+                Padding(padding: EdgeInsets.only(right: 8), child: Styles().images.getImage('calendar', excludeFromSemantics: true)),
+                Text(event?.shortDisplayDate ?? '',  style: Styles().textStyles.getTextStyle("widget.item.small.thin")),
               ],)),
             ],)
           ),
@@ -340,7 +340,7 @@ class _EventCard extends StatelessWidget {
             child: GestureDetector(onTap: () { onTapRemove!(); },
               child: Container(width: 36, height: 36,
                 child: Align(alignment: Alignment.center,
-                  child: Text('X', style: Styles().textStyles?.getTextStyle("widget.title.regular")),
+                  child: Text('X', style: Styles().textStyles.getTextStyle("widget.title.regular")),
                 ),
               ),
             ),

@@ -51,7 +51,7 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
         Expanded(
           child: Stack(
             children: [
-              CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.gradientColorPrimary, horzDir: TriangleHorzDirection.leftToRight, vertDir: TriangleVertDirection.bottomToTop), child:
+              CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.gradientColorPrimary, horzDir: TriangleHorzDirection.leftToRight, vertDir: TriangleVertDirection.bottomToTop), child:
                 Container(height: 64),
               ),
               Connectivity().isOffline ? _buildOfflineMessage() : _buildOccupationList(),
@@ -70,7 +70,7 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
         children: [
           Text(
             Localization().getStringEx('panel.skills_self_evaluation.occupation_list.section.title', 'Career Explorer'),
-            style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.header'),
+            style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.header'),
             textAlign: TextAlign.center,
           ),
           _buildOccupationsHeader(),
@@ -82,8 +82,8 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Styles().colors?.fillColorPrimaryVariant ?? Colors.transparent,
-            Styles().colors?.gradientColorPrimary ?? Colors.transparent,
+            Styles().colors.fillColorPrimaryVariant,
+            Styles().colors.gradientColorPrimary,
           ],
         ),
       ),
@@ -99,7 +99,7 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
           _buildSearchBar(),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Divider(color: Styles().colors?.surface, thickness: 2),
+            child: Divider(color: Styles().colors.surface, thickness: 2),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -111,7 +111,7 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
                     fit: FlexFit.tight,
                     child: Text(
                       Localization().getStringEx('panel.skills_self_evaluation.occupation_list.occupation.title', 'OCCUPATION'),
-                      style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),
+                      style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.table.header'),
                     )),
                 Flexible(
                     flex: 5,
@@ -122,11 +122,11 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
                         children: [
                           Text(
                             Localization().getStringEx('panel.skills_self_evaluation.occupation_list.match.title', 'MATCH PERCENTAGE'),
-                            style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),
+                            style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.table.header'),
                           ),
                           SizedBox(width: 8,),
-                          (_sortMatchAsc ? Styles().images?.getImage('chevron-up', excludeFromSemantics: true)
-                              : Styles().images?.getImage('chevron-down', excludeFromSemantics: true)) ?? Container(),
+                          (_sortMatchAsc ? Styles().images.getImage('chevron-up', excludeFromSemantics: true)
+                              : Styles().images.getImage('chevron-down', excludeFromSemantics: true)) ?? Container(),
                         ],
                       ),
                     ))
@@ -145,7 +145,7 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
           child: Text(
               Localization().getStringEx('panel.skills_self_evaluation.occupation_list.offline.error.msg', 'Career Explorer not available while offline.'),
               textAlign: TextAlign.center,
-              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'))),
+              style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title'))),
     );
   }
 
@@ -160,7 +160,7 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
         textInputAction: TextInputAction.search,
         autofocus: false,
         autocorrect: false,
-        style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"),
+        style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
         onChanged: (str) {
           setState(() {
             _searchTerm = str;
@@ -184,21 +184,21 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
                     _searchTerm = null;
                     _filterOccupationList();
                   });
-                }, icon: Styles().images?.getImage('close', excludeFromSemantics: true) ?? Container()),
+                }, icon: Styles().images.getImage('close', excludeFromSemantics: true) ?? Container()),
               ),
               IconButton(onPressed: () => setState(() {
                 _searchTerm = _searchController.text;
                 _filterOccupationList();
               }),
-              icon: Styles().images?.getImage('search', excludeFromSemantics: true) ?? Container()),
+              icon: Styles().images.getImage('search', excludeFromSemantics: true) ?? Container()),
             ],
           ),
-          labelStyle: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"),
+          labelStyle: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
           labelText: Localization().getStringEx('panel.skills_self_evaluation.search.title', 'Search'),
           filled: true,
-          fillColor: Styles().colors?.getColor('surface'),
-          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors?.getColor('surface') ?? Colors.white, width: 2.0, style: BorderStyle.solid)),
-          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors?.getColor('fillColorSecondary') ?? Colors.black, width: 2.0))),
+          fillColor: Styles().colors.getColor('surface'),
+          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.getColor('surface') ?? Colors.white, width: 2.0, style: BorderStyle.solid)),
+          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.getColor('fillColorSecondary') ?? Colors.black, width: 2.0))),
       ),);
   }
 
@@ -286,21 +286,21 @@ class OccupationListTile extends StatelessWidget {
                   fit: FlexFit.tight,
                   child: Text(
                     occupationMatch.occupation?.name.toString() ?? "",
-                    style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
+                    style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title'),
                   ),
                 ),
                 Spacer(),
                 Flexible(
                     flex: 2,
                     fit: FlexFit.tight,
-                    child: Text(occupationMatch.matchPercent?.toInt().toString() ?? '--', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.current'), textAlign: TextAlign.center,)
+                    child: Text(occupationMatch.matchPercent?.toInt().toString() ?? '--', style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.score.current'), textAlign: TextAlign.center,)
                 ),
                 Flexible(
                     flex: 1,
                     fit: FlexFit.tight,
                     child: SizedBox(
                         height: 16.0,
-                        child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true))),
+                        child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true))),
               ],
             ),
           ),

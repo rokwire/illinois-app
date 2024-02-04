@@ -94,13 +94,13 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                 button: true,
                 excludeSemantics: true,
                 child: IconButton(
-                  icon: Styles().images?.getImage('more-white') ?? Container(),
+                  icon: Styles().images.getImage('more-white') ?? Container(),
                   onPressed:_onOptionsTap,
               ))
           )
         ],
       ),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
       body: Column(children: <Widget>[
         Expanded(
@@ -111,7 +111,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
               children: [
                 _eventImageHeader(),
                 Container(
-                  color: Styles().colors!.white,
+                  color: Styles().colors.white,
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
                     children: [
@@ -154,19 +154,19 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     String? imageUrl = widget.event?.imageUrl;
     return Container(
       height: 200,
-      color: Styles().colors!.background,
+      color: Styles().colors.background,
       child:Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
           StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child: ModalImageHolder(child: Image.network(imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true))) : Container(),
           CustomPaint(
-            painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
+            painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
             child: Container(
               height: 53,
             ),
           ),
           CustomPaint(
-            painter: TrianglePainter(painterColor: Styles().colors!.white),
+            painter: TrianglePainter(painterColor: Styles().colors.white),
             child: Container(
               height: 30,
             ),
@@ -184,12 +184,12 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         children: [
           Text(
             JsonUtils.stringValue(category)?.toUpperCase() ?? "",
-            style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat.spaced")
+            style: Styles().textStyles.getTextStyle("widget.title.light.small.fat.spaced")
           ),
           Container(height: 8,),
           Text(
             _event!.exploreTitle!,
-            style: Styles().textStyles?.getTextStyle("widget.title.extra_large")
+            style: Styles().textStyles.getTextStyle("widget.title.extra_large")
           ),
         ],
       )
@@ -220,10 +220,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(right: 10),
-                  child: Styles().images?.getImage('calendar'),
+                  child: Styles().images.getImage('calendar'),
                 ),
                 Expanded(child: Text(displayTime!,
-                    style: Styles().textStyles?.getTextStyle("widget.item.regular"))),
+                    style: Styles().textStyles.getTextStyle("widget.item.regular"))),
               ],
             ),
           )
@@ -238,7 +238,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       return Container();
     }
     String eventType = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
-    BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
+    BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1)));
     String iconKey = "location" ;
     String? locationId = widget.event?.location?.id;
     String? locationText = _event?.getLongDisplayLocation(null); // if we need distance calculation - pass _locationData
@@ -263,10 +263,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.only(right: 10),
-                          child: Styles().images?.getImage(iconKey, excludeFromSemantics: true),
+                          child: Styles().images.getImage(iconKey, excludeFromSemantics: true),
                         ),
                         Container(decoration: (null), padding: EdgeInsets.only(bottom: (0)), child: Text(eventType,
-                            style: Styles().textStyles?.getTextStyle("widget.item.regular")),),
+                            style: Styles().textStyles.getTextStyle("widget.item.regular")),),
                       ]),
                   Container(height: 4,),
                   Visibility(visible: isValueVisible, child: Container(
@@ -276,7 +276,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                           padding: EdgeInsets.only(bottom: 2),
                           child: Text(
                             value??"",
-                            style: Styles().textStyles?.getTextStyle("widget.title.small.semi_fat")
+                            style: Styles().textStyles.getTextStyle("widget.title.small.semi_fat")
                           ))))
                 ],)
           )
@@ -290,7 +290,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     }
 
     String eventType = Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event");
-    BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
+    BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1)));
     String iconKey = "laptop";
     String? virtualUrl = widget.event?.onlineDetails?.url;
     String locationDescription = StringUtils.ensureNotEmpty(widget.event?.location?.description);
@@ -320,10 +320,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.only(right: 10),
-                          child: Styles().images?.getImage(iconKey, excludeFromSemantics: true),
+                          child: Styles().images.getImage(iconKey, excludeFromSemantics: true),
                         ),
                         Container(decoration: (StringUtils.isNotEmpty(value) ? underlineLocationDecoration : null), padding: EdgeInsets.only(bottom: (StringUtils.isNotEmpty(value) ? 2 : 0)), child: Text(eventType,
-                            style: Styles().textStyles?.getTextStyle("widget.item.regular")),),
+                            style: Styles().textStyles.getTextStyle("widget.item.regular")),),
                       ]),
                   Container(height: 4,),
                   Visibility(visible: isValueVisible, child: Container(
@@ -333,7 +333,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                           padding: EdgeInsets.only(bottom: 2),
                           child: Text(
                             value,
-                            style: Styles().textStyles?.getTextStyle("widget.title.small.semi_fat")
+                            style: Styles().textStyles.getTextStyle("widget.title.small.semi_fat")
                           ))))
                 ],)
           )
@@ -360,10 +360,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(right: 10),
-                      child: Styles().images?.getImage("cost"),
+                      child: Styles().images.getImage("cost"),
                     ),
                     Expanded(child:Text(priceText,
-                        style: Styles().textStyles?.getTextStyle("widget.item.regular"))),
+                        style: Styles().textStyles.getTextStyle("widget.item.regular"))),
 
                   ]),
               !hasAdditionalDescription? Container():
@@ -371,7 +371,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                   padding: EdgeInsets.only(left: 28),
                   child: Row(children: [
                     Expanded(child:Text(additionalDescription??"",
-                        style: Styles().textStyles?.getTextStyle("widget.item.regular"))),
+                        style: Styles().textStyles.getTextStyle("widget.item.regular"))),
 
                   ])),
             ],
@@ -385,7 +385,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   Widget _eventPrivacyDetail() {
     String privacyText = _isPrivateGroupEvent
-        ? Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event')
+        ? Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Uploaded Guest List Only')
         : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
     return Semantics(
         label: Localization().getStringEx('panel.explore_detail.label.privacy.title', 'Privacy'),
@@ -395,9 +395,9 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
             padding: EdgeInsets.only(bottom: 16),
             child: Column(children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Padding(padding: EdgeInsets.only(left: 1, right: 11), child: Styles().images?.getImage('privacy')),
+                Padding(padding: EdgeInsets.only(left: 1, right: 11), child: Styles().images.getImage('privacy')),
                 Expanded(
-                    child: Text(privacyText, style: Styles().textStyles?.getTextStyle("widget.item.regular")))
+                    child: Text(privacyText, style: Styles().textStyles.getTextStyle("widget.item.regular")))
               ])
             ])));
   }
@@ -435,7 +435,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         }
         contactDetails += contact.phone!;
       }
-      contactList.add(Padding(padding: EdgeInsets.only(bottom: 5), child: Text(contactDetails, style: Styles().textStyles?.getTextStyle("widget.text.regular"))));
+      contactList.add(Padding(padding: EdgeInsets.only(bottom: 5), child: Text(contactDetails, style: Styles().textStyles.getTextStyle("widget.text.regular"))));
     }
     return Padding(padding: EdgeInsets.only(left: 30), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: contactList));
   }
@@ -451,7 +451,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         child: HtmlWidget(
             StringUtils.ensureNotEmpty(description),
             onTapUrl : (url) {_launchUrl(url, context: context); return true;},
-            textStyle: Styles().textStyles?.getTextStyle("widget.info.regular")
+            textStyle: Styles().textStyles.getTextStyle("widget.info.regular")
         ));
   }
 
@@ -471,10 +471,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
             RoundedButton(
               label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
               hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
-              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-              backgroundColor: hasRegistrationUrl ? Styles().colors!.background : Colors.white,
-              borderColor: hasRegistrationUrl ? Styles().colors!.fillColorPrimary: Styles().colors!.fillColorSecondary,
-              rightIcon: Styles().images?.getImage(hasRegistrationUrl ? 'external-link-dark' : 'external-link'),
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+              backgroundColor: hasRegistrationUrl ? Styles().colors.background : Colors.white,
+              borderColor: hasRegistrationUrl ? Styles().colors.fillColorPrimary: Styles().colors.fillColorSecondary,
+              rightIcon: Styles().images.getImage(hasRegistrationUrl ? 'external-link-dark' : 'external-link'),
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               onTap: () {
                 Analytics().logSelect(target: 'Event website');
@@ -490,10 +490,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
           RoundedButton(
             label: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.title', 'Register'),
             hint: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.hint', ''),
-            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
             backgroundColor: Colors.white,
-            borderColor: Styles().colors!.fillColorSecondary,
-            rightIcon: Styles().images?.getImage('external-link'),
+            borderColor: Styles().colors.fillColorSecondary,
+            rightIcon: Styles().images.getImage('external-link'),
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             onTap: () {
               _onTapRegistration(registrationUrl);
@@ -520,7 +520,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
               hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                   'widget.card.button.favorite.on.hint', ''),
               button: true,
-              child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray')
+              child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray')
           )));
   }
 
@@ -540,7 +540,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         ),
         Container(
           height: 1,
-          color: Styles().colors!.surfaceAccent,
+          color: Styles().colors.surfaceAccent,
         ),
         Container(
           height: 14,
@@ -684,14 +684,14 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                           header: true,
                           excludeSemantics: true,
                           child: Text(title,
-                            style: Styles().textStyles?.getTextStyle("widget.title.tiny")
+                            style: Styles().textStyles.getTextStyle("widget.title.tiny")
                           ),
                         ),
                         Container(
                           padding: EdgeInsets.only(top: 2),
                           child: Text(
                             description,
-                            style: Styles().textStyles?.getTextStyle("widget.item.small.thin")
+                            style: Styles().textStyles.getTextStyle("widget.item.small.thin")
                           ),
                         )
                       ],)
@@ -712,15 +712,15 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                 Container(height: 27,),
                 RoundedButton(
                   label: Localization().getStringEx('panel.groups_event_detail.button.add.title', "ADD "),
-                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                   backgroundColor: Colors.white,
-                  borderColor: Styles().colors!.fillColorSecondary,
+                  borderColor: Styles().colors.fillColorSecondary,
                   onTap: (){
                     Analytics().logSelect(target: 'Add');
                     setState(() {
                       if(_currentlySelectedGroup!=null) {
                         Log.d("Selected group: $_currentlySelectedGroup");
-                        AppToast.show(
+                        AppToast.showMessage(
                             Localization().getStringEx('panel.groups_event_detail.label.link_result',  "Event has been linked to") + (_currentlySelectedGroup?.title ?? ""));
                         Groups().linkEventToGroup(groupId:_currentlySelectedGroup!.id,eventId: _event?.id);
                       }

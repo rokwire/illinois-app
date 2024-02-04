@@ -25,6 +25,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHealthScreenerWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessMentalHealthContentWidget.dart';
+import 'package:illinois/ui/wellness/WellnessSuccessTeamContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessAppointmentsContentWidget.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingsHomeContentWidget.dart';
@@ -41,7 +42,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-enum WellnessContent { dailyTips, rings, todo, appointments, healthScreener, podcast, resources, struggling, mentalHealth }
+enum WellnessContent { dailyTips, rings, todo, appointments, healthScreener, podcast, resources, struggling, mentalHealth, successTeam }
 
 class WellnessHomePanel extends StatefulWidget {
   static const String notifySelectContent = "edu.illinois.rokwire.wellness.content.select";
@@ -124,16 +125,16 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         appBar: _headerBar,
         body: Column(children: <Widget>[
           Container(
-            color: _healthScreenerSelected ? Styles().colors?.fillColorPrimaryVariant : Styles().colors?.background,
+            color: _healthScreenerSelected ? Styles().colors.fillColorPrimaryVariant : Styles().colors.background,
             padding: EdgeInsets.only(left: 16, top: 16, right: 16),
             child: Semantics(
               hint:  Localization().getStringEx("dropdown.hint", "DropDown"),
               container: true,
               child: RibbonButton(
-                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
-                  backgroundColor: Styles().colors!.white,
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+                  backgroundColor: Styles().colors.white,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
-                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                   rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
                   label: _getContentLabel(_selectedContent),
                   onTap: _changeSettingsContentValuesVisibility
@@ -149,12 +150,12 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
             _buildContentValuesContainer()
           ]))
         ]),
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         bottomNavigationBar: _navigationBar);
   }
 
   Widget _buildScrollableContentWidget({required Widget child}) {
-    if (_selectedContent == WellnessContent.appointments) {
+    if (_selectedContent == WellnessContent.appointments || _selectedContent == WellnessContent.todo) {
       return Container(child: child);
     } else {
       return SingleChildScrollView(controller: _contentScrollController, child: child);
@@ -176,12 +177,12 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
                     _contentValuesVisible = false;
                   });
                 },
-                child: Container(color: Styles().colors!.blackTransparent06))));
+                child: Container(color: Styles().colors.blackTransparent06))));
   }
 
   Widget _buildContentValuesWidget() {
     List<Widget> sectionList = <Widget>[];
-    sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
+    sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
 
     if (CollectionUtils.isNotEmpty(_contentValues)) {
       for (WellnessContent content in _contentValues!) {
@@ -195,8 +196,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
 
   Widget _buildContentItem(WellnessContent contentItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors!.white,
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        backgroundColor: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentItem),
         onTap: () => _onTapContentItem(contentItem));
@@ -264,6 +265,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
       return WellnessContent.resources;
     } else if (code == 'mental_health') {
       return WellnessContent.mentalHealth;
+    } else if (code == 'success_team') {
+      return WellnessContent.successTeam;
     } else if (code == 'struggling') {
       return WellnessContent.struggling;
     } else {
@@ -305,14 +308,16 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         return WellnessHealthScreenerHomeWidget(_contentScrollController);
       case WellnessContent.podcast:
         String? guideId = _loadWellcomeResourceGuideId('podcast');
-        return (guideId != null) ? GuideDetailWidget(key: _podcastKey, guideEntryId: guideId, headingColor: Styles().colors?.background) : Container();
+        return (guideId != null) ? GuideDetailWidget(key: _podcastKey, guideEntryId: guideId, headingColor: Styles().colors.background) : Container();
       case WellnessContent.resources:
         return WellnessResourcesContentWidget();
       case WellnessContent.mentalHealth:
         return WellnessMentalHealthContentWidget();
+      case WellnessContent.successTeam:
+        return WellnessSuccessTeamContentWidget();
       case WellnessContent.struggling:
         String? guideId = _loadWellcomeResourceGuideId('where_to_start');
-        return (guideId != null) ? GuideDetailWidget(key: _strugglingKey, guideEntryId: guideId, headingColor: Styles().colors?.background) : Container();
+        return (guideId != null) ? GuideDetailWidget(key: _strugglingKey, guideEntryId: guideId, headingColor: Styles().colors.background) : Container();
       default:
         return Container();
     }
@@ -358,6 +363,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         return _loadContentString('panel.wellness.section.resources.label', 'Wellness Resources', language: language);
       case WellnessContent.mentalHealth:
         return _loadContentString('panel.wellness.section.mental_health.label', 'Mental Health Resources', language: language);
+      case WellnessContent.successTeam:
+        return _loadContentString('panel.wellness.section.success_team.label', 'My Success Team', language: language);
       case WellnessContent.podcast:
         return _loadContentString('panel.wellness.section.podcast.label', 'Healthy Illini Podcast', language: language);
       case WellnessContent.struggling:

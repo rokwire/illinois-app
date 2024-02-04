@@ -64,7 +64,7 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
         title: Localization().getStringEx('panel.home_canvas_course.header.title', 'Course'),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors!.white,
+      backgroundColor: Styles().colors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -87,7 +87,7 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
   Widget _buildErrorContent() {
     return Center(
         child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.home_canvas_course.load.failed.error.msg', 'Failed to load course. Please, try again later.'),
-            textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
+            textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildCourseContent() {
@@ -169,7 +169,7 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
   }
 
   Widget _buildDelimiter() {
-    return Container(height: 1, color: Styles().colors!.surfaceAccent);
+    return Container(height: 1, color: Styles().colors.surfaceAccent);
   }
 
   void _onTapLaunch() async {

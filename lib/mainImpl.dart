@@ -24,6 +24,7 @@ import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/MobileAccess.dart';
@@ -31,7 +32,6 @@ import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/DeepLink.dart';
-import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Content.dart';
@@ -64,6 +64,7 @@ import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
+import 'package:rokwire_plugin/service/device_calendar.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -139,6 +140,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       CheckList(CheckList.giesOnboarding),
       CheckList(CheckList.uiucOnboarding),
       Canvas(),
+      CustomCourses(),
       Rewards(),
       OnCampus(),
       Wellness(),
@@ -276,9 +278,9 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
         //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
         title: Localization().getStringEx('app.title', 'Illinois'),
         theme: ThemeData(
-          appBarTheme: AppBarTheme(backgroundColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040)),
-          primaryColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040),
-          fontFamily: Styles().fontFamilies?.extraBold ?? 'ProximaNovaExtraBold'),
+          appBarTheme: AppBarTheme(backgroundColor: Styles().colors.fillColorPrimaryVariant),
+          primaryColor: Styles().colors.fillColorPrimaryVariant,
+          fontFamily: Styles().fontFamilies.extraBold),
         home: _homePanel,
       ),
     );

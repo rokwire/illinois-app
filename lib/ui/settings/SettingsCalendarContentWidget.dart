@@ -79,32 +79,14 @@ class _SettingsCalendarContentWidgetState extends State<SettingsCalendarContentW
     List<Widget> contentList = [];
     List<dynamic> codes = FlexUI()['calendar.settings'] ?? [];
     for (String code in codes) {
-      if (code == 'enable') {
-        contentList.add(Container(height: 4));
-        contentList.add(ToggleRibbonButton(
-            label: Localization().getStringEx('panel.settings.home.calendar.settings.enable.label', 'Allow saving to calendar'),
-            border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
-            borderRadius: BorderRadius.all(Radius.circular(4)),
-            textStyle: (Storage().calendarEnabledToSave == true) ? Styles().textStyles?.getTextStyle("widget.message.regular.fat") :   Styles().textStyles?.getTextStyle("widget.message.regular.fat.accent"),
-            toggled: Storage().calendarEnabledToSave ?? false,
-            onTap: _onEnable));
-      } else if (code == 'auto_save') {
-        contentList.add(Container(height: 4));
-        contentList.add(ToggleRibbonButton(
-            label: Localization().getStringEx('panel.settings.home.calendar.settings.add_events.label', 'Add saved events to calendar'),
-            border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
-            borderRadius: BorderRadius.all(Radius.circular(4)),
-            textStyle: (Storage().calendarEnabledToSave == true) ? Styles().textStyles?.getTextStyle("widget.message.regular.fat") :   Styles().textStyles?.getTextStyle("widget.message.regular.fat.accent"),
-            toggled: Storage().calendarEnabledToSave == true && Storage().calendarEnabledToAutoSave == true,
-            onTap: _onAutoSave));
-      } else if (code == 'prompt') {
+      if (code == 'prompt') {
         contentList.add(Container(height: 4));
         contentList.add(ToggleRibbonButton(
             label: Localization().getStringEx('panel.settings.home.calendar.settings.prompt.label', 'Prompt when saving events to calendar'),
-            border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+            border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4)),
-            textStyle: (Storage().calendarEnabledToSave == true) ? Styles().textStyles?.getTextStyle("widget.message.regular.fat") :   Styles().textStyles?.getTextStyle("widget.message.regular.fat.accent"),
-            toggled: Storage().calendarEnabledToSave == true && Storage().calendarCanPrompt == true,
+            textStyle: Styles().textStyles.getTextStyle("widget.message.regular.fat"),
+            toggled: Storage().calendarShouldPrompt,
             onTap: _onPrompt));
       }
     }
@@ -115,33 +97,17 @@ class _SettingsCalendarContentWidgetState extends State<SettingsCalendarContentW
         Row(children: [
           Expanded(
               child: Text('Calendar',
-                  style:  Styles().textStyles?.getTextStyle("widget.detail.regular.fat")))
+                  style:  Styles().textStyles.getTextStyle("widget.detail.regular.fat")))
         ])
       ]);
     }
     return contentList;
   }
 
-  void _onEnable() {
-    Analytics().logSelect(target: 'Add saved events to calendar');
-    setState(() {
-      Storage().calendarEnabledToSave = !Storage().calendarEnabledToSave!;
-    });
-  }
-
-  void _onAutoSave() {
-    Analytics().logSelect(target: 'Add saved events to calendar');
-    setState(() {
-      Storage().calendarEnabledToAutoSave = !Storage().calendarEnabledToAutoSave!;
-    });
-  }
-
   void _onPrompt() {
     Analytics().logSelect(target: 'Prompt when saving events to calendar');
-    if (Storage().calendarEnabledToSave == true) {
-      setState(() {
-        Storage().calendarCanPrompt = (Storage().calendarCanPrompt != true);
-      });
-    }
+    setState(() {
+      Storage().calendarShouldPrompt = (Storage().calendarShouldPrompt != true);
+    });
   }
 }

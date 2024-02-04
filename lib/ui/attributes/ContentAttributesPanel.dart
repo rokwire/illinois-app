@@ -25,6 +25,7 @@ class ContentAttributesPanel extends StatefulWidget {
   final TextStyle? sectionTitleTextStyle;
   final TextStyle? sectionDescriptionTextStyle;
   final TextStyle? sectionRequiredMarkTextStyle;
+  final Widget? Function(BuildContext context)? footerBuilder;
   final String? applyTitle;
   final Widget Function(BuildContext context, bool enabled, void Function() onTap)? applyBuilder;
   final String? continueTitle;
@@ -44,6 +45,7 @@ class ContentAttributesPanel extends StatefulWidget {
   ContentAttributesPanel({Key? key, this.title, this.bgImageKey,
     this.description, this.descriptionBuilder, this.descriptionTextStyle,
     this.sectionTitleTextStyle, this.sectionDescriptionTextStyle, this.sectionRequiredMarkTextStyle,
+    this.footerBuilder,
     this.applyTitle, this.applyBuilder,
     this.continueTitle, this.continueTextStyle,
     this.contentAttributes, this.selection,
@@ -59,6 +61,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
   Map<String, LinkedHashSet<dynamic>> _selection = <String, LinkedHashSet<dynamic>>{};
   Map<String, LinkedHashSet<dynamic>> _initialSelection = <String, LinkedHashSet<dynamic>>{};
+  ContentAttributes? _initialContentAttributes;
 
   int get requirementsScope => widget.filtersMode ? contentAttributeRequirementsFunctionalScopeFilter : contentAttributeRequirementsFunctionalScopeCreate;
 
@@ -68,6 +71,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       _selection = ContentAttributes.selectionFromAttributesSelection(widget.selection) ?? Map<String, LinkedHashSet<dynamic>>();
       _initialSelection = ContentAttributes.selectionFromAttributesSelection(widget.selection) ?? Map<String, LinkedHashSet<dynamic>>();
     }
+    _initialContentAttributes = widget.contentAttributes?.clone();
     super.initState();
   }
 
@@ -80,7 +84,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(title: widget.title, actions: _headerBarActions),
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
       body: _buildScaffoldContent(),
     );
   }
@@ -98,18 +102,23 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       Expanded(child:
         Container(padding: EdgeInsets.only(left: 16, right: 24, top: 8), child:
           SingleChildScrollView(child:
-            _buildAttributesContent(),
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              ..._buildAttributesContent(),
+              _buildClearAttributes(),
+              _buildFooter(),
+              Padding(padding: const EdgeInsets.only(top: 24)),
+            ]),
           ),
         ),
       ),
-      // Container(height: 1, color: Styles().colors?.surfaceAccent),
+      // Container(height: 1, color: Styles().colors.surfaceAccent),
       SafeArea(child:
         _buildCommands(),
       ),
     ]) : Container();
   }
 
-  Widget _buildAttributesContent() {
+  List<Widget> _buildAttributesContent() {
     List<Widget> contentList = <Widget>[];
 
     Widget? descriptionWidget = _buildDescriptionWidget();
@@ -137,9 +146,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       }
     }
 
-    return Padding(padding: EdgeInsets.only(bottom: 24), child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,)
-    ); 
+    return contentList;
   }
 
   Widget? _buildDescriptionWidget() {
@@ -148,7 +155,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     }
     else if (StringUtils.isNotEmpty(widget.description)) {
       return Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
-        Text(widget.description ?? '', style: widget.descriptionTextStyle ?? Styles().textStyles?.getTextStyle("widget.description.regular")),
+        Text(widget.description ?? '', style: widget.descriptionTextStyle ?? Styles().textStyles.getTextStyle("widget.description.regular")),
       );
     }
     else {
@@ -166,7 +173,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
     String? title = _constructAttributeDropdownTitle(attribute, attributeRawValues);
     String? hint = widget.filtersMode ? (attribute.displaySemanticsFilterHint ?? attribute.displaySemanticsHint) : attribute.displaySemanticsHint;
-    TextStyle? textStyle = Styles().textStyles?.getTextStyle(hasSelection ? 'widget.group.dropdown_button.value' : 'widget.group.dropdown_button.hint');
+    TextStyle? textStyle = Styles().textStyles.getTextStyle(hasSelection ? 'widget.group.dropdown_button.value' : 'widget.group.dropdown_button.hint');
     void Function()? onTap = enabled ? () => _onAttributeDropdownTap(attribute: attribute, attributeValues: attributeValues) : null;
     
     return Visibility(visible: visible, child:
@@ -271,7 +278,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     }
     
     String? text = (displayValue != null) ? attribute.text : (widget.filtersMode ? (attribute.emptyFilterHint ?? attribute.emptyHint) : attribute.emptyHint);
-    TextStyle? textStyle = Styles().textStyles?.getTextStyle((selectedAttributeValue != null) ? 'widget.group.dropdown_button.value' : 'widget.group.dropdown_button.hint');
+    TextStyle? textStyle = Styles().textStyles.getTextStyle((selectedAttributeValue != null) ? 'widget.group.dropdown_button.value' : 'widget.group.dropdown_button.hint');
 
     return Visibility(visible: visible, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -285,8 +292,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
         ),
         Container (
           decoration: BoxDecoration(
-            color: Styles().colors!.white,
-            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+            color: Styles().colors.white,
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))
           ),
           //padding: const EdgeInsets.only(left: 12, right: 8),
@@ -298,7 +305,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
                 ),
               ),
               Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
-                Styles().images?.getImage(imageAsset, excludeFromSemantics: true,) ?? Container(),
+                Styles().images.getImage(imageAsset, excludeFromSemantics: true,) ?? Container(),
               ),
             ]),
           ),
@@ -354,28 +361,30 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
   bool get _isSelectionValid => widget.contentAttributes?.isSelectionValid(_selection) ?? false;
 
+  bool get _isOnboardingMode => (widget.applyBuilder != null) || (widget.continueTitle != null);
+
+  bool get _canApply => (!DeepCollectionEquality().equals(_initialSelection, _selection) || (_initialContentAttributes != widget.contentAttributes)) && (widget.filtersMode || _isSelectionValid);
+
+  bool get _canClear =>  _isInitialSelectionNotEmpty && _isSelectionNotEmpty;
 
   List<Widget>? get _headerBarActions {
     List<Widget> actions = <Widget>[];
     if (!_isOnboardingMode) {
-      if (!DeepCollectionEquality().equals(_initialSelection, _selection) && (widget.filtersMode ? _isSelectionNotEmpty : _isSelectionValid)) {
+      if (_canApply) {
         actions.add(_buildHeaderBarButton(
           title:  Localization().getStringEx('dialog.apply.title', 'Apply'),
           onTap: _onTapApply,
         ));
       }
-      else if (_isInitialSelectionNotEmpty && _isSelectionNotEmpty) {
+      else if (_canClear) {
         actions.add(_buildHeaderBarButton(
           title:  Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
           onTap: _onTapClear,
         ));
       }
     }
-    
     return actions;
   }
-
-  bool get _isOnboardingMode => (widget.applyBuilder != null) || (widget.continueTitle != null);
 
   Widget _buildHeaderBarButton({String? title, void Function()? onTap}) =>
     Semantics(label: title, button: true, child:
@@ -384,9 +393,9 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
             Column(mainAxisSize: MainAxisSize.min, children: [
               Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.white!, width: 1.5, ))),
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.white, width: 1.5, ))),
                 child: Text(title ?? '',
-                  style: Styles().textStyles?.getTextStyle("widget.heading.regular.fat"),
+                  style: Styles().textStyles.getTextStyle("widget.heading.regular.fat"),
                   semanticsLabel: "",
                 ),
               ),
@@ -394,13 +403,13 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
           ),
         ),
         //Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
-        //  Text(title ?? '', style: Styles().textStyles?.getTextStyle('panel.athletics.home.button.underline'))
+        //  Text(title ?? '', style: Styles().textStyles.getTextStyle('panel.athletics.home.button.underline'))
         //),
       ),
     );
 
   Widget _buildImageBackground() => Positioned.fill(child:
-    Styles().images?.getImage(widget.bgImageKey, excludeFromSemantics: true, fit: BoxFit.cover) ?? Container()
+    Styles().images.getImage(widget.bgImageKey, excludeFromSemantics: true, fit: BoxFit.cover) ?? Container()
   );
 
   Widget _buildCommands() {
@@ -420,6 +429,32 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       ) : Container();
   }
 
+  Widget _buildClearAttributes() {
+    bool canClearAttributes = _isSelectionNotEmpty;
+    return Padding(padding: EdgeInsets.only(top: 16), child:
+      Row(children: <Widget>[
+        Expanded(flex: 1, child: Container()),
+        Expanded(flex: 2, child: RoundedButton(
+          label: Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
+            textColor: canClearAttributes ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
+            borderColor: canClearAttributes ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+          backgroundColor: Styles().colors.white,
+          textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          enabled: canClearAttributes,
+          onTap: _onTapClearAttributes
+        )),
+        Expanded(flex: 1, child: Container()),
+      ],),
+    );
+  }
+
+  Widget _buildFooter() {
+    Widget? Function(BuildContext context)? footerBuilder = widget.footerBuilder;
+    Widget? footerWidget = (footerBuilder != null) ? footerBuilder(context) : null;
+    return (footerWidget != null) ? Padding(padding: EdgeInsets.only(top: 24), child: footerWidget) : Container();
+  }
+
   Widget _buildApply() {
     bool canApply = (widget.filtersMode && _isSelectionNotEmpty) || (!widget.filtersMode && (widget.contentAttributes?.isSelectionValid(_selection) ?? false));
     return  (widget.applyBuilder != null) ? widget.applyBuilder!(context, canApply, _onTapApply) :
@@ -427,9 +462,9 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
         Expanded(flex: 1, child: Container()),
         Expanded(flex: 2, child: RoundedButton(
           label: widget.applyTitle ?? _applyTitle,
-          textColor: canApply ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-          borderColor: canApply ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent,
-          backgroundColor: Styles().colors?.white,
+          textColor: canApply ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
+          borderColor: canApply ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+          backgroundColor: Styles().colors.white,
           enabled: canApply,
           onTap: _onTapApply
         )),
@@ -439,7 +474,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
   Widget _buildContinue() => InkWell(onTap: _onTapContinue, child:
     Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
-      Text(widget.continueTitle ?? '', style: widget.continueTextStyle ?? Styles().textStyles?.getTextStyle('widget.button.title.medium.fat.underline'),)
+      Text(widget.continueTitle ?? '', style: widget.continueTextStyle ?? Styles().textStyles.getTextStyle('widget.button.title.medium.fat.underline'),)
     )
   ,);
 
@@ -456,6 +491,13 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   void _onTapClear() {
     Analytics().logSelect(target: 'Clear');
     Navigator.of(context).pop(<String, dynamic>{});
+  }
+
+  void _onTapClearAttributes() {
+    Analytics().logSelect(target: 'Clear Attributes');
+    setState(() {
+      _selection.clear();
+    });
   }
 
   void _onTapContinue() {
@@ -477,8 +519,8 @@ class _AttributeRibbonButton extends StatelessWidget {
     return InkWell(onTap: onTap, child:
       Container (
         decoration: BoxDecoration(
-          color: Styles().colors!.white,
-          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+          color: Styles().colors.white,
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(4))
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
@@ -490,7 +532,7 @@ class _AttributeRibbonButton extends StatelessWidget {
                 ),
               ),
               Padding(padding: EdgeInsets.all(12), child:
-                Styles().images?.getImage('chevron-right', excludeFromSemantics: true) ?? SizedBox(width: 10, height: 6),
+                Styles().images.getImage('chevron-right', excludeFromSemantics: true) ?? SizedBox(width: 10, height: 6),
               ),
             ],),
           ),

@@ -36,7 +36,7 @@ class Event2AttendanceTakerPanel extends StatelessWidget {
         ),
       ),
     ),
-    backgroundColor: Styles().colors!.white,
+    backgroundColor: Styles().colors.white,
   );
 
   Future<void> _onRefresh() async {
@@ -142,17 +142,17 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 
   Widget _buildEventDetailsSection() {
     String? attendeesStatus;
-    TextStyle? attendeesTextStyle, attendeesStatusTextStyle = Styles().textStyles?.getTextStyle('widget.label.small.fat.spaced');
+    TextStyle? attendeesTextStyle, attendeesStatusTextStyle = Styles().textStyles.getTextStyle('widget.label.small.fat.spaced');
     int attendeesCount = _atendeesNetIds.length;
     int? eventCapacity = widget.event?.registrationDetails?.eventCapacity;
     if (eventCapacity != null) {
       if (eventCapacity < attendeesCount) {
         attendeesStatus =  Localization().getStringEx('panel.event2.detail.attendance.attendees.capacity.exceeded.text', 'Event capacity exceeded');
-        attendeesStatusTextStyle = attendeesTextStyle = Styles().textStyles?.getTextStyle('widget.label.small.extra_fat.spaced');
+        attendeesStatusTextStyle = attendeesTextStyle = Styles().textStyles.getTextStyle('widget.label.small.extra_fat.spaced');
       }
       else if (eventCapacity == attendeesCount) {
         attendeesStatus = Localization().getStringEx('panel.event2.detail.attendance.attendees.capacity.reached.text', 'Event capacity is reached');
-        attendeesStatusTextStyle = Styles().textStyles?.getTextStyle('widget.item.small.thin.italic'); // widget.label.small.fat.spaced
+        attendeesStatusTextStyle = Styles().textStyles.getTextStyle('widget.item.small.thin.italic'); // widget.label.small.fat.spaced
       }
     }
 
@@ -187,10 +187,10 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
             (loading == true) ?
               Padding(padding: EdgeInsets.all(2.5), child:
                 SizedBox(width: 16, height: 16, child:
-                  CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2,),
+                  CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,),
                 ),
               ) :
-              Text(valueLabel, style: valueTextStyle ?? Styles().textStyles?.getTextStyle('widget.label.medium.fat'),)
+              Text(valueLabel, style: valueTextStyle ?? Styles().textStyles.getTextStyle('widget.label.medium.fat'),)
           ]),
 
           (description != null) ? Row(children: [
@@ -205,8 +205,8 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   }
 
   Widget _buildErrorStatus(String errorText) {
-    TextStyle? boldStyle = Styles().textStyles?.getTextStyle("panel.settings.error.text");
-    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("panel.settings.error.text.small");
+    TextStyle? boldStyle = Styles().textStyles.getTextStyle("panel.settings.error.text");
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle("panel.settings.error.text.small");
     return Row(children: [
       Expanded(child:
         RichText(text: TextSpan(style: regularStyle, children: <InlineSpan>[
@@ -241,7 +241,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     List<Widget> contentList = <Widget>[];
     for (Event2Person displayPerson in _displayList) {
       if (contentList.isNotEmpty) {
-        contentList.add(Divider(color: Styles().colors?.dividerLineAccent, thickness: 1, height: 1,));
+        contentList.add(Divider(color: Styles().colors.dividerLineAccent, thickness: 1, height: 1,));
       }
       contentList.add(_AttendeeListItemWidget(displayPerson,
         enabled: widget.manualCheckEnabled,
@@ -255,7 +255,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
         Center(child:
           SizedBox(width: 24, height: 24, child:
-            CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,)
+            CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,)
           ),
         ),
       );
@@ -270,7 +270,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
             Text(_hasError ?
               Localization().getStringEx("panel.event2.detail.attendance.attendees.failed.text", "Failed to load attendees list.") :
               Localization().getStringEx("panel.event2.detail.attendance.attendees.empty.text", "There are no users registered or attending for this event yet."),
-              textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.small.thin.italic'),),
+              textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.small.thin.italic'),),
           )
         ],)
       );
@@ -380,7 +380,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   }
 
   Widget _buildUploadAttendeesDescription() {
-    TextStyle? mainStyle = Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
+    TextStyle? mainStyle = Styles().textStyles.getTextStyle('widget.item.small.thin.italic');
     final Color defaultStyleColor = Colors.red;
     final String? eventAttendanceUrl = Config().eventAttendanceUrl;
     final String eventAttendanceUrlMacro = '{{event_attendance_url}}';
@@ -390,11 +390,11 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     return Visibility(visible: StringUtils.isNotEmpty(eventAttendanceUrl), child:
       Padding(padding: EdgeInsets.only(top: 12), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Styles().images?.getImage('info') ?? Container(),
+          Styles().images.getImage('info') ?? Container(),
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 6), child:
               HtmlWidget(contentHtml, onTapUrl: _onTapHtmlLink, textStyle: mainStyle,
-                customStylesBuilder: (element) => (element.localName == "a") ? { "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor), "text-decoration-color": ColorUtils.toHex(Styles().colors?.fillColorSecondary ?? defaultStyleColor)} : null,
+                customStylesBuilder: (element) => (element.localName == "a") ? { "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor), "text-decoration-color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null,
               )
             ),
           ),
@@ -410,7 +410,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   }
 
   Widget _buildManualNetIdInputSection() => Event2CreatePanel.buildSectionWidget(
-    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.detail.attendance.manual.netid.label', 'Add NetID to the guest list:')),
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.detail.attendance.manual.netid.label', 'Add NetID(s) as attended:')),
     body: _buildManualNetIdInputWidget() ,
   );
 
@@ -435,9 +435,9 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         Padding(padding: EdgeInsets.all(16), child:
           _manualInputProgress ? Padding(padding: EdgeInsets.all(2), child:
             SizedBox(width: 14, height: 14, child:
-              CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2,)
+              CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,)
             )
-          ) : Styles().images?.getImage('plus-circle')
+          ) : Styles().images.getImage('plus-circle')
         ),
       )
     ],)
@@ -531,9 +531,9 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   Widget _buildScanIlliniIdSection() => Event2CreatePanel.buildSectionWidget(body:
     RoundedButton(
       label: Localization().getStringEx('panel.event2.detail.attendance.scan.button', 'Scan Illini ID'),
-      textStyle: Styles().textStyles?.getTextStyle(widget.scanEnabled ? 'widget.button.title.large.fat' : 'widget.button.title.large.fat.variant3'),
-      borderColor: widget.scanEnabled ? Styles().colors!.fillColorSecondary : Styles().colors?.surfaceAccent,
-      backgroundColor: Styles().colors!.white,
+      textStyle: Styles().textStyles.getTextStyle(widget.scanEnabled ? 'widget.button.title.large.fat' : 'widget.button.title.large.fat.variant3'),
+      borderColor: widget.scanEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+      backgroundColor: Styles().colors.white,
       onTap: _onTapScanButton,
       contentWeight: 0.5,
       progress: _scanning,
@@ -558,7 +558,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         _onScanFinished("$uin");
       }); */
       
-      String lineColor = UiColors.toHex(Styles().colors?.fillColorSecondary) ?? '#E84A27';
+      String lineColor = UiColors.toHex(Styles().colors.fillColorSecondary) ?? '#E84A27';
       String cancelButtonTitle = Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel');
       FlutterBarcodeScanner.scanBarcode(lineColor, cancelButtonTitle, true, ScanMode.QR).then((String scanResult) {
         if (mounted) {
@@ -845,15 +845,15 @@ class _AttendeeListItemWidget extends StatelessWidget {
 
     String? registrantNetId = registrant.identifier?.netId;
     String? registrantType = event2UserRegistrationToDisplayString(registrant.registrationType);
-    return (registrantType != null) ? RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text:
-      TextSpan(text: registrantNetId, style: Styles().textStyles?.getTextStyle(titleStyleKey),  children: <InlineSpan>[
-        TextSpan(text: " (${registrantType.toLowerCase()})", style: Styles().textStyles?.getTextStyle(descriptionStyleKey),),
+    return (registrantType != null) ? RichText(textScaler: MediaQuery.of(context).textScaler, text:
+      TextSpan(text: registrantNetId, style: Styles().textStyles.getTextStyle(titleStyleKey),  children: <InlineSpan>[
+        TextSpan(text: " (${registrantType.toLowerCase()})", style: Styles().textStyles.getTextStyle(descriptionStyleKey),),
       ])
-    ) : Text(registrantNetId ?? '', style: Styles().textStyles?.getTextStyle(titleStyleKey));
+    ) : Text(registrantNetId ?? '', style: Styles().textStyles.getTextStyle(titleStyleKey));
   }
 
   Widget get _checkMarkWidget => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-    Styles().images?.getImage(_checkMarkImageKey) ?? Container()
+    Styles().images.getImage(_checkMarkImageKey) ?? Container()
   );
 
   String get _checkMarkImageKey {
@@ -883,7 +883,7 @@ class _AttendeeListItemWidget extends StatelessWidget {
 
   Widget get _progressMarkWidget => Padding(padding: EdgeInsets.symmetric(horizontal: 18, vertical: 18), child:
     SizedBox(width: 20, height: 20, child:
-      CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2,)
+      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,)
     )
   );
 

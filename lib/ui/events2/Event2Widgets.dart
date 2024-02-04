@@ -1,4 +1,6 @@
 
+import 'package:expandable_page_view/expandable_page_view.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -6,14 +8,29 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/groups/GroupDetailPanel.dart';
+import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/events2.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+
+import '../home/HomeWidgets.dart';
+
+//
+// Event2FilterCommandButton
+//
 
 class Event2FilterCommandButton extends StatelessWidget {
   final String? title;
@@ -50,7 +67,7 @@ class Event2FilterCommandButton extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> contentList = <Widget>[];
 
-    Widget? leftIconWidget = (leftIconKey != null) ? Styles().images?.getImage(leftIconKey) : null;
+    Widget? leftIconWidget = (leftIconKey != null) ? Styles().images.getImage(leftIconKey) : null;
     if (leftIconWidget != null) {
       contentList.add(
         Padding(padding: leftIconPadding, child: leftIconWidget,)
@@ -59,11 +76,11 @@ class Event2FilterCommandButton extends StatelessWidget {
 
     if (StringUtils.isNotEmpty(title)) {
       contentList.add(
-        Text(title ?? '', style: Styles().textStyles?.getTextStyle(titleTextStyleKey), semanticsLabel: "",)
+        Text(title ?? '', style: Styles().textStyles.getTextStyle(titleTextStyleKey), semanticsLabel: "",)
       );
     }
 
-    Widget? rightIconWidget = (rightIconKey != null) ? Styles().images?.getImage(rightIconKey) : null;
+    Widget? rightIconWidget = (rightIconKey != null) ? Styles().images.getImage(rightIconKey) : null;
     if (rightIconWidget != null) {
       contentList.add(
         Padding(padding: rightIconPadding, child: rightIconWidget,)
@@ -83,12 +100,16 @@ class Event2FilterCommandButton extends StatelessWidget {
   }
 
   static BoxDecoration get defaultContentDecoration => BoxDecoration(
-    color: Styles().colors?.white,
-    border: Border.all(color: Styles().colors?.disabledTextColor ?? Color(0xFF717273), width: 1),
+    color: Styles().colors.white,
+    border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
     borderRadius: BorderRadius.circular(16),
   );
 
 }
+
+//
+// Event2ImageCommandButton
+//
 
 class Event2ImageCommandButton extends StatelessWidget {
   final String imageKey;
@@ -107,14 +128,19 @@ class Event2ImageCommandButton extends StatelessWidget {
     Semantics(label: label, hint: hint, button: true, child:
       InkWell(onTap: onTap, child:
         Padding(padding: contentPadding, child:
-          Styles().images?.getImage(imageKey)
+          Styles().images.getImage(imageKey)
         )
       ),
     );
 }
 
+//
+// Event2Card
+//
+
 class Event2Card extends StatefulWidget {
   final Event2 event;
+  final Group? group;
   final Event2CardDisplayMode displayMode;
   final Event2GroupingType? linkType;
   final Position? userLocation;
@@ -122,7 +148,7 @@ class Event2Card extends StatefulWidget {
   
   final List<String>? displayCategories;
   
-  Event2Card(this.event, { Key? key, this.displayMode = Event2CardDisplayMode.list, this.linkType, this.userLocation, this.onTap}) :
+  Event2Card(this.event, { Key? key, this.group, this.displayMode = Event2CardDisplayMode.list, this.linkType, this.userLocation, this.onTap}) :
     displayCategories = Events2().contentAttributes?.displaySelectedLabelsFromSelection(event.attributes, usage: ContentAttributeUsage.category),
     super(key: key);
 
@@ -181,6 +207,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
       case Event2CardDisplayMode.list: return _listContentWidget;
       case Event2CardDisplayMode.page: return _pageContentWidget;
       case Event2CardDisplayMode.link: return _linkContentWidget;
+      case Event2CardDisplayMode.cardLink: return _cardLinkContentWidget;
     }
   }
 
@@ -196,38 +223,55 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
               _detailsWidget,
             ]),
           ),
+          ..._linkedEventsPagerWidget,
         ],),
       ),
     );
 
   Widget get _pageContentWidget =>
-    Stack(children: [
-      Container(decoration: _pageContentDecoration, child:
+    _hasImage ? _pageImageContentWidget : _pageStandardContentWidget;
+
+  Widget get _pageStandardContentWidget =>
+    Container(decoration: _pageContentDecoration, child:
+      ClipRRect(borderRadius: _pageContentBorderRadius, child:
         Column(mainAxisSize: MainAxisSize.min, children: [
-          Padding(padding: EdgeInsets.only(top: _pageHeadingHeight), child:
-            _contentHeadingWidget,
-          ),
+          _imageHeadingWidget,
+          _contentHeadingWidget,
           Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Visibility(visible: true, child:
-                Expanded(flex: 3, child:
-                  Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    _titleWidget,
-                    _detailsWidget,
-                  ]),
-                ),
-              ),
-              Visibility(visible: _hasImage, child:
-                Expanded(flex: 1, child:
-                  _imageDetailWidget,
-                )
-              ),
+            Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+              _titleWidget,
+              _detailsWidget,
             ]),
           ),
-        ],),
+          ..._linkedEventsPagerWidget,
+        ]),
       ),
-      _pageHeadingWidget,
-    ],);
+    );
+
+  Widget get _pageImageContentWidget =>
+    Column(mainAxisSize: MainAxisSize.min, children: [
+      Container(decoration: _pageTopContentDecoration, child:
+        ClipRRect(borderRadius: _pageContentTopBorderRadius, child:
+          Column(mainAxisSize: MainAxisSize.min, children: [
+            _imageHeadingWidget,
+          ])
+        ),
+      ),
+      Container(decoration: _pageBottomContentDecoration, child:
+        ClipRRect(borderRadius: _pageContentBottomBorderRadius, child:
+          Column(mainAxisSize: MainAxisSize.min, children: [
+            _contentHeadingWidget,
+            Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+              Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _titleWidget,
+                _detailsWidget,
+              ]),
+            ),
+            ..._linkedEventsPagerWidget,
+          ]),
+        ),
+      ),
+    ]);
 
   Widget get _linkContentWidget =>
     Container(decoration: _linkContentDecoration, child:
@@ -241,10 +285,32 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
               ],),
             ),
           ),
-          _favoriteButton
+          _favoriteButton,
+          _groupOptionsButton
         ],)
       ),
     );
+
+  Widget get _cardLinkContentWidget =>
+    Column(mainAxisSize: MainAxisSize.min, children: [
+      _eventHeadingWidget,
+      Container(decoration: _linkBottomContentDecoration, child:
+        ClipRRect(borderRadius: _linkContentBottomBorderRadius, child:
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(child:
+              Padding(padding: EdgeInsets.only(left: 16, top: 14, bottom: 14), child:
+                Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  _linkTitleWidget,
+                  _linkDetailWidget,
+                ],),
+              ),
+            ),
+            _favoriteButton,
+            _groupOptionsButton
+          ],)
+        ),
+      ),
+    ]);
 
   Widget get _linkTitleWidget {
     String? title;
@@ -254,7 +320,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     else if (widget.linkType == Event2GroupingType.recurrence) {
       title = widget.event.shortDisplayDate;
     }
-    return Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"), maxLines: 2, overflow: TextOverflow.ellipsis,);
+    return Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.regular.fat"), maxLines: 2, overflow: TextOverflow.ellipsis,);
   }
 
   Widget get _linkDetailWidget {
@@ -265,40 +331,86 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     else if (widget.linkType == Event2GroupingType.recurrence) {
       detail = widget.event.shortDisplayTime;
     }
-    return Text(detail ?? '', style: Styles().textStyles?.getTextStyle("widget.item.small"), maxLines: 1, overflow: TextOverflow.ellipsis,);
+    return Text(detail ?? '', style: Styles().textStyles.getTextStyle("widget.item.small"), maxLines: 1, overflow: TextOverflow.ellipsis,);
   }
 
   String get _semanticsLabel => '';//'''TODO custom label if needed';
   String get _semanticsHint => '';//'''TODO custom hint if needed';
 
   static Decoration get _listContentDecoration => BoxDecoration(
-    color: Styles().colors?.surface,
+    color: Styles().colors.surface,
     borderRadius: _listContentBorderRadius,
-    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]
   );
 
   static BorderRadiusGeometry get _listContentBorderRadius => BorderRadius.all(Radius.circular(8));
 
   static Decoration get _pageContentDecoration => BoxDecoration(
-    color: Styles().colors?.surface,
+    color: Styles().colors.surface,
     borderRadius: _pageContentBorderRadius,
-    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-    boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    boxShadow: _pageContentShadow
   );
 
-  static BorderRadiusGeometry get _pageContentBorderRadius => BorderRadius.vertical(bottom: Radius.circular(4));
+  static Decoration get _pageTopContentDecoration => BoxDecoration(
+    borderRadius: _pageContentTopBorderRadius,
+    boxShadow: _pageContentShadow
+  );
+
+  static Decoration get _pageBottomContentDecoration => BoxDecoration(
+    color: Styles().colors.surface,
+    borderRadius: _pageContentBottomBorderRadius,
+    border: Border(
+      left: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
+      right: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
+      bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
+    ),
+    boxShadow: _pageContentShadow
+  );
+
+  static List<BoxShadow> get _pageContentShadow => [
+    BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))
+  ];
+
+  static Radius get _pageContentRadius => Radius.circular(4.0);
+  static BorderRadiusGeometry get _pageContentBorderRadius => BorderRadius.all(_pageContentRadius);
+  static BorderRadiusGeometry get _pageContentTopBorderRadius => BorderRadius.vertical(top: _pageContentRadius);
+  static BorderRadiusGeometry get _pageContentBottomBorderRadius => BorderRadius.vertical(bottom: _pageContentRadius);
 
   static Decoration get _linkContentDecoration => BoxDecoration(
-    color: Styles().colors?.white,
+    color: Styles().colors.white,
     borderRadius: _linkContentBorderRadius,
-    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-    boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 2.0, offset: Offset(0, 1))]
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    boxShadow: _linkContentShadow
   );
 
-  static BorderRadiusGeometry get _linkContentBorderRadius => BorderRadius.circular(4.0);
+  static Decoration get _linkBottomContentDecoration => BoxDecoration(
+    color: Styles().colors.surface,
+    borderRadius: _linkContentBottomBorderRadius,
+    border: Border(
+      left: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
+      right: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
+      bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
+    ),
+    boxShadow: _linkContentShadow
+  );
+
+  static List<BoxShadow> get _linkContentShadow => [
+    BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 2.0, offset: Offset(0, 1))
+  ];
+
+  static Radius get _linkContentRadius => Radius.circular(4.0);
+  static BorderRadiusGeometry get _linkContentBorderRadius => BorderRadius.all(_linkContentRadius);
+  static BorderRadiusGeometry get _linkContentBottomBorderRadius => BorderRadius.vertical(bottom: _linkContentRadius);
 
   bool get _hasImage => StringUtils.isNotEmpty(widget.event.imageUrl);
+
+  bool get _hasGroup => (widget.group != null);
+  bool get _isGroupAdmin => (widget.group?.currentMember?.isAdmin ?? false);
+  bool get _canEditGroupEvent => _isGroupAdmin && (widget.event.canUserEdit == true);
+  bool get _canDeleteGroupEvent => _isGroupAdmin;
+  bool get _hasGroupEventOptions => _hasGroup && (_canEditGroupEvent || _canDeleteGroupEvent);
 
   Widget get _imageHeadingWidget => Visibility(visible: _hasImage, child:
     Container(decoration: _imageHeadingDecoration, child:
@@ -309,31 +421,25 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   );
 
   Decoration get _imageHeadingDecoration => BoxDecoration(
-    border: Border(bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1)),
+    border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
   );
 
-  Widget get _pageHeadingWidget => Container(height: _pageHeadingHeight, color: widget.event.uiColor);
+  Widget get _eventHeadingWidget => Container(height: _eventHeadingHeight, color: widget.event.uiColor,);
+  double get _eventHeadingHeight => 7;
 
-  double get _pageHeadingHeight => 7;
-
-  Widget get _imageDetailWidget =>
-    AspectRatio(aspectRatio: 1.3, child:
-      Image.network(widget.event.imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
-    );
-  
-
-  Widget get _contentHeadingWidget => 
+  Widget get _contentHeadingWidget =>
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Expanded(child:
         Padding(padding: EdgeInsets.only(left: 16, top: 16, bottom: 8), child:
           widget.hasDisplayCategories ? _categoriesContentWidget : _titleContentWidget
         ),
       ),
-      _favoriteButton
+      _favoriteButton,
+      _groupOptionsButton
     ]);
 
   Widget get _categoriesContentWidget =>
-    Text(widget.displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat"));
+    Text(widget.displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles.getTextStyle("widget.card.title.small.fat"));
 
   /*Widget get _groupingBadgeWidget {
     String? badgeLabel;
@@ -344,9 +450,9 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
       badgeLabel = Localization().getStringEx('widget.event2.card.recurring.abbreviation.label', 'REC');
     }
     return (badgeLabel != null) ? 
-      Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+      Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
         Semantics(label: badgeLabel, excludeSemantics: true, child:
-          Text(badgeLabel, style:  Styles().textStyles?.getTextStyle('widget.heading.small'),)
+          Text(badgeLabel, style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
     )) : Container();
   }*/
 
@@ -364,12 +470,23 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
           button: true,
           child: InkWell(onTap: _onFavorite,
             child: Padding(padding: EdgeInsets.all(16),
-              child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true,)
+              child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true,)
             )
           ),
         ),
       )
     );
+  }
+
+  Widget get _groupOptionsButton {
+    return Visibility(
+        visible: _hasGroupEventOptions,
+        child: Semantics(
+            label: Localization().getStringEx('widget.event2.card.detail.group.options.label', 'Options'),
+            button: true,
+            child: InkWell(
+                onTap: _onTapGroupEventOptions,
+                child: Container(padding: EdgeInsets.only(top: 16, right: 16, bottom: 16), alignment: Alignment.center, child: Styles().images.getImage('more')))));
   }
 
   Widget get _titleWidget => widget.hasDisplayCategories ? 
@@ -380,7 +497,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     ],) : Container();
 
   Widget get _titleContentWidget =>
-    Text(widget.event.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), maxLines: 2, overflow: TextOverflow.ellipsis);
+    Text(widget.event.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'), maxLines: 2, overflow: TextOverflow.ellipsis);
 
   Widget get _detailsWidget {
     List<Widget> detailWidgets = <Widget>[
@@ -414,18 +531,24 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
         _buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.in_person.label', 'In Person'), 'location'),
       ];
 
-      String? locationText = widget.event.location?.displayName ?? widget.event.location?.displayAddress ?? widget.event.location?.displayDescription; // ?? widget.event.location?.displayCoordinates
-      if (locationText != null) {
-        details.add(
-          _buildDetailWidget(Text(locationText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero)
-        );
+      String? displayName = widget.event.location?.displayName;
+      if (displayName != null) {
+        details.add(_buildLocationTextDetailWidget(displayName));
+      }
+
+      String? displayAddress = widget.event.location?.displayAddress;
+      if ((displayAddress != null) && (displayAddress != displayName)) {
+        details.add(_buildLocationTextDetailWidget(displayAddress));
+      }
+
+      String? displayDescription = widget.event.location?.displayDescription; // ?? widget.event.location?.displayCoordinates
+      if ((displayDescription != null) && (displayDescription != displayAddress) && (displayDescription != displayName)) {
+        details.add(_buildLocationTextDetailWidget(displayDescription));
       }
 
       String? distanceText = widget.event.getDisplayDistance(_userLocation);
       if (distanceText != null) {
-        details.add(
-          _buildDetailWidget(Text(distanceText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero)
-        );
+        details.add(_buildLocationTextDetailWidget(distanceText));
       }
 
       return details;
@@ -437,22 +560,18 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     if (widget.event.hasLinkedEvents) {
       List<Widget> details = <Widget>[];
       if (widget.event.isSuperEvent) {
-        details.add(_buildTextDetailWidget(
-          Localization().getStringEx('widget.event2.card.detail.super_event.label', 'Multi-Event'),
-          'event',
-        ));
+        details.add(_buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.super_event.label', 'Multi-Event'), 'event',));
       }
       if (widget.event.isRecurring) {
-        details.add(_buildTextDetailWidget(
-          Localization().getStringEx('widget.event2.card.detail.recurring.label', 'Repeats'),
-          'recurrence',
-        ));
+        details.add(_buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.recurring.label', 'Repeats'), 'recurrence',));
       }
       return details.isNotEmpty ? details : null;
     }
     return null;
   }
-  
+
+  Widget _buildLocationTextDetailWidget(String text) =>
+    _buildDetailWidget(Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero);
 
   Widget _buildTextDetailWidget(String text, String iconKey, {
     EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),
@@ -460,11 +579,8 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     bool iconVisible = true, int maxLines = 1,
   }) =>
     _buildDetailWidget(
-      Text(text, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'), maxLines: maxLines, overflow: TextOverflow.ellipsis,),
-      iconKey,
-      contentPadding: contentPadding,
-      iconPadding: iconPadding,
-      iconVisible: iconVisible
+      Text(text, style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular'), maxLines: maxLines, overflow: TextOverflow.ellipsis,),
+      iconKey, contentPadding: contentPadding, iconPadding: iconPadding, iconVisible: iconVisible
     );
 
   Widget _buildDetailWidget(Widget contentWidget, String iconKey, {
@@ -473,7 +589,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     bool iconVisible = true
   }) {
     List<Widget> contentList = <Widget>[];
-    Widget? iconWidget = Styles().images?.getImage(iconKey, excludeFromSemantics: true);
+    Widget? iconWidget = Styles().images.getImage(iconKey, excludeFromSemantics: true);
     if (iconWidget != null) {
       contentList.add(Padding(padding: iconPadding, child:
         Opacity(opacity: iconVisible ? 1 : 0, child:
@@ -489,28 +605,344 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     );
   }
 
+  List<Widget> get _linkedEventsPagerWidget {
+    Event2Grouping? linkedGroupingQuery = widget.event.linkedEventsGroupingQuery;
+    return (linkedGroupingQuery != null) ? <Widget>[
+      Container(color: Styles().colors.surfaceAccent, height: 1,),
+      Padding(padding: const EdgeInsets.symmetric(vertical: 16), child:
+        LinkedEvents2Pager(linkedGroupingQuery, userLocation: widget.userLocation)
+      )
+    ] : <Widget>[];
+  }
+
   void _onFavorite() {
     Analytics().logSelect(target: "Favorite: ${widget.event.name}");
     Auth2().prefs?.toggleFavorite(widget.event);
   }
+
+  void _onTapGroupEventOptions() {
+    Analytics().logSelect(target: 'Group Event Options');
+
+    List<Widget> options = <Widget>[];
+
+    if (_canEditGroupEvent) {
+      options.add(RibbonButton(
+          label: Localization().getStringEx('widget.event2.card.detail.group.edit_event.label', 'Edit Event'),
+          leftIconKey: 'edit',
+          onTap: _onEditGroupEventTap));
+    }
+
+    if (_canDeleteGroupEvent) {
+      options.add(RibbonButton(
+          label: Localization().getStringEx('widget.event2.card.detail.group.delete_event.label', 'Remove group event'),
+          leftIconKey: 'trash',
+          onTap: () {
+            Analytics().logSelect(target: 'Remove Group Event (Option)');
+            showDialog(context: context, builder: (context) => _buildRemoveEventDialog(context)).then((value) => Navigator.pop(context));
+          }));
+    }
+
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        builder: (context) {
+          return Container(
+              padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+              child: Column(mainAxisSize: MainAxisSize.min, children: options));
+        });
+  }
+
+  Widget _buildRemoveEventDialog(BuildContext context) {
+    return GroupsConfirmationDialog(
+        message: Localization().getStringEx(
+            'widget.event2.card.detail.group.delete_event.message', 'Are you sure you want to remove this event from your group page?'),
+        buttonTitle: Localization().getStringEx('widget.event2.card.detail.group.delete_event.delete.button', 'Remove'),
+        onConfirmTap: () {
+          _onTapRemoveGroupEvent(context);
+        });
+  }
+
+  void _onTapRemoveGroupEvent(BuildContext context) {
+    Analytics().logSelect(target: 'Remove Group Event');
+    Groups().deleteEventForGroupV3(eventId: widget.event.id, groupId: widget.group?.id).then((bool value) {
+      if (value) {
+        Navigator.of(context).pop();
+      } else {
+        AppAlert.showDialogResult(context, Localization().getStringEx('widget.event2.card.detail.group.delete_event.delete.failed.message', 'Failed to remove the event from group page.'));
+      }
+    });
+  }
+
+  void _onEditGroupEventTap() {
+    Analytics().logSelect(target: 'Update Group Event');
+    Navigator.pop(context);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Event2CreatePanel(
+                event: widget.event,
+                eventSelector: GroupEventSelector(GroupEventData(group: widget.group, event: widget.event),
+                    showSelectionButton: false, padding: EdgeInsets.only(top: 16)))));
+  }
 }
 
-enum Event2CardDisplayMode { list, page, link }
+enum Event2CardDisplayMode { list, page, link, cardLink }
+
+//
+// LinkedEvents2Pager
+//
+
+class LinkedEvents2Pager extends StatefulWidget {
+  final Event2Grouping linkedGroupingQuery;
+  final Position? userLocation;
+  LinkedEvents2Pager(this.linkedGroupingQuery, {super.key, this.userLocation });
+
+  @override
+  State<StatefulWidget> createState() => _LinkedEvents2PagerState();
+}
+
+class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
+
+  static const int _eventsPageLength = 16;
+  static const String _progressContentKey = '_progress_';
+
+  List<Event2>? _events;
+  bool? _lastPageLoadedAll;
+  int? _totalEventsCount;
+  String? _eventsErrorText;
+  bool _loadingEvents = false;
+  bool _extendingEvents = false;
+
+  PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  final double _pageSpacing = 16;
+
+  @override
+  void initState() {
+    _reload();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _pageController?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_loadingEvents) {
+      return _progressContent;
+    }
+    else if (_events == null) {
+      return _buildMessageContent(
+        title: Localization().getStringEx('panel.events2.home.message.failed.title', 'Failed'),
+        message: _eventsErrorText ?? Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred')
+      );
+    }
+    else if (_events?.length == 0) {
+      return _buildMessageContent(
+        message: Localization().getStringEx('widget.home.event2_feed.text.empty.description', 'There are no events available.')
+      );
+    }
+    else {
+      return _eventsPager;
+    }
+  }
+
+  Widget get _eventsPager {
+
+    int eventsCount = _events?.length ?? 0;
+    if ((_hasMoreEvents != false) || (1 < eventsCount)) {
+
+      List<Widget> pages = <Widget>[];
+      for (int index = 0; index < eventsCount; index++) {
+        Event2 event = _events![index];
+        String contentKey = "${event.id}-$index";
+        pages.add(Padding(
+          key: _contentKeys[contentKey] ??= GlobalKey(),
+          padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 4),
+          child: Event2Card(event,
+            displayMode: Event2CardDisplayMode.cardLink,
+            linkType: widget.linkedGroupingQuery.type,
+            userLocation: widget.userLocation,
+            onTap: () => _onTapEvent2(event),
+          )
+        ));
+      }
+
+      if (_hasMoreEvents != false) {
+        pages.add(Padding(
+          key: _contentKeys[_progressContentKey] ??= GlobalKey(),
+          padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8),
+          child: HomeProgressWidget(
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 36),
+          ),
+        ));
+      }
+
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width - 32;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport);
+      }
+
+      return Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          allowImplicitScrolling: true,
+          children: pages,
+          onPageChanged: _onPageChanged,
+        ),
+      );
+    }
+    else {
+      return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+        Event2Card(_events!.first,
+          displayMode: Event2CardDisplayMode.cardLink,
+          linkType: widget.linkedGroupingQuery.type,
+          userLocation: widget.userLocation,
+          onTap: () => _onTapEvent2(_events!.first)
+        )
+      );
+    }
+  }
+
+  Widget get _progressContent =>
+    Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
+      Center(child:
+        Container(width: 24, height: 24, child:
+          CircularProgressIndicator(strokeWidth: 3, color: Styles().colors.fillColorSecondary),
+        )
+      ),
+    );
+
+  Widget _buildMessageContent({String? title, String? message}) =>
+    Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
+      Column(children: <Widget>[
+        StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
+          Expanded(child:
+            Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
+              Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.card.title.medium.fat"), textAlign: TextAlign.center,)
+            ),
+          )
+        ]) : Container(),
+        StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
+          Expanded(child:
+            Text(message ?? '', style: Styles().textStyles.getTextStyle("widget.card.detail.regular"), textAlign: TextAlign.center)
+          )
+        ]) : Container(),
+      ]),
+    );
+
+  double get _pageHeight {
+    double? minContentHeight;
+    for (GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
+      }
+    }
+    return minContentHeight ?? 0;
+  }
+
+  bool? get _hasMoreEvents => (_totalEventsCount != null) ?
+    ((_events?.length ?? 0) < _totalEventsCount!) : _lastPageLoadedAll;
+
+  void _onPageChanged(int index) {
+    if ((_events?.length ?? 0) < (index + 1) && (_hasMoreEvents != false) && !_extendingEvents && !_loadingEvents) {
+      _extend();
+    }
+  }
+
+  void _onTapEvent2(Event2 event) {
+    Analytics().logSelect(target: "Event: '${event.name}'", source: widget.runtimeType.toString());
+    if (event.hasGame) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game)));
+    } else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event)));
+    }
+  }
+
+  Future<void> _reload({ int limit = _eventsPageLength }) async {
+    if (!_loadingEvents) {
+      setStateIfMounted(() {
+        _loadingEvents = true;
+        _extendingEvents = false;
+      });
+      dynamic result = await Events2().loadEventsEx(Events2Query(grouping: widget.linkedGroupingQuery, limit: limit));
+      Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
+      List<Event2>? events = listResult?.events;
+      String? errorTextResult = (result is String) ? result : null;
+
+      setStateIfMounted(() {
+        _events = (events != null) ? List<Event2>.from(events) : null;
+        _totalEventsCount = listResult?.totalCount;
+        _lastPageLoadedAll = (events != null) ? (events.length >= limit) : null;
+        _eventsErrorText = errorTextResult;
+        _loadingEvents = false;
+        _pageViewKey = UniqueKey();
+        _contentKeys.clear();
+      });
+    }
+  }
+
+  Future<void> _extend() async {
+    if (!_loadingEvents && !_extendingEvents) {
+      setStateIfMounted(() {
+        _extendingEvents = true;
+      });
+
+      Events2ListResult? loadResult = await Events2().loadEvents(Events2Query(grouping: widget.linkedGroupingQuery, offset: _events?.length ?? 0, limit: _eventsPageLength));
+      List<Event2>? events = loadResult?.events;
+      int? totalCount = loadResult?.totalCount;
+
+      if (mounted && _extendingEvents && !_loadingEvents) {
+        setState(() {
+          if (events != null) {
+            if (_events != null) {
+              _events?.addAll(events);
+            }
+            else {
+              _events = List<Event2>.from(events);
+            }
+            _lastPageLoadedAll = (events.length >= _eventsPageLength);
+          }
+          if (totalCount != null) {
+            _totalEventsCount = totalCount;
+          }
+          _extendingEvents = false;
+        });
+      }
+    }
+  }
+}
+
+//
+// Event2Popup
+//
 
 class Event2Popup {
   
   static Future<void> showMessage(BuildContext context, { String? title, String? message}) =>
     showDialog(context: context, builder: (BuildContext context) => AlertDialog(
+      surfaceTintColor: Styles().colors.surface,
       content: Column(mainAxisSize: MainAxisSize.min, children: [
-        (title != null) ? Text(title, style: Styles().textStyles?.getTextStyle("widget.card.title.regular.fat"),) : Container(),
+        (title != null) ? Text(title, style: Styles().textStyles.getTextStyle("widget.card.title.regular.fat"),) : Container(),
         (message != null) ? Padding(padding: (title != null) ? EdgeInsets.only(top: 12) : EdgeInsets.zero, child:
-          Text(message, style: Styles().textStyles?.getTextStyle("widget.card.title.small"),),
+          Text(message, style: Styles().textStyles.getTextStyle("widget.card.title.small"),),
         ) : Container()
       ],),
       actions: <Widget>[
         TextButton(
           child: Text(Localization().getStringEx("dialog.ok.title", "OK"), style:
-            Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
+            Styles().textStyles.getTextStyle("widget.button.title.medium.fat")
           ),
           onPressed: () {
             Analytics().logAlert(text: message, selection: "OK");
@@ -531,16 +963,17 @@ class Event2Popup {
     String? negativeButtonTitle, String? negativeAnalyticsTitle,
   }) async {
     return showDialog<bool?>(context: context, builder: (BuildContext context) => AlertDialog(
+      surfaceTintColor: Styles().colors.surface,
       content: Column(mainAxisSize: MainAxisSize.min, children: [
-        Text(title, style: Styles().textStyles?.getTextStyle("widget.card.title.regular.fat"),),
+        Text(title, style: Styles().textStyles.getTextStyle("widget.card.title.regular.fat"),),
         (message != null) ? Padding(padding: EdgeInsets.only(top: 12), child:
-          Text(message, style: Styles().textStyles?.getTextStyle("widget.card.title.small"),),
+          Text(message, style: Styles().textStyles.getTextStyle("widget.card.title.small"),),
         ) : Container()
       ],),
       actions: <Widget>[
         TextButton(
           child: Text(positiveButtonTitle ?? Localization().getStringEx("dialog.ok.title", "OK"), style:
-            Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
+            Styles().textStyles.getTextStyle("widget.button.title.medium.fat")
           ),
           onPressed: () {
             Analytics().logAlert(text: message, selection: positiveAnalyticsTitle ?? positiveButtonTitle ?? "OK");
@@ -549,7 +982,7 @@ class Event2Popup {
         ),
         TextButton(
           child: Text(negativeButtonTitle ?? Localization().getStringEx("dialog.cancel.title", "Cancel"), style:
-            Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
+            Styles().textStyles.getTextStyle("widget.button.title.medium.fat")
           ),
           onPressed: () {
             Analytics().logAlert(text: message, selection: negativeAnalyticsTitle ?? negativeButtonTitle ?? "Cancel");

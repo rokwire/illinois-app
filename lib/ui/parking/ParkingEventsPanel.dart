@@ -62,7 +62,7 @@ class _ParkingEventsPanelState extends State<ParkingEventsPanel>{
         title: Localization().getStringEx("panel.parking_events.label.heading", "State Farm Center Parking"),
       ),
       body: _buildScaffoldBody(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -89,7 +89,7 @@ class _ParkingEventsPanelState extends State<ParkingEventsPanel>{
                         Text(
                           Localization().getStringEx("panel.parking_events.label.loading", "Loading parking events. Please wait..."),
                           textAlign: TextAlign.center,
-                          style: Styles().textStyles?.getTextStyle("widget.message.light.regular")
+                          style: Styles().textStyles.getTextStyle("widget.message.light.regular")
                         )
                       )
                     ],)
@@ -108,7 +108,7 @@ class _ParkingEventsPanelState extends State<ParkingEventsPanel>{
       Padding(padding: EdgeInsets.symmetric(horizontal: 24), child:
         Text(Localization().getStringEx("panel.parking_events.label.no_events", "Currently there is no parking information for any State Farm Center events."),
           textAlign: TextAlign.center,
-          style: Styles().textStyles?.getTextStyle("widget.message.medium")
+          style: Styles().textStyles.getTextStyle("widget.message.medium")
         ),
       )
     );
@@ -120,7 +120,7 @@ class _ParkingEventsPanelState extends State<ParkingEventsPanel>{
           ParkingEvent event = _events![index];
           return _ParkingEventWidget(event: event,);
         },
-        separatorBuilder: (context, index) => Container(height: 1, color: Styles().colors!.lightGray,),
+        separatorBuilder: (context, index) => Container(height: 1, color: Styles().colors.lightGray,),
         itemCount: _events != null ? _events!.length : 0);
   }
 }
@@ -144,19 +144,19 @@ class _ParkingEventWidget extends StatelessWidget{
           children: <Widget>[
             Text(
               event!.name!,
-                style: Styles().textStyles?.getTextStyle("widget.title.medium.fat")
+                style: Styles().textStyles.getTextStyle("widget.title.medium.fat")
             ),
             Text(
               Localization().getStringEx("panel.parking_events.label.from","From: ")+"${event!.displayParkingFromDate}",
-              style: Styles().textStyles?.getTextStyle("widget.detail.light.regular")
+              style: Styles().textStyles.getTextStyle("widget.detail.light.regular")
             ),
             Text(
               Localization().getStringEx("panel.parking_events.label.to","To: ")+"${event!.displayParkingToDate}",
-              style: Styles().textStyles?.getTextStyle("widget.detail.light.regular")
+              style: Styles().textStyles.getTextStyle("widget.detail.light.regular")
             ),
             Text(
               Localization().getStringEx("panel.parking_events.label.status","Status: ")+"$status",
-              style: Styles().textStyles?.getTextStyle("widget.detail.light.regular")
+              style: Styles().textStyles.getTextStyle("widget.detail.light.regular")
             )
           ],
         ),

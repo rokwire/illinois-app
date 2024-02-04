@@ -196,7 +196,7 @@ class Game with Explore implements Favorite {
     if (randomImageURL == null) {
       randomImageURL = Content().randomImageUrl('sports.${sport!.shortName}');
     }
-    return randomImageURL!.isNotEmpty ? randomImageURL : null;
+    return StringUtils.isNotEmpty(randomImageURL) ? randomImageURL : null;
   }
 
   ExploreLocation? get _exploreLocation {
