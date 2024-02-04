@@ -141,9 +141,9 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
           padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           child: Container(
             decoration: BoxDecoration(
-                color: Styles().colors!.white,
+                color: Styles().colors.white,
                 boxShadow: [
-                  BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
+                  BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
                 ],
                 borderRadius: BorderRadius.all(Radius.circular(4))),
             child: Column(
@@ -160,7 +160,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
         contentWidget = Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: _DailyIlliniLoadingWidget(
-            progressColor: Styles().colors!.white!,
+            progressColor: Styles().colors.white,
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
           ),
         );
