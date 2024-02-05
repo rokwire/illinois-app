@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [5.1.21] - 2024-02-05
 ### Changed
 - Update Daily Illini home screen widget to show three stories on one card [#3079](https://github.com/rokwire/illinois-app/issues/3079).
 ### Added
@@ -12,12 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Android: crash [#3941](https://github.com/rokwire/illinois-app/issues/3941).
 
-## [5.1.20] - 2024-01-02
+## [5.1.20] - 2024-02-02
 ### Fixed
 - List only groups where the user is admin when adding event to groups [#3921](https://github.com/rokwire/illinois-app/issues/3921).
 - Added new iOS 17 calendar usage descriptions [#3789](https://github.com/rokwire/illinois-app/issues/3789).
 
-## [5.1.19] - 2024-01-01
+## [5.1.19] - 2024-02-01
 ### Added
 - Essential Skills Coach Dashboard [#3425](https://github.com/rokwire/illinois-app/issues/3425).
 - Primary care provider and academic advisors [#3925](https://github.com/rokwire/illinois-app/issues/3925).
