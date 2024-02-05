@@ -3121,7 +3121,7 @@
     "panel.essential_skills_coach.dashboard.activity.button.action.label": "GET STARTED",
     "panel.essential_skills_coach.assignment.header.title": "Daily Activities",
     "panel.essential_skills_coach.assignment.help.header.title": "Helpful Information",
-    "panel.essential_skills_coach.assignment.experience.selection.header.": "How did it go?",
+    "panel.essential_skills_coach.assignment.experience.selection.header": "How did it go?",
     "panel.essential_skills_coach.assignment.experience.good.notes.header.": "Describe your experience.",
     "panel.essential_skills_coach.assignment.experience.bad.notes.header.": "Why not? What got in your way?",
     "panel.essential_skills_coach.assignment.experience.notes.header.": "Notes",

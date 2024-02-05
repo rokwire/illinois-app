@@ -157,7 +157,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
         noteWidgets.addAll([
           Padding(
             padding: EdgeInsets.all(16),
-            child: Text(Localization().getStringEx('panel.essential_skills_coach.assignment.experience.selection.header.', "How did it go?"),
+            child: Text(_content.styles?.strings?['experience_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.selection.header', "How did it go?"),
               style: Styles().textStyles.getTextStyle("widget.title.light.regular"),
             ),
           ),
@@ -210,9 +210,9 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
         ]);
       }
 
-      String notesHeaderText = isComplete ? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.good.notes.header.', "Describe your experience.") :
-      (isNotComplete ? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.bad.notes.header.', "Why not? What got in your way?") :
-      Localization().getStringEx('panel.essential_skills_coach.assignment.experience.notes.header.', "Notes"));
+      String notesHeaderText = isComplete ? (_content.styles?.strings?['notes_complete_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.good.notes.header.', "Describe your experience.")) :
+      (isNotComplete ? (_content.styles?.strings?['notes_incomplete_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.bad.notes.header.', "Why not? What got in your way?")) :
+      (_content.styles?.strings?['notes_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.notes.header.', "Notes")));
       noteWidgets.add(
           Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
             child: Row(
@@ -232,7 +232,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
         Divider(color: _colorAccent, thickness: 2, indent: 24.0, endIndent: 24.0,),
         Padding(
           padding: EdgeInsets.all(16),
-          child: Text(Localization().getStringEx('panel.essential_skills_coach.assignment.completion.selection.header', "Did you complete this task?"),
+          child: Text(_content.styles?.strings?['complete_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.completion.selection.header', "Did you complete this task?"),
             style: Styles().textStyles.getTextStyle("widget.title.light.regular"),
           ),
         ),

@@ -258,9 +258,9 @@ class Module{
   final String? key;
   final List<Unit>? units;
 
-  final CourseDisplay? display;
+  final CourseStyles? styles;
 
-  Module({this.id, this.name, this.key, this.units, this.display});
+  Module({this.id, this.name, this.key, this.units, this.styles});
 
 
   static Module? fromJson(Map<String, dynamic>? json) {
@@ -272,7 +272,7 @@ class Module{
         name: JsonUtils.stringValue(json['name']),
         key: JsonUtils.stringValue(json['key']),
         units: Unit.listFromJson(JsonUtils.listValue(json['units'])),
-        display: CourseDisplay.fromJson(JsonUtils.mapValue(json['display'])),
+        styles: CourseStyles.fromJson(JsonUtils.mapValue(json['styles'] ?? json['display'])),
     );
   }
 
@@ -684,9 +684,9 @@ class Content{
   final Reference? reference;
   final List<String>? linkedContent;
 
-  final CourseDisplay? display;
+  final CourseStyles? styles;
 
-  Content({this.id, this.name, this.key, this.type, this.details, this.reference, this.linkedContent, this.display});
+  Content({this.id, this.name, this.key, this.type, this.details, this.reference, this.linkedContent, this.styles});
 
   static Content? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -700,7 +700,7 @@ class Content{
       details: JsonUtils.stringValue(json['details']),
       reference: Reference.fromJson(JsonUtils.mapValue(json['reference'])),
       linkedContent: JsonUtils.stringListValue(json['linked_content']),
-      display: CourseDisplay.fromJson(JsonUtils.mapValue(json['display'])),
+      styles: CourseStyles.fromJson(JsonUtils.mapValue(json['styles'] ?? json['display'])),
     );
   }
 
@@ -790,27 +790,23 @@ class CourseConfig {
   bool get usesUserTimezone => timezoneName == userTimezone;
 }
 
-// CourseDisplay
+// CourseStyles
 
-class CourseDisplay {
-  final String? primaryColor;
-  final String? accentColor;
-  final String? completeColor;
-  final String? incompleteColor;
-  final String? icon;
+class CourseStyles {
+  final Map<String, dynamic>? colors;
+  final Map<String, dynamic>? images;
+  final Map<String, dynamic>? strings;
 
-  CourseDisplay({this.primaryColor, this.accentColor, this.completeColor, this.incompleteColor, this.icon});
+  CourseStyles({this.colors, this.images, this.strings});
 
-  static CourseDisplay? fromJson(Map<String, dynamic>? json) {
+  static CourseStyles? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
-    return CourseDisplay(
-      primaryColor: JsonUtils.stringValue(json['primary_color']),
-      accentColor: JsonUtils.stringValue(json['accent_color']),
-      completeColor: JsonUtils.stringValue(json['complete_color']),
-      incompleteColor: JsonUtils.stringValue(json['incomplete_color']),
-      icon: JsonUtils.stringValue(json['icon']),
+    return CourseStyles(
+      colors: JsonUtils.mapValue(json['colors']),
+      images: JsonUtils.mapValue(json['images']),
+      strings: JsonUtils.mapValue(json['strings']),
     );
   }
 }

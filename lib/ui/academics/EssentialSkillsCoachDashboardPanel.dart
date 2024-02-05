@@ -56,7 +56,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             _buildStreakWidget(),
             Container(
               color: _selectedModulePrimaryColor,
-              child: _buildModuleSelection(_selectedModule!.display?.icon ?? 'skills-question'),
+              child: _buildModuleSelection(_selectedModule!.styles?.images?['icon'] ?? 'skills-question'),
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -86,8 +86,8 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   bool get _hasStartedSkillsCoach => _userCourse != null;
 
   Module? get _selectedModule => _userCourse?.course?.searchByKey(moduleKey: _selectedModuleKey) ?? _course?.searchByKey(moduleKey: _selectedModuleKey); //TODO: remove _course option after start course UI
-  Color? get _selectedModulePrimaryColor => _selectedModule!.display?.primaryColor != null ? Styles().colors.getColor(_selectedModule!.display!.primaryColor!) : Styles().colors.fillColorPrimary;
-  Color? get _selectedModuleAccentColor => _selectedModule!.display?.accentColor != null ? Styles().colors.getColor(_selectedModule!.display!.accentColor!) : Styles().colors.fillColorSecondary;
+  Color? get _selectedModulePrimaryColor => _selectedModule!.styles?.colors?['primary'] != null ? Styles().colors.getColor(_selectedModule!.styles!.colors!['primary']!) : Styles().colors.fillColorPrimary;
+  Color? get _selectedModuleAccentColor => _selectedModule!.styles?.colors?['accent'] != null ? Styles().colors.getColor(_selectedModule!.styles!.colors!['accent']!) : Styles().colors.fillColorSecondary;
 
   @override
   void onNotification(String name, param) {
@@ -186,7 +186,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         orElse: () => UserUnit.emptyFromUnit(unit, Config().essentialSkillsCoachKey ?? '', current: i == 0)
       ) ?? UserUnit.emptyFromUnit(unit, Config().essentialSkillsCoachKey ?? '', current: i == 0);
       moduleUnitWidgets.add(Padding(
-        padding: const EdgeInsets.only(bottom: 16.0),
+        padding: const EdgeInsets.only(bottom: 8.0),
         child: _buildUnitInfoWidget(showUnit, i+1),
       ));
       if (CollectionUtils.isNotEmpty(showUnit.unit!.scheduleItems)) {
@@ -276,7 +276,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
           }
         }
         unitWidgets.add(Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: contentButtons,
         ));
       } else if ((item.userContent?.length ?? 0) == 1) {
@@ -302,15 +302,15 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     bool isCompletedOrCurrent = isCompleted || isCurrent;
     bool shouldHighlight = (isCurrent && !userContent.hasData) || isNextWithCurrentComplete;
 
-    Color? contentColor = content.display?.primaryColor != null ? Styles().colors.getColor(content.display!.primaryColor!) : Styles().colors.fillColorSecondary;
-    Color? completedColor = content.display?.completeColor != null ? Styles().colors.getColor(content.display!.completeColor!) : Colors.green;
-    Color? incompleteColor = content.display?.incompleteColor != null ? Styles().colors.getColor(content.display!.incompleteColor!) : Colors.grey[700];
+    Color? contentColor = content.styles?.colors?['primary'] != null ? Styles().colors.getColor(content.styles!.colors!['primary']!) : Styles().colors.fillColorSecondary;
+    Color? completedColor = content.styles?.colors?['complete'] != null ? Styles().colors.getColor(content.styles!.colors!['complete']!) : Colors.green;
+    Color? incompleteColor = content.styles?.colors?['incomplete'] != null ? Styles().colors.getColor(content.styles!.colors!['incomplete']!) : Colors.grey[700];
 
     double? size = shouldHighlight ? 24.0 : null;
     Widget icon = Padding(
       padding: shouldHighlight ? EdgeInsets.zero : EdgeInsets.all(8.0),
       child: Opacity(opacity: isCompletedOrCurrent ? 1 : 0.3, child: (userContent.hasData && required ? Styles().images.getImage("skills-check", size: size) :
-        Styles().images.getImage(content.display?.icon, size: size)
+        Styles().images.getImage(content.styles?.images?['icon'], size: size)
       )) ?? Container()
     );
     Widget contentWidget = icon;
@@ -353,40 +353,41 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       );
     }
 
-    Widget contentButton = ElevatedButton(
-      onPressed: userUnit.current ? () {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => !required ? UnitInfoPanel(
-            content: content,
-            data: userContent.userData,
-            color: _selectedModulePrimaryColor,
-            colorAccent: _selectedModuleAccentColor,
-            preview: !isCompletedOrCurrent,
-          ) : AssignmentPanel(
-            content: content,
-            data: userContent.userData,
-            color: _selectedModulePrimaryColor,
-            colorAccent: _selectedModuleAccentColor,
-            isCurrent: isCurrent,
-            helpContent: (_userCourse?.course ?? _course) != null ? content.getLinkedContent(_userCourse?.course ?? _course) : null,
-            preview: !isCompletedOrCurrent,
-          )
-        )).then((result) {
-          if (result is Map<String, dynamic>) {
-            _updateProgress(unit.key!, userContent, content, result);
-          }
-        });
-      } : null,
-      child: contentWidget,
-      style: ElevatedButton.styleFrom(
-        shape: shouldHighlight ? RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))) : CircleBorder(),
-        side: isCurrent && !userContent.hasData ? BorderSide(color: _selectedModulePrimaryColor ?? Styles().colors.fillColorPrimary, width: 6.0, strokeAlign: BorderSide.strokeAlignOutside) : null,
-        padding: EdgeInsets.all(8.0),
-        backgroundColor: isCompletedOrCurrent ? (!required || userContent.hasData ? completedColor : contentColor) : incompleteColor,
-        disabledBackgroundColor: incompleteColor
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: ElevatedButton(
+        onPressed: userUnit.current ? () {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => !required ? UnitInfoPanel(
+              content: content,
+              data: userContent.userData,
+              color: _selectedModulePrimaryColor,
+              colorAccent: _selectedModuleAccentColor,
+              preview: !isCompletedOrCurrent,
+            ) : AssignmentPanel(
+              content: content,
+              data: userContent.userData,
+              color: _selectedModulePrimaryColor,
+              colorAccent: _selectedModuleAccentColor,
+              isCurrent: isCurrent,
+              helpContent: (_userCourse?.course ?? _course) != null ? content.getLinkedContent(_userCourse?.course ?? _course) : null,
+              preview: !isCompletedOrCurrent,
+            )
+          )).then((result) {
+            if (result is Map<String, dynamic>) {
+              _updateProgress(unit.key!, userContent, content, result);
+            }
+          });
+        } : null,
+        child: contentWidget,
+        style: ElevatedButton.styleFrom(
+          shape: shouldHighlight ? RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))) : CircleBorder(),
+          side: isCurrent && !userContent.hasData ? BorderSide(color: _selectedModulePrimaryColor ?? Styles().colors.fillColorPrimary, width: 6.0, strokeAlign: BorderSide.strokeAlignOutside) : null,
+          padding: EdgeInsets.all(8.0),
+          backgroundColor: isCompletedOrCurrent ? (!required || userContent.hasData ? completedColor : contentColor) : incompleteColor,
+          disabledBackgroundColor: incompleteColor
+        ),
       ),
     );
-
-    return contentButton;
   }
 
   List<DropdownMenuItem<String>> _moduleDropdownItems() {
