@@ -185,7 +185,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
       contentList.add(
         HomeSlantWidget(
           title: Localization().getStringEx('panel.browse.label.sections.title', 'App Sections'),
-          titleIconKey: 'campus-tools',
+          titleIconKey: 'browse',
           childPadding: HomeSlantWidget.defaultChildPadding,
           child: Column(children: sectionsList,),
         )    
