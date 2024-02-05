@@ -973,7 +973,7 @@ class _BrowseEntry extends StatelessWidget {
     if (StringUtils.isNotEmpty(url)) {
       Uri? uri = Uri.tryParse(url!);
       if (uri != null) {
-        launchUrl(uri);
+        launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
       }
     } else {
       debugPrint("Missing Config().dailyIlliniHomepageUrl");
