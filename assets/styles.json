@@ -720,7 +720,7 @@
     "checklist": {"src": "0xf03a", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 20, "todo": "same as todo"},
     "laundry": {"src": "0xf898", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
     "transit": {"src": "images/location.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "pick better icon"},
-    "inbox": {"src": "images/icon-news.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "pick better icon"},
+    "inbox": {"src": "images/icon-reminder.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "guide": {"src": "0xf6d4", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 19},
     "event": {"src": "images/icon-event.png", "type": "flutter.asset", "size": 18, "todo": "pick better icon, color issue"},
     "events": {"src": "images/icon-calendar.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "pick better icon"},
