@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 - Update Daily Illini home screen widget to show three stories on one card [#3079](https://github.com/rokwire/illinois-app/issues/3079).
+### Added
+- Added app version to Settings Contact Us panel [#3883](https://github.com/rokwire/illinois-app/issues/3883).
 
 ## [5.1.20] - 2024-01-02
 ### Fixed
