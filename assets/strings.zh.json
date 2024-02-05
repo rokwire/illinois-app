@@ -372,6 +372,7 @@
 	"panel.browse.entry.events.my_events.title": "我的活動",
 
 	"panel.browse.entry.feeds.twitter.title": "推特",
+	"panel.browse.entry.feeds.daily_illini.title": "The Daily Illini",
 	"panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 調頻",
 
 	"panel.browse.entry.groups.all_groups.title": "所有組",
@@ -3622,9 +3623,7 @@
 	"widget.home.twitter.button.all.title": "查看全部",
 	"widget.home.twitter.button.all.hint": "點擊查看所有推文",
 
-	"widget.home.daily_illini.header.label": "伊利尼日報",
-	"widget.home.daily_illini.item.page.next.hint": "下一頁",
-	"widget.home.daily_illini.item.page.previous.hint": "上一頁",
+	"widget.home.daily_illini.header.label": "The Daily Illini",
 	"widget.home.daily_illini.button.all.title": "查看全部",
 	"widget.home.daily_illini.button.all.hint": "點擊查看每日伊利尼日報",
 	"widget.home.daily_illini.text.empty.description": "無法加載伊利尼日報。",

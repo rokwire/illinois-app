@@ -28,13 +28,14 @@ class DailyIlliniItem {
   final String? link;
   final String? description;
   final String? thumbImageUrl;
+  final String? category;
   final DateTime? pubDateTimeUtc;
 
-  DailyIlliniItem({this.title, this.link, this.description, this.thumbImageUrl, this.pubDateTimeUtc});
+  DailyIlliniItem({this.title, this.link, this.description, this.thumbImageUrl, this.pubDateTimeUtc, this.category});
 
   String? get displayPubDate {
     DateTime? localDateTime = AppDateTime().getDeviceTimeFromUtcTime(pubDateTimeUtc);
-    return AppDateTime().formatDateTime(localDateTime, format: 'LLLL, d yyyy', ignoreTimeZone: true);
+    return AppDateTime().formatDateTime(localDateTime, format: 'LLLL d, yyyy', ignoreTimeZone: true);
   }
 
   static DailyIlliniItem? fromXml(XmlElement? xml) {
@@ -43,15 +44,17 @@ class DailyIlliniItem {
     }
     String? pubDateString = XmlUtils.childText(xml, 'pubDate');
     String? descriptionString = XmlUtils.childCdata(xml, 'description');
+    String? categoryString = _getCategory(xml.toString());
     String? thumbImgUrl = _getThumbImageUrl(descriptionString);
     return DailyIlliniItem(
       title: XmlUtils.childText(xml, 'title'),
       link: XmlUtils.childText(xml, 'link'),
+      category: categoryString,
       description: descriptionString,
       thumbImageUrl: thumbImgUrl,
       // DateTime format:
-      // Tue, 09 Aug 2022 12:00:17 +0000
-      pubDateTimeUtc: DateTimeUtils.dateTimeFromString(pubDateString, format: "E, dd LLL yyyy hh:mm:ss Z", isUtc: true),
+      // Tue, 09 Aug 2022 13:00:17 +0000
+      pubDateTimeUtc: DateTimeUtils.dateTimeFromString(pubDateString, format: "E, dd LLL yyyy HH:mm:ss Z", isUtc: true),
     );
   }
 
@@ -96,5 +99,22 @@ class DailyIlliniItem {
       }
     }
     return null;
+  }
+
+  static String? _getCategory(String? itemText) {
+    dom.Document doc = htmlParser.parse(itemText);
+    List<dom.Element> catElements = doc.getElementsByTagName('category');
+    for (int i = 0; i < catElements.length; i++) {
+      if (catElements[i].innerHtml.contains("Opinions")) {
+        return "Opinions";
+      } else if (catElements[i].innerHtml.contains("buzz")) {
+        return "buzz";
+      } else if (catElements[i].innerHtml.contains("Sports")) {
+        return "Sports";
+      } else if (catElements[i].innerHtml.contains("News")) {
+        return "News";
+      }
+    }
+    return "N/A";
   }
 }

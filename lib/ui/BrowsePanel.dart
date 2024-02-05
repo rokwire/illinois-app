@@ -969,7 +969,15 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapDailyIllini(BuildContext context) {
     Analytics().logSelect(target: "Daily Illini");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DailyIlliniListPanel()));
+    String? url = Config().dailyIlliniHomepageUrl;
+    if (StringUtils.isNotEmpty(url)) {
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
+      }
+    } else {
+      debugPrint("Missing Config().dailyIlliniHomepageUrl");
+    }
   }
 
   void _onTapWPGUFMRadio(BuildContext context) {
