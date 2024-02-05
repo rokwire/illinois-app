@@ -166,12 +166,6 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
         );
       }
 
-      _onViewAll() async {
-        final Uri url = Uri.parse(Config().dailyIlliniHomepageUrl!);
-        LaunchMode launchMode = Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault;
-        launchUrl(url, mode: launchMode);
-      }
-
       return Column(
         children: [
           contentWidget,
@@ -190,6 +184,17 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
       _illiniItems = items;
       _setLoading(false);
     });
+  }
+
+  void _onViewAll() async {
+    String? url = Config().dailyIlliniHomepageUrl;
+    if (StringUtils.isNotEmpty(url)) {
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        LaunchMode launchMode = Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault;
+        launchUrl(uri, mode: launchMode);
+      }
+    }
   }
 
   void _setLoading(bool loading) {
