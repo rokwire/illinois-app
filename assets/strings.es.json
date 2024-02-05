@@ -293,7 +293,7 @@
     "panel.browse.section.events.title": "Eventos",
     "panel.browse.section.events.description": "Encuentra eventos en todo el campus y en todo el mundo.",
     "panel.browse.section.feeds.title": "Feeds",
-    "panel.browse.section.feeds.description": "Escuche WPGU 107.1 y obtenga lo último en las redes sociales de {{app_title}}.",
+    "panel.browse.section.feeds.description": "Ponga al día con las últimas noticias del Daily Illini, WPGU 107.1 y las redes sociales de {{app_title}}.",
     "panel.browse.section.groups.title": "Grupos",
     "panel.browse.section.groups.description": "Comience su propio grupo o descubra un nuevo grupo para unirse.",
     "panel.browse.section.research_projects.title": "Investigación en Illinois",
@@ -372,6 +372,7 @@
     "panel.browse.entry.events.my_events.title": "Mis eventos",
 
     "panel.browse.entry.feeds.twitter.title": "X/Twitter",
+    "panel.browse.entry.feeds.daily_illini.title": "The Daily Illini",
     "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 FM",
 
     "panel.browse.entry.groups.all_groups.title": "Todos los grupos",
@@ -3638,7 +3639,7 @@
     "widget.home.daily_illini.header.label": "The Daily Illini",
     "widget.home.daily_illini.button.all.title": "Más Artículos",
     "widget.home.daily_illini.button.all.hint": "Toque para ver la página principal del Daily Illini",
-    "widget.home.daily_illini.text.empty.description": "No se pudo cargar la alimentación del Daily Illini.",
+    "widget.home.daily_illini.text.empty.description": "No se pudo cargar las noticias del Daily Illini.",
 
     "widget.food_detail.label.loading.title": "Cargando datos del menú",
     "widget.food_detail.label.loading.hint": "",
