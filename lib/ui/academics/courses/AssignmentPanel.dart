@@ -16,7 +16,8 @@ class AssignmentPanel extends StatefulWidget {
   final Color? colorAccent;
   final bool isCurrent;
   final List<Content>? helpContent;
-  AssignmentPanel({required this.content, required this.data, required this.color, required this.colorAccent, required this.isCurrent, this.helpContent});
+  final bool preview;
+  AssignmentPanel({required this.content, required this.data, required this.color, required this.colorAccent, required this.isCurrent, this.helpContent, required this.preview});
 
   @override
   State<AssignmentPanel> createState() => _AssignmentPanelState();
@@ -101,15 +102,16 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.all(16),
-              child: RoundedButton(
-                  label: Localization().getStringEx('panel.essential_skills_coach.assignment.button.save.label', 'Save'),
-                  textStyle: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"),
-                  backgroundColor: _colorAccent,
-                  borderColor: _colorAccent,
-                  onTap: () => _saveProgress(false)),
-            ),
+            if (!widget.preview)
+              Padding(
+                padding: EdgeInsets.all(16),
+                child: RoundedButton(
+                    label: Localization().getStringEx('panel.essential_skills_coach.assignment.button.save.label', 'Save'),
+                    textStyle: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"),
+                    backgroundColor: _colorAccent,
+                    borderColor: _colorAccent,
+                    onTap: () => _saveProgress(false)),
+              ),
             if (helpContentWidgets.isNotEmpty)
               ExpansionPanelList(
                 expandIconColor: Colors.white,
@@ -142,23 +144,31 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
   }
 
   List<Widget> _buildAssignmentActivityWidgets(){
-    List<Widget> noteWidgets = [];
-    if(isComplete){
-      noteWidgets.addAll([
-        Padding(
-          padding: EdgeInsets.all(16),
-          child: Text(Localization().getStringEx('panel.essential_skills_coach.assignment.experience.selection.header.', "How did it go?"),
-            style: Styles().textStyles.getTextStyle("widget.title.light.regular"),
+    List<Widget> assignmentWidgets = [
+      Padding(
+        padding: EdgeInsets.all(24),
+        child: Text(_content.details ?? "", style: Styles().textStyles.getTextStyle("widget.title.light.large")),
+      ),
+    ];
+
+    if (!widget.preview) {
+      List<Widget> noteWidgets = [];
+      if(isComplete){
+        noteWidgets.addAll([
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: Text(Localization().getStringEx('panel.essential_skills_coach.assignment.experience.selection.header.', "How did it go?"),
+              style: Styles().textStyles.getTextStyle("widget.title.light.regular"),
+            ),
           ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(
-                width: 150,
-                child:RoundedButton(
+          Padding(
+            padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                  width: 150,
+                  child:RoundedButton(
                     label: "",
                     textWidget: Icon(
                       Icons.thumb_up_alt_rounded,
@@ -173,12 +183,12 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                         experience = isGoodExperience ? null : 'good';
                       });
                     } : null,
+                  ),
                 ),
-              ),
-              SizedBox(width: 8,),
-              Container(
-                  width: 150,
-                  child:RoundedButton(
+                SizedBox(width: 8,),
+                Container(
+                    width: 150,
+                    child:RoundedButton(
                       label: "",
                       textWidget: Icon(
                         Icons.thumb_down_alt_rounded,
@@ -193,72 +203,68 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                           experience = isBadExperience ? null : 'bad';
                         });
                       } : null,
-                  )),
-            ],
-          ),
-        ),
-      ]);
-    }
-
-    String notesHeaderText = isComplete ? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.good.notes.header.', "Describe your experience.") :
-      (isNotComplete ? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.bad.notes.header.', "Why not? What got in your way?") :
-        Localization().getStringEx('panel.essential_skills_coach.assignment.experience.notes.header.', "Notes"));
-    noteWidgets.add(
-        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(notesHeaderText, style: Styles().textStyles.getTextStyle("widget.title.light.small.fat"),),
-              Visibility(
-                visible: widget.isCurrent && SpeechToText().isEnabled,
-                child: _buildSpeechToTextButton(),
-              )
-            ],
-          ),
-        )
-    );
-
-    return [
-      Padding(
-        padding: EdgeInsets.all(24),
-        child: Text(_content.details ?? "", style: Styles().textStyles.getTextStyle("widget.title.light.large")),
-      ),
-      Divider(color: _colorAccent, thickness: 2, indent: 24.0, endIndent: 24.0,),
-      Padding(
-        padding: EdgeInsets.all(16),
-        child: Text(Localization().getStringEx('panel.essential_skills_coach.assignment.completion.selection.header', "Did you complete this task?"),
-          style: Styles().textStyles.getTextStyle("widget.title.light.regular"),
-        ),
-      ),
-      Padding(
-        padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Container(
-              width: 150,
-              child:RoundedButton(
-                  label: Localization().getStringEx('panel.essential_skills_coach.assignment.completion.button.yes.label', 'Yes'),
-                  leftIconPadding: EdgeInsets.only(left: 15),
-                  textStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),
-                  backgroundColor: isComplete ? _colorAccent : _color,
-                  borderColor: _colorAccent,
-                  leftIcon: Icon(
-                    Icons.check_rounded,
-                    color: isComplete ? _color : _colorAccent,
-                    size: 20,
-                  ),
-                  onTap: widget.isCurrent && widget.data?[UserContent.completeKey] != true ? () {
-                    setState(() {
-                      complete = isComplete ? null : true;
-                    });
-                  } : null
-              ),
+                    )),
+              ],
             ),
-            SizedBox(width: 8,),
-            Container(
+          ),
+        ]);
+      }
+
+      String notesHeaderText = isComplete ? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.good.notes.header.', "Describe your experience.") :
+      (isNotComplete ? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.bad.notes.header.', "Why not? What got in your way?") :
+      Localization().getStringEx('panel.essential_skills_coach.assignment.experience.notes.header.', "Notes"));
+      noteWidgets.add(
+          Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(notesHeaderText, style: Styles().textStyles.getTextStyle("widget.title.light.small.fat"),),
+                Visibility(
+                  visible: widget.isCurrent && SpeechToText().isEnabled,
+                  child: _buildSpeechToTextButton(),
+                )
+              ],
+            ),
+          )
+      );
+
+      assignmentWidgets.addAll([
+        Divider(color: _colorAccent, thickness: 2, indent: 24.0, endIndent: 24.0,),
+        Padding(
+          padding: EdgeInsets.all(16),
+          child: Text(Localization().getStringEx('panel.essential_skills_coach.assignment.completion.selection.header', "Did you complete this task?"),
+            style: Styles().textStyles.getTextStyle("widget.title.light.regular"),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
                 width: 150,
                 child:RoundedButton(
+                    label: Localization().getStringEx('panel.essential_skills_coach.assignment.completion.button.yes.label', 'Yes'),
+                    leftIconPadding: EdgeInsets.only(left: 15),
+                    textStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),
+                    backgroundColor: isComplete ? _colorAccent : _color,
+                    borderColor: _colorAccent,
+                    leftIcon: Icon(
+                      Icons.check_rounded,
+                      color: isComplete ? _color : _colorAccent,
+                      size: 20,
+                    ),
+                    onTap: widget.isCurrent && widget.data?[UserContent.completeKey] != true ? () {
+                      setState(() {
+                        complete = isComplete ? null : true;
+                      });
+                    } : null
+                ),
+              ),
+              SizedBox(width: 8,),
+              Container(
+                  width: 150,
+                  child:RoundedButton(
                     label: Localization().getStringEx('panel.essential_skills_coach.assignment.completion.button.no.label', 'No'),
                     leftIconPadding: EdgeInsets.only(left: 15),
                     textStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),
@@ -274,12 +280,12 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                         complete = isNotComplete ? null : false;
                       });
                     } : null,
-                )),
-          ],
+                  )),
+            ],
+          ),
         ),
-      ),
-      ...noteWidgets,
-      Padding(
+        ...noteWidgets,
+        Padding(
           padding: EdgeInsets.only(left: 16, right: 16, bottom: 32),
           child:TextField(
             controller: _controller,
@@ -295,8 +301,11 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
               fillColor: Colors.white,
             ),
           )
-      ),
-    ];
+        ),
+      ]);
+    }
+
+    return assignmentWidgets;
   }
 
   Widget _buildSpeechToTextButton() => Material(

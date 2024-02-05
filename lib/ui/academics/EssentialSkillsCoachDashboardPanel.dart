@@ -344,7 +344,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             ),
             Text(
               content.reference?.highlightActionText() ?? (isNextWithCurrentComplete ?
-                sprintf(Localization().getStringEx('panel.essential_skills_coach.dashboard.activity.button.action.unlock.label', 'Unlocks %s'), [unlockTimeText ?? 'tomorrow']) :
+                sprintf(Localization().getStringEx('panel.essential_skills_coach.dashboard.activity.button.action.unlock.label', 'Starts %s'), [unlockTimeText ?? 'tomorrow']) :
                   Localization().getStringEx('panel.essential_skills_coach.dashboard.activity.button.action.label', 'GET STARTED')),
               style: Styles().textStyles.getTextStyle("widget.title.light.medium.fat")
             )
@@ -354,12 +354,13 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     }
 
     Widget contentButton = ElevatedButton(
-      onPressed: isCompletedOrCurrent ? () {
+      onPressed: userUnit.current ? () {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => !required ? UnitInfoPanel(
             content: content,
             data: userContent.userData,
             color: _selectedModulePrimaryColor,
             colorAccent: _selectedModuleAccentColor,
+            preview: !isCompletedOrCurrent,
           ) : AssignmentPanel(
             content: content,
             data: userContent.userData,
@@ -367,6 +368,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             colorAccent: _selectedModuleAccentColor,
             isCurrent: isCurrent,
             helpContent: (_userCourse?.course ?? _course) != null ? content.getLinkedContent(_userCourse?.course ?? _course) : null,
+            preview: !isCompletedOrCurrent,
           )
         )).then((result) {
           if (result is Map<String, dynamic>) {

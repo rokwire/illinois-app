@@ -11,7 +11,8 @@ class UnitInfoPanel extends StatefulWidget {
   final Map<String, dynamic>? data;
   final Color? color;
   final Color? colorAccent;
-  const UnitInfoPanel({required this.content, required this.data, required this.color, required this.colorAccent});
+  final bool preview;
+  const UnitInfoPanel({required this.content, required this.data, required this.color, required this.colorAccent, required this.preview});
 
   @override
   State<UnitInfoPanel> createState() => _UnitInfoPanelState();
@@ -118,7 +119,7 @@ class _UnitInfoPanelState extends State<UnitInfoPanel> implements NotificationsL
   }
 
   void _saveProgress(bool didPop) async {
-    bool returnData = (_data?['complete'] != true);
+    bool returnData = widget.preview ? false : (_data?['complete'] != true);
     if (returnData) {
       _data ??= {};
       _data!['complete'] = true;

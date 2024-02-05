@@ -3123,7 +3123,7 @@
     "panel.essential_skills_coach.dashboard.no_streak.text": "No Streak",
     "panel.essential_skills_coach.dashboard.resources.button.label": "Resources",
     "panel.essential_skills_coach.dashboard.activity.button.label": "Activity",
-    "panel.essential_skills_coach.dashboard.activity.button.action.unlock.label": "Unlocks %s",
+    "panel.essential_skills_coach.dashboard.activity.button.action.unlock.label": "Starts %s",
     "panel.essential_skills_coach.dashboard.activity.button.action.label": "GET STARTED",
     "panel.essential_skills_coach.assignment.header.title": "Daily Activities",
     "panel.essential_skills_coach.assignment.help.header.title": "Helpful Information",
