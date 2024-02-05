@@ -3115,6 +3115,7 @@
     "panel.essential_skills_coach.get_started.description.list": "\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience",
     "panel.essential_skills_coach.dashboard.content.missing.text": "Course content could not be loaded. Please try again later.",
     "panel.essential_skills_coach.dashboard.no_streak.text": "No Streak",
+    "panel.essential_skills_coach.dashboard.complete_to_unlock.text": "Complete Unit %d to unlock",
     "panel.essential_skills_coach.dashboard.resources.button.label": "Resources",
     "panel.essential_skills_coach.dashboard.activity.button.label": "Activity",
     "panel.essential_skills_coach.dashboard.activity.button.action.unlock.label": "Starts %s",

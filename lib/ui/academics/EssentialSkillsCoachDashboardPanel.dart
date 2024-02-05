@@ -204,7 +204,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
           if (!userUnit.current)
             Padding(
               padding: const EdgeInsets.only(top: 16.0),
-              child: Text(Localization().getStringEx('', 'Complete Unit ${displayNumber-1} to unlock'), style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat")),
+              child: Text(sprintf(Localization().getStringEx('panel.essential_skills_coach.dashboard.complete_to_unlock.text', 'Complete Unit %d to unlock'), [displayNumber-1]), style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat")),
             ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),

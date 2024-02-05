@@ -464,7 +464,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       case AcademicsContent.appointments:
         return Localization().getStringEx('panel.academics.section.appointments.label', 'Appointments');
       case AcademicsContent.skills_dashboard:
-        return Localization().getStringEx('', 'Essential Skills Coach');
+        return Localization().getStringEx('panel.academics.section.essential_skills_coach.label', 'Essential Skills Coach');
     }
   }
 
