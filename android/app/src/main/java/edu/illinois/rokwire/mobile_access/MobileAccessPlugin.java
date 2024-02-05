@@ -347,8 +347,10 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
 
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-        methodChannel.setMethodCallHandler(null);
-        methodChannel = null;
+        if (methodChannel != null) {
+            methodChannel.setMethodCallHandler(null);
+            methodChannel = null;
+        }
     }
 
     public static void invokeStartFinishedMethod(boolean result) {
