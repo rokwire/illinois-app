@@ -969,7 +969,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapDailyIllini(BuildContext context) {
     Analytics().logSelect(target: "Daily Illini");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DailyIlliniListPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => HomeDailyIlliniWidget()));
   }
 
   void _onTapWPGUFMRadio(BuildContext context) {

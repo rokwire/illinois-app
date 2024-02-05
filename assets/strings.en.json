@@ -3641,11 +3641,9 @@
     "widget.home.twitter.button.all.title": "View All",
     "widget.home.twitter.button.all.hint": "Tap to view all tweets",
 
-    "widget.home.daily_illini.header.label": "Daily Illini",
-    "widget.home.daily_illini.item.page.next.hint": "Next page",
-    "widget.home.daily_illini.item.page.previous.hint": "Previous page",
-    "widget.home.daily_illini.button.all.title": "View All",
-    "widget.home.daily_illini.button.all.hint": "Tap to view the Daily Illini feed",
+    "widget.home.daily_illini.header.label": "The Daily Illini",
+    "widget.home.daily_illini.button.all.title": "More Stories",
+    "widget.home.daily_illini.button.all.hint": "Tap to view the Daily Illini home page",
     "widget.home.daily_illini.text.empty.description": "Failed to load the Daily Illini feed.",
 
     "widget.food_detail.label.loading.title": "Loading menu data",

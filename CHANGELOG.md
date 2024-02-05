@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+- Update Daily Illini home screen widget to show three stories on one card [#3079](https://github.com/rokwire/illinois-app/issues/3079).
+
 ## [5.1.20] - 2024-01-02
 ### Fixed
 - List only groups where the user is admin when adding event to groups [#3921](https://github.com/rokwire/illinois-app/issues/3921).
@@ -653,7 +655,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Illinois Assistant chatbot integration [#3220](https://github.com/rokwire/illinois-app/issues/3220).
 - Initial preview of new Events interface [#3300](https://github.com/rokwire/illinois-app/issues/3300).
->>>>>>> 0ef3b534c72362c5d54c9539391663a69c96c8a8
 
 ## [5.0.7] - 2023-06-12
 ### Added
