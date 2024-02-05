@@ -17,7 +17,6 @@ class SettingsContactsContentWidget extends StatefulWidget{
 }
 
 class _SettingsContactsContentWidgetState extends State<SettingsContactsContentWidget> {
-
   static BorderRadius _bottomRounding = BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10));
   static BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10));
 
@@ -35,11 +34,12 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
         _buildLinkButton(label: Localization().getStringEx("panel.settings.partners.button.help_desk.title", "PARTNER WITH US"),
           onTap: _onFeedback),
         _buildLinkButton(label: Localization().getStringEx("panel.settings.review.button.help_desk.title", "REVIEW APP"),
-            borderRadius: _bottomRounding,
-            onTap: _onReviewClicked),
+            onTap: _onReviewClicked,
+            borderRadius: _bottomRounding,),
         _feedbackDescriptionWidget,
         _dividerWidget,
-        _contactInfoWidget
+        _contactInfoWidget,
+        _appVersionWidget
       ],
     );
   }
@@ -98,6 +98,18 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
           ]))
       ],)
     );
+
+  Widget get _appVersionWidget =>
+      Padding(padding: const EdgeInsets.only(top: 0), child:
+        RichText(textAlign: TextAlign.left, text:
+        TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children:[
+          TextSpan(text: Localization().getStringEx('panel.settings.home.version.info.label', '{{app_title}} App Version:').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),),
+          TextSpan(text:  " $_appVersion", style : Styles().textStyles.getTextStyle("widget.item.regular.fat")),
+        ])
+        ),
+    );
+
+  String get _appVersion => Config().appVersion ?? '';
 
   Widget get _dividerWidget =>
       Container(color: Styles().colors.surfaceAccent, height: 1,);
