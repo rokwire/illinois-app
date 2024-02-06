@@ -40,7 +40,6 @@ import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -1459,19 +1458,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapEvent(Event2 event) {
     Analytics().logSelect(target: 'Group Event: ${event.name}');
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (context) => event.hasGame == true
-                ? AthleticsGameDetailPanel(
-                    game: event.game,
-                    eventSelector:
-                        _group != null ? GroupEventSelector(GroupEventData(group: _group, event: event), showSelectionButton: false) : null)
-                : Event2DetailPanel(
-                    event: event,
-                    eventSelector: _group != null
-                        ? GroupEventSelector(GroupEventData(group: _group, event: event), showSelectionButton: false)
-                        : null)));
+    Navigator.push(context, CupertinoPageRoute( builder: (context) => (event.hasGame == true) ?
+      AthleticsGameDetailPanel(game: event.game, event: event, group: _group) :
+      Event2DetailPanel(event: event, group: _group)));
   }
 
   void _onTapEventOptions() {
@@ -1792,15 +1781,16 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapCreateEvent(){
     Analytics().logSelect(target: "Create Event", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(
-        eventSelector: GroupEventSelector(GroupEventData(group: _group), showSelectionButton: false, enablePostingToAdminGroups: true, padding: EdgeInsets.only(top: 16)))));
+    if (_group != null) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(targetGroups: [_group!],)));
+    }
   }
 
   void _onTapBrowseEvents(){
     Analytics().logSelect(target: "Browse Events", attributes: _group?.analyticsAttributes);
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, browseGroup: _group, initialFilter: ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {0/*Upcoming*/} ),)));
-    Event2HomePanel.present(context, eventSelector: GroupEventSelector(GroupEventData(group: _group,), enablePostingToAdminGroups: true));
-
+    if (_group != null) {
+      Event2HomePanel.present(context, eventSelector: GroupEventSelector2(_group!));
+    }
   }
 
   void _onTapCreatePost() {
@@ -1942,284 +1932,62 @@ class _OfficerCard extends StatelessWidget {
   }
 }
 
-class GroupEventSelector extends Event2Selector{
-  final bool showSelectionButton;
-  final bool enableMembersSelection;
-  final bool enablePostingToAdminGroups;
-  final EdgeInsetsGeometry padding;
-  GroupEventData data;
-
-  GroupEventSelector(this.data, {
-    this.showSelectionButton = true,
-    this.enableMembersSelection = false,
-    this.enablePostingToAdminGroups = false,
-    this.padding = const EdgeInsets.symmetric(vertical: 10),
-  }) : super(data);
-
-  @override
-  void init(State<StatefulWidget> state) {
-    super.init(state);
-    if(enableMembersSelection) {
-      _initMemberSelection(state);
-    }
-  }
-
-  @override
-  Widget? buildWidget(State<StatefulWidget> state) {
-    _updateDataFromState(state);
-    return Container(
-        padding: padding,
-        child: Column(
-          children: [
-            Visibility(visible: showSelectionButton,
-              child: RoundedButton(
-                label: (data.group?.researchProject == true) ?
-                Localization().getStringEx('panel.explore_detail.button.add_to_project.title', 'Add Event To Project') :
-                Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
-                hint: (data.group?.researchProject == true) ?
-                Localization().getStringEx('panel.explore_detail.button.add_to_project.hint', '') :
-                Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
-                textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                backgroundColor: Colors.white,
-                borderColor: Styles().colors.fillColorPrimary,
-                progress: data.bindingInProgress ?? false,
-                onTap: ()=>_onTapAddToGroup(state),
-              ),
-            ),
-            Container(height: 6,),
-            Visibility(visible: enableMembersSelection,
-              child: GroupMembersSelectionWidget(
-              selectedMembers: data.membersSelection,
-              groupId: data.group?.id,
-              onSelectionChanged: (members){
-                state.setStateIfMounted(() {
-                  data.membersSelection = members;
-                });
-              },)),
-          ],
-        )
-    );
-  }
-
- @override
-  Future<void> prepareSelection(State state) async {
-    await super.prepareSelection(state);
-    _updateDataFromState(state);
-    if(enablePostingToAdminGroups) {
-      await _selectOtherAdminGroups(state);
-    }
-  }
-
-  @override
-  Future<dynamic> Function(Event2 source)? event2SelectorServiceAPI() =>
-    (data.updateExistingEvent == true) ? _updateEvent : _createEvent;
-
-  @override
-  Future <void> performSelection(State state) async {
-    //await _bindEvent();
-    state.setStateIfMounted(() {data.bindingInProgress = false;});
-    if (StringUtils.isNotEmpty(data.serviceAPIError)) {
-      bool? confirmed = await AppAlert.showDialogResult(state.context, data.serviceAPIError);
-      if(confirmed == true)
-        Log.d("The user confirms the error");
-    }
-  }
-
-  @override
-  void finishSelection(State state){
-    if (state.mounted) {
-      Navigator.of(state.context).popUntil((Route route) {
-        return route.settings.name == GroupDetailPanel.routeName;
-      });
-    }
-  }
-
-  void _updateDataFromState(State state){
-    if(state is Event2SelectorDataProvider){
-      Event2SelectorData? rawData = (state as Event2SelectorDataProvider).selectorData;
-      data = (rawData is GroupEventData) ? rawData : data;
-    }
-  }
-
-  void _onTapAddToGroup(State state) async{
-    Analytics().logSelect(target: "Add To Group");
-    state.setStateIfMounted(() {data.bindingInProgress = true;});
-    await prepareSelection(state);
-    await _bindEvent();
-    await performSelection(state);
-    finishSelection(state);
-  }
-
-  void _initMemberSelection(State<StatefulWidget> state){
-    if(data.group?.id != null && data.event?.id != null && CollectionUtils.isEmpty(data.membersSelection)){
-      Groups().loadGroupEventMemberSelection(data.group?.id, data.event?.id).then((memberSelection) { //Check do we already have selection {update mode}
-        state.setStateIfMounted(() {
-          if(memberSelection != null) {
-            data.membersSelection = memberSelection;
-          }
-        });
-      });
-    }
-  }
-
-  //Event to Group binding
-  Future<void> _bindEvent() async{
-    Future<bool> Function({String? groupId, String? eventId, List<Member>? toMembers}) serviceAPI = data.updateExistingEvent == true ? Groups().updateLinkedEventMembers : Groups().linkEventToGroup;
-    List<Future<bool>> futures = [
-      serviceAPI(groupId: data.group?.id, eventId: data.event?.id, toMembers: data.membersSelection)
-    ];
-    if (data.adminGroupsSelection?.isNotEmpty == true) {
-      for (Group group in data.adminGroupsSelection!) {
-        futures.add(serviceAPI(groupId: group.id, eventId: data.event?.id, toMembers: data.membersSelection));
-      }
-    }
-
-    List<bool> results = await Future.wait(futures);
-
-    List<String> failedBindingGroupNames = [];
-    for (int index = 0; index < results.length; index++) {
-      if (!results[index]) {
-        Group? group = (0 < index) ? data.adminGroupsSelection![index - 1] : data.group;
-        if (group?.title != null) {
-          failedBindingGroupNames.add(group!.title!);
-        }
-      }
-    }
-    if (failedBindingGroupNames.isNotEmpty) {
-      data.serviceAPIError = _constructBindingFailureMsg(event: data.event, failedGroupNames: failedBindingGroupNames);
-    }
-  }
-
-  Future<dynamic> _createEvent(Event2 event) async {
-    if (data.adminGroupsSelection?.isNotEmpty == true) {
-      return await _createEventForGroups(event);
-    }
-    else {
-      return await Groups().createEventForGroupV3(event, groupId: data.group?.id, toMembers: data.membersSelection);
-    }
-  }
-
-  Future<dynamic> _createEventForGroups(Event2 event) async {
-    List<String> groupIds = <String>[];
-    ListUtils.add(groupIds, data.group?.id);
-    data.adminGroupsSelection?.forEach((Group group) => ListUtils.add(groupIds, group.id));
-
-    dynamic result = await Groups().createEventForGroupsV3(event, groupIds: groupIds);
-    if ((result is CreateEventForGroupsV3Param) && (result.event != null)) {
-      data.serviceAPIError = _constructFailedGroupsMessage(
-        targetGroups: data.adminGroupsSelection,
-        succeededGroupIds: result.groupIds
-      );
-      return result.event;
-    }
-    else {
-      return result;
-    }
-  }
-
-  Future<dynamic> _updateEvent(Event2 event) async =>
-    await Groups().updateEventForGroupV3(event, groupId: data.group?.id, toMembers: data.membersSelection);
-
-
-  //Other admin groups
-  Future<void> _selectOtherAdminGroups(State state) async{
-    if (CollectionUtils.isEmpty(data.membersSelection)) { //Do not allow to save to other groups if membersSelection is performed. Causes a bug that these members may not be also members of the rest of the groups
-      if(data.group?.id != null) {
-        List<Group>? otherAdminGroups = await Groups().loadAdminUserGroups(excludeIds: [data.group!.id!]);
-        List<Group>? otherSelectedGroups = await showDialog(
-            context: state.context,
-            barrierDismissible: true,
-            builder: (_) => GroupsSelectionPopup(
-              groups: otherAdminGroups,
-              title: Localization().getStringEx('widget.groups.event.selection.heading', '{{app_title}} App Groups').
-                replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-              description: Localization().getStringEx('widget.groups.event.selection.message', 'Publish your event to Group(s) that you administer.'),
-            )
-        );
-        state.setStateIfMounted(() {data.adminGroupsSelection = otherSelectedGroups;});
-      }
-    }
-  }
-
-  String? _constructFailedGroupsMessage({List<Group>? targetGroups, List<String>? succeededGroupIds}) {
-    List<String>? failedGroupNames;
-    if (targetGroups != null) {
-      Set<String>? succeededMap = (succeededGroupIds != null) ? Set.from(succeededGroupIds) : null;
-      for (Group group in targetGroups) {
-        if ((succeededMap?.contains(group.id) != true) && (group.title != null)) {
-          (failedGroupNames ??= <String>[]).add(group.title!);
-        }
-      }
-    }
-    return (failedGroupNames?.isNotEmpty == true) ? (Localization().getStringEx('panel.create_event.groups.failed.msg', 'There was an error binding this event to the following groups: ') + failedGroupNames!.join(', ')) : null;
-  }
-
-  ///
-  /// Returns the group for which the binding has failed. Empty == success
-  ///
-  /*Future<List<String>> _bindEventToSelectedAdminGroups(Event2 event) async{
-    List<String> failedForGroups = [];
-    // Save the event to the other selected groups that the user is admin.
-    if (CollectionUtils.isNotEmpty(data.adminGroupsSelection)) {
-      for (Group group in data.adminGroupsSelection!) {
-          bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: group.id, eventId: event.id, toMembers: data.membersSelection);
-          if (eventLinkedToGroup == false) {
-            // Failed to link event to group
-            ListUtils.add(failedForGroups, group.title);
-          }
-        }
-      }
-
-    return failedForGroups;
-  }*/
-
-  String? _constructBindingFailureMsg({List<String?>? failedGroupNames, Event2? event}){
-    String? failedMsg;
-    if(StringUtils.isEmpty(event?.id)){
-      failedMsg = Localization().getStringEx('panel.create_event.failed.msg', 'There was an error creating this event.');
-    } else if(CollectionUtils.isNotEmpty(failedGroupNames)){
-      failedMsg = Localization().getStringEx('panel.create_event.groups.failed.msg', 'There was an error binding this event to the following groups: ');
-      failedMsg += failedGroupNames!.join(', ');
-    }
-
-    return failedMsg;
-  }
+extension GroupEvent2Selector2State on Event2Selector2State {
+  bool get bindingInProgress => selectorData['binding'] == true;
+  set bindingInProgress(bool value) => selectorData['binding'] = value;
 }
 
-class GroupEventData extends Event2SelectorData{
-  GroupEventData({Group? group, Event2? event, List<Member>? memberSelection}):
-        super(data: {
-          "group" : group,
-          "event" : event,
-          "members_selection" : memberSelection,
-          "update_existing_event" : (event?.id != null)
-        });
+class GroupEventSelector2 extends Event2Selector2 {
+  final Group group;
 
-  void set group(Group? group) => data["group"] = group;
-  Group? get group {
-      dynamic groupData = data["group"];
-      return (groupData is Group)? groupData : null;
+  GroupEventSelector2(this.group);
+
+  @override
+  Widget? buildUI(Event2Selector2State state, { required Event2 event }) => Padding(padding: const EdgeInsets.symmetric(vertical: 16), child:
+    Column(children: [
+      RoundedButton(
+        label: (group.researchProject == true) ?
+        Localization().getStringEx('panel.explore_detail.button.add_to_project.title', 'Add Event To Project') :
+        Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
+        hint: (group.researchProject == true) ?
+        Localization().getStringEx('panel.explore_detail.button.add_to_project.hint', '') :
+        Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
+        textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+        backgroundColor: Colors.white,
+        borderColor: Styles().colors.fillColorPrimary,
+        progress: state.bindingInProgress,
+        onTap: () => _onAddEventToGroup(state, event),
+      ),
+    ],)
+  );
+
+  void _onAddEventToGroup(Event2Selector2State state, Event2 event) {
+    if (state.mounted) {
+      state.setSelectorState((){
+        state.bindingInProgress = true;
+      });
+      Groups().linkEventToGroup(groupId: group.id, eventId: event.id).then((bool result) {
+        if (state.mounted) {
+          state.setSelectorState((){
+            state.bindingInProgress = false;
+          });
+          if (result) {
+            _finish(state);
+          }
+          else {
+            String message = Localization().getStringEx('panel.create_event.groups.failed.msg', 'There was an error binding this event to the following groups: ') + (group.title ?? '');
+            AppAlert.showDialogResult(state.context, message).then((_) {
+              _finish(state);
+            });
+          }
+        }
+      });
+    }
   }
 
-  void set membersSelection(List<Member>? selection) => data["members_selection"] = selection;
-  List<Member>? get membersSelection {
-    dynamic selectionData = data["members_selection"];
-    return (selectionData is List<Member>)? selectionData : null;
+  void _finish(Event2Selector2State state) {
+    Navigator.of(state.context).popUntil((Route route) {
+      return route.settings.name == GroupDetailPanel.routeName;
+    });
   }
-
-  bool? get bindingInProgress => JsonUtils.boolValue(data["binding_in_progress"]);
-  void set bindingInProgress(bool? progress) => data["binding_in_progress"] = progress;
-
-  void set updateExistingEvent(bool? value) => data["update_existing_event"] = value;
-  bool? get updateExistingEvent {
-    return JsonUtils.boolValue(data["update_existing_event"]);
-  }
-
-  void set adminGroupsSelection(List<Group>? otherGroups) => data["other_admin_groups"] = otherGroups;
-  List<Group>? get adminGroupsSelection {
-    return JsonUtils.listValue<Group>(data["other_admin_groups"]);
-  }
-
-  String? get serviceAPIError => JsonUtils.stringValue(data['service_api_error']);
-  set serviceAPIError(String? value) => data['service_api_error'] = value;
 }

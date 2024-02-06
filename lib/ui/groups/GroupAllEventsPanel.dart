@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
-import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -153,14 +154,12 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
 
   void _onTapEvent(Event2 event) {
     Analytics().logSelect(target: 'Group Event: ${event.name}');
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (context) => Event2DetailPanel(
-                event: event,
-                eventSelector: widget.group != null
-                    ? GroupEventSelector(GroupEventData(group: widget.group, event: event), showSelectionButton: false)
-                    : null)));
+    if (event.hasGame) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game, event: event, group: widget.group,)));
+    }
+    else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, group: widget.group)));
+    }
   }
 
   bool? get _hasMoreEvents => (_totalEventsCount != null) ? ((_events?.length ?? 0) < _totalEventsCount!) : _lastPageLoadedAll;

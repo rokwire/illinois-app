@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [5.1.22] - 2024-02-06
+### Changed
+- Clean up event selector [#3905](https://github.com/rokwire/illinois-app/issues/3905).
+- Clean up UI icons and styles [#3837](https://github.com/rokwire/illinois-app/issues/3837).
 
 ## [5.1.21] - 2024-02-05
 ### Changed
