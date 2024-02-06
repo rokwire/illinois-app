@@ -9,9 +9,9 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
-import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -25,8 +25,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-
-import '../home/HomeWidgets.dart';
 
 //
 // Event2FilterCommandButton
@@ -286,7 +284,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
             ),
           ),
           _favoriteButton,
-          _groupOptionsButton
+          _groupEventOptionsButton,
         ],)
       ),
     );
@@ -306,7 +304,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
               ),
             ),
             _favoriteButton,
-            _groupOptionsButton
+            _groupEventOptionsButton,
           ],)
         ),
       ),
@@ -435,7 +433,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
         ),
       ),
       _favoriteButton,
-      _groupOptionsButton
+      _groupEventOptionsButton,
     ]);
 
   Widget get _categoriesContentWidget =>
@@ -478,15 +476,16 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     );
   }
 
-  Widget get _groupOptionsButton {
-    return Visibility(
-        visible: _hasGroupEventOptions,
-        child: Semantics(
-            label: Localization().getStringEx('widget.event2.card.detail.group.options.label', 'Options'),
-            button: true,
-            child: InkWell(
-                onTap: _onTapGroupEventOptions,
-                child: Container(padding: EdgeInsets.only(top: 16, right: 16, bottom: 16), alignment: Alignment.center, child: Styles().images.getImage('more')))));
+  Widget get _groupEventOptionsButton {
+    return Visibility(visible: _hasGroupEventOptions, child:
+      Semantics(label: Localization().getStringEx('widget.event2.card.detail.group.options.label', 'Options'), button: true, child:
+        InkWell(onTap: _onGroupEventOptions, child:
+          Container(padding: EdgeInsets.only(top: 16, right: 16, bottom: 16), alignment: Alignment.center, child:
+            Styles().images.getImage('more')
+          )
+        )
+      )
+    );
   }
 
   Widget get _titleWidget => widget.hasDisplayCategories ? 
@@ -620,52 +619,58 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     Auth2().prefs?.toggleFavorite(widget.event);
   }
 
-  void _onTapGroupEventOptions() {
+  void _onGroupEventOptions() {
     Analytics().logSelect(target: 'Group Event Options');
 
     List<Widget> options = <Widget>[];
 
     if (_canEditGroupEvent) {
       options.add(RibbonButton(
-          label: Localization().getStringEx('widget.event2.card.detail.group.edit_event.label', 'Edit Event'),
-          leftIconKey: 'edit',
-          onTap: _onEditGroupEventTap));
+        label: Localization().getStringEx('widget.event2.card.detail.group.edit_event.label', 'Edit Event'),
+        leftIconKey: 'edit',
+        onTap: _onEditGroupEvent
+      ));
     }
 
     if (_canDeleteGroupEvent) {
       options.add(RibbonButton(
-          label: Localization().getStringEx('widget.event2.card.detail.group.delete_event.label', 'Remove group event'),
-          leftIconKey: 'trash',
-          onTap: () {
-            Analytics().logSelect(target: 'Remove Group Event (Option)');
-            showDialog(context: context, builder: (context) => _buildRemoveEventDialog(context)).then((value) => Navigator.pop(context));
-          }));
+        label: Localization().getStringEx('widget.event2.card.detail.group.delete_event.label', 'Remove group event'),
+        leftIconKey: 'trash',
+        onTap: _onDeleteGroupEvent
+      ));
     }
 
     showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.white,
-        isScrollControlled: true,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
-        builder: (context) {
-          return Container(
-              padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
-              child: Column(mainAxisSize: MainAxisSize.min, children: options));
-        });
+      context: context,
+      backgroundColor: Colors.white,
+      isScrollControlled: true,
+      isDismissible: true,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (context) => Container(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
+        Column(mainAxisSize: MainAxisSize.min, children: options)
+      ),
+    );
   }
 
-  Widget _buildRemoveEventDialog(BuildContext context) {
-    return GroupsConfirmationDialog(
-        message: Localization().getStringEx(
-            'widget.event2.card.detail.group.delete_event.message', 'Are you sure you want to remove this event from your group page?'),
-        buttonTitle: Localization().getStringEx('widget.event2.card.detail.group.delete_event.delete.button', 'Remove'),
-        onConfirmTap: () {
-          _onTapRemoveGroupEvent(context);
-        });
+  void _onEditGroupEvent() {
+    Analytics().logSelect(target: 'Update Group Event (Option)');
+    Navigator.pop(context);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(event: widget.event,)));
   }
 
-  void _onTapRemoveGroupEvent(BuildContext context) {
+  void _onDeleteGroupEvent() {
+    Analytics().logSelect(target: 'Remove Group Event (Option)');
+    showDialog(context: context, builder: (context) => _removeEventDialog).then((_) => Navigator.pop(context));
+  }
+
+  Widget get _removeEventDialog =>
+    GroupsConfirmationDialog(
+      message: Localization().getStringEx('widget.event2.card.detail.group.delete_event.message', 'Are you sure you want to remove this event from your group page?'),
+      buttonTitle: Localization().getStringEx('widget.event2.card.detail.group.delete_event.delete.button', 'Remove'),
+      onConfirmTap: _onTapRemoveGroupEvent
+    );
+
+  void _onTapRemoveGroupEvent() {
     Analytics().logSelect(target: 'Remove Group Event');
     Groups().deleteEventForGroupV3(eventId: widget.event.id, groupId: widget.group?.id).then((bool value) {
       if (value) {
@@ -674,18 +679,6 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
         AppAlert.showDialogResult(context, Localization().getStringEx('widget.event2.card.detail.group.delete_event.delete.failed.message', 'Failed to remove the event from group page.'));
       }
     });
-  }
-
-  void _onEditGroupEventTap() {
-    Analytics().logSelect(target: 'Update Group Event');
-    Navigator.pop(context);
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => Event2CreatePanel(
-                event: widget.event,
-                eventSelector: GroupEventSelector(GroupEventData(group: widget.group, event: widget.event),
-                    showSelectionButton: false, padding: EdgeInsets.only(top: 16)))));
   }
 }
 
