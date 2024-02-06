@@ -23,6 +23,8 @@ import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -43,9 +45,12 @@ class AthleticsGameDetailPanel extends StatefulWidget implements AnalyticsPageAt
   final String? gameId;
   final String? sportName;
 
-  final Event2Selector<Event2SelectorData>? eventSelector;
+  final Event2? event;
+  final Group? group;
 
-  AthleticsGameDetailPanel({this.game, this.gameId, this.sportName, this.eventSelector});
+  final Event2Selector2? eventSelector;
+
+  AthleticsGameDetailPanel({this.game, this.gameId, this.sportName, this.event, this.group, this.eventSelector});
 
   @override
   _AthleticsGameDetailPanelState createState() => _AthleticsGameDetailPanelState(game);
@@ -54,7 +59,7 @@ class AthleticsGameDetailPanel extends StatefulWidget implements AnalyticsPageAt
   Map<String, dynamic>? get analyticsPageAttributes => game?.analyticsAttributes;
 }
 
-class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> implements Event2SelectorDataProvider{
+class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameDetailPanel> {
   Game? game;
   bool _newsExpanded = false;
   bool _loading = false;
@@ -67,13 +72,11 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> imp
       RecentItems().addRecentItem(RecentItem.fromSource(game));
     else
       _loadGame();
-    _initSelector();
     super.initState();
   }
 
   @override
   void dispose(){
-    widget.eventSelector?.dispose(this);
     super.dispose();
   }
 
@@ -370,16 +373,8 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> imp
     }
   }
 
-  //Event to Group Binding support
-  @override
-  Event2SelectorData? selectorData;
-
-  void _initSelector(){
-    widget.eventSelector?.init(this);
-  }
-
   Widget _buildSelectorWidget(){
-    Widget? selectorWidget = widget.eventSelector?.buildWidget(this);
+    Widget? selectorWidget = (widget.event != null) ? widget.eventSelector?.buildUI(this, event: widget.event!) : null;
     if(selectorWidget != null){
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),

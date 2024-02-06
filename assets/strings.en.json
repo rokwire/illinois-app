@@ -294,7 +294,7 @@
     "panel.browse.section.events.title": "Events",
     "panel.browse.section.events.description": "Find events across campus and around the world.",
     "panel.browse.section.feeds.title": "Feeds",
-    "panel.browse.section.feeds.description": "Listen to WPGU 107.1 and catch the latest on {{app_title}} social media.",
+    "panel.browse.section.feeds.description": "Catch the latest from The Daily Illini, WPGU 107.1, and {{app_title}} social media.",
     "panel.browse.section.groups.title": "Groups",
     "panel.browse.section.groups.description": "Start your own group or discover a new group to join.",
     "panel.browse.section.research_projects.title": "Research at Illinois",
@@ -373,6 +373,7 @@
     "panel.browse.entry.events.my_events.title": "My Events",
 
     "panel.browse.entry.feeds.twitter.title": "X/Twitter",
+    "panel.browse.entry.feeds.daily_illini.title": "The Daily Illini",
     "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 FM",
 
     "panel.browse.entry.groups.all_groups.title": "All Groups",
@@ -3647,11 +3648,9 @@
     "widget.home.twitter.button.all.title": "View All",
     "widget.home.twitter.button.all.hint": "Tap to view all tweets",
 
-    "widget.home.daily_illini.header.label": "Daily Illini",
-    "widget.home.daily_illini.item.page.next.hint": "Next page",
-    "widget.home.daily_illini.item.page.previous.hint": "Previous page",
-    "widget.home.daily_illini.button.all.title": "View All",
-    "widget.home.daily_illini.button.all.hint": "Tap to view the Daily Illini feed",
+    "widget.home.daily_illini.header.label": "The Daily Illini",
+    "widget.home.daily_illini.button.all.title": "More Stories",
+    "widget.home.daily_illini.button.all.hint": "Tap to view the Daily Illini home page",
     "widget.home.daily_illini.text.empty.description": "Failed to load the Daily Illini feed.",
 
     "widget.food_detail.label.loading.title": "Loading menu data",

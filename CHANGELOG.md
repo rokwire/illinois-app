@@ -5,12 +5,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-## [5.1.20] - 2024-01-02
+## [5.1.22] - 2024-02-06
+### Changed
+- Clean up event selector [#3905](https://github.com/rokwire/illinois-app/issues/3905).
+- Clean up UI icons and styles [#3837](https://github.com/rokwire/illinois-app/issues/3837).
+
+## [5.1.21] - 2024-02-05
+### Changed
+- Update Daily Illini home screen widget to show three stories on one card [#3079](https://github.com/rokwire/illinois-app/issues/3079).
+### Added
+- Added app version to Settings Contact Us panel [#3883](https://github.com/rokwire/illinois-app/issues/3883).
+### Fixed
+- Android: crash [#3941](https://github.com/rokwire/illinois-app/issues/3941).
+
+## [5.1.20] - 2024-02-02
 ### Fixed
 - List only groups where the user is admin when adding event to groups [#3921](https://github.com/rokwire/illinois-app/issues/3921).
 - Added new iOS 17 calendar usage descriptions [#3789](https://github.com/rokwire/illinois-app/issues/3789).
 
-## [5.1.19] - 2024-01-01
+## [5.1.19] - 2024-02-01
 ### Added
 - Essential Skills Coach Dashboard [#3425](https://github.com/rokwire/illinois-app/issues/3425).
 - Primary care provider and academic advisors [#3925](https://github.com/rokwire/illinois-app/issues/3925).
@@ -653,7 +666,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Illinois Assistant chatbot integration [#3220](https://github.com/rokwire/illinois-app/issues/3220).
 - Initial preview of new Events interface [#3300](https://github.com/rokwire/illinois-app/issues/3300).
->>>>>>> 0ef3b534c72362c5d54c9539391663a69c96c8a8
 
 ## [5.0.7] - 2023-06-12
 ### Added
