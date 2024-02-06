@@ -22,12 +22,12 @@ import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
 import 'package:illinois/ui/events2/Event2SurveyResponsesPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
-import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/device_calendar.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/survey.dart';
@@ -48,9 +48,10 @@ class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttribute
   final String? eventId;
   final Event2? superEvent;
   final Survey? survey;
+  final Group? group;
   final Position? userLocation;
-  final Event2Selector? eventSelector;
-  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.userLocation, this.eventSelector});
+  final Event2Selector2? eventSelector;
+  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.group, this.userLocation, this.eventSelector});
   
   @override
   State<StatefulWidget> createState() => _Event2DetailPanelState();
@@ -61,7 +62,7 @@ class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttribute
   Map<String, dynamic>? get analyticsPageAttributes => event?.analyticsAttributes;
 }
 
-class _Event2DetailPanelState extends State<Event2DetailPanel> implements NotificationsListener, Event2SelectorDataProvider {
+class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> implements NotificationsListener {
 
   Event2? _event;
   Survey? _survey;
@@ -105,7 +106,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     _survey = widget.survey;
     _displayCategories = _buildDisplayCategories(widget.event);
     _initEvent();
-    _initSelector();
 
     if ((_userLocation = widget.userLocation) == null) {
       Event2HomePanel.getUserLocationIfAvailable().then((Position? userLocation) {
@@ -121,7 +121,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
-    widget.eventSelector?.dispose(this);
     super.dispose();
   }
 
@@ -758,8 +757,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
                   strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)))));
 
   List<Widget>? get _selectorWidget {
-      Widget? customSelectorWidget = widget.eventSelector?.buildWidget(this);
-      return customSelectorWidget != null ? <Widget> [customSelectorWidget] : null;
+    Widget? selectorWidget = (_event != null) ? widget.eventSelector?.buildUI(this, event: _event!) : null;
+    return (selectorWidget != null) ? <Widget> [selectorWidget] : null;
   }
 
   Widget get _adminSettingsWidget  =>
@@ -1048,7 +1047,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onSettingEditEvent(){
     Analytics().logSelect(target: "Edit event");
-    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel(event: _event, survey: _survey, eventSelector: widget.eventSelector,))).then((Event2SetupSurveyParam? result) {
+    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel(event: _event, survey: _survey,))).then((Event2SetupSurveyParam? result) {
       if (result != null) {
         setStateIfMounted(() {
           if (result.event != null) {
@@ -1167,7 +1166,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         List<String>? displayCategories = _buildDisplayCategories(event);
         setStateIfMounted(() {
           _event = event;
-          _selectorEvent = event;
           _displayCategories = displayCategories;
         });
       }
@@ -1313,7 +1311,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
                 progress(false);
               }
               _event = event;
-              _selectorEvent = event;
               _displayCategories = displayCategories;
               
               _survey = survey;
@@ -1355,7 +1352,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     if ((event != null) && (event.id == _eventId) && mounted) {
       setState(() {
         _event = event;
-        _selectorEvent = event;
       });
     }
   }
@@ -1411,58 +1407,14 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   String? get _eventId => widget.event?.id ?? widget.eventId;
 
-  bool get _isGroupEvent => (widget.eventSelector is GroupEventSelector);
-
-  //Event to Group Binding support
-  @override
-  Event2SelectorData? selectorData;
-
-  void _initSelector(){
-    widget.eventSelector?.init(this);
-    selectorData?.event = _event;
-  }
-
-  void set _selectorEvent(Event2 event) => selectorData?.event = event;
+  bool get _isGroupEvent => (widget.group != null);
 }
 
-//EventSelector Interface
-abstract class Event2Selector<T extends Event2SelectorData> {
-  final T data; //Pass initial data (containing group etc)
-
-  Event2Selector(this.data);
-
-  void init(State state){
-    if( (state is Event2SelectorDataProvider)){
-      ( state as Event2SelectorDataProvider).selectorData = data; // Hook the data to the DataProvider (pass initial data)
-    }
-  }
-
-  void dispose(State state){}
-
-  Widget? buildWidget(State state); //Provide custom layout to perform selection
-
-  Future<void> prepareSelection(State state) async {} //Call whatever API we need before performing the selection
-
-  Future<dynamic> Function(Event2 source)? event2SelectorServiceAPI() => null;
-
-  Future<void> performSelection(State state) async {} //Call the bind API
-
-  void finishSelection(State state) {} //Go Back to the initial flow panel
-
+abstract class Event2Selector2State<T extends StatefulWidget> extends State<T> {
+  final Map<String, dynamic> selectorData = <String, dynamic>{};
+  void setSelectorState(VoidCallback fn) => setState(fn);
 }
 
-abstract class Event2SelectorDataProvider <T extends Event2SelectorData>{
-  void set selectorData(T? data);
-  T? get selectorData; //Mechanism to write to the data from the Provider[EventPanel] (passing selected event etc)
-}
-
-class Event2SelectorData{
-  Map<String, dynamic> data;
-  Event2SelectorData({required this.data});
-
-  void set event(Event2? event) => data["event"] = event;
-  Event2? get event {
-    dynamic eventData = data["event"];
-    return (eventData is Event2)? eventData : null;
-  }
+abstract class Event2Selector2 {
+  Widget? buildUI(Event2Selector2State state, { required Event2 event });
 }

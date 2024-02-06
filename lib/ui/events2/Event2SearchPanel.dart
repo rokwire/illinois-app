@@ -55,7 +55,7 @@ class Event2SearchPanel extends StatefulWidget {
   final Event2SearchContext? searchContext;
   final LocationServicesStatus? locationServicesStatus;
   final Position? userLocation;
-  final Event2Selector? eventSelector;
+  final Event2Selector2? eventSelector;
 
   Event2SearchPanel({Key? key, this.searchText, this.searchContext, this.locationServicesStatus, this.userLocation, this.eventSelector}) : super(key: key);
 
