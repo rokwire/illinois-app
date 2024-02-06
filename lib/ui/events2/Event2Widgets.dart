@@ -857,7 +857,7 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
   void _onTapEvent2(Event2 event) {
     Analytics().logSelect(target: "Event: '${event.name}'", source: widget.runtimeType.toString());
     if (event.hasGame) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game, event: event)));
     } else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event)));
     }
