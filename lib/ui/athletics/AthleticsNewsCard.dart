@@ -187,7 +187,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
         padding: _detailPadding,
         child: Row(
           children: <Widget>[
-            Styles().images.getImage('news', excludeFromSemantics: true) ?? Container(),
+            Styles().images.getImage('calendar', excludeFromSemantics: true) ?? Container(),
             Padding(
               padding: _iconPadding,
             ),
