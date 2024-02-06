@@ -1933,7 +1933,7 @@ class _OfficerCard extends StatelessWidget {
 }
 
 extension GroupEvent2Selector2State on Event2Selector2State {
-  bool get bindingInProgress => JsonUtils.boolValue(selectorData['binding']) == true;
+  bool get bindingInProgress => selectorData['binding'] == true;
   set bindingInProgress(bool value) => selectorData['binding'] = value;
 }
 
