@@ -1412,7 +1412,6 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
 abstract class Event2Selector2State<T extends StatefulWidget> extends State<T> {
   final Map<String, dynamic> selectorData = <String, dynamic>{};
-
   void setSelectorState(VoidCallback fn) => setState(fn);
 }
 
