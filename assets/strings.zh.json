@@ -3128,6 +3128,12 @@
 	"panel.essential_skills_coach.pauses_reward.missing.text": "Pauses can be earned by responding to tasks daily. Check in daily to keep your streak going!",
 	"panel.essential_skills_coach.pauses_reward.text": "Pauses can be earned by responding to a task for %d consecutive days. Check in daily to keep your streak going!",
 	"panel.essential_skills_coach.resources.header.title": "Unit Resources",
+	"panel.essential_skills_coach.resources.select.all.label": "View All Resources",
+	"panel.essential_skills_coach.resources.select.pdf.label": "View All PDFs",
+	"panel.essential_skills_coach.resources.select.video.label": "View All Videos",
+	"panel.essential_skills_coach.resources.select.uri.label": "View All External Links",
+	"panel.essential_skills_coach.resources.select.text.label": "View All Information",
+	"panel.essential_skills_coach.resources.select.powerpoint.label": "View All Powerpoints",
 	"panel.essential_skills_coach.unit_info.header.title": "Unit Information",
 	"panel.essential_skills_coach.unit_info.button.continue.label": "Continue",
 

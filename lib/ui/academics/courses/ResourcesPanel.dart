@@ -1,12 +1,22 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/academics/courses/PDFScreen.dart';
+import 'package:illinois/ui/academics/courses/VideoPlayer.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/service/content.dart' as con;
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class ResourcesPanel extends StatefulWidget {
-  final List<Content>? contentItems;
+  final List<Content> contentItems;
   final Color? color;
   final Color? colorAccent;
   final int unitNumber;
@@ -18,24 +28,22 @@ class ResourcesPanel extends StatefulWidget {
 }
 
 class _ResourcesPanelState extends State<ResourcesPanel> implements NotificationsListener {
-  late Color? _color;
-  late Color? _colorAccent;
-  late int _unitNumber;
+  Color? _color;
+  Color? _colorAccent;
   late List<Content> _contentItems;
-  late String _unitName;
-
-  String? _selectedResourceType = "View All Resources";
-  final List<String> _resourceTypes = ["View All Resources", "View All PDFs",
-    "View All Videos", "View All External Links", "View All Information", "View All Powerpoints"];
+  Set<String> _loadingReferenceKeys = {};
+  Map<String, File?> _fileCache = {};
+  ReferenceType? _selectedResourceType = null;
 
   @override
   void initState() {
-    _color = widget.color!;
-    _colorAccent = widget.colorAccent!;
-    _unitNumber = widget.unitNumber;
-    _contentItems = widget.contentItems!;
-    _unitName = widget.unitName;
+    _color = widget.color;
+    _colorAccent = widget.colorAccent;
+    _contentItems = widget.contentItems;
     super.initState();
+
+    // _loadDataContentItem( key: 'resource_text');
+    //TODO: load and cache all content files on init?
   }
 
   @override
@@ -44,76 +52,99 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
       appBar: HeaderBar(title: Localization().getStringEx('panel.essential_skills_coach.resources.header.title', 'Unit Resources'),
         textStyle: Styles().textStyles.getTextStyle('header_bar'),),
       body: SingleChildScrollView(
-        child: _buildUnitResourcesWidgets(),
+        child: Column(children: [
+          _buildResourcesHeaderWidget(),
+          _buildResourceTypeDropdown(),
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: SingleChildScrollView(
+              child: _buildResources()
+            )
+          ),
+        ],),
       ),
       backgroundColor: _color,
     );
   }
 
-  Widget _buildUnitResourcesWidgets(){
-    List<Widget> widgets = <Widget>[];
-
-    widgets.add(_buildResourcesHeaderWidget());
-    widgets.add(_buildResourceTypeDropdown());
-    widgets.add(_buildResourcesList());
-    return  Column(
-        children: widgets,
-    );
-  }
-
-  Widget _buildResourcesList(){
-    return Padding(
-      padding: EdgeInsets.all(16),
-      child: SingleChildScrollView(
-          child: _buildResources()
-      )
-    );
-  }
-
   Widget _buildResources(){
-    List<Content> filteredContentItems = <Content>[];
-
-    switch(_selectedResourceType){
-      case "View All Resources":
-        filteredContentItems = _contentItems;
-        break;
-      case "View All PDFs":
-        filteredContentItems = _filterContentItems("pdf");
-        break;
-      case "View All Videos":
-        filteredContentItems = _filterContentItems("video");
-        break;
-      case "View All External Links":
-        filteredContentItems = _filterContentItems("link");
-        break;
-      case "View All Information":
-        filteredContentItems = _filterContentItems("text");
-        break;
-      case "View All Power Points":
-        filteredContentItems = _filterContentItems("powerpoint");
-        break;
-    }
-    return ExpansionPanelList(
-      expansionCallback: (int index, bool isExpanded) {
-        // setState(() {
-        //   filteredContentItems[index].isExpanded = !filteredContentItems[index].isExpanded;
-        // });
-      },
-      children: filteredContentItems.map<ExpansionPanel>((Content item) {
-        return ExpansionPanel(
-
-          headerBuilder: (BuildContext context, bool isExpanded) {
-            return ListTile(
-                leading: Styles().images.getImage((item.reference?.stringFromType() ?? "item") + "-icon") ?? Container(),
-                title: Text(item.name ?? ""),
+    List<Content> filteredContentItems = _filterContentItems();
+    return ListView.builder(
+        padding: const EdgeInsets.all(4),
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: filteredContentItems.length,
+        itemBuilder: (BuildContext context, int index) {
+          Content contentItem = filteredContentItems[index];
+          Reference? reference = contentItem.reference;
+          if(reference?.type == ReferenceType.text){
+            return Center(
+              child: Card(
+                clipBehavior: Clip.antiAlias,
+                child: ExpansionTile(
+                  leading: Styles().images.getImage("${reference?.stringFromType()}-icon") ?? Container(),
+                  title: Text(contentItem.name ?? "", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),),
+                  subtitle: Text(contentItem.details ?? ""),
+                  children: [
+                   Padding(
+                     padding: const EdgeInsets.all(8.0),
+                     child: Center(
+                       child: Text("Soften", style: Styles().textStyles.getTextStyle("widget.message.large"),),
+                     ),
+                   ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
+                      child: Center(
+                        child: Text("(smile, open posture, forward lean, touch, eye contact, nod)", style: Styles().textStyles.getTextStyle("widget.message.regular"),),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             );
-          },
-          body: ListTile(
-              title: Text(item.details ?? ""),
-        ),
-            // isExpanded: item.isExpanded
-        );
-      }).toList(),
+          }else{
+            return Center(
+              child: Card(
+                clipBehavior: Clip.hardEdge,
+                child: InkWell(
+                  onTap: (){
+                    if(reference?.type == ReferenceType.video){
+                      if (_fileCache[reference?.referenceKey] != null) {
+                        _openVideo(context, reference?.name, _fileCache[reference?.referenceKey]!);
+                      } else {
+                        _setLoadingReferenceKey(reference?.referenceKey, true);
+                        _loadContentForKey(reference?.referenceKey, onResult: (value) {
+                          _openVideo(context, reference?.name, value);
+                        });
+                      }
+                    } else if(reference?.type == ReferenceType.uri){
+                      Uri uri = Uri.parse(reference?.referenceKey ?? "");
+                      _launchUrl(uri);
+                    } else{
+                      _setLoadingReferenceKey(reference?.referenceKey, true);
+                      if (_fileCache[reference?.referenceKey] != null) {
+                        _openPdf(context, reference?.name, _fileCache[reference?.referenceKey]!.path);
+                      } else {
+                        _loadContentForKey(reference?.referenceKey, onResult: (value) {
+                          _openPdf(context, reference?.name, value.path);
+                        });
+                      }
+                    }
+                  },
+                  child: ListTile(
+                    leading: Styles().images.getImage("${reference?.stringFromType()}-icon") ?? Container(),
+                    title: Text(contentItem.name ?? "", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),),
+                    subtitle: Text(contentItem.details ?? ""),
+                    trailing: _loadingReferenceKeys.contains(reference?.referenceKey) ? CircularProgressIndicator() : Icon(
+                      Icons.chevron_right_rounded,
+                      size: 25.0,
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+        }
     );
   }
 
@@ -127,8 +158,8 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
               focusColor: Colors.white,
               dropdownColor: _color,
               isExpanded: true,
-              items: DropdownBuilder.getItems(_resourceTypes, style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")),
-              onChanged: (String? selected) {
+              items: _buildDropdownItems(),
+              onChanged: (ReferenceType? selected) {
                 setState(() {
                   _selectedResourceType = selected;
                 });
@@ -150,10 +181,10 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Unit $_unitNumber', style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")),
+                Text('Unit ${widget.unitNumber}', style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")),
                 Container(
                   width: 200,
-                  child: Text(_unitName, style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat")),
+                  child: Text(widget.unitName, style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat")),
                 )
               ],
             ),
@@ -167,27 +198,111 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
     );
   }
 
+  List<DropdownMenuItem<ReferenceType>> _buildDropdownItems() {
+    List<DropdownMenuItem<ReferenceType>> dropDownItems = [
+      DropdownMenuItem(value: null, child: Text(Localization().getStringEx('panel.essential_skills_coach.resources.select.all.label', "View All Resources"), style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")))
+    ];
+
+    for (ReferenceType type in ReferenceType.values) {
+      switch (type) {
+        case ReferenceType.pdf:
+          dropDownItems.add(DropdownMenuItem(value: type, child: Text(
+            Localization().getStringEx('panel.essential_skills_coach.resources.select.pdf.label', 'View All PDFs'),
+            style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")
+          )));
+          break;
+        case ReferenceType.video:
+          dropDownItems.add(DropdownMenuItem(value: type, child: Text(
+            Localization().getStringEx('panel.essential_skills_coach.resources.select.video.label', 'View All Videos'),
+            style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")
+          )));
+          break;
+        case ReferenceType.uri:
+          dropDownItems.add(DropdownMenuItem(value: type, child: Text(
+            Localization().getStringEx('panel.essential_skills_coach.resources.select.uri.label', 'View All External Links'),
+            style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")
+          )));
+          break;
+        case ReferenceType.text:
+          dropDownItems.add(DropdownMenuItem(value: type, child: Text(
+            Localization().getStringEx('panel.essential_skills_coach.resources.select.text.label', 'View All Information'),
+            style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")
+          )));
+          break;
+        case ReferenceType.powerpoint:
+          dropDownItems.add(DropdownMenuItem(value: type, child: Text(
+            Localization().getStringEx('panel.essential_skills_coach.resources.select.powerpoint.label', 'View All Powerpoints'),
+            style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")
+          )));
+          break;
+        default:
+          continue;
+      }
+    }
+    return dropDownItems;
+  }
+
+  Future<void> _launchUrl(Uri url) async {
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
   @override
   void onNotification(String name, param) {
     // TODO: implement onNotification
   }
 
-  List<Content> _filterContentItems(String filter){
-    List<Content> filteredContentItems =  _contentItems.where((i) => i.reference?.type == filter).toList();
-    return filteredContentItems;
+  List<Content> _filterContentItems() {
+    if (_selectedResourceType != null) {
+      List<Content> filteredContentItems =  _contentItems.where((i) => i.reference?.type == _selectedResourceType).toList();
+      return filteredContentItems;
+    }
+    return _contentItems;
   }
 
-}
+  // //TODO fix data parsing
+  // void _loadDataContentItem({required String key}) async{
+  //   Map<String, dynamic>? response = await con.Content().getDataContentItem(key);
+  //
+  // }
 
-class DropdownBuilder {
-  static List<DropdownMenuItem<T>> getItems<T>(List<T> options, {String? nullOption, TextStyle? style}) {
-    List<DropdownMenuItem<T>> dropDownItems = <DropdownMenuItem<T>>[];
-    if (nullOption != null) {
-      dropDownItems.add(DropdownMenuItem(value: null, child: Text(nullOption, style: style ?? Styles().textStyles.getTextStyle("widget.detail.regular"))));
+  void _loadContentForKey(String? key, {Function(File)? onResult}) {
+    if (StringUtils.isNotEmpty(key)) {
+      _setLoadingReferenceKey(key, true);
+      con.Content().getFileContentItem(key!, Config().essentialSkillsCoachKey ?? "").then((value) => {
+        setState(() {
+          _loadingReferenceKeys.remove(key);
+          if (value != null) {
+            _fileCache[key] = value;
+            onResult?.call(value);
+          }
+        })
+      });
     }
-    for (T option in options) {
-      dropDownItems.add(DropdownMenuItem(value: option, child: Text(option.toString(), style: style ?? Styles().textStyles.getTextStyle("widget.detail.regular"))));
+  }
+
+  void _openPdf(BuildContext context, String? resourceName, String? path) {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) => PDFScreen(resourceName: resourceName, path: path, color: _color,),
+    ),);
+  }
+
+  void _openVideo(BuildContext context, String? resourceName, File file) {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) => VideoPlayerScreen(resourceName: resourceName, file: file, color: _color,),
+    ),);
+  }
+
+  void _setLoadingReferenceKey(String? key, bool value) {
+    if (key != null) {
+      setStateIfMounted(() {
+        if (value) {
+          _loadingReferenceKeys.add(key);
+        } else {
+          _loadingReferenceKeys.remove(key);
+        }
+      });
     }
-    return dropDownItems;
   }
 }

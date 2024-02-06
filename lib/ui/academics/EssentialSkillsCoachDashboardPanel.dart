@@ -237,35 +237,36 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                     ],
                   ),
                 ),
-                Flexible(
-                  flex: 1,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 4),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourcesPanel(
-                                color: _selectedModulePrimaryColor,
-                                colorAccent: _selectedModuleAccentColor,
-                                unitNumber: displayNumber,
-                                contentItems: userUnit.unit?.resourceContent,
-                                unitName: userUnit.unit?.name ?? ""
-                            )));
-                          },
-                          child: Styles().images.getImage('closed-book'),
-                          style: ElevatedButton.styleFrom(
-                            shape: CircleBorder(),
-                            padding: EdgeInsets.all(16),
-                            backgroundColor: Colors.white,
+                if (CollectionUtils.isNotEmpty(userUnit.unit?.resourceContent))
+                  Flexible(
+                    flex: 1,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 4),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourcesPanel(
+                                  color: _selectedModulePrimaryColor,
+                                  colorAccent: _selectedModuleAccentColor,
+                                  unitNumber: displayNumber,
+                                  contentItems: userUnit.unit?.resourceContent,
+                                  unitName: userUnit.unit?.name ?? ""
+                              )));
+                            },
+                            child: Styles().images.getImage('closed-book'),
+                            style: ElevatedButton.styleFrom(
+                              shape: CircleBorder(),
+                              padding: EdgeInsets.all(16),
+                              backgroundColor: Colors.white,
+                            ),
                           ),
                         ),
-                      ),
-                      Text(Localization().getStringEx('panel.essential_skills_coach.dashboard.resources.button.label', 'Resources'), style: Styles().textStyles.getTextStyle("widget.title.light.small.fat")),
-                    ],
+                        Text(Localization().getStringEx('panel.essential_skills_coach.dashboard.resources.button.label', 'Resources'), style: Styles().textStyles.getTextStyle("widget.title.light.small.fat")),
+                      ],
+                    ),
                   ),
-                ),
               ],
             ),
           ),
