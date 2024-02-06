@@ -13,6 +13,7 @@ import 'package:illinois/ui/academics/courses/ResourcesPanel.dart';
 import 'package:illinois/ui/academics/courses/StreakPanel.dart';
 import 'package:illinois/ui/academics/courses/UnitInfoPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -35,14 +36,25 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   bool _loading = false;
 
   String? _selectedModuleKey;
+  DateTime? _pausedDateTime;
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      AppLivecycle.notifyStateChanged,
+    ]);
+
     _loadCourseAndUnits();
     _loadCourseConfig();
     //TODO: check ESC onboarding completed, _hasStartedSkillsCoach, completed BESSI for onboarding sequence
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
   }
 
   @override
@@ -56,7 +68,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             _buildStreakWidget(),
             Container(
               color: _selectedModulePrimaryColor,
-              child: _buildModuleSelection(_selectedModule!.styles?.images?['icon'] ?? 'skills-question'),
+              child: _buildModuleSelection(),
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -88,10 +100,13 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   Module? get _selectedModule => _userCourse?.course?.searchByKey(moduleKey: _selectedModuleKey) ?? _course?.searchByKey(moduleKey: _selectedModuleKey); //TODO: remove _course option after start course UI
   Color? get _selectedModulePrimaryColor => _selectedModule!.styles?.colors?['primary'] != null ? Styles().colors.getColor(_selectedModule!.styles!.colors!['primary']!) : Styles().colors.fillColorPrimary;
   Color? get _selectedModuleAccentColor => _selectedModule!.styles?.colors?['accent'] != null ? Styles().colors.getColor(_selectedModule!.styles!.colors!['accent']!) : Styles().colors.fillColorSecondary;
+  Widget? get _selectedModuleIcon => Styles().images.getImage(_selectedModule!.styles?.images?['icon'] ?? 'skills-question', size: 48);
 
   @override
   void onNotification(String name, param) {
-    // TODO: implement onNotification
+    if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
   }
 
   Widget _buildStreakWidget() {
@@ -127,7 +142,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     );
   }
 
-  Widget _buildModuleSelection(String iconKey) {
+  Widget _buildModuleSelection() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Row(
@@ -136,7 +151,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             flex: 1,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Styles().images.getImage(iconKey, size: 48),
+              child: _selectedModuleIcon,
             ),
           ),
           Flexible(
@@ -190,7 +205,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         child: _buildUnitInfoWidget(showUnit, i+1),
       ));
       if (CollectionUtils.isNotEmpty(showUnit.unit!.scheduleItems)) {
-        moduleUnitWidgets.addAll(_buildUnitWidgets(showUnit));
+        moduleUnitWidgets.addAll(_buildUnitWidgets(showUnit, i+1));
       }
     }
     return moduleUnitWidgets;
@@ -239,11 +254,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                                 unitName: userUnit.unit?.name ?? ""
                             )));
                           },
-                          child: Icon(
-                            Icons.menu_book_rounded,
-                            color: Styles().colors.fillColorPrimary,
-                            size: 30.0,
-                          ),
+                          child: Styles().images.getImage('closed-book'),
                           style: ElevatedButton.styleFrom(
                             shape: CircleBorder(),
                             padding: EdgeInsets.all(16),
@@ -263,7 +274,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     );
   }
 
-  List<Widget> _buildUnitWidgets(UserUnit userUnit){
+  List<Widget> _buildUnitWidgets(UserUnit userUnit, int displayNumber){
     List<Widget> unitWidgets = [];
     for (int i = 0; i < (userUnit.unit?.scheduleItems?.length ?? 0); i++) {
       ScheduleItem item = userUnit.unit!.scheduleItems![i];
@@ -272,17 +283,20 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         for (UserContent userContent in item.userContent!) {
           Content? content = userUnit.unit?.searchByKey(contentKey: userContent.contentKey);
           if (content != null && StringUtils.isNotEmpty(userUnit.unit?.key)) {
-            contentButtons.add(_buildContentWidget(userUnit, userContent, content, i));
+            contentButtons.add(_buildContentWidget(userUnit, displayNumber, userContent, content, i));
           }
         }
-        unitWidgets.add(Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: contentButtons,
+        unitWidgets.add(SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: contentButtons,
+          ),
         ));
       } else if ((item.userContent?.length ?? 0) == 1) {
         Content? content = userUnit.unit?.searchByKey(contentKey: item.userContent![0].contentKey);
         if (content != null && StringUtils.isNotEmpty(userUnit.unit?.key)) {
-          unitWidgets.add(_buildContentWidget(userUnit, item.userContent![0], content, i));
+          unitWidgets.add(_buildContentWidget(userUnit, displayNumber, item.userContent![0], content, i));
         }
       }
 
@@ -291,16 +305,18 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     return unitWidgets;
   }
 
-  Widget _buildContentWidget(UserUnit userUnit, UserContent userContent, Content content, int scheduleIndex) {
-    Unit unit = userUnit.unit!;
-    int scheduleStart = unit.scheduleStart!;
+  Widget _buildContentWidget(UserUnit userUnit, int unitNumber, UserContent userContent, Content content, int scheduleIndex) {
+    int scheduleStart = userUnit.unit!.scheduleStart!;
+    int activityNumber = scheduleIndex - scheduleStart + 1;
 
     bool required = scheduleIndex >= scheduleStart;
     bool isCompleted = (scheduleIndex < userUnit.completed) && userUnit.current;
     bool isCurrent = (scheduleIndex == userUnit.completed) && userUnit.current;
-    bool isNextWithCurrentComplete = (scheduleIndex == userUnit.completed + 1) && userUnit.current && (unit.scheduleItems?[userUnit.completed].isComplete ?? false);
+    bool isNextWithCurrentComplete = (scheduleIndex == userUnit.completed + 1) && userUnit.current && (userUnit.currentScheduleItem?.isComplete ?? false);
     bool isCompletedOrCurrent = isCompleted || isCurrent;
-    bool shouldHighlight = (isCurrent && userContent.isNotComplete) || isNextWithCurrentComplete;
+
+    bool isFirstIncompleteInScheduleItem = userContent.contentKey != null && userUnit.currentScheduleItem?.firstIncomplete?.contentKey == userContent.contentKey;
+    bool shouldHighlight = (isCurrent && userContent.isNotComplete && isFirstIncompleteInScheduleItem) || isNextWithCurrentComplete;
 
     Color? contentColor = content.styles?.colors?['primary'] != null ? Styles().colors.getColor(content.styles!.colors!['primary']!) : Styles().colors.fillColorSecondary;
     Color? completedColor = content.styles?.colors?['complete'] != null ? Styles().colors.getColor(content.styles!.colors!['complete']!) : Colors.green;
@@ -352,7 +368,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                   icon,
                   SizedBox(width: 16.0),
                   Text(
-                    content.reference?.highlightDisplayText() ?? Localization().getStringEx('panel.essential_skills_coach.dashboard.activity.button.label', 'Activity') + ' ${scheduleIndex - scheduleStart + 1}',
+                    content.reference?.highlightDisplayText() ?? sprintf(Localization().getStringEx('panel.essential_skills_coach.dashboard.activity.button.label', 'Activity %d'), [activityNumber]),
                     style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")
                   )
                 ]
@@ -360,7 +376,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             ),
             Text(
               content.reference?.highlightActionText() ?? (isNextWithCurrentComplete ?
-                sprintf(Localization().getStringEx('panel.essential_skills_coach.dashboard.activity.button.action.unlock.label', 'Starts %s'), [unlockTimeText ?? 'tomorrow']) :
+                sprintf(Localization().getStringEx('panel.essential_skills_coach.dashboard.activity.button.action.unlock.label', 'Starts %s'), [unlockTimeText ?? 'Tomorrow']) :
                   Localization().getStringEx('panel.essential_skills_coach.dashboard.activity.button.action.label', 'GET STARTED')),
               style: Styles().textStyles.getTextStyle("widget.title.light.medium.fat")
             )
@@ -379,6 +395,8 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
               color: _selectedModulePrimaryColor,
               colorAccent: _selectedModuleAccentColor,
               preview: !isCompletedOrCurrent,
+              moduleIcon: _selectedModuleIcon,
+              moduleName: _selectedModule?.name ?? '',
             ) : AssignmentPanel(
               content: content,
               data: userContent.userData,
@@ -387,10 +405,14 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
               isCurrent: isCurrent,
               helpContent: (_userCourse?.course ?? _course) != null ? content.getLinkedContent(_userCourse?.course ?? _course) : null,
               preview: !isCompletedOrCurrent,
+              moduleIcon: _selectedModuleIcon,
+              moduleName: _selectedModule?.name ?? '',
+              unitNumber: unitNumber,
+              activityNumber: activityNumber,
             )
           )).then((result) {
             if (result is Map<String, dynamic>) {
-              _updateProgress(unit.key!, userContent, content, result);
+              _updateProgress(userUnit.unit!.key!, userContent, content, result, unitNumber, activityNumber);
             }
           });
         } : null,
@@ -515,7 +537,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     _setLoading(false);
   }
 
-  Future<void> _updateProgress(String unitKey, UserContent current, Content content, Map<String, dynamic> updatedData) async {
+  Future<void> _updateProgress(String unitKey, UserContent current, Content content, Map<String, dynamic> updatedData, int unitNumber, int activityNumber) async {
     _setLoading(true);
     UserUnit? updatedUserUnit = await CustomCourses().updateUserCourseProgress(UserContent(contentKey: current.contentKey, userData: updatedData), courseKey: _userCourse!.course!.key!, unitKey: unitKey);
     if (updatedUserUnit != null) {
@@ -550,10 +572,10 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       // if the current task was just completed and it extended the user's streak
       if (extendedStreak && current.isNotComplete && updatedData[UserContent.completeKey] == true) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentCompletePanel(
-          contentName: content.name ?? '',
+          unitNumber: unitNumber,
+          activityNumber: activityNumber,
           pauses: earnedPause ? _userCourse?.pauses : null,
           color: _selectedModulePrimaryColor,
-          colorAccent: _selectedModuleAccentColor,
         )));
       }
     } else {
@@ -565,5 +587,20 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     setStateIfMounted(() {
       _loading = value;
     });
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _loadCourseAndUnits();
+          _loadCourseConfig();
+        }
+      }
+    }
   }
 }

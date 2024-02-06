@@ -41,7 +41,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx('panel.essential_skills_coach.resources.header.title', 'Resources'),
+      appBar: HeaderBar(title: Localization().getStringEx('panel.essential_skills_coach.resources.header.title', 'Unit Resources'),
         textStyle: Styles().textStyles.getTextStyle('header_bar'),),
       body: SingleChildScrollView(
         child: _buildUnitResourcesWidgets(),
@@ -160,11 +160,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
           ),
           Padding(
             padding: EdgeInsets.all(24),
-            child: Icon(
-              Icons.menu_book_rounded,
-              color: Colors.white,
-              size: 50.0,
-            ),
+            child: Styles().images.getImage('closed-book', size: 50.0),
           ),
         ],
       ),

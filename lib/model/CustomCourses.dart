@@ -481,6 +481,8 @@ class UserUnit {
     }
     return firstCompleted;
   }
+
+  ScheduleItem? get currentScheduleItem => completed >= 0 && completed < (unit?.scheduleItems?.length ?? 0) ? (unit?.scheduleItems?[completed]) : null;
 }
 
 class ScheduleItem{
@@ -540,7 +542,18 @@ class ScheduleItem{
     return jsonList;
   }
 
-  bool get isComplete => dateCompleted != null || (userContent?.every((uc) => uc.isComplete) ?? false);
+  bool get isComplete => userContent?.every((uc) => uc.isComplete) ?? false;
+
+  UserContent? get firstIncomplete {
+    try {
+      return userContent?.firstWhere((uc) => uc.isNotComplete);
+    } catch (e) {
+      if (e is! StateError) {
+        debugPrint(e.toString());
+      }
+    }
+    return null;
+  }
 }
 
 class UserContent{

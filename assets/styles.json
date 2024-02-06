@@ -1029,6 +1029,7 @@
     "skills-speech-mic": {"src": "0xf130", "type": "fa.icon", "weight": "solid", "size": 25},
     "skills-speech-pause": {"src": "0xf04c", "type": "fa.icon", "weight": "solid", "size": 25},
     "lock": {"src": "0xf023", "type":  "fa.icon", "weight": "solid", "color": "surface", "size": 48},
+    "closed-book": {"src": "0xf02d", "type":  "fa.icon", "weight": "solid", "color": "fillColorPrimary", "size": 30},
     "text-icon": {"src": "images/text-icon.png", "type": "flutter.asset", "size": 35},
     "link-icon": {"src": "images/external-link-icon.png", "type": "flutter.asset", "size": 35},
     "pdf-icon": {"src": "images/pdf-icon.png", "type": "flutter.asset", "size": 35},
