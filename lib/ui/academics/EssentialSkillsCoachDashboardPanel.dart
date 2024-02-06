@@ -251,7 +251,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                                   color: _selectedModulePrimaryColor,
                                   colorAccent: _selectedModuleAccentColor,
                                   unitNumber: displayNumber,
-                                  contentItems: userUnit.unit?.resourceContent,
+                                  contentItems: userUnit.unit!.resourceContent!,
                                   unitName: userUnit.unit?.name ?? ""
                               )));
                             },
