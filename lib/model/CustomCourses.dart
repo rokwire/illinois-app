@@ -540,7 +540,7 @@ class ScheduleItem{
     return jsonList;
   }
 
-  bool get isComplete => dateCompleted != null || (userContent?.every((uc) => uc.hasData) ?? false);
+  bool get isComplete => dateCompleted != null || (userContent?.every((uc) => uc.isComplete) ?? false);
 }
 
 class UserContent{
@@ -596,7 +596,7 @@ class UserContent{
     return jsonList;
   }
 
-  bool get hasData => userData?.isNotEmpty ?? false;
+  // bool get hasData => userData?.isNotEmpty ?? false;
   bool get isComplete => userData?[completeKey] == true;
   bool get isNotComplete => !isComplete;
 }

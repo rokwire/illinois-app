@@ -150,7 +150,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Unit ' + (_unitNumber + 1).toString(), style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")),
+                Text('Unit $_unitNumber', style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")),
                 Container(
                   width: 200,
                   child: Text(_unitName, style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat")),

@@ -300,18 +300,34 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     bool isCurrent = (scheduleIndex == userUnit.completed) && userUnit.current;
     bool isNextWithCurrentComplete = (scheduleIndex == userUnit.completed + 1) && userUnit.current && (unit.scheduleItems?[userUnit.completed].isComplete ?? false);
     bool isCompletedOrCurrent = isCompleted || isCurrent;
-    bool shouldHighlight = (isCurrent && !userContent.hasData) || isNextWithCurrentComplete;
+    bool shouldHighlight = (isCurrent && userContent.isNotComplete) || isNextWithCurrentComplete;
 
     Color? contentColor = content.styles?.colors?['primary'] != null ? Styles().colors.getColor(content.styles!.colors!['primary']!) : Styles().colors.fillColorSecondary;
     Color? completedColor = content.styles?.colors?['complete'] != null ? Styles().colors.getColor(content.styles!.colors!['complete']!) : Colors.green;
     Color? incompleteColor = content.styles?.colors?['incomplete'] != null ? Styles().colors.getColor(content.styles!.colors!['incomplete']!) : Colors.grey[700];
 
-    double? size = shouldHighlight ? 24.0 : null;
+    double? size = shouldHighlight ? 32.0 : null;
+    Widget? iconImage = Styles().images.getImage(content.styles?.images?['icon'], size: size);
+    if (content.styles?.images?['icon'] == 'skills-play') {
+      iconImage = Padding(
+        padding: const EdgeInsets.only(left: 4.0),
+        child: iconImage,
+      );
+    }
+    if (userContent.isComplete && required) {
+      iconImage = Styles().images.getImage('skills-check', size: size);
+    } else if (!userUnit.current) {
+      iconImage = Padding(
+        padding: const EdgeInsets.only(left: 4.0, right: 4.0, bottom: 4.0),
+        child: Styles().images.getImage('lock', size: size),
+      );
+    }
     Widget icon = Padding(
-      padding: shouldHighlight ? EdgeInsets.zero : EdgeInsets.all(8.0),
-      child: Opacity(opacity: isCompletedOrCurrent ? 1 : 0.3, child: (userContent.hasData && required ? Styles().images.getImage("skills-check", size: size) :
-        Styles().images.getImage(content.styles?.images?['icon'], size: size)
-      )) ?? Container()
+      padding: shouldHighlight ? EdgeInsets.zero : EdgeInsets.all(16.0),
+      child: Opacity(
+        opacity: isCompletedOrCurrent ? 1 : 0.3,
+        child: iconImage,
+      )
     );
     Widget contentWidget = icon;
     if (shouldHighlight) {
@@ -337,7 +353,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                   SizedBox(width: 16.0),
                   Text(
                     content.reference?.highlightDisplayText() ?? Localization().getStringEx('panel.essential_skills_coach.dashboard.activity.button.label', 'Activity') + ' ${scheduleIndex - scheduleStart + 1}',
-                    style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")
+                    style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")
                   )
                 ]
               ),
@@ -381,9 +397,9 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         child: contentWidget,
         style: ElevatedButton.styleFrom(
           shape: shouldHighlight ? RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))) : CircleBorder(),
-          side: isCurrent && !userContent.hasData ? BorderSide(color: _selectedModulePrimaryColor ?? Styles().colors.fillColorPrimary, width: 6.0, strokeAlign: BorderSide.strokeAlignOutside) : null,
+          side: isCurrent && userContent.isNotComplete ? BorderSide(color: _selectedModulePrimaryColor ?? Styles().colors.fillColorPrimary, width: 6.0, strokeAlign: BorderSide.strokeAlignOutside) : null,
           padding: EdgeInsets.all(8.0),
-          backgroundColor: isCompletedOrCurrent ? (!required || userContent.hasData ? completedColor : contentColor) : incompleteColor,
+          backgroundColor: isCompletedOrCurrent ? (userContent.isComplete ? completedColor : contentColor) : incompleteColor,
           disabledBackgroundColor: incompleteColor
         ),
       ),
