@@ -866,7 +866,7 @@
     "chevron-up-gray": {"src": "images/arrow-up-orange.png", "type": "flutter.asset", "color": "mediumGray", "size": 10, "todo": "size issue?"},
     "chevron-down-gray": {"src": "images/arrow-down-orange.png", "type": "flutter.asset", "color": "mediumGray", "size": 10, "todo": "size issue?"},
     "chevron-right-gray": {"src": "images/chevron-right-gray.png", "type": "flutter.asset", "color": "mediumGray", "size": 14, "todo": "size issue?"},
-    "chevron-left-gray": {"src": "images/chevron-left-grayx.png", "type": "flutter.asset", "color": "mediumGray", "size": 14, "todo": "size issue?"},
+    "chevron-left-gray": {"src": "images/chevron-left-gray.png", "type": "flutter.asset", "color": "mediumGray", "size": 14, "todo": "size issue?"},
     "star-gray": {"src": "0xf5c0", "type": "fa.icon", "weight": "regular", "color": "mediumGray", "size": 19},
     "wellness-gray-0": {"src": "images/tab-wellness.png", "type": "flutter.asset", "color": "mediumGray", "size": 28, "todo": "size issue"},
     "wellness-gray": {"src": "images/tab-wellness-universal.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},
