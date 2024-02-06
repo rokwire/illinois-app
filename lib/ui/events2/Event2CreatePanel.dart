@@ -21,7 +21,6 @@ import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
-import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/GestureDetector.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -50,9 +49,9 @@ class Event2CreatePanel extends StatefulWidget {
 
   final Event2? event;
   final Survey? survey;
-  final Event2Selector? eventSelector;
+  final List<Group>? targetGroups;
 
-  Event2CreatePanel({Key? key, this.event, this.survey, this.eventSelector}) : super(key: key);
+  Event2CreatePanel({Key? key, this.event, this.survey, this.targetGroups}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _Event2CreatePanelState();
@@ -449,7 +448,7 @@ class Event2CreatePanel extends StatefulWidget {
 
 }
 
-class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2SelectorDataProvider{
+class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   String? _imageUrl;
 
@@ -472,6 +471,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
   Event2AttendanceDetails? _attendanceDetails;
   Event2SurveyDetails? _surveyDetails;
   Survey? _survey;
+  List<Survey> _surveysCache = <Survey>[];
+  List<Group> _targetGroups = <Group>[];
 
   String? _sponsor;
   String? _speaker;
@@ -505,9 +506,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
   bool _dateTimeSectionExpanded = false;
   bool _typeAndLocationSectionExpanded = false;
   bool _costSectionExpanded = false;
-
-  List<Survey> _surveysCache = <Survey>[];
-  List<Group> _selectedGroups = <Group>[];
 
   @override
   void initState() {
@@ -554,6 +552,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     _attendanceDetails = widget.event?.attendanceDetails;
     _surveyDetails = widget.event?.surveyDetails;
     _survey = widget.survey;
+    _targetGroups = widget.targetGroups ?? <Group>[];
 
     _sponsor = widget.event?.sponsor;
     _speaker = widget.event?.speaker;
@@ -571,7 +570,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     _locationLongitudeController.addListener(_updateErrorMap);
     _costController.addListener(_updateErrorMap);
     _websiteController.addListener(_updateErrorMap);
-    _initSelector();
 
     super.initState();
   }
@@ -639,7 +637,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
             _buildGroupsButtonSection(),
             _buildPublishedSection(),
             _buildVisibilitySection(),
-            _buildEventSelectorSection(),
             _buildCreateEventSection(),
           ]),
         )
@@ -1540,7 +1537,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
       title: Localization().getStringEx('panel.event2.create.button.groups.title', '{{app_title}} APP GROUPS').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois').toUpperCase()),
       subTitle: Localization().getStringEx('panel.event2.create.button.groups.description', 'Publish your event in group(s) that you administer.'),
-      onTap: _onGroups,
+      onTap: _onSelectGroups,
     ),
     body: _buildGroupsSectionBody()
   ) : Container();
@@ -1549,8 +1546,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     List<InlineSpan> descriptionList = <InlineSpan>[];
     TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
 
-    if (_selectedGroups.isNotEmpty) {
-      for (Group group in _selectedGroups) {
+    if (_targetGroups.isNotEmpty) {
+      for (Group group in _targetGroups) {
         if (descriptionList.isNotEmpty) {
           descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
         }
@@ -1572,13 +1569,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     }
   }
 
-  void _onGroups() {
+  void _onSelectGroups() {
     Analytics().logSelect(target: "Event Groups");
     Event2CreatePanel.hideKeyboard(context);
-    Navigator.push<List<Group>>(context, CupertinoPageRoute(builder: (context) => Event2SetupGroups(selectedGroups: _selectedGroups))).then((List<Group>? selectedGroups) {
-      if ((selectedGroups != null) && mounted) {
+    Navigator.push<List<Group>>(context, CupertinoPageRoute(builder: (context) => Event2SetupGroups(selection: _targetGroups))).then((List<Group>? selection) {
+      if ((selection != null) && mounted) {
         setState(() {
-          _selectedGroups = selectedGroups;
+          _targetGroups = selection;
         });
       }
     });
@@ -1586,7 +1583,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   List<String> get _selectedGroupIds {
     List<String> selectedGroupIds = <String>[];
-    for (Group group in _selectedGroups) {
+    for (Group group in _targetGroups) {
       if (group.id != null) {
         selectedGroupIds.add(group.id ?? '');
       }
@@ -1672,14 +1669,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     setStateIfMounted(() {
       _published = !_published;
     });
-  }
-
-  //EventSelector section
-  Widget _buildEventSelectorSection() {
-    if(widget.eventSelector != null){
-      return widget.eventSelector!.buildWidget(this) ?? Container();
-    }
-    return Container();
   }
 
   // Create Event
@@ -1857,18 +1846,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     setStateIfMounted(() {
       _creatingEvent = true;
     });
-    await widget.eventSelector?.prepareSelection(this);
 
     dynamic result;
     Event2 event = _createEventFromData();
-    Future<dynamic> Function(Event2 source)? selectorAPI = widget.eventSelector?.event2SelectorServiceAPI();
-    if (selectorAPI != null) {
-      result = await selectorAPI(event);
-    }
-    else if (widget.isUpdate) {
+    if (widget.isUpdate) {
       result = await Events2().updateEvent(event);
     }
-    else if (_selectedGroups.isEmpty) {
+    else if (_targetGroups.isEmpty) {
       result = await Events2().createEvent(event);
     }
     else {
@@ -1877,8 +1861,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
     if (mounted) {
       if (result is Event2) {
-        _selectorEvent = result;
-        await widget.eventSelector?.performSelection(this);
         Survey? survey = widget.survey;
         if (widget.isCreate) {
           if (_survey != null) {
@@ -1892,7 +1874,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
               Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
                 event: result,
                 survey: survey,
-                eventSelector: widget.eventSelector,
               )));
             }
             else {
@@ -1900,14 +1881,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
                 Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
                   event: result,
                   survey: null,
-                  eventSelector: widget.eventSelector,
                 )));
               });
             }
           }
           else {
             Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
-              event: result, eventSelector: widget.eventSelector,
+              event: result,
             )));
           }
         }
@@ -1950,7 +1930,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
             });
           }
         }
-        widget.eventSelector?.finishSelection(this);
       }
       else  {
         setState(() {
@@ -2015,7 +1994,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   bool get _private => (_visibility == _Event2Visibility.private);
 
-  bool get _isGroupEvent => (CollectionUtils.isNotEmpty(_selectedGroupIds) || (widget.eventSelector is GroupEventSelector));
+  bool get _isGroupEvent => CollectionUtils.isNotEmpty(_selectedGroupIds);
 
   bool get _hasSurvey => (_survey != null) || (_surveyDetails?.isNotEmpty ?? false);
 
@@ -2165,17 +2144,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       speaker: _speaker,
       contacts: _contacts,
     );
-
-  //EventSelector
-  @override
-  Event2SelectorData? selectorData;
-
-  //Selector
-  void _initSelector(){
-    widget.eventSelector?.init(this);
-  }
-
-  void set _selectorEvent(Event2 event) => selectorData?.event = event;
 }
 
 // _Event2Visibility

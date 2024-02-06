@@ -52,7 +52,7 @@ class Event2HomePanel extends StatefulWidget {
 
   final Event2SortType? sortType;
 
-  final Event2Selector? eventSelector;
+  final Event2Selector2? eventSelector;
 
   Event2HomePanel({Key? key,
     this.timeFilter, this.customStartTime, this.customEndTime,
@@ -68,7 +68,7 @@ class Event2HomePanel extends StatefulWidget {
   static void present(BuildContext context, {
     Event2TimeFilter? timeFilter, TZDateTime? customStartTime, TZDateTime? customEndTime,
     LinkedHashSet<Event2TypeFilter>? types, Map<String, dynamic>? attributes, Event2SortType? sortType,
-    Event2Selector? eventSelector
+    Event2Selector2? eventSelector
   }) {
     if ((timeFilter != null) || (attributes != null) || (types != null)) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(
@@ -1051,8 +1051,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   void _onEvent(Event2 event) {
     Analytics().logSelect(target: 'Event: ${event.name}');
     if (event.hasGame) {
-      widget.eventSelector?.data.event = event;
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game, eventSelector: widget.eventSelector)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game, event: event, eventSelector: widget.eventSelector)));
     } else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, userLocation: _currentLocation, eventSelector: widget.eventSelector,)));
     }

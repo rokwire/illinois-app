@@ -13,9 +13,9 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class Event2SetupGroups extends StatefulWidget {
-  final List<Group> selectedGroups;
+  final List<Group> selection;
 
-  Event2SetupGroups({super.key, required this.selectedGroups});
+  Event2SetupGroups({super.key, required this.selection});
 
   @override
   State<StatefulWidget> createState() => _Event2SetupGroupsState();
@@ -31,7 +31,7 @@ class _Event2SetupGroupsState extends State<Event2SetupGroups> {
 
   @override
   void initState() {
-    _initialSelectedGroupIds = LinkedHashSet.from(widget.selectedGroups.map((Group group) => group.id));
+    _initialSelectedGroupIds = LinkedHashSet.from(widget.selection.map((Group group) => group.id));
     _selectedGroupIds = LinkedHashSet.from(_initialSelectedGroupIds);
     _loadGroups();
     super.initState();
@@ -208,14 +208,14 @@ class _Event2SetupGroupsState extends State<Event2SetupGroups> {
       groupsMap[group.id ?? ''] = group;
     });
 
-    List<Group> selectedGroups = <Group>[];
+    List<Group> selection = <Group>[];
     for (String groupId in _selectedGroupIds) {
       Group? group = groupsMap[groupId];
       if (group != null) {
-        selectedGroups.add(group);
+        selection.add(group);
       }
     }
 
-    Navigator.of(context).pop(selectedGroups);
+    Navigator.of(context).pop(selection);
   }
 }
