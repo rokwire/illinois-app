@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Fix Typo on Settings Screen [#3933](https://github.com/rokwire/illinois-app/issues/3933).
+- Fixed Global Settings Ui mismatches [#3935](https://github.com/rokwire/illinois-app/issues/3933).
+### Changed
+- Profile voice recording text edit [#3923](https://github.com/rokwire/illinois-app/issues/3923).
+
 ## [5.1.22] - 2024-02-06
 ### Changed
 - Clean up event selector [#3905](https://github.com/rokwire/illinois-app/issues/3905).

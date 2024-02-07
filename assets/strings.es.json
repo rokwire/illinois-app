@@ -1608,7 +1608,7 @@
     "panel.settings.review.button.help_desk.title": "REVIEW APP",
     "panel.settings.contact.info.row1": "Smart, Healthy Communities Initiative | Rokwire",
     "panel.settings.contact.info.row2": "Grainger Engineering Library, Room 333 \n 1301 West Springfield Avenue; Urbana, IL 61801",
-    "panel.settings.contact.feedback.app.description.format": "The Illinois app is the official campus app of the <a href='{{university_url}}'> University of Illinois Urbana-Champaign</>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>. The app is built on the <a href='{{rokwire_platform_url}}'>Rokwire</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='{{shci_url}}'>Smart, Healthy Communities Initiative</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> in the office of the Provost at the University of Illinois.",
+    "panel.settings.contact.feedback.app.description.format": "The Illinois app is the official campus app of the <a href='{{university_url}}'> University of Illinois Urbana-Champaign</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>. The app is built on the <a href='{{rokwire_platform_url}}'>Rokwire</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='{{shci_url}}'>Smart, Healthy Communities Initiative</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> in the Office of the Provost at the University of Illinois.",
 
     "panel.saved.header.label": "Guardado",
     "panel.saved.label.events": "Mis Eventos",
