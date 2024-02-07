@@ -2150,15 +2150,16 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         ((widget.event?.free ?? true) != _free) ||
         ((widget.event?.cost ?? '') != _costController.text) ||
 
-        (widget.event?.registrationDetails != _registrationDetails) ||
+        !Event2RegistrationDetails.equals(widget.event?.registrationDetails, _registrationDetails) ||
+        //(widget.event?.registrationDetails != _registrationDetails) ||
         (widget.event?.attendanceDetails != _attendanceDetails) ||
         (widget.event?.surveyDetails != _surveyDetails) ||
         (widget.survey != _survey) ||
 
         !DeepCollectionEquality().equals(_eventGroups ?? <Group>[], _initialEventGroups ?? <Group>[]) ||
 
-        ((widget.event?.sponsor ?? '') != _sponsor) ||
-        ((widget.event?.speaker ?? '') != _speaker) ||
+        (widget.event?.sponsor != _sponsor) ||
+        (widget.event?.speaker != _speaker) ||
         !DeepCollectionEquality().equals(widget.event?.contacts, _contacts);
     }
 
