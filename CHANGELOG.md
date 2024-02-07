@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [5.1.23] - 2024-02-07
 ### Fixed
 - Fix Typo on Settings Screen [#3933](https://github.com/rokwire/illinois-app/issues/3933).
 - Fixed Global Settings Ui mismatches [#3935](https://github.com/rokwire/illinois-app/issues/3933).
