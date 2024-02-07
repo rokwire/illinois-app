@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/academics/courses/ModuleHeaderWidget.dart';
 import 'package:illinois/ui/academics/courses/PDFScreen.dart';
 import 'package:illinois/ui/academics/courses/VideoPlayer.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -17,11 +18,15 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ResourcesPanel extends StatefulWidget {
   final List<Content> contentItems;
+  final ReferenceType? initialReferenceType;
   final Color? color;
-  final Color? colorAccent;
   final int unitNumber;
   final String unitName;
-  const ResourcesPanel({required this.color, required this.colorAccent, required this.unitNumber, required this.contentItems, required this.unitName});
+
+  final Widget? moduleIcon;
+  final String moduleName;
+
+  const ResourcesPanel({required this.contentItems, this.initialReferenceType, required this.color, required this.unitNumber, required this.unitName, this.moduleIcon, required this.moduleName});
 
   @override
   State<ResourcesPanel> createState() => _ResourcesPanelState();
@@ -29,17 +34,22 @@ class ResourcesPanel extends StatefulWidget {
 
 class _ResourcesPanelState extends State<ResourcesPanel> implements NotificationsListener {
   Color? _color;
-  Color? _colorAccent;
   late List<Content> _contentItems;
+  Set<ReferenceType> _referenceTypes = {};
   Set<String> _loadingReferenceKeys = {};
   Map<String, File?> _fileCache = {};
-  ReferenceType? _selectedResourceType = null;
+  ReferenceType? _selectedResourceType;
 
   @override
   void initState() {
     _color = widget.color;
-    _colorAccent = widget.colorAccent;
     _contentItems = widget.contentItems;
+    _selectedResourceType = widget.initialReferenceType;
+    for (Content item in _contentItems) {
+      if (item.reference?.type != null) {
+        _referenceTypes.add(item.reference!.type!);
+      }
+    }
     super.initState();
 
     // _loadDataContentItem( key: 'resource_text');
@@ -51,19 +61,18 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.essential_skills_coach.resources.header.title', 'Unit Resources'),
         textStyle: Styles().textStyles.getTextStyle('header_bar'),),
-      body: SingleChildScrollView(
-        child: Column(children: [
-          _buildResourcesHeaderWidget(),
-          _buildResourceTypeDropdown(),
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: SingleChildScrollView(
-              child: _buildResources()
-            )
-          ),
-        ],),
-      ),
-      backgroundColor: _color,
+      body: Column(children: [
+        ModuleHeaderWidget(icon: widget.moduleIcon, moduleName: widget.moduleName, backgroundColor: _color,),
+        _buildResourcesHeaderWidget(),
+        _buildResourceTypeDropdown(),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: SingleChildScrollView(
+            child: _buildResources()
+          )
+        ),
+      ],),
+      backgroundColor: Styles().colors.background,
     );
   }
 
@@ -77,167 +86,143 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
         itemBuilder: (BuildContext context, int index) {
           Content contentItem = filteredContentItems[index];
           Reference? reference = contentItem.reference;
-          if(reference?.type == ReferenceType.text){
-            return Center(
-              child: Card(
-                clipBehavior: Clip.antiAlias,
-                child: ExpansionTile(
-                  leading: Styles().images.getImage("${reference?.stringFromType()}-icon") ?? Container(),
-                  title: Text(contentItem.name ?? "", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),),
-                  subtitle: Text(contentItem.details ?? ""),
-                  children: [
-                   Padding(
-                     padding: const EdgeInsets.all(8.0),
-                     child: Center(
-                       child: Text("Soften", style: Styles().textStyles.getTextStyle("widget.message.large"),),
-                     ),
-                   ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
-                      child: Center(
-                        child: Text("(smile, open posture, forward lean, touch, eye contact, nod)", style: Styles().textStyles.getTextStyle("widget.message.regular"),),
-                      ),
-                    ),
-                  ],
-                ),
+          return Card(
+            clipBehavior: Clip.hardEdge,
+            child: InkWell(
+              onTap: (){
+                if (reference?.type == ReferenceType.video) {
+                  if (_fileCache[reference?.referenceKey] != null) {
+                    _openVideo(context, reference?.name, _fileCache[reference?.referenceKey]!);
+                  } else {
+                    _setLoadingReferenceKey(reference?.referenceKey, true);
+                    _loadContentForKey(reference?.referenceKey, onResult: (value) {
+                      _openVideo(context, reference?.name, value);
+                    });
+                  }
+                } else if (reference?.type == ReferenceType.uri) {
+                  Uri uri = Uri.parse(reference?.referenceKey ?? "");
+                  _launchUrl(uri);
+                } else if (reference?.type != ReferenceType.text) {
+                  _setLoadingReferenceKey(reference?.referenceKey, true);
+                  if (_fileCache[reference?.referenceKey] != null) {
+                    _openPdf(context, reference?.name, _fileCache[reference?.referenceKey]!.path);
+                  } else {
+                    _loadContentForKey(reference?.referenceKey, onResult: (value) {
+                      _openPdf(context, reference?.name, value.path);
+                    });
+                  }
+                }
+              },
+              child: ListTile(
+                leading: Styles().images.getImage("${reference?.stringFromType()}-icon"),
+                title: Text(contentItem.name ?? "", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),),
+                subtitle: Text(contentItem.details ?? ""),
+                trailing: reference?.type != ReferenceType.text ? _loadingReferenceKeys.contains(reference?.referenceKey) ? CircularProgressIndicator() : Icon(
+                  Icons.chevron_right_rounded,
+                  size: 25.0,
+                ) : null,
               ),
-            );
-          }else{
-            return Center(
-              child: Card(
-                clipBehavior: Clip.hardEdge,
-                child: InkWell(
-                  onTap: (){
-                    if(reference?.type == ReferenceType.video){
-                      if (_fileCache[reference?.referenceKey] != null) {
-                        _openVideo(context, reference?.name, _fileCache[reference?.referenceKey]!);
-                      } else {
-                        _setLoadingReferenceKey(reference?.referenceKey, true);
-                        _loadContentForKey(reference?.referenceKey, onResult: (value) {
-                          _openVideo(context, reference?.name, value);
-                        });
-                      }
-                    } else if(reference?.type == ReferenceType.uri){
-                      Uri uri = Uri.parse(reference?.referenceKey ?? "");
-                      _launchUrl(uri);
-                    } else{
-                      _setLoadingReferenceKey(reference?.referenceKey, true);
-                      if (_fileCache[reference?.referenceKey] != null) {
-                        _openPdf(context, reference?.name, _fileCache[reference?.referenceKey]!.path);
-                      } else {
-                        _loadContentForKey(reference?.referenceKey, onResult: (value) {
-                          _openPdf(context, reference?.name, value.path);
-                        });
-                      }
-                    }
-                  },
-                  child: ListTile(
-                    leading: Styles().images.getImage("${reference?.stringFromType()}-icon") ?? Container(),
-                    title: Text(contentItem.name ?? "", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),),
-                    subtitle: Text(contentItem.details ?? ""),
-                    trailing: _loadingReferenceKeys.contains(reference?.referenceKey) ? CircularProgressIndicator() : Icon(
-                      Icons.chevron_right_rounded,
-                      size: 25.0,
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }
+            ),
+          );
         }
     );
   }
 
   Widget _buildResourceTypeDropdown(){
-    return Padding(padding: EdgeInsets.only(left: 16, right: 16,bottom: 16, top: 16),
-        child:  Center(
-          child: DropdownButton(
-              value: _selectedResourceType,
-              iconDisabledColor: Colors.white,
-              iconEnabledColor: Colors.white,
-              focusColor: Colors.white,
-              dropdownColor: _color,
-              isExpanded: true,
-              items: _buildDropdownItems(),
-              onChanged: (ReferenceType? selected) {
-                setState(() {
-                  _selectedResourceType = selected;
-                });
-              }
-          ),
-        )
+    return Padding(
+      padding: EdgeInsets.all(16),
+      child: ButtonTheme(
+        alignedDropdown: true,
+        child: DropdownButton(
+          value: _selectedResourceType,
+          alignment: AlignmentDirectional.centerStart,
+          iconDisabledColor: Styles().colors.fillColorSecondary,
+          iconEnabledColor: Styles().colors.fillColorSecondary,
+          focusColor: Styles().colors.surface,
+          dropdownColor: Styles().colors.surface,
+          isExpanded: true,
+          underline: Divider(color: Styles().colors.fillColorSecondary, height: 1.0, indent: 16.0, endIndent: 16.0),
+          borderRadius: BorderRadius.all(Radius.circular(4.0)),
+          items: _buildDropdownItems(),
+          onChanged: (ReferenceType? selected) {
+            setState(() {
+              _selectedResourceType = selected;
+            });
+          }
+        ),
+      )
     );
   }
 
   Widget _buildResourcesHeaderWidget(){
     return Container(
-      color: _colorAccent,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Padding(
-            padding: EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Unit ${widget.unitNumber}', style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")),
-                Container(
-                  width: 200,
-                  child: Text(widget.unitName, style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat")),
-                )
-              ],
+      color: Styles().colors.fillColorPrimary,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Unit ${widget.unitNumber}', style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")),
+                  Text(widget.unitName, style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"))
+                ],
+              ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(24),
-            child: Styles().images.getImage('closed-book', size: 50.0),
-          ),
-        ],
+            Flexible(
+              flex: 1,
+              child: Container(
+                  decoration: BoxDecoration(
+                    color: Styles().colors.surface,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Styles().images.getImage('closed-book', size: 40.0),
+                  )
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
 
   List<DropdownMenuItem<ReferenceType>> _buildDropdownItems() {
     List<DropdownMenuItem<ReferenceType>> dropDownItems = [
-      DropdownMenuItem(value: null, child: Text(Localization().getStringEx('panel.essential_skills_coach.resources.select.all.label', "View All Resources"), style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")))
+      DropdownMenuItem(value: null, child: Text(Localization().getStringEx('panel.essential_skills_coach.resources.select.all.label', "View All Resources"), style: Styles().textStyles.getTextStyle("widget.detail.large")))
     ];
 
-    for (ReferenceType type in ReferenceType.values) {
+    for (ReferenceType type in _referenceTypes) {
+      String itemText = '';
       switch (type) {
         case ReferenceType.pdf:
-          dropDownItems.add(DropdownMenuItem(value: type, child: Text(
-            Localization().getStringEx('panel.essential_skills_coach.resources.select.pdf.label', 'View All PDFs'),
-            style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")
-          )));
+          itemText = Localization().getStringEx('panel.essential_skills_coach.resources.select.pdf.label', 'View All PDFs');
           break;
         case ReferenceType.video:
-          dropDownItems.add(DropdownMenuItem(value: type, child: Text(
-            Localization().getStringEx('panel.essential_skills_coach.resources.select.video.label', 'View All Videos'),
-            style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")
-          )));
+          itemText = Localization().getStringEx('panel.essential_skills_coach.resources.select.video.label', 'View All Videos');
           break;
         case ReferenceType.uri:
-          dropDownItems.add(DropdownMenuItem(value: type, child: Text(
-            Localization().getStringEx('panel.essential_skills_coach.resources.select.uri.label', 'View All External Links'),
-            style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")
-          )));
+          itemText = Localization().getStringEx('panel.essential_skills_coach.resources.select.uri.label', 'View All External Links');
           break;
         case ReferenceType.text:
-          dropDownItems.add(DropdownMenuItem(value: type, child: Text(
-            Localization().getStringEx('panel.essential_skills_coach.resources.select.text.label', 'View All Information'),
-            style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")
-          )));
+          itemText = Localization().getStringEx('panel.essential_skills_coach.resources.select.text.label', 'View All Terms');
           break;
         case ReferenceType.powerpoint:
-          dropDownItems.add(DropdownMenuItem(value: type, child: Text(
-            Localization().getStringEx('panel.essential_skills_coach.resources.select.powerpoint.label', 'View All Powerpoints'),
-            style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")
-          )));
+          itemText = Localization().getStringEx('panel.essential_skills_coach.resources.select.powerpoint.label', 'View All Powerpoints');
           break;
         default:
           continue;
       }
+
+      dropDownItems.add(DropdownMenuItem(value: type, child: Text(
+        itemText,
+        style: Styles().textStyles.getTextStyle("widget.detail.large")
+      )));
     }
     return dropDownItems;
   }

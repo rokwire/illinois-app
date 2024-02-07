@@ -1,9 +1,11 @@
 
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/academics/courses/ModuleHeaderWidget.dart';
+import 'package:illinois/ui/academics/courses/ResourcesPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -23,10 +25,11 @@ class AssignmentPanel extends StatefulWidget {
   final Widget? moduleIcon;
   final String moduleName;
   final int unitNumber;
+  final String unitName;
   final int activityNumber;
 
   AssignmentPanel({required this.content, required this.data, required this.color, required this.colorAccent, required this.isCurrent,
-    this.helpContent, required this.preview, this.moduleIcon, required this.moduleName, required this.unitNumber, required this.activityNumber,});
+    this.helpContent, required this.preview, this.moduleIcon, required this.moduleName, required this.unitNumber, required this.unitName, required this.activityNumber,});
 
   @override
   State<AssignmentPanel> createState() => _AssignmentPanelState();
@@ -41,8 +44,8 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
   Color? _colorAccent;
   TextEditingController _controller = TextEditingController();
   ScrollController _scrollController = ScrollController();
-  List<bool> _isOpen = [false];
 
+  bool _helpContentOpen = false;
   bool _listening = false;
 
   @override
@@ -50,6 +53,8 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     NotificationService().subscribe(this, [
       SpeechToText.notifyError,
     ]);
+
+    //TODO: load history
 
     _content = widget.content;
     _data = widget.data != null ? Map.of(widget.data!) : null;
@@ -93,9 +98,19 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     List<Widget> helpContentWidgets = [];
     for (Content help in _helpContent ?? []) {
       helpContentWidgets.add(
-        //TODO: make this tappable to link to ResourcesPanel
-        Padding(padding: EdgeInsets.all(8),
-          child: Text("- " + (help.name ?? "") + ": " + (help.details ?? ""), style:Styles().textStyles.getTextStyle("widget.title.light.small")),
+        Padding(padding: EdgeInsets.only(top: 16.0),
+          child: TextButton(
+            child: Text("\u2022 ${help.name}: ${help.details}", style:Styles().textStyles.getTextStyle("widget.title.light.regular")),
+            onPressed: () => Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourcesPanel(
+              color: _color,
+              initialReferenceType: help.reference?.type,
+              unitNumber: widget.unitNumber,
+              contentItems: _helpContent!,  //TODO: pass all unit resources here or only linked content for this task?
+              unitName: widget.unitName,
+              moduleIcon: widget.moduleIcon,
+              moduleName: widget.moduleName,
+            ))),
+          ),
         )
       );
     }
@@ -132,26 +147,30 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                     borderColor: _color,
                     onTap: () => _saveProgress(false)),
               ),
-            if (helpContentWidgets.isNotEmpty)
+            if (!widget.preview && helpContentWidgets.isNotEmpty)
               ExpansionPanelList(
-                expandIconColor: Colors.white,
-                expansionCallback: (i, isOpen) =>
-                    setState(() => _isOpen[i] = !isOpen),
+                expandedHeaderPadding: EdgeInsets.zero,
+                expandIconColor: Styles().colors.surface,
+                expansionCallback: (i, isOpen) => setState(() => _helpContentOpen = isOpen),
                 children: [
                   ExpansionPanel(
                     backgroundColor: _colorAccent,
-                    isExpanded: _isOpen[0],
+                    isExpanded: _helpContentOpen,
                     headerBuilder: (BuildContext context, bool isExpanded) {
                       return ListTile(
-                          iconColor: Colors.white,
-                          title: Center(
-                            child:Text(Localization().getStringEx('panel.essential_skills_coach.assignment.help.header.title', "Helpful Information"), style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")),
-                          )
+                        iconColor: Styles().colors.surface,
+                        title: Text(Localization().getStringEx('panel.essential_skills_coach.assignment.help.header.title', "Helpful Information"), style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat"))
                       );
                     },
-                    body: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: helpContentWidgets,
+                    body: Padding(
+                      padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Divider(color: _color, thickness: 2.0),
+                          ...helpContentWidgets
+                        ],
+                      ),
                     ),
                   )
                 ],

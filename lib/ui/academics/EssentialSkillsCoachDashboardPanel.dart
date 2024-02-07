@@ -124,13 +124,14 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.lightbulb_circle,
-              color: Colors.white,
-              size: 30.0,
+            Container(
+              decoration: BoxDecoration(
+                color: Styles().colors.surface,
+                shape: BoxShape.circle,
+              ),
+              child: Styles().images.getImage('streak', color: Styles().colors.fillColorPrimary, size: 40.0) ?? Container()
             ),
             SizedBox(width: 8,),
-            //TODO: update 'No Streak' string
             Text(
               (_userCourse?.streak ?? 0) > 0 ? '${_userCourse!.streak} ' + Localization().getStringEx('panel.essential_skills_coach.streak.days.suffix', "Day Streak!") :
                 Localization().getStringEx('panel.essential_skills_coach.dashboard.no_streak.text', 'No Streak'),
@@ -166,14 +167,13 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                 child: ButtonTheme(
                   alignedDropdown: true,
                   child: DropdownButton(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
                       alignment: AlignmentDirectional.centerStart,
                       value: _selectedModuleKey,
                       iconDisabledColor: Styles().colors.fillColorSecondary,
                       iconEnabledColor: Styles().colors.fillColorSecondary,
-                      focusColor: Styles().colors.fillColorSecondary,
+                      focusColor: Styles().colors.surface,
                       dropdownColor: Styles().colors.surface,
-                      underline: Divider(color: Styles().colors.fillColorSecondary, height: 1.0),
+                      underline: Divider(color: Styles().colors.fillColorSecondary, height: 1.0, indent: 16.0, endIndent: 16.0),
                       borderRadius: BorderRadius.all(Radius.circular(4.0)),
                       isExpanded: true,
                       items: _moduleDropdownItems(),
@@ -246,20 +246,22 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                         Padding(
                           padding: EdgeInsets.only(bottom: 4),
                           child: ElevatedButton(
-                            onPressed: () {
+                            onPressed: userUnit.current ? () {
                               Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourcesPanel(
                                   color: _selectedModulePrimaryColor,
-                                  colorAccent: _selectedModuleAccentColor,
                                   unitNumber: displayNumber,
                                   contentItems: userUnit.unit!.resourceContent!,
-                                  unitName: userUnit.unit?.name ?? ""
+                                  unitName: userUnit.unit?.name ?? "",
+                                  moduleIcon: _selectedModuleIcon,
+                                  moduleName: _selectedModule?.name ?? '',
                               )));
-                            },
+                            } : null,
                             child: Styles().images.getImage('closed-book'),
                             style: ElevatedButton.styleFrom(
                               shape: CircleBorder(),
                               padding: EdgeInsets.all(16),
-                              backgroundColor: Colors.white,
+                              backgroundColor: Styles().colors.surface,
+                              disabledBackgroundColor: Styles().colors.surface,
                             ),
                           ),
                         ),
@@ -409,6 +411,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
               moduleIcon: _selectedModuleIcon,
               moduleName: _selectedModule?.name ?? '',
               unitNumber: unitNumber,
+              unitName: userUnit.unit?.name ?? '',
               activityNumber: activityNumber,
             )
           )).then((result) {
@@ -438,7 +441,6 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       if (module.key != null && module.name != null/* && CollectionUtils.isNotEmpty(module.units)*/) { // TODO remove comment
         dropDownItems.add(DropdownMenuItem(
           value: module.key,
-          alignment: AlignmentDirectional.center,
           child: Text(module.name!, style: Styles().textStyles.getTextStyle("widget.detail.large"))
         ));
       }
