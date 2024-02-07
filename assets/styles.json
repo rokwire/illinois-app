@@ -937,6 +937,8 @@
     "radio-button-off": {"src": "images/icon-favorite-deselected.png", "type": "flutter.asset", "todo": "color issue"},
 
     "university-logo": {"src": "images/block-i-orange.png", "type": "flutter.asset"},
+    "university-logo-dark-frame": {"src": "images/block-i-orange-blue.png", "type": "flutter.asset"},
+    "university-logo-oval-white": {"src": "images/block-i-orange-oval.png", "type": "flutter.asset"},
     "university-logo-dark": {"src": "images/illinois-blockI-blue.png", "type": "flutter.asset"},
     "university-logo-circle-white": {"src": "images/group-5-white.png", "type": "flutter.asset"},
     "university-logo-circle-dark": {"src": "images/group-5-blue.png", "type": "flutter.asset"},
