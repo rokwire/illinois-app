@@ -55,7 +55,7 @@ class _NamePronouncementState extends State<NamePronouncementWidget> implements 
             Visibility(visible: !_hasStoredPronouncement, child:
             Expanded(
                 child: GestureDetector(onTap:  _onRecordNamePronouncement, child:
-                Text( Localization().getStringEx("", "Add name pronunciation and how you prefer to be addressed by students (Ex: Please call me Dr. Last Name,First Name, or Nickname. )"),
+                Text( Localization().getStringEx("", "Add name pronunciation and how you prefer to be addressed (Ex: Please call me Dr. Last Name, First Name, or Nickname. )"),
                   style: Styles().textStyles.getTextStyle("widget.info.medium.underline"),
                 ),
                 )
