@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fix Typo on Settings Screen [#3933](https://github.com/rokwire/illinois-app/issues/3933).
+### Changed
+- Profile voice recording text edit [#3923](https://github.com/rokwire/illinois-app/issues/3923).
 
 ## [5.1.22] - 2024-02-06
 ### Changed
