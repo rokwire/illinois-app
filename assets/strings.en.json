@@ -1610,7 +1610,7 @@
     "panel.settings.review.button.help_desk.title": "REVIEW APP",
     "panel.settings.contact.info.row1": "Smart, Healthy Communities Initiative | Rokwire",
     "panel.settings.contact.info.row2": "Grainger Engineering Library, Room 333 \n 1301 West Springfield Avenue; Urbana, IL 61801",
-    "panel.settings.contact.feedback.app.description.format": "The Illinois app is the official campus app of the <a href='{{university_url}}'> University of Illinois Urbana-Champaign</>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>. The app is built on the <a href='{{rokwire_platform_url}}'>Rokwire</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='{{shci_url}}'>Smart, Healthy Communities Initiative</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> in the office of the Provost at the University of Illinois.",
+    "panel.settings.contact.feedback.app.description.format": "The Illinois app is the official campus app of the <a href='{{university_url}}'> University of Illinois Urbana-Champaign</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>. The app is built on the <a href='{{rokwire_platform_url}}'>Rokwire</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='{{shci_url}}'>Smart, Healthy Communities Initiative</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> in the Office of the Provost at the University of Illinois.",
 
     "panel.saved.header.label": "Saved",
     "panel.saved.label.events": "My Events",
@@ -1801,7 +1801,7 @@
     "panel.settings.home.button.review.title": "Review App",
     "panel.settings.home.button.review.hint": "",
     "panel.settings.home.version.info.label": "{{app_title}} App Version:",
-    "panel.settings.home.feedback.app.description.format": "The Illinois app is the official campus app of the University of Illinois Urbana-Champaign. The app is built on the <a href='{{rokwire_platform_url}}'>Rokwire</a> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='{{shci_url}}'>Smart, Healthy Communities Initiative</a> in the office of the Provost at the University of Illinois.",
+    "panel.settings.home.feedback.app.description.format": "The Illinois app is the official campus app of the University of Illinois Urbana-Champaign. The app is built on the <a href='{{rokwire_platform_url}}'>Rokwire</a> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='{{shci_url}}'>Smart, Healthy Communities Initiative</a> in the Office of the Provost at the University of Illinois.",
     "panel.settings.home.copyright.text": "Copyright © {{COPYRIGHT_YEAR}} University of Illinois Board of Trustees",
 
     "panel.settings.profile.content.profile.label": "My Profile",
