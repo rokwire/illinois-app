@@ -1037,7 +1037,7 @@
     "pdf-icon": {"src": "images/pdf-icon.png", "type": "flutter.asset", "size": 35},
     "powerpoint-icon": {"src": "images/powerpoint.png", "type": "flutter.asset", "size": 35},
     "video-icon": {"src": "images/blue-play.png", "type": "flutter.asset", "size": 35},
-    "streak": {"src": "images/streak.png", "type": "flutter.asset", "size": 193},
+    "streak": {"src": "images/streak.png", "type": "flutter.asset", "size": 240},
     "pause-filled-blue": {"src": "images/pause-filled-blue.png", "type": "flutter.asset", "size": 32},
     "pause-empty-blue": {"src": "images/pause-empty-blue.png", "type": "flutter.asset", "size": 32},
 

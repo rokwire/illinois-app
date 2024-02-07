@@ -51,11 +51,11 @@ class UnitInfoPanel extends StatelessWidget {
                         ),
                         Padding(
                           padding: EdgeInsets.all(16),
-                          child: Text(content.name?.toUpperCase() ?? "", style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")?.apply(color: color)),
+                          child: Text(content.name?.toUpperCase() ?? "", style: Styles().textStyles.getTextStyle("widget.detail.extra_large.fat")),
                         ),
                         Padding(
                           padding: EdgeInsets.all(16),
-                          child: Text(content.details ?? "", style: Styles().textStyles.getTextStyle("widget.title.light.large")?.apply(color: color)),
+                          child: Text(content.details ?? "", style: Styles().textStyles.getTextStyle("widget.detail.large")),
                         ),
                         //TODO other content to be added here
                       ],

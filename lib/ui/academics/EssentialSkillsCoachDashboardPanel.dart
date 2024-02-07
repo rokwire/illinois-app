@@ -145,7 +145,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
 
   Widget _buildModuleSelection() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Row(
         children: [
           Flexible(
@@ -159,10 +159,11 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             flex: 4,
             child: Padding(padding: EdgeInsets.only(right: 16),
               child: Container(
+                padding: const EdgeInsets.only(top: 4.0, bottom: 8.0),
                 decoration: BoxDecoration(
                   color: Styles().colors.surface,
                   shape: BoxShape.rectangle,
-                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                  borderRadius: BorderRadius.all(Radius.circular(4.0)),
                 ),
                 child: ButtonTheme(
                   alignedDropdown: true,
@@ -321,7 +322,8 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     bool isFirstIncompleteInScheduleItem = userContent.contentKey != null && userUnit.currentScheduleItem?.firstIncomplete?.contentKey == userContent.contentKey;
     bool shouldHighlight = (isCurrent && userContent.isNotComplete && isFirstIncompleteInScheduleItem) || isNextWithCurrentComplete;
 
-    Color? contentColor = content.styles?.colors?['primary'] != null ? Styles().colors.getColor(content.styles!.colors!['primary']!) : Styles().colors.fillColorSecondary;
+    Color? contentColor = content.styles?.colors?['primary'] != null ? Styles().colors.getColor(content.styles!.colors!['primary']!) : Styles().colors.fillColorPrimary;
+    Color? borderColor = content.styles?.colors?['accent'] != null ? Styles().colors.getColor(content.styles!.colors!['accent']!) : Styles().colors.fillColorSecondary;
     Color? completedColor = content.styles?.colors?['complete'] != null ? Styles().colors.getColor(content.styles!.colors!['complete']!) : Colors.green;
     Color? incompleteColor = content.styles?.colors?['incomplete'] != null ? Styles().colors.getColor(content.styles!.colors!['incomplete']!) : Colors.grey[700];
 
@@ -423,7 +425,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         child: contentWidget,
         style: ElevatedButton.styleFrom(
           shape: shouldHighlight ? RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))) : CircleBorder(),
-          side: isCurrent && userContent.isNotComplete ? BorderSide(color: _selectedModulePrimaryColor ?? Styles().colors.fillColorPrimary, width: 6.0, strokeAlign: BorderSide.strokeAlignOutside) : null,
+          side: isCurrent && userContent.isNotComplete ? BorderSide(color: borderColor ?? Styles().colors.fillColorSecondary, width: 6.0, strokeAlign: BorderSide.strokeAlignOutside) : null,
           padding: EdgeInsets.all(8.0),
           backgroundColor: isCompletedOrCurrent ? (userContent.isComplete ? completedColor : contentColor) : incompleteColor,
           disabledBackgroundColor: incompleteColor
@@ -512,7 +514,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   }
 
   Future<void> _loadCourseConfig() async {
-    if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
+    if (_courseConfig == null && StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
       _setLoading(true);
       CourseConfig? courseConfig = await CustomCourses().loadCourseConfig(Config().essentialSkillsCoachKey!);
       if (courseConfig != null) {

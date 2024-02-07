@@ -65,11 +65,11 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
         ModuleHeaderWidget(icon: widget.moduleIcon, moduleName: widget.moduleName, backgroundColor: _color,),
         _buildResourcesHeaderWidget(),
         _buildResourceTypeDropdown(),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: SingleChildScrollView(
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
             child: _buildResources()
-          )
+          ),
         ),
       ],),
       backgroundColor: Styles().colors.background,
@@ -79,48 +79,54 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
   Widget _buildResources(){
     List<Content> filteredContentItems = _filterContentItems();
     return ListView.builder(
-        padding: const EdgeInsets.all(4),
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
+        // physics: NeverScrollableScrollPhysics(),
         itemCount: filteredContentItems.length,
         itemBuilder: (BuildContext context, int index) {
           Content contentItem = filteredContentItems[index];
           Reference? reference = contentItem.reference;
-          return Card(
-            clipBehavior: Clip.hardEdge,
-            child: InkWell(
-              onTap: (){
-                if (reference?.type == ReferenceType.video) {
-                  if (_fileCache[reference?.referenceKey] != null) {
-                    _openVideo(context, reference?.name, _fileCache[reference?.referenceKey]!);
-                  } else {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Material(
+              color: Styles().colors.surface,
+              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+              clipBehavior: Clip.hardEdge,
+              elevation: 1.0,
+              child: InkWell(
+                onTap: (){
+                  if (reference?.type == ReferenceType.video) {
+                    if (_fileCache[reference?.referenceKey] != null) {
+                      _openVideo(context, reference?.name, _fileCache[reference?.referenceKey]!);
+                    } else {
+                      _setLoadingReferenceKey(reference?.referenceKey, true);
+                      _loadContentForKey(reference?.referenceKey, onResult: (value) {
+                        _openVideo(context, reference?.name, value);
+                      });
+                    }
+                  } else if (reference?.type == ReferenceType.uri) {
+                    Uri uri = Uri.parse(reference?.referenceKey ?? "");
+                    _launchUrl(uri);
+                  } else if (reference?.type != ReferenceType.text) {
                     _setLoadingReferenceKey(reference?.referenceKey, true);
-                    _loadContentForKey(reference?.referenceKey, onResult: (value) {
-                      _openVideo(context, reference?.name, value);
-                    });
+                    if (_fileCache[reference?.referenceKey] != null) {
+                      _openPdf(context, reference?.name, _fileCache[reference?.referenceKey]!.path);
+                    } else {
+                      _loadContentForKey(reference?.referenceKey, onResult: (value) {
+                        _openPdf(context, reference?.name, value.path);
+                      });
+                    }
                   }
-                } else if (reference?.type == ReferenceType.uri) {
-                  Uri uri = Uri.parse(reference?.referenceKey ?? "");
-                  _launchUrl(uri);
-                } else if (reference?.type != ReferenceType.text) {
-                  _setLoadingReferenceKey(reference?.referenceKey, true);
-                  if (_fileCache[reference?.referenceKey] != null) {
-                    _openPdf(context, reference?.name, _fileCache[reference?.referenceKey]!.path);
-                  } else {
-                    _loadContentForKey(reference?.referenceKey, onResult: (value) {
-                      _openPdf(context, reference?.name, value.path);
-                    });
-                  }
-                }
-              },
-              child: ListTile(
-                leading: Styles().images.getImage("${reference?.stringFromType()}-icon"),
-                title: Text(contentItem.name ?? "", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),),
-                subtitle: Text(contentItem.details ?? ""),
-                trailing: reference?.type != ReferenceType.text ? _loadingReferenceKeys.contains(reference?.referenceKey) ? CircularProgressIndicator() : Icon(
-                  Icons.chevron_right_rounded,
-                  size: 25.0,
-                ) : null,
+                },
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  leading: Styles().images.getImage("${reference?.stringFromType()}-icon"),
+                  title: Text(contentItem.name ?? "", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),),
+                  subtitle: Text(contentItem.details ?? ""),
+                  trailing: reference?.type != ReferenceType.text ? _loadingReferenceKeys.contains(reference?.referenceKey) ? CircularProgressIndicator() : Icon(
+                    Icons.chevron_right_rounded,
+                    size: 25.0,
+                  ) : null,
+                ),
               ),
             ),
           );
@@ -130,26 +136,34 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
 
   Widget _buildResourceTypeDropdown(){
     return Padding(
-      padding: EdgeInsets.all(16),
-      child: ButtonTheme(
-        alignedDropdown: true,
-        child: DropdownButton(
-          value: _selectedResourceType,
-          alignment: AlignmentDirectional.centerStart,
-          iconDisabledColor: Styles().colors.fillColorSecondary,
-          iconEnabledColor: Styles().colors.fillColorSecondary,
-          focusColor: Styles().colors.surface,
-          dropdownColor: Styles().colors.surface,
-          isExpanded: true,
-          underline: Divider(color: Styles().colors.fillColorSecondary, height: 1.0, indent: 16.0, endIndent: 16.0),
+      padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 24.0),
+      child: Container(
+        padding: const EdgeInsets.only(top: 4.0, bottom: 8.0),
+        decoration: BoxDecoration(
+          color: Styles().colors.surface,
+          shape: BoxShape.rectangle,
           borderRadius: BorderRadius.all(Radius.circular(4.0)),
-          items: _buildDropdownItems(),
-          onChanged: (ReferenceType? selected) {
-            setState(() {
-              _selectedResourceType = selected;
-            });
-          }
         ),
+        child: ButtonTheme(
+          alignedDropdown: true,
+          child: DropdownButton(
+            value: _selectedResourceType,
+            alignment: AlignmentDirectional.centerStart,
+            iconDisabledColor: Styles().colors.fillColorSecondary,
+            iconEnabledColor: Styles().colors.fillColorSecondary,
+            focusColor: Styles().colors.surface,
+            dropdownColor: Styles().colors.surface,
+            isExpanded: true,
+            underline: Divider(color: Styles().colors.fillColorSecondary, height: 1.0, indent: 16.0, endIndent: 16.0),
+            borderRadius: BorderRadius.all(Radius.circular(4.0)),
+            items: _buildDropdownItems(),
+            onChanged: (ReferenceType? selected) {
+              setState(() {
+                _selectedResourceType = selected;
+              });
+            }
+          ),
+        )
       )
     );
   }

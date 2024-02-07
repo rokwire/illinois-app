@@ -186,11 +186,11 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     List<Widget> assignmentWidgets = [
       Padding(
         padding: EdgeInsets.symmetric(horizontal: 8.0),
-        child: Align(alignment: AlignmentDirectional.centerStart, child: Text(_content.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.light.medium_large.extra_fat")?.apply(color: _color),)),
+        child: Align(alignment: AlignmentDirectional.centerStart, child: Text(_content.name ?? "", style: Styles().textStyles.getTextStyle("widget.detail.large.extra_fat"),)),
       ),
       Padding(
         padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
-        child: Align(alignment: AlignmentDirectional.centerStart, child: Text(_content.details ?? "", style: Styles().textStyles.getTextStyle("widget.title.light.large")?.apply(color: _color))),
+        child: Align(alignment: AlignmentDirectional.centerStart, child: Text(_content.details ?? "", style: Styles().textStyles.getTextStyle("widget.detail.large"))),
       ),
     ];
 
@@ -201,7 +201,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
           Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
             child: Text(_content.styles?.strings?['experience_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.selection.header', "How did it go?"),
-              style: Styles().textStyles.getTextStyle("widget.title.light.regular")?.apply(color: _color),
+              style: Styles().textStyles.getTextStyle("widget.detail.regular"),
             ),
           ),
           Padding(
@@ -259,7 +259,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(notesHeaderText, style: Styles().textStyles.getTextStyle("widget.title.light.small.fat")?.apply(color: _color),),
+                Text(notesHeaderText, style: Styles().textStyles.getTextStyle("widget.detail.small.fat"),),
                 Visibility(
                   visible: widget.isCurrent && SpeechToText().isEnabled,
                   child: _buildSpeechToTextButton(),
@@ -274,7 +274,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
         Padding(
           padding: EdgeInsets.symmetric(vertical: 16),
           child: Text(_content.styles?.strings?['complete_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.completion.selection.header', "Did you complete this task?"),
-            style: Styles().textStyles.getTextStyle("widget.title.light.regular")?.apply(color: _color),
+            style: Styles().textStyles.getTextStyle("widget.detail.regular"),
           ),
         ),
         Padding(
@@ -319,6 +319,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                     onTap: widget.isCurrent && widget.data?[UserContent.completeKey] != true ? (){
                       setState(() {
                         complete = isNotComplete ? null : false;
+                        experience = null;
                       });
                     } : null,
                   )),

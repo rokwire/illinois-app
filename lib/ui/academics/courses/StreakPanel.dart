@@ -84,16 +84,17 @@ class _StreakPanelState extends State<StreakPanel> {
       body: _loading ? Center(child: CircularProgressIndicator()) :
         SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: const EdgeInsets.only(left: 16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Stack(
+                    alignment: AlignmentDirectional.centerStart,
                     children: [
+                      Align(alignment: AlignmentDirectional.centerEnd, child: Styles().images.getImage("streak") ?? Container()),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -110,7 +111,6 @@ class _StreakPanelState extends State<StreakPanel> {
                           )
                         ],
                       ),
-                      Styles().images.getImage("streak") ?? Container()
                     ],
                   ),
                 ),

@@ -63,12 +63,12 @@ class _AssignmentCompletePanelState extends State<AssignmentCompletePanel> {
                   padding: const EdgeInsets.only(bottom: 16.0),
                   child: Text(
                     sprintf(Localization().getStringEx('panel.essential_skills_coach.assignment.complete.earned_pause.message', "You earned a pause!\nYou now have %d pauses."), [widget.pauses]),
-                    style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")?.apply(color: widget.color),
+                    style: Styles().textStyles.getTextStyle("widget.detail.extra_large.fat"),
                   ),
                 ),
               Text(
                 Localization().getStringEx('panel.essential_skills_coach.assignment.complete.message', "Keep up the \ngood work!"),
-                style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")?.apply(color: widget.color),
+                style: Styles().textStyles.getTextStyle("widget.detail.extra_large.fat"),
               ),
             ],
           )
