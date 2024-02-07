@@ -472,7 +472,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   Event2SurveyDetails? _surveyDetails;
   Survey? _survey;
   List<Survey> _surveysCache = <Survey>[];
-  List<Group> _targetGroups = <Group>[];
+
+  List<Group>? _eventGroups;
+  List<Group>? _initialEventGroups;
+  bool _loadingEventGroups = false;
 
   String? _sponsor;
   String? _speaker;
@@ -515,13 +518,15 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     _websiteController.text = widget.event?.eventUrl ?? '';
 
     _timeZone = timeZoneDatabase.locations[widget.event?.timezone] ?? DateTimeLocal.timezoneLocal;
-    if (widget.event?.startTimeUtc != null) {
-      TZDateTime startTime = TZDateTime.from(widget.event!.startTimeUtc!, _timeZone);
+    DateTime? startTimeUtc = widget.event?.startTimeUtc;
+    if (startTimeUtc != null) {
+      TZDateTime startTime = TZDateTime.from(startTimeUtc, _timeZone);
       _startDate = TZDateTimeUtils.dateOnly(startTime);
       _startTime = TimeOfDay.fromDateTime(startTime);
     }
-    if (widget.event?.endTimeUtc != null) {
-      TZDateTime endTime = TZDateTime.from(widget.event!.endTimeUtc!, _timeZone);
+    DateTime? endTimeUtc = widget.event?.endTimeUtc;
+    if (endTimeUtc != null) {
+      TZDateTime endTime = TZDateTime.from(endTimeUtc, _timeZone);
       _endDate = TZDateTimeUtils.dateOnly(endTime);
       _endTime = TimeOfDay.fromDateTime(endTime);
     }
@@ -552,7 +557,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     _attendanceDetails = widget.event?.attendanceDetails;
     _surveyDetails = widget.event?.surveyDetails;
     _survey = widget.survey;
-    _targetGroups = widget.targetGroups ?? <Group>[];
 
     _sponsor = widget.event?.sponsor;
     _speaker = widget.event?.speaker;
@@ -570,6 +574,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     _locationLongitudeController.addListener(_updateErrorMap);
     _costController.addListener(_updateErrorMap);
     _websiteController.addListener(_updateErrorMap);
+
+    _initEventGroups();
 
     super.initState();
   }
@@ -1533,21 +1539,33 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   // Groups
 
-  Widget _buildGroupsButtonSection() => widget.isCreate ? Event2CreatePanel.buildButtonSectionWidget(
+  Widget _buildGroupsButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
     heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
       title: Localization().getStringEx('panel.event2.create.button.groups.title', '{{app_title}} APP GROUPS').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois').toUpperCase()),
       subTitle: Localization().getStringEx('panel.event2.create.button.groups.description', 'Publish your event in group(s) that you administer.'),
       onTap: _onSelectGroups,
     ),
     body: _buildGroupsSectionBody()
-  ) : Container();
+  );
 
   Widget? _buildGroupsSectionBody() {
-    List<InlineSpan> descriptionList = <InlineSpan>[];
     TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
+    if (_loadingEventGroups) {
+      return Row(children: [
+        Padding(padding: const EdgeInsets.only(right: 6), child:
+          SizedBox(width: 14, height: 14, child:
+            CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
+          ),
+        ),
+        Expanded(child:
+          Text(Localization().getStringEx('panel.event2.create.groups.load.progress.msg', 'Loading event groups...'), style: regularStyle,),
+        ),
+      ],);
+    }
+    else if (_eventGroups != null) {
+      List<InlineSpan> descriptionList = <InlineSpan>[];
 
-    if (_targetGroups.isNotEmpty) {
-      for (Group group in _targetGroups) {
+      for (Group group in _eventGroups!) {
         if (descriptionList.isNotEmpty) {
           descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
         }
@@ -1558,37 +1576,53 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
       }
 
-      return Row(children: [
+      return descriptionList.isNotEmpty ? Row(children: [
         Expanded(child:
           RichText(textScaler: MediaQuery.of(context).textScaler, text: TextSpan(style: regularStyle, children: descriptionList))
         ),
-      ],);
+      ],) : null;
     }
     else {
-      return null;
+      return widget.isUpdate ? Row(children: [
+        Expanded(child:
+          Text(Localization().getStringEx('panel.event2.create.groups.load.failed.msg', 'Failed to load event groups'), style: Styles().textStyles.getTextStyle("panel.settings.error.text.small"),),
+        ),
+      ],) : null;
     }
   }
 
   void _onSelectGroups() {
     Analytics().logSelect(target: "Event Groups");
     Event2CreatePanel.hideKeyboard(context);
-    Navigator.push<List<Group>>(context, CupertinoPageRoute(builder: (context) => Event2SetupGroups(selection: _targetGroups))).then((List<Group>? selection) {
+    Navigator.push<List<Group>>(context, CupertinoPageRoute(builder: (context) => Event2SetupGroups(selection: _eventGroups ?? <Group>[]))).then((List<Group>? selection) {
       if ((selection != null) && mounted) {
         setState(() {
-          _targetGroups = selection;
+          _eventGroups = selection;
         });
       }
     });
   }
 
-  List<String> get _selectedGroupIds {
-    List<String> selectedGroupIds = <String>[];
-    for (Group group in _targetGroups) {
-      if (group.id != null) {
-        selectedGroupIds.add(group.id ?? '');
-      }
+  List<String> get _selectedGroupIds => Group.listToListIds(_eventGroups) ?? <String>[];
+  List<String> get _initialGroupIds => Group.listToListIds(_initialEventGroups) ?? <String>[];
+
+  void _initEventGroups() {
+    String? eventId = widget.event?.id;
+    if (eventId != null) {
+      _loadingEventGroups = true;
+      Groups().loadUserGroupsHavingEventEx(eventId).then((dynamic result) {
+        if (mounted) {
+          setState(() {
+            _loadingEventGroups = false;
+            _eventGroups = JsonUtils.listTypedValue<Group>(result);
+            _initialEventGroups = (_eventGroups != null) ? List.from(_eventGroups!) : <Group>[];
+          });
+        }
+      });
     }
-    return selectedGroupIds;
+    else {
+      _eventGroups = widget.targetGroups;
+    }
   }
 
   // Visibility
@@ -1849,14 +1883,39 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
     dynamic result;
     Event2 event = _createEventFromData();
-    if (widget.isUpdate) {
-      result = await Events2().updateEvent(event);
-    }
-    else if (_targetGroups.isEmpty) {
-      result = await Events2().createEvent(event);
+    String? eventId = event.id;
+    if (eventId == null) {
+      if (_eventGroups?.isNotEmpty != true) {
+        result = await Events2().createEvent(event);
+      }
+      else {
+        result = await _createEventForGroups(event);
+      }
     }
     else {
-      result = await _createEventForGroups(event);
+      bool eventModified = (event != widget.event);
+      if (eventModified) {
+        result = await Events2().updateEvent(event);
+      }
+      else {
+        result = event;
+      }
+
+      if (mounted && (result is Event2) && !DeepCollectionEquality().equals(_eventGroups ?? <Group>[], _initialEventGroups ?? <Group>[])) {
+        dynamic groupsResult = await Groups().saveUserGroupsHavingEvent(eventId, groupIds: _selectedGroupIds, previousGroupIds: _initialGroupIds);
+        List<String>? updatedGroupIds = JsonUtils.listStringsValue(groupsResult);
+        if ((updatedGroupIds == null) && mounted) {
+          Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.create.groups.update.failed.msg', 'Failed to update event groups')).then((_) {
+            if (eventModified) {
+              Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
+                event: result,
+                survey: null,
+              )));
+            }
+          });
+          return;
+        }
+      }
     }
 
     if (mounted) {
@@ -1865,24 +1924,27 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         if (widget.isCreate) {
           if (_survey != null) {
             bool? success = await Surveys().createEvent2Survey(_survey!, result);
-
-            setStateIfMounted(() {
-              _creatingEvent = false;
-            });
-            if (success == true && result.id != null) {
-              survey = await Surveys().loadEvent2Survey(result.id!);
-              Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
-                event: result,
-                survey: survey,
-              )));
-            }
-            else {
-              Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.create.survey.create.failed.msg', 'Failed to create event survey.')).then((_) {
-                Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
-                  event: result,
-                  survey: null,
-                )));
-              });
+            if (mounted) {
+              if (success == true && result.id != null) {
+                survey = await Surveys().loadEvent2Survey(result.id!);
+                if (mounted) {
+                  Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
+                    event: result,
+                    survey: survey,
+                  )));
+                }
+              }
+              else {
+                setState(() {
+                  _creatingEvent = false;
+                });
+                Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.create.survey.create.failed.msg', 'Failed to create event survey.')).then((_) {
+                  Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
+                    event: result,
+                    survey: null,
+                  )));
+                });
+              }
             }
           }
           else {
@@ -1913,21 +1975,23 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
               }
             }
           }
-          setState(() {
-            _creatingEvent = false;
-          });
-          if (surveyUpdateResult) {
-            Navigator.of(context).pop(Event2SetupSurveyParam(
-              event: result,
-              survey: survey,
-            ));
-          } else {
-            Event2Popup.showErrorResult(context,Localization().getStringEx('panel.event2.create.survey.update.failed.msg', 'Failed to set event survey, but the number of hours setting has been saved. Remember that other event admins may have modified the survey.')).then((_) {
+          if (mounted) {
+            setState(() {
+              _creatingEvent = false;
+            });
+            if (surveyUpdateResult) {
               Navigator.of(context).pop(Event2SetupSurveyParam(
                 event: result,
                 survey: survey,
               ));
-            });
+            } else {
+              Event2Popup.showErrorResult(context,Localization().getStringEx('panel.event2.create.survey.update.failed.msg', 'Failed to set event survey, but the number of hours setting has been saved. Remember that other event admins may have modified the survey.')).then((_) {
+                Navigator.of(context).pop(Event2SetupSurveyParam(
+                  event: result,
+                  survey: survey,
+                ));
+              });
+            }
           }
         }
       }
@@ -1987,10 +2051,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   bool get _hasValidWebsiteURL => UrlUtils.isValidUrl(_websiteController.text);
 
   DateTime? get _startDateTimeUtc =>
-    (_startDate != null) ? Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _startDate!, _startTime).toUtc() : null;
+    (_startDate != null) ? DateTime.fromMillisecondsSinceEpoch(Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _startDate!, _startTime).millisecondsSinceEpoch)  : null;
 
   DateTime? get _endDateTimeUtc =>
-    (_endDate != null) ? Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _endDate!, _endTime) : null;
+    (_endDate != null) ? DateTime.fromMillisecondsSinceEpoch(Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _endDate!, _endTime).millisecondsSinceEpoch) : null;
 
   bool get _private => (_visibility == _Event2Visibility.private);
 
@@ -2055,6 +2119,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         _hasRegistrationDetails ||
         _hasAttendanceDetails ||
         _hasSurvey ||
+
+        !DeepCollectionEquality().equals(_eventGroups ?? <Group>[], widget.targetGroups ?? <Group>[]) ||
         
         (_sponsor != null) ||
         (_speaker != null) ||
@@ -2084,13 +2150,16 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         ((widget.event?.free ?? true) != _free) ||
         ((widget.event?.cost ?? '') != _costController.text) ||
 
-        (widget.event?.registrationDetails != _registrationDetails) ||
+        !Event2RegistrationDetails.equals(widget.event?.registrationDetails, _registrationDetails) ||
+        //(widget.event?.registrationDetails != _registrationDetails) ||
         (widget.event?.attendanceDetails != _attendanceDetails) ||
         (widget.event?.surveyDetails != _surveyDetails) ||
         (widget.survey != _survey) ||
 
-        ((widget.event?.sponsor ?? '') != _sponsor) ||
-        ((widget.event?.speaker ?? '') != _speaker) ||
+        !DeepCollectionEquality().equals(_eventGroups ?? <Group>[], _initialEventGroups ?? <Group>[]) ||
+
+        (widget.event?.sponsor != _sponsor) ||
+        (widget.event?.speaker != _speaker) ||
         !DeepCollectionEquality().equals(widget.event?.contacts, _contacts);
     }
 
@@ -2130,8 +2199,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       private: _private,
       published: _published,
 
-      canceled: null, // NA
-      userRole: null, // NA
+      canceled: widget.event?.canceled, // NA
+      userRole: widget.event?.userRole, // NA
 
       free: _free,
       cost: Event2CreatePanel.textFieldValue(_costController),
