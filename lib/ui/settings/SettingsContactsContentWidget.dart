@@ -59,8 +59,8 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
     final String universityUrlMacro = '{{university_url}}';
     final String shciUrlMacro = '{{shci_url}}';
     final String externalLinIconMacro = '{{external_link_icon}}';
-    String descriptionHtml = Localization().getStringEx("",
-        "The Illinois app is the official campus app of the <a href='$universityUrlMacro'> University of Illinois Urbana Champaign</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>. The app is built on the <a href='$rokwirePlatformUrlMacro'>Rokwire</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='$shciUrlMacro'>Smart, Healthy Communities Initiative</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> in the office of the Provost at the University of Illinois.");
+    String descriptionHtml = Localization().getStringEx("panel.settings.contact.feedback.app.description.format",
+        "The Illinois app is the official campus app of the <a href='$universityUrlMacro'> University of Illinois Urbana Champaign</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>. The app is built on the <a href='$rokwirePlatformUrlMacro'>Rokwire</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='$shciUrlMacro'>Smart, Healthy Communities Initiative</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> in the Office of the Provost at the University of Illinois.");
     descriptionHtml = descriptionHtml.replaceAll(rokwirePlatformUrlMacro, Config().rokwirePlatformUrl ?? '');
     descriptionHtml = descriptionHtml.replaceAll(shciUrlMacro, Config().smartHealthyInitiativeUrl ?? '');
     descriptionHtml = descriptionHtml.replaceAll(universityUrlMacro, 'https://app.illinois.edu/'); //TBD get from Config. Confirm this is the correct url
