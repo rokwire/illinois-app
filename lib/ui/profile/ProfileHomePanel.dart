@@ -165,8 +165,8 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   Widget _buildPage(BuildContext context) {
     return Column(key: _pageKey, children: <Widget>[
-      Container(color: Styles().colors.background, child:
-        Expanded(child:
+      Expanded(child:
+        Container(color: Styles().colors.background, child:
           SingleChildScrollView(physics: _contentValuesVisible ? NeverScrollableScrollPhysics() : null, child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Padding(key: _pageHeadingKey, padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
