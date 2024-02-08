@@ -258,9 +258,9 @@ class Module{
   final String? key;
   final List<Unit>? units;
 
-  final CourseDisplay? display;
+  final CourseStyles? styles;
 
-  Module({this.id, this.name, this.key, this.units, this.display});
+  Module({this.id, this.name, this.key, this.units, this.styles});
 
 
   static Module? fromJson(Map<String, dynamic>? json) {
@@ -272,7 +272,7 @@ class Module{
         name: JsonUtils.stringValue(json['name']),
         key: JsonUtils.stringValue(json['key']),
         units: Unit.listFromJson(JsonUtils.listValue(json['units'])),
-        display: CourseDisplay.fromJson(JsonUtils.mapValue(json['display'])),
+        styles: CourseStyles.fromJson(JsonUtils.mapValue(json['styles'] ?? json['display'])),
     );
   }
 
@@ -481,6 +481,8 @@ class UserUnit {
     }
     return firstCompleted;
   }
+
+  ScheduleItem? get currentScheduleItem => completed >= 0 && completed < (unit?.scheduleItems?.length ?? 0) ? (unit?.scheduleItems?[completed]) : null;
 }
 
 class ScheduleItem{
@@ -540,10 +542,27 @@ class ScheduleItem{
     return jsonList;
   }
 
-  bool get isComplete => dateCompleted != null || (userContent?.every((uc) => uc.hasData) ?? false);
+  bool get isComplete => userContent?.every((uc) => uc.isComplete) ?? false;
+
+  UserContent? get firstIncomplete {
+    try {
+      return userContent?.firstWhere((uc) => uc.isNotComplete);
+    } catch (e) {
+      if (e is! StateError) {
+        debugPrint(e.toString());
+      }
+    }
+    return null;
+  }
 }
 
 class UserContent{
+  static const String completeKey = 'complete';
+  static const String experienceKey = 'experience';
+  static const String goodExperience = 'good';
+  static const String badExperience = 'bad';
+  static const String notesKey = 'notes';
+
   final String? contentKey;
   final Map<String,dynamic>? userData;
 
@@ -590,10 +609,12 @@ class UserContent{
     return jsonList;
   }
 
-  bool get hasData => userData?.isNotEmpty ?? false;
+  // bool get hasData => userData?.isNotEmpty ?? false;
+  bool get isComplete => userData?[completeKey] == true;
+  bool get isNotComplete => !isComplete;
 }
 
-enum ReferenceType { video, keyTerm, pdf, uri, none }
+enum ReferenceType { video, text, pdf, powerpoint, uri, none }
 
 class Reference{
   final String? name;
@@ -626,8 +647,8 @@ class Reference{
   static ReferenceType typeFromString(String value) {
     switch (value) {
       case 'video': return ReferenceType.video;
-      case 'keyTerm': return ReferenceType.keyTerm;
-      case 'key_term': return ReferenceType.keyTerm;
+      case 'text': return ReferenceType.text;
+      case 'powerpoint': return ReferenceType.powerpoint;
       case 'pdf': return ReferenceType.pdf;
       case 'uri': return ReferenceType.uri;
       default: return ReferenceType.none;
@@ -637,7 +658,8 @@ class Reference{
   String stringFromType() {
     switch (type) {
       case ReferenceType.video: return 'video';
-      case ReferenceType.keyTerm: return 'keyTerm';
+      case ReferenceType.text: return 'text';
+      case ReferenceType.powerpoint: return 'powerpoint';
       case ReferenceType.pdf: return 'pdf';
       case ReferenceType.uri: return 'uri';
       default: return '';
@@ -648,8 +670,9 @@ class Reference{
     //TODO: move this to backend?
     switch (type) {
       case ReferenceType.video: return 'Video';
-      case ReferenceType.keyTerm: return 'Key Term';
-      case ReferenceType.pdf: return 'File';
+      case ReferenceType.text: return 'Key Term';
+      case ReferenceType.powerpoint: return 'Powerpoint';
+      case ReferenceType.pdf: return 'PDF';
       case ReferenceType.uri: return 'Web Link';
       default: return null;
     }
@@ -659,7 +682,8 @@ class Reference{
     //TODO: move this to backend?
     switch (type) {
       case ReferenceType.video: return 'WATCH NOW';
-      case ReferenceType.keyTerm: return 'LEARN NOW';
+      case ReferenceType.text: return 'LEARN NOW';
+      case ReferenceType.powerpoint: return 'VIEW NOW';
       case ReferenceType.pdf: return 'VIEW NOW';
       case ReferenceType.uri: return 'OPEN NOW';
       default: return null;
@@ -676,9 +700,9 @@ class Content{
   final Reference? reference;
   final List<String>? linkedContent;
 
-  final CourseDisplay? display;
+  final CourseStyles? styles;
 
-  Content({this.id, this.name, this.key, this.type, this.details, this.reference, this.linkedContent, this.display});
+  Content({this.id, this.name, this.key, this.type, this.details, this.reference, this.linkedContent, this.styles});
 
   static Content? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -692,7 +716,7 @@ class Content{
       details: JsonUtils.stringValue(json['details']),
       reference: Reference.fromJson(JsonUtils.mapValue(json['reference'])),
       linkedContent: JsonUtils.stringListValue(json['linked_content']),
-      display: CourseDisplay.fromJson(JsonUtils.mapValue(json['display'])),
+      styles: CourseStyles.fromJson(JsonUtils.mapValue(json['styles'] ?? json['display'])),
     );
   }
 
@@ -782,27 +806,23 @@ class CourseConfig {
   bool get usesUserTimezone => timezoneName == userTimezone;
 }
 
-// CourseDisplay
+// CourseStyles
 
-class CourseDisplay {
-  final String? primaryColor;
-  final String? accentColor;
-  final String? completeColor;
-  final String? incompleteColor;
-  final String? icon;
+class CourseStyles {
+  final Map<String, dynamic>? colors;
+  final Map<String, dynamic>? images;
+  final Map<String, dynamic>? strings;
 
-  CourseDisplay({this.primaryColor, this.accentColor, this.completeColor, this.incompleteColor, this.icon});
+  CourseStyles({this.colors, this.images, this.strings});
 
-  static CourseDisplay? fromJson(Map<String, dynamic>? json) {
+  static CourseStyles? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
-    return CourseDisplay(
-      primaryColor: JsonUtils.stringValue(json['primary_color']),
-      accentColor: JsonUtils.stringValue(json['accent_color']),
-      completeColor: JsonUtils.stringValue(json['complete_color']),
-      incompleteColor: JsonUtils.stringValue(json['incomplete_color']),
-      icon: JsonUtils.stringValue(json['icon']),
+    return CourseStyles(
+      colors: JsonUtils.mapValue(json['colors']),
+      images: JsonUtils.mapValue(json['images']),
+      strings: JsonUtils.mapValue(json['strings']),
     );
   }
 }
