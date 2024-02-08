@@ -11,7 +11,6 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/content.dart' as con;
-import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
@@ -96,7 +95,6 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
                     if (_fileCache[reference?.referenceKey] != null) {
                       _openVideo(context, reference?.name, _fileCache[reference?.referenceKey]!);
                     } else {
-                      _setLoadingReferenceKey(reference?.referenceKey, true);
                       _loadContentForKey(reference?.referenceKey, onResult: (value) {
                         _openVideo(context, reference?.name, value);
                       });
@@ -105,7 +103,6 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
                     Uri uri = Uri.parse(reference?.referenceKey ?? "");
                     _launchUrl(uri);
                   } else if (reference?.type != ReferenceType.text) {
-                    _setLoadingReferenceKey(reference?.referenceKey, true);
                     if (_fileCache[reference?.referenceKey] != null) {
                       _openPdf(context, reference?.name, _fileCache[reference?.referenceKey]!.path);
                     } else {
@@ -254,9 +251,11 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
   }
 
   void _loadContentForKey(String? key, {Function(File)? onResult}) {
-    if (StringUtils.isNotEmpty(key) && !_loadingReferenceKeys.contains(key)) {
-      _setLoadingReferenceKey(key, true);
-      con.Content().getFileContentItem(key!, Config().essentialSkillsCoachKey ?? "").then((value) => {
+    if ((key != null) && key.isNotEmpty && !_loadingReferenceKeys.contains(key) && mounted) {
+      setState(() {
+        _loadingReferenceKeys.add(key);
+      });;
+      con.Content().getFileContentItem(key, Config().essentialSkillsCoachKey ?? "").then((value) => {
         setStateIfMounted(() {
           _loadingReferenceKeys.remove(key);
           if (value != null) {
@@ -278,17 +277,5 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
     Navigator.push(context, MaterialPageRoute(
       builder: (context) => VideoPanel(resourceName: resourceName, file: file,),
     ),);
-  }
-
-  void _setLoadingReferenceKey(String? key, bool value) {
-    if (key != null) {
-      setStateIfMounted(() {
-        if (value) {
-          _loadingReferenceKeys.add(key);
-        } else {
-          _loadingReferenceKeys.remove(key);
-        }
-      });
-    }
   }
 }
