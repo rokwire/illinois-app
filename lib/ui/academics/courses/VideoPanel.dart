@@ -2,15 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:video_player/video_player.dart';
-
-import '../../../service/Analytics.dart';
-import '../../../service/NativeCommunicator.dart';
-import '../../widgets/VideoPlayButton.dart';
 
 class VideoPanel extends StatefulWidget {
   final String? resourceName;
