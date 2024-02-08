@@ -24,9 +24,12 @@ class UnitInfoPanel extends StatelessWidget {
       canPop: false,
       onPopInvoked: (didPop) => _saveProgress(context, didPop),
       child: Scaffold(
-        appBar: HeaderBar(title: Localization().getStringEx("panel.essential_skills_coach.unit_info.header.title", "Unit Information"), textStyle: Styles().textStyles.getTextStyle('header_bar'), onLeading: () => _saveProgress(context, false),),
+        appBar: HeaderBar(
+          title: Localization().getStringEx("panel.essential_skills_coach.unit_info.header.title", "Unit Information"),
+          textStyle: Styles().textStyles.getTextStyle('header_bar'),
+          onLeading: () => _saveProgress(context, false),
+        ),
         body: Column(
-          //TODO add any extra content i.e. videos and files
           children: [
             SingleChildScrollView(
               child: Column(
@@ -57,7 +60,6 @@ class UnitInfoPanel extends StatelessWidget {
                           padding: EdgeInsets.all(16),
                           child: Text(content.details ?? "", style: Styles().textStyles.getTextStyle("widget.detail.large")),
                         ),
-                        //TODO other content to be added here
                       ],
                     ),
                   ),
@@ -83,10 +85,10 @@ class UnitInfoPanel extends StatelessWidget {
 
   void _saveProgress(BuildContext context, bool didPop) async {
     Map<String, dynamic>? updatedData;
-    bool returnData = preview ? false : (data?['complete'] != true);
+    bool returnData = preview ? false : (data?[UserContent.completeKey] != true);
     if (returnData) {
       updatedData = data != null ? Map.from(data!) : {};
-      updatedData['complete'] = true;
+      updatedData[UserContent.completeKey] = true;
     }
     if (!didPop) {
       Navigator.pop(context, returnData ? updatedData : null);

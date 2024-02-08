@@ -42,20 +42,12 @@ class _StreakPanelState extends State<StreakPanel> {
 
   @override
   Widget build(BuildContext context) {
-    double circleSize = 100.0;
+    double streakCircleSize = 100.0;
     if (_streak >= 100) {
-      circleSize += 60.0;
+      streakCircleSize += 60.0;
     } else if (_streak >= 10) {
-      circleSize += 10.0;
+      streakCircleSize += 10.0;
     }
-    Widget bigCircle = new Container(
-      width: circleSize,
-      height: circleSize,
-      decoration: new BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-      ),
-    );
 
     List<Widget> pauseIconWidgets = [];
     for(int i = 0; i < (_courseConfig?.maxPauses ?? 0); i++) {
@@ -84,7 +76,7 @@ class _StreakPanelState extends State<StreakPanel> {
       body: _loading ? Center(child: CircularProgressIndicator()) :
         SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+            padding: EdgeInsets.only(left: 16, bottom: 16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,20 +86,27 @@ class _StreakPanelState extends State<StreakPanel> {
                   child: Stack(
                     alignment: AlignmentDirectional.centerStart,
                     children: [
-                      Align(alignment: AlignmentDirectional.centerEnd, child: Styles().images.getImage("streak") ?? Container()),
+                      Align(alignment: AlignmentDirectional.centerEnd, child: Opacity(opacity: 0.2, child: Styles().images.getImage("streak", color: Styles().colors.fillColorPrimary))),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Stack(
                             alignment: AlignmentDirectional.center,
                             children: [
-                              bigCircle,
-                              Text(_streak.toString(), style: TextStyle(fontSize: 80, color: Styles().colors.fillColorPrimary), textAlign: TextAlign.center,)
+                              Container(
+                                width: streakCircleSize,
+                                height: streakCircleSize,
+                                decoration: new BoxDecoration(
+                                  color: Styles().colors.fillColorPrimary,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              Text(_streak.toString(), style: TextStyle(fontSize: 80, color: Styles().colors.surface), textAlign: TextAlign.center,)
                             ],
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 8),
-                            child: Text(Localization().getStringEx('panel.essential_skills_coach.streak.days.suffix', "Day Streak!"), style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")),
+                            child: Text(Localization().getStringEx('panel.essential_skills_coach.streak.days.suffix', "Day Streak!"), style: Styles().textStyles.getTextStyle("widget.title.huge.extra_fat")),
                           )
                         ],
                       ),
@@ -115,14 +114,14 @@ class _StreakPanelState extends State<StreakPanel> {
                   ),
                 ),
                 Padding(
-                  padding:EdgeInsets.only(left: 16, top: 16),
-                  child:Text(Localization().getStringEx('panel.essential_skills_coach.streak.calendar.header', "Calender"), style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")),
+                  padding:EdgeInsets.symmetric(horizontal: 16.0),
+                  child:Text(Localization().getStringEx('panel.essential_skills_coach.streak.calendar.header', "Calendar"), style: Styles().textStyles.getTextStyle("widget.detail.large.fat")),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 16.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: Styles().colors.gradientColorPrimary),
+                      border: Border.all(color: Styles().colors.dividerLineAccent),
                       borderRadius: BorderRadius.all(
                           Radius.circular(5.0)
                       ),
@@ -135,7 +134,7 @@ class _StreakPanelState extends State<StreakPanel> {
                       },
                       headerStyle: HeaderStyle(
                         titleCentered: true,
-                        titleTextStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat") ?? TextStyle(),
+                        titleTextStyle: Styles().textStyles.getTextStyle("widget.detail.large.fat") ?? TextStyle(),
                         leftChevronIcon: Icon(
                           Icons.chevron_left_rounded,
                           color: Colors.white,
@@ -151,15 +150,16 @@ class _StreakPanelState extends State<StreakPanel> {
                       availableGestures: AvailableGestures.horizontalSwipe,
                       pageJumpingEnabled: true,
                       rangeSelectionMode: RangeSelectionMode.disabled,
+                      daysOfWeekHeight: 32.0,
                       daysOfWeekStyle: DaysOfWeekStyle(
                         dowTextFormatter: (date, locale) => DateFormat.E(locale).format(date).substring(0, 2),
-                        weekdayStyle: Styles().textStyles.getTextStyle("widget.title.light.small.fat") ?? TextStyle(),
-                        weekendStyle: Styles().textStyles.getTextStyle("widget.title.light.small.fat") ?? TextStyle(),
+                        weekdayStyle: Styles().textStyles.getTextStyle("widget.detail.small.fat") ?? TextStyle(),
+                        weekendStyle: Styles().textStyles.getTextStyle("widget.detail.small.fat") ?? TextStyle(),
                       ),
                       calendarStyle: CalendarStyle(
                         cellMargin: EdgeInsets.zero,
-                        defaultTextStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat") ?? TextStyle(),
-                        weekendTextStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat") ?? TextStyle(),
+                        defaultTextStyle: Styles().textStyles.getTextStyle("widget.detail.large.fat") ?? TextStyle(),
+                        weekendTextStyle: Styles().textStyles.getTextStyle("widget.detail.large.fat") ?? TextStyle(),
                         tablePadding: const EdgeInsets.symmetric(horizontal: 4.0),
                       ),
                       calendarBuilders: CalendarBuilders(
@@ -173,16 +173,15 @@ class _StreakPanelState extends State<StreakPanel> {
                     ),
                   ),
                 ),
-
                 Padding(
-                  padding:EdgeInsets.only(left: 16, top: 16),
-                  child:Text(Localization().getStringEx('panel.essential_skills_coach.streak.pauses.header', "Pauses"), style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")),
+                  padding:EdgeInsets.only(left: 16, right: 16, top: 16),
+                  child:Text(Localization().getStringEx('panel.essential_skills_coach.streak.pauses.header', "Pauses"), style: Styles().textStyles.getTextStyle("widget.detail.large.fat")),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 16.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: Styles().colors.gradientColorPrimary),
+                      border: Border.all(color: Styles().colors.dividerLineAccent),
                       borderRadius: BorderRadius.all(
                           Radius.circular(5.0)
                       ),
@@ -203,9 +202,9 @@ class _StreakPanelState extends State<StreakPanel> {
                             ),
                           Padding(
                             padding: const EdgeInsets.only(bottom: 8.0),
-                            child: Text(earnedPausesText, style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat")),
+                            child: Text(earnedPausesText, style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
                           ),
-                          Text(pauseRewardText, style: Styles().textStyles.getTextStyle("widget.title.light.regular.thin")),
+                          Text(pauseRewardText, style: Styles().textStyles.getTextStyle("widget.title.regular")),
                         ]
                       ),
                     ),
@@ -215,17 +214,17 @@ class _StreakPanelState extends State<StreakPanel> {
           ),
         ),
       ),
-      backgroundColor: Styles().colors.fillColorPrimary,
+      backgroundColor: Styles().colors.background,
     );
   }
 
   Widget? _buildSelected(BuildContext context, DateTime day, DateTime focusedDay) {
     double radius = 20.0;
     double cellWidth = 54.0;
-    BoxDecoration singleDecoration = BoxDecoration(color: Styles().colors.gradientColorPrimary, shape: BoxShape.circle);
-    BoxDecoration rangeMiddleDecoration = BoxDecoration(color: Styles().colors.gradientColorPrimary, shape: BoxShape.rectangle);
-    BoxDecoration rangeStartDecoration = BoxDecoration(color: Styles().colors.gradientColorPrimary, borderRadius: BorderRadius.only(topLeft: Radius.circular(radius), bottomLeft: Radius.circular(radius)));
-    BoxDecoration rangeEndDecoration = BoxDecoration(color: Styles().colors.gradientColorPrimary, borderRadius: BorderRadius.only(topRight: Radius.circular(radius), bottomRight: Radius.circular(radius)));
+    BoxDecoration singleDecoration = BoxDecoration(color: Styles().colors.fillColorPrimary, shape: BoxShape.circle);
+    BoxDecoration rangeMiddleDecoration = BoxDecoration(color: Styles().colors.fillColorPrimary, shape: BoxShape.rectangle);
+    BoxDecoration rangeStartDecoration = BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.only(topLeft: Radius.circular(radius), bottomLeft: Radius.circular(radius)));
+    BoxDecoration rangeEndDecoration = BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.only(topRight: Radius.circular(radius), bottomRight: Radius.circular(radius)));
 
     DateTime dayBefore = day.subtract(const Duration(days: 1));
     DateTime dayAfter = day.add(const Duration(days: 1));
@@ -265,13 +264,13 @@ class _StreakPanelState extends State<StreakPanel> {
           Container(
             width: 40,
             height: 40,
-            decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, border: Border.all(color: Styles().colors.gradientColorPrimary, width: 2.0), shape: BoxShape.circle),
+            decoration: BoxDecoration(color: Styles().colors.background, border: Border.all(color: Styles().colors.fillColorPrimary, width: 2.0), shape: BoxShape.circle),
           ),
           Align(
             alignment: AlignmentDirectional.bottomCenter,
             child: Styles().images.getImage('pause-filled-blue', size: 16.0),
           ),
-          Text(day.day.toString(), style: Styles().textStyles.getTextStyle("widget.title.light.large.fat"), textAlign: TextAlign.center,)
+          Text(day.day.toString(), style: Styles().textStyles.getTextStyle("widget.detail.large.fat"), textAlign: TextAlign.center,)
         ],
       ),
     );

@@ -3138,7 +3138,7 @@
     "panel.essential_skills_coach.assignment.complete.button.continue.label": "Continue",
     "panel.essential_skills_coach.streak.header.title": "Streak",
     "panel.essential_skills_coach.streak.days.suffix": "Day Streak!",
-    "panel.essential_skills_coach.streak.calendar.header": "Calender",
+    "panel.essential_skills_coach.streak.calendar.header": "Calendar",
     "panel.essential_skills_coach.streak.pauses.header": "Pauses",
     "panel.essential_skills_coach.pauses.missing.text": "Your number of pauses could not be determined.",
     "panel.essential_skills_coach.pauses.ratio.text": "You have earned %d of %d pauses.",
@@ -3154,6 +3154,8 @@
     "panel.essential_skills_coach.resources.select.powerpoint.label": "View All Powerpoints",
     "panel.essential_skills_coach.unit_info.header.title": "Unit Information",
     "panel.essential_skills_coach.unit_info.button.continue.label": "Continue",
+    "panel.essential_skills_coach.pdf_view.header.title": "PDF View",
+    "panel.essential_skills_coach.video.header.title": "Video",
 
     "panel.home_canvas_course.header.title": "Curso",
     "panel.home_canvas_course.load.failed.error.msg": "No se ha podido cargar el curso. Vuelve a intentarlo más tarde.",

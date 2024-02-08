@@ -4,12 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/academics/courses/ModuleHeaderWidget.dart';
-import 'package:illinois/ui/academics/courses/PDFScreen.dart';
-import 'package:illinois/ui/academics/courses/VideoPlayer.dart';
+import 'package:illinois/ui/academics/courses/PDFPanel.dart';
+import 'package:illinois/ui/academics/courses/VideoPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/content.dart' as con;
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -32,7 +31,7 @@ class ResourcesPanel extends StatefulWidget {
   State<ResourcesPanel> createState() => _ResourcesPanelState();
 }
 
-class _ResourcesPanelState extends State<ResourcesPanel> implements NotificationsListener {
+class _ResourcesPanelState extends State<ResourcesPanel> {
   Color? _color;
   late List<Content> _contentItems;
   Set<ReferenceType> _referenceTypes = {};
@@ -52,7 +51,6 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
     }
     super.initState();
 
-    // _loadDataContentItem( key: 'resource_text');
     //TODO: load and cache all content files on init?
   }
 
@@ -247,11 +245,6 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
     }
   }
 
-  @override
-  void onNotification(String name, param) {
-    // TODO: implement onNotification
-  }
-
   List<Content> _filterContentItems() {
     if (_selectedResourceType != null) {
       List<Content> filteredContentItems =  _contentItems.where((i) => i.reference?.type == _selectedResourceType).toList();
@@ -259,12 +252,6 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
     }
     return _contentItems;
   }
-
-  // //TODO fix data parsing
-  // void _loadDataContentItem({required String key}) async{
-  //   Map<String, dynamic>? response = await con.Content().getDataContentItem(key);
-  //
-  // }
 
   void _loadContentForKey(String? key, {Function(File)? onResult}) {
     if (StringUtils.isNotEmpty(key)) {
@@ -283,13 +270,13 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
 
   void _openPdf(BuildContext context, String? resourceName, String? path) {
     Navigator.push(context, MaterialPageRoute(
-      builder: (context) => PDFScreen(resourceName: resourceName, path: path, color: _color,),
+      builder: (context) => PDFPanel(resourceName: resourceName, path: path,),
     ),);
   }
 
   void _openVideo(BuildContext context, String? resourceName, File file) {
     Navigator.push(context, MaterialPageRoute(
-      builder: (context) => VideoPlayerScreen(resourceName: resourceName, file: file, color: _color,),
+      builder: (context) => VideoPanel(resourceName: resourceName, file: file,),
     ),);
   }
 

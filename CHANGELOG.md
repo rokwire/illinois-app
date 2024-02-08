@@ -10,8 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Global Settings Ui mismatches [#3935](https://github.com/rokwire/illinois-app/issues/3933).
 ### Changed
 - Profile voice recording text edit [#3923](https://github.com/rokwire/illinois-app/issues/3923).
+- Essential Skills Coach UI improvements [#3936](https://github.com/rokwire/illinois-app/issues/3936).
 ### Added
 - Added ability to edit event groups from CreateEventPanel [#3930](https://github.com/rokwire/illinois-app/issues/3930).
+- Create Data Content Panels For Essential Skills Coach [#3812](https://github.com/rokwire/illinois-app/issues/3812).
 
 ## [5.1.22] - 2024-02-06
 ### Changed
