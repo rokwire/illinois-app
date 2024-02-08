@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Essential Skills Coach UI improvements [#3936](https://github.com/rokwire/illinois-app/issues/3936).
+- Cleaned up editing event groups from CreateEventPanel [#3930](https://github.com/rokwire/illinois-app/issues/3930).
 ### Added
 - Create Data Content Panels For Essential Skills Coach [#3812](https://github.com/rokwire/illinois-app/issues/3812).
 
