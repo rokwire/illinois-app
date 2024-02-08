@@ -257,7 +257,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
     if (StringUtils.isNotEmpty(key) && !_loadingReferenceKeys.contains(key)) {
       _setLoadingReferenceKey(key, true);
       con.Content().getFileContentItem(key!, Config().essentialSkillsCoachKey ?? "").then((value) => {
-        setState(() {
+        setStateIfMounted(() {
           _loadingReferenceKeys.remove(key);
           if (value != null) {
             _fileCache[key] = value;
