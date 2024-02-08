@@ -474,7 +474,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   List<Survey> _surveysCache = <Survey>[];
 
   List<Group>? _eventGroups;
-  List<Group>? _initialEventGroups;
+  Set<String>? _initialGroupIds;
   bool _loadingEventGroups = false;
 
   String? _sponsor;
@@ -1603,9 +1603,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     });
   }
 
-  List<String> get _selectedGroupIds => Group.listToListIds(_eventGroups) ?? <String>[];
-  List<String> get _initialGroupIds => Group.listToListIds(_initialEventGroups) ?? <String>[];
-
   void _initEventGroups() {
     String? eventId = widget.event?.id;
     if (eventId != null) {
@@ -1615,7 +1612,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
           setState(() {
             _loadingEventGroups = false;
             _eventGroups = JsonUtils.listTypedValue<Group>(result);
-            _initialEventGroups = (_eventGroups != null) ? List.from(_eventGroups!) : <Group>[];
+            _initialGroupIds = Group.listToSetIds(_eventGroups) ?? <String>{};
           });
         }
       });
@@ -1883,13 +1880,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
     dynamic result;
     Event2 event = _createEventFromData();
+    Set<String> selectedGroupIds = Group.listToSetIds(_eventGroups) ?? <String>{};
     String? eventId = event.id;
     if (eventId == null) {
       if (_eventGroups?.isNotEmpty != true) {
         result = await Events2().createEvent(event);
       }
       else {
-        result = await _createEventForGroups(event);
+        result = await _createEventForGroups(event, selectedGroupIds);
       }
     }
     else {
@@ -1901,10 +1899,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         result = event;
       }
 
-      if (mounted && (result is Event2) && !DeepCollectionEquality().equals(_eventGroups ?? <Group>[], _initialEventGroups ?? <Group>[])) {
-        dynamic groupsResult = await Groups().saveUserGroupsHavingEvent(eventId, groupIds: _selectedGroupIds, previousGroupIds: _initialGroupIds);
-        List<String>? updatedGroupIds = JsonUtils.listStringsValue(groupsResult);
-        if ((updatedGroupIds == null) && mounted) {
+      if (mounted && (result is Event2) && !DeepCollectionEquality().equals(selectedGroupIds, _initialGroupIds)) {
+        dynamic groupsResult = await Groups().saveUserGroupsHavingEvent(eventId, groupIds: selectedGroupIds, previousGroupIds: _initialGroupIds);
+        if (!(groupsResult is Iterable) && mounted) {
           Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.create.groups.update.failed.msg', 'Failed to update event groups')).then((_) {
             if (eventModified) {
               Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
@@ -2004,8 +2001,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     }
   }
 
-  Future<dynamic> _createEventForGroups(Event2 source) async {
-    dynamic result = await Groups().createEventForGroupsV3(source, groupIds: _selectedGroupIds);
+  Future<dynamic> _createEventForGroups(Event2 source, Set<String> selectedGroupIds) async {
+    dynamic result = await Groups().createEventForGroupsV3(source, groupIds: selectedGroupIds);
     return (result is CreateEventForGroupsV3Param) ? result.event : result;
   }
 
@@ -2058,7 +2055,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   bool get _private => (_visibility == _Event2Visibility.private);
 
-  bool get _isGroupEvent => CollectionUtils.isNotEmpty(_selectedGroupIds);
+  bool get _isGroupEvent => CollectionUtils.isNotEmpty(_eventGroups);
 
   bool get _hasSurvey => (_survey != null) || (_surveyDetails?.isNotEmpty ?? false);
 
@@ -2156,7 +2153,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         (widget.event?.surveyDetails != _surveyDetails) ||
         (widget.survey != _survey) ||
 
-        !DeepCollectionEquality().equals(_eventGroups ?? <Group>[], _initialEventGroups ?? <Group>[]) ||
+        !DeepCollectionEquality().equals(Group.listToSetIds(_eventGroups) ?? <String>{}, _initialGroupIds ?? <String>{}) ||
 
         (widget.event?.sponsor != _sponsor) ||
         (widget.event?.speaker != _speaker) ||
