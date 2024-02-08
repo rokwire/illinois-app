@@ -254,7 +254,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
   }
 
   void _loadContentForKey(String? key, {Function(File)? onResult}) {
-    if (StringUtils.isNotEmpty(key)) {
+    if (StringUtils.isNotEmpty(key) && !_loadingReferenceKeys.contains(key)) {
       _setLoadingReferenceKey(key, true);
       con.Content().getFileContentItem(key!, Config().essentialSkillsCoachKey ?? "").then((value) => {
         setState(() {
