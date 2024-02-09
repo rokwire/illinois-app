@@ -869,7 +869,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     String? semanticsTimeLabel,
   }) {
     List<Widget> contentList = <Widget>[
-      Expanded(flex: hasTime ? 2 : 1, child:
+      Expanded(flex: hasTime ? 65 : 100, child:
         Semantics(label: semanticsDateLabel, button: true, excludeSemantics: true, child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Padding(padding: EdgeInsets.only(bottom: 4), child:
@@ -884,7 +884,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     ];
     
     if (hasTime) {
-      contentList.add(Expanded(flex: 1, child:
+      contentList.add(Expanded(flex: 35, child:
         Padding(padding: EdgeInsets.only(left: 4), child:
           Semantics(label: semanticsTimeLabel, button: true, excludeSemantics: true, child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -893,7 +893,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                   Event2CreatePanel.buildSectionTitleWidget(timeLabel ?? '', required: timeRequired),
                 ],),
               ),
-              _buildDropdownButton(label: (time != null) ? DateFormat("h:mma").format(_dateWithTimeOfDay(time)) : "-", onTap: onTime,)
+              _buildDropdownButton(label: (time != null) ? DateFormat("h:mma").format(_dateWithTimeOfDay(time)) : "-", onTap: onTime,),
             ],)
           ),
         ),
