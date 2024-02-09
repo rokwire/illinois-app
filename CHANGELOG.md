@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Check if event belongs to groups in event detail panel [#3954](https://github.com/rokwire/illinois-app/issues/3954).
+### Fixed
+- Fixed Date & Time layout in create event panel. 
 
 ## [5.1.24] - 2024-02-08
 ### Changed
