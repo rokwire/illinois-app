@@ -560,11 +560,10 @@ packages:
   font_awesome_flutter:
     dependency: "direct main"
     description:
-      name: font_awesome_flutter
-      sha256: "275ff26905134bcb59417cf60ad979136f1f8257f2f449914b2c3e05bbb4cd6f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "10.7.0"
+      path: "plugin/plugins/font_awesome_flutter"
+      relative: true
+    source: path
+    version: "10.6.0"
   fwfh_cached_network_image:
     dependency: transitive
     description:
