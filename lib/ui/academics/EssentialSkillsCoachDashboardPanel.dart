@@ -1,4 +1,5 @@
 
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
@@ -85,7 +86,18 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
 
   bool get _hasStartedSkillsCoach => _userCourse != null;
 
-  Module? get _selectedModule => _userCourse?.course?.searchByKey(moduleKey: _selectedModuleKey) ?? _course?.searchByKey(moduleKey: _selectedModuleKey); //TODO: remove _course option after start course UI
+  String? get _availableSelectedModuleKey {
+    List<DropdownMenuItem<String>> items = _moduleDropdownItems(style:  Styles().textStyles.getTextStyle("widget.title.light.large.fat"));
+    String? selected = items.firstOrNull?.value;
+    if(items.firstWhereOrNull((e) => e.value == _selectedModuleKey) != null) {
+      selected = _selectedModuleKey;
+    }
+    return selected;
+  }
+  Module? get _selectedModule {
+    String? selected = _availableSelectedModuleKey;
+    return _userCourse?.course?.searchByKey(moduleKey: selected) ?? _course?.searchByKey(moduleKey: selected);
+  } //TODO: remove _course option after start course UI
   Color? get _selectedModulePrimaryColor => _selectedModule!.display?.primaryColor != null ? Styles().colors.getColor(_selectedModule!.display!.primaryColor!) : Styles().colors.fillColorPrimary;
   Color? get _selectedModuleAccentColor => _selectedModule!.display?.accentColor != null ? Styles().colors.getColor(_selectedModule!.display!.accentColor!) : Styles().colors.fillColorSecondary;
 
@@ -128,6 +140,11 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   }
 
   Widget _buildModuleSelection(String iconKey) {
+    List<DropdownMenuItem<String>> items = _moduleDropdownItems(style:  Styles().textStyles.getTextStyle("widget.title.light.large.fat"));
+    String? selected = items.firstOrNull?.value;
+    if(items.firstWhereOrNull((e) => e.value == _selectedModuleKey) != null) {
+      selected = _selectedModuleKey;
+    }
     return Row(
       children: [
         Flexible(
@@ -141,15 +158,13 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
           flex: 4,
           child: Padding(padding: EdgeInsets.symmetric(horizontal: 16),
               child: DropdownButton(
-                  value: _selectedModuleKey,
+                  value: selected,
                   iconDisabledColor: Colors.white,
                   iconEnabledColor: Colors.white,
                   focusColor: Colors.white,
                   dropdownColor: _selectedModuleAccentColor,
                   isExpanded: true,
-                  items: _moduleDropdownItems(
-                      style: Styles().textStyles.getTextStyle(
-                          "widget.title.light.large.fat")),
+                  items: items,
                   onChanged: (String? selected) {
                     setState(() {
                       _selectedModuleKey = selected;
@@ -465,14 +480,18 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     }
   }
 
-  Future<void> _startCourse() async {
-    await _loadCourseAndUnits();
+  Future<void> _startCourse(String? moduleKeyPrefix) async {
+    //await _loadCourseAndUnits();
     if (_userCourse == null && StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
       _setLoading(true);
       UserCourse? userCourse = await CustomCourses().createUserCourse(Config().essentialSkillsCoachKey!);
       if (userCourse != null) {
         setStateIfMounted(() {
           _userCourse = userCourse;
+          String moduleKey = "${moduleKeyPrefix}_skills";
+          if(StringUtils.isNotEmpty(moduleKeyPrefix)) {
+            _selectedModuleKey = moduleKey;
+          }
         });
       }
     }

@@ -16,19 +16,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
+import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'EssentialSkillsCoachGetStarted.dart';
+import 'EssentialSkillsResults.dart';
 
 
 class EssentialSkillsCoach extends StatefulWidget {
-  final Function onStartCourse;
+  final Function (String?)? onStartCourse;
 
-  EssentialSkillsCoach({required this.onStartCourse});
+  EssentialSkillsCoach({this.onStartCourse});
 
   @override
   _EssentialSkillsCoachState createState() => _EssentialSkillsCoachState();
@@ -37,7 +40,6 @@ class EssentialSkillsCoach extends StatefulWidget {
 class _EssentialSkillsCoachState extends State<EssentialSkillsCoach> {
 
   bool whichPage = true;
-
 
   @override
   Widget build(BuildContext context) {
@@ -62,14 +64,7 @@ class _EssentialSkillsCoachState extends State<EssentialSkillsCoach> {
           label: Localization().getStringEx("panel.essential_skills_coach.get_started.button.label", 'Get Started'),
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant"),
           backgroundColor: Styles().colors.surface,
-          onTap: () {
-            setState(() {
-              whichPage = false;
-            });
-
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => EssentialSkillsCoachGetStarted(onStartCourse: widget.onStartCourse)),
-            );
-          } //SingleChildScrollView(child: EssentialSkillsCoach(onStartCourse: _startCourse,));
+          onTap:_loadResults
         )),
       ]),),
       decoration: BoxDecoration(
@@ -96,18 +91,36 @@ class _EssentialSkillsCoachState extends State<EssentialSkillsCoach> {
     ]);
   }
 
-  void _onTapStartSkillsCoach() async {
-    //TODO: begin skills coach onboarding, for now create user course and immediately start
-    Future<bool?>? result = AccessDialog.show(context: context, resource: 'academics.essential_skills_coach');
-    if (result == null) {
-      if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
-        widget.onStartCourse();
+  // void _onTapStartSkillsCoach() async {
+  //   //TODO: begin skills coach onboarding, for now create user course and immediately start
+  //   Future<bool?>? result = AccessDialog.show(context: context, resource: 'academics.essential_skills_coach');
+  //   if (result == null) {
+  //     if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
+  //       widget.onStartCourse?.call(null);
+  //     }
+  //   } else {
+  //     bool? accessResult = await result;
+  //     if (accessResult == true) {
+  //       widget.onStartCourse?.call(null);
+  //     }
+  //   }
+  // }
+
+  void _loadResults() {
+    //_setLoading(true);
+    Surveys().loadUserSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
+      if (CollectionUtils.isNotEmpty(responses)) {
+        responses!.sort(((a, b) => b.dateTaken.compareTo(a.dateTaken)));
+        if(mounted) {
+          Navigator.of(context).push(CupertinoPageRoute(builder: (context) => EssentialSkillsResults(latestResponse: responses[0], onStartCourse: widget.onStartCourse)));
+        }
       }
-    } else {
-      bool? accessResult = await result;
-      if (accessResult == true) {
-        widget.onStartCourse();
+      else {
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => EssentialSkillsCoachGetStarted(onStartCourse: widget.onStartCourse)));
       }
-    }
+      //_setLoading(false);
+    });
   }
+
+
 }

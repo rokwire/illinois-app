@@ -16,17 +16,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/academics/EssentialSkillsLearning.dart';
+import 'package:illinois/ui/academics/EssentialSkillsResults.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/service/surveys.dart';
+import 'package:rokwire_plugin/ui/panels/survey_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 
 class EssentialSkillsCoachGetStarted extends StatefulWidget {
-  final Function onStartCourse;
+  final Function (String?)? onStartCourse;
 
   EssentialSkillsCoachGetStarted({required this.onStartCourse});
 
@@ -37,18 +42,35 @@ class EssentialSkillsCoachGetStarted extends StatefulWidget {
 class _EssentialSkillsCoachGetStartedState extends State<EssentialSkillsCoachGetStarted> {
 
   @override
+  void initState() {
+    _loadResults();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: "Hello"),
+      appBar: RootHeaderBar(title: Localization().getStringEx('', 'Take the Self-Evaluation'), leading: RootHeaderBarLeading.Back,),
       body: SectionSlantHeader(
         headerWidget: _buildHeader(),
         slantColor: Styles().colors.gradientColorPrimary,
         slantPainterHeadingHeight: 0,
         backgroundColor: Styles().colors.background,
-        // children: [],
+        children: [
+          Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
+            label: Localization().getStringEx("", 'Start Evaluation'),
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant"),
+            backgroundColor: Styles().colors.surface,
+            onTap: _onTapStartEvaluation,
+            //     () {
+            //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => EssentialSkillsResults()));
+            // },
+          )),
+        ],
         childrenPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         allowOverlap: false,
       ),
+        bottomNavigationBar: uiuc.TabBar()
     );
   }
 
@@ -56,22 +78,17 @@ class _EssentialSkillsCoachGetStartedState extends State<EssentialSkillsCoachGet
     return Container(
       padding: EdgeInsets.only(top: 32, bottom: 32),
       child: Padding(padding: EdgeInsets.only(left: 24, right: 8), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Text(Localization().getStringEx('', 'Take the Essential Test'), style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.get_started.header'), textAlign: TextAlign.left,),
+        Text(Localization().getStringEx('', 'Take the Essential Skills Self-Evaluation'), style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.get_started.header'), textAlign: TextAlign.left,),
+        Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.time.description', '5 Minutes'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.time.description'), textAlign: TextAlign.left,),
         Padding(padding: EdgeInsets.only(top: 24), child: _buildDescription()),
-        Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
-            label: Localization().getStringEx("", 'Take a Survey'),
-            textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant"),
-            backgroundColor: Styles().colors.surface,
-            onTap: null
-        )),
-        Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
-            label: Localization().getStringEx("", 'Skip'),
-            textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant"),
-            backgroundColor: Styles().colors.surface,
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => EssentialSkillsLearning(onStartCourse: widget.onStartCourse)));
-            },
-        )),
+        // Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
+        //     label: Localization().getStringEx("", 'Start Evaluation'),
+        //     textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant"),
+        //     backgroundColor: Styles().colors.surface,
+        //     onTap: () {
+        //       Navigator.of(context).push(MaterialPageRoute(builder: (context) => EssentialSkillsResults()));
+        //     },
+        // )),
       ]),),
       decoration: BoxDecoration(
           shape: BoxShape.rectangle,
@@ -89,27 +106,49 @@ class _EssentialSkillsCoachGetStartedState extends State<EssentialSkillsCoachGet
 
   Widget _buildDescription() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(Localization().getStringEx("panel.essential_skills_coach.get_started.description.title", 'Improve your strengths related to:'), style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.header.description'),),
+      Text(Localization().getStringEx("panel.skills_self_evaluation.get_started.description.title", 'Identify your strengths related to:'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.header.description'),),
       Padding(padding: EdgeInsets.only(top: 8), child: Text(
-        Localization().getStringEx("panel.essential_skills_coach.get_started.description.list", '\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience'),
-        style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.header.description'),
+        Localization().getStringEx("panel.skills_self_evaluation.get_started.description.list", '\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience'),
+        style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.header.description'),
       ))
     ]);
   }
 
-  void _onTapStartSkillsCoach() async {
-    //TODO: begin skills coach onboarding, for now create user course and immediately start
-    Future<bool?>? result = AccessDialog.show(context: context, resource: 'academics.essential_skills_coach');
-    if (result == null) {
-      if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
-        widget.onStartCourse();
-      }
-    } else {
-      bool? accessResult = await result;
-      if (accessResult == true) {
-        widget.onStartCourse();
-      }
+  void _onTapStartEvaluation() {
+    Future? result = AccessDialog.show(context: context, resource: 'academics.skills_self_evaluation');
+    if (Config().bessiSurveyID != null && result == null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _gotoResults, offlineWidget: _buildOfflineWidget(), tabBar: uiuc.TabBar())));
     }
+  }
+
+  void _gotoResults(dynamic response) {
+    if (response is SurveyResponse) {
+      Navigator.of(context).push(CupertinoPageRoute(builder: (context) => EssentialSkillsResults(onStartCourse: widget.onStartCourse, latestResponse: response,)));
+    }
+  }
+
+  Widget _buildOfflineWidget() {
+    return Padding(padding: EdgeInsets.all(28), child:
+    Center(child:
+    Text(
+        Localization().getStringEx('panel.skills_self_evaluation.get_started.offline.error.msg', 'Skills Self-Evaluation is not available while offline.'),
+        textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')
+    )
+    ),
+    );
+  }
+
+  void _loadResults() {
+    //_setLoading(true);
+    Surveys().loadUserSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
+      if (CollectionUtils.isNotEmpty(responses)) {
+        responses!.sort(((a, b) => b.dateTaken.compareTo(a.dateTaken)));
+        if(mounted) {
+          _gotoResults(responses[0]);
+        }
+      }
+      //_setLoading(false);
+    });
   }
 
 }

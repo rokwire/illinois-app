@@ -22,12 +22,14 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 
 class EssentialSkillsLearning extends StatefulWidget {
-  final Function onStartCourse;
+  final Function (String?)? onStartCourse;
+  final String? selectedSkill;
 
-  EssentialSkillsLearning({required this.onStartCourse});
+  EssentialSkillsLearning({required this.onStartCourse, this.selectedSkill});
 
   @override
   _EssentialSkillsLearningState createState() => _EssentialSkillsLearningState();
@@ -38,16 +40,26 @@ class _EssentialSkillsLearningState extends State<EssentialSkillsLearning> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: "Hello"),
+      appBar: RootHeaderBar(title: Localization().getStringEx('', 'Let\'s Get Started'), leading: RootHeaderBarLeading.Back,),
       body: SectionSlantHeader(
         headerWidget: _buildHeader(),
         slantColor: Styles().colors.gradientColorPrimary,
         slantPainterHeadingHeight: 0,
         backgroundColor: Styles().colors.background,
-        // children: [],
+        children: [
+          Styles().images.getImage("streak") ?? Container(),
+          Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
+              label: Localization().getStringEx("", 'Start'),
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant"),
+              backgroundColor: Styles().colors.surface,
+              onTap: _onTap
+          )),
+
+        ],
         childrenPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         allowOverlap: false,
       ),
+        bottomNavigationBar: uiuc.TabBar()
     );
   }
 
@@ -55,14 +67,8 @@ class _EssentialSkillsLearningState extends State<EssentialSkillsLearning> {
     return Container(
       padding: EdgeInsets.only(top: 32, bottom: 32),
       child: Padding(padding: EdgeInsets.only(left: 24, right: 8), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Text(Localization().getStringEx('', 'Take the Essential Test'), style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.get_started.header'), textAlign: TextAlign.left,),
+        Text(Localization().getStringEx('', 'Start Learning'), style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.get_started.header'), textAlign: TextAlign.left,),
         Padding(padding: EdgeInsets.only(top: 24), child: _buildDescription()),
-        Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
-            label: Localization().getStringEx("", 'Take a Survey'),
-            textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant"),
-            backgroundColor: Styles().colors.surface,
-            onTap: null
-        )),
       ]),),
       decoration: BoxDecoration(
           shape: BoxShape.rectangle,
@@ -80,12 +86,17 @@ class _EssentialSkillsLearningState extends State<EssentialSkillsLearning> {
 
   Widget _buildDescription() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(Localization().getStringEx("panel.essential_skills_coach.get_started.description.title", 'Improve your strengths related to:'), style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.header.description'),),
-      Padding(padding: EdgeInsets.only(top: 8), child: Text(
-        Localization().getStringEx("panel.essential_skills_coach.get_started.description.list", '\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience'),
-        style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.header.description'),
-      ))
+      Text(Localization().getStringEx("", 'Check back everyday to complete your daily activity'), style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.header.description'),),
+      // Padding(padding: EdgeInsets.only(top: 8), child: Text(
+      //   Localization().getStringEx("panel.essential_skills_coach.get_started.description.list", '\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience'),
+      //   style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.header.description'),
+      // ))
     ]);
+  }
+
+  void _onTap() {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    widget.onStartCourse?.call(widget.selectedSkill);
   }
 
 }
