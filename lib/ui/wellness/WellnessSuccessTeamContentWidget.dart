@@ -16,15 +16,12 @@
 
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../service/Config.dart';
-import '../../service/Wellness.dart';
-import '../WebPanel.dart';
-import '../widgets/InfoPopup.dart';
+import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/model/wellness/SuccessTeam.dart';
 
 class WellnessSuccessTeamContentWidget extends StatefulWidget {

@@ -361,7 +361,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
             image: e['image'],
             externalLink: e['externalLink'])).toList();
         return primaryCareProviders;
-      } on Exception catch (_e) {
+      } on Exception catch (_) {
         return [];
       }
     } else {
@@ -384,7 +384,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
             lastName: e['last_name'],
             image: e['image'])).toList();
         return academicAdvisors;
-      } on Exception catch (_e) {
+      } on Exception catch (_) {
         return [];
       }
     } else {
