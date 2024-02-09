@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Check if event belongs to groups in event detail panel [#3954](https://github.com/rokwire/illinois-app/issues/3954).
 ### Fixed
 - Fixed Date & Time layout in create event panel. 
+### Added
+- Load individual events [#3956](https://github.com/rokwire/illinois-app/issues/3956).
 
 ## [5.1.24] - 2024-02-08
 ### Changed

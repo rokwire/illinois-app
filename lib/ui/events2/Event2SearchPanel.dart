@@ -702,6 +702,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
       customStartTimeUtc: _customStartTime?.toUtc(),
       customEndTimeUtc: _customEndTime?.toUtc(),
       types: _types,
+      groupings: Event2Grouping.individualEvents(),
       attributes: _attributes,
       sortType: _sortType,
       sortOrder: Event2SortOrder.ascending,
