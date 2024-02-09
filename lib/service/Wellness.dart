@@ -348,13 +348,22 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
 
   Future<List<SuccessTeamMember?>> getPrimaryCareProviders() async {
     String url = '${Config().gatewayUrl}/successteam/pcp?id=${Auth2().uin}';
-    http.Response? response = await Network().get(url, auth: Auth2(), headers: {'External-Authorization': Auth2().uiucToken!.accessToken});
+    http.Response? response = await Network().get(url, auth: Auth2(), headers: {'External-Authorization': Auth2().uiucToken?.accessToken});
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
-      List<dynamic> responseList = json.decode(responseString!);
-      List<SuccessTeamMember?> primaryCareProviders = responseList.map((e) => SuccessTeamMember(firstName: e['first_name'], lastName: e['last_name'], email: e['email'], image: e['image'])).toList();
-      return primaryCareProviders;
+      try {
+        List<dynamic> responseList = json.decode(responseString!);
+        List<SuccessTeamMember?> primaryCareProviders = responseList.map((e) =>
+          SuccessTeamMember(
+            firstName: e['first_name'],
+            lastName: e['last_name'],
+            image: e['image'],
+            externalLink: e['externalLink'])).toList();
+        return primaryCareProviders;
+      } on Exception catch (_e) {
+        return [];
+      }
     } else {
       Log.w('Failed to load primary care providers. Response:\n$responseCode: $responseString');
       return [];
@@ -362,14 +371,22 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
   }
 
   Future<List<SuccessTeamMember?>> getAcademicAdvisors() async {
-    String url = '${Config().gatewayUrl}/successteam/advisors?id=${Auth2().uin}&unitid=${IlliniCash().studentClassification!.collegeName == "The Grainger College of Engineering" ? "1933" : ""}';
-    http.Response? response = await Network().get(url, auth: Auth2(), headers: {'External-Authorization': Auth2().uiucToken!.accessToken});
+    String url = '${Config().gatewayUrl}/successteam/advisors?id=${Auth2().uin}&unitid=${IlliniCash().studentClassification?.collegeName == "The Grainger College of Engineering" ? "1933" : ""}';
+    http.Response? response = await Network().get(url, auth: Auth2(), headers: {'External-Authorization': Auth2().uiucToken?.accessToken});
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
-      List<dynamic> responseList = json.decode(responseString!);
-      List<SuccessTeamMember?> academicAdvisors = responseList.map((e) => SuccessTeamMember(firstName: e['first_name'], lastName: e['last_name'], email: e['email'], image: e['image'])).toList();
-      return academicAdvisors;
+      try {
+        List<dynamic> responseList = json.decode(responseString!);
+        List<SuccessTeamMember?> academicAdvisors = responseList.map((e) =>
+          SuccessTeamMember(
+            firstName: e['first_name'],
+            lastName: e['last_name'],
+            image: e['image'])).toList();
+        return academicAdvisors;
+      } on Exception catch (_e) {
+        return [];
+      }
     } else {
       Log.w('Failed to load academic advisors. Response:\n$responseCode: $responseString');
       return [];

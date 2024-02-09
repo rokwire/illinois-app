@@ -16,10 +16,14 @@
 
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../service/Config.dart';
 import '../../service/Wellness.dart';
+import '../WebPanel.dart';
 import '../widgets/InfoPopup.dart';
 import 'package:illinois/model/wellness/SuccessTeam.dart';
 
@@ -68,8 +72,8 @@ class _WellnessSuccessTeamContentWidgetState extends State<WellnessSuccessTeamCo
   Widget _buildContentUi() {
     List<Widget> widgetList = <Widget>[];
 
-    List<Widget> primaryCareProviderWidgets = this.primaryCareProviders.map((pcp) => _buildSuccessTeamItem("MCKINLEY HEALTH CENTER", "Primary Care Provider", "${pcp?.firstName} ${pcp?.lastName}", pcp!.email, pcp.image)).toList();
-    List<Widget> academicAdvisorWidgets = this.academicAdvisors.map((advisor) => _buildSuccessTeamItem("THE GRAINGER COLLEGE OF ENGINEERING", "Academic Advisor", "${advisor?.firstName} ${advisor?.lastName}", advisor!.email, advisor.image)).toList();
+    List<Widget> primaryCareProviderWidgets = this.primaryCareProviders.map((pcp) => _buildSuccessTeamItem("MCKINLEY HEALTH CENTER", "Primary Care Provider", "${pcp?.firstName} ${pcp?.lastName}", pcp!.externalLink!, pcp.image)).toList();
+    List<Widget> academicAdvisorWidgets = this.academicAdvisors.map((advisor) => _buildSuccessTeamItem("THE GRAINGER COLLEGE OF ENGINEERING", "Academic Advisor", "${advisor?.firstName} ${advisor?.lastName}", "https://my.engr.illinois.edu/advising", advisor!.image)).toList();
     if (primaryCareProviderWidgets.length > 0) widgetList.add(primaryCareProviderWidgets[0]);
     if (academicAdvisorWidgets.length > 0) widgetList.add(academicAdvisorWidgets[advisorIndex]);
 
@@ -109,9 +113,7 @@ class _WellnessSuccessTeamContentWidgetState extends State<WellnessSuccessTeamCo
         padding: EdgeInsets.all(16),
         child: Row(
           children: [
-            Spacer(),
-            Text("Your Success Team is empty.", style: Styles().textStyles.getTextStyle('widget.description.regular')),
-            Spacer(),
+            Flexible(child: Text("There are no success team members to display.", style: Styles().textStyles.getTextStyle('widget.description.small'))),
           ]
         )
       )
@@ -122,7 +124,7 @@ class _WellnessSuccessTeamContentWidgetState extends State<WellnessSuccessTeamCo
     return Padding(padding: const EdgeInsets.all(16), child: Column(children: widgetList));
   }
 
-  Widget _buildSuccessTeamItem(String department, String type, String name, String contactInfo, [String image = ""]) {
+  Widget _buildSuccessTeamItem(String department, String type, String name, String externalLink, [String image = ""]) {
     return Padding(padding: EdgeInsets.only(bottom: 16), child: Container(
         decoration: BoxDecoration(
             color: Styles().colors.white,
@@ -147,7 +149,9 @@ class _WellnessSuccessTeamContentWidgetState extends State<WellnessSuccessTeamCo
               ]),
               Row(children: [
                 Padding(padding: EdgeInsets.only(right: 6), child: Styles().images.getImage('external-link', excludeFromSemantics: true) ?? Container()),
-                Text(contactInfo, style: Styles().textStyles.getTextStyle('widget.description.regular'))]),
+                GestureDetector(onTap: () => launchUrl(Uri.parse(externalLink)), child:
+                  Text("Schedule an Appointment", style: Styles().textStyles.getTextStyle('widget.description.regular.underline'))
+                )]),
             ]),
             Spacer(),
             Padding(padding: EdgeInsets.only(left: 8), child: ClipRRect(
