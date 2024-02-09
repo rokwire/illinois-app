@@ -5,6 +5,7 @@ import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/academics/courses/PDFScreen.dart';
 import 'package:illinois/ui/academics/courses/VideoPlayer.dart';
+import 'package:illinois/ui/academics/courses/SkillsHistoryPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -265,11 +266,19 @@ class _ResourcesPanelState extends State<ResourcesPanel> implements Notification
     return _contentItems;
   }
 
-  // //TODO fix data parsing
-  // void _loadDataContentItem({required String key}) async{
-  //   Map<String, dynamic>? response = await con.Content().getDataContentItem(key);
-  //
-  // }
+
+  void _loadDataContentItem({required String key}) async{
+    List<Map<String, dynamic>> response = await con.Content.internal().getDataContentItem(key);
+    //TODO expand to multiple after more design is done
+    Map<String, dynamic>? content = response.firstOrNull;
+    print(content.toString());
+    // Map<String, dynamic>? body = JsonUtils.decodeMap(content?["Value"]);
+
+    if(content != null){
+
+    }
+
+  }
 
   void _loadContentForKey(String? key, {Function(File)? onResult}) {
     if (StringUtils.isNotEmpty(key)) {

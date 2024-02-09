@@ -8,6 +8,7 @@ import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/ui/academics/EssentialSkillsCoach.dart';
 import 'package:illinois/ui/academics/courses/AssignmentPanel.dart';
 import 'package:illinois/ui/academics/courses/ResourcesPanel.dart';
+import 'package:illinois/ui/academics/courses/SkillsHistoryPanel.dart';
 import 'package:illinois/ui/academics/courses/StreakPanel.dart';
 import 'package:illinois/ui/academics/courses/UnitInfoPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -27,22 +28,23 @@ class EssentialSkillsCoachDashboardPanel extends StatefulWidget {
   State<EssentialSkillsCoachDashboardPanel> createState() => _EssentialSkillsCoachDashboardPanelState();
 }
 
-class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoachDashboardPanel> implements NotificationsListener {
+class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoachDashboardPanel> with TickerProviderStateMixin implements NotificationsListener {
   Course? _course;
   UserCourse? _userCourse;
   List<UserUnit>? _userCourseUnits;
   CourseConfig? _courseConfig;
   bool _loading = false;
-
+  late TabController _controller;
   String? _selectedModuleKey;
+  int _tabIndex = 0;
 
   @override
   void initState() {
     _loadCourseAndUnits();
     _loadCourseConfig();
     //TODO: check ESC onboarding completed, _hasStartedSkillsCoach, completed BESSI for onboarding sequence
-
     super.initState();
+    _controller = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -53,17 +55,34 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       if (_selectedModule != null) {
         return Column(
           children: [
-            _buildStreakWidget(),
-            Container(
-              color: _selectedModulePrimaryColor,
-              child: _buildModuleSelection(_selectedModule!.display?.icon ?? 'skills-question'),
-            ),
+            _buildTabNavBar(),
             Expanded(
-              child: SingleChildScrollView(
-                child: Container(
-                  color: _selectedModulePrimaryColor,
-                  child: Column(children: _buildModuleUnitWidgets(),),
-                ),
+              child: TabBarView(
+                controller: _controller,
+                children: [
+                  SizedBox.expand(
+                    child: Column(
+                      children: [
+                        _buildStreakWidget(),
+                        Container(
+                          color: _selectedModulePrimaryColor,
+                          child: _buildModuleSelection(_selectedModule!.display?.icon ?? 'skills-question'),
+                        ),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: Container(
+                              color: _selectedModulePrimaryColor,
+                              child: Column(children: _buildModuleUnitWidgets(),),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox.expand(
+                    child: SkillsHistoryPanel()
+                  )
+                ],
               ),
             ),
           ],
@@ -92,6 +111,47 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   @override
   void onNotification(String name, param) {
     // TODO: implement onNotification
+  }
+
+  Widget _buildTabNavBar(){
+    var theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Container(
+        height: 50,
+        width: double.infinity,
+        child: Theme(
+          data: theme.copyWith(
+            colorScheme: theme.colorScheme.copyWith(
+              surfaceVariant: Colors.transparent,
+            ),
+          ),
+          child: TabBar(
+            onTap: (index){
+              setState(() {
+                _tabIndex = index;
+
+              });
+            },
+            controller: _controller,
+            indicator: BoxDecoration(
+                borderRadius: BorderRadius.circular(50), // Creates border
+                color: Styles().colors.fillColorPrimary),
+            padding: EdgeInsets.all(8),
+            tabs: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Tab(icon: Text("Skills Coach", style:( _tabIndex.compareTo(0) == 0) ? Styles().textStyles.getTextStyle("widget.title.light.small.fat") : Styles().textStyles.getTextStyle("widget.title.small.fat"))),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Tab(icon: Text("Skills History", style: (_tabIndex.compareTo(1) == 0) ? Styles().textStyles.getTextStyle("widget.title.light.small.fat") : Styles().textStyles.getTextStyle("widget.title.small.fat"))),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildStreakWidget() {

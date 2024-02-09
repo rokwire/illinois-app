@@ -682,6 +682,7 @@
     "panel.essential_skills_coach.auth_dialog.text": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimaryVariant"},
     "panel.essential_skills_coach.auth_dialog.link": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
     "panel.essential_skills_coach.content.title":  {"font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant"},
+    "panel.essential_skills_coach.results.table.header": {"font_family": "regular", "size": 12.0, "color": "fillColorPrimary"},
 
     "panel.wellness_appointments.button.title.underline":  {"extends": "widget.button.title.regular.thin.underline", "decoration_color":  "fillColorPrimary"},
     "panel.wellness_appointments.title.large":  {"extends": "widget.title.medium_large.extra_fat", "color": "blackTransparent06"},
