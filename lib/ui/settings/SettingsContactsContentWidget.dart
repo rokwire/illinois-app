@@ -66,13 +66,14 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
     descriptionHtml = descriptionHtml.replaceAll(universityUrlMacro, "https://app.illinois.edu/"/*Config().universityHomepageUrl ?? ''*/); //TBD update config value to https://app.illinois.edu/ TBD: check if this is the correct url
     descriptionHtml = descriptionHtml.replaceAll(externalLinIconMacro, 'images/external-link.png');
 
-    return  Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 20), child:
-      HtmlWidget(
-        StringUtils.ensureNotEmpty(descriptionHtml),
-        onTapUrl : (url) {_processUrl(url); return true;},
-        textStyle:  Styles().textStyles.getTextStyle("widget.item.regular.thin"),
-        customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.textBackground)} : null
-    ));
+    return  Semantics(container: true, child:
+        Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 20), child:
+          HtmlWidget(
+            StringUtils.ensureNotEmpty(descriptionHtml),
+            onTapUrl : (url) {_processUrl(url); return true;},
+            textStyle:  Styles().textStyles.getTextStyle("widget.item.regular.thin"),
+            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.textBackground)} : null
+        )));
   }
 
   Widget get _contactInfoWidget =>

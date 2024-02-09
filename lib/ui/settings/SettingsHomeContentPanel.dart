@@ -149,11 +149,13 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
               ),
             ),
             Visibility(visible: (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)), child:
-              InkWell(onTap : _onTapDebug, child:
-                Container(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child: 
-                  Styles().images.getImage('bug', excludeFromSemantics: true),
+              Semantics(label: "debug", child:
+                InkWell(onTap : _onTapDebug, child:
+                  Container(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
+                    Styles().images.getImage('bug', excludeFromSemantics: true),
+                  ),
                 ),
-              ),
+              )
             ),
             Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
               InkWell(onTap : _onTapClose, child:
