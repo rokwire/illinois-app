@@ -302,6 +302,30 @@ class CustomCourses with Service implements NotificationsListener {
     return null;
   }
 
+  // User history
+
+  // use this to load user content history items
+  Future<List<UserContent>?> loadUserContentHistory({List<String>? ids}) async {
+    if (Auth2().isLoggedIn && _isLmsAvailable) {
+      Map<String, String> queryParams = {};
+      if (CollectionUtils.isNotEmpty(ids)) {
+        queryParams['ids'] = ids!.join(',');
+      }
+      String? url = '${Config().lmsUrl}/users/contents';
+      if (queryParams.isNotEmpty) {
+        url = UrlUtils.addQueryParameters(url, queryParams);
+      }
+      http.Response? response = await Network().get(url, auth: Auth2());
+      String? responseString = response?.statusCode == 200 ? response?.body : null;
+      if (responseString != null) {
+        List<dynamic> responseMap = JsonUtils.decodeList(responseString) ?? [];
+        List<UserContent>? content = UserContent.listFromJson(responseMap);
+        return content;
+      }
+    }
+    return null;
+  }
+
   // Event Detail Deep Links
 
   /* Unused: void _onDeepLinkUri(Uri? uri) {

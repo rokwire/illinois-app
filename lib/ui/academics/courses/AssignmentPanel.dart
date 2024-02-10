@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
+import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/academics/courses/ModuleHeaderWidget.dart';
 import 'package:illinois/ui/academics/courses/ResourcesPanel.dart';
@@ -11,6 +12,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class AssignmentPanel extends StatefulWidget {
@@ -21,6 +23,7 @@ class AssignmentPanel extends StatefulWidget {
   final bool isCurrent;
   final List<Content>? helpContent;
   final bool preview;
+  final List<UserScheduleItem>? userScheduleItems;
 
   final Widget? moduleIcon;
   final String moduleName;
@@ -29,7 +32,7 @@ class AssignmentPanel extends StatefulWidget {
   final int activityNumber;
 
   AssignmentPanel({required this.content, required this.data, required this.color, required this.colorAccent, required this.isCurrent,
-    this.helpContent, required this.preview, this.moduleIcon, required this.moduleName, required this.unitNumber, required this.unitName, required this.activityNumber,});
+    this.helpContent, required this.preview, this.moduleIcon, required this.moduleName, required this.unitNumber, required this.unitName, required this.activityNumber, this.userScheduleItems});
 
   @override
   State<AssignmentPanel> createState() => _AssignmentPanelState();
@@ -44,6 +47,8 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
   Color? _colorAccent;
   TextEditingController _controller = TextEditingController();
   ScrollController _scrollController = ScrollController();
+  List<UserScheduleItem>? _userScheduleItems;
+  List<UserContent>? _userContent;
 
   bool _helpContentOpen = false;
   bool _listening = false;
@@ -54,9 +59,19 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
       SpeechToText.notifyError,
     ]);
 
-    //TODO: load history
-
     _content = widget.content;
+    _userScheduleItems = widget.userScheduleItems;
+    if(_userScheduleItems != null){
+      for(UserScheduleItem item in _userScheduleItems!){
+        for(UserContentReference ref in item?.userContent ?? []){
+          if(ref.contentKey == _content.key){
+            CustomCourses().loadUserContentHistory(ids: ref.ids).then((responses) {
+              _userContent = List.from(responses as Iterable);
+            });
+          }
+        }
+      }
+    }
     _data = widget.data != null ? Map.of(widget.data!) : null;
     _controller.text = userNotes ?? '';
     _color = widget.color;
@@ -344,11 +359,52 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
             ),
           )
         ),
-        //TODO: add history here
+        Padding(padding: EdgeInsets.only(bottom: 16),
+          child: ExpansionTile(
+            title: Text("History", style: Styles().textStyles.getTextStyle("widget.detail.small.fat")),
+            children: _buildTaskHistoryWidgets()
+          )
+        )
       ]);
     }
 
     return assignmentWidgets;
+
+  }
+
+  List<Widget> _buildTaskHistoryWidgets(){
+    List<Widget> taskWidgets = [];
+
+    for(UserContent content in _userContent ??[]){
+      taskWidgets.add(Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text((content.userData?["complete"] ?? false ? "Task Completed": "Task Not Completed"),
+              style: TextStyle(
+                color: Styles.appColors.fillColorSecondary,
+                fontFamily: Styles.appFontFamilies.bold,
+                decoration: TextDecoration.underline,
+                fontSize: 14,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(((content.userData?["complete"] ?? false) ?
+            DateTimeUtils.localDateTimeToString(DateTime.parse(content.userData?["date_completed"]), format: 'MM/dd/yy at h:mma') ?? " "
+                : DateTimeUtils.localDateTimeToString(DateTime.parse(content.userData?["date_started"]), format: 'MM/dd/yy at h:mma') ?? " "),
+              style: TextStyle(
+                color: Styles.appColors.fillColorSecondary,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
+      ));
+    }
+    return taskWidgets;
   }
 
   Widget _buildSpeechToTextButton() => Material(

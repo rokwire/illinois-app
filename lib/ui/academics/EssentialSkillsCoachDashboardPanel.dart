@@ -415,6 +415,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
               unitNumber: unitNumber,
               unitName: userUnit.unit?.name ?? '',
               activityNumber: activityNumber,
+              userScheduleItems: userUnit.userSchedule,
             )
           )).then((result) {
             if (result is Map<String, dynamic>) {

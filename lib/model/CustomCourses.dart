@@ -411,12 +411,13 @@ class UserUnit {
   final bool current;
 
   final Unit? unit;
+  List<UserScheduleItem>? userSchedule;
 
   final DateTime? lastCompleted;
   final DateTime? dateCreated;
   final DateTime? dateUpdated;
 
-  UserUnit({this.id, this.courseKey, this.moduleKey, this.completed = 0, this.current = false, this.unit, this.lastCompleted, this.dateCreated, this.dateUpdated});
+  UserUnit({this.id, this.courseKey, this.moduleKey, this.completed = 0, this.current = false, this.unit, this.lastCompleted, this.dateCreated, this.dateUpdated, this.userSchedule});
 
   factory UserUnit.emptyFromUnit(Unit unit, String courseKey, {bool current = false}) {
     return UserUnit(courseKey: courseKey, completed: 0, unit: unit, current: current);
@@ -436,6 +437,7 @@ class UserUnit {
       lastCompleted: AppDateTime().dateTimeLocalFromJson(json['last_completed']),
       dateCreated: AppDateTime().dateTimeLocalFromJson(json['date_created']),
       dateUpdated: AppDateTime().dateTimeLocalFromJson(json['date_updated']),
+      userSchedule: UserScheduleItem.listFromJson(JsonUtils.listValue(json['user_schedule']))
     );
   }
 
@@ -483,6 +485,66 @@ class UserUnit {
   }
 
   ScheduleItem? get currentScheduleItem => completed >= 0 && completed < (unit?.scheduleItems?.length ?? 0) ? (unit?.scheduleItems?[completed]) : null;
+}
+
+class UserScheduleItem{
+  List<UserContentReference>? userContent;
+  final DateTime? dateStarted;
+  final DateTime? dateCompleted;
+
+  UserScheduleItem({this.userContent, this.dateStarted, this.dateCompleted});
+
+  static UserScheduleItem? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return UserScheduleItem(
+      userContent: UserContentReference.listFromJson(JsonUtils.listValue(json['user_content'])),
+      dateStarted: AppDateTime().dateTimeLocalFromJson(json['date_started']),
+      dateCompleted: AppDateTime().dateTimeLocalFromJson(json['date_completed']),
+    );
+  }
+
+  static List<UserScheduleItem>? listFromJson(List<dynamic>? jsonList) {
+    List<UserScheduleItem>? result;
+    if (jsonList != null) {
+      result = <UserScheduleItem>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, UserScheduleItem.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+}
+
+class UserContentReference{
+  List<String>? ids;
+  String? contentKey;
+  bool? complete;
+
+  UserContentReference({this.ids, this.contentKey, this.complete});
+
+  static UserContentReference? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return UserContentReference(
+      ids: JsonUtils.listStringsValue(json['ids']),
+      contentKey: JsonUtils.stringValue(json['content_key']),
+      complete: JsonUtils.boolValue(json['complete']) ?? false,
+    );
+  }
+
+  static List<UserContentReference>? listFromJson(List<dynamic>? jsonList) {
+    List<UserContentReference>? result;
+    if (jsonList != null) {
+      result = <UserContentReference>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, UserContentReference.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
 }
 
 class ScheduleItem{
