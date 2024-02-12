@@ -17,8 +17,8 @@
 class SuccessTeamMember {
   final String firstName;
   final String lastName;
-  final String email;
   final String image;
+  final String? email;
   final String? department;
   final String? title;
   final String? externalLink;
@@ -28,8 +28,8 @@ class SuccessTeamMember {
   SuccessTeamMember({
     required this.firstName,
     required this.lastName,
-    required this.email,
     required this.image,
+    this.email,
     this.department,
     this.title,
     this.externalLink,

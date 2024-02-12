@@ -5,6 +5,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [5.1.25] - 2024-02-09
+### Changed
+- Check if event belongs to groups in event detail panel [#3954](https://github.com/rokwire/illinois-app/issues/3954).
+### Fixed
+- Fixed Date & Time layout in create event panel. 
+### Added
+- Load individual events [#3956](https://github.com/rokwire/illinois-app/issues/3956).
+
+## [5.1.24] - 2024-02-08
+### Changed
+- Essential Skills Coach UI improvements [#3936](https://github.com/rokwire/illinois-app/issues/3936).
+- Cleaned up editing event groups from CreateEventPanel [#3930](https://github.com/rokwire/illinois-app/issues/3930).
+### Added
+- Create Data Content Panels For Essential Skills Coach [#3812](https://github.com/rokwire/illinois-app/issues/3812).
+
+## [5.1.23] - 2024-02-07
+### Fixed
+- Fix Typo on Settings Screen [#3933](https://github.com/rokwire/illinois-app/issues/3933).
+- Fixed Global Settings Ui mismatches [#3935](https://github.com/rokwire/illinois-app/issues/3933).
+### Changed
+- Profile voice recording text edit [#3923](https://github.com/rokwire/illinois-app/issues/3923).
+### Added
+- Added ability to edit event groups from CreateEventPanel [#3930](https://github.com/rokwire/illinois-app/issues/3930).
+
 ## [5.1.22] - 2024-02-06
 ### Changed
 - Clean up event selector [#3905](https://github.com/rokwire/illinois-app/issues/3905).

@@ -487,6 +487,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
       customEndTimeUtc: queryCustomEndTime?.toUtc(),
       types: queryTypes,
       attributes: _queryAttributes,
+      groupings: Event2Grouping.individualEvents(),
       sortType: querySortType,
       sortOrder: Event2SortOrder.ascending,
       location: _currentLocation,

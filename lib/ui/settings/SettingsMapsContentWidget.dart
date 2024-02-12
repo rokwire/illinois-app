@@ -109,29 +109,33 @@ class _SettingsMapsContentWidgetState extends State<SettingsMapsContentWidget> i
       {required String label, bool enabled = true, required bool selected, VoidCallback? onTap}) =>
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(height: 4),
-      GestureDetector(onTap: onTap, child:
-      Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          decoration: BoxDecoration(
-              color: Styles().colors.white,
-              border: Border.all(
-                  color: Styles().colors.blackTransparent018, width: 1),
-              borderRadius: BorderRadius.all(Radius.circular(4))),
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Expanded(child:
-            Text(label, style: enabled ? Styles().textStyles.getTextStyle(
-                "widget.button.title.enabled") : Styles().textStyles
-                .getTextStyle("widget.button.title.disabled")
-            )
-            ),
-            Padding(padding: EdgeInsets.only(left: 5), child:
-            Styles().images.getImage(
-                selected ?  'radio-button-on' : 'radio-button-off',
-                excludeFromSemantics: true)
-            )
-          ])
-      )
+      Semantics(label: label, enabled: enabled, checked: selected, inMutuallyExclusiveGroup: true, child:
+        InkWell(onTap: onTap, child:
+          Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              decoration: BoxDecoration(
+                  color: Styles().colors.white,
+                  border: Border.all(
+                      color: Styles().colors.blackTransparent018, width: 1),
+                  borderRadius: BorderRadius.all(Radius.circular(4))),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Expanded(child:
+                    ExcludeSemantics(child:
+                      Text(label, style: enabled ? Styles().textStyles.getTextStyle(
+                          "widget.button.title.enabled") : Styles().textStyles
+                          .getTextStyle("widget.button.title.disabled")
+                      )
+                    )
+                ),
+                Padding(padding: EdgeInsets.only(left: 5), child:
+                Styles().images.getImage(
+                    selected ?  'radio-button-on' : 'radio-button-off',
+                    excludeFromSemantics: true)
+                )
+              ])
+          )
+        )
       )
   ]);
 

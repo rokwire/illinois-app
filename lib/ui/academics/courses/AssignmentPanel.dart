@@ -4,12 +4,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/SpeechToText.dart';
+import 'package:illinois/ui/academics/courses/ModuleHeaderWidget.dart';
+import 'package:illinois/ui/academics/courses/ResourcesPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/academics/courses/AssignmentCompletePanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:sprintf/sprintf.dart';
 
 class AssignmentPanel extends StatefulWidget {
   final Content content;
@@ -18,7 +20,16 @@ class AssignmentPanel extends StatefulWidget {
   final Color? colorAccent;
   final bool isCurrent;
   final List<Content>? helpContent;
-  AssignmentPanel({required this.content, required this.data, required this.color, required this.colorAccent, required this.isCurrent, this.helpContent});
+  final bool preview;
+
+  final Widget? moduleIcon;
+  final String moduleName;
+  final int unitNumber;
+  final String unitName;
+  final int activityNumber;
+
+  AssignmentPanel({required this.content, required this.data, required this.color, required this.colorAccent, required this.isCurrent,
+    this.helpContent, required this.preview, this.moduleIcon, required this.moduleName, required this.unitNumber, required this.unitName, required this.activityNumber,});
 
   @override
   State<AssignmentPanel> createState() => _AssignmentPanelState();
@@ -33,8 +44,8 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
   Color? _colorAccent;
   TextEditingController _controller = TextEditingController();
   ScrollController _scrollController = ScrollController();
-  List<bool> _isOpen = [false];
 
+  bool _helpContentOpen = false;
   bool _listening = false;
 
   @override
@@ -42,6 +53,8 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     NotificationService().subscribe(this, [
       SpeechToText.notifyError,
     ]);
+
+    //TODO: load history
 
     _content = widget.content;
     _data = widget.data != null ? Map.of(widget.data!) : null;
@@ -60,30 +73,44 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     super.dispose();
   }
 
-  bool get isComplete => _data?['complete'] == true;
-  bool get isNotComplete => _data?['complete'] == false;
+  bool get isComplete => _data?[UserContent.completeKey] == true;
+  bool get isNotComplete => _data?[UserContent.completeKey] == false;
   set complete(bool? value) {
     _data ??= {};
-    _data!['complete'] = value;
+    _data![UserContent.completeKey] = value;
   }
 
-  bool get isGoodExperience => _data?['experience'] == 'good';
-  bool get isBadExperience => _data?['experience'] == 'bad';
+  bool get isGoodExperience => _data?[UserContent.experienceKey] == UserContent.goodExperience;
+  bool get isBadExperience => _data?[UserContent.experienceKey] == UserContent.badExperience;
   set experience(String? value) {
     _data ??= {};
-    _data!['experience'] = value;
+    _data![UserContent.experienceKey] = value;
   }
 
-  String? get userNotes => _data?['notes'].toString();
+  String? get userNotes => _data?[UserContent.notesKey].toString();
+  set userNotes(String? value) {
+    _data ??= {};
+    _data![UserContent.notesKey] = value;
+  }
 
   @override
   Widget build(BuildContext context) {
     List<Widget> helpContentWidgets = [];
     for (Content help in _helpContent ?? []) {
       helpContentWidgets.add(
-        //TODO: make this tappable to link to ResourcesPanel
-        Padding(padding: EdgeInsets.all(8),
-          child: Text("- " + (help.name ?? "") + ": " + (help.details ?? ""), style:Styles().textStyles.getTextStyle("widget.title.light.small")),
+        Padding(padding: EdgeInsets.only(top: 16.0),
+          child: TextButton(
+            child: Text("\u2022 ${help.name}: ${help.details}", style:Styles().textStyles.getTextStyle("widget.title.light.regular")),
+            onPressed: () => Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourcesPanel(
+              color: _color,
+              initialReferenceType: help.reference?.type,
+              unitNumber: widget.unitNumber,
+              contentItems: _helpContent!,  //TODO: pass all unit resources here or only linked content for this task?
+              unitName: widget.unitName,
+              moduleIcon: widget.moduleIcon,
+              moduleName: widget.moduleName,
+            ))),
+          ),
         )
       );
     }
@@ -92,191 +119,216 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
       onPopInvoked: _saveProgress,
       child: Scaffold(
         resizeToAvoidBottomInset: true,
-        appBar: HeaderBar(title: _content.name, textStyle: Styles().textStyles.getTextStyle('header_bar'), onLeading: () => _saveProgress(false),),
+        appBar: HeaderBar(
+          title: sprintf(Localization().getStringEx("panel.essential_skills_coach.assignment.header.title", "Unit %d Activity %d"), [widget.unitNumber, widget.activityNumber]),
+          textStyle: Styles().textStyles.getTextStyle('header_bar'), onLeading: () => _saveProgress(false),
+        ),
         body: Column(
           children: [
+            ModuleHeaderWidget(icon: widget.moduleIcon, moduleName: widget.moduleName, backgroundColor: _color,),
             Expanded(
               child: SingleChildScrollView(
                 controller: _scrollController,
-                child: Column(
-                  children: _buildAssignmentActivityWidgets(),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: _buildAssignmentActivityWidgets(),
+                  ),
                 ),
               ),
             ),
-            if (helpContentWidgets.isNotEmpty)
+            if (!widget.preview)
+              Padding(
+                padding: EdgeInsets.all(16),
+                child: RoundedButton(
+                    label: Localization().getStringEx('panel.essential_skills_coach.assignment.button.save.label', 'Save'),
+                    textStyle: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"),
+                    backgroundColor: _color,
+                    borderColor: _color,
+                    onTap: () => _saveProgress(false)),
+              ),
+            if (!widget.preview && helpContentWidgets.isNotEmpty)
               ExpansionPanelList(
-                expandIconColor: Colors.white,
-                expansionCallback: (i, isOpen) =>
-                    setState(() => _isOpen[i] = !isOpen),
+                expandedHeaderPadding: EdgeInsets.zero,
+                expandIconColor: Styles().colors.surface,
+                expansionCallback: (i, isOpen) => setState(() => _helpContentOpen = isOpen),
                 children: [
                   ExpansionPanel(
                     backgroundColor: _colorAccent,
-                    isExpanded: _isOpen[0],
+                    isExpanded: _helpContentOpen,
                     headerBuilder: (BuildContext context, bool isExpanded) {
                       return ListTile(
-                          iconColor: Colors.white,
-                          title: Center(
-                            child:Text(Localization().getStringEx('panel.essential_skills_coach.assignment.help.header.title', "Helpful Information"), style:Styles().textStyles.getTextStyle("widget.title.light.large.fat")),
-                          )
+                        iconColor: Styles().colors.surface,
+                        title: Text(Localization().getStringEx('panel.essential_skills_coach.assignment.help.header.title', "Helpful Information"), style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat"))
                       );
                     },
-                    body: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: helpContentWidgets,
+                    body: Padding(
+                      padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Divider(color: _color, thickness: 2.0),
+                          ...helpContentWidgets
+                        ],
+                      ),
                     ),
                   )
                 ],
               ),
           ],
         ),
-        backgroundColor: _color,
+        backgroundColor: Styles().colors.background,
       ),
     );
   }
 
   List<Widget> _buildAssignmentActivityWidgets(){
-    List<Widget> noteWidgets = [];
-    if(isComplete){
-      noteWidgets.addAll([
-        Padding(
-          padding: EdgeInsets.all(16),
-          child: Text(Localization().getStringEx('panel.essential_skills_coach.assignment.experience.selection.header.', "How did it go?"),
-            style: Styles().textStyles.getTextStyle("widget.title.light.regular"),
+    List<Widget> assignmentWidgets = [
+      Padding(
+        padding: EdgeInsets.symmetric(horizontal: 8.0),
+        child: Align(alignment: AlignmentDirectional.centerStart, child: Text(_content.name ?? "", style: Styles().textStyles.getTextStyle("widget.detail.large.extra_fat"),)),
+      ),
+      Padding(
+        padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+        child: Align(alignment: AlignmentDirectional.centerStart, child: Text(_content.details ?? "", style: Styles().textStyles.getTextStyle("widget.detail.large"))),
+      ),
+    ];
+
+    if (!widget.preview) {
+      List<Widget> noteWidgets = [];
+      if(isComplete){
+        noteWidgets.addAll([
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Text(_content.styles?.strings?['experience_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.selection.header', "How did it go?"),
+              style: Styles().textStyles.getTextStyle("widget.detail.regular"),
+            ),
           ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(
-                width: 150,
-                child:RoundedButton(
+          Padding(
+            padding: EdgeInsets.only(bottom: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                  width: 150,
+                  child:RoundedButton(
                     label: "",
                     textWidget: Icon(
                       Icons.thumb_up_alt_rounded,
                       color: Colors.white,
                       size: 25,
                     ),
-                    textStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),
-                    backgroundColor: isGoodExperience ? _colorAccent : _color,
-                    borderColor: _colorAccent,
+                    backgroundColor: isGoodExperience ? _color : _colorAccent,
+                    borderColor: _color,
                     onTap: widget.isCurrent ? (){
                       setState(() {
-                        experience = isGoodExperience ? null : 'good';
+                        experience = isGoodExperience ? null : UserContent.goodExperience;
                       });
                     } : null,
+                  ),
                 ),
-              ),
-              SizedBox(width: 8,),
-              Container(
-                  width: 150,
-                  child:RoundedButton(
+                SizedBox(width: 8,),
+                Container(
+                    width: 150,
+                    child:RoundedButton(
                       label: "",
                       textWidget: Icon(
                         Icons.thumb_down_alt_rounded,
                         color: Colors.white,
                         size: 25,
                       ),
-                      textStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),
-                      backgroundColor:  isBadExperience ? _colorAccent : _color,
-                      borderColor: _colorAccent,
+                      backgroundColor:  isBadExperience ? _color : _colorAccent,
+                      borderColor: _color,
                       onTap: widget.isCurrent ? (){
                         setState(() {
-                          experience = isBadExperience ? null : 'bad';
+                          experience = isBadExperience ? null : UserContent.badExperience;
                         });
                       } : null,
+                    )),
+              ],
+            ),
+          ),
+        ]);
+      }
+
+      String notesHeaderText = isComplete ? (_content.styles?.strings?['notes_complete_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.good.notes.header.', "Describe your experience.")) :
+      (isNotComplete ? (_content.styles?.strings?['notes_incomplete_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.bad.notes.header.', "Why not? What got in your way?")) :
+      (_content.styles?.strings?['notes_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.notes.header.', "Notes")));
+      noteWidgets.add(
+          Padding(padding: EdgeInsets.only(top: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(notesHeaderText, style: Styles().textStyles.getTextStyle("widget.detail.small.fat"),),
+                Visibility(
+                  visible: widget.isCurrent && SpeechToText().isEnabled,
+                  child: _buildSpeechToTextButton(),
+                )
+              ],
+            ),
+          )
+      );
+
+      assignmentWidgets.addAll([
+        Divider(color: _color, thickness: 2, indent: 8.0, endIndent: 8.0,),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 16),
+          child: Text(_content.styles?.strings?['complete_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.completion.selection.header', "Did you complete this task?"),
+            style: Styles().textStyles.getTextStyle("widget.detail.regular"),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(bottom: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                width: 150,
+                child:RoundedButton(
+                    label: Localization().getStringEx('panel.essential_skills_coach.assignment.completion.button.yes.label', 'Yes'),
+                    leftIconPadding: EdgeInsets.only(left: 16),
+                    textStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),
+                    backgroundColor: isComplete ? _color : _colorAccent,
+                    borderColor: _color,
+                    leftIcon: Icon(
+                      Icons.check_rounded,
+                      color: isComplete ? _colorAccent : _color,
+                      size: 20,
+                    ),
+                    onTap: widget.isCurrent && widget.data?[UserContent.completeKey] != true ? () {
+                      setState(() {
+                        complete = isComplete ? null : true;
+                      });
+                    } : null
+                ),
+              ),
+              SizedBox(width: 8,),
+              Container(
+                  width: 150,
+                  child:RoundedButton(
+                    label: Localization().getStringEx('panel.essential_skills_coach.assignment.completion.button.no.label', 'No'),
+                    leftIconPadding: EdgeInsets.only(left: 16),
+                    textStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),
+                    backgroundColor:  isNotComplete ?  _color : _colorAccent,
+                    borderColor: _color,
+                    leftIcon: Icon(
+                      Icons.close_rounded,
+                      color: isNotComplete ? _colorAccent : _color,
+                      size: 20,
+                    ),
+                    onTap: widget.isCurrent && widget.data?[UserContent.completeKey] != true ? (){
+                      setState(() {
+                        complete = isNotComplete ? null : false;
+                        experience = null;
+                      });
+                    } : null,
                   )),
             ],
           ),
         ),
-      ]);
-    }
-
-    String notesHeaderText = isComplete ? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.good.notes.header.', "Describe your experience.") :
-      (isNotComplete ? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.bad.notes.header.', "Why not? What got in your way?") :
-        Localization().getStringEx('panel.essential_skills_coach.assignment.experience.notes.header.', "Notes"));
-    noteWidgets.add(
-        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(notesHeaderText, style: Styles().textStyles.getTextStyle("widget.title.light.small.fat"),),
-              Visibility(
-                visible: widget.isCurrent && SpeechToText().isEnabled,
-                child: _buildSpeechToTextButton(),
-              )
-            ],
-          ),
-        )
-    );
-
-    return [
-      Padding(
-        padding: EdgeInsets.all(24),
-        child: Text(_content.details ?? "", style: Styles().textStyles.getTextStyle("widget.title.light.large")),
-      ),
-      Divider(color: _colorAccent, thickness: 2, indent: 24.0, endIndent: 24.0,),
-      Padding(
-        padding: EdgeInsets.all(16),
-        child: Text(Localization().getStringEx('panel.essential_skills_coach.assignment.completion.selection.header', "Did you complete this task?"),
-          style: Styles().textStyles.getTextStyle("widget.title.light.regular"),
-        ),
-      ),
-      Padding(
-        padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Container(
-              width: 150,
-              child:RoundedButton(
-                  label: Localization().getStringEx('panel.essential_skills_coach.assignment.completion.button.yes.label', 'Yes'),
-                  leftIconPadding: EdgeInsets.only(left: 15),
-                  textStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),
-                  backgroundColor: isComplete ? _colorAccent : _color,
-                  borderColor: _colorAccent,
-                  leftIcon: Icon(
-                    Icons.check_rounded,
-                    color: isComplete ? _color : _colorAccent,
-                    size: 20,
-                  ),
-                  onTap: widget.isCurrent ? () {
-                    setState(() {
-                      complete = isComplete ? null : true;
-                    });
-                    if (isComplete) {
-                      Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentCompletePanel(contentName: _content.name ?? '', color: _color, colorAccent: _colorAccent,)));
-                    }
-                  } : null
-              ),
-            ),
-            SizedBox(width: 8,),
-            Container(
-                width: 150,
-                child:RoundedButton(
-                    label: Localization().getStringEx('panel.essential_skills_coach.assignment.completion.button.no.label', 'No'),
-                    leftIconPadding: EdgeInsets.only(left: 15),
-                    textStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),
-                    backgroundColor:  isNotComplete ?  _colorAccent : _color,
-                    borderColor: _colorAccent,
-                    leftIcon: Icon(
-                      Icons.close_rounded,
-                      color: isNotComplete ? _color : _colorAccent,
-                      size: 20,
-                    ),
-                    onTap: widget.isCurrent ? (){
-                      setState(() {
-                        complete = isNotComplete ? null : false;
-                      });
-                    } : null,
-                )),
-          ],
-        ),
-      ),
-      ...noteWidgets,
-      Padding(
-          padding: EdgeInsets.only(left: 16, right: 16, bottom: 32),
+        ...noteWidgets,
+        Padding(
+          padding: EdgeInsets.only(bottom: 32),
           child:TextField(
             controller: _controller,
             maxLines: 10,
@@ -288,18 +340,22 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
               ),
               filled: true,
               hintStyle: TextStyle(color: Colors.grey[800]),
-              fillColor: Colors.white,
+              fillColor: Styles().colors.surface,
             ),
           )
-      ),
-    ];
+        ),
+        //TODO: add history here
+      ]);
+    }
+
+    return assignmentWidgets;
   }
 
   Widget _buildSpeechToTextButton() => Material(
-    color: _color,
+    color: Styles().colors.background,
     child: IconButton(
       icon: Styles().images.getImage(_listening ? "skills-speech-pause" :"skills-speech-mic") ?? Container(),
-      color: _colorAccent,
+      color: _color,
       onPressed: () {
         if (_listening) {
           _stopListening();
@@ -311,7 +367,9 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
   );
 
   void _saveProgress(bool didPop) async {
-    _data?['notes'] = _controller.text;
+    if (userNotes != null || _controller.text.isNotEmpty) {
+      userNotes = _controller.text;
+    }
     if (!didPop) {
       Navigator.pop(context, !widget.isCurrent || DeepCollectionEquality().equals(_data, widget.data) ? null : _data);
     }

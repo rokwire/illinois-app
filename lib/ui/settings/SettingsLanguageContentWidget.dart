@@ -83,10 +83,15 @@ class _SettingsLanguageContentWidgetState extends State<SettingsLanguageContentW
   }
 
   Widget _buildLanguageOption(String name, String? code) {
-    return Row(children: [
+    bool selected = Localization().selectedLocale?.languageCode == code;
+    return
+      Semantics(label: name, checked: selected, inMutuallyExclusiveGroup: true, child:
+      Row(children: [
       Expanded(child:
         Padding(padding: EdgeInsets.only(left: 16), child:
-          Text(name, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),)
+          ExcludeSemantics(child:
+            Text(name, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),)
+          )
         )
       ),
       InkWell(onTap: () => _onLanguageOption(name, code), child:
@@ -94,7 +99,7 @@ class _SettingsLanguageContentWidgetState extends State<SettingsLanguageContentW
           Styles().images.getImage((Localization().selectedLocale?.languageCode == code) ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true)
         )
       ),
-    ],);
+    ],));
   }
 
   void _onLanguageOption(String name, String? code) {

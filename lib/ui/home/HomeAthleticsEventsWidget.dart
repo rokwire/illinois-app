@@ -248,6 +248,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
     Events2Query query = Events2Query(
         attributes: Event2HomePanel.athleticsCategoryAttributes,
         limit: Config().homeAthleticsEventsCount,
+        groupings: Event2Grouping.individualEvents(),
         sortType: Event2SortType.dateTime);
     Events2ListResult? result = await Events2().loadEvents(query);
     return result?.events;

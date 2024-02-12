@@ -753,10 +753,9 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
 
   Widget _buildAppInfo() => Column(children: [
     Container(
-      decoration: BoxDecoration(borderRadius: _allRounding, border: _allBorder,),
       padding: const EdgeInsets.all(6),
-      child: SizedBox(width: 32, height: 32, child:
-        Styles().images.getImage('university-logo', fit: BoxFit.contain),
+      child: SizedBox(width: 51, height: 51, child:
+        Styles().images.getImage('university-logo-oval-white', fit: BoxFit.contain),
       ),
     ),
     Padding(padding: const EdgeInsets.only(top: 8)),

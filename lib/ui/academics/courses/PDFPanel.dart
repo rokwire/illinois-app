@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -8,18 +7,16 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 import '../../widgets/HeaderBar.dart';
 
-class PDFScreen extends StatefulWidget {
+class PDFPanel extends StatefulWidget {
   final String? resourceName;
   final String? path;
-  final Color? color;
-  PDFScreen({Key? key, this.resourceName, this.path, required this.color}) : super(key: key);
+  PDFPanel({Key? key, this.resourceName, this.path}) : super(key: key);
 
-  _PDFScreenState createState() => _PDFScreenState();
+  _PDFPanelState createState() => _PDFPanelState();
 }
 
-class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
-  final Completer<PDFViewController> _controller =
-  Completer<PDFViewController>();
+class _PDFPanelState extends State<PDFPanel> with WidgetsBindingObserver {
+  final Completer<PDFViewController> _viewCompleter = Completer<PDFViewController>();
   int? pages = 0;
   int? currentPage = 0;
   bool isReady = false;
@@ -27,11 +24,9 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    Color? color = widget.color;
-
     return Scaffold(
-      backgroundColor: color,
-      appBar: HeaderBar(title: widget.resourceName ?? Localization().getStringEx('', 'PDF View'),
+      backgroundColor: Styles().colors.background,
+      appBar: HeaderBar(title: widget.resourceName ?? Localization().getStringEx('panel.essential_skills_coach.pdf_view.header.title', 'PDF View'),
         textStyle: Styles().textStyles.getTextStyle('header_bar'),),
       body: Stack(
         children: <Widget>[
@@ -44,8 +39,6 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
             pageSnap: true,
             defaultPage: currentPage!,
             fitPolicy: FitPolicy.BOTH,
-            preventLinkNavigation:
-            false, // if set to true the link is handled in flutter
             onRender: (_pages) {
               setState(() {
                 pages = _pages;
@@ -56,36 +49,22 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
               setState(() {
                 errorMessage = error.toString();
               });
-              print(error.toString());
             },
             onPageError: (page, error) {
               setState(() {
                 errorMessage = '$page: ${error.toString()}';
               });
-              print('$page: ${error.toString()}');
             },
             onViewCreated: (PDFViewController pdfViewController) {
-              _controller.complete(pdfViewController);
-            },
-            onLinkHandler: (String? uri) {
-              print('goto uri: $uri');
+              _viewCompleter.complete(pdfViewController);
             },
             onPageChanged: (int? page, int? total) {
-              print('page change: $page/$total');
               setState(() {
                 currentPage = page;
               });
             },
           ),
-          errorMessage.isEmpty
-              ? !isReady
-              ? Center(
-            child: CircularProgressIndicator(),
-          )
-              : Container()
-              : Center(
-            child: Text(errorMessage),
-          )
+          errorMessage.isEmpty ? (isReady ? Container() : Center(child: CircularProgressIndicator(),)) : Center(child: Text(errorMessage),),
         ],
       ),
     );
