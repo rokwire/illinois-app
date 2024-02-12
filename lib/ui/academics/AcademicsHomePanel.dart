@@ -45,8 +45,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 enum AcademicsContent { events,
   gies_checklist, uiuc_checklist,
   canvas_courses, medicine_courses, student_courses,
-  skills_self_evaluation,
-  todo_list, due_date_catalog, my_illini, appointments, skills_dashboard
+  skills_self_evaluation, essential_skills_coach,
+  todo_list, due_date_catalog, my_illini, appointments
 }
 
 class AcademicsHomePanel extends StatefulWidget {
@@ -136,7 +136,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   Widget get _bodyWidget {
     return Column(children: <Widget>[
       Container(
-        color: _skillsSelfEvaluationSelected || _skillsDashboardSelected ? Styles().colors.fillColorPrimaryVariant : Styles().colors.background,
+        color: _skillsSelfEvaluationSelected ? Styles().colors.fillColorPrimaryVariant : Styles().colors.background,
         padding: EdgeInsets.only(left: 16, top: 16, right: 16),
         child: Semantics(
           hint:  Localization().getStringEx("dropdown.hint", "DropDown"),
@@ -267,6 +267,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       return AcademicsContent.events;
     } else if (code == 'skills_self_evaluation') {
       return AcademicsContent.skills_self_evaluation;
+    } else if (code == 'essential_skills_coach') {
+      return AcademicsContent.essential_skills_coach;
     } else if (code == 'todo_list') {
       return AcademicsContent.todo_list;
     } else if (code == 'due_date_catalog') {
@@ -274,8 +276,6 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     } else if (code == 'my_illini') {
       return AcademicsContent.my_illini;
     } else if (code == 'appointments') {
-      return AcademicsContent.skills_dashboard;
-    } else if (code == 'skills_dashboard') {
       return AcademicsContent.appointments;
     } else {
       return null;
@@ -386,7 +386,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
             (_selectedContent == AcademicsContent.uiuc_checklist) ||
             (_selectedContent == AcademicsContent.student_courses) ||
             (_selectedContent == AcademicsContent.todo_list) ||
-            (_selectedContent == AcademicsContent.skills_dashboard) ||
+            (_selectedContent == AcademicsContent.essential_skills_coach) ||
             (_selectedContent == AcademicsContent.appointments) ||
             (_selectedContent == AcademicsContent.events)) ?
       _rawContentWidget :
@@ -414,10 +414,10 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return StudentCoursesContentWidget();
       case AcademicsContent.skills_self_evaluation:
         return SkillsSelfEvaluation();
+      case AcademicsContent.essential_skills_coach:
+        return EssentialSkillsCoachDashboardPanel();
       case AcademicsContent.todo_list:
         return WellnessToDoHomeContentWidget();
-      case AcademicsContent.skills_dashboard:
-        return EssentialSkillsCoachDashboardPanel();
       case AcademicsContent.due_date_catalog:
         String? guideId = Guide().detailIdFromUrl(Config().dateCatalogUrl);
         return (guideId != null) ? GuideDetailWidget(key: _dueDateCatalogKey, guideEntryId: guideId, headingColor: Styles().colors.background) : Container();
@@ -429,7 +429,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   }
   
   bool get _skillsSelfEvaluationSelected => _selectedContent == AcademicsContent.skills_self_evaluation;
-  bool get _skillsDashboardSelected => _selectedContent == AcademicsContent.skills_dashboard;
+  bool get _skillsDashboardSelected => _selectedContent == AcademicsContent.essential_skills_coach;
 
   bool _isCheckListCompleted(String contentKey) {
     int stepsCount = CheckList(contentKey).progressSteps?.length ?? 0;
@@ -455,6 +455,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return Localization().getStringEx('panel.academics.section.student_courses.label', 'My Courses');
       case AcademicsContent.skills_self_evaluation:
         return Localization().getStringEx('panel.academics.section.skills_self_evaluation.label', 'Skills Self-Evaluation');
+      case AcademicsContent.essential_skills_coach:
+        return Localization().getStringEx('panel.academics.section.essential_skills_coach.label', 'Essential Skills Coach');
       case AcademicsContent.todo_list:
         return Localization().getStringEx('panel.academics.section.todo_list.label', 'To-Do List');
       case AcademicsContent.due_date_catalog:
@@ -463,8 +465,6 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return Localization().getStringEx('panel.academics.section.my_illini.label', 'myIllini');
       case AcademicsContent.appointments:
         return Localization().getStringEx('panel.academics.section.appointments.label', 'Appointments');
-      case AcademicsContent.skills_dashboard:
-        return Localization().getStringEx('panel.academics.section.essential_skills_coach.label', 'Essential Skills Coach');
     }
   }
 

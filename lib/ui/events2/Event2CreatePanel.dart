@@ -75,11 +75,15 @@ class Event2CreatePanel extends StatefulWidget {
   static const EdgeInsetsGeometry innerTextEditContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
 
   static TextStyle? get headingTextStype => Styles().textStyles.getTextStyle("widget.title.small.fat.spaced");
+  static TextStyle? get headingDisabledTextStype => Styles().textStyles.getTextStyle("widget.title.small.fat.disabled.spaced");
   static TextStyle? get subTitleTextStype => Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
   static TextStyle? get textEditStyle => Styles().textStyles.getTextStyle('widget.input_field.dark.text.regular.thin');
 
-  static BoxDecoration get sectionDecoration => BoxDecoration(
-    border: Border.all(color: Styles().colors.mediumGray2, width: 1),
+  static BoxDecoration get sectionDecoration => sectionDecorationEx(enabled: true);
+  static BoxDecoration get sectionDisabledDecoration => sectionDecorationEx(enabled: false);
+
+  static BoxDecoration sectionDecorationEx({bool enabled = true}) => BoxDecoration(
+    border: Border.all(color: enabled ? Styles().colors.mediumGray2 : Styles().colors.surfaceAccent, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(8))
   );
 
@@ -131,7 +135,7 @@ class Event2CreatePanel extends StatefulWidget {
     EdgeInsetsGeometry bodyPadding = EdgeInsets.zero
   }) => buildSectionWidget(heading: heading, body: body, trailing: trailing, padding: padding, bodyPadding: bodyPadding);
 
-  static Widget buildSectionHeadingWidget(String title, { bool required = false, String? prefixImageKey, String? suffixImageKey, EdgeInsetsGeometry padding = sectionHeadingPadding }) {
+  static Widget buildSectionHeadingWidget(String title, { bool required = false, TextStyle? titleTextStyle, String? prefixImageKey, String? suffixImageKey, EdgeInsetsGeometry padding = sectionHeadingPadding }) {
     String semanticsLabel = title;
     if (required) {
       semanticsLabel += ", required";
@@ -146,7 +150,7 @@ class Event2CreatePanel extends StatefulWidget {
       ));
     }
 
-    contentList.add(buildSectionTitleWidget(title));
+    contentList.add(buildSectionTitleWidget(title, textStyle: titleTextStyle));
     
     if (required) {
       contentList.add(Padding(padding: EdgeInsets.only(left: 2), child:
@@ -177,11 +181,11 @@ class Event2CreatePanel extends StatefulWidget {
   }
 
   static Widget buildSectionTitleWidget(String title, { bool required = false, TextStyle? textStyle, TextStyle? requiredTextStyle,  }) =>
-    Semantics ( label: title,
-    child: RichText(textScaler: textScaler, text:
-      TextSpan(text: title, style: textStyle ?? headingTextStype, semanticsLabel: "", children: required ? <InlineSpan>[
-        TextSpan(text: ' *', style: requiredTextStyle ?? Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
-      ] : null),
+    Semantics ( label: title, child:
+      RichText(textScaler: textScaler, text:
+        TextSpan(text: title, style: textStyle ?? headingTextStype, semanticsLabel: "", children: required ? <InlineSpan>[
+          TextSpan(text: ' *', style: requiredTextStyle ?? Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
+        ] : null),
     ));
 
 
