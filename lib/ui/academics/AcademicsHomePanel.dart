@@ -136,7 +136,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   Widget get _bodyWidget {
     return Column(children: <Widget>[
       Container(
-        color: _skillsSelfEvaluationSelected || _skillsDashboardSelected ? Styles().colors.fillColorPrimaryVariant : Styles().colors.background,
+        color: _skillsSelfEvaluationSelected ? Styles().colors.fillColorPrimaryVariant : Styles().colors.background,
         padding: EdgeInsets.only(left: 16, top: 16, right: 16),
         child: Semantics(
           hint:  Localization().getStringEx("dropdown.hint", "DropDown"),

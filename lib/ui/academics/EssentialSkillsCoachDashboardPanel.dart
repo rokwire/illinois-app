@@ -11,6 +11,7 @@ import 'package:illinois/ui/academics/EssentialSkillsCoach.dart';
 import 'package:illinois/ui/academics/courses/AssignmentPanel.dart';
 import 'package:illinois/ui/academics/courses/AssignmentCompletePanel.dart';
 import 'package:illinois/ui/academics/courses/ResourcesPanel.dart';
+import 'package:illinois/ui/academics/courses/SkillsHistoryPanel.dart';
 import 'package:illinois/ui/academics/courses/StreakPanel.dart';
 import 'package:illinois/ui/academics/courses/UnitInfoPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -21,6 +22,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
+enum EssentialSkillsCoachTab { coach, history }
 
 class EssentialSkillsCoachDashboardPanel extends StatefulWidget {
   EssentialSkillsCoachDashboardPanel();
@@ -35,9 +37,9 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   List<UserUnit>? _userCourseUnits;
   CourseConfig? _courseConfig;
   bool _loading = false;
-
   String? _selectedModuleKey;
   DateTime? _pausedDateTime;
+  EssentialSkillsCoachTab _selectedTab = EssentialSkillsCoachTab.coach;
 
   @override
   void initState() {
@@ -48,7 +50,6 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     _loadCourseAndUnits();
     _loadCourseConfig();
     //TODO: check ESC onboarding completed, _hasStartedSkillsCoach, completed BESSI for onboarding sequence
-
     super.initState();
   }
 
@@ -66,17 +67,10 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       if (_selectedModule != null) {
         return Column(
           children: [
-            _buildStreakWidget(),
-            Container(
-              color: _selectedModulePrimaryColor,
-              child: _buildModuleSelection(),
-            ),
+            _buildTabNavBar(),
             Expanded(
-              child: SingleChildScrollView(
-                child: Container(
-                  color: Styles().colors.background,
-                  child: Column(children: _buildModuleUnitWidgets(),),
-                ),
+              child: SizedBox.expand(
+                child: content
               ),
             ),
           ],
@@ -119,6 +113,84 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
+  }
+
+  Widget get content {
+    if (_selectedTab == EssentialSkillsCoachTab.coach) {
+      return coachContent;
+    }
+    else if (_selectedTab == EssentialSkillsCoachTab.history) {
+      return historyContent;
+    }
+    return Container();
+  }
+
+  Widget get coachContent {
+    return Column(
+      children: [
+        _buildStreakWidget(),
+        Container(
+          color: _selectedModulePrimaryColor,
+          child: _buildModuleSelection(),
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Container(
+              color: Styles().colors.background,
+              child: Column(children: _buildModuleUnitWidgets(),),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget get historyContent {
+    return SkillsHistoryPanel();
+  }
+
+  String _tabLabel(EssentialSkillsCoachTab tab) {
+    if (tab == EssentialSkillsCoachTab.coach) {
+      return Localization().getStringEx('', "Skills Coach");
+    }
+    else if (tab == EssentialSkillsCoachTab.history) {
+      return Localization().getStringEx('', "Skills History");
+    }
+    return '';
+  }
+
+  Widget _buildTabButton(EssentialSkillsCoachTab tab) {
+    bool selected = _selectedTab == tab;
+    BorderRadius radius = BorderRadius.circular(40);
+    return Padding(
+      padding: const EdgeInsets.only(left: 8.0),
+      child: Material(
+        borderRadius: radius, // Creates border
+        color: selected ? Styles().colors.fillColorPrimary : Styles().colors.backgroundVariant,
+        child: InkWell(
+          borderRadius: radius,
+          onTap: () =>setStateIfMounted(() {
+            _selectedTab = tab;
+          }),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Text(_tabLabel(tab), style: selected ?
+              Styles().textStyles.getTextStyle("widget.title.light.small.fat")
+                : Styles().textStyles.getTextStyle("widget.title.small.fat")),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabNavBar(){
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(children: [
+        _buildTabButton(EssentialSkillsCoachTab.coach),
+        _buildTabButton(EssentialSkillsCoachTab.history),
+      ]),
+    );
   }
 
   Widget _buildStreakWidget() {

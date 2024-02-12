@@ -63,6 +63,7 @@ dependencies:
   table_calendar: ^3.0.9
   flutter_beep: ^1.0.0
   flutter_pdfview: ^1.2.7
+  fl_chart: ^0.62.0
   font_awesome_flutter: '>= 4.7.0' # comment if published plugin is used
 # google_maps_flutter: ^2.2.5
 
