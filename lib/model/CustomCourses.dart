@@ -630,7 +630,7 @@ class ScheduleItem{
     return jsonList;
   }
 
-  bool get isRequired => duration == null;
+  bool get isRequired => duration != null;
 }
 
 class UserContent{
