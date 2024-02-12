@@ -21,6 +21,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
+enum EssentialSkillsCoachTab { coach, history }
 
 class EssentialSkillsCoachDashboardPanel extends StatefulWidget {
   EssentialSkillsCoachDashboardPanel();
@@ -29,16 +30,15 @@ class EssentialSkillsCoachDashboardPanel extends StatefulWidget {
   State<EssentialSkillsCoachDashboardPanel> createState() => _EssentialSkillsCoachDashboardPanelState();
 }
 
-class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoachDashboardPanel> with TickerProviderStateMixin implements NotificationsListener {
+class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoachDashboardPanel> implements NotificationsListener {
   Course? _course;
   UserCourse? _userCourse;
   List<UserUnit>? _userCourseUnits;
   CourseConfig? _courseConfig;
   bool _loading = false;
-  late TabController _controller;
   String? _selectedModuleKey;
   DateTime? _pausedDateTime;
-  int _tabIndex = 0;
+  EssentialSkillsCoachTab _selectedTab = EssentialSkillsCoachTab.coach;
 
   @override
   void initState() {
@@ -50,7 +50,6 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     _loadCourseConfig();
     //TODO: check ESC onboarding completed, _hasStartedSkillsCoach, completed BESSI for onboarding sequence
     super.initState();
-    _controller = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -69,32 +68,8 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
           children: [
             _buildTabNavBar(),
             Expanded(
-              child: TabBarView(
-                controller: _controller,
-                children: [
-                  SizedBox.expand(
-                    child: Column(
-                      children: [
-                        _buildStreakWidget(),
-                        Container(
-                          color: _selectedModulePrimaryColor,
-                          child: _buildModuleSelection(),
-                        ),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            child: Container(
-                              color: Styles().colors.background,
-                              child: Column(children: _buildModuleUnitWidgets(),),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox.expand(
-                    child: SkillsHistoryPanel()
-                  )
-                ],
+              child: SizedBox.expand(
+                child: content
               ),
             ),
           ],
@@ -128,44 +103,81 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     }
   }
 
-  Widget _buildTabNavBar(){
-    var theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: Container(
-        height: 50,
-        width: double.infinity,
-        child: Theme(
-          data: theme.copyWith(
-            colorScheme: theme.colorScheme.copyWith(
-              surfaceVariant: Colors.transparent,
+  Widget get content {
+    if (_selectedTab == EssentialSkillsCoachTab.coach) {
+      return coachContent;
+    }
+    else if (_selectedTab == EssentialSkillsCoachTab.history) {
+      return historyContent;
+    }
+    return Container();
+  }
+
+  Widget get coachContent {
+    return Column(
+      children: [
+        _buildStreakWidget(),
+        Container(
+          color: _selectedModulePrimaryColor,
+          child: _buildModuleSelection(),
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Container(
+              color: Styles().colors.background,
+              child: Column(children: _buildModuleUnitWidgets(),),
             ),
           ),
-          child: TabBar(
-            onTap: (index){
-              setState(() {
-                _tabIndex = index;
+        ),
+      ],
+    );
+  }
 
-              });
-            },
-            controller: _controller,
-            indicator: BoxDecoration(
-                borderRadius: BorderRadius.circular(50), // Creates border
-                color: Styles().colors.fillColorPrimary),
-            padding: EdgeInsets.all(8),
-            tabs: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Tab(icon: Text("Skills Coach", style:( _tabIndex.compareTo(0) == 0) ? Styles().textStyles.getTextStyle("widget.title.light.small.fat") : Styles().textStyles.getTextStyle("widget.title.small.fat"))),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Tab(icon: Text("Skills History", style: (_tabIndex.compareTo(1) == 0) ? Styles().textStyles.getTextStyle("widget.title.light.small.fat") : Styles().textStyles.getTextStyle("widget.title.small.fat"))),
-                ),
-            ],
+  Widget get historyContent {
+    return SkillsHistoryPanel();
+  }
+
+  String _tabLabel(EssentialSkillsCoachTab tab) {
+    if (tab == EssentialSkillsCoachTab.coach) {
+      return Localization().getStringEx('', "Skills Coach");
+    }
+    else if (tab == EssentialSkillsCoachTab.history) {
+      return Localization().getStringEx('', "Skills History");
+    }
+    return '';
+  }
+
+  Widget _buildTabButton(EssentialSkillsCoachTab tab) {
+    bool selected = _selectedTab == tab;
+    BorderRadius radius = BorderRadius.circular(40);
+    return Padding(
+      padding: const EdgeInsets.only(left: 8.0),
+      child: Material(
+        borderRadius: radius, // Creates border
+        color: selected ? Styles().colors.fillColorPrimary : Styles().colors.backgroundVariant,
+        child: InkWell(
+          borderRadius: radius,
+          onTap: () =>setStateIfMounted(() {
+            _selectedTab = tab;
+          }),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Text(_tabLabel(tab), style: selected ?
+              Styles().textStyles.getTextStyle("widget.title.light.small.fat")
+                : Styles().textStyles.getTextStyle("widget.title.small.fat")),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTabNavBar(){
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(children: [
+        _buildTabButton(EssentialSkillsCoachTab.coach),
+        _buildTabButton(EssentialSkillsCoachTab.history),
+      ]),
     );
   }
 

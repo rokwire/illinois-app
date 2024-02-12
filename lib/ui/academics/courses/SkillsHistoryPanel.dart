@@ -133,7 +133,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(_determineSkillScore(lastStats?.scores["cooperation"], lastStats?.maximumScores["cooperation"]).toString(), style: TextStyle(color: Styles().colors.essentialSkillsCoachRed, fontSize: 32)),
+                      child: Text(_determineSkillScore(lastStats?.scores["cooperation"], lastStats?.maximumScores["cooperation"]).toString(), style: TextStyle(color: Styles().colors.getColor('essentialSkillsCoachRed'), fontSize: 32)),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -163,7 +163,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(_determineSkillScore(lastStats?.scores["emotional_resilience"], lastStats?.maximumScores["emotional_resilience"]).toString(), style: TextStyle(color: Styles().colors.essentialSkillsCoachOrange, fontSize: 32)),
+                      child: Text(_determineSkillScore(lastStats?.scores["emotional_resilience"], lastStats?.maximumScores["emotional_resilience"]).toString(), style: TextStyle(color: Styles().colors.getColor('essentialSkillsCoachOrange'), fontSize: 32)),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -193,7 +193,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(_determineSkillScore(lastStats?.scores["innovation"], lastStats?.maximumScores["innovation"]).toString(), style: TextStyle(color: Styles().colors.essentialSkillsCoachGreen, fontSize: 32)),
+                      child: Text(_determineSkillScore(lastStats?.scores["innovation"], lastStats?.maximumScores["innovation"]).toString(), style: TextStyle(color: Styles().colors.getColor('essentialSkillsCoachGreen'), fontSize: 32)),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -223,7 +223,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(_determineSkillScore(lastStats?.scores["self_management"], lastStats?.maximumScores["self_management"]).toString(), style: TextStyle(color: Styles().colors.essentialSkillsCoachBlue, fontSize: 32)),
+                      child: Text(_determineSkillScore(lastStats?.scores["self_management"], lastStats?.maximumScores["self_management"]).toString(), style: TextStyle(color: Styles().colors.getColor('essentialSkillsCoachBlue'), fontSize: 32)),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -253,7 +253,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(_determineSkillScore(lastStats?.scores["social_engagement"], lastStats?.maximumScores["social_engagement"]).toString(), style: TextStyle(color: Styles().colors.essentialSkillsCoachPurple, fontSize: 32)),
+                      child: Text(_determineSkillScore(lastStats?.scores["social_engagement"], lastStats?.maximumScores["social_engagement"]).toString(), style: TextStyle(color: Styles().colors.getColor('essentialSkillsCoachPurple'), fontSize: 32)),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -291,7 +291,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
 
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(_determineSkillScore(lastStats?.scores["cooperation"], lastStats?.maximumScores["cooperation"]).toString(), style: TextStyle(color: Styles().colors.essentialSkillsCoachRed, fontSize: 32)),
+                        child: Text(_determineSkillScore(lastStats?.scores["cooperation"], lastStats?.maximumScores["cooperation"]).toString(), style: TextStyle(color: Styles().colors.getColor('essentialSkillsCoachRed'), fontSize: 32)),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -325,7 +325,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(_determineSkillScore(lastStats?.scores["emotional_resilience"], lastStats?.maximumScores["emotional_resilience"]).toString(), style: TextStyle(color: Styles().colors.essentialSkillsCoachOrange, fontSize: 32)),
+                        child: Text(_determineSkillScore(lastStats?.scores["emotional_resilience"], lastStats?.maximumScores["emotional_resilience"]).toString(), style: TextStyle(color: Styles().colors.getColor('essentialSkillsCoachOrange'), fontSize: 32)),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -359,7 +359,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(_determineSkillScore(lastStats?.scores["innovation"], lastStats?.maximumScores["innovation"]).toString(), style: TextStyle(color: Styles().colors.essentialSkillsCoachGreen, fontSize: 32)),
+                        child: Text(_determineSkillScore(lastStats?.scores["innovation"], lastStats?.maximumScores["innovation"]).toString(), style: TextStyle(color: Styles().colors.getColor('essentialSkillsCoachGreen'), fontSize: 32)),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -393,7 +393,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(_determineSkillScore(lastStats?.scores["self_management"], lastStats?.maximumScores["self_management"]).toString(), style: TextStyle(color: Styles().colors.essentialSkillsCoachBlue, fontSize: 32)),
+                        child: Text(_determineSkillScore(lastStats?.scores["self_management"], lastStats?.maximumScores["self_management"]).toString(), style: TextStyle(color: Styles().colors.getColor('essentialSkillsCoachBlue'), fontSize: 32)),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -427,7 +427,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(_determineSkillScore(lastStats?.scores["social_engagement"], lastStats?.maximumScores["social_engagement"]).toString(), style: TextStyle(color: Styles().colors.essentialSkillsCoachPurple, fontSize: 32)),
+                        child: Text(_determineSkillScore(lastStats?.scores["social_engagement"], lastStats?.maximumScores["social_engagement"]).toString(), style: TextStyle(color: Styles().colors.getColor('essentialSkillsCoachPurple'), fontSize: 32)),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),

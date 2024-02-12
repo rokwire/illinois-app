@@ -250,20 +250,6 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
     return _contentItems;
   }
 
-
-  void _loadDataContentItem({required String key}) async{
-    List<Map<String, dynamic>> response = await con.Content.internal().getDataContentItem(key);
-    //TODO expand to multiple after more design is done
-    Map<String, dynamic>? content = response.firstOrNull;
-    print(content.toString());
-    // Map<String, dynamic>? body = JsonUtils.decodeMap(content?["Value"]);
-
-    if(content != null){
-
-    }
-
-  }
-
   void _loadContentForKey(String? key, {Function(File)? onResult}) {
     if ((key != null) && key.isNotEmpty && !_loadingReferenceKeys.contains(key) && mounted) {
       setState(() {
