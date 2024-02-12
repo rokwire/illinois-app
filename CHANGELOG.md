@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Essential Skills Coach Onboarding Flow [#3950](https://github.com/rokwire/illinois-app/issues/3950)
 
 ## [5.1.25] - 2024-02-09
 ### Changed
