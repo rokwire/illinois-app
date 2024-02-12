@@ -198,7 +198,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     for (int i = 0; i < (_selectedModule?.units?.length ?? 0); i++) {
       Unit unit = _selectedModule!.units![i];
       UserUnit showUnit = _userCourseUnits?.firstWhere(
-        (userUnit) => (userUnit.unit?.key != null) && (userUnit.unit!.key == unit.key),
+        (userUnit) => (userUnit.unit?.key != null) && (userUnit.unit!.key == unit.key) && (_selectedModuleKey != null) && (userUnit.moduleKey == _selectedModuleKey),
         orElse: () => UserUnit.emptyFromUnit(unit, Config().essentialSkillsCoachKey ?? '', current: i == 0)
       ) ?? UserUnit.emptyFromUnit(unit, Config().essentialSkillsCoachKey ?? '', current: i == 0);
       moduleUnitWidgets.add(Padding(
@@ -553,6 +553,10 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         if (unitIndex >= 0) {
           setStateIfMounted(() {
             _userCourseUnits![unitIndex] = updatedUserUnit;
+          });
+        } else {
+          setStateIfMounted(() {
+            _userCourseUnits!.add(updatedUserUnit);
           });
         }
       } else {

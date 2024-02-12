@@ -361,8 +361,6 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
   List<Widget> _buildTaskHistoryWidgets(){
     List<Widget> taskWidgets = [];
 
-
-
     for(UserContent historyItem in _userResponseHistory ?? [] ) {
       DateTime displayTime = historyItem.dateUpdated ?? historyItem.dateCreated ?? DateTime.now();
       taskWidgets.add(Row(
@@ -424,6 +422,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
 
       setStateIfMounted(() {
         _userResponseHistory = history.sublist(_currentResponse != null ? 1 : 0);
+        _controller.text = userNotes ?? '';
       });
     }
   }

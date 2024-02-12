@@ -66,8 +66,8 @@ class _StreakPanelState extends State<StreakPanel> {
       }
     }
     String pauseRewardText = Localization().getStringEx('panel.essential_skills_coach.pauses_reward.missing.text', 'Pauses can be earned by responding to tasks daily. Check in daily to keep your streak going!');
-    if (_courseConfig?.pauseRewardStreak != null) {
-      pauseRewardText = sprintf(Localization().getStringEx('panel.essential_skills_coach.pauses_reward.text', 'Pauses can be earned by responding to a task for %d consecutive days. Check in daily to keep your streak going!'), [_courseConfig!.pauseRewardStreak]);
+    if (_courseConfig?.pauseProgressReward != null) {
+      pauseRewardText = sprintf(Localization().getStringEx('panel.essential_skills_coach.pauses_reward.text', 'Pauses can be earned by responding to a task for %d consecutive days. Check in daily to keep your streak going!'), [_courseConfig!.pauseProgressReward]);
     }
 
     return Scaffold(

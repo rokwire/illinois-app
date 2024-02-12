@@ -879,13 +879,13 @@ class CourseConfig {
   final String? courseKey;
   final int? initialPauses;
   final int? maxPauses;
-  final int? pauseRewardStreak;
+  final int? pauseProgressReward;
 
   final int? streaksProcessTime;
   final String? timezoneName;
   final int? timezoneOffset;
 
-  CourseConfig({this.id, this.courseKey, this.initialPauses, this.maxPauses, this.pauseRewardStreak, this.streaksProcessTime, this.timezoneName, this.timezoneOffset});
+  CourseConfig({this.id, this.courseKey, this.initialPauses, this.maxPauses, this.pauseProgressReward, this.streaksProcessTime, this.timezoneName, this.timezoneOffset});
 
   static const String userTimezone = "user";
 
@@ -898,7 +898,7 @@ class CourseConfig {
       courseKey: JsonUtils.stringValue(json['course_key']),
       initialPauses: JsonUtils.intValue(json['initial_pauses']),
       maxPauses: JsonUtils.intValue(json['max_pauses']),
-      pauseRewardStreak: JsonUtils.intValue(json['pause_reward_streak']),
+      pauseProgressReward: JsonUtils.intValue(json['pause_progress_reward']),
       streaksProcessTime: JsonUtils.intValue(json['streaks_notifications_config']?['streaks_process_time']),
       timezoneName: JsonUtils.stringValue(json['streaks_notifications_config']?['timezone_name']),
       timezoneOffset: JsonUtils.intValue(json['streaks_notifications_config']?['timezone_offset']),
