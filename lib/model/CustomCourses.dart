@@ -333,11 +333,10 @@ class Unit{
   final String? id;
   final String? name;
   final String? key;
-  final int? scheduleStart;
   final List<ScheduleItem>? scheduleItems;
   final List<Content>? contentItems;
 
-  Unit({this.id, this.name, this.key, this.scheduleStart, this.scheduleItems, this.contentItems});
+  Unit({this.id, this.name, this.key, this.scheduleItems, this.contentItems});
 
   static Unit? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -347,7 +346,6 @@ class Unit{
       id: JsonUtils.stringValue(json['id']),
       name: JsonUtils.stringValue(json['name']),
       key: JsonUtils.stringValue(json['key']),
-      scheduleStart: JsonUtils.intValue(json['schedule_start']),
       scheduleItems: ScheduleItem.listFromJson(JsonUtils.listValue(json['schedule'])),
       contentItems: Content.listFromJson(JsonUtils.listValue(json['content'])),
     );
@@ -357,7 +355,6 @@ class Unit{
     Map<String, dynamic> json = {
       'name': name,
       'key': key,
-      'schedule_start': scheduleStart,
       'schedule': ScheduleItem.listToJson(scheduleItems),
       'content': Content.listToJson(contentItems),
     };
@@ -400,6 +397,20 @@ class Unit{
     return null;
   }
 
+  int? getActivityNumber(int scheduleIndex) {
+    if (scheduleIndex >= 0 && scheduleIndex < (scheduleItems?.length ?? 0)) {
+      int activityNumber = 0;
+      for (int i = 0; i <= scheduleIndex; i++) {
+        ScheduleItem item = scheduleItems![i];
+        if (item.isRequired) {
+          activityNumber++;
+        }
+      }
+      return activityNumber;
+    }
+    return null;
+  }
+
   List<Content>? get resourceContent => contentItems?.where((item) => item.type == 'resource').toList();
 }
 
@@ -419,7 +430,16 @@ class UserUnit {
   UserUnit({this.id, this.courseKey, this.moduleKey, this.completed = 0, this.current = false, this.unit, this.dateCreated, this.dateUpdated, this.userSchedule});
 
   factory UserUnit.emptyFromUnit(Unit unit, String courseKey, {bool current = false}) {
-    return UserUnit(courseKey: courseKey, completed: 0, unit: unit, current: current);
+    List<UserScheduleItem> userSchedule = [];
+    for (ScheduleItem item in unit.scheduleItems ?? []) {
+      List<UserContentReference> userContentReferences = [];
+      for (String contentKey in item.contentKeys ?? []) {
+        userContentReferences.add(UserContentReference(contentKey: contentKey, complete: false, ids: []));
+      }
+      userSchedule.add(UserScheduleItem(userContent: userContentReferences));
+    }
+
+    return UserUnit(courseKey: courseKey, completed: 0, unit: unit, current: current, userSchedule: userSchedule);
   }
 
   static UserUnit? fromJson(Map<String, dynamic>? json) {
@@ -609,6 +629,8 @@ class ScheduleItem{
     }
     return jsonList;
   }
+
+  bool get isRequired => duration == null;
 }
 
 class UserContent{

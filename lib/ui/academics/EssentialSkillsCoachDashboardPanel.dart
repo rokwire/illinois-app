@@ -310,10 +310,9 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   }
 
   Widget _buildContentWidget(UserUnit userUnit, int unitNumber, UserContentReference userContentReference, Content content, int scheduleIndex) {
-    int scheduleStart = userUnit.unit!.scheduleStart!;
-    int activityNumber = scheduleIndex - scheduleStart + 1;
+    int activityNumber = userUnit.unit?.getActivityNumber(scheduleIndex) ?? scheduleIndex;
 
-    bool required = scheduleIndex >= scheduleStart;
+    bool required = userUnit.unit?.scheduleItems?[scheduleIndex].isRequired ?? false;
     bool isCompleted = (scheduleIndex < userUnit.completed) && userUnit.current;
     bool isCurrent = (scheduleIndex == userUnit.completed) && userUnit.current;
     bool isNextWithCurrentComplete = (scheduleIndex == userUnit.completed + 1) && userUnit.current && (userUnit.currentUserScheduleItem?.isComplete ?? false);
