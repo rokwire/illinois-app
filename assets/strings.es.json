@@ -3082,6 +3082,7 @@
     "panel.skills_self_evaluation.results.section.title": "Resultados",
     "panel.skills_self_evaluation.results.score.description": "Puntaje de dominio de habilidades",
     "panel.skills_self_evaluation.results.score.scale": "(0-100)",
+    "panel.skills_self_evaluation.results.contact": "If you have any questions or concerns about the BESSI score feedback you just received, please contact Dr. Brent Roberts (bwrobrts@illinois.edu).  Dr. Roberts is a professor of psychology at the University of Illinois at Urbana-Champaign and a co-creator of the BESSI inventory and associated BESSI assessment tools.",
     "panel.skills_self_evaluation.results.skills.title": "HABILIDADES",
     "panel.skills_self_evaluation.results.offline.error.msg": "Los resultados no están disponibles sin conexión.",
     "panel.skills_self_evaluation.results.unavailable.message": "El contenido de los resultados no está disponible actualmente. Por favor, inténtelo de nuevo más tarde.",
@@ -3114,7 +3115,7 @@
 
     "panel.essential_skills_coach.get_started.section.title": "Essential Skills Coach",
     "panel.essential_skills_coach.get_started.button.label": "Get Started",
-    "panel.essential_skills_coach.get_started.description.title": "Improve your strengths related to:",
+    "panel.essential_skills_coach.get_started.description.title": "Improve your skills related to:",
     "panel.essential_skills_coach.get_started.description.list": "\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience",
     "panel.essential_skills_coach.dashboard.content.missing.text": "Course content could not be loaded. Please try again later.",
     "panel.essential_skills_coach.dashboard.no_streak.text": "No Streak",

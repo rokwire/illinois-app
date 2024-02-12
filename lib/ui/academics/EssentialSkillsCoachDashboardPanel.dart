@@ -1,4 +1,5 @@
 
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
@@ -97,7 +98,18 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
 
   bool get _hasStartedSkillsCoach => _userCourse != null;
 
-  Module? get _selectedModule => _userCourse?.course?.searchByKey(moduleKey: _selectedModuleKey) ?? _course?.searchByKey(moduleKey: _selectedModuleKey); //TODO: remove _course option after start course UI
+  String? get _availableSelectedModuleKey {
+    List<DropdownMenuItem<String>> items = _moduleDropdownItems();
+    String? selected = items.firstOrNull?.value;
+    if(items.firstWhereOrNull((e) => e.value == _selectedModuleKey) != null) {
+      selected = _selectedModuleKey;
+    }
+    return selected;
+  }
+  Module? get _selectedModule {
+    String? selected = _availableSelectedModuleKey;
+    return _userCourse?.course?.searchByKey(moduleKey: selected) ?? _course?.searchByKey(moduleKey: selected);
+  } //TODO: remove _course option after start course UI
   Color? get _selectedModulePrimaryColor => _selectedModule!.styles?.colors?['primary'] != null ? Styles().colors.getColor(_selectedModule!.styles!.colors!['primary']!) : Styles().colors.fillColorPrimary;
   Color? get _selectedModuleAccentColor => _selectedModule!.styles?.colors?['accent'] != null ? Styles().colors.getColor(_selectedModule!.styles!.colors!['accent']!) : Styles().colors.fillColorSecondary;
   Widget? get _selectedModuleIcon => Styles().images.getImage(_selectedModule!.styles?.images?['icon'] ?? 'skills-question', size: 48);
@@ -144,6 +156,11 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   }
 
   Widget _buildModuleSelection() {
+    List<DropdownMenuItem<String>> items = _moduleDropdownItems();
+    String? selected = items.firstOrNull?.value;
+    if(items.firstWhereOrNull((e) => e.value == _selectedModuleKey) != null) {
+      selected = _selectedModuleKey;
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Row(
@@ -169,7 +186,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                   alignedDropdown: true,
                   child: DropdownButton(
                       alignment: AlignmentDirectional.centerStart,
-                      value: _selectedModuleKey,
+                      value: selected,
                       iconDisabledColor: Styles().colors.fillColorSecondary,
                       iconEnabledColor: Styles().colors.fillColorSecondary,
                       focusColor: Styles().colors.surface,
@@ -177,7 +194,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                       underline: Divider(color: Styles().colors.fillColorSecondary, height: 1.0, indent: 16.0, endIndent: 16.0),
                       borderRadius: BorderRadius.all(Radius.circular(4.0)),
                       isExpanded: true,
-                      items: _moduleDropdownItems(),
+                      items: items,
                       onChanged: (String? selected) {
                         setState(() {
                           _selectedModuleKey = selected;
@@ -440,7 +457,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     ];
 
     for (Module module in _userCourse?.course?.modules ?? _course?.modules ?? []) {
-      if (module.key != null && module.name != null/* && CollectionUtils.isNotEmpty(module.units)*/) { // TODO remove comment
+      if (module.key != null && module.name != null && CollectionUtils.isNotEmpty(module.units)) {
         dropDownItems.add(DropdownMenuItem(
           value: module.key,
           child: Text(module.name!, style: Styles().textStyles.getTextStyle("widget.detail.large"))
@@ -451,43 +468,49 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   }
 
   Future<void> _loadCourseAndUnits() async {
-    _userCourse ??= CustomCourses().userCourses?[Config().essentialSkillsCoachKey];
-    if (_userCourse == null) {
-      if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
-        _setLoading(true);
-        UserCourse? userCourse = await CustomCourses().loadUserCourse(Config().essentialSkillsCoachKey!);
-        if (userCourse != null) {
-          setStateIfMounted(() {
-            _userCourse = userCourse;
-            _selectedModuleKey ??= CollectionUtils.isNotEmpty(userCourse.course?.modules) ? userCourse.course!.modules![0].key : null;
-            _loading = false;
+    if (mounted) {
+      _userCourse ??= CustomCourses().userCourses?[Config().essentialSkillsCoachKey];
+      if (_userCourse == null) {
+        if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
+          setState(() {
+            _loading = true;
           });
-          await _loadUserCourseUnits();
-        } else {
-          await _loadCourse();
+          UserCourse? userCourse = await CustomCourses().loadUserCourse(Config().essentialSkillsCoachKey!);
+          if (mounted) {
+            if (userCourse != null) {
+              setState(() {
+                _userCourse = userCourse;
+                _selectedModuleKey ??= CollectionUtils.isNotEmpty(userCourse.course?.modules) ? userCourse.course!.modules![0].key : null;
+                _loading = false;
+              });
+              await _loadUserCourseUnits();
+            } else {
+              await _loadCourse();
+            }
+          }
         }
+      } else {
+        _selectedModuleKey ??= CollectionUtils.isNotEmpty(_userCourse?.course?.modules) ? _userCourse?.course!.modules![0].key : null;
+        await _loadUserCourseUnits();
       }
-    } else {
-      _selectedModuleKey ??= CollectionUtils.isNotEmpty(_userCourse?.course?.modules) ? _userCourse?.course!.modules![0].key : null;
-      await _loadUserCourseUnits();
     }
   }
 
   Future<void> _loadCourse() async {
     _course ??= CustomCourses().courses?[Config().essentialSkillsCoachKey];
     if (_course == null) {
-      if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
-        _setLoading(true);
+      if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey) && mounted) {
+        setState(() {
+          _loading = true;
+        });
         Course? course = await CustomCourses().loadCourse(Config().essentialSkillsCoachKey!);
-        if (course != null) {
-          setStateIfMounted(() {
+        setStateIfMounted(() {
+          if (course != null) {
             _course = course;
             _selectedModuleKey ??= CollectionUtils.isNotEmpty(course.modules) ? course.modules![0].key : null;
-            _loading = false;
-          });
-        } else {
-          _setLoading(false);
-        }
+          }
+          _loading = false;
+        });
       }
     } else {
       setStateIfMounted(() {
@@ -499,99 +522,107 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
 
   Future<void> _loadUserCourseUnits() async {
     _userCourseUnits ??= CustomCourses().userCourseUnits?[Config().essentialSkillsCoachKey];
-    if (_userCourseUnits == null) {
-      if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
-        _setLoading(true);
-        List<UserUnit>? userUnits = await CustomCourses().loadUserCourseUnits(Config().essentialSkillsCoachKey!);
+    if ((_userCourseUnits == null) && StringUtils.isNotEmpty(Config().essentialSkillsCoachKey) && mounted) {
+      setState(() {
+        _loading = true;
+      });
+      List<UserUnit>? userUnits = await CustomCourses().loadUserCourseUnits(Config().essentialSkillsCoachKey!);
+      setStateIfMounted(() {
         if (userUnits != null) {
-          setStateIfMounted(() {
-            _userCourseUnits = userUnits;
-          });
+          _userCourseUnits = userUnits;
         }
-      }
+        _loading = false;
+      });
     }
-    _setLoading(false);
   }
 
   Future<void> _loadCourseConfig() async {
     if (_courseConfig == null && StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
-      _setLoading(true);
+      setState(() {
+        _loading = true;
+      });
       CourseConfig? courseConfig = await CustomCourses().loadCourseConfig(Config().essentialSkillsCoachKey!);
-      if (courseConfig != null) {
-        setStateIfMounted(() {
+      setStateIfMounted(() {
+        if (courseConfig != null) {
           _courseConfig = courseConfig;
-          _loading = false;
-        });
-      } else {
-        _setLoading(false);
-      }
+        }
+        _loading = false;
+      });
     }
   }
 
-  Future<void> _startCourse() async {
-    await _loadCourseAndUnits();
-    if (_userCourse == null && StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
-      _setLoading(true);
+  Future<void> _startCourse(String? moduleKeyPrefix) async {
+    //await _loadCourseAndUnits();
+    if (_userCourse == null && StringUtils.isNotEmpty(Config().essentialSkillsCoachKey) && mounted) {
+      setState(() {
+        _loading = true;
+      });
       UserCourse? userCourse = await CustomCourses().createUserCourse(Config().essentialSkillsCoachKey!);
-      if (userCourse != null) {
-        setStateIfMounted(() {
+      setStateIfMounted(() {
+        if (userCourse != null) {
           _userCourse = userCourse;
-        });
-      }
+          String moduleKey = "${moduleKeyPrefix}_skills";
+          if(StringUtils.isNotEmpty(moduleKeyPrefix)) {
+            _selectedModuleKey = moduleKey;
+          }
+        }
+        _loading = false;
+      });
     }
-    _setLoading(false);
   }
 
   Future<void> _updateProgress(String unitKey, UserContent current, Content content, Map<String, dynamic> updatedData, int unitNumber, int activityNumber) async {
-    _setLoading(true);
-    UserUnit? updatedUserUnit = await CustomCourses().updateUserCourseProgress(UserContent(contentKey: current.contentKey, userData: updatedData), courseKey: _userCourse!.course!.key!, unitKey: unitKey);
-    if (updatedUserUnit != null) {
-      if (CollectionUtils.isNotEmpty(_userCourseUnits)) {
-        int unitIndex = _userCourseUnits!.indexWhere((userUnit) => userUnit.id != null && userUnit.id == updatedUserUnit.id);
-        if (unitIndex >= 0) {
-          setStateIfMounted(() {
-            _userCourseUnits![unitIndex] = updatedUserUnit;
-          });
+    if (mounted) {
+      setState(() {
+        _loading = true;
+      });
+      UserUnit? updatedUserUnit = await CustomCourses().updateUserCourseProgress(UserContent(contentKey: current.contentKey, userData: updatedData), courseKey: _userCourse!.course!.key!, unitKey: unitKey);
+      if (mounted) {
+        if (updatedUserUnit != null) {
+          if (CollectionUtils.isNotEmpty(_userCourseUnits)) {
+            int unitIndex = _userCourseUnits!.indexWhere((userUnit) => userUnit.id != null && userUnit.id == updatedUserUnit.id);
+            if (unitIndex >= 0) {
+              setStateIfMounted(() {
+                _userCourseUnits![unitIndex] = updatedUserUnit;
+              });
+            }
+          } else {
+            setStateIfMounted(() {
+              _userCourseUnits ??= [];
+              _userCourseUnits!.add(updatedUserUnit);
+            });
+          }
+
+          bool earnedPause = false;
+          bool extendedStreak = false;
+          UserCourse? userCourse = await CustomCourses().loadUserCourse(Config().essentialSkillsCoachKey!);
+          if (mounted) {
+            setState(() {
+              if (userCourse != null) {
+                earnedPause = (userCourse.pauses ?? 0) > (_userCourse?.pauses ?? 0);
+                extendedStreak = (userCourse.streak ?? 0) > (_userCourse?.streak ?? 0);
+                _userCourse = userCourse;
+              }
+              _loading = false;
+            });
+
+            // if the current task was just completed and it extended the user's streak
+            if (extendedStreak && current.isNotComplete && updatedData[UserContent.completeKey] == true) {
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentCompletePanel(
+                unitNumber: unitNumber,
+                activityNumber: activityNumber,
+                pauses: earnedPause ? _userCourse?.pauses : null,
+                color: _selectedModulePrimaryColor,
+              )));
+            }
+          }
+        } else {
+          setState(() {
+            _loading = false;
+          });;
         }
-      } else {
-        setStateIfMounted(() {
-          _userCourseUnits ??= [];
-          _userCourseUnits!.add(updatedUserUnit);
-        });
       }
-
-      bool earnedPause = false;
-      bool extendedStreak = false;
-      UserCourse? userCourse = await CustomCourses().loadUserCourse(Config().essentialSkillsCoachKey!);
-      if (userCourse != null) {
-        earnedPause = (userCourse.pauses ?? 0) > (_userCourse?.pauses ?? 0);
-        extendedStreak = (userCourse.streak ?? 0) > (_userCourse?.streak ?? 0);
-        setStateIfMounted(() {
-          _userCourse = userCourse;
-          _loading = false;
-        });
-      } else {
-        _setLoading(false);
-      }
-
-      // if the current task was just completed and it extended the user's streak
-      if (extendedStreak && current.isNotComplete && updatedData[UserContent.completeKey] == true) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentCompletePanel(
-          unitNumber: unitNumber,
-          activityNumber: activityNumber,
-          pauses: earnedPause ? _userCourse?.pauses : null,
-          color: _selectedModulePrimaryColor,
-        )));
-      }
-    } else {
-      _setLoading(false);
     }
-  }
-
-  void _setLoading(bool value) {
-    setStateIfMounted(() {
-      _loading = value;
-    });
   }
 
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {

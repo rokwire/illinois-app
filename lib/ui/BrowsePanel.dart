@@ -526,6 +526,7 @@ class _BrowseEntry extends StatelessWidget {
       case "academics.gies_checklist":        _onTapGiesChecklist(context); break;
       case "academics.new_student_checklist": _onTapNewStudentChecklist(context); break;
       case "academics.skills_self_evaluation":_onTapSkillSelfEvaluation(context); break;
+      case "academics.essential_skills_coach":_onTapEssentialSkillCoach(context); break;
       case "academics.student_courses":       _onTapStudentCourses(context); break;
       case "academics.canvas_courses":        _onTapCanvasCourses(context); break;
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
@@ -636,6 +637,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapSkillSelfEvaluation(BuildContext context) {
     Analytics().logSelect(target: "Skills Self-Evaluation");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.skills_self_evaluation,)));
+  }
+
+  void _onTapEssentialSkillCoach(BuildContext context) {
+    Analytics().logSelect(target: "Essential Skills Coach");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.essential_skills_coach,)));
   }
 
   void _onTapCanvasCourses(BuildContext context) {

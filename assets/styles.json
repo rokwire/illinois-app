@@ -674,9 +674,11 @@
     "panel.skills_self_evaluation.auth_dialog.text": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimaryVariant"},
     "panel.skills_self_evaluation.auth_dialog.link": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
     "panel.skills_self_evaluation.content.title":  {"font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant"},
+    "panel.skills_self_evaluation.content.title.large":  {"font_family": "bold", "size": 20.0, "color": "fillColorPrimaryVariant"},
     "panel.skills_self_evaluation.content.body":  {"font_family": "regular", "size": 16.0, "color": "fillColorPrimaryVariant"},
     "panel.skills_self_evaluation.content.body.small":  {"font_family": "regular", "size": 12.0, "color": "fillColorPrimaryVariant"},
     "panel.skills_self_evaluation.content.link":  {"font_family": "regular", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
+    "panel.skills_self_evaluation.content.link.small":  {"font_family": "regular", "size": 12.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
     "panel.skills_self_evaluation.content.link.fat":  {"font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
 
     "panel.essential_skills_coach.get_started.header": {"font_family": "extra_bold", "size": 28.0, "color": "surface"},

@@ -3088,6 +3088,9 @@
     "panel.skills_self_evaluation.results.section.title": "Results",
     "panel.skills_self_evaluation.results.score.description": "Skills Domain Score",
     "panel.skills_self_evaluation.results.score.scale": "(0-100)",
+    "panel.skills_self_evaluation.results.contact1": "If you have any questions or concerns about the BESSI score feedback you just received, please contact Dr. Brent Roberts (",
+    "panel.skills_self_evaluation.results.contact.address": "bwrobrts@illinois.edu",
+    "panel.skills_self_evaluation.results.contact2": ").  Dr. Roberts is a professor of psychology at the University of Illinois at Urbana-Champaign and a co-creator of the BESSI inventory and associated BESSI assessment tools.",
     "panel.skills_self_evaluation.results.skills.title": "SKILLS",
     "panel.skills_self_evaluation.results.offline.error.msg": "Results not available while offline.",
     "panel.skills_self_evaluation.results.unavailable.message": "Results content is currently unavailable. Please try again later.",
@@ -3120,7 +3123,7 @@
 
     "panel.essential_skills_coach.get_started.section.title": "Essential Skills Coach",
     "panel.essential_skills_coach.get_started.button.label": "Get Started",
-    "panel.essential_skills_coach.get_started.description.title": "Improve your strengths related to:",
+    "panel.essential_skills_coach.get_started.description.title": "Improve your skills related to:",
     "panel.essential_skills_coach.get_started.description.list": "\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience",
     "panel.essential_skills_coach.dashboard.content.missing.text": "Course content could not be loaded. Please try again later.",
     "panel.essential_skills_coach.dashboard.no_streak.text": "No Streak",
