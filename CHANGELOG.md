@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Essential Skills History [#3964](https://github.com/rokwire/illinois-app/issues/3964)
+- Essential Skills Coach Onboarding Flow [#3950](https://github.com/rokwire/illinois-app/issues/3950)
+### Fixed
+- Do not allow manual attendance taking if relevant options are not selected. 
 
 ## [5.1.25] - 2024-02-09
 ### Changed
