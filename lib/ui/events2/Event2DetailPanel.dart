@@ -33,6 +33,7 @@ import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/auth2.dart' as pluginAuth;
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -69,6 +70,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   bool? _hasSurveyResponse;
   Event2PersonsResult? _persons;
   Event2? _superEvent;
+  Set<String>? _groupIds;
 
   List<Event2>? _linkedEvents;
   bool _linkedEventsLoading = false;
@@ -105,6 +107,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     _superEvent = widget.superEvent;
     _survey = widget.survey;
     _displayCategories = _buildDisplayCategories(widget.event);
+
     _initEvent();
 
     if ((_userLocation = widget.userLocation) == null) {
@@ -429,11 +432,13 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     _detailSpacerWidget,
   ];
 
-  String get _privacyStatus => (_event?.private == true)
-    ? (_isGroupEvent
+  String get _privacyStatus => (_event?.private != true)
+    ? Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event')
+    : (_eventProcessing
+      ? '...'
+      : (_isGroupEvent
         ? Localization().getStringEx('panel.explore_detail.label.privacy.group_members.title', 'Group Members Only')
-        : Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Uploaded Guest List Only'))
-    : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
+        : Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Uploaded Guest List Only')));
 
   List<Widget>? get _publishedDetailWidget => _isAdmin ? <Widget>[
     _buildTextDetailWidget(_publishedStatus, 'eye'),
@@ -1213,13 +1218,23 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         futures.add(Events2().loadEvent(_event?.grouping?.superEventId ?? ''));
       }
 
+      // We need to know whether event belongs to a group only for the provacy status text
+      int? groupIdsIndex = ((_event?.private == true) && (widget.group == null)) ? futures.length : null;
+      if (groupIdsIndex != null) {
+        futures.add(Groups().loadUserGroupsHavingEvent(eventId));
+      }
+
       if (futures.isNotEmpty) {
+        setState(() {
+          _eventProcessing = true;
+        });
         List<dynamic> results = await Future.wait(futures);
         Survey? survey = ((surveyIndex != null) && (surveyIndex < results.length) && (results[surveyIndex] is Survey)) ? results[surveyIndex] : null;
         List<SurveyResponse>? surveyResponses = ((surveyResponseIndex != null) && (surveyResponseIndex < results.length) && (results[surveyResponseIndex] is List<SurveyResponse>)) ? results[surveyResponseIndex] : null;
         Event2PersonsResult? persons = ((peopleIndex != null) && (peopleIndex < results.length) && (results[peopleIndex] is Event2PersonsResult)) ? results[peopleIndex] : null;
         Events2ListResult? linkedEventsResult = ((linkedEventsIndex != null) && (linkedEventsIndex < results.length) && (results[linkedEventsIndex] is Events2ListResult)) ? results[linkedEventsIndex] : null;
         Event2? superEvent = ((superEventIndex != null) && (superEventIndex < results.length) && (results[superEventIndex] is Event2)) ? results[superEventIndex] : null;
+        Set<String>? groupIds = ((groupIdsIndex != null) && (groupIdsIndex < results.length) && (results[groupIdsIndex] is Set<String>)) ? JsonUtils.setStringsValue(results[groupIdsIndex])  : null;
 
         // Handle searching for survey responses if the event survey was just loaded
         if ((_event?.hasSurvey == true) && (surveyResponseIndex == null) && (survey?.id != null)) {
@@ -1227,7 +1242,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         }
 
         setStateIfMounted(() {
-          _eventLoading = false;
+          _eventProcessing = false;
           _linkedEventsLoading = false;
           if (survey != null) {
             _survey = survey;
@@ -1248,6 +1263,9 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
           if (superEvent != null) {
             _superEvent = superEvent;
           }
+          if (groupIds != null) {
+            _groupIds = groupIds;
+          }
         });
       }
     }
@@ -1257,11 +1275,9 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     String? eventId = widget.event?.id ?? widget.eventId;
     if ((eventId != null) && mounted) {
       
-      if (progress != null) {
-        setState(() {
-          progress(true);
-        });
-      }
+      setState(() {
+        progress?.call(true);
+      });
 
       Event2? event = await Events2().loadEvent(eventId);
       if (mounted) {
@@ -1292,12 +1308,19 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
             futures.add(Events2().loadEvent(event.grouping?.superEventId ?? ''));
           }
 
+          // We need to know whether event belongs to a group only for the provacy status text
+          int? groupIdsIndex = ((_event?.private == true) && (widget.group == null)) ? futures.length : null;
+          if (groupIdsIndex != null) {
+            futures.add(Groups().loadUserGroupsHavingEvent(eventId));
+          }
+
           if (futures.isNotEmpty) {
             List<dynamic> results = await Future.wait(futures);
             Survey? survey = ((surveyIndex != null) && (surveyIndex < results.length) && (results[surveyIndex] is Survey)) ? results[surveyIndex] : null;
             Event2PersonsResult? persons = ((peopleIndex != null) && (peopleIndex < results.length) && (results[peopleIndex] is Event2PersonsResult)) ? results[peopleIndex] : null;
             Events2ListResult? linkedEventsResult = ((linkedEventsIndex != null) && (linkedEventsIndex < results.length) && (results[linkedEventsIndex] is Events2ListResult)) ? results[linkedEventsIndex] : null;
             Event2? superEvent = ((superEventIndex != null) && (superEventIndex < results.length) && (results[superEventIndex] is Event2)) ? results[superEventIndex] : null;
+            Set<String>? groupIds = ((groupIdsIndex != null) && (groupIdsIndex < results.length) && (results[groupIdsIndex] is Set<String>)) ? JsonUtils.setStringsValue(results[groupIdsIndex])  : null;
 
             // Handle searching for existing survey responses
             String? surveyId = survey?.id;
@@ -1307,12 +1330,11 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
             List<String>? displayCategories = _buildDisplayCategories(event);
 
             setStateIfMounted(() {
-              if (progress != null) {
-                progress(false);
-              }
+              progress?.call(false);
+
               _event = event;
               _displayCategories = displayCategories;
-              
+
               _survey = survey;
 
               if (persons != null) {
@@ -1331,17 +1353,20 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
               if (superEvent != null) {
                 _superEvent = superEvent;
               }
+              if (groupIds != null) {
+                _groupIds = groupIds;
+              }
             });
           }
           else if (progress != null) {
             setState(() {
-              progress(true);
+              progress(false);
             });
           }
         }
         else if (progress != null) {
           setState(() {
-            progress(true);
+            progress(false);
           });
         }
       }
@@ -1352,7 +1377,9 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     if ((event != null) && (event.id == _eventId) && mounted) {
       setState(() {
         _event = event;
+        _displayCategories = _buildDisplayCategories(event);
       });
+      _refreshEvent(progress: (bool value) => (_eventProcessing = value));
     }
   }
 
@@ -1407,7 +1434,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   String? get _eventId => widget.event?.id ?? widget.eventId;
 
-  bool get _isGroupEvent => (widget.group != null);
+  bool get _isGroupEvent => ((widget.group != null) || (_groupIds?.isNotEmpty == true));
 }
 
 abstract class Event2Selector2State<T extends StatefulWidget> extends State<T> {

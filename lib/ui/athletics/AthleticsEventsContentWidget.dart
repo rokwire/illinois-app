@@ -165,6 +165,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
       timeFilter: Event2TimeFilter.upcoming,
       attributes: _buildQueryAttributes(),
       types: _favoritesMode ? {Event2TypeFilter.favorite} : null,
+      groupings: Event2Grouping.individualEvents(),
       sortType: Event2SortType.dateTime,
       sortOrder: Event2SortOrder.ascending
     );
@@ -188,7 +189,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
         _extendingEvents = false;
       });
 
-      dynamic result = await Events2().loadEventsEx(await _queryParam(limit: limit));
+      dynamic result = await Events2().loadEventsEx(_queryParam(limit: limit));
       Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
       List<Event2>? events = listResult?.events;
       String? errorTextResult = (result is String) ? result : null;
@@ -226,7 +227,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
       });
 
       int limit = max(_events?.length ?? 0, _eventsPageLength);
-      dynamic result = await Events2().loadEventsEx(await _queryParam(limit: limit));
+      dynamic result = await Events2().loadEventsEx(_queryParam(limit: limit));
       Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
       List<Event2>? events = listResult?.events;
       int? totalCount = listResult?.totalCount;
@@ -255,7 +256,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
         _extendingEvents = true;
       });
 
-      Events2ListResult? listResult = await Events2().loadEvents(await _queryParam(offset: _events?.length ?? 0, limit: _eventsPageLength));
+      Events2ListResult? listResult = await Events2().loadEvents(_queryParam(offset: _events?.length ?? 0, limit: _eventsPageLength));
       List<Event2>? events = listResult?.events;
       int? totalCount = listResult?.totalCount;
 

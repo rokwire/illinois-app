@@ -912,6 +912,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       customStartTimeUtc: _customStartTime?.toUtc(),
       customEndTimeUtc: _customEndTime?.toUtc(),
       types: _types,
+      groupings: Event2Grouping.individualEvents(),
       attributes: _attributes,
       sortType: _sortType,
       sortOrder: Event2SortOrder.ascending,
