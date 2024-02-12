@@ -15,7 +15,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/ui/academics/EssentialSkillsLearning.dart';
 import 'package:illinois/ui/academics/EssentialSkillsResults.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';

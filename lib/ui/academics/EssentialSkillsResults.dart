@@ -16,7 +16,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/academics/EssentialSkillsLearning.dart';
-import 'package:illinois/ui/academics/SkillsSelfEvaluationOccupationListPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -26,7 +25,6 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
-import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -175,18 +173,18 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
 
   List<Widget> _buildContent() {
     Iterable<String> responseSections = _resultsContentItems['section_titles']?.params?.keys ?? [];
-    Map<String, num>? comparisonScores;
-    SkillsSelfEvaluationProfile? selectedProfile;
+    //Map<String, num>? comparisonScores;
+    //SkillsSelfEvaluationProfile? selectedProfile;
     List<Widget> workOnSections = [];
     List<Widget> proficientSections = [];
 
     if (_comparisonResponseId != _defaultComparisonResponseId) {
       try {
-        selectedProfile = _profileContentItems.firstWhere((element) => element.key == _comparisonResponseId);
-        comparisonScores = selectedProfile.scores;
+        //selectedProfile = _profileContentItems.firstWhere((element) => element.key == _comparisonResponseId);
+        //comparisonScores = selectedProfile.scores;
       } catch (e) {
         try {
-          comparisonScores = _responses.firstWhere((element) => element.id == _comparisonResponseId).survey.stats?.percentages;
+          //comparisonScores = _responses.firstWhere((element) => element.id == _comparisonResponseId).survey.stats?.percentages;
         } catch (e) {
           debugPrint(e.toString());
         }
@@ -547,11 +545,11 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
     _loadContentItems();
   }
 
-  void _onResponseDateDropDownChanged(String? value) {
+  /*void _onResponseDateDropDownChanged(String? value) {
     setState(() {
       _comparisonResponseId = value ?? _defaultComparisonResponseId;
     });
-  }
+  }*/
 
   void _showScoreDescription(String section) {
     String skillDefinition = _latestResponse?.survey.resultData is Map<String, dynamic> ? _latestResponse!.survey.resultData['${section}_results'] ?? '' :
@@ -559,7 +557,7 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsDetailPanel(content: _resultsContentItems[section], params: {'skill_definition': skillDefinition})));
   }
 
-  void _onTapClearAllScores() {
+  /*void _onTapClearAllScores() {
     List<Widget> buttons = [
       Padding(padding: const EdgeInsets.symmetric(horizontal: 4), child: RoundedButton(
         label: Localization().getStringEx('dialog.no.title', 'No'),
@@ -602,6 +600,6 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
       _comparisonResponseId = _defaultComparisonResponseId;
       _loadResults();
     });
-  }
+  }*/
 }
 
