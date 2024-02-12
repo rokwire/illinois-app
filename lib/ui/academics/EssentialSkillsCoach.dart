@@ -108,16 +108,16 @@ class _EssentialSkillsCoachState extends State<EssentialSkillsCoach> {
   void _loadResults() {
     //_setLoading(true);
     Surveys().loadUserSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
-      if (CollectionUtils.isNotEmpty(responses)) {
-        responses!.sort(((a, b) => b.dateTaken.compareTo(a.dateTaken)));
-        if(mounted) {
+      if (mounted) {
+        //_setLoading(false);
+        if (CollectionUtils.isNotEmpty(responses)) {
+          responses!.sort(((a, b) => b.dateTaken.compareTo(a.dateTaken)));
           Navigator.of(context).push(CupertinoPageRoute(builder: (context) => EssentialSkillsResults(latestResponse: responses[0], onStartCourse: widget.onStartCourse)));
         }
+        else {
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => EssentialSkillsCoachGetStarted(onStartCourse: widget.onStartCourse)));
+        }
       }
-      else {
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => EssentialSkillsCoachGetStarted(onStartCourse: widget.onStartCourse)));
-      }
-      //_setLoading(false);
     });
   }
 }

@@ -491,53 +491,49 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
   // }
 
   void _loadResults() {
-    _setLoading(true);
+    setState(() {
+      _loading = true;
+    });
     Surveys().loadUserSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
-      _responses.clear();
-      if (CollectionUtils.isNotEmpty(responses)) {
-        responses!.sort(((a, b) => b.dateTaken.compareTo(a.dateTaken)));
-
-        if (widget.latestResponse == null) {
-          _latestResponse = responses[0];
+      if (mounted) {
+        if (CollectionUtils.isNotEmpty(responses)) {
+          responses?.sort(((a, b) => b.dateTaken.compareTo(a.dateTaken)));
         }
-        _responses = responses.sublist(_latestResponse?.id == responses[0].id ? 1 : 0);
-      } else if (!_latestCleared) {
-        _latestResponse = widget.latestResponse;
+        setState(() {
+          _responses.clear();
+          if ((responses != null) && responses.isNotEmpty) {
+            if (widget.latestResponse == null) {
+              _latestResponse = responses[0];
+            }
+            _responses = responses.sublist(_latestResponse?.id == responses[0].id ? 1 : 0);
+          } else if (!_latestCleared) {
+            _latestResponse = widget.latestResponse;
+          }
+          _loading = false;
+        });
       }
-
-      _setLoading(false);
     });
   }
 
   void _loadContentItems() {
     SkillsSelfEvaluation.loadContentItems(["bessi_results", "bessi_profile"]).then((content) {
-      if (content?.isNotEmpty ?? false) {
-        _resultsContentItems.clear();
-        _profileContentItems.clear();
-        for (MapEntry<String, Map<String, dynamic>> item in content?.entries ?? []) {
-          switch (item.value['category']) {
-            case 'bessi_results':
-              _resultsContentItems[item.key] = SkillsSelfEvaluationContent.fromJson(item.value);
-              break;
-            case 'bessi_profile':
-              _profileContentItems.add(SkillsSelfEvaluationProfile.fromJson(item.value));
-              break;
+      if (mounted && (content?.isNotEmpty == true)) {
+        setState(() {
+          _resultsContentItems.clear();
+          _profileContentItems.clear();
+          for (MapEntry<String, Map<String, dynamic>> item in content?.entries ?? []) {
+            switch (item.value['category']) {
+              case 'bessi_results':
+                _resultsContentItems[item.key] = SkillsSelfEvaluationContent.fromJson(item.value);
+                break;
+              case 'bessi_profile':
+                _profileContentItems.add(SkillsSelfEvaluationProfile.fromJson(item.value));
+                break;
+            }
           }
-        }
-
-        if (mounted) {
-          setState(() {});
-        }
+        });
       }
     });
-  }
-
-  void _setLoading(bool value) {
-    if (mounted) {
-      setState(() {
-        _loading = value;
-      });
-    }
   }
 
   Future<void> _onPullToRefresh() async {
