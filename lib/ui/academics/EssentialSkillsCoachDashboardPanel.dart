@@ -650,11 +650,16 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       setState(() {
         _loading = true;
       });
-      UserUnit? updatedUserUnit = await CustomCourses().updateUserCourseProgress(UserResponse(unitKey: unitKey, contentKey: userContentReference.contentKey!, response: response), courseKey: _userCourse!.course!.key!, moduleKey: moduleKey);
+      UserUnit? updatedUserUnit = await CustomCourses()
+          .updateUserCourseProgress(UserResponse(unitKey: unitKey,
+          contentKey: userContentReference.contentKey!,
+          response: response), courseKey: _userCourse!.course!.key!,
+          moduleKey: moduleKey);
       if (mounted) {
         if (updatedUserUnit != null) {
           if (CollectionUtils.isNotEmpty(_userCourseUnits)) {
-            int unitIndex = _userCourseUnits!.indexWhere((userUnit) => userUnit.id != null && userUnit.id == updatedUserUnit.id);
+            int unitIndex = _userCourseUnits!.indexWhere((userUnit) =>
+            userUnit.id != null && userUnit.id == updatedUserUnit.id);
             if (unitIndex >= 0) {
               setStateIfMounted(() {
                 _userCourseUnits![unitIndex] = updatedUserUnit;
@@ -673,32 +678,38 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
 
           bool earnedPause = false;
           bool extendedStreak = false;
-          UserCourse? userCourse = await CustomCourses().loadUserCourse(Config().essentialSkillsCoachKey!);
+          UserCourse? userCourse = await CustomCourses().loadUserCourse(
+              Config().essentialSkillsCoachKey!);
           if (mounted) {
             setState(() {
               if (userCourse != null) {
-                earnedPause = (userCourse.pauses ?? 0) > (_userCourse?.pauses ?? 0);
-                extendedStreak = (userCourse.streak ?? 0) > (_userCourse?.streak ?? 0);
+                earnedPause =
+                    (userCourse.pauses ?? 0) > (_userCourse?.pauses ?? 0);
+                extendedStreak =
+                    (userCourse.streak ?? 0) > (_userCourse?.streak ?? 0);
                 _userCourse = userCourse;
               }
               _loading = false;
             });
 
-      // if the current task was just completed and it extended the user's streak
-      if (extendedStreak && userContentReference.isNotComplete && response[UserContent.completeKey] == true) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-            AssignmentCompletePanel(
-              unitNumber: unitNumber,
-              activityNumber: activityNumber,
-              pauses: earnedPause ? _userCourse?.pauses : null,
-              color: _selectedModulePrimaryColor,
-            )));
+            // if the current task was just completed and it extended the user's streak
+            if (extendedStreak && userContentReference.isNotComplete &&
+                response[UserContent.completeKey] == true) {
+              Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+                  AssignmentCompletePanel(
+                    unitNumber: unitNumber,
+                    activityNumber: activityNumber,
+                    pauses: earnedPause ? _userCourse?.pauses : null,
+                    color: _selectedModulePrimaryColor,
+                  )));
+            }
+          }
+        } else {
+          setState(() {
+            _loading = false;
+          });
         }
       }
-    } else {
-      setState(() {
-        _loading = false;
-      });;
     }
   }
 
