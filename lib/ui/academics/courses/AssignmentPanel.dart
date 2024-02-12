@@ -288,8 +288,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Container(
-                width: 150,
+              Expanded(
                 child:RoundedButton(
                     label: Localization().getStringEx('panel.essential_skills_coach.assignment.completion.button.yes.label', 'Yes'),
                     leftIconPadding: EdgeInsets.only(left: 16),
@@ -308,9 +307,8 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                     } : null
                 ),
               ),
-              SizedBox(width: 8,),
-              Container(
-                  width: 150,
+              SizedBox(width: 8),
+              Expanded(
                   child:RoundedButton(
                     label: Localization().getStringEx('panel.essential_skills_coach.assignment.completion.button.no.label', 'No'),
                     leftIconPadding: EdgeInsets.only(left: 16),
