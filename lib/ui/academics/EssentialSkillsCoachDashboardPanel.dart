@@ -7,6 +7,7 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/CustomCourses.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/academics/EssentialSkillsCoach.dart';
 import 'package:illinois/ui/academics/courses/AssignmentPanel.dart';
 import 'package:illinois/ui/academics/courses/AssignmentCompletePanel.dart';
@@ -40,6 +41,8 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   String? _selectedModuleKey;
   DateTime? _pausedDateTime;
   EssentialSkillsCoachTab _selectedTab = EssentialSkillsCoachTab.coach;
+
+  GlobalKey _currentActivityKey = GlobalKey();
 
   @override
   void initState() {
@@ -269,8 +272,9 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                       items: items,
                       onChanged: (String? selected) {
                         setState(() {
-                          _selectedModuleKey = selected;
+                          Storage().essentialSkillsCoachModule = _selectedModuleKey = selected;
                         });
+                        _showCurrentActivity();
                       }
                   )
                 ),
@@ -481,6 +485,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     }
 
     return Padding(
+      key: isCurrent ? _currentActivityKey : null,
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: ElevatedButton(
         onPressed: userUnit.current ? () {
@@ -554,7 +559,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             if (userCourse != null) {
               setState(() {
                 _userCourse = userCourse;
-                _selectedModuleKey ??= CollectionUtils.isNotEmpty(userCourse.course?.modules) ? userCourse.course!.modules![0].key : null;
+                _setDefaultSelectedModule(userCourse.course);
                 _loading = false;
               });
               await _loadUserCourseUnits();
@@ -564,10 +569,20 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
           }
         }
       } else {
-        _selectedModuleKey ??= CollectionUtils.isNotEmpty(_userCourse?.course?.modules) ? _userCourse?.course!.modules![0].key : null;
+        _setDefaultSelectedModule(_userCourse?.course);
         await _loadUserCourseUnits();
       }
+      _showCurrentActivity();
     }
+  }
+
+  void _showCurrentActivity() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      BuildContext? context = _currentActivityKey.currentContext;
+      if (context != null) {
+        Scrollable.ensureVisible(context, duration: Duration(milliseconds: 500));
+      }
+    });
   }
 
   Future<void> _loadCourse() async {
@@ -581,17 +596,21 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         setStateIfMounted(() {
           if (course != null) {
             _course = course;
-            _selectedModuleKey ??= CollectionUtils.isNotEmpty(course.modules) ? course.modules![0].key : null;
+            _setDefaultSelectedModule(course);
           }
           _loading = false;
         });
       }
     } else {
       setStateIfMounted(() {
-        _selectedModuleKey ??= CollectionUtils.isNotEmpty(_course!.modules) ? _course!.modules![0].key : null;
+        _setDefaultSelectedModule(_course);
         _loading = false;
       });
     }
+  }
+
+  void _setDefaultSelectedModule(Course? course) {
+    _selectedModuleKey ??= Storage().essentialSkillsCoachModule ?? (CollectionUtils.isNotEmpty(course?.modules) ? course!.modules![0].key : null);
   }
 
   Future<void> _loadUserCourseUnits() async {
@@ -622,6 +641,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         }
         _loading = false;
       });
+      _showCurrentActivity();
     }
   }
 
@@ -636,8 +656,8 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         if (userCourse != null) {
           _userCourse = userCourse;
           String moduleKey = "${moduleKeyPrefix}_skills";
-          if(StringUtils.isNotEmpty(moduleKeyPrefix)) {
-            _selectedModuleKey = moduleKey;
+          if (StringUtils.isNotEmpty(moduleKeyPrefix)) {
+            Storage().essentialSkillsCoachModule = _selectedModuleKey = moduleKey;
           }
         }
         _loading = false;

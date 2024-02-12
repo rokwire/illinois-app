@@ -443,4 +443,9 @@ class Storage extends rokwire.Storage {
   static const String events2SortTypeKey = 'events2_sort_type';
   String? get events2SortType => getStringWithName(events2SortTypeKey);
   set events2SortType(String? value) => setStringWithName(events2SortTypeKey, value);
+
+  // Essential Skills Coach
+  static const String essentialSkillsCoachModuleKey = 'essential_skills_coach_module';
+  String? get essentialSkillsCoachModule => getStringWithName(essentialSkillsCoachModuleKey);
+  set essentialSkillsCoachModule(String? value) => setStringWithName(essentialSkillsCoachModuleKey, value);
 }
