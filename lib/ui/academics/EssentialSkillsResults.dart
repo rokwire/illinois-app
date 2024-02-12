@@ -151,10 +151,10 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
     return Padding(padding: const EdgeInsets.only(top: 20, left: 28, right: 28), child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Divider(color: Styles().colors.surface, thickness: 2),
+        // Divider(color: Styles().colors.surface, thickness: 2),
         Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Flexible(flex: 4, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.results.skills.title', 'SKILLS'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.table.header'),)),
-          Flexible(flex: 3, fit: FlexFit.tight, child: Text(_latestResponse != null ? DateTimeUtils.localDateTimeToString(_latestResponse!.dateTaken, format: 'MM/dd/yy h:mma') ?? 'NONE' : 'NONE', textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.table.header'),)),
+          // Flexible(flex: 4, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.results.skills.title', 'SKILLS'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.table.header'),)),
+          // Flexible(flex: 3, fit: FlexFit.tight, child: Text(_latestResponse != null ? DateTimeUtils.localDateTimeToString(_latestResponse!.dateTaken, format: 'MM/dd/yy h:mma') ?? 'NONE' : 'NONE', textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.table.header'),)),
           // Flexible(flex: 3, fit: FlexFit.tight, child: DropdownButtonHideUnderline(child:
           // DropdownButton<String>(
           //   icon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),
