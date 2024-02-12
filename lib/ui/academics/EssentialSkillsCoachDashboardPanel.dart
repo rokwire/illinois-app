@@ -99,7 +99,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   bool get _hasStartedSkillsCoach => _userCourse != null;
 
   String? get _availableSelectedModuleKey {
-    List<DropdownMenuItem<String>> items = _moduleDropdownItems(style:  Styles().textStyles.getTextStyle("widget.title.light.large.fat"));
+    List<DropdownMenuItem<String>> items = _moduleDropdownItems();
     String? selected = items.firstOrNull?.value;
     if(items.firstWhereOrNull((e) => e.value == _selectedModuleKey) != null) {
       selected = _selectedModuleKey;
@@ -156,7 +156,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   }
 
   Widget _buildModuleSelection() {
-    List<DropdownMenuItem<String>> items = _moduleDropdownItems(style:  Styles().textStyles.getTextStyle("widget.title.light.large.fat"));
+    List<DropdownMenuItem<String>> items = _moduleDropdownItems();
     String? selected = items.firstOrNull?.value;
     if(items.firstWhereOrNull((e) => e.value == _selectedModuleKey) != null) {
       selected = _selectedModuleKey;
@@ -169,7 +169,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             flex: 1,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: selected,
+              child: _selectedModuleIcon,
             ),
           ),
           Flexible(
@@ -186,7 +186,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                   alignedDropdown: true,
                   child: DropdownButton(
                       alignment: AlignmentDirectional.centerStart,
-                      value: _selectedModuleKey,
+                      value: selected,
                       iconDisabledColor: Styles().colors.fillColorSecondary,
                       iconEnabledColor: Styles().colors.fillColorSecondary,
                       focusColor: Styles().colors.surface,
