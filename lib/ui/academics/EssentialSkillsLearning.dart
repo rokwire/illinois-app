@@ -47,7 +47,7 @@ class _EssentialSkillsLearningState extends State<EssentialSkillsLearning> {
         slantPainterHeadingHeight: 0,
         backgroundColor: Styles().colors.background,
         children: [
-          Styles().images.getImage("streak") ?? Container(),
+          Styles().images.getImage("streak", color: Styles().colors.fillColorPrimary) ?? Container(),
           Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
               label: Localization().getStringEx("", 'Start'),
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant"),
@@ -86,7 +86,7 @@ class _EssentialSkillsLearningState extends State<EssentialSkillsLearning> {
 
   Widget _buildDescription() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(Localization().getStringEx("", 'Check back everyday to complete your daily activity'), style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.header.description'),),
+      Text(Localization().getStringEx("", 'Check back every day to complete your daily activity and keep your streak!'), style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.header.description'),),
       // Padding(padding: EdgeInsets.only(top: 8), child: Text(
       //   Localization().getStringEx("panel.essential_skills_coach.get_started.description.list", '\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience'),
       //   style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.header.description'),

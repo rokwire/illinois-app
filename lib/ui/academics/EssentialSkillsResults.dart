@@ -80,8 +80,9 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
               slantPainterHeadingHeight: 0,
               backgroundColor: Styles().colors.background,
               children: Connectivity().isOffline ? _buildOfflineMessage() : _buildContent(),
-              childrenPadding: EdgeInsets.zero,
+              childrenPadding: EdgeInsets.symmetric(horizontal: 16.0),
               allowOverlap: false,
+              childrenAlignment: CrossAxisAlignment.start,
             ),
           ),
             Column(
@@ -130,7 +131,6 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
         Text(Localization().getStringEx('panel.skills_self_evaluation.results.score.description', 'Skills Domain Score'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.header.description'), textAlign: TextAlign.center,),
         Text(Localization().getStringEx('panel.skills_self_evaluation.results.score.scale', '(0-100)'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.header.description'), textAlign: TextAlign.center,),
         SizedBox(height: 8),
-        Text(Localization().getStringEx('', 'Pick a skill to get started:'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.header.description'), textAlign: TextAlign.center,),
         _buildScoresHeader(),
       ]),
       decoration: BoxDecoration(
@@ -191,14 +191,19 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
       }
     }
 
+    int proficientScore = 70;
+    dynamic proficientScoreVal = _latestResponse?.survey.constants['proficient_score'];
+    if (proficientScoreVal is int) {
+      proficientScore = proficientScoreVal;
+    }
+
     responseSections.forEach((section) {
       String title = _resultsContentItems['section_titles']?.params?[section].toString() ?? '';
       num? mostRecentScore = (_latestResponse?.survey.stats?.percentages[section] ?? 0) * 100;
-      mostRecentScore = mostRecentScore?.round();
-      if(section == 'self_management')
-        mostRecentScore = 20;
+      mostRecentScore = mostRecentScore.round();
+      bool isProficient = mostRecentScore >= proficientScore;
       Widget sectionWidget = Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+          padding: const EdgeInsets.symmetric(vertical: 4),
           child: Card(
               child: InkWell(
                   onTap: () => _showScoreDescription(section),
@@ -220,16 +225,20 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
                               flex: 5,
                               fit: FlexFit.tight,
                               child: Text(
-                                  title,
-                                  style:  mostRecentScore != null && mostRecentScore < 50 ? Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title') : Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')?.apply(color: Styles().colors.mediumGray),// Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')
+                                title,
+                                style: !isProficient ?
+                                  Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')
+                                    : Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')?.apply(color: Styles().colors.mediumGray),// Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')
                               )
                           ),
                           Flexible(
                               flex: 3,
                               fit: FlexFit.tight,
                               child: Text(
-                                mostRecentScore?.toString() ?? "--",
-                                style: mostRecentScore != null && mostRecentScore < 50 ? Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.score.current') : Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.score.past'),
+                                mostRecentScore.toString(),
+                                style: !isProficient ?
+                                  Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.score.current')
+                                    : Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.score.past'),
                                 textAlign: TextAlign.center,
                               )
                           ),
@@ -238,7 +247,8 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
                               fit: FlexFit.tight,
                               child: SizedBox(
                                   height: 16.0,
-                                  child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true, color: Styles().colors.mediumGray)
+                                  child: Styles().images.getImage('chevron-right-bold',
+                                      excludeFromSemantics: true, color: Styles().colors.mediumGray)
                               )
                           ),
                         ],
@@ -248,14 +258,21 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
           )
       );
 
-      if (mostRecentScore != null && mostRecentScore < 50) {
-        workOnSections.add(sectionWidget);
-      } else {
+      if (isProficient) {
         proficientSections.add(sectionWidget);
+      } else {
+        workOnSections.add(sectionWidget);
       }
     });
 
-    List<Widget> finalWidgets = [];
+    List<Widget> finalWidgets = [
+      Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: Text(Localization().getStringEx('', 'Pick a skill to get started:'),
+          style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title.large')
+        ),
+      ),
+    ];
 
     if (responseSections.isEmpty) {
       finalWidgets.add(Padding(
@@ -273,16 +290,16 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
 
     if (workOnSections.isNotEmpty) {
       finalWidgets.add(Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text("Work on:", style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title.large')),
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Text("Improve:", style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')),
       ));
       finalWidgets.addAll(workOnSections);
     }
 
     if (proficientSections.isNotEmpty) {
       finalWidgets.add(Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text("Proficient:", style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title.large')),
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Text("Proficient:", style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')),
       ));
       finalWidgets.addAll(proficientSections);
     }
@@ -306,7 +323,6 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
         textAlign: TextAlign.left,
       ),
     ));
-
 
     return finalWidgets;
   }

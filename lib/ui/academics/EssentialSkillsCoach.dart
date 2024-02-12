@@ -83,7 +83,9 @@ class _EssentialSkillsCoachState extends State<EssentialSkillsCoach> {
 
   Widget _buildDescription() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(Localization().getStringEx("panel.essential_skills_coach.get_started.description.title", 'Improve your strengths related to:'), style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.header.description'),),
+      Text(Localization().getStringEx("panel.essential_skills_coach.get_started.description.title",
+          'Improve your skills related to:'),
+        style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.header.description'),),
       Padding(padding: EdgeInsets.only(top: 8), child: Text(
         Localization().getStringEx("panel.essential_skills_coach.get_started.description.list", '\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience'),
         style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.header.description'),
@@ -121,6 +123,4 @@ class _EssentialSkillsCoachState extends State<EssentialSkillsCoach> {
       //_setLoading(false);
     });
   }
-
-
 }

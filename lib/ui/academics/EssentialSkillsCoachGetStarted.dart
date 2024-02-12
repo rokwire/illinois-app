@@ -106,9 +106,12 @@ class _EssentialSkillsCoachGetStartedState extends State<EssentialSkillsCoachGet
 
   Widget _buildDescription() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(Localization().getStringEx("panel.skills_self_evaluation.get_started.description.title", 'Identify your strengths related to:'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.header.description'),),
+      Text(Localization().getStringEx('',
+          'Before getting started, take the skills self-evaluation to identify your current strengths related to:'),
+        style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.header.description'),),
       Padding(padding: EdgeInsets.only(top: 8), child: Text(
-        Localization().getStringEx("panel.skills_self_evaluation.get_started.description.list", '\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience'),
+        Localization().getStringEx("panel.skills_self_evaluation.get_started.description.list",
+            '\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience'),
         style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.header.description'),
       ))
     ]);

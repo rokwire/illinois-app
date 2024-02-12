@@ -457,7 +457,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     ];
 
     for (Module module in _userCourse?.course?.modules ?? _course?.modules ?? []) {
-      if (module.key != null && module.name != null/* && CollectionUtils.isNotEmpty(module.units)*/) { // TODO remove comment
+      if (module.key != null && module.name != null && CollectionUtils.isNotEmpty(module.units)) {
         dropDownItems.add(DropdownMenuItem(
           value: module.key,
           child: Text(module.name!, style: Styles().textStyles.getTextStyle("widget.detail.large"))
