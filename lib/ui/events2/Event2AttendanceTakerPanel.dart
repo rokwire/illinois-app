@@ -410,12 +410,16 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   }
 
   Widget _buildManualNetIdInputSection() => Event2CreatePanel.buildSectionWidget(
-    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.detail.attendance.manual.netid.label', 'Add NetID(s) as attended:')),
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.detail.attendance.manual.netid.label', 'Add NetID(s) as attended:'),
+      titleTextStyle: widget.manualCheckEnabled ? Event2CreatePanel.headingTextStype : Event2CreatePanel.headingDisabledTextStype,
+    ),
     body: _buildManualNetIdInputWidget() ,
   );
 
-  Widget _buildManualNetIdInputWidget() => Container(decoration: Event2CreatePanel.sectionDecoration, padding: const EdgeInsets.only(left: 12), child:
-    Row(children: [
+  Widget _buildManualNetIdInputWidget() => Container(
+    decoration: Event2CreatePanel.sectionDecorationEx(enabled: widget.manualCheckEnabled),
+    padding: const EdgeInsets.only(left: 12),
+    child: Row(children: [
       Expanded(child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 12), child:
           TextField(
@@ -427,6 +431,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
             maxLines: 1,
             keyboardType: TextInputType.text,
             autocorrect: false,
+            enabled: widget.manualCheckEnabled,
             onEditingComplete: _onTapManualNetIdAdd,
           )
         )
@@ -437,7 +442,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
             SizedBox(width: 14, height: 14, child:
               CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,)
             )
-          ) : Styles().images.getImage('plus-circle')
+          ) : Styles().images.getImage('plus-circle', color: widget.manualCheckEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent)
         ),
       )
     ],)
@@ -447,7 +452,12 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   void _onTapManualNetIdAdd() {
     String netId = _manualNetIdController.text.trim();
     String? eventId = widget.event?.id;
-    if (netId.isNotEmpty && (eventId != null) && (_manualInputProgress == false)) {
+    if (widget.manualCheckEnabled != true) {
+      Event2Popup.showMessage(context,
+        title: Localization().getStringEx("panel.event2.detail.attendance.message.not_available.title", "Not Available"),
+        message: Localization().getStringEx("panel.event2.detail.attendance.manual_check.disabled", "Manual check is not enabled for this event."));
+    }
+    else if (netId.isNotEmpty && (eventId != null) && (_manualInputProgress == false)) {
       _manualAttendEvent_CheckAttendee(eventId: eventId, netId: netId);
     }
   }
@@ -853,30 +863,30 @@ class _AttendeeListItemWidget extends StatelessWidget {
   }
 
   Widget get _checkMarkWidget => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-    Styles().images.getImage(_checkMarkImageKey) ?? Container()
+    _checkMarkImageWidget ?? Container()
   );
 
-  String get _checkMarkImageKey {
+  Widget? get _checkMarkImageWidget {
     if (enabled) {
       if (highlighted) {
-        return 'check-circle-outline';
+        return Styles().images.getImage('check-circle-outline');
       }
       else if (selected) {
-        return 'check-circle-filled';
+        return Styles().images.getImage('check-circle-filled');
       }
       else {
-        return 'circle-outline-gray';
+        return Styles().images.getImage('circle-outline-gray');
       }
     }
     else {
       if (highlighted) {
-        return 'check-circle-outline';
+        return Styles().images.getImage('check-circle-outline', );
       }
       else if (selected) {
-        return 'check-circle-outline-gray';
+        return Styles().images.getImage('check-circle-outline-gray-2', color: Styles().colors.surfaceAccent);
       }
       else {
-        return 'circle-outline-gray';
+        return Styles().images.getImage('circle-outline-gray', color: Styles().colors.surfaceAccent);
       }
     }
   }

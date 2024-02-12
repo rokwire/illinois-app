@@ -197,6 +197,8 @@
     "widget.title.small.semi_fat": {"font_family": "medium", "size": 14.0, "color": "fillColorPrimary"},
     "widget.title.small.fat": {"font_family": "bold", "size": 14.0, "color": "fillColorPrimary"},
     "widget.title.small.fat.spaced": {"extends": "widget.title.small.fat", "letter_spacing": 1.0},
+    "widget.title.small.disabled": {"font_family": "bold", "size": 14.0, "color": "surfaceAccent"},
+    "widget.title.small.fat.disabled.spaced": {"extends": "widget.title.small.disabled", "letter_spacing": 1.0},
     "widget.title.tiny": {"font_family": "bold", "size": 12.0, "color": "fillColorPrimary"},
     "widget.title.tiny.highlight": {"extends" : "widget.title.tiny", "color": "white"},
     "widget.title.tiny.extra_fat": {"font_family": "extra_bold", "size": 12.0, "color": "fillColorPrimary"},
@@ -803,12 +805,14 @@
 
     "circle-outline": {"src": "images/oval-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 24},
     "check-circle-outline": {"src": "0xf111", "type": "fa.icon", "weight": "thin", "color": "fillColorSecondary", "size": 20},
+    "check-circle-outline-2": {"src": "images/deselected.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 24},
     "location-outline": {"src": "images/icon-map-view.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "size issue"},
     "list-outline": {"src": "images/icon-list-view.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "size issue"},
 
     "star-outline-gray": {"src": "0xf005", "type": "fa.icon", "weight": "regular", "color": "mediumGray", "size": 18},
     "thumbs-up-outline-gray": {"src": "images/icon-thumbs-up-outline.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
     "check-circle-outline-gray": {"src": "0xf111", "type": "fa.icon", "weight": "thin", "color": "mediumGray", "size": 20},
+    "check-circle-outline-gray-2": {"src": "images/deselected.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},
     "box-outline-gray": {"src": "images/deselected-checkbox.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},
     "location-outline-gray": {"src": "images/tab-navigate.png", "type": "flutter.asset", "color": "mediumGray", "size": 18, "todo": "size"},
     "campus-tools-outline-gray": {"src": "images/tab-browse.png", "type": "flutter.asset", "color": "mediumGray", "size": 18, "todo": "remove if not used"},
