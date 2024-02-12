@@ -245,9 +245,9 @@ class CustomCourses with Service implements NotificationsListener {
 
   // UserUnits
 
-  Future<UserUnit?> updateUserCourseProgress(UserContent userContent, {required String courseKey, required String unitKey}) async {
+  Future<UserUnit?> updateUserCourseProgress(UserContent userContent, {required String courseKey, required String moduleKey}) async {
     if (Auth2().isLoggedIn && _isLmsAvailable) {
-      String? url = '${Config().lmsUrl}/users/courses/$courseKey/units/$unitKey';
+      String? url = '${Config().lmsUrl}/users/courses/$courseKey/module/$moduleKey';
       String? post = JsonUtils.encode({
         'timezone_name': _timezoneName,
         'timezone_offset': _timezoneOffset,
@@ -260,7 +260,7 @@ class CustomCourses with Service implements NotificationsListener {
         return UserUnit.fromJson(responseJson);
       }
 
-      debugPrint('Failed to update user course progress for course $courseKey unit $unitKey. Reason: $url ${response?.statusCode} $responseString');
+      debugPrint('Failed to update user course progress for course $courseKey module $moduleKey. Reason: $url ${response?.statusCode} $responseString');
     }
     return null;
   }

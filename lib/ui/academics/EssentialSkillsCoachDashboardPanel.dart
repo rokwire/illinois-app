@@ -419,7 +419,10 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             )
           )).then((result) {
             if (result is Map<String, dynamic>) {
-              _updateProgress(userUnit.unit!.key!, userContent, content, result, unitNumber, activityNumber);
+              String? moduleKey = _selectedModule?.key;
+              if (moduleKey != null) {
+                _updateProgress(moduleKey, userContent, content, result, unitNumber, activityNumber);
+              }
             }
           });
         } : null,
@@ -543,9 +546,9 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     _setLoading(false);
   }
 
-  Future<void> _updateProgress(String unitKey, UserContent current, Content content, Map<String, dynamic> updatedData, int unitNumber, int activityNumber) async {
+  Future<void> _updateProgress(String moduleKey, UserContent current, Content content, Map<String, dynamic> updatedData, int unitNumber, int activityNumber) async {
     _setLoading(true);
-    UserUnit? updatedUserUnit = await CustomCourses().updateUserCourseProgress(UserContent(contentKey: current.contentKey, userData: updatedData), courseKey: _userCourse!.course!.key!, unitKey: unitKey);
+    UserUnit? updatedUserUnit = await CustomCourses().updateUserCourseProgress(UserContent(contentKey: current.contentKey, userData: updatedData), courseKey: _userCourse!.course!.key!, moduleKey: moduleKey);
     if (updatedUserUnit != null) {
       if (CollectionUtils.isNotEmpty(_userCourseUnits)) {
         int unitIndex = _userCourseUnits!.indexWhere((userUnit) => userUnit.id != null && userUnit.id == updatedUserUnit.id);

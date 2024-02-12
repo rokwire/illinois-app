@@ -370,7 +370,7 @@ SPEC CHECKSUMS:
   FirebaseInstallations: 558b1da7d65afeb996fd5c814332f013234ece4e
   FirebaseMessaging: 9bc34a98d2e0237e1b121915120d4d48ddcf301e
   FirebaseSessions: 2f348975f6d1c139231c180e12194161da2e0cd6
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_barcode_scanner: 7a1144744c28dc0c57a8de7218ffe5ec59a9e4bf
   flutter_beep: 54fb393b22dfa0f0e4573c81b1c74dd71c4e5af8
   flutter_exif_rotation: de6b54e8bd54a687f28d6397d1a890391de41111
@@ -418,4 +418,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: e4dceef7a484caba641d3b508b2df500c714aa77
 
-COCOAPODS: 1.15.0
+COCOAPODS: 1.14.3
