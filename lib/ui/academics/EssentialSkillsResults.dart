@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/academics/EssentialSkillsLearning.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationOccupationListPanel.dart';
@@ -29,6 +30,7 @@ import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EssentialSkillsResults extends StatefulWidget {
   final SurveyResponse? latestResponse;
@@ -316,11 +318,40 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
     );
 
     finalWidgets.add(Padding(
-      padding: const EdgeInsets.only(top: 4, bottom: 80),
-      child: Text(
-        Localization().getStringEx('panel.skills_self_evaluation.results.more_info.description', '*Tap score cards for more info'),
-        style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.body.small'),
-        textAlign: TextAlign.left,
+      padding: const EdgeInsets.only(top: 4),
+      child: Center(
+        child: Text(
+          Localization().getStringEx('panel.skills_self_evaluation.results.more_info.description', '*Tap score cards for more info'),
+          style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.body.small'),
+          textAlign: TextAlign.left,
+        ),
+      ),
+    ));
+
+    String contactAddress = Localization().getStringEx('panel.skills_self_evaluation.results.contact.address',
+        'bwrobrts@illinois.edu');
+    finalWidgets.add(Padding(
+      padding: const EdgeInsets.only(top: 8.0, bottom: 80),
+      child: RichText(
+        text: TextSpan(children: [
+          TextSpan(text: Localization().getStringEx('panel.skills_self_evaluation.results.contact1',
+              'If you have any questions or concerns about the BESSI score feedback '
+                  'you just received, please contact Dr. Brent Roberts ('),
+              style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.body.small')),
+          TextSpan(text: contactAddress,
+              recognizer: TapGestureRecognizer()..onTap = () {
+                Uri? uri = Uri.tryParse('mailto:$contactAddress');
+                if (uri != null) {
+                  launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              },
+              style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.link.small')),
+          TextSpan(text: Localization().getStringEx('panel.skills_self_evaluation.results.contact2',
+              ').  Dr. Roberts is a professor of psychology at the University of '
+                  'Illinois at Urbana-Champaign and a co-creator of the BESSI inventory '
+                  'and associated BESSI assessment tools.'),
+              style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.body.small'))
+        ]),
       ),
     ));
 

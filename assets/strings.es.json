@@ -3082,6 +3082,7 @@
     "panel.skills_self_evaluation.results.section.title": "Resultados",
     "panel.skills_self_evaluation.results.score.description": "Puntaje de dominio de habilidades",
     "panel.skills_self_evaluation.results.score.scale": "(0-100)",
+    "panel.skills_self_evaluation.results.contact": "If you have any questions or concerns about the BESSI score feedback you just received, please contact Dr. Brent Roberts (bwrobrts@illinois.edu).  Dr. Roberts is a professor of psychology at the University of Illinois at Urbana-Champaign and a co-creator of the BESSI inventory and associated BESSI assessment tools.",
     "panel.skills_self_evaluation.results.skills.title": "HABILIDADES",
     "panel.skills_self_evaluation.results.offline.error.msg": "Los resultados no están disponibles sin conexión.",
     "panel.skills_self_evaluation.results.unavailable.message": "El contenido de los resultados no está disponible actualmente. Por favor, inténtelo de nuevo más tarde.",
