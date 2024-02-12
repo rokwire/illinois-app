@@ -413,11 +413,10 @@ class UserUnit {
   final Unit? unit;
   List<UserScheduleItem>? userSchedule;
 
-  final DateTime? lastCompleted;
   final DateTime? dateCreated;
   final DateTime? dateUpdated;
 
-  UserUnit({this.id, this.courseKey, this.moduleKey, this.completed = 0, this.current = false, this.unit, this.lastCompleted, this.dateCreated, this.dateUpdated, this.userSchedule});
+  UserUnit({this.id, this.courseKey, this.moduleKey, this.completed = 0, this.current = false, this.unit, this.dateCreated, this.dateUpdated, this.userSchedule});
 
   factory UserUnit.emptyFromUnit(Unit unit, String courseKey, {bool current = false}) {
     return UserUnit(courseKey: courseKey, completed: 0, unit: unit, current: current);
@@ -434,7 +433,6 @@ class UserUnit {
       completed: JsonUtils.intValue(json['completed']) ?? 0,
       current: JsonUtils.boolValue(json['current']) ?? false,
       unit: Unit.fromJson(json['unit']),
-      lastCompleted: AppDateTime().dateTimeLocalFromJson(json['last_completed']),
       dateCreated: AppDateTime().dateTimeLocalFromJson(json['date_created']),
       dateUpdated: AppDateTime().dateTimeLocalFromJson(json['date_updated']),
       userSchedule: UserScheduleItem.listFromJson(JsonUtils.listValue(json['user_schedule']))
@@ -448,7 +446,6 @@ class UserUnit {
       'completed': completed,
       'current': current,
       'unit': unit?.toJson(),
-      'last_completed': AppDateTime().dateTimeLocalToJson(lastCompleted),
       'date_created': AppDateTime().dateTimeLocalToJson(dateCreated),
       'date_updated': AppDateTime().dateTimeLocalToJson(dateUpdated),
     };
@@ -472,7 +469,7 @@ class UserUnit {
   static DateTime? firstScheduleItemCompletionFromList(List<UserUnit> userUnits) {
     DateTime? firstCompleted;
     for (UserUnit userUnit in userUnits) {
-      for (ScheduleItem item in userUnit.unit?.scheduleItems ?? []) {
+      for (UserScheduleItem item in userUnit.userSchedule ?? []) {
         if (item.dateCompleted != null) {
           firstCompleted ??= item.dateCompleted;
           if (item.dateCompleted!.isBefore(firstCompleted!)) {
@@ -484,7 +481,7 @@ class UserUnit {
     return firstCompleted;
   }
 
-  ScheduleItem? get currentScheduleItem => completed >= 0 && completed < (unit?.scheduleItems?.length ?? 0) ? (unit?.scheduleItems?[completed]) : null;
+  UserScheduleItem? get currentUserScheduleItem => completed >= 0 && completed < (userSchedule?.length ?? 0) ? (userSchedule?[completed]) : null;
 }
 
 class UserScheduleItem{
@@ -514,6 +511,19 @@ class UserScheduleItem{
       }
     }
     return result;
+  }
+
+  bool get isComplete => userContent?.every((uc) => uc.isComplete) ?? false;
+
+  UserContentReference? get firstIncomplete {
+    try {
+      return userContent?.firstWhere((uc) => uc.isNotComplete);
+    } catch (e) {
+      if (e is! StateError) {
+        debugPrint(e.toString());
+      }
+    }
+    return null;
   }
 }
 
@@ -545,17 +555,17 @@ class UserContentReference{
     }
     return result;
   }
+
+  bool get isComplete => complete ?? false;
+  bool get isNotComplete => !isComplete;
 }
 
 class ScheduleItem{
   final String? name;
   final int? duration;
-  final List<UserContent>? userContent;
-  
-  final DateTime? dateStarted;
-  final DateTime? dateCompleted;
+  final List<String>? contentKeys;
 
-  ScheduleItem({this.name, this.duration, this.userContent, this.dateStarted, this.dateCompleted});
+  ScheduleItem({this.name, this.duration, this.contentKeys});
 
   static ScheduleItem? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -564,9 +574,7 @@ class ScheduleItem{
     return ScheduleItem(
       name: JsonUtils.stringValue(json['name']),
       duration: JsonUtils.intValue(json['duration']),
-      userContent: UserContent.listFromJson(JsonUtils.listValue(json['user_content'])),
-      dateStarted: AppDateTime().dateTimeLocalFromJson(json['date_started']),
-      dateCompleted: AppDateTime().dateTimeLocalFromJson(json['date_completed']),
+      contentKeys: JsonUtils.listStringsValue(json['content_keys']),
     );
   }
 
@@ -574,9 +582,7 @@ class ScheduleItem{
     Map<String, dynamic> json = {
       'name': name,
       'duration': duration,
-      'user_content': UserContent.listToJson(userContent),
-      'date_started': AppDateTime().dateTimeLocalToJson(dateStarted),
-      'date_completed': AppDateTime().dateTimeLocalToJson(dateCompleted),
+      'content_keys': contentKeys,
     };
     json.removeWhere((key, value) => (value == null));
     return json;
@@ -603,19 +609,6 @@ class ScheduleItem{
     }
     return jsonList;
   }
-
-  bool get isComplete => userContent?.every((uc) => uc.isComplete) ?? false;
-
-  UserContent? get firstIncomplete {
-    try {
-      return userContent?.firstWhere((uc) => uc.isNotComplete);
-    } catch (e) {
-      if (e is! StateError) {
-        debugPrint(e.toString());
-      }
-    }
-    return null;
-  }
 }
 
 class UserContent{
@@ -625,25 +618,43 @@ class UserContent{
   static const String badExperience = 'bad';
   static const String notesKey = 'notes';
 
-  final String? contentKey;
-  final Map<String,dynamic>? userData;
+  final String? id;
+  final String? courseKey;
+  final String? moduleKey;
+  final String? unitKey;
+  final Content? content;
+  final Map<String,dynamic>? response;
 
-  UserContent({this.contentKey, this.userData,});
+  final DateTime? dateCreated;
+  final DateTime? dateUpdated;
+
+  UserContent({this.id, this.courseKey, this.moduleKey, this.unitKey, this.content, this.response, this.dateCreated, this.dateUpdated});
 
   static UserContent? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
     return UserContent(
-      contentKey: JsonUtils.stringValue(json['content_key']),
-      userData: json['user_data'],
+      id: JsonUtils.stringValue(json['id']),
+      courseKey: JsonUtils.stringValue(json['course_key']),
+      moduleKey: JsonUtils.stringValue(json['module_key']),
+      unitKey: JsonUtils.stringValue(json['unit_key']),
+      content: Content.fromJson(json['content']),
+      response: JsonUtils.mapValue(json['response']),
+      dateCreated: AppDateTime().dateTimeLocalFromJson(json['date_created']),
+      dateUpdated: AppDateTime().dateTimeLocalFromJson(json['date_updated']),
     );
   }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {
-      'content_key': contentKey,
-      'user_data': userData,
+      'course_key': courseKey,
+      'module_key': moduleKey,
+      'unit_key': unitKey,
+      'response': response,
+      'content': content?.toJson(),
+      'date_created': AppDateTime().dateTimeLocalToJson(dateCreated),
+      'date_updated': AppDateTime().dateTimeLocalToJson(dateUpdated),
     };
     json.removeWhere((key, value) => (value == null));
     return json;
@@ -671,8 +682,7 @@ class UserContent{
     return jsonList;
   }
 
-  // bool get hasData => userData?.isNotEmpty ?? false;
-  bool get isComplete => userData?[completeKey] == true;
+  bool get isComplete => response?[completeKey] == true;
   bool get isNotComplete => !isComplete;
 }
 
@@ -830,6 +840,14 @@ class Content{
     }
     return null;
   }
+}
+
+class UserResponse {
+  final String unitKey;
+  final String contentKey;
+  Map<String, dynamic>? response;
+
+  UserResponse({required this.unitKey, required this.contentKey, this.response});
 }
 
 // CourseConfig

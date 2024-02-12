@@ -3,27 +3,27 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/academics/courses/ModuleHeaderWidget.dart';
 import 'package:illinois/ui/academics/courses/ResourcesPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class AssignmentPanel extends StatefulWidget {
   final Content content;
-  final Map<String, dynamic>? data;
+  final UserContentReference contentReference;
   final Color? color;
   final Color? colorAccent;
-  final bool isCurrent;
   final List<Content>? helpContent;
   final bool preview;
-  final List<UserScheduleItem>? userScheduleItems;
+  final DateTime? courseDayStart;
 
   final Widget? moduleIcon;
   final String moduleName;
@@ -31,8 +31,8 @@ class AssignmentPanel extends StatefulWidget {
   final String unitName;
   final int activityNumber;
 
-  AssignmentPanel({required this.content, required this.data, required this.color, required this.colorAccent, required this.isCurrent,
-    this.helpContent, required this.preview, this.moduleIcon, required this.moduleName, required this.unitNumber, required this.unitName, required this.activityNumber, this.userScheduleItems});
+  AssignmentPanel({required this.content, required this.contentReference, required this.color, required this.colorAccent,
+    this.helpContent, required this.preview, this.courseDayStart, this.moduleIcon, required this.moduleName, required this.unitNumber, required this.unitName, required this.activityNumber});
 
   @override
   State<AssignmentPanel> createState() => _AssignmentPanelState();
@@ -41,14 +41,15 @@ class AssignmentPanel extends StatefulWidget {
 class _AssignmentPanelState extends State<AssignmentPanel> implements NotificationsListener {
 
   late Content _content;
-  Map<String, dynamic>? _data;
   List<Content>? _helpContent;
   Color? _color;
   Color? _colorAccent;
   TextEditingController _controller = TextEditingController();
   ScrollController _scrollController = ScrollController();
-  List<UserScheduleItem>? _userScheduleItems;
-  List<UserContent>? _userContent;
+
+  Map<String, dynamic>? _initialResponse;
+  Map<String, dynamic>? _currentResponse;
+  List<UserContent>? _userResponseHistory;
 
   bool _helpContentOpen = false;
   bool _listening = false;
@@ -60,23 +61,13 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     ]);
 
     _content = widget.content;
-    _userScheduleItems = widget.userScheduleItems;
-    if(_userScheduleItems != null){
-      for(UserScheduleItem item in _userScheduleItems!){
-        for(UserContentReference ref in item?.userContent ?? []){
-          if(ref.contentKey == _content.key){
-            CustomCourses().loadUserContentHistory(ids: ref.ids).then((responses) {
-              _userContent = List.from(responses as Iterable);
-            });
-          }
-        }
-      }
-    }
-    _data = widget.data != null ? Map.of(widget.data!) : null;
     _controller.text = userNotes ?? '';
     _color = widget.color;
     _colorAccent = widget.colorAccent;
     _helpContent = widget.helpContent;
+
+    _loadAssignmentHistory();
+
     super.initState();
   }
 
@@ -88,24 +79,24 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     super.dispose();
   }
 
-  bool get isComplete => _data?[UserContent.completeKey] == true;
-  bool get isNotComplete => _data?[UserContent.completeKey] == false;
+  bool get isComplete => _currentResponse?[UserContent.completeKey] == true;
+  bool get isNotComplete => _currentResponse?[UserContent.completeKey] == false;
   set complete(bool? value) {
-    _data ??= {};
-    _data![UserContent.completeKey] = value;
+    _currentResponse ??= {};
+    _currentResponse![UserContent.completeKey] = value;
   }
 
-  bool get isGoodExperience => _data?[UserContent.experienceKey] == UserContent.goodExperience;
-  bool get isBadExperience => _data?[UserContent.experienceKey] == UserContent.badExperience;
+  bool get isGoodExperience => _currentResponse?[UserContent.experienceKey] == UserContent.goodExperience;
+  bool get isBadExperience => _currentResponse?[UserContent.experienceKey] == UserContent.badExperience;
   set experience(String? value) {
-    _data ??= {};
-    _data![UserContent.experienceKey] = value;
+    _currentResponse ??= {};
+    _currentResponse![UserContent.experienceKey] = value;
   }
 
-  String? get userNotes => _data?[UserContent.notesKey].toString();
+  String? get userNotes => _currentResponse?[UserContent.notesKey].toString();
   set userNotes(String? value) {
-    _data ??= {};
-    _data![UserContent.notesKey] = value;
+    _currentResponse ??= {};
+    _currentResponse![UserContent.notesKey] = value;
   }
 
   @override
@@ -235,11 +226,11 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                     ),
                     backgroundColor: isGoodExperience ? _color : _colorAccent,
                     borderColor: _color,
-                    onTap: widget.isCurrent ? (){
+                    onTap: (){
                       setState(() {
                         experience = isGoodExperience ? null : UserContent.goodExperience;
                       });
-                    } : null,
+                    },
                   ),
                 ),
                 SizedBox(width: 8,),
@@ -254,11 +245,11 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                       ),
                       backgroundColor:  isBadExperience ? _color : _colorAccent,
                       borderColor: _color,
-                      onTap: widget.isCurrent ? (){
+                      onTap: () {
                         setState(() {
                           experience = isBadExperience ? null : UserContent.badExperience;
                         });
-                      } : null,
+                      },
                     )),
               ],
             ),
@@ -276,7 +267,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
               children: [
                 Text(notesHeaderText, style: Styles().textStyles.getTextStyle("widget.detail.small.fat"),),
                 Visibility(
-                  visible: widget.isCurrent && SpeechToText().isEnabled,
+                  visible: SpeechToText().isEnabled,
                   child: _buildSpeechToTextButton(),
                 )
               ],
@@ -310,7 +301,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                       color: isComplete ? _colorAccent : _color,
                       size: 20,
                     ),
-                    onTap: widget.isCurrent && widget.data?[UserContent.completeKey] != true ? () {
+                    onTap: _initialResponse?[UserContent.completeKey] != true ? () {
                       setState(() {
                         complete = isComplete ? null : true;
                       });
@@ -331,7 +322,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                       color: isNotComplete ? _colorAccent : _color,
                       size: 20,
                     ),
-                    onTap: widget.isCurrent && widget.data?[UserContent.completeKey] != true ? (){
+                    onTap: _initialResponse?[UserContent.completeKey] != true ? (){
                       setState(() {
                         complete = isNotComplete ? null : false;
                         experience = null;
@@ -347,7 +338,6 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
           child:TextField(
             controller: _controller,
             maxLines: 10,
-            readOnly: !widget.isCurrent,
             textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
               border: OutlineInputBorder(
@@ -375,13 +365,16 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
   List<Widget> _buildTaskHistoryWidgets(){
     List<Widget> taskWidgets = [];
 
-    for(UserContent content in _userContent ??[]){
+
+
+    for(UserContent historyItem in _userResponseHistory ?? [] ) {
+      DateTime displayTime = historyItem.dateUpdated ?? historyItem.dateCreated ?? DateTime.now();
       taskWidgets.add(Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text((content.userData?["complete"] ?? false ? "Task Completed": "Task Not Completed"),
+            child: Text((historyItem.isComplete ? "Task Completed": "Task Not Completed"),
               style: TextStyle(
                 color: Styles.appColors.fillColorSecondary,
                 fontFamily: Styles.appFontFamilies.bold,
@@ -392,9 +385,8 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text(((content.userData?["complete"] ?? false) ?
-            DateTimeUtils.localDateTimeToString(DateTime.parse(content.userData?["date_completed"]), format: 'MM/dd/yy at h:mma') ?? " "
-                : DateTimeUtils.localDateTimeToString(DateTime.parse(content.userData?["date_started"]), format: 'MM/dd/yy at h:mma') ?? " "),
+            child: Text(
+              '${AppDateTime().getDisplayDay(dateTimeUtc: displayTime, includeAtSuffix: true)} ${AppDateTime().getDisplayTime(dateTimeUtc: displayTime)}',
               style: TextStyle(
                 color: Styles.appColors.fillColorSecondary,
                 fontSize: 12,
@@ -422,12 +414,30 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     ),
   );
 
+  Future<void> _loadAssignmentHistory() async {
+    List<UserContent>? history = await CustomCourses().loadUserContentHistory(ids: widget.contentReference.ids);
+    if (history != null) {
+      history.sort(((a, b) => b.dateCreated?.compareTo(a.dateCreated ?? DateTime.now()) ?? 0));
+      for (UserContent historyItem in history) {
+        if (widget.courseDayStart != null && !(historyItem.dateCreated?.isBefore(widget.courseDayStart!) ?? true)) {
+          _currentResponse = historyItem.response != null ? Map.from(historyItem.response!) : null; // the current response is the first in the list (most recently created)
+          _initialResponse = historyItem.response != null ? Map.from(historyItem.response!) : null; // copy the current response so we can check if the user changed it when saving
+          break;
+        }
+      }
+
+      setStateIfMounted(() {
+        _userResponseHistory = history.sublist(_currentResponse != null ? 1 : 0);
+      });
+    }
+  }
+
   void _saveProgress(bool didPop) async {
     if (userNotes != null || _controller.text.isNotEmpty) {
       userNotes = _controller.text;
     }
     if (!didPop) {
-      Navigator.pop(context, !widget.isCurrent || DeepCollectionEquality().equals(_data, widget.data) ? null : _data);
+      Navigator.pop(context, DeepCollectionEquality().equals(_currentResponse, _initialResponse) ? null : _currentResponse); //
     }
   }
 
@@ -447,9 +457,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
 
   void _onSpeechResult(String result, bool finalResult) {
     setState(() {
-      if (widget.isCurrent) {
-        _controller.text = result;
-      }
+      _controller.text = result;
       if (finalResult) {
         _listening = false;
       }

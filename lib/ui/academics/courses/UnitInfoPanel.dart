@@ -8,7 +8,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class UnitInfoPanel extends StatelessWidget {
   final Content content;
-  final Map<String, dynamic>? data;
+  final UserContentReference contentReference;
   final Color? color;
   final Color? colorAccent;
   final bool preview;
@@ -16,7 +16,7 @@ class UnitInfoPanel extends StatelessWidget {
   final Widget? moduleIcon;
   final String moduleName;
 
-  const UnitInfoPanel({required this.content, required this.data, required this.color, required this.colorAccent, required this.preview, this.moduleIcon, required this.moduleName});
+  const UnitInfoPanel({required this.content, required this.contentReference, required this.color, required this.colorAccent, required this.preview, this.moduleIcon, required this.moduleName});
 
   @override
   Widget build(BuildContext context) {
@@ -84,14 +84,8 @@ class UnitInfoPanel extends StatelessWidget {
   }
 
   void _saveProgress(BuildContext context, bool didPop) async {
-    Map<String, dynamic>? updatedData;
-    bool returnData = preview ? false : (data?[UserContent.completeKey] != true);
-    if (returnData) {
-      updatedData = data != null ? Map.from(data!) : {};
-      updatedData[UserContent.completeKey] = true;
-    }
     if (!didPop) {
-      Navigator.pop(context, returnData ? updatedData : null);
+      Navigator.pop(context, !preview && contentReference.isNotComplete ? {UserContent.completeKey: true} : null);
     }
   }
 }
