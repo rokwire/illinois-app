@@ -71,7 +71,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
           Divider(color: Styles().colors.fillColorPrimary, thickness: 2),
           Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Flexible(flex: 4, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.results.skills.title', 'SKILLS'), style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.results.table.header'),)),
-            Flexible(flex: 3, fit: FlexFit.tight, child: Text(_latestResponse != null ? DateTimeUtils.localDateTimeToString(_latestResponse.dateTaken, format: 'MM/dd/yy\nh:mma') ?? 'NONE' : 'NONE', textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.results.table.header'),)),
+            Flexible(flex: 3, fit: FlexFit.tight, child: Text(DateTimeUtils.localDateTimeToString(_latestResponse.dateTaken, format: 'MM/dd/yy\nh:mma') ?? 'NONE', textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.results.table.header'),)),
             Flexible(flex: 3, fit: FlexFit.tight, child: DropdownButtonHideUnderline(child:
             DropdownButton<String>(
               icon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),

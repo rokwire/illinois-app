@@ -31,8 +31,8 @@ class ScoreBarSegment{
 }
 
 class SkillsScoreChart extends StatefulWidget {
-  SkillsScoreChartController controller;
-  int maxBars;
+  final SkillsScoreChartController controller;
+  final int maxBars;
   SkillsScoreChart({super.key, required this.controller, this.maxBars = 10});
 
   @override
@@ -94,7 +94,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
     }
   }
   
-  void _processOneSkill(List<SurveyResponse>? responses, String selectedSkill, {bool displayDate = true}){
+  void _processOneSkill(List<SurveyResponse>? responses, String selectedSkill /*, {bool displayDate = true}*/){
     for (SurveyResponse survey in responses ?? []) {
       SurveyStats? stats = survey.survey.stats;
       int totalScore = 0;
@@ -136,7 +136,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
     }
   }
 
-  void _processAllSkills(List<SurveyResponse>? responses, {bool displayDate = true}) {
+  void _processAllSkills(List<SurveyResponse>? responses /*, {bool displayDate = true}*/) {
     for (SurveyResponse survey in responses ?? []) {
       SurveyStats? stats = survey.survey.stats;
       if(stats != null){
