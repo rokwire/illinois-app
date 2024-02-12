@@ -215,8 +215,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Container(
-                  width: 150,
+                Expanded(
                   child:RoundedButton(
                     label: "",
                     textWidget: Icon(
@@ -234,8 +233,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                   ),
                 ),
                 SizedBox(width: 8,),
-                Container(
-                    width: 150,
+                Expanded(
                     child:RoundedButton(
                       label: "",
                       textWidget: Icon(
