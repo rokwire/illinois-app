@@ -490,35 +490,36 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
   }
 
   void _loadResults() {
-    _setLoading(true);
-    Surveys().loadUserSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
-      _responses.clear();
-      if (CollectionUtils.isNotEmpty(responses)) {
-        responses!.sort(((a, b) => b.dateTaken.compareTo(a.dateTaken)));
-
-        _responses = List.from(responses);
-
-        if(responses.length > 1){
-          _latestResponse = _responses[0];
-          _comparedResponse = _responses[1];
-          _comparisonResponseId = _responses[1].id;
-        }else{
-          _latestResponse = _responses[0];
-          _comparedResponse = _responses[0];
-          _comparisonResponseId = _responses[0].id;
-        }
-      }
-      _chartController.updateData(responses, _selectedSkillType);
-      _setLoading(false);
+    setState(() {
+      _loading = true;
     });
-  }
+    Surveys().loadUserSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
+      if (mounted) {
+        if (CollectionUtils.isNotEmpty(responses)) {
+          responses?.sort(((a, b) => b.dateTaken.compareTo(a.dateTaken)));
+        }
+        setState(() {
+          if ((responses != null) && responses.isNotEmpty) {
+            _responses = List.from(responses);
 
-  void _setLoading(bool value) {
-    if (mounted) {
-      setState(() {
-        _loading = value;
-      });
-    }
+            if(responses.length > 1){
+              _latestResponse = _responses[0];
+              _comparedResponse = _responses[1];
+              _comparisonResponseId = _responses[1].id;
+            }else{
+              _latestResponse = _responses[0];
+              _comparedResponse = _responses[0];
+              _comparisonResponseId = _responses[0].id;
+            }
+          }
+          else {
+            _responses.clear();
+          }
+          _chartController.updateData(responses, _selectedSkillType);
+          _loading = false;
+        });
+      }
+    });
   }
 
   int _determineSkillScore(num? score, num? maxScore){
@@ -547,19 +548,17 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
 
   void _loadContentItems() {
     SkillsSelfEvaluation.loadContentItems(["bessi_results", "bessi_profile"]).then((content) {
-      if (content?.isNotEmpty ?? false) {
-        _resultsContentItems.clear();
-        for (MapEntry<String, Map<String, dynamic>> item in content?.entries ?? []) {
-          switch (item.value['category']) {
-            case 'bessi_results':
-              _resultsContentItems[item.key] = SkillsSelfEvaluationContent.fromJson(item.value);
-              break;
+      if ((content != null) && content.isNotEmpty && mounted) {
+        setState(() {
+          _resultsContentItems.clear();
+          for (MapEntry<String, Map<String, dynamic>> item in content.entries) {
+            switch (item.value['category']) {
+              case 'bessi_results':
+                _resultsContentItems[item.key] = SkillsSelfEvaluationContent.fromJson(item.value);
+                break;
+            }
           }
-        }
-
-        if (mounted) {
-          setState(() {});
-        }
+        });
       }
     });
   }
