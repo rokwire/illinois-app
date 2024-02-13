@@ -52,6 +52,7 @@ enum AcademicsContent { events,
 class AcademicsHomePanel extends StatefulWidget {
   static const String notifySelectContent = "edu.illinois.rokwire.academics.content.select";
   static const String contentItemKey = "content-item";
+  static final String routeName = 'AcademicsHomePanel';
 
   final AcademicsContent? content;
   final bool rootTabDisplay;

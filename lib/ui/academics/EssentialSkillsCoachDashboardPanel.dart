@@ -11,6 +11,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/academics/EssentialSkillsCoach.dart';
 import 'package:illinois/ui/academics/courses/AssignmentPanel.dart';
 import 'package:illinois/ui/academics/courses/AssignmentCompletePanel.dart';
+import 'package:illinois/ui/academics/courses/EssentialSkillsCoachWidgets.dart';
 import 'package:illinois/ui/academics/courses/ResourcesPanel.dart';
 import 'package:illinois/ui/academics/courses/SkillsHistoryPanel.dart';
 import 'package:illinois/ui/academics/courses/StreakPanel.dart';
@@ -254,35 +255,16 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
           Flexible(
             flex: 4,
             child: Padding(padding: EdgeInsets.only(right: 16),
-              child: Container(
-                padding: const EdgeInsets.only(top: 4.0, bottom: 8.0),
-                decoration: BoxDecoration(
-                  color: Styles().colors.surface,
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                ),
-                child: ButtonTheme(
-                  alignedDropdown: true,
-                  child: DropdownButton(
-                      alignment: AlignmentDirectional.centerStart,
-                      value: selected,
-                      iconDisabledColor: Styles().colors.fillColorSecondary,
-                      iconEnabledColor: Styles().colors.fillColorSecondary,
-                      focusColor: Styles().colors.surface,
-                      dropdownColor: Styles().colors.surface,
-                      underline: Divider(color: Styles().colors.fillColorSecondary, height: 1.0, indent: 16.0, endIndent: 16.0),
-                      borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                      isExpanded: true,
-                      items: items,
-                      onChanged: (String? selected) {
-                        setState(() {
-                          Storage().essentialSkillsCoachModule = _selectedModuleKey = selected;
-                        });
-                        _showCurrentActivity(selected);
-                      }
-                  )
-                ),
-              )
+              child: EssentialSkillsCoachDropdown(
+                value: selected,
+                items: items,
+                onChanged: (String? selected) {
+                  setState(() {
+                    Storage().essentialSkillsCoachModule = _selectedModuleKey = selected;
+                  });
+                  _showCurrentActivity(selected);
+                }
+              ),
             ),
           ),
         ],
@@ -471,14 +453,14 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                   icon,
                   SizedBox(width: 16.0),
                   Text(
-                    content.reference?.highlightDisplayText() ?? sprintf(Localization().getStringEx('panel.essential_skills_coach.dashboard.activity.button.label', 'Activity %d'), [activityNumber]),
+                    content.styles?.strings?['highlight_label'] ?? content.reference?.highlightLabelText() ?? sprintf(Localization().getStringEx('panel.essential_skills_coach.dashboard.activity.button.label', 'Activity %d'), [activityNumber]),
                     style: Styles().textStyles.getTextStyle("widget.title.light.huge.fat")
                   )
                 ]
               ),
             ),
             Text(
-              content.reference?.highlightActionText() ?? (isNextWithCurrentComplete ?
+              content.styles?.strings?['highlight_action'] ?? content.reference?.highlightActionText() ?? (isNextWithCurrentComplete ?
                 sprintf(Localization().getStringEx('panel.essential_skills_coach.dashboard.activity.button.action.unlock.label', 'Starts %s'), [unlockTimeText ?? 'Tomorrow']) :
                   Localization().getStringEx('panel.essential_skills_coach.dashboard.activity.button.action.label', 'GET STARTED')),
               style: Styles().textStyles.getTextStyle("widget.title.light.medium.fat")

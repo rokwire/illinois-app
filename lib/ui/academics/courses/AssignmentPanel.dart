@@ -6,7 +6,7 @@ import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/service/SpeechToText.dart';
-import 'package:illinois/ui/academics/courses/ModuleHeaderWidget.dart';
+import 'package:illinois/ui/academics/courses/EssentialSkillsCoachWidgets.dart';
 import 'package:illinois/ui/academics/courses/ResourcesPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -138,7 +138,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
         ),
         body: Column(
           children: [
-            ModuleHeaderWidget(icon: widget.moduleIcon, moduleName: widget.moduleName, backgroundColor: _color,),
+            EssentialSkillsCoachModuleHeader(icon: widget.moduleIcon, moduleName: widget.moduleName, backgroundColor: _color,),
             Expanded(
               child: Stack(
                 children: [

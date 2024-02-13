@@ -636,12 +636,12 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapSkillSelfEvaluation(BuildContext context) {
     Analytics().logSelect(target: "Skills Self-Evaluation");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.skills_self_evaluation,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.skills_self_evaluation,), settings: RouteSettings(name: AcademicsHomePanel.routeName)));
   }
 
   void _onTapEssentialSkillCoach(BuildContext context) {
     Analytics().logSelect(target: "Essential Skills Coach");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.essential_skills_coach,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.essential_skills_coach,), settings: RouteSettings(name: AcademicsHomePanel.routeName)));
   }
 
   void _onTapCanvasCourses(BuildContext context) {
