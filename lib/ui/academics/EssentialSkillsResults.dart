@@ -16,6 +16,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/ui/academics/EssentialSkillsLearning.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
@@ -33,7 +34,6 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../service/Config.dart';
 
 class EssentialSkillsResults extends StatefulWidget {
   final SurveyResponse? latestResponse;
