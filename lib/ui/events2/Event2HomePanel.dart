@@ -1009,13 +1009,14 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     }
   }
 
-  void _updateEventIfNeeded(Event2? event) {
-    if ((event != null) && (event.id != null) && mounted) {
+  void _updateEventIfNeeded(dynamic event) {
+    if ((event is Event2) && (event.id != null) && mounted) {
       int? index = Event2.indexInList(_events, id: event.id);
-      if (index != null)
-      setState(() {
-       _events?[index] = event;
-      });
+      if (index != null) {
+        setState(() {
+          _events?[index] = event;
+        });
+      }
     }
   }
 

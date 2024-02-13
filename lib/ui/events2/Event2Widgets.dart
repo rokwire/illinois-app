@@ -163,13 +163,16 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
 
   // Keep a copy of the user position in the State because it gets cleared somehow in the widget
   // when sending the appliction to background in iOS.
+  late Event2 _event;
   Position? _userLocation; 
 
   @override
   void initState() {
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoriteChanged,
+      Events2.notifyUpdated,
     ]);
+    _event = widget.event;
     _userLocation = widget.userLocation;
     super.initState();
   }
@@ -185,8 +188,15 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoriteChanged) {
-      if ((param is Favorite) && (param.favoriteKey == widget.event.favoriteKey) && (param.favoriteId == widget.event.favoriteId) && mounted) {
+      if ((param is Favorite) && (param.favoriteKey == _event.favoriteKey) && (param.favoriteId == _event.favoriteId) && mounted) {
         setState(() {});
+      }
+    }
+    else if (name == Events2.notifyUpdated) {
+      if ((param is Event2) && (param.id == _event.id) && mounted) {
+        setState(() {
+          _event = param;
+        });
       }
     }
   }
@@ -313,10 +323,10 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   Widget get _linkTitleWidget {
     String? title;
     if (widget.linkType == Event2GroupingType.superEvent) {
-      title = widget.event.name;
+      title = _event.name;
     }
     else if (widget.linkType == Event2GroupingType.recurrence) {
-      title = widget.event.shortDisplayDate;
+      title = _event.shortDisplayDate;
     }
     return Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.regular.fat"), maxLines: 2, overflow: TextOverflow.ellipsis,);
   }
@@ -324,10 +334,10 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   Widget get _linkDetailWidget {
     String? detail;
     if (widget.linkType == Event2GroupingType.superEvent) {
-      detail = widget.event.shortDisplayDateAndTime;
+      detail = _event.shortDisplayDateAndTime;
     }
     else if (widget.linkType == Event2GroupingType.recurrence) {
-      detail = widget.event.shortDisplayTime;
+      detail = _event.shortDisplayTime;
     }
     return Text(detail ?? '', style: Styles().textStyles.getTextStyle("widget.item.small"), maxLines: 1, overflow: TextOverflow.ellipsis,);
   }
@@ -402,18 +412,18 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   static BorderRadiusGeometry get _linkContentBorderRadius => BorderRadius.all(_linkContentRadius);
   static BorderRadiusGeometry get _linkContentBottomBorderRadius => BorderRadius.vertical(bottom: _linkContentRadius);
 
-  bool get _hasImage => StringUtils.isNotEmpty(widget.event.imageUrl);
+  bool get _hasImage => StringUtils.isNotEmpty(_event.imageUrl);
 
   bool get _hasGroup => (widget.group != null);
   bool get _isGroupAdmin => (widget.group?.currentMember?.isAdmin ?? false);
-  bool get _canEditGroupEvent => _isGroupAdmin && (widget.event.canUserEdit == true);
+  bool get _canEditGroupEvent => _isGroupAdmin && (_event.canUserEdit == true);
   bool get _canDeleteGroupEvent => _isGroupAdmin;
   bool get _hasGroupEventOptions => _hasGroup && (_canEditGroupEvent || _canDeleteGroupEvent);
 
   Widget get _imageHeadingWidget => Visibility(visible: _hasImage, child:
     Container(decoration: _imageHeadingDecoration, child:
       AspectRatio(aspectRatio: 2.5, child:
-        Image.network(widget.event.imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+        Image.network(_event.imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
       ),
     )
   );
@@ -422,7 +432,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
   );
 
-  Widget get _eventHeadingWidget => Container(height: _eventHeadingHeight, color: widget.event.uiColor,);
+  Widget get _eventHeadingWidget => Container(height: _eventHeadingHeight, color: _event.uiColor,);
   double get _eventHeadingHeight => 7;
 
   Widget get _contentHeadingWidget =>
@@ -441,10 +451,10 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
 
   /*Widget get _groupingBadgeWidget {
     String? badgeLabel;
-    if (widget.event.isSuperEvent) {
+    if (_event.isSuperEvent) {
       badgeLabel = Localization().getStringEx('widget.event2.card.super_event.abbreviation.label', 'COMP'); // composite
     }
-    else if (widget.event.isRecurring) {
+    else if (_event.isRecurring) {
       badgeLabel = Localization().getStringEx('widget.event2.card.recurring.abbreviation.label', 'REC');
     }
     return (badgeLabel != null) ? 
@@ -455,7 +465,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   }*/
 
   Widget get _favoriteButton {
-    bool isFavorite = Auth2().isFavorite(widget.event);
+    bool isFavorite = Auth2().isFavorite(_event);
     return Opacity(opacity: Auth2().canFavorite ? 1 : 0, child:
       Semantics(container: true,
         child: Semantics(
@@ -496,7 +506,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     ],) : Container();
 
   Widget get _titleContentWidget =>
-    Text(widget.event.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'), maxLines: 2, overflow: TextOverflow.ellipsis);
+    Text(_event.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'), maxLines: 2, overflow: TextOverflow.ellipsis);
 
   Widget get _detailsWidget {
     List<Widget> detailWidgets = <Widget>[
@@ -513,39 +523,39 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   }
 
   List<Widget>? get _dateDetailWidget {
-    String? dateTime = widget.event.shortDisplayDateAndTime;
+    String? dateTime = _event.shortDisplayDateAndTime;
     return (dateTime != null) ? <Widget>[_buildTextDetailWidget(dateTime, 'calendar')] : null;
   }
 
   List<Widget>? get _onlineDetailWidget {
-    return widget.event.isOnline ? <Widget>[
+    return _event.isOnline ? <Widget>[
       _buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.online.label', 'Online'), 'laptop')
     ] : null;
   }
 
   List<Widget>? get _locationDetailWidget {
-    if (widget.event.isInPerson) {
+    if (_event.isInPerson) {
 
       List<Widget> details = <Widget>[
         _buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.in_person.label', 'In Person'), 'location'),
       ];
 
-      String? displayName = widget.event.location?.displayName;
+      String? displayName = _event.location?.displayName;
       if (displayName != null) {
         details.add(_buildLocationTextDetailWidget(displayName));
       }
 
-      String? displayAddress = widget.event.location?.displayAddress;
+      String? displayAddress = _event.location?.displayAddress;
       if ((displayAddress != null) && (displayAddress != displayName)) {
         details.add(_buildLocationTextDetailWidget(displayAddress));
       }
 
-      String? displayDescription = widget.event.location?.displayDescription; // ?? widget.event.location?.displayCoordinates
+      String? displayDescription = _event.location?.displayDescription; // ?? _event.location?.displayCoordinates
       if ((displayDescription != null) && (displayDescription != displayAddress) && (displayDescription != displayName)) {
         details.add(_buildLocationTextDetailWidget(displayDescription));
       }
 
-      String? distanceText = widget.event.getDisplayDistance(_userLocation);
+      String? distanceText = _event.getDisplayDistance(_userLocation);
       if (distanceText != null) {
         details.add(_buildLocationTextDetailWidget(distanceText));
       }
@@ -556,12 +566,12 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   }
 
   List<Widget>? get _groupingDetailWidget {
-    if (widget.event.hasLinkedEvents) {
+    if (_event.hasLinkedEvents) {
       List<Widget> details = <Widget>[];
-      if (widget.event.isSuperEvent) {
+      if (_event.isSuperEvent) {
         details.add(_buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.super_event.label', 'Multi-Event'), 'event',));
       }
-      if (widget.event.isRecurring) {
+      if (_event.isRecurring) {
         details.add(_buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.recurring.label', 'Repeats'), 'recurrence',));
       }
       return details.isNotEmpty ? details : null;
@@ -605,7 +615,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   }
 
   List<Widget> get _linkedEventsPagerWidget {
-    Event2Grouping? linkedGroupingQuery = widget.event.linkedEventsGroupingQuery;
+    Event2Grouping? linkedGroupingQuery = _event.linkedEventsGroupingQuery;
     return (linkedGroupingQuery != null) ? <Widget>[
       Container(color: Styles().colors.surfaceAccent, height: 1,),
       Padding(padding: const EdgeInsets.symmetric(vertical: 16), child:
@@ -615,8 +625,8 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   }
 
   void _onFavorite() {
-    Analytics().logSelect(target: "Favorite: ${widget.event.name}");
-    Auth2().prefs?.toggleFavorite(widget.event);
+    Analytics().logSelect(target: "Favorite: ${_event.name}");
+    Auth2().prefs?.toggleFavorite(_event);
   }
 
   void _onGroupEventOptions() {
@@ -655,7 +665,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   void _onEditGroupEvent() {
     Analytics().logSelect(target: 'Update Group Event (Option)');
     Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(event: widget.event,)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(event: _event,)));
   }
 
   void _onDeleteGroupEvent() {
@@ -672,7 +682,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
 
   void _onTapRemoveGroupEvent() {
     Analytics().logSelect(target: 'Remove Group Event');
-    Groups().deleteEventForGroupV3(eventId: widget.event.id, groupId: widget.group?.id).then((bool value) {
+    Groups().deleteEventForGroupV3(eventId: _event.id, groupId: widget.group?.id).then((bool value) {
       if (value) {
         Navigator.of(context).pop();
       } else {

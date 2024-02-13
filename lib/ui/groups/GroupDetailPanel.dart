@@ -38,6 +38,7 @@ import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -96,7 +97,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool               _confirmationLoading = false;
   bool               _updatingEvents = false;
   int                _allEventsCount = 0;
-  List<Event2>?       _groupEvents;
+  List<Event2>?      _groupEvents;
   List<GroupPost>    _visibleGroupPosts = <GroupPost>[];
   List<Member>?      _groupAdmins;
 
@@ -212,6 +213,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Polls.notifyStatusChanged,
       Polls.notifyVoteChanged,
       Polls.notifyResultsChanged,
+      Events2.notifyUpdated,
       FlexUI.notifyChanged,
       Connectivity.notifyStatusChanged,
     ]);
@@ -526,7 +528,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     } 
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
-    } 
+    }
+    else if (name == Events2.notifyUpdated) {
+      _updateEventIfNeeded(param);
+    }
     else if (name == FlexUI.notifyChanged) {
       setStateIfMounted(() {});
     } 
@@ -1819,6 +1824,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if (poll != null) {
         setState(() {
           _updatePollInList(poll);
+        });
+      }
+    }
+  }
+
+  void _updateEventIfNeeded(dynamic event) {
+    if ((event is Event2) && (event.id != null) && mounted) {
+      int? index = Event2.indexInList(_groupEvents, id: event.id);
+      if (index != null) {
+        setState(() {
+          _groupEvents?[index] = event;
         });
       }
     }
