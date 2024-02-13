@@ -29,7 +29,7 @@ class UnitInfoPanel extends StatelessWidget {
           textStyle: Styles().textStyles.getTextStyle('header_bar'),
           onLeading: () => _saveProgress(context, false),
         ),
-        body: Column(
+        body: Stack(
           children: [
             SingleChildScrollView(
               child: Column(
@@ -66,15 +66,19 @@ class UnitInfoPanel extends StatelessWidget {
                 ],
               ),
             ),
-            Expanded(child: Container(),),
-            Padding(
-              padding: EdgeInsets.all(16),
-              child: RoundedButton(
-                  label: Localization().getStringEx('panel.essential_skills_coach.unit_info.button.continue.label', 'Continue'),
-                  textStyle: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"),
-                  backgroundColor: color,
-                  borderColor: color,
-                  onTap: () => _saveProgress(context, false)),
+            Column(
+              children: [
+                Expanded(child: Container(),),
+                Padding(
+                  padding: EdgeInsets.all(16),
+                  child: RoundedButton(
+                      label: Localization().getStringEx('panel.essential_skills_coach.unit_info.button.continue.label', 'Continue'),
+                      textStyle: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"),
+                      backgroundColor: color,
+                      borderColor: color,
+                      onTap: () => _saveProgress(context, false)),
+                ),
+              ],
             ),
           ],
         ),

@@ -154,10 +154,10 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
 
   String _tabLabel(EssentialSkillsCoachTab tab) {
     if (tab == EssentialSkillsCoachTab.coach) {
-      return Localization().getStringEx('', "Skills Coach");
+      return Localization().getStringEx('panel.essential_skills_coach.dashboard.tab.coach.label', "Skills Coach");
     }
     else if (tab == EssentialSkillsCoachTab.history) {
-      return Localization().getStringEx('', "Skills History");
+      return Localization().getStringEx('panel.essential_skills_coach.dashboard.tab.history.label', "Skills History");
     }
     return '';
   }

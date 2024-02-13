@@ -95,7 +95,7 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
                 Padding(
                   padding: EdgeInsets.only(left: 64, right: 64, bottom: 8),
                   child: RoundedButton(
-                    label: Localization().getStringEx("", 'Continue'),
+                    label: Localization().getStringEx("panel.essential_skills_coach.evaluation_results.button.continue.label", 'Continue'),
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant"),
                     backgroundColor: Styles().colors.surface,
                     onTap: () {
@@ -134,8 +134,7 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
         Text(Localization().getStringEx('panel.skills_self_evaluation.results.section.title', 'Results'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.header'), textAlign: TextAlign.center,),
         Text(Localization().getStringEx('panel.skills_self_evaluation.results.score.description', 'Skills Domain Score'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.header.description'), textAlign: TextAlign.center,),
         Text(Localization().getStringEx('panel.skills_self_evaluation.results.score.scale', '(0-100)'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.header.description'), textAlign: TextAlign.center,),
-        SizedBox(height: 8),
-        _buildScoresHeader(),
+        SizedBox(height: 28),
       ]),
       decoration: BoxDecoration(
           shape: BoxShape.rectangle,
@@ -149,30 +148,6 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
           )
       ),
     );
-  }
-
-  Widget _buildScoresHeader() {
-    return Padding(padding: const EdgeInsets.only(top: 20, left: 28, right: 28), child: Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        // Divider(color: Styles().colors.surface, thickness: 2),
-        Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          // Flexible(flex: 4, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.results.skills.title', 'SKILLS'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.table.header'),)),
-          // Flexible(flex: 3, fit: FlexFit.tight, child: Text(_latestResponse != null ? DateTimeUtils.localDateTimeToString(_latestResponse!.dateTaken, format: 'MM/dd/yy h:mma') ?? 'NONE' : 'NONE', textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.table.header'),)),
-          // Flexible(flex: 3, fit: FlexFit.tight, child: DropdownButtonHideUnderline(child:
-          // DropdownButton<String>(
-          //   icon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),
-          //   isExpanded: true,
-          //   style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.table.header'),
-          //   items: _buildResponseDateDropDownItems(),
-          //   value: _comparisonResponseId,
-          //   onChanged: _onResponseDateDropDownChanged,
-          //   dropdownColor: Styles().colors.textBackground,
-          // ),
-          // )),
-        ],)),
-      ],
-    ));
   }
 
   List<Widget> _buildContent() {
@@ -267,7 +242,7 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
     List<Widget> finalWidgets = [
       Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
-        child: Text(Localization().getStringEx('', 'Pick a skill to get started:'),
+        child: Text(Localization().getStringEx('panel.essential_skills_coach.evaluation_results.select_skill.message', 'Pick a skill to get started:'),
           style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title.large')
         ),
       ),

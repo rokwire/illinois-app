@@ -14,6 +14,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class AssignmentPanel extends StatefulWidget {
@@ -363,7 +364,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
         Padding(padding: const EdgeInsets.only(bottom: 80),
           child: Theme(data: Theme.of(context).copyWith(dividerColor: Colors.transparent), child: ExpansionTile(
             tilePadding: EdgeInsets.zero,
-            title: Text(Localization().getStringEx("", "History"), style: Styles().textStyles.getTextStyle("widget.detail.small.fat")),
+            title: Text(Localization().getStringEx("panel.essential_skills_coach.assignment.history.header", "History"), style: Styles().textStyles.getTextStyle("widget.detail.small.fat")),
             iconColor: Styles().colors.fillColorPrimary,
             collapsedIconColor: Styles().colors.fillColorPrimary,
             children: _buildTaskHistoryWidgets(),
@@ -394,7 +395,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
             child: TextButton(
               onPressed: () => _onTapViewHistoryResponse(i),
               child: Text(
-                displayTime == null ? Localization().getStringEx("", "Unsaved Response") : (historyItem.isComplete ? Localization().getStringEx("", "Task Completed"): Localization().getStringEx("", "Task Not Completed")),
+                displayTime == null ? Localization().getStringEx("panel.essential_skills_coach.assignment.history.unsaved.label", "Unsaved Response") : (historyItem.isComplete ? Localization().getStringEx("panel.essential_skills_coach.assignment.history.complete.label", "Task Completed"): Localization().getStringEx("panel.essential_skills_coach.assignment.history.incomplete.label", "Task Not Completed")),
                 style: Styles().textStyles.getTextStyle(isSelected ? "widget.detail.regular.extra_fat" : "widget.detail.regular")?.apply(decoration: TextDecoration.underline),
               ),
             ),
@@ -402,7 +403,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
-              displayTime == null ? Localization().getStringEx("", "Now") : '${AppDateTime().getDisplayDay(dateTimeUtc: displayTime, includeAtSuffix: true)} ${AppDateTime().getDisplayTime(dateTimeUtc: displayTime)}',
+              displayTime == null ? Localization().getStringEx("panel.essential_skills_coach.assignment.history.timestamp.now.label", "Now") : '${AppDateTime().getDisplayDay(dateTimeUtc: displayTime, includeAtSuffix: true)} ${AppDateTime().getDisplayTime(dateTimeUtc: displayTime)}',
               style: Styles().textStyles.getTextStyle(isSelected ? "widget.detail.regular.extra_fat" : "widget.detail.regular"),
             ),
           ),
@@ -428,6 +429,11 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
   );
 
   void _onTapViewHistoryResponse(int index) {
+    if (_viewingHistoryIndex != index) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        _scrollController.animateTo(0, duration: Duration(milliseconds: 500), curve: Curves.linear);
+      });
+    }
     setState(() {
       _viewingHistoryIndex = index;
       _controller.text = userNotes ?? '';
@@ -435,7 +441,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
   }
 
   Future<void> _loadAssignmentHistory() async {
-    List<UserContent>? history = await CustomCourses().loadUserContentHistory(ids: widget.contentReference.ids);
+    List<UserContent>? history = CollectionUtils.isNotEmpty(widget.contentReference.ids) ? await CustomCourses().loadUserContentHistory(ids: widget.contentReference.ids) : [];
     if (history != null) {
       history.sort(((a, b) => b.dateCreated?.compareTo(a.dateCreated ?? DateTime.now()) ?? 0));
       for (int i = 0; i < history.length; i++) {

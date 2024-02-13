@@ -37,8 +37,6 @@ class SkillsScoreChart extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => SkillsScoreChartState();
-
-
 }
 
 class SkillsScoreChartState extends State<SkillsScoreChart> {
@@ -290,7 +288,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
                     padding: const EdgeInsets.all(8.0),
                     child: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: Styles().colors.getColor('essentialSkillsCoachRed'), borderRadius: BorderRadius.circular(4)), child: Container(width: 15, height: 15,)),
                   ),
-                  Text(Localization().getStringEx('', 'Cooperation\nSkills'), style: Styles().textStyles.getTextStyle("widget.toggle_button.title.tiny.thin.enabled"), textAlign: TextAlign.center,),
+                  Text(Localization().getStringEx('widget.essential_skills_coach.history.score_chart.cooperation.label', 'Cooperation\nSkills'), style: Styles().textStyles.getTextStyle("widget.toggle_button.title.tiny.thin.enabled"), textAlign: TextAlign.center,),
                 ],
               ),
             ),
@@ -304,7 +302,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
                     padding: const EdgeInsets.all(8.0),
                     child: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: Styles().colors.getColor('essentialSkillsCoachOrange'), borderRadius: BorderRadius.circular(4)), child: Container(width: 15, height: 15,)),
                   ),
-                  Text(Localization().getStringEx('', 'Emotional\nResilience\nSkills'), style: Styles().textStyles.getTextStyle("widget.toggle_button.title.tiny.thin.enabled"), textAlign: TextAlign.center,),
+                  Text(Localization().getStringEx('widget.essential_skills_coach.history.score_chart.emotional_resilience.label', 'Emotional\nResilience\nSkills'), style: Styles().textStyles.getTextStyle("widget.toggle_button.title.tiny.thin.enabled"), textAlign: TextAlign.center,),
                 ],
               ),
             ),
@@ -318,7 +316,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
                     padding: const EdgeInsets.all(8.0),
                     child: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: Styles().colors.getColor('essentialSkillsCoachGreen'), borderRadius: BorderRadius.circular(4)), child: Container(width: 15, height: 15,)),
                   ),
-                  Text(Localization().getStringEx('', 'Innovation\nSkills'), style: Styles().textStyles.getTextStyle("widget.toggle_button.title.tiny.thin.enabled"), textAlign: TextAlign.center,),
+                  Text(Localization().getStringEx('widget.essential_skills_coach.history.score_chart.innovation.label', 'Innovation\nSkills'), style: Styles().textStyles.getTextStyle("widget.toggle_button.title.tiny.thin.enabled"), textAlign: TextAlign.center,),
                 ],
               ),
             ),
@@ -332,7 +330,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
                     padding: const EdgeInsets.all(8.0),
                     child: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: Styles().colors.getColor('essentialSkillsCoachBlue'), borderRadius: BorderRadius.circular(4)), child: Container(width: 15, height: 15,)),
                   ),
-                  Text(Localization().getStringEx('', 'Self-\nManagement\nSkills'), style: Styles().textStyles.getTextStyle("widget.toggle_button.title.tiny.thin.enabled"), textAlign: TextAlign.center,),
+                  Text(Localization().getStringEx('widget.essential_skills_coach.history.score_chart.self_management.label', 'Self-\nManagement\nSkills'), style: Styles().textStyles.getTextStyle("widget.toggle_button.title.tiny.thin.enabled"), textAlign: TextAlign.center,),
                 ],
               ),
             ),
@@ -346,7 +344,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
                     padding: const EdgeInsets.all(8.0),
                     child: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: Styles().colors.getColor('essentialSkillsCoachPurple'), borderRadius: BorderRadius.circular(4)), child: Container(width: 15, height: 15,)),
                   ),
-                  Text(Localization().getStringEx('', 'Social\nEngagement\nSkills'), style: Styles().textStyles.getTextStyle("widget.toggle_button.title.tiny.thin.enabled"), textAlign: TextAlign.center,),
+                  Text(Localization().getStringEx('widget.essential_skills_coach.history.score_chart.social_engagement.label', 'Social\nEngagement\nSkills'), style: Styles().textStyles.getTextStyle("widget.toggle_button.title.tiny.thin.enabled"), textAlign: TextAlign.center,),
                 ],
               ),
             ),
