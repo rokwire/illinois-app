@@ -19,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:http/http.dart' as http;
@@ -56,7 +55,6 @@ class CustomCourses with Service implements NotificationsListener {
     super.createService();
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
-      DeepLink.notifyUri,
     ]);
   }
 
@@ -245,13 +243,15 @@ class CustomCourses with Service implements NotificationsListener {
 
   // UserUnits
 
-  Future<UserUnit?> updateUserCourseProgress(UserContent userContent, {required String courseKey, required String unitKey}) async {
+  Future<UserUnit?> updateUserCourseProgress(UserResponse userResponse, {required String courseKey, required String moduleKey}) async {
     if (Auth2().isLoggedIn && _isLmsAvailable) {
-      String? url = '${Config().lmsUrl}/users/courses/$courseKey/units/$unitKey';
+      String? url = '${Config().lmsUrl}/users/courses/$courseKey/modules/$moduleKey';
       String? post = JsonUtils.encode({
         'timezone_name': _timezoneName,
         'timezone_offset': _timezoneOffset,
-        'user_content': userContent.toJson(),
+        'unit_key': userResponse.unitKey,
+        'content_key': userResponse.contentKey,
+        'response': userResponse.response,
       });
       http.Response? response = await Network().put(url, auth: Auth2(), body: post);
       String? responseString = response?.statusCode == 200 ? response?.body : null;
@@ -260,7 +260,7 @@ class CustomCourses with Service implements NotificationsListener {
         return UserUnit.fromJson(responseJson);
       }
 
-      debugPrint('Failed to update user course progress for course $courseKey unit $unitKey. Reason: $url ${response?.statusCode} $responseString');
+      debugPrint('Failed to update user course progress for course $courseKey module $moduleKey. Reason: $url ${response?.statusCode} $responseString');
     }
     return null;
   }
@@ -302,11 +302,28 @@ class CustomCourses with Service implements NotificationsListener {
     return null;
   }
 
-  // Event Detail Deep Links
+  // User history
 
-  /* Unused: void _onDeepLinkUri(Uri? uri) {
-    //TODO
-  }*/
+  // use this to load user content history items
+  Future<List<UserContent>?> loadUserContentHistory({List<String>? ids}) async {
+    if (Auth2().isLoggedIn && _isLmsAvailable) {
+      Map<String, String> queryParams = {};
+      if (CollectionUtils.isNotEmpty(ids)) {
+        queryParams['ids'] = ids!.join(',');
+      }
+      String? url = '${Config().lmsUrl}/users/contents';
+      if (queryParams.isNotEmpty) {
+        url = UrlUtils.addQueryParameters(url, queryParams);
+      }
+      http.Response? response = await Network().get(url, auth: Auth2());
+      String? responseString = response?.statusCode == 200 ? response?.body : null;
+      if (responseString != null) {
+        List<dynamic>? responseList = JsonUtils.decodeList(responseString);
+        return UserContent.listFromJson(responseList);
+      }
+    }
+    return null;
+  }
 
   // NotificationsListener
 
@@ -315,9 +332,6 @@ class CustomCourses with Service implements NotificationsListener {
     if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
-    // else if (name == DeepLink.notifyUri) {
-    //   _onDeepLinkUri(param);
-    // }
   }
 
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {

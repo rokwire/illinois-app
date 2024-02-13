@@ -224,32 +224,6 @@ class UserCourse {
       return onHour ? DateTime(dt.year, dt.month, dt.day, dt.hour) : dt;
     });
   }
-
-  DateTime? nextScheduleItemUnlockTimeUtc(CourseConfig config) {
-    if (config.streaksProcessTime != null) {
-      timezone.Location location = DateTimeLocal.timezoneLocal;
-      DateTime now = DateTime.now();
-      if (!config.usesUserTimezone) {
-        if (StringUtils.isNotEmpty(config.timezoneName)) {
-          return null;
-        }
-        location = timezone.getLocation(config.timezoneName!);
-        now = DateTimeUtils.nowTimezone(location);
-      }
-      int nowLocalSeconds = 3600*now.hour + 60*now.minute + now.second;
-
-      int hour = config.streaksProcessTime! ~/ 3600;
-      int minute = (config.streaksProcessTime! % 60) ~/ 60;
-      int second = (config.streaksProcessTime! % 60) % 60;
-      DateTime nextUnlockUtc = timezone.TZDateTime(location, now.year, now.month, now.day, hour, minute, second).toUtc();
-      if (nowLocalSeconds > config.streaksProcessTime!) {
-        // go forward one day if the current moment is after the unlock time in the current day
-        nextUnlockUtc = nextUnlockUtc.add(Duration(days: 1));
-      }
-      return nextUnlockUtc;
-    }
-    return null;
-  }
 }
 
 class Module{
@@ -333,11 +307,10 @@ class Unit{
   final String? id;
   final String? name;
   final String? key;
-  final int? scheduleStart;
   final List<ScheduleItem>? scheduleItems;
   final List<Content>? contentItems;
 
-  Unit({this.id, this.name, this.key, this.scheduleStart, this.scheduleItems, this.contentItems});
+  Unit({this.id, this.name, this.key, this.scheduleItems, this.contentItems});
 
   static Unit? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -347,7 +320,6 @@ class Unit{
       id: JsonUtils.stringValue(json['id']),
       name: JsonUtils.stringValue(json['name']),
       key: JsonUtils.stringValue(json['key']),
-      scheduleStart: JsonUtils.intValue(json['schedule_start']),
       scheduleItems: ScheduleItem.listFromJson(JsonUtils.listValue(json['schedule'])),
       contentItems: Content.listFromJson(JsonUtils.listValue(json['content'])),
     );
@@ -357,7 +329,6 @@ class Unit{
     Map<String, dynamic> json = {
       'name': name,
       'key': key,
-      'schedule_start': scheduleStart,
       'schedule': ScheduleItem.listToJson(scheduleItems),
       'content': Content.listToJson(contentItems),
     };
@@ -400,6 +371,20 @@ class Unit{
     return null;
   }
 
+  int? getActivityNumber(int scheduleIndex) {
+    if (scheduleIndex >= 0 && scheduleIndex < (scheduleItems?.length ?? 0)) {
+      int activityNumber = 0;
+      for (int i = 0; i <= scheduleIndex; i++) {
+        ScheduleItem item = scheduleItems![i];
+        if (item.isRequired) {
+          activityNumber++;
+        }
+      }
+      return activityNumber;
+    }
+    return null;
+  }
+
   List<Content>? get resourceContent => contentItems?.where((item) => item.type == 'resource').toList();
 }
 
@@ -411,15 +396,24 @@ class UserUnit {
   final bool current;
 
   final Unit? unit;
+  List<UserScheduleItem>? userSchedule;
 
-  final DateTime? lastCompleted;
   final DateTime? dateCreated;
   final DateTime? dateUpdated;
 
-  UserUnit({this.id, this.courseKey, this.moduleKey, this.completed = 0, this.current = false, this.unit, this.lastCompleted, this.dateCreated, this.dateUpdated});
+  UserUnit({this.id, this.courseKey, this.moduleKey, this.completed = 0, this.current = false, this.unit, this.dateCreated, this.dateUpdated, this.userSchedule});
 
-  factory UserUnit.emptyFromUnit(Unit unit, String courseKey, {bool current = false}) {
-    return UserUnit(courseKey: courseKey, completed: 0, unit: unit, current: current);
+  factory UserUnit.emptyFromUnit(Unit unit, String? courseKey, String? moduleKey, {bool current = false}) {
+    List<UserScheduleItem> userSchedule = [];
+    for (ScheduleItem item in unit.scheduleItems ?? []) {
+      List<UserContentReference> userContentReferences = [];
+      for (String contentKey in item.contentKeys ?? []) {
+        userContentReferences.add(UserContentReference(contentKey: contentKey, complete: false, ids: []));
+      }
+      userSchedule.add(UserScheduleItem(userContent: userContentReferences));
+    }
+
+    return UserUnit(courseKey: courseKey, moduleKey: moduleKey, completed: 0, unit: unit, current: current, userSchedule: userSchedule);
   }
 
   static UserUnit? fromJson(Map<String, dynamic>? json) {
@@ -433,9 +427,9 @@ class UserUnit {
       completed: JsonUtils.intValue(json['completed']) ?? 0,
       current: JsonUtils.boolValue(json['current']) ?? false,
       unit: Unit.fromJson(json['unit']),
-      lastCompleted: AppDateTime().dateTimeLocalFromJson(json['last_completed']),
       dateCreated: AppDateTime().dateTimeLocalFromJson(json['date_created']),
       dateUpdated: AppDateTime().dateTimeLocalFromJson(json['date_updated']),
+      userSchedule: UserScheduleItem.listFromJson(JsonUtils.listValue(json['user_schedule']))
     );
   }
 
@@ -446,7 +440,6 @@ class UserUnit {
       'completed': completed,
       'current': current,
       'unit': unit?.toJson(),
-      'last_completed': AppDateTime().dateTimeLocalToJson(lastCompleted),
       'date_created': AppDateTime().dateTimeLocalToJson(dateCreated),
       'date_updated': AppDateTime().dateTimeLocalToJson(dateUpdated),
     };
@@ -470,7 +463,7 @@ class UserUnit {
   static DateTime? firstScheduleItemCompletionFromList(List<UserUnit> userUnits) {
     DateTime? firstCompleted;
     for (UserUnit userUnit in userUnits) {
-      for (ScheduleItem item in userUnit.unit?.scheduleItems ?? []) {
+      for (UserScheduleItem item in userUnit.userSchedule ?? []) {
         if (item.dateCompleted != null) {
           firstCompleted ??= item.dateCompleted;
           if (item.dateCompleted!.isBefore(firstCompleted!)) {
@@ -482,18 +475,91 @@ class UserUnit {
     return firstCompleted;
   }
 
-  ScheduleItem? get currentScheduleItem => completed >= 0 && completed < (unit?.scheduleItems?.length ?? 0) ? (unit?.scheduleItems?[completed]) : null;
+  UserScheduleItem? get currentUserScheduleItem => completed >= 0 && completed < (userSchedule?.length ?? 0) ? (userSchedule?[completed]) : null;
+}
+
+class UserScheduleItem{
+  List<UserContentReference>? userContent;
+  final DateTime? dateStarted;
+  final DateTime? dateCompleted;
+
+  UserScheduleItem({this.userContent, this.dateStarted, this.dateCompleted});
+
+  static UserScheduleItem? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return UserScheduleItem(
+      userContent: UserContentReference.listFromJson(JsonUtils.listValue(json['user_content'])),
+      dateStarted: AppDateTime().dateTimeLocalFromJson(json['date_started']),
+      dateCompleted: AppDateTime().dateTimeLocalFromJson(json['date_completed']),
+    );
+  }
+
+  static List<UserScheduleItem>? listFromJson(List<dynamic>? jsonList) {
+    List<UserScheduleItem>? result;
+    if (jsonList != null) {
+      result = <UserScheduleItem>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, UserScheduleItem.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  bool get isComplete => userContent?.every((uc) => uc.isComplete) ?? false;
+
+  UserContentReference? get firstIncomplete {
+    try {
+      return userContent?.firstWhere((uc) => uc.isNotComplete);
+    } catch (e) {
+      if (e is! StateError) {
+        debugPrint(e.toString());
+      }
+    }
+    return null;
+  }
+}
+
+class UserContentReference{
+  List<String>? ids;
+  String? contentKey;
+  bool? complete;
+
+  UserContentReference({this.ids, this.contentKey, this.complete});
+
+  static UserContentReference? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return UserContentReference(
+      ids: JsonUtils.listStringsValue(json['ids']),
+      contentKey: JsonUtils.stringValue(json['content_key']),
+      complete: JsonUtils.boolValue(json['complete']) ?? false,
+    );
+  }
+
+  static List<UserContentReference>? listFromJson(List<dynamic>? jsonList) {
+    List<UserContentReference>? result;
+    if (jsonList != null) {
+      result = <UserContentReference>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, UserContentReference.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  bool get isComplete => complete ?? false;
+  bool get isNotComplete => !isComplete;
 }
 
 class ScheduleItem{
   final String? name;
   final int? duration;
-  final List<UserContent>? userContent;
-  
-  final DateTime? dateStarted;
-  final DateTime? dateCompleted;
+  final List<String>? contentKeys;
 
-  ScheduleItem({this.name, this.duration, this.userContent, this.dateStarted, this.dateCompleted});
+  ScheduleItem({this.name, this.duration, this.contentKeys});
 
   static ScheduleItem? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -502,9 +568,7 @@ class ScheduleItem{
     return ScheduleItem(
       name: JsonUtils.stringValue(json['name']),
       duration: JsonUtils.intValue(json['duration']),
-      userContent: UserContent.listFromJson(JsonUtils.listValue(json['user_content'])),
-      dateStarted: AppDateTime().dateTimeLocalFromJson(json['date_started']),
-      dateCompleted: AppDateTime().dateTimeLocalFromJson(json['date_completed']),
+      contentKeys: JsonUtils.listStringsValue(json['content_keys']),
     );
   }
 
@@ -512,9 +576,7 @@ class ScheduleItem{
     Map<String, dynamic> json = {
       'name': name,
       'duration': duration,
-      'user_content': UserContent.listToJson(userContent),
-      'date_started': AppDateTime().dateTimeLocalToJson(dateStarted),
-      'date_completed': AppDateTime().dateTimeLocalToJson(dateCompleted),
+      'content_keys': contentKeys,
     };
     json.removeWhere((key, value) => (value == null));
     return json;
@@ -542,18 +604,7 @@ class ScheduleItem{
     return jsonList;
   }
 
-  bool get isComplete => userContent?.every((uc) => uc.isComplete) ?? false;
-
-  UserContent? get firstIncomplete {
-    try {
-      return userContent?.firstWhere((uc) => uc.isNotComplete);
-    } catch (e) {
-      if (e is! StateError) {
-        debugPrint(e.toString());
-      }
-    }
-    return null;
-  }
+  bool get isRequired => duration != null;
 }
 
 class UserContent{
@@ -563,25 +614,43 @@ class UserContent{
   static const String badExperience = 'bad';
   static const String notesKey = 'notes';
 
-  final String? contentKey;
-  final Map<String,dynamic>? userData;
+  final String? id;
+  final String? courseKey;
+  final String? moduleKey;
+  final String? unitKey;
+  final Content? content;
+  Map<String,dynamic>? response;
 
-  UserContent({this.contentKey, this.userData,});
+  final DateTime? dateCreated;
+  final DateTime? dateUpdated;
+
+  UserContent({this.id, this.courseKey, this.moduleKey, this.unitKey, this.content, this.response, this.dateCreated, this.dateUpdated});
 
   static UserContent? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
     return UserContent(
-      contentKey: JsonUtils.stringValue(json['content_key']),
-      userData: json['user_data'],
+      id: JsonUtils.stringValue(json['id']),
+      courseKey: JsonUtils.stringValue(json['course_key']),
+      moduleKey: JsonUtils.stringValue(json['module_key']),
+      unitKey: JsonUtils.stringValue(json['unit_key']),
+      content: Content.fromJson(json['content']),
+      response: JsonUtils.mapValue(json['response']),
+      dateCreated: AppDateTime().dateTimeLocalFromJson(json['date_created']),
+      dateUpdated: AppDateTime().dateTimeLocalFromJson(json['date_updated']),
     );
   }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {
-      'content_key': contentKey,
-      'user_data': userData,
+      'course_key': courseKey,
+      'module_key': moduleKey,
+      'unit_key': unitKey,
+      'response': response,
+      'content': content?.toJson(),
+      'date_created': AppDateTime().dateTimeLocalToJson(dateCreated),
+      'date_updated': AppDateTime().dateTimeLocalToJson(dateUpdated),
     };
     json.removeWhere((key, value) => (value == null));
     return json;
@@ -609,8 +678,7 @@ class UserContent{
     return jsonList;
   }
 
-  // bool get hasData => userData?.isNotEmpty ?? false;
-  bool get isComplete => userData?[completeKey] == true;
+  bool get isComplete => response?[completeKey] == true;
   bool get isNotComplete => !isComplete;
 }
 
@@ -770,6 +838,14 @@ class Content{
   }
 }
 
+class UserResponse {
+  final String unitKey;
+  final String contentKey;
+  Map<String, dynamic>? response;
+
+  UserResponse({required this.unitKey, required this.contentKey, this.response});
+}
+
 // CourseConfig
 
 class CourseConfig {
@@ -777,13 +853,13 @@ class CourseConfig {
   final String? courseKey;
   final int? initialPauses;
   final int? maxPauses;
-  final int? pauseRewardStreak;
+  final int? pauseProgressReward;
 
   final int? streaksProcessTime;
   final String? timezoneName;
   final int? timezoneOffset;
 
-  CourseConfig({this.id, this.courseKey, this.initialPauses, this.maxPauses, this.pauseRewardStreak, this.streaksProcessTime, this.timezoneName, this.timezoneOffset});
+  CourseConfig({this.id, this.courseKey, this.initialPauses, this.maxPauses, this.pauseProgressReward, this.streaksProcessTime, this.timezoneName, this.timezoneOffset});
 
   static const String userTimezone = "user";
 
@@ -796,11 +872,37 @@ class CourseConfig {
       courseKey: JsonUtils.stringValue(json['course_key']),
       initialPauses: JsonUtils.intValue(json['initial_pauses']),
       maxPauses: JsonUtils.intValue(json['max_pauses']),
-      pauseRewardStreak: JsonUtils.intValue(json['pause_reward_streak']),
+      pauseProgressReward: JsonUtils.intValue(json['pause_progress_reward']),
       streaksProcessTime: JsonUtils.intValue(json['streaks_notifications_config']?['streaks_process_time']),
       timezoneName: JsonUtils.stringValue(json['streaks_notifications_config']?['timezone_name']),
       timezoneOffset: JsonUtils.intValue(json['streaks_notifications_config']?['timezone_offset']),
     );
+  }
+
+  DateTime? nextScheduleItemUnlockTime({bool inUtc = false}) {
+    if (streaksProcessTime != null) {
+      timezone.Location location = DateTimeLocal.timezoneLocal;
+      DateTime now = DateTime.now();
+      if (!usesUserTimezone) {
+        if (StringUtils.isNotEmpty(timezoneName)) {
+          return null;
+        }
+        location = timezone.getLocation(timezoneName!);
+        now = DateTimeUtils.nowTimezone(location);
+      }
+      int nowLocalSeconds = 3600*now.hour;
+
+      DateTime nextUnlock = timezone.TZDateTime(location, now.year, now.month, now.day, streaksProcessTime! ~/ 3600, 0, 0);
+      if (inUtc) {
+        nextUnlock = nextUnlock.toUtc();
+      }
+      if (nowLocalSeconds > streaksProcessTime!) {
+        // go forward one day if the current moment is after the unlock time in the current day
+        nextUnlock = nextUnlock.add(Duration(days: 1));
+      }
+      return nextUnlock;
+    }
+    return null;
   }
 
   bool get usesUserTimezone => timezoneName == userTimezone;

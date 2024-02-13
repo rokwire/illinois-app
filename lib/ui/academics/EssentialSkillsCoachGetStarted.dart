@@ -49,7 +49,7 @@ class _EssentialSkillsCoachGetStartedState extends State<EssentialSkillsCoachGet
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RootHeaderBar(title: Localization().getStringEx('', 'Take the Self-Evaluation'), leading: RootHeaderBarLeading.Back,),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.essential_skills_coach.get_started.header.title', 'Take the Self-Evaluation'), leading: RootHeaderBarLeading.Back,),
       body: SectionSlantHeader(
         headerWidget: _buildHeader(),
         slantColor: Styles().colors.gradientColorPrimary,
@@ -57,13 +57,10 @@ class _EssentialSkillsCoachGetStartedState extends State<EssentialSkillsCoachGet
         backgroundColor: Styles().colors.background,
         children: [
           Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
-            label: Localization().getStringEx("", 'Start Evaluation'),
+            label: Localization().getStringEx("panel.essential_skills_coach.get_started.button.start.label", 'Start Evaluation'),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant"),
             backgroundColor: Styles().colors.surface,
             onTap: _onTapStartEvaluation,
-            //     () {
-            //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => EssentialSkillsResults()));
-            // },
           )),
         ],
         childrenPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
@@ -77,17 +74,9 @@ class _EssentialSkillsCoachGetStartedState extends State<EssentialSkillsCoachGet
     return Container(
       padding: EdgeInsets.only(top: 32, bottom: 32),
       child: Padding(padding: EdgeInsets.only(left: 24, right: 8), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Text(Localization().getStringEx('', 'Take the Essential Skills Self-Evaluation'), style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.get_started.header'), textAlign: TextAlign.left,),
+        Text(Localization().getStringEx('panel.essential_skills_coach.get_started.take_evaluation_header', 'Take the Essential Skills Self-Evaluation'), style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.get_started.header'), textAlign: TextAlign.left,),
         Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.time.description', '5 Minutes'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.time.description'), textAlign: TextAlign.left,),
         Padding(padding: EdgeInsets.only(top: 24), child: _buildDescription()),
-        // Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
-        //     label: Localization().getStringEx("", 'Start Evaluation'),
-        //     textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant"),
-        //     backgroundColor: Styles().colors.surface,
-        //     onTap: () {
-        //       Navigator.of(context).push(MaterialPageRoute(builder: (context) => EssentialSkillsResults()));
-        //     },
-        // )),
       ]),),
       decoration: BoxDecoration(
           shape: BoxShape.rectangle,
@@ -105,19 +94,19 @@ class _EssentialSkillsCoachGetStartedState extends State<EssentialSkillsCoachGet
 
   Widget _buildDescription() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(Localization().getStringEx('',
+      Text(Localization().getStringEx('panel.essential_skills_coach.get_started.take_evaluation.message',
           'Before getting started, take the skills self-evaluation to identify your current strengths related to:'),
-        style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.header.description'),),
+        style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.header.description'),),
       Padding(padding: EdgeInsets.only(top: 8), child: Text(
-        Localization().getStringEx("panel.skills_self_evaluation.get_started.description.list",
+        Localization().getStringEx("panel.essential_skills_coach.get_started.description.list",
             '\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience'),
-        style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.header.description'),
+        style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.header.description'),
       ))
     ]);
   }
 
   void _onTapStartEvaluation() {
-    Future? result = AccessDialog.show(context: context, resource: 'academics.skills_self_evaluation');
+    Future? result = AccessDialog.show(context: context, resource: 'academics.essential_skills_coach');
     if (Config().bessiSurveyID != null && result == null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _gotoResults, offlineWidget: _buildOfflineWidget(), tabBar: uiuc.TabBar())));
     }
@@ -131,17 +120,16 @@ class _EssentialSkillsCoachGetStartedState extends State<EssentialSkillsCoachGet
 
   Widget _buildOfflineWidget() {
     return Padding(padding: EdgeInsets.all(28), child:
-    Center(child:
-    Text(
-        Localization().getStringEx('panel.skills_self_evaluation.get_started.offline.error.msg', 'Skills Self-Evaluation is not available while offline.'),
-        textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')
-    )
-    ),
+      Center(child:
+        Text(
+            Localization().getStringEx('panel.skills_self_evaluation.get_started.offline.error.msg', 'Skills Self-Evaluation is not available while offline.'),
+            textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')
+        )
+      ),
     );
   }
 
   void _loadResults() {
-    //_setLoading(true);
     Surveys().loadUserSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
       if (CollectionUtils.isNotEmpty(responses)) {
         responses!.sort(((a, b) => b.dateTaken.compareTo(a.dateTaken)));
@@ -149,8 +137,6 @@ class _EssentialSkillsCoachGetStartedState extends State<EssentialSkillsCoachGet
           _gotoResults(responses[0]);
         }
       }
-      //_setLoading(false);
     });
   }
-
 }

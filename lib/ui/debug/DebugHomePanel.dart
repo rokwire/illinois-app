@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/ui/debug/mobile_access/DebugMobileAccessHomePanel.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
@@ -495,6 +496,31 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                     onTap: _onTapCrash
                   )
                 ),
+
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
+
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
+                      label: "Clear Essential Skills Coach Data",
+                      backgroundColor: Styles().colors.background,
+                      fontSize: 16.0,
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorPrimary,
+                      onTap: _onTapClearEssentialSkillsCoachData
+                  )
+                ),
+
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
+                      label: "Clear BESSI Responses",
+                      backgroundColor: Styles().colors.background,
+                      fontSize: 16.0,
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorPrimary,
+                      onTap: _onTapClearEssentialSkillsSelfEvaluationResponses
+                  )
+                ),
+
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
                     Padding(padding: EdgeInsets.only(bottom: 10), child: Text('Font Awesome Pro Icons: ', style: Styles().textStyles.getTextStyle('widget.message.medium'))),
@@ -942,6 +968,18 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   void _onTapCrash(){
     FirebaseCrashlytics.instance.crash();
+  }
+
+  void _onTapClearEssentialSkillsCoachData() {
+    if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
+      CustomCourses().deleteUserCourse(Config().essentialSkillsCoachKey!);
+    }
+  }
+
+  void _onTapClearEssentialSkillsSelfEvaluationResponses() {
+    if (StringUtils.isNotEmpty(Config().bessiSurveyID)) {
+      Surveys().deleteSurveyResponses(surveyIDs: [Config().bessiSurveyID!]);
+    }
   }
 
   String get _refreshTokenTitle {

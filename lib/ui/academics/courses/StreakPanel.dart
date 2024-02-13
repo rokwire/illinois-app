@@ -24,6 +24,8 @@ class StreakPanel extends StatefulWidget {
 
 class _StreakPanelState extends State<StreakPanel> {
   CourseConfig? _courseConfig;
+  Duration _courseDayStartOffset = Duration();
+
   bool _loading = false;
   late int _streak;
   int? _pauses;
@@ -34,6 +36,7 @@ class _StreakPanelState extends State<StreakPanel> {
     _pauses = widget.userCourse.pauses;
     if (widget.courseConfig != null) {
       _courseConfig = widget.courseConfig;
+      _setCourseDayStartOffset();
     } else {
       _loadCourseConfig();
     }
@@ -66,8 +69,8 @@ class _StreakPanelState extends State<StreakPanel> {
       }
     }
     String pauseRewardText = Localization().getStringEx('panel.essential_skills_coach.pauses_reward.missing.text', 'Pauses can be earned by responding to tasks daily. Check in daily to keep your streak going!');
-    if (_courseConfig?.pauseRewardStreak != null) {
-      pauseRewardText = sprintf(Localization().getStringEx('panel.essential_skills_coach.pauses_reward.text', 'Pauses can be earned by responding to a task for %d consecutive days. Check in daily to keep your streak going!'), [_courseConfig!.pauseRewardStreak]);
+    if (_courseConfig?.pauseProgressReward != null) {
+      pauseRewardText = sprintf(Localization().getStringEx('panel.essential_skills_coach.pauses_reward.text', 'Pauses can be earned by responding to a task for %d consecutive days. Check in daily to keep your streak going!'), [_courseConfig!.pauseProgressReward]);
     }
 
     return Scaffold(
@@ -129,8 +132,7 @@ class _StreakPanelState extends State<StreakPanel> {
                     child: TableCalendar(
                       selectedDayPredicate: _isStreak,
                       holidayPredicate: (day) {
-                        Duration startOfDayWithTolerance = Duration(minutes: 5, seconds: _courseConfig?.streaksProcessTime ?? 0);
-                        return widget.userCourse.isDatePauseUse(day, startOfDayWithTolerance);
+                        return widget.userCourse.isDatePauseUse(day, _courseDayStartOffset);
                       },
                       headerStyle: HeaderStyle(
                         titleCentered: true,
@@ -167,9 +169,9 @@ class _StreakPanelState extends State<StreakPanel> {
                         holidayBuilder: _buildHoliday,
                         todayBuilder: _buildToday,
                       ),
-                      firstDay: widget.userCourse.dateCreated ?? widget.firstScheduleItemCompleted ?? DateTime(2024, 2, 1),
-                      lastDay: DateTime.now().add(Duration(days: 365)),
-                      focusedDay: DateTime.now(),
+                      firstDay: (widget.userCourse.dateCreated ?? widget.firstScheduleItemCompleted ?? DateTime(2024, 2, 1)).subtract(_courseDayStartOffset),
+                      lastDay: DateTime.now().add(Duration(days: 365)).subtract(_courseDayStartOffset),
+                      focusedDay: DateTime.now().subtract(_courseDayStartOffset),
                     ),
                   ),
                 ),
@@ -293,8 +295,7 @@ class _StreakPanelState extends State<StreakPanel> {
   }
 
   bool _isStreak(DateTime date) {
-    Duration startOfDayOffset = Duration(seconds: _courseConfig?.streaksProcessTime ?? 0);
-    return widget.userCourse.isDateStreak(date, widget.firstScheduleItemCompleted, startOfDayOffset);
+    return widget.userCourse.isDateStreak(date, widget.firstScheduleItemCompleted, _courseDayStartOffset);
   }
 
   Future<void> _loadCourseConfig() async {
@@ -304,12 +305,26 @@ class _StreakPanelState extends State<StreakPanel> {
       if (courseConfig != null) {
         setStateIfMounted(() {
           _courseConfig = courseConfig;
+          _setCourseDayStartOffset();
           _loading = false;
         });
       } else {
         _setLoading(false);
       }
     }
+  }
+
+  void _setCourseDayStartOffset() {
+    // set _courseDayStartOffset to align the course-defined day, which starts at a local time defined by _courseConfig, to the actual day (midnight to midnight) with lowest possible hour difference
+    int hourOffset = 0;
+    int? courseDayStartHour = _courseConfig!.nextScheduleItemUnlockTime()?.hour;
+    if (courseDayStartHour != null) {
+      hourOffset = courseDayStartHour;
+      if (courseDayStartHour >= 12) {
+        hourOffset = 24 - hourOffset;
+      }
+    }
+    _courseDayStartOffset = Duration(hours: hourOffset);
   }
 
   void _setLoading(bool value) {

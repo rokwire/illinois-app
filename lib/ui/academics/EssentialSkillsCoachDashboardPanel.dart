@@ -7,6 +7,7 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/CustomCourses.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/academics/EssentialSkillsCoach.dart';
 import 'package:illinois/ui/academics/courses/AssignmentPanel.dart';
 import 'package:illinois/ui/academics/courses/AssignmentCompletePanel.dart';
@@ -40,6 +41,8 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   String? _selectedModuleKey;
   DateTime? _pausedDateTime;
   EssentialSkillsCoachTab _selectedTab = EssentialSkillsCoachTab.coach;
+
+  Map<String, GlobalKey> _currentActivityKey = {};
 
   @override
   void initState() {
@@ -151,10 +154,10 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
 
   String _tabLabel(EssentialSkillsCoachTab tab) {
     if (tab == EssentialSkillsCoachTab.coach) {
-      return Localization().getStringEx('', "Skills Coach");
+      return Localization().getStringEx('panel.essential_skills_coach.dashboard.tab.coach.label', "Skills Coach");
     }
     else if (tab == EssentialSkillsCoachTab.history) {
-      return Localization().getStringEx('', "Skills History");
+      return Localization().getStringEx('panel.essential_skills_coach.dashboard.tab.history.label', "Skills History");
     }
     return '';
   }
@@ -233,6 +236,10 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     if(items.firstWhereOrNull((e) => e.value == _selectedModuleKey) != null) {
       selected = _selectedModuleKey;
     }
+    if (selected != null) {
+      _currentActivityKey[selected] ??= GlobalKey();
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Row(
@@ -269,8 +276,9 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                       items: items,
                       onChanged: (String? selected) {
                         setState(() {
-                          _selectedModuleKey = selected;
+                          Storage().essentialSkillsCoachModule = _selectedModuleKey = selected;
                         });
+                        _showCurrentActivity(selected);
                       }
                   )
                 ),
@@ -287,14 +295,14 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     for (int i = 0; i < (_selectedModule?.units?.length ?? 0); i++) {
       Unit unit = _selectedModule!.units![i];
       UserUnit showUnit = _userCourseUnits?.firstWhere(
-        (userUnit) => (userUnit.unit?.key != null) && (userUnit.unit!.key == unit.key),
-        orElse: () => UserUnit.emptyFromUnit(unit, Config().essentialSkillsCoachKey ?? '', current: i == 0)
-      ) ?? UserUnit.emptyFromUnit(unit, Config().essentialSkillsCoachKey ?? '', current: i == 0);
+        (userUnit) => (userUnit.unit?.key != null) && (userUnit.unit!.key == unit.key) && (_selectedModuleKey != null) && (userUnit.moduleKey == _selectedModuleKey),
+        orElse: () => UserUnit.emptyFromUnit(unit, Config().essentialSkillsCoachKey, _selectedModule?.key, current: i == 0)
+      ) ?? UserUnit.emptyFromUnit(unit, Config().essentialSkillsCoachKey, _selectedModule?.key, current: i == 0);
       moduleUnitWidgets.add(Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
         child: _buildUnitInfoWidget(showUnit, i+1),
       ));
-      if (CollectionUtils.isNotEmpty(showUnit.unit!.scheduleItems)) {
+      if (CollectionUtils.isNotEmpty(showUnit.userSchedule)) {
         moduleUnitWidgets.addAll(_buildUnitWidgets(showUnit, i+1));
       }
     }
@@ -369,14 +377,14 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
 
   List<Widget> _buildUnitWidgets(UserUnit userUnit, int displayNumber){
     List<Widget> unitWidgets = [];
-    for (int i = 0; i < (userUnit.unit?.scheduleItems?.length ?? 0); i++) {
-      ScheduleItem item = userUnit.unit!.scheduleItems![i];
+    for (int i = 0; i < (userUnit.userSchedule?.length ?? 0); i++) {
+      UserScheduleItem item = userUnit.userSchedule![i];
       if ((item.userContent?.length ?? 0) > 1) {
         List<Widget> contentButtons = [];
-        for (UserContent userContent in item.userContent!) {
-          Content? content = userUnit.unit?.searchByKey(contentKey: userContent.contentKey);
+        for (UserContentReference reference in item.userContent!) {
+          Content? content = userUnit.unit?.searchByKey(contentKey: reference.contentKey);
           if (content != null && StringUtils.isNotEmpty(userUnit.unit?.key)) {
-            contentButtons.add(_buildContentWidget(userUnit, displayNumber, userContent, content, i));
+            contentButtons.add(_buildContentWidget(userUnit, displayNumber, reference, content, i));
           }
         }
         unitWidgets.add(SingleChildScrollView(
@@ -398,23 +406,27 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     return unitWidgets;
   }
 
-  Widget _buildContentWidget(UserUnit userUnit, int unitNumber, UserContent userContent, Content content, int scheduleIndex) {
-    int scheduleStart = userUnit.unit!.scheduleStart!;
-    int activityNumber = scheduleIndex - scheduleStart + 1;
+  Widget _buildContentWidget(UserUnit userUnit, int unitNumber, UserContentReference userContentReference, Content content, int scheduleIndex) {
+    int activityNumber = userUnit.unit?.getActivityNumber(scheduleIndex) ?? scheduleIndex;
 
-    bool required = scheduleIndex >= scheduleStart;
+    bool required = userUnit.unit?.scheduleItems?[scheduleIndex].isRequired ?? false;
     bool isCompleted = (scheduleIndex < userUnit.completed) && userUnit.current;
     bool isCurrent = (scheduleIndex == userUnit.completed) && userUnit.current;
-    bool isNextWithCurrentComplete = (scheduleIndex == userUnit.completed + 1) && userUnit.current && (userUnit.currentScheduleItem?.isComplete ?? false);
+    bool isNextWithCurrentComplete = (scheduleIndex == userUnit.completed + 1) && userUnit.current && (userUnit.currentUserScheduleItem?.isComplete ?? false);
     bool isCompletedOrCurrent = isCompleted || isCurrent;
 
-    bool isFirstIncompleteInScheduleItem = userContent.contentKey != null && userUnit.currentScheduleItem?.firstIncomplete?.contentKey == userContent.contentKey;
-    bool shouldHighlight = (isCurrent && userContent.isNotComplete && isFirstIncompleteInScheduleItem) || isNextWithCurrentComplete;
+    bool isFirstIncompleteInScheduleItem = userContentReference.contentKey != null && userUnit.currentUserScheduleItem?.firstIncomplete?.contentKey == userContentReference.contentKey;
+    bool shouldHighlight = (isCurrent && userContentReference.isNotComplete && isFirstIncompleteInScheduleItem) || isNextWithCurrentComplete;
 
     Color? contentColor = content.styles?.colors?['primary'] != null ? Styles().colors.getColor(content.styles!.colors!['primary']!) : Styles().colors.fillColorPrimary;
     Color? borderColor = content.styles?.colors?['accent'] != null ? Styles().colors.getColor(content.styles!.colors!['accent']!) : Styles().colors.fillColorSecondary;
     Color? completedColor = content.styles?.colors?['complete'] != null ? Styles().colors.getColor(content.styles!.colors!['complete']!) : Colors.green;
     Color? incompleteColor = content.styles?.colors?['incomplete'] != null ? Styles().colors.getColor(content.styles!.colors!['incomplete']!) : Colors.grey[700];
+
+    DateTime? nextCourseDayStart;
+    if (_courseConfig != null) {
+      nextCourseDayStart = _courseConfig!.nextScheduleItemUnlockTime(inUtc: true);
+    }
 
     double? size = shouldHighlight ? 32.0 : null;
     Widget? iconImage = Styles().images.getImage(content.styles?.images?['icon'], size: size);
@@ -424,7 +436,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         child: iconImage,
       );
     }
-    if (userContent.isComplete && required) {
+    if (userContentReference.isComplete && required) {
       iconImage = Styles().images.getImage('skills-check', size: size);
     } else if (!userUnit.current) {
       iconImage = Padding(
@@ -442,11 +454,8 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     Widget contentWidget = icon;
     if (shouldHighlight) {
       String? unlockTimeText;
-      if (isNextWithCurrentComplete && _courseConfig != null) {
-        DateTime? unlockTimeUtc = _userCourse?.nextScheduleItemUnlockTimeUtc(_courseConfig!);
-        if (unlockTimeUtc != null) {
-          unlockTimeText = '${AppDateTime().getDisplayDay(dateTimeUtc: unlockTimeUtc, includeAtSuffix: true)} ${AppDateTime().getDisplayTime(dateTimeUtc: unlockTimeUtc)}';
-        }
+      if (isNextWithCurrentComplete && nextCourseDayStart != null) {
+        unlockTimeText = '${AppDateTime().getDisplayDay(dateTimeUtc: nextCourseDayStart, includeAtSuffix: true)} ${AppDateTime().getDisplayTime(dateTimeUtc: nextCourseDayStart)}';
       }
       contentWidget = Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -480,12 +489,13 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     }
 
     return Padding(
+      key: shouldHighlight && userUnit.moduleKey != null ? _currentActivityKey[userUnit.moduleKey!] : null,
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: ElevatedButton(
         onPressed: userUnit.current ? () {
           Navigator.push(context, CupertinoPageRoute(builder: (context) => !required ? UnitInfoPanel(
               content: content,
-              data: userContent.userData,
+              contentReference: userContentReference,
               color: _selectedModulePrimaryColor,
               colorAccent: _selectedModuleAccentColor,
               preview: !isCompletedOrCurrent,
@@ -493,12 +503,12 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
               moduleName: _selectedModule?.name ?? '',
             ) : AssignmentPanel(
               content: content,
-              data: userContent.userData,
+              contentReference: userContentReference,
               color: _selectedModulePrimaryColor,
               colorAccent: _selectedModuleAccentColor,
-              isCurrent: isCurrent,
               helpContent: (_userCourse?.course ?? _course) != null ? content.getLinkedContent(_userCourse?.course ?? _course) : null,
               preview: !isCompletedOrCurrent,
+              courseDayStart: nextCourseDayStart?.subtract(Duration(days: 1)),
               moduleIcon: _selectedModuleIcon,
               moduleName: _selectedModule?.name ?? '',
               unitNumber: unitNumber,
@@ -507,16 +517,19 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             )
           )).then((result) {
             if (result is Map<String, dynamic>) {
-              _updateProgress(userUnit.unit!.key!, userContent, content, result, unitNumber, activityNumber);
+              String? moduleKey = _selectedModuleKey;
+              if (moduleKey != null && StringUtils.isNotEmpty(userUnit.unit?.key) && StringUtils.isNotEmpty(userContentReference.contentKey)) {
+                _updateProgress(moduleKey, userUnit.unit!.key!, result, userContentReference, unitNumber, activityNumber);
+              }
             }
           });
         } : null,
         child: contentWidget,
         style: ElevatedButton.styleFrom(
           shape: shouldHighlight ? RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))) : CircleBorder(),
-          side: isCurrent && userContent.isNotComplete ? BorderSide(color: borderColor ?? Styles().colors.fillColorSecondary, width: 6.0, strokeAlign: BorderSide.strokeAlignOutside) : null,
+          side: isCurrent && userContentReference.isNotComplete ? BorderSide(color: borderColor ?? Styles().colors.fillColorSecondary, width: 6.0, strokeAlign: BorderSide.strokeAlignOutside) : null,
           padding: EdgeInsets.all(8.0),
-          backgroundColor: isCompletedOrCurrent ? (userContent.isComplete ? completedColor : contentColor) : incompleteColor,
+          backgroundColor: isCompletedOrCurrent ? (userContentReference.isComplete ? completedColor : contentColor) : incompleteColor,
           disabledBackgroundColor: incompleteColor
         ),
       ),
@@ -524,9 +537,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   }
 
   List<DropdownMenuItem<String>> _moduleDropdownItems() {
-    List<DropdownMenuItem<String>> dropDownItems = <DropdownMenuItem<String>>[
-      // DropdownMenuItem(value: null, child: Text('Skills Coach Overview', style: Styles().textStyles.getTextStyle("widget.detail.large"))) //TODO: add option for ESC overview
-    ];
+    List<DropdownMenuItem<String>> dropDownItems = <DropdownMenuItem<String>>[]; //TODO: add option for ESC overview
 
     for (Module module in _userCourse?.course?.modules ?? _course?.modules ?? []) {
       if (module.key != null && module.name != null && CollectionUtils.isNotEmpty(module.units)) {
@@ -552,44 +563,38 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             if (userCourse != null) {
               setState(() {
                 _userCourse = userCourse;
-                _selectedModuleKey ??= CollectionUtils.isNotEmpty(userCourse.course?.modules) ? userCourse.course!.modules![0].key : null;
+                _setDefaultSelectedModule(userCourse.course);
                 _loading = false;
               });
               await _loadUserCourseUnits();
             } else {
-              await _loadCourse();
+              setState(() {
+                _loading = false;
+              });
             }
           }
         }
       } else {
-        _selectedModuleKey ??= CollectionUtils.isNotEmpty(_userCourse?.course?.modules) ? _userCourse?.course!.modules![0].key : null;
+        _setDefaultSelectedModule(_userCourse?.course);
         await _loadUserCourseUnits();
       }
+      _showCurrentActivity(_selectedModuleKey);
     }
   }
 
-  Future<void> _loadCourse() async {
-    _course ??= CustomCourses().courses?[Config().essentialSkillsCoachKey];
-    if (_course == null) {
-      if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey) && mounted) {
-        setState(() {
-          _loading = true;
-        });
-        Course? course = await CustomCourses().loadCourse(Config().essentialSkillsCoachKey!);
-        setStateIfMounted(() {
-          if (course != null) {
-            _course = course;
-            _selectedModuleKey ??= CollectionUtils.isNotEmpty(course.modules) ? course.modules![0].key : null;
-          }
-          _loading = false;
-        });
+  void _showCurrentActivity(String? selected) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (selected != null) {
+        BuildContext? context = _currentActivityKey[selected]?.currentContext;
+        if (context != null) {
+          Scrollable.ensureVisible(context, duration: Duration(milliseconds: 500));
+        }
       }
-    } else {
-      setStateIfMounted(() {
-        _selectedModuleKey ??= CollectionUtils.isNotEmpty(_course!.modules) ? _course!.modules![0].key : null;
-        _loading = false;
-      });
-    }
+    });
+  }
+
+  void _setDefaultSelectedModule(Course? course) {
+    _selectedModuleKey ??= Storage().essentialSkillsCoachModule ?? (CollectionUtils.isNotEmpty(course?.modules) ? course!.modules![0].key : null);
   }
 
   Future<void> _loadUserCourseUnits() async {
@@ -620,6 +625,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         }
         _loading = false;
       });
+      _showCurrentActivity(_selectedModuleKey);
     }
   }
 
@@ -634,8 +640,8 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         if (userCourse != null) {
           _userCourse = userCourse;
           String moduleKey = "${moduleKeyPrefix}_skills";
-          if(StringUtils.isNotEmpty(moduleKeyPrefix)) {
-            _selectedModuleKey = moduleKey;
+          if (StringUtils.isNotEmpty(moduleKeyPrefix)) {
+            Storage().essentialSkillsCoachModule = _selectedModuleKey = moduleKey;
           }
         }
         _loading = false;
@@ -643,19 +649,28 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     }
   }
 
-  Future<void> _updateProgress(String unitKey, UserContent current, Content content, Map<String, dynamic> updatedData, int unitNumber, int activityNumber) async {
+  Future<void> _updateProgress(String moduleKey, String unitKey, Map<String, dynamic> response, UserContentReference userContentReference, int unitNumber, int activityNumber) async {
     if (mounted) {
       setState(() {
         _loading = true;
       });
-      UserUnit? updatedUserUnit = await CustomCourses().updateUserCourseProgress(UserContent(contentKey: current.contentKey, userData: updatedData), courseKey: _userCourse!.course!.key!, unitKey: unitKey);
+      UserUnit? updatedUserUnit = await CustomCourses()
+          .updateUserCourseProgress(UserResponse(unitKey: unitKey,
+          contentKey: userContentReference.contentKey!,
+          response: response), courseKey: _userCourse!.course!.key!,
+          moduleKey: moduleKey);
       if (mounted) {
         if (updatedUserUnit != null) {
           if (CollectionUtils.isNotEmpty(_userCourseUnits)) {
-            int unitIndex = _userCourseUnits!.indexWhere((userUnit) => userUnit.id != null && userUnit.id == updatedUserUnit.id);
+            int unitIndex = _userCourseUnits!.indexWhere((userUnit) =>
+            userUnit.id != null && userUnit.id == updatedUserUnit.id);
             if (unitIndex >= 0) {
               setStateIfMounted(() {
                 _userCourseUnits![unitIndex] = updatedUserUnit;
+              });
+            } else {
+              setStateIfMounted(() {
+                _userCourseUnits!.add(updatedUserUnit);
               });
             }
           } else {
@@ -667,35 +682,41 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
 
           bool earnedPause = false;
           bool extendedStreak = false;
-          UserCourse? userCourse = await CustomCourses().loadUserCourse(Config().essentialSkillsCoachKey!);
+          UserCourse? userCourse = await CustomCourses().loadUserCourse(
+              Config().essentialSkillsCoachKey!);
           if (mounted) {
             setState(() {
               if (userCourse != null) {
-                earnedPause = (userCourse.pauses ?? 0) > (_userCourse?.pauses ?? 0);
-                extendedStreak = (userCourse.streak ?? 0) > (_userCourse?.streak ?? 0);
+                earnedPause =
+                    (userCourse.pauses ?? 0) > (_userCourse?.pauses ?? 0);
+                extendedStreak =
+                    (userCourse.streak ?? 0) > (_userCourse?.streak ?? 0);
                 _userCourse = userCourse;
               }
               _loading = false;
             });
 
             // if the current task was just completed and it extended the user's streak
-            if (extendedStreak && current.isNotComplete && updatedData[UserContent.completeKey] == true) {
-              Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentCompletePanel(
-                unitNumber: unitNumber,
-                activityNumber: activityNumber,
-                pauses: earnedPause ? _userCourse?.pauses : null,
-                color: _selectedModulePrimaryColor,
-              )));
+            if (extendedStreak && userContentReference.isNotComplete &&
+                response[UserContent.completeKey] == true) {
+              Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+                  AssignmentCompletePanel(
+                    unitNumber: unitNumber,
+                    activityNumber: activityNumber,
+                    pauses: earnedPause ? _userCourse?.pauses : null,
+                    color: _selectedModulePrimaryColor,
+                  )));
             }
           }
         } else {
           setState(() {
             _loading = false;
-          });;
+          });
         }
       }
     }
   }
+
 
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {

@@ -3,24 +3,28 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
+import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/academics/courses/ModuleHeaderWidget.dart';
 import 'package:illinois/ui/academics/courses/ResourcesPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class AssignmentPanel extends StatefulWidget {
   final Content content;
-  final Map<String, dynamic>? data;
+  final UserContentReference contentReference;
   final Color? color;
   final Color? colorAccent;
-  final bool isCurrent;
   final List<Content>? helpContent;
   final bool preview;
+  final DateTime? courseDayStart;
 
   final Widget? moduleIcon;
   final String moduleName;
@@ -28,8 +32,8 @@ class AssignmentPanel extends StatefulWidget {
   final String unitName;
   final int activityNumber;
 
-  AssignmentPanel({required this.content, required this.data, required this.color, required this.colorAccent, required this.isCurrent,
-    this.helpContent, required this.preview, this.moduleIcon, required this.moduleName, required this.unitNumber, required this.unitName, required this.activityNumber,});
+  AssignmentPanel({required this.content, required this.contentReference, required this.color, required this.colorAccent,
+    this.helpContent, required this.preview, this.courseDayStart, this.moduleIcon, required this.moduleName, required this.unitNumber, required this.unitName, required this.activityNumber});
 
   @override
   State<AssignmentPanel> createState() => _AssignmentPanelState();
@@ -38,13 +42,17 @@ class AssignmentPanel extends StatefulWidget {
 class _AssignmentPanelState extends State<AssignmentPanel> implements NotificationsListener {
 
   late Content _content;
-  Map<String, dynamic>? _data;
   List<Content>? _helpContent;
   Color? _color;
   Color? _colorAccent;
   TextEditingController _controller = TextEditingController();
   ScrollController _scrollController = ScrollController();
 
+  Map<String, dynamic>? _initialResponse;
+  List<UserContent>? _userResponseHistory;
+  int _viewingHistoryIndex = 0;
+
+  bool _historyExpanded = false;
   bool _helpContentOpen = false;
   bool _listening = false;
 
@@ -54,14 +62,14 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
       SpeechToText.notifyError,
     ]);
 
-    //TODO: load history
-
     _content = widget.content;
-    _data = widget.data != null ? Map.of(widget.data!) : null;
     _controller.text = userNotes ?? '';
     _color = widget.color;
     _colorAccent = widget.colorAccent;
     _helpContent = widget.helpContent;
+
+    _loadAssignmentHistory();
+
     super.initState();
   }
 
@@ -73,24 +81,29 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     super.dispose();
   }
 
-  bool get isComplete => _data?[UserContent.completeKey] == true;
-  bool get isNotComplete => _data?[UserContent.completeKey] == false;
+  Map<String, dynamic>? get displayResponse => _userResponseHistory?[_viewingHistoryIndex].response;
+  set displayResponse(Map<String, dynamic>? value){
+    _userResponseHistory?[0].response = value;
+  }
+
+  bool get isComplete => displayResponse?[UserContent.completeKey] == true;
+  bool get isNotComplete => displayResponse?[UserContent.completeKey] == false;
   set complete(bool? value) {
-    _data ??= {};
-    _data![UserContent.completeKey] = value;
+    displayResponse ??= {};
+    displayResponse![UserContent.completeKey] = value;
   }
 
-  bool get isGoodExperience => _data?[UserContent.experienceKey] == UserContent.goodExperience;
-  bool get isBadExperience => _data?[UserContent.experienceKey] == UserContent.badExperience;
+  bool get isGoodExperience => displayResponse?[UserContent.experienceKey] == UserContent.goodExperience;
+  bool get isBadExperience => displayResponse?[UserContent.experienceKey] == UserContent.badExperience;
   set experience(String? value) {
-    _data ??= {};
-    _data![UserContent.experienceKey] = value;
+    displayResponse ??= {};
+    displayResponse![UserContent.experienceKey] = value;
   }
 
-  String? get userNotes => _data?[UserContent.notesKey].toString();
+  String? get userNotes => displayResponse?[UserContent.notesKey].toString();
   set userNotes(String? value) {
-    _data ??= {};
-    _data![UserContent.notesKey] = value;
+    displayResponse ??= {};
+    displayResponse![UserContent.notesKey] = value;
   }
 
   @override
@@ -127,26 +140,35 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
           children: [
             ModuleHeaderWidget(icon: widget.moduleIcon, moduleName: widget.moduleName, backgroundColor: _color,),
             Expanded(
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: _buildAssignmentActivityWidgets(),
+              child: Stack(
+                children: [
+                  SingleChildScrollView(
+                    controller: _scrollController,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: _buildAssignmentActivityWidgets(),
+                      ),
+                    ),
                   ),
-                ),
+                  if (_viewingHistoryIndex == 0 && !widget.preview)
+                    Column(
+                      children: [
+                        Expanded(child: Container()),
+                        Padding(
+                          padding: EdgeInsets.all(16),
+                          child: RoundedButton(
+                            label: Localization().getStringEx('panel.essential_skills_coach.assignment.button.save.label', 'Save'),
+                            textStyle: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"),
+                            backgroundColor: _color,
+                            borderColor: _color,
+                            onTap: () => _saveProgress(false)),
+                        ),
+                      ],
+                    ),
+                ],
               ),
             ),
-            if (!widget.preview)
-              Padding(
-                padding: EdgeInsets.all(16),
-                child: RoundedButton(
-                    label: Localization().getStringEx('panel.essential_skills_coach.assignment.button.save.label', 'Save'),
-                    textStyle: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"),
-                    backgroundColor: _color,
-                    borderColor: _color,
-                    onTap: () => _saveProgress(false)),
-              ),
             if (!widget.preview && helpContentWidgets.isNotEmpty)
               ExpansionPanelList(
                 expandedHeaderPadding: EdgeInsets.zero,
@@ -209,8 +231,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Container(
-                  width: 150,
+                Expanded(
                   child:RoundedButton(
                     label: "",
                     textWidget: Icon(
@@ -220,7 +241,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                     ),
                     backgroundColor: isGoodExperience ? _color : _colorAccent,
                     borderColor: _color,
-                    onTap: widget.isCurrent ? (){
+                    onTap: _viewingHistoryIndex == 0 ? (){
                       setState(() {
                         experience = isGoodExperience ? null : UserContent.goodExperience;
                       });
@@ -228,8 +249,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                   ),
                 ),
                 SizedBox(width: 8,),
-                Container(
-                    width: 150,
+                Expanded(
                     child:RoundedButton(
                       label: "",
                       textWidget: Icon(
@@ -237,9 +257,9 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                         color: Colors.white,
                         size: 25,
                       ),
-                      backgroundColor:  isBadExperience ? _color : _colorAccent,
+                      backgroundColor: isBadExperience ? _color : _colorAccent,
                       borderColor: _color,
-                      onTap: widget.isCurrent ? (){
+                      onTap: _viewingHistoryIndex == 0 ? () {
                         setState(() {
                           experience = isBadExperience ? null : UserContent.badExperience;
                         });
@@ -261,7 +281,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
               children: [
                 Text(notesHeaderText, style: Styles().textStyles.getTextStyle("widget.detail.small.fat"),),
                 Visibility(
-                  visible: widget.isCurrent && SpeechToText().isEnabled,
+                  visible: SpeechToText().isEnabled,
                   child: _buildSpeechToTextButton(),
                 )
               ],
@@ -282,8 +302,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Container(
-                width: 150,
+              Expanded(
                 child:RoundedButton(
                     label: Localization().getStringEx('panel.essential_skills_coach.assignment.completion.button.yes.label', 'Yes'),
                     leftIconPadding: EdgeInsets.only(left: 16),
@@ -295,16 +314,15 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                       color: isComplete ? _colorAccent : _color,
                       size: 20,
                     ),
-                    onTap: widget.isCurrent && widget.data?[UserContent.completeKey] != true ? () {
+                    onTap: _viewingHistoryIndex == 0 && _initialResponse?[UserContent.completeKey] != true ? () {
                       setState(() {
                         complete = isComplete ? null : true;
                       });
                     } : null
                 ),
               ),
-              SizedBox(width: 8,),
-              Container(
-                  width: 150,
+              SizedBox(width: 8),
+              Expanded(
                   child:RoundedButton(
                     label: Localization().getStringEx('panel.essential_skills_coach.assignment.completion.button.no.label', 'No'),
                     leftIconPadding: EdgeInsets.only(left: 16),
@@ -316,7 +334,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                       color: isNotComplete ? _colorAccent : _color,
                       size: 20,
                     ),
-                    onTap: widget.isCurrent && widget.data?[UserContent.completeKey] != true ? (){
+                    onTap: _viewingHistoryIndex == 0 && _initialResponse?[UserContent.completeKey] != true ? (){
                       setState(() {
                         complete = isNotComplete ? null : false;
                         experience = null;
@@ -328,11 +346,10 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
         ),
         ...noteWidgets,
         Padding(
-          padding: EdgeInsets.only(bottom: 32),
+          padding: EdgeInsets.only(bottom: 16),
           child:TextField(
             controller: _controller,
             maxLines: 10,
-            readOnly: !widget.isCurrent,
             textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
               border: OutlineInputBorder(
@@ -344,11 +361,56 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
             ),
           )
         ),
-        //TODO: add history here
+        Padding(padding: const EdgeInsets.only(bottom: 80),
+          child: Theme(data: Theme.of(context).copyWith(dividerColor: Colors.transparent), child: ExpansionTile(
+            tilePadding: EdgeInsets.zero,
+            title: Text(Localization().getStringEx("panel.essential_skills_coach.assignment.history.header", "History"), style: Styles().textStyles.getTextStyle("widget.detail.small.fat")),
+            iconColor: Styles().colors.fillColorPrimary,
+            collapsedIconColor: Styles().colors.fillColorPrimary,
+            children: _buildTaskHistoryWidgets(),
+            onExpansionChanged: (open) {
+              _historyExpanded = open;
+            },
+            initiallyExpanded: _historyExpanded,
+          ))
+        )
       ]);
     }
 
     return assignmentWidgets;
+  }
+
+  List<Widget> _buildTaskHistoryWidgets(){
+    List<Widget> taskWidgets = [];
+
+    for(int i = 0; i < (_userResponseHistory?.length ?? 0); i++) {
+      UserContent historyItem = _userResponseHistory![i];
+      DateTime? displayTime = historyItem.dateUpdated ?? historyItem.dateCreated;
+      bool isSelected = (i == _viewingHistoryIndex);
+      taskWidgets.add(Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: TextButton(
+              onPressed: () => _onTapViewHistoryResponse(i),
+              child: Text(
+                displayTime == null ? Localization().getStringEx("panel.essential_skills_coach.assignment.history.unsaved.label", "Unsaved Response") : (historyItem.isComplete ? Localization().getStringEx("panel.essential_skills_coach.assignment.history.complete.label", "Task Completed"): Localization().getStringEx("panel.essential_skills_coach.assignment.history.incomplete.label", "Task Not Completed")),
+                style: Styles().textStyles.getTextStyle(isSelected ? "widget.detail.regular.extra_fat" : "widget.detail.regular")?.apply(decoration: TextDecoration.underline),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              displayTime == null ? Localization().getStringEx("panel.essential_skills_coach.assignment.history.timestamp.now.label", "Now") : '${AppDateTime().getDisplayDay(dateTimeUtc: displayTime, includeAtSuffix: true)} ${AppDateTime().getDisplayTime(dateTimeUtc: displayTime)}',
+              style: Styles().textStyles.getTextStyle(isSelected ? "widget.detail.regular.extra_fat" : "widget.detail.regular"),
+            ),
+          ),
+        ],
+      ));
+    }
+    return taskWidgets;
   }
 
   Widget _buildSpeechToTextButton() => Material(
@@ -366,12 +428,47 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     ),
   );
 
+  void _onTapViewHistoryResponse(int index) {
+    if (_viewingHistoryIndex != index) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        _scrollController.animateTo(0, duration: Duration(milliseconds: 500), curve: Curves.linear);
+      });
+    }
+    setState(() {
+      _viewingHistoryIndex = index;
+      _controller.text = userNotes ?? '';
+    });
+  }
+
+  Future<void> _loadAssignmentHistory() async {
+    List<UserContent>? history = CollectionUtils.isNotEmpty(widget.contentReference.ids) ? await CustomCourses().loadUserContentHistory(ids: widget.contentReference.ids) : [];
+    if (history != null) {
+      history.sort(((a, b) => b.dateCreated?.compareTo(a.dateCreated ?? DateTime.now()) ?? 0));
+      for (int i = 0; i < history.length; i++) {
+        UserContent historyItem = history[i];
+        if (widget.courseDayStart != null && !(historyItem.dateCreated?.isBefore(widget.courseDayStart!) ?? true)) {
+          _initialResponse = historyItem.response != null ? Map.from(historyItem.response!) : null; // copy the current response so we can check if the user changed it when saving
+          break;
+        }
+      }
+
+      if (_initialResponse == null) {
+        history.insert(0, UserContent()); // insert new UserContent with an empty response at the "top" of the history to act as the new potential response
+      }
+
+      setStateIfMounted(() {
+        _userResponseHistory = history;
+        _controller.text = userNotes ?? '';
+      });
+    }
+  }
+
   void _saveProgress(bool didPop) async {
     if (userNotes != null || _controller.text.isNotEmpty) {
       userNotes = _controller.text;
     }
     if (!didPop) {
-      Navigator.pop(context, !widget.isCurrent || DeepCollectionEquality().equals(_data, widget.data) ? null : _data);
+      Navigator.pop(context, _viewingHistoryIndex != 0 || DeepCollectionEquality().equals(displayResponse, _initialResponse) ? null : displayResponse);
     }
   }
 
@@ -391,9 +488,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
 
   void _onSpeechResult(String result, bool finalResult) {
     setState(() {
-      if (widget.isCurrent) {
-        _controller.text = result;
-      }
+      _controller.text = result;
       if (finalResult) {
         _listening = false;
       }

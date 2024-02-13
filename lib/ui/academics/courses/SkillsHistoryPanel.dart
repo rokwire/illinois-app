@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dart';
+import 'package:illinois/ui/academics/courses/SkillsScoreChart.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -7,9 +10,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-import '../SkillsSelfEvaluation.dart';
-import '../SkillsSelfEvaluationResultsDetailPanel.dart';
-import 'SkillsScoreChart.dart';
 
 class SkillsHistoryPanel extends StatefulWidget {
 
@@ -44,7 +44,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Styles().colors.lightGray,
+      color: Styles().colors.background,
       child: SingleChildScrollView(
           child: Column(
             children: [
@@ -461,32 +461,47 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
   Widget _buildFilterDropDown(){
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Center(
-          child: Container(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: DropdownButton(
-                  alignment: AlignmentDirectional.center,
-                  value: _selectedSkillType,
-                  iconDisabledColor: Colors.white,
-                  iconEnabledColor: Styles().colors.fillColorSecondary,
-                  focusColor: Styles().colors.fillColorSecondary,
-                  dropdownColor: Colors.white,
-                  isExpanded: true,
-                  underline: Divider(color: Styles().colors.fillColorSecondary, thickness: 2,),
-                  items: DropdownBuilder.getItems(_skillTypes, style: Styles().textStyles.getTextStyle("widget.title.large")),
-                  onChanged: (String? selected) {
-                    setState(() {
-                      _selectedSkillType = selected;
-                    });
-                    _chartController.updateData(_responses, _selectedSkillType);
-                  }
-              ),
-            ),
-          )
+      child: Container(
+        padding: const EdgeInsets.only(top: 4.0, bottom: 8.0),
+        decoration: BoxDecoration(
+          color: Styles().colors.surface,
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.all(Radius.circular(4.0)),
+        ),
+        child: ButtonTheme(
+            alignedDropdown: true,
+            child: DropdownButton(
+                alignment: AlignmentDirectional.centerStart,
+                value: _selectedSkillType,
+                iconDisabledColor: Styles().colors.fillColorSecondary,
+                iconEnabledColor: Styles().colors.fillColorSecondary,
+                focusColor: Styles().colors.surface,
+                dropdownColor: Styles().colors.surface,
+                underline: Divider(color: Styles().colors.fillColorSecondary, height: 1.0, indent: 16.0, endIndent: 16.0),
+                borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                isExpanded: true,
+                items: _buildDropdownItems(_skillTypes, style: Styles().textStyles.getTextStyle("widget.title.large")),
+                onChanged: (String? selected) {
+                  setState(() {
+                    _selectedSkillType = selected;
+                  });
+                  _chartController.updateData(_responses, _selectedSkillType);
+                }
+            )
+        ),
       ),
     );
+  }
+
+  List<DropdownMenuItem<T>> _buildDropdownItems<T>(List<T> options, {String? nullOption, TextStyle? style}) {
+    List<DropdownMenuItem<T>> dropDownItems = <DropdownMenuItem<T>>[];
+    if (nullOption != null) {
+      dropDownItems.add(DropdownMenuItem(value: null, child: Text(nullOption, style: style ?? Styles().textStyles.getTextStyle("widget.detail.regular"))));
+    }
+    for (T option in options) {
+      dropDownItems.add(DropdownMenuItem(value: option, child: Text(option.toString(), style: style ?? Styles().textStyles.getTextStyle("widget.detail.regular"))));
+    }
+    return dropDownItems;
   }
 
   void _loadResults() {
@@ -561,19 +576,5 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
         });
       }
     });
-  }
-
-}
-
-class DropdownBuilder {
-  static List<DropdownMenuItem<T>> getItems<T>(List<T> options, {String? nullOption, TextStyle? style}) {
-    List<DropdownMenuItem<T>> dropDownItems = <DropdownMenuItem<T>>[];
-    if (nullOption != null) {
-      dropDownItems.add(DropdownMenuItem(value: null, child: Text(nullOption, style: style ?? Styles().textStyles.getTextStyle("widget.detail.regular"))));
-    }
-    for (T option in options) {
-      dropDownItems.add(DropdownMenuItem(value: option, child: Text(option.toString(), style: style ?? Styles().textStyles.getTextStyle("widget.detail.regular"))));
-    }
-    return dropDownItems;
   }
 }
