@@ -48,9 +48,10 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
   ScrollController _scrollController = ScrollController();
 
   Map<String, dynamic>? _initialResponse;
-  Map<String, dynamic>? _currentResponse;
   List<UserContent>? _userResponseHistory;
+  int _viewingHistoryIndex = 0;
 
+  bool _historyExpanded = false;
   bool _helpContentOpen = false;
   bool _listening = false;
 
@@ -79,24 +80,29 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     super.dispose();
   }
 
-  bool get isComplete => _currentResponse?[UserContent.completeKey] == true;
-  bool get isNotComplete => _currentResponse?[UserContent.completeKey] == false;
+  Map<String, dynamic>? get displayResponse => _userResponseHistory?[_viewingHistoryIndex].response;
+  set displayResponse(Map<String, dynamic>? value){
+    _userResponseHistory?[0].response = value;
+  }
+
+  bool get isComplete => displayResponse?[UserContent.completeKey] == true;
+  bool get isNotComplete => displayResponse?[UserContent.completeKey] == false;
   set complete(bool? value) {
-    _currentResponse ??= {};
-    _currentResponse![UserContent.completeKey] = value;
+    displayResponse ??= {};
+    displayResponse![UserContent.completeKey] = value;
   }
 
-  bool get isGoodExperience => _currentResponse?[UserContent.experienceKey] == UserContent.goodExperience;
-  bool get isBadExperience => _currentResponse?[UserContent.experienceKey] == UserContent.badExperience;
+  bool get isGoodExperience => displayResponse?[UserContent.experienceKey] == UserContent.goodExperience;
+  bool get isBadExperience => displayResponse?[UserContent.experienceKey] == UserContent.badExperience;
   set experience(String? value) {
-    _currentResponse ??= {};
-    _currentResponse![UserContent.experienceKey] = value;
+    displayResponse ??= {};
+    displayResponse![UserContent.experienceKey] = value;
   }
 
-  String? get userNotes => _currentResponse?[UserContent.notesKey].toString();
+  String? get userNotes => displayResponse?[UserContent.notesKey].toString();
   set userNotes(String? value) {
-    _currentResponse ??= {};
-    _currentResponse![UserContent.notesKey] = value;
+    displayResponse ??= {};
+    displayResponse![UserContent.notesKey] = value;
   }
 
   @override
@@ -133,26 +139,35 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
           children: [
             ModuleHeaderWidget(icon: widget.moduleIcon, moduleName: widget.moduleName, backgroundColor: _color,),
             Expanded(
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: _buildAssignmentActivityWidgets(),
+              child: Stack(
+                children: [
+                  SingleChildScrollView(
+                    controller: _scrollController,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: _buildAssignmentActivityWidgets(),
+                      ),
+                    ),
                   ),
-                ),
+                  if (_viewingHistoryIndex == 0 && !widget.preview)
+                    Column(
+                      children: [
+                        Expanded(child: Container()),
+                        Padding(
+                          padding: EdgeInsets.all(16),
+                          child: RoundedButton(
+                            label: Localization().getStringEx('panel.essential_skills_coach.assignment.button.save.label', 'Save'),
+                            textStyle: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"),
+                            backgroundColor: _color,
+                            borderColor: _color,
+                            onTap: () => _saveProgress(false)),
+                        ),
+                      ],
+                    ),
+                ],
               ),
             ),
-            if (!widget.preview)
-              Padding(
-                padding: EdgeInsets.all(16),
-                child: RoundedButton(
-                    label: Localization().getStringEx('panel.essential_skills_coach.assignment.button.save.label', 'Save'),
-                    textStyle: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"),
-                    backgroundColor: _color,
-                    borderColor: _color,
-                    onTap: () => _saveProgress(false)),
-              ),
             if (!widget.preview && helpContentWidgets.isNotEmpty)
               ExpansionPanelList(
                 expandedHeaderPadding: EdgeInsets.zero,
@@ -225,11 +240,11 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                     ),
                     backgroundColor: isGoodExperience ? _color : _colorAccent,
                     borderColor: _color,
-                    onTap: (){
+                    onTap: _viewingHistoryIndex == 0 ? (){
                       setState(() {
                         experience = isGoodExperience ? null : UserContent.goodExperience;
                       });
-                    },
+                    } : null,
                   ),
                 ),
                 SizedBox(width: 8,),
@@ -241,13 +256,13 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                         color: Colors.white,
                         size: 25,
                       ),
-                      backgroundColor:  isBadExperience ? _color : _colorAccent,
+                      backgroundColor: isBadExperience ? _color : _colorAccent,
                       borderColor: _color,
-                      onTap: () {
+                      onTap: _viewingHistoryIndex == 0 ? () {
                         setState(() {
                           experience = isBadExperience ? null : UserContent.badExperience;
                         });
-                      },
+                      } : null,
                     )),
               ],
             ),
@@ -298,7 +313,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                       color: isComplete ? _colorAccent : _color,
                       size: 20,
                     ),
-                    onTap: _initialResponse?[UserContent.completeKey] != true ? () {
+                    onTap: _viewingHistoryIndex == 0 && _initialResponse?[UserContent.completeKey] != true ? () {
                       setState(() {
                         complete = isComplete ? null : true;
                       });
@@ -318,7 +333,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                       color: isNotComplete ? _colorAccent : _color,
                       size: 20,
                     ),
-                    onTap: _initialResponse?[UserContent.completeKey] != true ? (){
+                    onTap: _viewingHistoryIndex == 0 && _initialResponse?[UserContent.completeKey] != true ? (){
                       setState(() {
                         complete = isNotComplete ? null : false;
                         experience = null;
@@ -330,7 +345,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
         ),
         ...noteWidgets,
         Padding(
-          padding: EdgeInsets.only(bottom: 32),
+          padding: EdgeInsets.only(bottom: 16),
           child:TextField(
             controller: _controller,
             maxLines: 10,
@@ -345,46 +360,50 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
             ),
           )
         ),
-        Padding(padding: EdgeInsets.only(bottom: 16),
-          child: ExpansionTile(
-            title: Text("History", style: Styles().textStyles.getTextStyle("widget.detail.small.fat")),
-            children: _buildTaskHistoryWidgets()
-          )
+        Padding(padding: const EdgeInsets.only(bottom: 80),
+          child: Theme(data: Theme.of(context).copyWith(dividerColor: Colors.transparent), child: ExpansionTile(
+            tilePadding: EdgeInsets.zero,
+            title: Text(Localization().getStringEx("", "History"), style: Styles().textStyles.getTextStyle("widget.detail.small.fat")),
+            iconColor: Styles().colors.fillColorPrimary,
+            collapsedIconColor: Styles().colors.fillColorPrimary,
+            children: _buildTaskHistoryWidgets(),
+            onExpansionChanged: (open) {
+              _historyExpanded = open;
+            },
+            initiallyExpanded: _historyExpanded,
+          ))
         )
       ]);
     }
 
     return assignmentWidgets;
-
   }
 
   List<Widget> _buildTaskHistoryWidgets(){
     List<Widget> taskWidgets = [];
 
-    for(UserContent historyItem in _userResponseHistory ?? [] ) {
-      DateTime displayTime = historyItem.dateUpdated ?? historyItem.dateCreated ?? DateTime.now();
+    for(int i = 0; i < (_userResponseHistory?.length ?? 0); i++) {
+      UserContent historyItem = _userResponseHistory![i];
+      DateTime? displayTime = historyItem.dateUpdated ?? historyItem.dateCreated;
+      bool isSelected = (i == _viewingHistoryIndex);
       taskWidgets.add(Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text((historyItem.isComplete ? "Task Completed": "Task Not Completed"),
-              style: TextStyle(
-                color: Styles.appColors.fillColorSecondary,
-                fontFamily: Styles.appFontFamilies.bold,
-                decoration: TextDecoration.underline,
-                fontSize: 14,
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: TextButton(
+              onPressed: () => _onTapViewHistoryResponse(i),
+              child: Text(
+                displayTime == null ? Localization().getStringEx("", "Unsaved Response") : (historyItem.isComplete ? Localization().getStringEx("", "Task Completed"): Localization().getStringEx("", "Task Not Completed")),
+                style: Styles().textStyles.getTextStyle(isSelected ? "widget.detail.regular.extra_fat" : "widget.detail.regular")?.apply(decoration: TextDecoration.underline),
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
-              '${AppDateTime().getDisplayDay(dateTimeUtc: displayTime, includeAtSuffix: true)} ${AppDateTime().getDisplayTime(dateTimeUtc: displayTime)}',
-              style: TextStyle(
-                color: Styles.appColors.fillColorSecondary,
-                fontSize: 12,
-              ),
+              displayTime == null ? Localization().getStringEx("", "Now") : '${AppDateTime().getDisplayDay(dateTimeUtc: displayTime, includeAtSuffix: true)} ${AppDateTime().getDisplayTime(dateTimeUtc: displayTime)}',
+              style: Styles().textStyles.getTextStyle(isSelected ? "widget.detail.regular.extra_fat" : "widget.detail.regular"),
             ),
           ),
         ],
@@ -408,20 +427,31 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     ),
   );
 
+  void _onTapViewHistoryResponse(int index) {
+    setState(() {
+      _viewingHistoryIndex = index;
+      _controller.text = userNotes ?? '';
+    });
+  }
+
   Future<void> _loadAssignmentHistory() async {
     List<UserContent>? history = await CustomCourses().loadUserContentHistory(ids: widget.contentReference.ids);
     if (history != null) {
       history.sort(((a, b) => b.dateCreated?.compareTo(a.dateCreated ?? DateTime.now()) ?? 0));
-      for (UserContent historyItem in history) {
+      for (int i = 0; i < history.length; i++) {
+        UserContent historyItem = history[i];
         if (widget.courseDayStart != null && !(historyItem.dateCreated?.isBefore(widget.courseDayStart!) ?? true)) {
-          _currentResponse = historyItem.response != null ? Map.from(historyItem.response!) : null; // the current response is the first in the list (most recently created)
           _initialResponse = historyItem.response != null ? Map.from(historyItem.response!) : null; // copy the current response so we can check if the user changed it when saving
           break;
         }
       }
 
+      if (_initialResponse == null) {
+        history.insert(0, UserContent()); // insert new UserContent with an empty response at the "top" of the history to act as the new potential response
+      }
+
       setStateIfMounted(() {
-        _userResponseHistory = history.sublist(_currentResponse != null ? 1 : 0);
+        _userResponseHistory = history;
         _controller.text = userNotes ?? '';
       });
     }
@@ -432,7 +462,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
       userNotes = _controller.text;
     }
     if (!didPop) {
-      Navigator.pop(context, DeepCollectionEquality().equals(_currentResponse, _initialResponse) ? null : _currentResponse); //
+      Navigator.pop(context, _viewingHistoryIndex != 0 || DeepCollectionEquality().equals(displayResponse, _initialResponse) ? null : displayResponse);
     }
   }
 

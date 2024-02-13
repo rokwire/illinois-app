@@ -42,7 +42,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   DateTime? _pausedDateTime;
   EssentialSkillsCoachTab _selectedTab = EssentialSkillsCoachTab.coach;
 
-  GlobalKey _currentActivityKey = GlobalKey();
+  Map<String, GlobalKey> _currentActivityKey = {};
 
   @override
   void initState() {
@@ -236,6 +236,10 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     if(items.firstWhereOrNull((e) => e.value == _selectedModuleKey) != null) {
       selected = _selectedModuleKey;
     }
+    if (selected != null) {
+      _currentActivityKey[selected] ??= GlobalKey();
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Row(
@@ -274,7 +278,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                         setState(() {
                           Storage().essentialSkillsCoachModule = _selectedModuleKey = selected;
                         });
-                        _showCurrentActivity();
+                        _showCurrentActivity(selected);
                       }
                   )
                 ),
@@ -292,8 +296,8 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       Unit unit = _selectedModule!.units![i];
       UserUnit showUnit = _userCourseUnits?.firstWhere(
         (userUnit) => (userUnit.unit?.key != null) && (userUnit.unit!.key == unit.key) && (_selectedModuleKey != null) && (userUnit.moduleKey == _selectedModuleKey),
-        orElse: () => UserUnit.emptyFromUnit(unit, Config().essentialSkillsCoachKey ?? '', current: i == 0)
-      ) ?? UserUnit.emptyFromUnit(unit, Config().essentialSkillsCoachKey ?? '', current: i == 0);
+        orElse: () => UserUnit.emptyFromUnit(unit, Config().essentialSkillsCoachKey, _selectedModule?.key, current: i == 0)
+      ) ?? UserUnit.emptyFromUnit(unit, Config().essentialSkillsCoachKey, _selectedModule?.key, current: i == 0);
       moduleUnitWidgets.add(Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
         child: _buildUnitInfoWidget(showUnit, i+1),
@@ -421,7 +425,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
 
     DateTime? nextCourseDayStart;
     if (_courseConfig != null) {
-      nextCourseDayStart = _userCourse?.nextScheduleItemUnlockTimeUtc(_courseConfig!);
+      nextCourseDayStart = _courseConfig!.nextScheduleItemUnlockTime(inUtc: true);
     }
 
     double? size = shouldHighlight ? 32.0 : null;
@@ -485,7 +489,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     }
 
     return Padding(
-      key: isCurrent ? _currentActivityKey : null,
+      key: shouldHighlight && userUnit.moduleKey != null ? _currentActivityKey[userUnit.moduleKey!] : null,
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: ElevatedButton(
         onPressed: userUnit.current ? () {
@@ -564,7 +568,9 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
               });
               await _loadUserCourseUnits();
             } else {
-              await _loadCourse();
+              setState(() {
+                _loading = false;
+              });
             }
           }
         }
@@ -572,41 +578,19 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         _setDefaultSelectedModule(_userCourse?.course);
         await _loadUserCourseUnits();
       }
-      _showCurrentActivity();
+      _showCurrentActivity(_selectedModuleKey);
     }
   }
 
-  void _showCurrentActivity() {
+  void _showCurrentActivity(String? selected) {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      BuildContext? context = _currentActivityKey.currentContext;
-      if (context != null) {
-        Scrollable.ensureVisible(context, duration: Duration(milliseconds: 500));
+      if (selected != null) {
+        BuildContext? context = _currentActivityKey[selected]?.currentContext;
+        if (context != null) {
+          Scrollable.ensureVisible(context, duration: Duration(milliseconds: 500));
+        }
       }
     });
-  }
-
-  Future<void> _loadCourse() async {
-    _course ??= CustomCourses().courses?[Config().essentialSkillsCoachKey];
-    if (_course == null) {
-      if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey) && mounted) {
-        setState(() {
-          _loading = true;
-        });
-        Course? course = await CustomCourses().loadCourse(Config().essentialSkillsCoachKey!);
-        setStateIfMounted(() {
-          if (course != null) {
-            _course = course;
-            _setDefaultSelectedModule(course);
-          }
-          _loading = false;
-        });
-      }
-    } else {
-      setStateIfMounted(() {
-        _setDefaultSelectedModule(_course);
-        _loading = false;
-      });
-    }
   }
 
   void _setDefaultSelectedModule(Course? course) {
@@ -641,7 +625,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         }
         _loading = false;
       });
-      _showCurrentActivity();
+      _showCurrentActivity(_selectedModuleKey);
     }
   }
 

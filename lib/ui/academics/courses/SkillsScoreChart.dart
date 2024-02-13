@@ -104,7 +104,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
           case "Cooperation Skills":
             int score = _determineSkillScore(stats.scores["cooperation"], stats.maximumScores["cooperation"]);
             totalScore +=score;
-            scoreBarSegments.add(ScoreBarSegment(skillType: "cooperation", color: Styles().colors.getColor('essentialSkillsCoachRedAccent'), score: score));
+            scoreBarSegments.add(ScoreBarSegment(skillType: "cooperation", color: Styles().colors.getColor('essentialSkillsCoachRed'), score: score));
             _chartItems.add(ScoreBarData(title: DateTimeUtils.localDateTimeToString(survey.dateTaken, format: 'MM/dd/yy\nh:mma') ?? '', scoreBarSegments: scoreBarSegments, score: totalScore));
             break;
           case "Emotional Resilience Skills":
@@ -147,7 +147,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
             case "cooperation":
               int score = _determineSkillScore(value, stats.maximumScores["cooperation"]);
               totalScore +=score;
-              scoreBarSegments.add(ScoreBarSegment(skillType: "cooperation", color: Styles().colors.getColor('essentialSkillsCoachRedAccent'), score: score));
+              scoreBarSegments.add(ScoreBarSegment(skillType: "cooperation", color: Styles().colors.getColor('essentialSkillsCoachRed'), score: score));
               break;
             case "emotional_resilience":
               int score = _determineSkillScore(value, stats.maximumScores["emotional_resilience"]);
@@ -243,7 +243,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
                         sideTitles: SideTitles(
                           showTitles: true,
                           getTitlesWidget: leftTitles,
-                          interval: _maxScore / 4,
+                          interval: _maxScore / 5,
                           reservedSize: 42,
                         ),
                       ),
@@ -265,6 +265,8 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
                           strokeWidth: 0.8,
                         );
                       },
+                      horizontalInterval: _maxScore / 5,
+                      getDrawingHorizontalLine: (value) => FlLine(strokeWidth: 2),
                     ),
                     borderData: FlBorderData(
                       show: false,
@@ -355,7 +357,6 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
   }
 
   Widget bottomTitles(double value, TitleMeta meta) {
-    // style = TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 10);
     String text = bottomTitleStrings(value.toInt());
     return SideTitleWidget(
       axisSide: meta.axisSide,
@@ -368,7 +369,6 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
   }
 
   Widget leftTitles(double value, TitleMeta meta) {
-    // style = TextStyle(color: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 10);
     String text;
     if (value == 0) {
       text = '0';
@@ -376,13 +376,16 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
       text = value.toInt().toString();
     }
     return SideTitleWidget(
-      angle: AppMathUtils.degreesToRadians(value < 0 ? -45 : 45),
+      angle: 0,
       axisSide: meta.axisSide,
       space: 4,
-      child: Text(
-        text,
-        style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 10),
-        textAlign: TextAlign.center,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 8.0),
+        child: Text(
+          text,
+          style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 10),
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }
@@ -435,11 +438,3 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
     return BarTooltipItem('${bottomTitleStrings(group.x)}\n', textStyle, children: barData.reversed.toList());
   }
 }
-
-class AppMathUtils {
-  static const double pi = 3.141592653589793238;
-  static double degreesToRadians(double degree) {
-    return degree * pi / 180;
-  }
-}
-

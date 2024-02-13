@@ -224,32 +224,6 @@ class UserCourse {
       return onHour ? DateTime(dt.year, dt.month, dt.day, dt.hour) : dt;
     });
   }
-
-  DateTime? nextScheduleItemUnlockTimeUtc(CourseConfig config) {
-    if (config.streaksProcessTime != null) {
-      timezone.Location location = DateTimeLocal.timezoneLocal;
-      DateTime now = DateTime.now();
-      if (!config.usesUserTimezone) {
-        if (StringUtils.isNotEmpty(config.timezoneName)) {
-          return null;
-        }
-        location = timezone.getLocation(config.timezoneName!);
-        now = DateTimeUtils.nowTimezone(location);
-      }
-      int nowLocalSeconds = 3600*now.hour + 60*now.minute + now.second;
-
-      int hour = config.streaksProcessTime! ~/ 3600;
-      int minute = (config.streaksProcessTime! % 60) ~/ 60;
-      int second = (config.streaksProcessTime! % 60) % 60;
-      DateTime nextUnlockUtc = timezone.TZDateTime(location, now.year, now.month, now.day, hour, minute, second).toUtc();
-      if (nowLocalSeconds > config.streaksProcessTime!) {
-        // go forward one day if the current moment is after the unlock time in the current day
-        nextUnlockUtc = nextUnlockUtc.add(Duration(days: 1));
-      }
-      return nextUnlockUtc;
-    }
-    return null;
-  }
 }
 
 class Module{
@@ -429,7 +403,7 @@ class UserUnit {
 
   UserUnit({this.id, this.courseKey, this.moduleKey, this.completed = 0, this.current = false, this.unit, this.dateCreated, this.dateUpdated, this.userSchedule});
 
-  factory UserUnit.emptyFromUnit(Unit unit, String courseKey, {bool current = false}) {
+  factory UserUnit.emptyFromUnit(Unit unit, String? courseKey, String? moduleKey, {bool current = false}) {
     List<UserScheduleItem> userSchedule = [];
     for (ScheduleItem item in unit.scheduleItems ?? []) {
       List<UserContentReference> userContentReferences = [];
@@ -439,7 +413,7 @@ class UserUnit {
       userSchedule.add(UserScheduleItem(userContent: userContentReferences));
     }
 
-    return UserUnit(courseKey: courseKey, completed: 0, unit: unit, current: current, userSchedule: userSchedule);
+    return UserUnit(courseKey: courseKey, moduleKey: moduleKey, completed: 0, unit: unit, current: current, userSchedule: userSchedule);
   }
 
   static UserUnit? fromJson(Map<String, dynamic>? json) {
@@ -645,7 +619,7 @@ class UserContent{
   final String? moduleKey;
   final String? unitKey;
   final Content? content;
-  final Map<String,dynamic>? response;
+  Map<String,dynamic>? response;
 
   final DateTime? dateCreated;
   final DateTime? dateUpdated;
@@ -903,6 +877,32 @@ class CourseConfig {
       timezoneName: JsonUtils.stringValue(json['streaks_notifications_config']?['timezone_name']),
       timezoneOffset: JsonUtils.intValue(json['streaks_notifications_config']?['timezone_offset']),
     );
+  }
+
+  DateTime? nextScheduleItemUnlockTime({bool inUtc = false}) {
+    if (streaksProcessTime != null) {
+      timezone.Location location = DateTimeLocal.timezoneLocal;
+      DateTime now = DateTime.now();
+      if (!usesUserTimezone) {
+        if (StringUtils.isNotEmpty(timezoneName)) {
+          return null;
+        }
+        location = timezone.getLocation(timezoneName!);
+        now = DateTimeUtils.nowTimezone(location);
+      }
+      int nowLocalSeconds = 3600*now.hour;
+
+      DateTime nextUnlock = timezone.TZDateTime(location, now.year, now.month, now.day, streaksProcessTime! ~/ 3600, 0, 0);
+      if (inUtc) {
+        nextUnlock = nextUnlock.toUtc();
+      }
+      if (nowLocalSeconds > streaksProcessTime!) {
+        // go forward one day if the current moment is after the unlock time in the current day
+        nextUnlock = nextUnlock.add(Duration(days: 1));
+      }
+      return nextUnlock;
+    }
+    return null;
   }
 
   bool get usesUserTimezone => timezoneName == userTimezone;
