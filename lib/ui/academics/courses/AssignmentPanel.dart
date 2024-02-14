@@ -236,7 +236,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                     label: "",
                     textWidget: Icon(
                       Icons.thumb_up_alt_rounded,
-                      color: Colors.white,
+                      color: Styles().colors.surface,
                       size: 25,
                     ),
                     backgroundColor: isGoodExperience ? _color : _colorAccent,
@@ -254,7 +254,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                       label: "",
                       textWidget: Icon(
                         Icons.thumb_down_alt_rounded,
-                        color: Colors.white,
+                        color: Styles().colors.surface,
                         size: 25,
                       ),
                       backgroundColor: isBadExperience ? _color : _colorAccent,

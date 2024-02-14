@@ -320,10 +320,10 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
           BarChartRodData(
             fromY:fromY,
             toY: scoreBar.score.toDouble() + fromY,
-            color: scoreBar.color ?? Colors.white,
+            color: scoreBar.color ?? Styles().colors.surface,
             width: _barWidth,
             borderSide: BorderSide(
-              color: scoreBar.color ?? Colors.white,
+              color: scoreBar.color ?? Styles().colors.surface,
               width: isTouched ? 2 : 0,
             ),
             borderRadius: const BorderRadius.only(

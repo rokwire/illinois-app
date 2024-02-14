@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
@@ -35,7 +35,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
   late List<Content> _contentItems;
   Set<ReferenceType> _referenceTypes = {};
   Set<String> _loadingReferenceKeys = {};
-  Map<String, File?> _fileCache = {};
+  Map<String, Uint8List?> _fileCache = {};
   ReferenceType? _selectedResourceType;
 
   @override
@@ -89,7 +89,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
               child: InkWell(
                 onTap: (){
                   if (reference?.type == ReferenceType.video) {
-                    _openVideo(context, reference?.referenceKey);
+                    _openVideo(context, reference?.name, reference?.referenceKey);
                   } else if (reference?.type == ReferenceType.uri) {
                     Uri? uri = Uri.tryParse(reference?.referenceKey ?? "");
                     if (uri != null) {
@@ -97,10 +97,10 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
                     }
                   } else if (reference?.type != ReferenceType.text) {
                     if (_fileCache[reference?.referenceKey] != null) {
-                      _openPdf(context, reference?.name, _fileCache[reference?.referenceKey]!.path);
+                      _openPdf(context, reference?.name, _fileCache[reference?.referenceKey]!);
                     } else {
                       _loadContentForKey(reference?.referenceKey, onResult: (value) {
-                        _openPdf(context, reference?.name, value.path);
+                        _openPdf(context, reference?.name, value);
                       });
                     }
                   }
@@ -224,7 +224,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
     return _contentItems;
   }
 
-  void _loadContentForKey(String? key, {Function(File)? onResult}) {
+  void _loadContentForKey(String? key, {Function(Uint8List)? onResult}) {
     if ((key != null) && key.isNotEmpty && !_loadingReferenceKeys.contains(key) && mounted) {
       setState(() {
         _loadingReferenceKeys.add(key);
@@ -241,15 +241,15 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
     }
   }
 
-  void _openPdf(BuildContext context, String? resourceName, String? path) {
+  void _openPdf(BuildContext context, String? resourceName, Uint8List? pdfData) {
     Navigator.push(context, MaterialPageRoute(
-      builder: (context) => PDFPanel(resourceName: resourceName, path: path,),
+      builder: (context) => PDFPanel(resourceName: resourceName, pdfData: pdfData,),
     ),);
   }
 
-  void _openVideo(BuildContext context, String? resourceKey) {
+  void _openVideo(BuildContext context, String? resourceName, String? resourceKey) {
     Navigator.push(context, MaterialPageRoute(
-      builder: (context) => VideoPanel(resourceKey: resourceKey,),
+      builder: (context) => VideoPanel(resourceName: resourceName, resourceKey: resourceKey,),
     ),);
   }
 }

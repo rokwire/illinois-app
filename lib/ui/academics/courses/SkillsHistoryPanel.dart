@@ -75,7 +75,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> {
               items: _buildResponseDateDropDownItems(),
               value: _comparisonResponseId,
               onChanged: _onResponseDateDropDownChanged,
-              dropdownColor: Styles().colors.white,
+              dropdownColor: Styles().colors.surface,
             ),
           )),
         ],)),

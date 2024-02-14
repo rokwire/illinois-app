@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -6,8 +8,8 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 class PDFPanel extends StatefulWidget {
   final String? resourceName;
-  final String? path;
-  PDFPanel({Key? key, this.resourceName, this.path}) : super(key: key);
+  final Uint8List? pdfData;
+  PDFPanel({Key? key, this.resourceName, this.pdfData}) : super(key: key);
 
   _PDFPanelState createState() => _PDFPanelState();
 }
@@ -29,7 +31,7 @@ class _PDFPanelState extends State<PDFPanel> with WidgetsBindingObserver {
       body: Stack(
         children: <Widget>[
           PDFView(
-            filePath: widget.path,
+            pdfData: widget.pdfData,
             enableSwipe: true,
             swipeHorizontal: true,
             autoSpacing: false,

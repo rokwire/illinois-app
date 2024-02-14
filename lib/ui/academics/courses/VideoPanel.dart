@@ -13,7 +13,8 @@ import 'package:video_player/video_player.dart';
 
 class VideoPanel extends StatefulWidget {
   final String? resourceKey;
-  VideoPanel({Key? key, this.resourceKey}) : super(key: key);
+  final String? resourceName;
+  VideoPanel({Key? key, this.resourceName, this.resourceKey}) : super(key: key);
 
   @override
   State<VideoPanel> createState() => _VideoPanelState();
@@ -85,7 +86,7 @@ class _VideoPanelState extends State<VideoPanel> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles().colors.background,
-      appBar: HeaderBar(title: widget.resourceKey ?? Localization().getStringEx('panel.essential_skills_coach.video.header.title', 'Video'),
+      appBar: HeaderBar(title: widget.resourceName ?? Localization().getStringEx('panel.essential_skills_coach.video.header.title', 'Video'),
         textStyle: Styles().textStyles.getTextStyle('header_bar'),),
       body: Center(child: _buildVideoContent()),
     );
@@ -152,7 +153,7 @@ class _VideoPanelState extends State<VideoPanel> {
   void _logAnalyticsVideoEvent({required String event}) {
     Analytics().logVideo(
         videoId: widget.resourceKey,
-        videoTitle: widget.resourceKey,
+        videoTitle: widget.resourceName,
         videoEvent: event,
         duration: _controller.value.duration.inSeconds,
         position: _controller.value.position.inSeconds);
