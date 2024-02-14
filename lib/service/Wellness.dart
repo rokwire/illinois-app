@@ -24,7 +24,6 @@ import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -34,11 +33,11 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:illinois/model/wellness/SuccessTeam.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-import '../model/wellness/SuccessTeam.dart';
 
 class Wellness with Service implements NotificationsListener, ContentItemCategoryClient {
   static const String notifyToDoCategoryChanged = "edu.illinois.rokwire.wellness.todo.category.changed";
@@ -373,26 +372,29 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
   Future<List<SuccessTeamMember?>> getAcademicAdvisors() async {
     String classificationUrl = '${Config().identityUrl}/studentclassification';
     http.Response? classificationResponse = await Network().get(classificationUrl, auth: Auth2(), headers: {'External-Authorization': Auth2().uiucToken?.accessToken});
-    String? classificationResponseString = classificationResponse?.body;
-    String departmentCode = json.decode(classificationResponseString!)["DepartmentCode"];
-    String url = '${Config().gatewayUrl}/successteam/advisors?id=${Auth2().uin}&unitid=${departmentCode}';
-    http.Response? response = await Network().get(url, auth: Auth2(), headers: {'External-Authorization': Auth2().uiucToken?.accessToken});
-    int? responseCode = response?.statusCode;
-    String? responseString = response?.body;
-    if (responseCode == 200) {
-      try {
-        List<dynamic> responseList = json.decode(responseString!);
-        List<SuccessTeamMember?> academicAdvisors = responseList.map((e) =>
-          SuccessTeamMember(
-            firstName: e['first_name'],
-            lastName: e['last_name'],
-            image: e['image'])).toList();
-        return academicAdvisors;
-      } on Exception catch (_) {
+    Map<String, dynamic>? responseMap = (classificationResponse?.statusCode == 200) ? JsonUtils.decodeMap(classificationResponse?.body) : null;
+    String? departmentCode = (responseMap != null) ? JsonUtils.stringValue(responseMap['DepartmentCode']) : null;
+    if ((departmentCode != null) && departmentCode.isNotEmpty) {
+      String url = '${Config().gatewayUrl}/successteam/advisors?id=${Auth2().uin}&unitid=${departmentCode}';
+      http.Response? response = await Network().get(url, auth: Auth2(), headers: {'External-Authorization': Auth2().uiucToken?.accessToken});
+      int? responseCode = response?.statusCode;
+      String? responseString = response?.body;
+      if (responseCode == 200) {
+        try {
+          List<dynamic>? responseList = JsonUtils.decodeList(responseString!);
+          List<SuccessTeamMember?>? academicAdvisors = responseList?.map((e) =>
+            SuccessTeamMember.fromJson(JsonUtils.mapValue(e))).toList();
+          return academicAdvisors ?? [];
+        } on Exception catch (_) {
+          return [];
+        }
+      } else {
+        Log.w('Failed to load academic advisors. Response:\n$responseCode: $responseString');
         return [];
       }
-    } else {
-      Log.w('Failed to load academic advisors. Response:\n$responseCode: $responseString');
+    }
+    else {
+      Log.w('Failed to load student classification. Response:\n${classificationResponse?.statusCode}: ${classificationResponse?.body}');
       return [];
     }
   }
