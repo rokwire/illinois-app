@@ -621,7 +621,7 @@ class _BrowseEntry extends StatelessWidget {
       case "wellness.my_appointments":          _onTapWellnessAppointments(context); break;
       case "wellness.wellness_tips":            _onTapWellnessTips(context); break;
       case "wellness.wellness_health_screener": _onTapWellnessHealthScreener(context); break;
-      case "wellness.wellness_success_team": _onTapWellnessSuccessTeam(context); break;
+      case "wellness.wellness_success_team":    _onTapWellnessSuccessTeam(context); break;
     }
   }
 
