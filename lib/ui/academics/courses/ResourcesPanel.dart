@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/ui/academics/courses/ModuleHeaderWidget.dart';
+import 'package:illinois/ui/academics/courses/EssentialSkillsCoachWidgets.dart';
 import 'package:illinois/ui/academics/courses/PDFPanel.dart';
 import 'package:illinois/ui/academics/courses/VideoPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -49,8 +49,6 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
       }
     }
     super.initState();
-
-    //TODO: load and cache all content files on init?
   }
 
   @override
@@ -59,7 +57,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
       appBar: HeaderBar(title: Localization().getStringEx('panel.essential_skills_coach.resources.header.title', 'Unit Resources'),
         textStyle: Styles().textStyles.getTextStyle('header_bar'),),
       body: Column(children: [
-        ModuleHeaderWidget(icon: widget.moduleIcon, moduleName: widget.moduleName, backgroundColor: _color,),
+        EssentialSkillsCoachModuleHeader(icon: widget.moduleIcon, moduleName: widget.moduleName, backgroundColor: _color,),
         _buildResourcesHeaderWidget(),
         _buildResourceTypeDropdown(),
         Expanded(
@@ -77,7 +75,6 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
     List<Content> filteredContentItems = _filterContentItems();
     return ListView.builder(
         shrinkWrap: true,
-        // physics: NeverScrollableScrollPhysics(),
         itemCount: filteredContentItems.length,
         itemBuilder: (BuildContext context, int index) {
           Content contentItem = filteredContentItems[index];
@@ -92,16 +89,12 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
               child: InkWell(
                 onTap: (){
                   if (reference?.type == ReferenceType.video) {
-                    if (_fileCache[reference?.referenceKey] != null) {
-                      _openVideo(context, reference?.name, _fileCache[reference?.referenceKey]!);
-                    } else {
-                      _loadContentForKey(reference?.referenceKey, onResult: (value) {
-                        _openVideo(context, reference?.name, value);
-                      });
-                    }
+                    _openVideo(context, reference?.referenceKey);
                   } else if (reference?.type == ReferenceType.uri) {
-                    Uri uri = Uri.parse(reference?.referenceKey ?? "");
-                    _launchUrl(uri);
+                    Uri? uri = Uri.tryParse(reference?.referenceKey ?? "");
+                    if (uri != null) {
+                      _launchUrl(uri);
+                    }
                   } else if (reference?.type != ReferenceType.text) {
                     if (_fileCache[reference?.referenceKey] != null) {
                       _openPdf(context, reference?.name, _fileCache[reference?.referenceKey]!.path);
@@ -132,34 +125,15 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
   Widget _buildResourceTypeDropdown(){
     return Padding(
       padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 24.0),
-      child: Container(
-        padding: const EdgeInsets.only(top: 4.0, bottom: 8.0),
-        decoration: BoxDecoration(
-          color: Styles().colors.surface,
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.all(Radius.circular(4.0)),
-        ),
-        child: ButtonTheme(
-          alignedDropdown: true,
-          child: DropdownButton(
-            value: _selectedResourceType,
-            alignment: AlignmentDirectional.centerStart,
-            iconDisabledColor: Styles().colors.fillColorSecondary,
-            iconEnabledColor: Styles().colors.fillColorSecondary,
-            focusColor: Styles().colors.surface,
-            dropdownColor: Styles().colors.surface,
-            isExpanded: true,
-            underline: Divider(color: Styles().colors.fillColorSecondary, height: 1.0, indent: 16.0, endIndent: 16.0),
-            borderRadius: BorderRadius.all(Radius.circular(4.0)),
-            items: _buildDropdownItems(),
-            onChanged: (ReferenceType? selected) {
-              setState(() {
-                _selectedResourceType = selected;
-              });
-            }
-          ),
-        )
-      )
+      child: EssentialSkillsCoachDropdown(
+          value: _selectedResourceType,
+          items: _buildDropdownItems(),
+          onChanged: (ReferenceType? selected) {
+            setState(() {
+              _selectedResourceType = selected;
+            });
+          }
+      ),
     );
   }
 
@@ -273,9 +247,9 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
     ),);
   }
 
-  void _openVideo(BuildContext context, String? resourceName, File file) {
+  void _openVideo(BuildContext context, String? resourceKey) {
     Navigator.push(context, MaterialPageRoute(
-      builder: (context) => VideoPanel(resourceName: resourceName, file: file,),
+      builder: (context) => VideoPanel(resourceKey: resourceKey,),
     ),);
   }
 }

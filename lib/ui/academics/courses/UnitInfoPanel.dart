@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
-import 'package:illinois/ui/academics/courses/ModuleHeaderWidget.dart';
+import 'package:illinois/ui/academics/courses/EssentialSkillsCoachWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -34,7 +34,7 @@ class UnitInfoPanel extends StatelessWidget {
             SingleChildScrollView(
               child: Column(
                 children: [
-                  ModuleHeaderWidget(icon: moduleIcon, moduleName: moduleName, backgroundColor: color,),
+                  EssentialSkillsCoachModuleHeader(icon: moduleIcon, moduleName: moduleName, backgroundColor: color,),
                   Padding(
                     padding: EdgeInsets.all(16),
                     child: Column(
