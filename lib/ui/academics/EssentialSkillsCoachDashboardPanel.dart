@@ -2,6 +2,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/CustomCourses.dart';
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';

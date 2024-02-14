@@ -1,7 +1,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/localization.dart';
 import 'package:timezone/timezone.dart' as timezone;
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -732,28 +731,6 @@ class Reference{
       case ReferenceType.pdf: return 'pdf';
       case ReferenceType.uri: return 'uri';
       default: return '';
-    }
-  }
-
-  String? highlightLabelText() {
-    switch (type) {
-      case ReferenceType.video: return Localization().getStringEx('model.custom_courses.reference_type.video.highlight.label', 'Video');
-      case ReferenceType.text: return Localization().getStringEx('model.custom_courses.reference_type.text.highlight.label', 'Key Term');
-      case ReferenceType.powerpoint: return Localization().getStringEx('model.custom_courses.reference_type.powerpoint.highlight.label', 'Powerpoint');
-      case ReferenceType.pdf: return Localization().getStringEx('model.custom_courses.reference_type.pdf.highlight.label', 'PDF');
-      case ReferenceType.uri: return Localization().getStringEx('model.custom_courses.reference_type.uri.highlight.label', 'Web Link');
-      default: return null;
-    }
-  }
-
-  String? highlightActionText() {
-    switch (type) {
-      case ReferenceType.video: return Localization().getStringEx('model.custom_courses.reference_type.video.highlight.action', 'WATCH NOW');
-      case ReferenceType.text: return Localization().getStringEx('model.custom_courses.reference_type.text.highlight.action', 'LEARN NOW');
-      case ReferenceType.powerpoint: return Localization().getStringEx('model.custom_courses.reference_type.powerpoint.highlight.action', 'VIEW NOW');
-      case ReferenceType.pdf: return Localization().getStringEx('model.custom_courses.reference_type.pdf.highlight.action', 'VIEW NOW');
-      case ReferenceType.uri: return Localization().getStringEx('model.custom_courses.reference_type.uri.highlight.action', 'OPEN NOW');
-      default: return null;
     }
   }
 }
