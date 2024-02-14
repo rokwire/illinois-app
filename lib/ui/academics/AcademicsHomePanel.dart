@@ -64,6 +64,9 @@ class AcademicsHomePanel extends StatefulWidget {
   @override
   _AcademicsHomePanelState createState() => _AcademicsHomePanelState();
 
+  static Future<void> push(BuildContext context, AcademicsContent content) =>
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: content), settings: RouteSettings(name: AcademicsHomePanel.routeName)));
+
   static bool get hasState {
     Set<NotificationsListener>? subscribers = NotificationService().subscribers(AcademicsHomePanel.notifySelectContent);
     if (subscribers != null) {
