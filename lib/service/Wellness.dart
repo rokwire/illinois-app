@@ -359,7 +359,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
             firstName: e['first_name'],
             lastName: e['last_name'],
             image: e['image'],
-            externalLink: e['externalLink'])).toList();
+            externalLink: e['external_link'])).toList();
         return primaryCareProviders;
       } on Exception catch (_) {
         return [];
@@ -371,7 +371,11 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
   }
 
   Future<List<SuccessTeamMember?>> getAcademicAdvisors() async {
-    String url = '${Config().gatewayUrl}/successteam/advisors?id=${Auth2().uin}&unitid=${IlliniCash().studentClassification?.collegeName == "The Grainger College of Engineering" ? "1933" : ""}';
+    String classificationUrl = '${Config().identityUrl}/studentclassification';
+    http.Response? classificationResponse = await Network().get(classificationUrl, auth: Auth2(), headers: {'External-Authorization': Auth2().uiucToken?.accessToken});
+    String? classificationResponseString = classificationResponse?.body;
+    String departmentCode = json.decode(classificationResponseString!)["DepartmentCode"];
+    String url = '${Config().gatewayUrl}/successteam/advisors?id=${Auth2().uin}&unitid=${departmentCode}';
     http.Response? response = await Network().get(url, auth: Auth2(), headers: {'External-Authorization': Auth2().uiucToken?.accessToken});
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
