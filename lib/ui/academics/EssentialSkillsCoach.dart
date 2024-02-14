@@ -36,11 +36,11 @@ class EssentialSkillsCoach extends StatefulWidget {
 
 class _EssentialSkillsCoachState extends State<EssentialSkillsCoach> {
 
-  bool whichPage = true;
+  bool _loading = false;
 
   @override
   Widget build(BuildContext context) {
-    return SectionSlantHeader(
+    return _loading ? Center(child: CircularProgressIndicator()) : SectionSlantHeader(
         headerWidget: _buildHeader(),
         slantColor: Styles().colors.gradientColorPrimary,
         slantPainterHeadingHeight: 0,
@@ -106,10 +106,14 @@ class _EssentialSkillsCoachState extends State<EssentialSkillsCoach> {
   // }
 
   void _loadResults() {
-    //_setLoading(true);
+    setState(() {
+      _loading = true;
+    });
     Surveys().loadUserSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
       if (mounted) {
-        //_setLoading(false);
+        setState(() {
+          _loading = false;
+        });
         if (CollectionUtils.isNotEmpty(responses)) {
           responses!.sort(((a, b) => b.dateTaken.compareTo(a.dateTaken)));
           Navigator.of(context).push(CupertinoPageRoute(builder: (context) => EssentialSkillsResults(latestResponse: responses[0], onStartCourse: widget.onStartCourse)));

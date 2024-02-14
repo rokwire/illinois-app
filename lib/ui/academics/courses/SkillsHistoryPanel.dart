@@ -1,11 +1,12 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dart';
+import 'package:illinois/ui/academics/courses/EssentialSkillsCoachWidgets.dart';
 import 'package:illinois/ui/academics/courses/SkillsScoreChart.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -19,22 +20,22 @@ class SkillsHistoryPanel extends StatefulWidget {
   State<SkillsHistoryPanel> createState() => _SkillsHistoryPanelState();
 }
 
-class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements NotificationsListener {
-  String? _selectedSkillType = "All Essential Skills";
-  final List<String> _skillTypes = ["All Essential Skills", "Cooperation Skills",
-    "Emotional Resilience Skills", "Innovation Skills", "Self-Management Skills", "Social Engagement Skills"];
+class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> {
+  String? _selectedSkillType;
+
   final SkillsScoreChartController _chartController = SkillsScoreChartController();
+
   static const String _defaultComparisonResponseId = 'none';
   String _comparisonResponseId = _defaultComparisonResponseId;
   Map<String, SkillsSelfEvaluationContent> _resultsContentItems = {};
   List<SurveyResponse> _responses = [];
-  late SurveyResponse _latestResponse;
-  late SurveyResponse _comparedResponse;
+  SurveyResponse? _latestResponse;
+  SurveyResponse? _comparedResponse;
+
   bool _loading = false;
 
   @override
   void initState() {
-
     _loadResults();
     _loadContentItems();
     super.initState();
@@ -49,7 +50,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
           child: Column(
             children: [
               _buildFilterDropDown(),
-              _buildSkillsScoreChart(),
+              SkillsScoreChart(controller: _chartController, ),
               _buildSkillsScoreData(),
               _buildSkillsCards()
             ],
@@ -58,21 +59,15 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
     );
   }
 
-  @override
-  void onNotification(String name, param) {
-    // TODO: implement onNotification
-  }
-
   Widget _buildSkillsScoreData(){
-    if(!_loading){
-      return Padding(padding: const EdgeInsets.only(top: 20, left: 28, right: 28), child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Divider(color: Styles().colors.fillColorPrimary, thickness: 2),
-          Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Flexible(flex: 4, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.results.skills.title', 'SKILLS'), style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.results.table.header'),)),
-            Flexible(flex: 3, fit: FlexFit.tight, child: Text(DateTimeUtils.localDateTimeToString(_latestResponse.dateTaken, format: 'MM/dd/yy\nh:mma') ?? 'NONE', textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.results.table.header'),)),
-            Flexible(flex: 3, fit: FlexFit.tight, child: DropdownButtonHideUnderline(child:
+    return Padding(padding: const EdgeInsets.only(top: 20, left: 28, right: 28), child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Divider(color: Styles().colors.fillColorPrimary, thickness: 2),
+        Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Flexible(flex: 4, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.results.skills.title', 'SKILLS'), style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.results.table.header'),)),
+          Flexible(flex: 3, fit: FlexFit.tight, child: Text(DateTimeUtils.localDateTimeToString(_latestResponse?.dateTaken, format: 'MM/dd/yy\nh:mma') ?? 'NONE', textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.results.table.header'),)),
+          Flexible(flex: 3, fit: FlexFit.tight, child: DropdownButtonHideUnderline(child:
             DropdownButton<String>(
               icon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),
               isExpanded: true,
@@ -80,15 +75,12 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
               items: _buildResponseDateDropDownItems(),
               value: _comparisonResponseId,
               onChanged: _onResponseDateDropDownChanged,
-              dropdownColor: Styles().colors.white,
+              dropdownColor: Styles().colors.surface,
             ),
-            )),
-          ],)),
-        ],
-      ));
-    }else{
-      return Container();
-    }
+          )),
+        ],)),
+      ],
+    ));
   }
 
   List<DropdownMenuItem<String>> _buildResponseDateDropDownItems() {
@@ -111,395 +103,127 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
 
   Widget _buildSkillsCards(){
     if(!_loading){
-      SurveyStats? lastStats = _latestResponse.survey.stats;
-      SurveyStats? stats = _comparedResponse.survey.stats;
-      if(_selectedSkillType == "All Essential Skills"){
+      SurveyStats? lastStats = _latestResponse?.survey.stats;
+      SurveyStats? stats = _comparedResponse?.survey.stats;
+      if(_selectedSkillType == null){
         return ListView(
-          padding: const EdgeInsets.all(8),
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
-          children: [
-            Container(
-              height: 80,
+          children: List.generate(SkillsScoreChart.skillSections.length, (index) {
+            String section = SkillsScoreChart.skillSections[index];
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
               child: Card(
-                color: Colors.white,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(width: 170, child: Text("Cooperation Skills", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),)),
+                color: Styles().colors.surface,
+                child: InkWell(
+                  onTap: (){
+                    _showScoreDescription(section);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Row(
+                      children: [
+                        Flexible(flex: 5, fit: FlexFit.tight, child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Text(
+                            Localization().getStringEx("panel.essential_skills_coach.skills_history.$section.label", StringUtils.capitalize('${section}_skills', allWords: true, splitDelimiter: '_')),
+                            style: Styles().textStyles.getTextStyle("widget.message.small.fat"),
+                          ),
+                        )),
+                        Flexible(flex: 3, fit: FlexFit.tight, child: Text(
+                            _determineSkillScore(lastStats?.scores[section], lastStats?.maximumScores[section]),
+                            style: TextStyle(color: SkillsScoreChart.getSectionColor(section), fontSize: 32),
+                            textAlign: TextAlign.center,
+                        ),),
+                        Flexible(flex: 3, fit: FlexFit.tight, child: Text(
+                            _determineSkillScore(stats?.scores[section], stats?.maximumScores[section]),
+                            style: TextStyle(color: Styles().colors.mediumGray, fontSize: 32),
+                            textAlign: TextAlign.center,
+                        ),),
+                        Flexible(flex: 1, fit: FlexFit.tight, child: SizedBox(height: 16.0 , child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true))),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(_determineSkillScore(lastStats?.scores["cooperation"], lastStats?.maximumScores["cooperation"]).toString(), style: TextStyle(color: Styles().colors.getColor('essentialSkillsCoachRed'), fontSize: 32)),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(_determineSkillScore(stats?.scores["cooperation"], stats?.maximumScores["cooperation"]).toString(), style: TextStyle(color: Styles().colors.mediumGray, fontSize: 32)),
-                    ),
-                    IconButton(
-                      onPressed: (){
-                        _showScoreDescription("cooperation");
-                      },
-                      icon: Styles().images.getImage('chevron-right-bold') ?? Container()
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-            Container(
-              height: 80,
-              child: Card(
-                color: Colors.white,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(width: 170, child: Text("Emotional\nResilience Skills", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),)),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(_determineSkillScore(lastStats?.scores["emotional_resilience"], lastStats?.maximumScores["emotional_resilience"]).toString(), style: TextStyle(color: Styles().colors.getColor('essentialSkillsCoachOrange'), fontSize: 32)),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(_determineSkillScore(stats?.scores["emotional_resilience"], stats?.maximumScores["emotional_resilience"]).toString(), style: TextStyle(color: Styles().colors.mediumGray, fontSize: 32)),
-                    ),
-                    IconButton(
-                        onPressed: (){
-                          _showScoreDescription("emotional_resilience");
-                        },
-                        icon: Styles().images.getImage('chevron-right-bold') ?? Container()
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              height: 80,
-              child: Card(
-                color: Colors.white,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(width:170, child: Text("Innovation Skills", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),)),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(_determineSkillScore(lastStats?.scores["innovation"], lastStats?.maximumScores["innovation"]).toString(), style: TextStyle(color: Styles().colors.getColor('essentialSkillsCoachGreen'), fontSize: 32)),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(_determineSkillScore(stats?.scores["innovation"], stats?.maximumScores["innovation"]).toString(), style: TextStyle(color: Styles().colors.mediumGray, fontSize: 32)),
-                    ),
-                    IconButton(
-                        onPressed: (){
-                          _showScoreDescription("innovation");
-                        },
-                        icon: Styles().images.getImage('chevron-right-bold') ?? Container()
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              height: 80,
-              child: Card(
-                color: Colors.white,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(width: 170, child: Text("Self-Management\nSkills", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),)),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(_determineSkillScore(lastStats?.scores["self_management"], lastStats?.maximumScores["self_management"]).toString(), style: TextStyle(color: Styles().colors.getColor('essentialSkillsCoachBlue'), fontSize: 32)),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(_determineSkillScore(stats?.scores["self_management"], stats?.maximumScores["self_management"]).toString(), style: TextStyle(color: Styles().colors.mediumGray, fontSize: 32)),
-                    ),
-                    IconButton(
-                        onPressed: (){
-                          _showScoreDescription("self_management");
-                        },
-                        icon: Styles().images.getImage('chevron-right-bold') ?? Container()
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              height: 80,
-              child: Card(
-                color: Colors.white,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(width: 170, child: Text("Social Engagement\nSkills", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),)),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(_determineSkillScore(lastStats?.scores["social_engagement"], lastStats?.maximumScores["social_engagement"]).toString(), style: TextStyle(color: Styles().colors.getColor('essentialSkillsCoachPurple'), fontSize: 32)),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(_determineSkillScore(stats?.scores["social_engagement"], stats?.maximumScores["social_engagement"]).toString(), style: TextStyle(color: Styles().colors.mediumGray, fontSize: 32)),
-                    ),
-                    IconButton(
-                        onPressed: (){
-                          _showScoreDescription("social_engagement");
-                        },
-                        icon: Styles().images.getImage('chevron-right-bold') ?? Container()
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+            );
+          }),
         );
-      }else{
-        switch(_selectedSkillType){
-          case "Cooperation Skills":
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                height: 80,
-                child: Card(
-                  color: Colors.white,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(width: 170, child: Text("Cooperation Skills", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),)),
+      } else {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+          child: Card(
+            color: Styles().colors.surface,
+            child: InkWell(
+              onTap: (){
+                _showScoreDescription(_selectedSkillType!);
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    Flexible(flex: 5, fit: FlexFit.tight, child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Text(
+                        Localization().getStringEx("panel.essential_skills_coach.skills_history.$_selectedSkillType!.label", StringUtils.capitalize('${_selectedSkillType!}_skills', allWords: true, splitDelimiter: '_')),
+                        style: Styles().textStyles.getTextStyle("widget.message.small.fat"),
                       ),
-
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(_determineSkillScore(lastStats?.scores["cooperation"], lastStats?.maximumScores["cooperation"]).toString(), style: TextStyle(color: Styles().colors.getColor('essentialSkillsCoachRed'), fontSize: 32)),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(_determineSkillScore(stats?.scores["cooperation"], stats?.maximumScores["cooperation"]).toString(), style: TextStyle(color: Styles().colors.mediumGray, fontSize: 32)),
-                      ),
-                      IconButton(
-                          onPressed: (){
-                            _showScoreDescription("cooperation");
-                          },
-                          icon: Styles().images.getImage('chevron-right-bold') ?? Container()
-                      ),
-                    ],
-                  ),
+                    )),
+                    Flexible(flex: 3, fit: FlexFit.tight, child: Text(
+                        _determineSkillScore(lastStats?.scores[_selectedSkillType!], lastStats?.maximumScores[_selectedSkillType!]),
+                        style: TextStyle(color: SkillsScoreChart.getSectionColor(_selectedSkillType!), fontSize: 36),
+                        textAlign: TextAlign.center,
+                    ),),
+                    Flexible(flex: 3, fit: FlexFit.tight, child: Text(
+                        _determineSkillScore(stats?.scores[_selectedSkillType!], stats?.maximumScores[_selectedSkillType!]),
+                        style: TextStyle(color: Styles().colors.mediumGray, fontSize: 36),
+                        textAlign: TextAlign.center,
+                    ),),
+                    Flexible(flex: 1, fit: FlexFit.tight, child: SizedBox(height: 16.0 , child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true))),
+                  ],
                 ),
               ),
-            );
-          case "Emotional Resilience Skills":
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                height: 80,
-                child: Card(
-                  color: Colors.white,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(width: 170, child: Text("Emotional\nResilience Skills", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),)),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(_determineSkillScore(lastStats?.scores["emotional_resilience"], lastStats?.maximumScores["emotional_resilience"]).toString(), style: TextStyle(color: Styles().colors.getColor('essentialSkillsCoachOrange'), fontSize: 32)),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(_determineSkillScore(stats?.scores["emotional_resilience"], stats?.maximumScores["emotional_resilience"]).toString(), style: TextStyle(color: Styles().colors.mediumGray, fontSize: 32)),
-                      ),
-                      IconButton(
-                          onPressed: (){
-                            _showScoreDescription("emotional_resilience");
-                          },
-                          icon: Styles().images.getImage('chevron-right-bold') ?? Container()
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            );
-          case "Innovation Skills":
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                height: 80,
-                child: Card(
-                  color: Colors.white,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(width:170, child: Text("Innovation Skills", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),)),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(_determineSkillScore(lastStats?.scores["innovation"], lastStats?.maximumScores["innovation"]).toString(), style: TextStyle(color: Styles().colors.getColor('essentialSkillsCoachGreen'), fontSize: 32)),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(_determineSkillScore(stats?.scores["innovation"], stats?.maximumScores["innovation"]).toString(), style: TextStyle(color: Styles().colors.mediumGray, fontSize: 32)),
-                      ),
-                      IconButton(
-                          onPressed: (){
-                            _showScoreDescription("innovation");
-                          },
-                          icon: Styles().images.getImage('chevron-right-bold') ?? Container()
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            );
-          case "Self-Management Skills":
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                height: 80,
-                child: Card(
-                  color: Colors.white,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(width: 170, child: Text("Self-Management\nSkills", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),)),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(_determineSkillScore(lastStats?.scores["self_management"], lastStats?.maximumScores["self_management"]).toString(), style: TextStyle(color: Styles().colors.getColor('essentialSkillsCoachBlue'), fontSize: 32)),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(_determineSkillScore(stats?.scores["self_management"], stats?.maximumScores["self_management"]).toString(), style: TextStyle(color: Styles().colors.mediumGray, fontSize: 32)),
-                      ),
-                      IconButton(
-                          onPressed: (){
-                            _showScoreDescription("self_management");
-                          },
-                          icon: Styles().images.getImage('chevron-right-bold') ?? Container()
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            );
-          case "Social Engagement Skills":
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                height: 80,
-                child: Card(
-                  color: Colors.white,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(width: 170, child: Text("Social Engagement\nSkills", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),)),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(_determineSkillScore(lastStats?.scores["social_engagement"], lastStats?.maximumScores["social_engagement"]).toString(), style: TextStyle(color: Styles().colors.getColor('essentialSkillsCoachPurple'), fontSize: 32)),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(_determineSkillScore(stats?.scores["social_engagement"], stats?.maximumScores["social_engagement"]).toString(), style: TextStyle(color: Styles().colors.mediumGray, fontSize: 32)),
-                      ),
-                      IconButton(
-                          onPressed: (){
-                            _showScoreDescription("social_engagement");
-                          },
-                          icon: Styles().images.getImage('chevron-right-bold') ?? Container()
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            );
-          default:
-            return Container();
-        }
+            ),
+          ),
+        );
       }
-    }else{
-      return Container();
     }
 
-  }
-
-  Widget _buildSkillsScoreChart() {
-    return SkillsScoreChart(controller: _chartController, );
+    return Center(child: CircularProgressIndicator());
   }
 
   Widget _buildFilterDropDown(){
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Container(
-        padding: const EdgeInsets.only(top: 4.0, bottom: 8.0),
-        decoration: BoxDecoration(
-          color: Styles().colors.surface,
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.all(Radius.circular(4.0)),
-        ),
-        child: ButtonTheme(
-            alignedDropdown: true,
-            child: DropdownButton(
-                alignment: AlignmentDirectional.centerStart,
-                value: _selectedSkillType,
-                iconDisabledColor: Styles().colors.fillColorSecondary,
-                iconEnabledColor: Styles().colors.fillColorSecondary,
-                focusColor: Styles().colors.surface,
-                dropdownColor: Styles().colors.surface,
-                underline: Divider(color: Styles().colors.fillColorSecondary, height: 1.0, indent: 16.0, endIndent: 16.0),
-                borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                isExpanded: true,
-                items: _buildDropdownItems(_skillTypes, style: Styles().textStyles.getTextStyle("widget.title.large")),
-                onChanged: (String? selected) {
-                  setState(() {
-                    _selectedSkillType = selected;
-                  });
-                  _chartController.updateData(_responses, _selectedSkillType);
-                }
-            )
-        ),
+      child: EssentialSkillsCoachDropdown(
+        value: _selectedSkillType,
+        items: _buildFilterDropdownItems(),
+        onChanged: (String? selected) {
+          setState(() {
+            _selectedSkillType = selected;
+          });
+          _chartController.updateData(_responses, _selectedSkillType);
+        }
       ),
     );
   }
 
-  List<DropdownMenuItem<T>> _buildDropdownItems<T>(List<T> options, {String? nullOption, TextStyle? style}) {
-    List<DropdownMenuItem<T>> dropDownItems = <DropdownMenuItem<T>>[];
-    if (nullOption != null) {
-      dropDownItems.add(DropdownMenuItem(value: null, child: Text(nullOption, style: style ?? Styles().textStyles.getTextStyle("widget.detail.regular"))));
-    }
-    for (T option in options) {
-      dropDownItems.add(DropdownMenuItem(value: option, child: Text(option.toString(), style: style ?? Styles().textStyles.getTextStyle("widget.detail.regular"))));
+  List<DropdownMenuItem<String>> _buildFilterDropdownItems() {
+    List<DropdownMenuItem<String>> dropDownItems = <DropdownMenuItem<String>>[
+      DropdownMenuItem(
+          value: null,
+          child: Text(Localization().getStringEx("panel.essential_skills_coach.skills_history.all.label", "All Essential Skills"), style: Styles().textStyles.getTextStyle("widget.detail.large"))
+      )
+    ];
+
+    for (String section in SkillsScoreChart.skillSections) {
+      dropDownItems.add(DropdownMenuItem(
+          value: section,
+          child: Text(
+            Localization().getStringEx("panel.essential_skills_coach.skills_history.$section.label", StringUtils.capitalize('${section}_skills', allWords: true, splitDelimiter: '_')),
+            style: Styles().textStyles.getTextStyle("widget.detail.large")
+          )
+      ));
     }
     return dropDownItems;
   }
@@ -519,12 +243,8 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
 
             if(responses.length > 1){
               _latestResponse = _responses[0];
-              _comparedResponse = _responses[1];
-              _comparisonResponseId = _responses[1].id;
             }else{
               _latestResponse = _responses[0];
-              _comparedResponse = _responses[0];
-              _comparisonResponseId = _responses[0].id;
             }
           }
           else {
@@ -537,26 +257,22 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> implements Noti
     });
   }
 
-  int _determineSkillScore(num? score, num? maxScore){
+  String _determineSkillScore(num? score, num? maxScore){
     if(score != null && maxScore != null){
-      return ((score/maxScore)*100).round();
-    }else{
-      return 0;
+      return ((score/maxScore)*100).round().toString();
     }
+    return '--';
   }
 
   void _onResponseDateDropDownChanged(String? value) {
     setState(() {
       _comparisonResponseId = value ?? _defaultComparisonResponseId;
-      if(_comparisonResponseId != _defaultComparisonResponseId){
-        _comparedResponse = _responses.firstWhere((survey) =>
-            survey.id.contains(value ?? ""));
-      }
+      _comparedResponse = _responses.firstWhereOrNull((survey) => survey.id == value);
     });
   }
 
   void _showScoreDescription(String section) {
-    String skillDefinition = _latestResponse.survey.resultData is Map<String, dynamic> ? _latestResponse.survey.resultData['${section}_results'] ?? '' :
+    String skillDefinition = _latestResponse?.survey.resultData is Map<String, dynamic> ? _latestResponse?.survey.resultData['${section}_results'] ?? '' :
     Localization().getStringEx('panel.skills_self_evaluation.results.empty.message', 'No results yet.');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsDetailPanel(content: _resultsContentItems[section], params: {'skill_definition': skillDefinition})));
   }

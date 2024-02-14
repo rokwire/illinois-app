@@ -527,10 +527,10 @@ class _BrowseEntry extends StatelessWidget {
       case "academics.new_student_checklist": _onTapNewStudentChecklist(context); break;
       case "academics.skills_self_evaluation":_onTapSkillSelfEvaluation(context); break;
       case "academics.essential_skills_coach":_onTapEssentialSkillCoach(context); break;
+      case "academics.wellness_todo":         _onTapAcademicsToDo(context); break;
       case "academics.student_courses":       _onTapStudentCourses(context); break;
       case "academics.canvas_courses":        _onTapCanvasCourses(context); break;
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
-      case "academics.wellness_todo":         _onTapAcademicsToDo(context); break;
       case "academics.due_date_catalog":      _onTapDueDateCatalog(context); break;
       case "academics.appointments":          _onTapAcademicsAppointments(context); break;
 
@@ -636,12 +636,17 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapSkillSelfEvaluation(BuildContext context) {
     Analytics().logSelect(target: "Skills Self-Evaluation");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.skills_self_evaluation,)));
+    AcademicsHomePanel.push(context, AcademicsContent.skills_self_evaluation);
   }
 
   void _onTapEssentialSkillCoach(BuildContext context) {
     Analytics().logSelect(target: "Essential Skills Coach");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.essential_skills_coach,)));
+    AcademicsHomePanel.push(context, AcademicsContent.essential_skills_coach);
+  }
+
+  void _onTapAcademicsToDo(BuildContext context) {
+    Analytics().logSelect(target: "Academics To Do");
+    AcademicsHomePanel.push(context, AcademicsContent.todo_list);
   }
 
   void _onTapCanvasCourses(BuildContext context) {
@@ -1132,11 +1137,6 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapWellnessToDo(BuildContext context) {
     Analytics().logSelect(target: "Wellness To Do");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.todo,)));
-  }
-
-  void _onTapAcademicsToDo(BuildContext context) {
-    Analytics().logSelect(target: "Academics To Do");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.todo_list,)));
   }
 
   void _onTapWellnessTips(BuildContext context) {

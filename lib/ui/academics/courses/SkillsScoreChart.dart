@@ -35,6 +35,25 @@ class SkillsScoreChart extends StatefulWidget {
   final int maxBars;
   SkillsScoreChart({super.key, required this.controller, this.maxBars = 10});
 
+  static Color? getSectionColor(String section) {
+    switch(section){
+      case "cooperation":
+        return Styles().colors.getColor('essentialSkillsCoachRed');
+      case "emotional_resilience":
+        return Styles().colors.getColor('essentialSkillsCoachOrange');
+      case "innovation":
+        return Styles().colors.getColor('essentialSkillsCoachGreen');
+      case "self_management":
+        return Styles().colors.getColor('essentialSkillsCoachBlue');
+      case "social_engagement":
+        return Styles().colors.getColor('essentialSkillsCoachPurple');
+      default:
+        return null;
+    }
+  }
+
+  static const List<String> skillSections = ['cooperation', 'emotional_resilience', 'innovation', 'self_management', 'social_engagement'];
+
   @override
   State<StatefulWidget> createState() => SkillsScoreChartState();
 }
@@ -42,12 +61,12 @@ class SkillsScoreChart extends StatefulWidget {
 class SkillsScoreChartState extends State<SkillsScoreChart> {
   static const double shadowOpacity = 0.2;
   static const int minMaxScore = 500;
-  String _selectedSkill = "All Essential Skills";
+  String? _selectedSkill;
 
   List<ScoreBarData> _chartItems = [];
 
-  double _barWidth = 20;
-  double _barSpacing = 10;
+  double _barWidth = 30;
+  double _barSpacing = 24;
 
   int _maxScore = 500;
 
@@ -63,7 +82,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
   void _updateData(List<SurveyResponse>? responses, String? selectedSkill) {
     if (mounted) {
       setState(() {
-        _selectedSkill = selectedSkill ?? "All Essential Skills";
+        _selectedSkill = selectedSkill;
         _processSurveyData(responses, selectedSkill);
       });
     }
@@ -73,100 +92,52 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
     _chartItems = [];
     _maxScore = minMaxScore;
     switch(selectedSkill) {
-      case "All Essential Skills":
+      case null:
         _maxScore = 500;
         _processAllSkills(responses);
         break;
       default:
         _maxScore = 100;
-        _processOneSkill(responses, selectedSkill ?? "");
+        _processOneSkill(responses, selectedSkill!);
         break;
     }
 
-    if (_chartItems.length <= 8) {
-      _barWidth = 30;
-      _barSpacing = 24;
-    } else if (_chartItems.length <= 12) {
-      _barWidth = 20;
-      _barSpacing = 10;
+    if (_chartItems.length > 8) {
+      _barWidth = 24;
+    }
+
+    if (_chartItems.length == 10) {
+      _barSpacing = 12;
+    } else if (_chartItems.length >= 8) {
+      _barSpacing = 16;
     }
   }
   
-  void _processOneSkill(List<SurveyResponse>? responses, String selectedSkill /*, {bool displayDate = true}*/){
+  void _processOneSkill(List<SurveyResponse>? responses, String selectedSkill){
     for (SurveyResponse survey in responses ?? []) {
       SurveyStats? stats = survey.survey.stats;
       int totalScore = 0;
       List<ScoreBarSegment> scoreBarSegments = [];
       if(stats != null){
-        switch(selectedSkill){
-          case "Cooperation Skills":
-            int score = _determineSkillScore(stats.scores["cooperation"], stats.maximumScores["cooperation"]);
-            totalScore +=score;
-            scoreBarSegments.add(ScoreBarSegment(skillType: "cooperation", color: Styles().colors.getColor('essentialSkillsCoachRed'), score: score));
-            _chartItems.add(ScoreBarData(title: DateTimeUtils.localDateTimeToString(survey.dateTaken, format: 'MM/dd/yy\nh:mma') ?? '', scoreBarSegments: scoreBarSegments, score: totalScore));
-            break;
-          case "Emotional Resilience Skills":
-            int score = _determineSkillScore(stats.scores["emotional_resilience"], stats.maximumScores["emotional_resilience"]);
-            totalScore +=score;
-            scoreBarSegments.add(ScoreBarSegment(skillType: "emotional_resilience", color: Styles().colors.getColor('essentialSkillsCoachOrange'), score: score));
-            _chartItems.add(ScoreBarData(title: DateTimeUtils.localDateTimeToString(survey.dateTaken, format: 'MM/dd/yy\nh:mma') ?? '', scoreBarSegments: scoreBarSegments, score: totalScore));
-            break;
-          case "Innovation Skills":
-            int score = _determineSkillScore(stats.scores["innovation"], stats.maximumScores["innovation"]);
-            totalScore +=score;
-            scoreBarSegments.add(ScoreBarSegment(skillType: "innovation", color: Styles().colors.getColor('essentialSkillsCoachGreen'), score: score));
-            _chartItems.add(ScoreBarData(title: DateTimeUtils.localDateTimeToString(survey.dateTaken, format: 'MM/dd/yy\nh:mma') ?? '', scoreBarSegments: scoreBarSegments, score: totalScore));
-            break;
-          case "Self-Management Skills":
-            int score = _determineSkillScore(stats.scores["self_management"], stats.maximumScores["self_management"]);
-            totalScore +=score;
-            scoreBarSegments.add(ScoreBarSegment(skillType: "self_management", color: Styles().colors.getColor('essentialSkillsCoachBlue'), score: score));
-            _chartItems.add(ScoreBarData(title: DateTimeUtils.localDateTimeToString(survey.dateTaken, format: 'MM/dd/yy\nh:mma') ?? '', scoreBarSegments: scoreBarSegments, score: totalScore));
-            break;
-          case "Social Engagement Skills":
-            int score = _determineSkillScore(stats.scores["social_engagement"], stats.maximumScores["social_engagement"]);
-            totalScore +=score;
-            scoreBarSegments.add(ScoreBarSegment(skillType: "social_engagement", color: Styles().colors.getColor('essentialSkillsCoachPurple'), score: score));
-            _chartItems.add(ScoreBarData(title: DateTimeUtils.localDateTimeToString(survey.dateTaken, format: 'MM/dd/yy\nh:mma') ?? '', scoreBarSegments: scoreBarSegments, score: totalScore));
-            break;
-        }
+        int score = _determineSkillScore(stats.scores[selectedSkill], stats.maximumScores[selectedSkill]);
+        totalScore += score;
+        scoreBarSegments.add(ScoreBarSegment(skillType: selectedSkill, color: SkillsScoreChart.getSectionColor(selectedSkill), score: score));
+        _chartItems.add(ScoreBarData(title: DateTimeUtils.localDateTimeToString(survey.dateTaken, format: 'MM/dd/yy\nh:mma') ?? '', scoreBarSegments: scoreBarSegments, score: totalScore));
       }
     }
   }
 
-  void _processAllSkills(List<SurveyResponse>? responses /*, {bool displayDate = true}*/) {
+  void _processAllSkills(List<SurveyResponse>? responses) {
     for (SurveyResponse survey in responses ?? []) {
       SurveyStats? stats = survey.survey.stats;
       if(stats != null){
         List<ScoreBarSegment> scoreBarSegments = [];
         int totalScore = 0;
         stats.scores.forEach((key, value) {
-          switch(key){
-            case "cooperation":
-              int score = _determineSkillScore(value, stats.maximumScores["cooperation"]);
-              totalScore +=score;
-              scoreBarSegments.add(ScoreBarSegment(skillType: "cooperation", color: Styles().colors.getColor('essentialSkillsCoachRed'), score: score));
-              break;
-            case "emotional_resilience":
-              int score = _determineSkillScore(value, stats.maximumScores["emotional_resilience"]);
-              totalScore +=score;
-              scoreBarSegments.add(ScoreBarSegment(skillType: "emotional_resilience", color: Styles().colors.getColor('essentialSkillsCoachOrange'), score: score));
-              break;
-            case "innovation":
-              int score = _determineSkillScore(value, stats.maximumScores["innovation"]);
-              totalScore +=score;
-              scoreBarSegments.add(ScoreBarSegment(skillType: "innovation", color: Styles().colors.getColor('essentialSkillsCoachGreen'), score: score));
-              break;
-            case "self_management":
-              int score = _determineSkillScore(value, stats.maximumScores["self_management"]);
-              totalScore +=score;
-              scoreBarSegments.add(ScoreBarSegment(skillType: "self_management", color: Styles().colors.getColor('essentialSkillsCoachBlue'), score: score));
-              break;
-            case "social_engagement":
-              int score = _determineSkillScore(value, stats.maximumScores["social_engagement"]);
-              totalScore +=score;
-              scoreBarSegments.add(ScoreBarSegment(skillType: "social_engagement", color: Styles().colors.getColor('essentialSkillsCoachPurple'), score: score));
-              break;
+          if (SkillsScoreChart.skillSections.contains(key)) {
+            int score = _determineSkillScore(value, stats.maximumScores[key]);
+            totalScore +=score;
+            scoreBarSegments.add(ScoreBarSegment(skillType: key, color: SkillsScoreChart.getSectionColor(key), score: score));
           }
         });
 
@@ -186,169 +157,125 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 16),
           child: SizedBox(
             height: 220,
-            child: SingleChildScrollView(
-              clipBehavior: Clip.none,
-              scrollDirection: Axis.horizontal,
-              child: SizedBox(
-                width: _chartItems.length * 60,
-                child: BarChart(
-                  BarChartData(
-                    alignment: BarChartAlignment.center,
-                    maxY: _maxScore.toDouble(),
-                    minY: 0,
-                    groupsSpace: _barSpacing,
-                    barTouchData: BarTouchData(
-                        allowTouchBarBackDraw: true,
-                        handleBuiltInTouches: true,
-                        touchCallback: (FlTouchEvent event, barTouchResponse) {
-                          if (!event.isInterestedForInteractions ||
-                              barTouchResponse == null ||
-                              barTouchResponse.spot == null) {
-                            setState(() {
-                              touchedIndex = -1;
-                              touchedRodIndex = -1;
-                            });
-                            return;
-                          }
-                          setState(() {
-                            touchedIndex = barTouchResponse.spot!.touchedBarGroupIndex;
-                            touchedRodIndex = barTouchResponse.spot!.touchedRodDataIndex;
-                          });
-                        },
-                        touchTooltipData: BarTouchTooltipData(
-                          tooltipPadding: EdgeInsets.all(4),
-                          tooltipBgColor: Styles().colors.background,
-                          tooltipBorder: BorderSide(color: Styles().colors.dividerLine, width: 1.0),
-                          getTooltipItem: getTooltipItem,
-                          // fitInsideVertically: true,
-                        )
-                    ),
-                    titlesData: FlTitlesData(
-                      show: true,
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 48,
-                          getTitlesWidget: bottomTitles,
-                        ),
-                      ),
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: leftTitles,
-                          interval: _maxScore / 5,
-                          reservedSize: 42,
-                        ),
-                      ),
-                      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    ),
-                    gridData: FlGridData(
-                      show: true,
-                      checkToShowVerticalLine: (value) => value % 100 == 0,
-                      getDrawingVerticalLine: (value) {
-                        if (value == 0) {
-                          return FlLine(
-                            color: Styles().colors.surface.withOpacity(0.1),
-                            strokeWidth: 3,
-                          );
-                        }
-                        return FlLine(
-                          color: Styles().colors.surface.withOpacity(0.05),
-                          strokeWidth: 0.8,
-                        );
-                      },
-                      horizontalInterval: _maxScore / 5,
-                      getDrawingHorizontalLine: (value) => FlLine(strokeWidth: 2),
-                    ),
-                    borderData: FlBorderData(
-                      show: false,
-                    ),
-                    barGroups: _chartItems.mapIndexed((i, e) => generateGroup(i, e)).toList(),
-                  ),
+            width: MediaQuery.of(context).size.width - 32,
+            child: BarChart(
+              BarChartData(
+                alignment: BarChartAlignment.start,
+                maxY: _maxScore.toDouble() + 1,
+                minY: -1,
+                groupsSpace: _barSpacing,
+                barTouchData: BarTouchData(
+                    allowTouchBarBackDraw: true,
+                    handleBuiltInTouches: true,
+                    touchCallback: (FlTouchEvent event, barTouchResponse) {
+                      if (!event.isInterestedForInteractions ||
+                          barTouchResponse == null ||
+                          barTouchResponse.spot == null) {
+                        setState(() {
+                          touchedIndex = -1;
+                          touchedRodIndex = -1;
+                        });
+                        return;
+                      }
+                      setState(() {
+                        touchedIndex = barTouchResponse.spot!.touchedBarGroupIndex;
+                        touchedRodIndex = barTouchResponse.spot!.touchedRodDataIndex;
+                      });
+                    },
+                    touchTooltipData: BarTouchTooltipData(
+                      tooltipPadding: EdgeInsets.all(4),
+                      tooltipBgColor: Styles().colors.background,
+                      tooltipBorder: BorderSide(color: Styles().colors.dividerLine, width: 1.0),
+                      getTooltipItem: getTooltipItem,
+                      // fitInsideVertically: true,
+                    )
                 ),
+                titlesData: FlTitlesData(
+                  show: true,
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 48,
+                      getTitlesWidget: bottomTitles,
+                    ),
+                  ),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: leftTitles,
+                      interval: _maxScore / 5,
+                      reservedSize: 28,
+                    ),
+                  ),
+                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                ),
+                gridData: FlGridData(
+                  show: true,
+                  checkToShowVerticalLine: (value) => value % 100 == 0,
+                  getDrawingVerticalLine: (value) {
+                    if (value == 0) {
+                      return FlLine(
+                        color: Styles().colors.surface.withOpacity(0.1),
+                        strokeWidth: 3,
+                      );
+                    }
+                    return FlLine(
+                      color: Styles().colors.surface.withOpacity(0.05),
+                      strokeWidth: 0.8,
+                    );
+                  },
+                  horizontalInterval: _maxScore / 5,
+                  getDrawingHorizontalLine: (value) => FlLine(strokeWidth: 2),
+                ),
+                borderData: FlBorderData(
+                  show: false,
+                ),
+                barGroups: _chartItems.mapIndexed((i, e) => generateGroup(i, e)).toList(),
               ),
             ),
           ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Wrap(alignment: WrapAlignment.center, children: [
-            Opacity(
-              opacity: (_selectedSkill != "Cooperation Skills" && _selectedSkill != "All Essential Skills") ? .3 : 1,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: Styles().colors.getColor('essentialSkillsCoachRed'), borderRadius: BorderRadius.circular(4)), child: Container(width: 15, height: 15,)),
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            children: List.generate(SkillsScoreChart.skillSections.length, (index) {
+              String section = SkillsScoreChart.skillSections[index];
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: Opacity(
+                  opacity: (_selectedSkill != section && _selectedSkill != null) ? .3 : 1,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                                color: SkillsScoreChart.getSectionColor(section),
+                                borderRadius: BorderRadius.circular(4)
+                            )
+                        ),
+                      ),
+                      Text(
+                        Localization().getStringEx('widget.essential_skills_coach.history.score_chart.$section.label', StringUtils.capitalize('${section}_skills', allWords: true, splitDelimiter: '_')),
+                        style: Styles().textStyles.getTextStyle("widget.toggle_button.title.tiny.thin.enabled"), textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
-                  Text(Localization().getStringEx('widget.essential_skills_coach.history.score_chart.cooperation.label', 'Cooperation\nSkills'), style: Styles().textStyles.getTextStyle("widget.toggle_button.title.tiny.thin.enabled"), textAlign: TextAlign.center,),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8.0),
-            Opacity(
-              opacity: (_selectedSkill != "Emotional Resilience Skills" && _selectedSkill != "All Essential Skills") ? .3 : 1,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: Styles().colors.getColor('essentialSkillsCoachOrange'), borderRadius: BorderRadius.circular(4)), child: Container(width: 15, height: 15,)),
-                  ),
-                  Text(Localization().getStringEx('widget.essential_skills_coach.history.score_chart.emotional_resilience.label', 'Emotional\nResilience\nSkills'), style: Styles().textStyles.getTextStyle("widget.toggle_button.title.tiny.thin.enabled"), textAlign: TextAlign.center,),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8.0),
-            Opacity(
-              opacity: (_selectedSkill != "Innovation Skills" && _selectedSkill != "All Essential Skills") ? .3 : 1,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: Styles().colors.getColor('essentialSkillsCoachGreen'), borderRadius: BorderRadius.circular(4)), child: Container(width: 15, height: 15,)),
-                  ),
-                  Text(Localization().getStringEx('widget.essential_skills_coach.history.score_chart.innovation.label', 'Innovation\nSkills'), style: Styles().textStyles.getTextStyle("widget.toggle_button.title.tiny.thin.enabled"), textAlign: TextAlign.center,),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8.0),
-            Opacity(
-              opacity: (_selectedSkill != "Self-Management Skills" && _selectedSkill != "All Essential Skills") ? .3 : 1,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: Styles().colors.getColor('essentialSkillsCoachBlue'), borderRadius: BorderRadius.circular(4)), child: Container(width: 15, height: 15,)),
-                  ),
-                  Text(Localization().getStringEx('widget.essential_skills_coach.history.score_chart.self_management.label', 'Self-\nManagement\nSkills'), style: Styles().textStyles.getTextStyle("widget.toggle_button.title.tiny.thin.enabled"), textAlign: TextAlign.center,),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8.0),
-            Opacity(
-              opacity: (_selectedSkill != "Social Engagement Skills" && _selectedSkill != "All Essential Skills") ? .3 : 1,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: Styles().colors.getColor('essentialSkillsCoachPurple'), borderRadius: BorderRadius.circular(4)), child: Container(width: 15, height: 15,)),
-                  ),
-                  Text(Localization().getStringEx('widget.essential_skills_coach.history.score_chart.social_engagement.label', 'Social\nEngagement\nSkills'), style: Styles().textStyles.getTextStyle("widget.toggle_button.title.tiny.thin.enabled"), textAlign: TextAlign.center,),
-                ],
-              ),
-            ),
-          ]),
+                ),
+              );
+            })
+          ),
         )
       ],
     );
@@ -358,7 +285,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
     String text = bottomTitleStrings(value.toInt());
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      child: Text(text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 10)),
+      child: Text(text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: _chartItems.length >= 8 ? 8 : 10)),
     );
   }
 
@@ -367,25 +294,18 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
   }
 
   Widget leftTitles(double value, TitleMeta meta) {
-    String text;
-    if (value == 0) {
-      text = '0';
-    } else {
-      text = value.toInt().toString();
-    }
-    return SideTitleWidget(
-      angle: 0,
-      axisSide: meta.axisSide,
-      space: 4,
-      child: Padding(
-        padding: const EdgeInsets.only(right: 8.0),
+    if (value >= 0 && value <= _maxScore) {
+      String text = value.toInt().toString();;
+      return SideTitleWidget(
+        axisSide: meta.axisSide,
         child: Text(
           text,
           style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 10),
-          textAlign: TextAlign.center,
+          textAlign: TextAlign.left,
         ),
-      ),
-    );
+      );
+    }
+    return SizedBox(height: 0);
   }
   
   BarChartGroupData generateGroup(int x, ScoreBarData data) {
@@ -398,10 +318,10 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
           BarChartRodData(
             fromY:fromY,
             toY: scoreBar.score.toDouble() + fromY,
-            color: scoreBar.color ?? Colors.white,
+            color: scoreBar.color ?? Styles().colors.surface,
             width: _barWidth,
             borderSide: BorderSide(
-              color: scoreBar.color ?? Colors.white,
+              color: scoreBar.color ?? Styles().colors.surface,
               width: isTouched ? 2 : 0,
             ),
             borderRadius: const BorderRadius.only(

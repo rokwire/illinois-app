@@ -733,30 +733,6 @@ class Reference{
       default: return '';
     }
   }
-
-  String? highlightDisplayText() {
-    //TODO: move this to backend?
-    switch (type) {
-      case ReferenceType.video: return 'Video';
-      case ReferenceType.text: return 'Key Term';
-      case ReferenceType.powerpoint: return 'Powerpoint';
-      case ReferenceType.pdf: return 'PDF';
-      case ReferenceType.uri: return 'Web Link';
-      default: return null;
-    }
-  }
-
-  String? highlightActionText() {
-    //TODO: move this to backend?
-    switch (type) {
-      case ReferenceType.video: return 'WATCH NOW';
-      case ReferenceType.text: return 'LEARN NOW';
-      case ReferenceType.powerpoint: return 'VIEW NOW';
-      case ReferenceType.pdf: return 'VIEW NOW';
-      case ReferenceType.uri: return 'OPEN NOW';
-      default: return null;
-    }
-  }
 }
 
 class Content{

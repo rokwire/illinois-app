@@ -511,17 +511,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 ),
 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
-                  RoundedButton(
-                      label: "Clear BESSI Responses",
-                      backgroundColor: Styles().colors.background,
-                      fontSize: 16.0,
-                      textColor: Styles().colors.fillColorPrimary,
-                      borderColor: Styles().colors.fillColorPrimary,
-                      onTap: _onTapClearEssentialSkillsSelfEvaluationResponses
-                  )
-                ),
-
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
                     Padding(padding: EdgeInsets.only(bottom: 10), child: Text('Font Awesome Pro Icons: ', style: Styles().textStyles.getTextStyle('widget.message.medium'))),
                     Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -973,12 +962,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   void _onTapClearEssentialSkillsCoachData() {
     if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
       CustomCourses().deleteUserCourse(Config().essentialSkillsCoachKey!);
-    }
-  }
-
-  void _onTapClearEssentialSkillsSelfEvaluationResponses() {
-    if (StringUtils.isNotEmpty(Config().bessiSurveyID)) {
-      Surveys().deleteSurveyResponses(surveyIDs: [Config().bessiSurveyID!]);
     }
   }
 

@@ -1,20 +1,20 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPanel extends StatefulWidget {
+  final String? resourceKey;
   final String? resourceName;
-  final File file;
-  VideoPanel({Key? key, this.resourceName, required this.file}) : super(key: key);
+  VideoPanel({Key? key, this.resourceName, this.resourceKey}) : super(key: key);
 
   @override
   State<VideoPanel> createState() => _VideoPanelState();
@@ -40,13 +40,31 @@ class _VideoPanelState extends State<VideoPanel> {
   }
 
   void _initVideoPlayer() {
-    _controller = VideoPlayerController.file(widget.file);
-    _initializeVideoPlayerFuture = _controller.initialize().then((_) {
-      _controller.setLooping(true);
-      if (mounted) {
-        _playVideo();
+    if (StringUtils.isNotEmpty(widget.resourceKey)) {
+      //first try to parse the resource key as a uri; if it doesn't work then try to use it as a file name and send request to the content BB
+      Uri? videoUri = Uri.tryParse(widget.resourceKey!);
+      if (videoUri == null && StringUtils.isNotEmpty(Config().essentialSkillsCoachKey) && StringUtils.isNotEmpty(Config().contentUrl)) {
+        Map<String, String> queryParams = {
+          'fileName': widget.resourceKey!,
+          'category': Config().essentialSkillsCoachKey!,
+        };
+        String url = "${Config().contentUrl}/files";
+        if (queryParams.isNotEmpty) {
+          url = UrlUtils.addQueryParameters(url, queryParams);
+        }
+        videoUri = Uri.tryParse(url);
       }
-    });
+
+      if (videoUri != null) {
+        _controller = VideoPlayerController.networkUrl(videoUri, httpHeaders: Auth2().networkAuthHeaders ?? {});
+        _initializeVideoPlayerFuture = _controller.initialize().then((_) {
+          _controller.setLooping(true);
+          if (mounted) {
+          _playVideo();
+          }
+        });
+      }
+    }
   }
 
   void _disposeVideoPlayer() {
@@ -134,8 +152,8 @@ class _VideoPanelState extends State<VideoPanel> {
 
   void _logAnalyticsVideoEvent({required String event}) {
     Analytics().logVideo(
-        videoId: widget.resourceName,
-        videoTitle: widget.file.name,
+        videoId: widget.resourceKey,
+        videoTitle: widget.resourceName,
         videoEvent: event,
         duration: _controller.value.duration.inSeconds,
         position: _controller.value.position.inSeconds);
