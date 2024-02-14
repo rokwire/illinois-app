@@ -107,8 +107,12 @@ class Config extends rokwire.Config {
   String? get preferredFirstNameStmntUrl => JsonUtils.stringValue(otherUniversityServices['preferred_first_name_stmnt_url']);
   String? get rokwirePlatformUrl     => JsonUtils.stringValue(otherUniversityServices['rokwire_platform_url']);
   String? get smartHealthyInitiativeUrl  => JsonUtils.stringValue(otherUniversityServices['smart_healthy_initiative_url']);
+  String? get universityHomepageUrl  => JsonUtils.stringValue(otherUniversityServices['university_homepage_url']);
+  String? get dailyIlliniHomepageUrl => JsonUtils.stringValue(otherUniversityServices['daily_illini_homepage_url']);
   String? get dailyIlliniFeedUrl     => JsonUtils.stringValue(otherUniversityServices['daily_illini_feed_url']);
   String? get eventAttendanceUrl     => JsonUtils.stringValue(otherUniversityServices['event_attendance_url']);
+  String? get eventsPublishingInfoUrl => JsonUtils.stringValue(otherUniversityServices['events_publishing_info_url']); // ?? 'edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=addingevents';
+
 
   // Getters: Platform Building Blocks
   String? get gatewayUrl             => JsonUtils.stringValue(platformBuildingBlocks['gateway_url']);
@@ -121,6 +125,7 @@ class Config extends rokwire.Config {
   String? get appointmentsUrl        => JsonUtils.stringValue(platformBuildingBlocks["appointments_url"]);
   String? get occupationsUrl         => JsonUtils.stringValue(platformBuildingBlocks["occupations_url"]);
   String? get assistantUrl           => JsonUtils.stringValue(platformBuildingBlocks["assistant_url"]);
+  String? get aiProxyUrl             => JsonUtils.stringValue(platformBuildingBlocks["ai_proxy_url"]);
   String? get identityUrl            => JsonUtils.stringValue(platformBuildingBlocks["identity_url"]);
 
   // Getters: Third Party Services
@@ -210,6 +215,7 @@ class Config extends rokwire.Config {
 
   String? get healthScreenerSurveyID => JsonUtils.stringValue(settings['health_screener_survey_id']);
   String? get bessiSurveyID          => JsonUtils.stringValue(settings['bessi_survey_id']);
+  String? get essentialSkillsCoachKey => JsonUtils.stringValue(settings['essential_skills_coach_key']) ?? 'essential_skills_coach';
 
   int get mobileAccessDeleteTimeoutMins   => JsonUtils.intValue(settings['mobileAccessDeleteTimeout']) ?? 10;
 

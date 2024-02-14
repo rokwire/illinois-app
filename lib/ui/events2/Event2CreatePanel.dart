@@ -14,6 +14,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupAttendancePanel.dart';
+import 'package:illinois/ui/events2/Event2SetupGroupsPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSponsorshipAndContactsPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
@@ -30,9 +31,11 @@ import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/events2.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
@@ -46,9 +49,9 @@ class Event2CreatePanel extends StatefulWidget {
 
   final Event2? event;
   final Survey? survey;
-  final Event2Selector? eventSelector;
+  final List<Group>? targetGroups;
 
-  Event2CreatePanel({Key? key, this.event, this.survey, this.eventSelector}) : super(key: key);
+  Event2CreatePanel({Key? key, this.event, this.survey, this.targetGroups}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _Event2CreatePanelState();
@@ -71,32 +74,36 @@ class Event2CreatePanel extends StatefulWidget {
   static const EdgeInsetsGeometry textEditContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 20);
   static const EdgeInsetsGeometry innerTextEditContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
 
-  static TextStyle? get headingTextStype => Styles().textStyles?.getTextStyle("widget.title.small.fat.spaced");
-  static TextStyle? get subTitleTextStype => Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
-  static TextStyle? get textEditStyle => Styles().textStyles?.getTextStyle('widget.input_field.dark.text.regular.thin');
+  static TextStyle? get headingTextStype => Styles().textStyles.getTextStyle("widget.title.small.fat.spaced");
+  static TextStyle? get headingDisabledTextStype => Styles().textStyles.getTextStyle("widget.title.small.fat.disabled.spaced");
+  static TextStyle? get subTitleTextStype => Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
+  static TextStyle? get textEditStyle => Styles().textStyles.getTextStyle('widget.input_field.dark.text.regular.thin');
 
-  static BoxDecoration get sectionDecoration => BoxDecoration(
-    border: Border.all(color: Styles().colors!.mediumGray2!, width: 1),
+  static BoxDecoration get sectionDecoration => sectionDecorationEx(enabled: true);
+  static BoxDecoration get sectionDisabledDecoration => sectionDecorationEx(enabled: false);
+
+  static BoxDecoration sectionDecorationEx({bool enabled = true}) => BoxDecoration(
+    border: Border.all(color: enabled ? Styles().colors.mediumGray2 : Styles().colors.surfaceAccent, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(8))
   );
 
   static BoxDecoration get sectionSplitterDecoration => BoxDecoration(
-    border: Border(top: BorderSide(color: Styles().colors!.mediumGray2!, width: 1))
+    border: Border(top: BorderSide(color: Styles().colors.mediumGray2, width: 1))
   );
 
   static InputDecoration textEditDecoration({EdgeInsetsGeometry? padding}) => InputDecoration(
-    fillColor: Styles().colors?.surface,
+    fillColor: Styles().colors.surface,
     filled: true,
     border: OutlineInputBorder(
-      borderSide: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),
+      borderSide: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
       borderRadius: BorderRadius.circular(8)
     ),
     contentPadding: padding,
   );
 
   static BoxDecoration get dropdownButtonDecoration => BoxDecoration(
-    color: Styles().colors?.surface,
-    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+    color: Styles().colors.surface,
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(4))
   );
 
@@ -128,7 +135,7 @@ class Event2CreatePanel extends StatefulWidget {
     EdgeInsetsGeometry bodyPadding = EdgeInsets.zero
   }) => buildSectionWidget(heading: heading, body: body, trailing: trailing, padding: padding, bodyPadding: bodyPadding);
 
-  static Widget buildSectionHeadingWidget(String title, { bool required = false, String? prefixImageKey, String? suffixImageKey, EdgeInsetsGeometry padding = sectionHeadingPadding }) {
+  static Widget buildSectionHeadingWidget(String title, { bool required = false, TextStyle? titleTextStyle, String? prefixImageKey, String? suffixImageKey, EdgeInsetsGeometry padding = sectionHeadingPadding }) {
     String semanticsLabel = title;
     if (required) {
       semanticsLabel += ", required";
@@ -136,22 +143,22 @@ class Event2CreatePanel extends StatefulWidget {
 
     List<Widget> contentList = <Widget>[];
 
-    Widget? prefixImageWidget = (prefixImageKey != null) ? Styles().images?.getImage(prefixImageKey) : null;
+    Widget? prefixImageWidget = (prefixImageKey != null) ? Styles().images.getImage(prefixImageKey) : null;
     if (prefixImageWidget != null) {
       contentList.add(Padding(padding: EdgeInsets.only(right: 6), child:
         prefixImageWidget,
       ));
     }
 
-    contentList.add(buildSectionTitleWidget(title));
+    contentList.add(buildSectionTitleWidget(title, textStyle: titleTextStyle));
     
     if (required) {
       contentList.add(Padding(padding: EdgeInsets.only(left: 2), child:
-        Text('*', style: Styles().textStyles?.getTextStyle("widget.label.small.fat"),),
+        Text('*', style: Styles().textStyles.getTextStyle("widget.label.small.fat"),),
       ));
     }
 
-    Widget? suffixImageWidget = (suffixImageKey != null) ? Styles().images?.getImage(suffixImageKey) : null;
+    Widget? suffixImageWidget = (suffixImageKey != null) ? Styles().images.getImage(suffixImageKey) : null;
     if (suffixImageWidget != null) {
       contentList.add(Padding(padding: EdgeInsets.only(left: 6), child:
         suffixImageWidget,
@@ -168,17 +175,17 @@ class Event2CreatePanel extends StatefulWidget {
   static Widget buildInnerSectionHeadingWidget(String title, { bool required = false, String? prefixImageKey, String? suffixImageKey, EdgeInsetsGeometry padding = innerSectionHeadingPadding }) =>
     buildSectionHeadingWidget(title, required: required, prefixImageKey: prefixImageKey, suffixImageKey: suffixImageKey, padding : padding);
 
-  static double get textScaleFactor {
+  static TextScaler get textScaler {
     BuildContext? context = App.instance?.currentContext;
-    return (context != null) ? MediaQuery.of(context).textScaleFactor : 1.0;
+    return (context != null) ? MediaQuery.of(context).textScaler : TextScaler.noScaling;
   }
 
   static Widget buildSectionTitleWidget(String title, { bool required = false, TextStyle? textStyle, TextStyle? requiredTextStyle,  }) =>
-    Semantics ( label: title,
-    child: RichText(textScaleFactor: textScaleFactor, text:
-      TextSpan(text: title, style: textStyle ?? headingTextStype, semanticsLabel: "", children: required ? <InlineSpan>[
-        TextSpan(text: ' *', style: requiredTextStyle ?? Styles().textStyles?.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
-      ] : null),
+    Semantics ( label: title, child:
+      RichText(textScaler: textScaler, text:
+        TextSpan(text: title, style: textStyle ?? headingTextStype, semanticsLabel: "", children: required ? <InlineSpan>[
+          TextSpan(text: ' *', style: requiredTextStyle ?? Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
+        ] : null),
     ));
 
 
@@ -186,7 +193,7 @@ class Event2CreatePanel extends StatefulWidget {
     Text(subTitle, style: subTitleTextStype);
 
   static Widget buildSectionRequiredWidget() => 
-    Text('*', style: Styles().textStyles?.getTextStyle("widget.label.small.fat"), semanticsLabel: ", required",);
+    Text('*', style: Styles().textStyles.getTextStyle("widget.label.small.fat"), semanticsLabel: ", required",);
 
   // Sections / Dropdown Section
 
@@ -229,7 +236,7 @@ class Event2CreatePanel extends StatefulWidget {
               buildSectionTitleWidget(title, required: required),
             ),
             Padding(padding: EdgeInsets.only(left: 8), child:
-              Styles().images?.getImage(expanded ? 'chevron-up' : 'chevron-down') ?? Container()
+              Styles().images.getImage(expanded ? 'chevron-up' : 'chevron-down') ?? Container()
             ),
           ],),
         ),
@@ -281,7 +288,7 @@ class Event2CreatePanel extends StatefulWidget {
               leftWidget,
             ),
             Padding(padding: EdgeInsets.only(left: 8), child:
-              Styles().images?.getImage('chevron-right') ?? Container()
+              Styles().images.getImage('chevron-right') ?? Container()
             ),
           ],),
         ),
@@ -344,7 +351,7 @@ class Event2CreatePanel extends StatefulWidget {
       Row(mainAxisSize: MainAxisSize.min, children: [
         progress ? Padding(padding: padding, child:
           SizedBox(width: 16, height: 16, child:
-            CircularProgressIndicator(strokeWidth: 2, color: Styles().colors?.fillColorSecondary,)
+            CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
           ),
         ) : Container(),
         LinkButton(
@@ -421,16 +428,16 @@ class Event2CreatePanel extends StatefulWidget {
           Padding(padding: padding, child:
             Column(mainAxisSize: MainAxisSize.min, children: [
               Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.white!, width: 1.5, ))),
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.white, width: 1.5, ))),
                 child: Text(title ?? '',
-                  style: Styles().textStyles?.getTextStyle("widget.heading.regular.fat")
+                  style: Styles().textStyles.getTextStyle("widget.heading.regular.fat")
                 ),
               ),
             ],)
           ),
         ),
         //Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
-        //  Text(title ?? '', style: Styles().textStyles?.getTextStyle('panel.athletics.home.button.underline'))
+        //  Text(title ?? '', style: Styles().textStyles.getTextStyle('panel.athletics.home.button.underline'))
         //),
       ),
     );
@@ -439,13 +446,13 @@ class Event2CreatePanel extends StatefulWidget {
   static Widget buildHeaderBarActionProgress({ EdgeInsetsGeometry padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 20) }) =>
     Padding(padding: padding, child:
         SizedBox(width: 16, height: 16, child:
-          CircularProgressIndicator(color: Styles().colors?.white, strokeWidth: 3,)
+          CircularProgressIndicator(color: Styles().colors.white, strokeWidth: 3,)
         )
     );
 
 }
 
-class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2SelectorDataProvider{
+class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   String? _imageUrl;
 
@@ -468,6 +475,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
   Event2AttendanceDetails? _attendanceDetails;
   Event2SurveyDetails? _surveyDetails;
   Survey? _survey;
+  List<Survey> _surveysCache = <Survey>[];
+
+  List<Group>? _eventGroups;
+  Set<String>? _initialGroupIds;
+  bool _loadingEventGroups = false;
 
   String? _sponsor;
   String? _speaker;
@@ -502,8 +514,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
   bool _typeAndLocationSectionExpanded = false;
   bool _costSectionExpanded = false;
 
-  List<Survey> _surveysCache = <Survey>[];
-
   @override
   void initState() {
     _titleController.text = widget.event?.name ?? '';
@@ -512,13 +522,15 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     _websiteController.text = widget.event?.eventUrl ?? '';
 
     _timeZone = timeZoneDatabase.locations[widget.event?.timezone] ?? DateTimeLocal.timezoneLocal;
-    if (widget.event?.startTimeUtc != null) {
-      TZDateTime startTime = TZDateTime.from(widget.event!.startTimeUtc!, _timeZone);
+    DateTime? startTimeUtc = widget.event?.startTimeUtc;
+    if (startTimeUtc != null) {
+      TZDateTime startTime = TZDateTime.from(startTimeUtc, _timeZone);
       _startDate = TZDateTimeUtils.dateOnly(startTime);
       _startTime = TimeOfDay.fromDateTime(startTime);
     }
-    if (widget.event?.endTimeUtc != null) {
-      TZDateTime endTime = TZDateTime.from(widget.event!.endTimeUtc!, _timeZone);
+    DateTime? endTimeUtc = widget.event?.endTimeUtc;
+    if (endTimeUtc != null) {
+      TZDateTime endTime = TZDateTime.from(endTimeUtc, _timeZone);
       _endDate = TZDateTimeUtils.dateOnly(endTime);
       _endTime = TimeOfDay.fromDateTime(endTime);
     }
@@ -566,7 +578,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     _locationLongitudeController.addListener(_updateErrorMap);
     _costController.addListener(_updateErrorMap);
     _websiteController.addListener(_updateErrorMap);
-    _initSelector();
+
+    _initEventGroups();
 
     super.initState();
   }
@@ -595,6 +608,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   @override
   Widget build(BuildContext context) {
+    // TBD: Replace with PopScope
+    // ignore: deprecated_member_use
     return WillPopScope(onWillPop: _canGoBack, child: Platform.isIOS ?
       BackGestureDetector(onBack: _onHeaderBack, child:
         _buildScaffoldContent(),
@@ -609,7 +624,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       Localization().getStringEx("panel.event2.update.header.title", "Update Event"),
       onLeading: _onHeaderBack,),
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors!.white,
+    backgroundColor: Styles().colors.white,
   );
 
   Widget _buildPanelContent() {
@@ -629,9 +644,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
             _buildAttendanceButtonSection(),
             _buildSurveyButtonSection(),
             _buildSponsorshipAndContactsButtonSection(),
+            _buildGroupsButtonSection(),
             _buildPublishedSection(),
             _buildVisibilitySection(),
-            _buildEventSelectorSection(),
             _buildCreateEventSection(),
           ]),
         )
@@ -651,22 +666,22 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       Localization().getStringEx("panel.create_event.modify_image.hint","") :
       Localization().getStringEx("panel.create_event.add_image.hint","");
 
-    return Container(height: 200, color: Styles().colors!.background, child:
+    return Container(height: 200, color: Styles().colors.background, child:
       Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           Positioned.fill(child: (_imageUrl != null) ?
             Image.network(_imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders) : Container()
           ),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.white), child: Container(height: 30)),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white), child: Container(height: 30)),
           Positioned.fill(child:
             Center(child:
               Semantics(label: buttonTitle, hint: buttonHint, button: true, excludeSemantics: true, child:
                 RoundedButton(
                   label: buttonTitle,
-                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                   onTap: _onTapAddImage,
-                  backgroundColor: Styles().colors!.white,
-                  borderColor: Styles().colors!.fillColorSecondary,
+                  backgroundColor: Styles().colors.white,
+                  borderColor: Styles().colors.fillColorSecondary,
                   contentWeight: 0.67,
                 )
               ),
@@ -707,9 +722,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
         Semantics(label: semanticsLabel, header: true, excludeSemantics: true, child:
           Row(children: [
             Expanded(child:
-              RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text:
+              RichText(textScaler: MediaQuery.of(context).textScaler, text:
                 TextSpan(text: title, style: Event2CreatePanel.headingTextStype,  children: <InlineSpan>[
-                  TextSpan(text: description, style: Styles().textStyles?.getTextStyle('widget.item.small.thin'),),
+                  TextSpan(text: description, style: Styles().textStyles.getTextStyle('widget.item.small.thin'),),
                 ])
               )
             ),
@@ -805,9 +820,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
             Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
               DropdownButtonHideUnderline(child:
                 DropdownButton<Location>(
-                  icon: Styles().images?.getImage('chevron-down'),
+                  icon: Styles().images.getImage('chevron-down'),
                   isExpanded: true,
-                  style: Styles().textStyles?.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                  style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
                   hint: Text(_timeZone.name,),
                   items: _buildTimeZoneDropDownItems(),
                   onChanged: _onTimeZoneChanged
@@ -858,7 +873,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     String? semanticsTimeLabel,
   }) {
     List<Widget> contentList = <Widget>[
-      Expanded(flex: hasTime ? 2 : 1, child:
+      Expanded(flex: hasTime ? 65 : 100, child:
         Semantics(label: semanticsDateLabel, button: true, excludeSemantics: true, child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Padding(padding: EdgeInsets.only(bottom: 4), child:
@@ -873,7 +888,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     ];
     
     if (hasTime) {
-      contentList.add(Expanded(flex: 1, child:
+      contentList.add(Expanded(flex: 35, child:
         Padding(padding: EdgeInsets.only(left: 4), child:
           Semantics(label: semanticsTimeLabel, button: true, excludeSemantics: true, child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -882,7 +897,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
                   Event2CreatePanel.buildSectionTitleWidget(timeLabel ?? '', required: timeRequired),
                 ],),
               ),
-              _buildDropdownButton(label: (time != null) ? DateFormat("h:mma").format(_dateWithTimeOfDay(time)) : "-", onTap: onTime,)
+              _buildDropdownButton(label: (time != null) ? DateFormat("h:mma").format(_dateWithTimeOfDay(time)) : "-", onTap: onTime,),
             ],)
           ),
         ),
@@ -896,8 +911,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     return InkWell(onTap: onTap, child:
       Container(decoration: Event2CreatePanel.dropdownButtonDecoration, padding: Event2CreatePanel.dropdownButtonContentPadding, child:
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-          Text(label ??  '-', style: Styles().textStyles?.getTextStyle("widget.title.regular"),),
-          Styles().images?.getImage('chevron-down') ?? Container()
+          Text(label ??  '-', style: Styles().textStyles.getTextStyle("widget.title.regular"),),
+          Styles().images.getImage('chevron-down') ?? Container()
         ],),
       ),
     );
@@ -917,7 +932,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     ));
 
   EdgeInsetsGeometry get _togglePadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 12);
-  BoxBorder get _toggleBorder => Border.all(color: Styles().colors!.surfaceAccent!, width: 1);
+  BoxBorder get _toggleBorder => Border.all(color: Styles().colors.surfaceAccent, width: 1);
   BorderRadius get _toggleBorderRadius => BorderRadius.all(Radius.circular(4));
 
   void _onToggleDateAndTimeSection() {
@@ -1057,9 +1072,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     return Semantics(label: "$title, required", container: true, child:
       Row(children: <Widget>[
         Expanded(flex: 4, child:
-          RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text:
+          RichText(textScaler: MediaQuery.of(context).textScaler, text:
             TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: "", children: <InlineSpan>[
-              TextSpan(text: ' *', style: Styles().textStyles?.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
+              TextSpan(text: ' *', style: Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
             ])
           )
         ),
@@ -1069,9 +1084,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
             Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
               DropdownButtonHideUnderline(child:
                 DropdownButton<Event2Type>(
-                  icon: Styles().images?.getImage('chevron-down'),
+                  icon: Styles().images.getImage('chevron-down'),
                   isExpanded: true,
-                  style: Styles().textStyles?.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                  style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
                   hint: Text(event2TypeToDisplayString(_eventType) ?? '-',),
                   items: _buildEventTypeDropDownItems(),
                   onChanged: _onEventTypeChanged
@@ -1144,10 +1159,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       Semantics(label: buttonTitle, hint: buttonHint, button: true, excludeSemantics: true, child:
         RoundedButton(
           label: buttonTitle,
-          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.regular"),
+          textStyle: Styles().textStyles.getTextStyle("widget.button.title.regular"),
           onTap: _onTapSelectLocation,
-          backgroundColor: Styles().colors!.white,
-          borderColor: Styles().colors!.fillColorSecondary,
+          backgroundColor: Styles().colors.white,
+          borderColor: Styles().colors.fillColorSecondary,
           contentWeight: 0.80,
         )
       ),
@@ -1214,10 +1229,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
   ]);
     
   Widget _buildFreeToggle() => Semantics(toggled: _free, excludeSemantics: true, 
-    label: Localization().getStringEx("panel.event2.create.free.toggle.title", "Is this event free?"),
+    label: Localization().getStringEx("panel.event2.create.free.toggle.title", "List event as free"),
     hint: Localization().getStringEx("panel.event2.create.free.toggle.hint", ""),
     child: ToggleRibbonButton(
-      label: Localization().getStringEx("panel.event2.create.free.toggle.title", "Is this event free?"),
+      label: Localization().getStringEx("panel.event2.create.free.toggle.title", "List event as free"),
       padding: _togglePadding,
       toggled: _free,
       onTap: _onTapFree,
@@ -1239,10 +1254,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       Semantics(label: semanticsLabel, header: true, excludeSemantics: true, child:
         Row(children: [
           Expanded(child:
-            RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text:
+            RichText(textScaler: MediaQuery.of(context).textScaler, text:
               TextSpan(text: title, style: Event2CreatePanel.headingTextStype, children: <InlineSpan>[
-                TextSpan(text: description, style: Styles().textStyles?.getTextStyle('widget.item.small.thin'),),
-                TextSpan(text: _free ? '' : ' *', style: Styles().textStyles?.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
+                TextSpan(text: description, style: Styles().textStyles.getTextStyle('widget.item.small.thin'),),
+                TextSpan(text: _free ? '' : ' *', style: Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
               ])
             )
           ),
@@ -1283,7 +1298,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   Widget? _buildAttributesSectionBody() {
     List<InlineSpan> descriptionList = <InlineSpan>[];
-    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
 
     ContentAttributes? contentAttributes = Events2().contentAttributes;
     List<ContentAttribute>? attributes = contentAttributes?.attributes;
@@ -1306,7 +1321,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
       return Row(children: [
         Expanded(child:
-          RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text: TextSpan(style: regularStyle, children: descriptionList))
+          RichText(textScaler: MediaQuery.of(context).textScaler, text: TextSpan(style: regularStyle, children: descriptionList))
         ),
       ],);
     }
@@ -1356,14 +1371,18 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
   void _onEventRegistration() {
     Analytics().logSelect(target: "Event Registration");
     Event2CreatePanel.hideKeyboard(context);
-    Navigator.push<Event2RegistrationDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(
+    Navigator.push<dynamic>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(
+      event: widget.event,
       registrationDetails: _registrationDetails,
-    ))).then((Event2RegistrationDetails? result) {
-      if ((result != null) && mounted) {
-        setState(() {
+    ))).then((dynamic result) {
+      setStateIfMounted(() {
+        if (result is Event2RegistrationDetails) {
           _registrationDetails = result;
-        });
-      }
+        }
+        else if (result is Event2) {
+          _registrationDetails = result.registrationDetails;
+        }
+      });
     });
   }
 
@@ -1382,8 +1401,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
   void _onEventAttendance() {
     Analytics().logSelect(target: "Event Attendance");
     Event2CreatePanel.hideKeyboard(context);
-    Navigator.push<Event2AttendanceDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(attendanceDetails: _attendanceDetails
-    ))).then((Event2AttendanceDetails? result) {
+    Navigator.push<Event2AttendanceDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(attendanceDetails: _attendanceDetails, event: widget.event,))).then((Event2AttendanceDetails? result) {
       if ((result != null) && mounted) {
         setState(() {
           _attendanceDetails = result;
@@ -1418,14 +1436,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
   void _onEventSurvey() {
     Analytics().logSelect(target: "Event Follow-Up Survey");
     Event2CreatePanel.hideKeyboard(context);
-    Navigator.push<Event2SetupSurveyParam>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(
+    Event2SetupSurveyPanel.push(context,
       surveyParam: Event2SetupSurveyParam(
         details: _surveyDetails,
         survey: _survey,
       ),
       eventName: _titleController.text,
       surveysCache: _surveysCache,
-    ))).then((Event2SetupSurveyParam? result) {
+    ).then((Event2SetupSurveyParam? result) {
       if ((result != null) && mounted) {
         setState(() {
           _survey = result.survey;
@@ -1449,8 +1467,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   Widget? _buildSponsorshipAndContactsSectionBody() {
     List<InlineSpan> descriptionList = <InlineSpan>[];
-    TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.title.tiny.fat");
-    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
+    TextStyle? boldStyle = Styles().textStyles.getTextStyle("widget.card.title.tiny.fat");
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
 
 //	"panel.event2.create.button.sponsorship_and_contacts.label.sponsor": "Sponsor: ",
 //	"panel.event2.create.button.sponsorship_and_contacts.label.speaker": "Speaker: ",
@@ -1493,7 +1511,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
       return Row(children: [
         Expanded(child:
-          RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text: TextSpan(style: regularStyle, children: descriptionList))
+          RichText(textScaler: MediaQuery.of(context).textScaler, text: TextSpan(style: regularStyle, children: descriptionList))
         ),
       ],);
     }
@@ -1523,6 +1541,91 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     });
   }
 
+  // Groups
+
+  Widget _buildGroupsButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
+    heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
+      title: Localization().getStringEx('panel.event2.create.button.groups.title', '{{app_title}} APP GROUPS').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois').toUpperCase()),
+      subTitle: Localization().getStringEx('panel.event2.create.button.groups.description', 'Publish your event in group(s) that you administer.'),
+      onTap: _onSelectGroups,
+    ),
+    body: _buildGroupsSectionBody()
+  );
+
+  Widget? _buildGroupsSectionBody() {
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
+    if (_loadingEventGroups) {
+      return Row(children: [
+        Padding(padding: const EdgeInsets.only(right: 6), child:
+          SizedBox(width: 14, height: 14, child:
+            CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
+          ),
+        ),
+        Expanded(child:
+          Text(Localization().getStringEx('panel.event2.create.groups.load.progress.msg', 'Loading event groups...'), style: regularStyle,),
+        ),
+      ],);
+    }
+    else if (_eventGroups != null) {
+      List<InlineSpan> descriptionList = <InlineSpan>[];
+
+      for (Group group in _eventGroups!) {
+        if (descriptionList.isNotEmpty) {
+          descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
+        }
+        descriptionList.add(TextSpan(text: group.title ?? '', style: regularStyle,),);
+      }
+
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
+      }
+
+      return descriptionList.isNotEmpty ? Row(children: [
+        Expanded(child:
+          RichText(textScaler: MediaQuery.of(context).textScaler, text: TextSpan(style: regularStyle, children: descriptionList))
+        ),
+      ],) : null;
+    }
+    else {
+      return widget.isUpdate ? Row(children: [
+        Expanded(child:
+          Text(Localization().getStringEx('panel.event2.create.groups.load.failed.msg', 'Failed to load event groups'), style: Styles().textStyles.getTextStyle("panel.settings.error.text.small"),),
+        ),
+      ],) : null;
+    }
+  }
+
+  void _onSelectGroups() {
+    Analytics().logSelect(target: "Event Groups");
+    Event2CreatePanel.hideKeyboard(context);
+    Navigator.push<List<Group>>(context, CupertinoPageRoute(builder: (context) => Event2SetupGroups(selection: _eventGroups ?? <Group>[]))).then((List<Group>? selection) {
+      if ((selection != null) && mounted) {
+        setState(() {
+          _eventGroups = selection;
+        });
+      }
+    });
+  }
+
+  void _initEventGroups() {
+    String? eventId = widget.event?.id;
+    if (eventId != null) {
+      _loadingEventGroups = true;
+      Groups().loadUserGroupsHavingEventEx(eventId).then((dynamic result) {
+        if (mounted) {
+          setState(() {
+            _loadingEventGroups = false;
+            _eventGroups = JsonUtils.listTypedValue<Group>(result);
+            _initialGroupIds = Group.listToSetIds(_eventGroups) ?? <String>{};
+          });
+        }
+      });
+    }
+    else {
+      _eventGroups = widget.targetGroups;
+    }
+  }
+
   // Visibility
 
   Widget _buildVisibilitySection() {
@@ -1541,10 +1644,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
               Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
                 DropdownButtonHideUnderline(child:
                   DropdownButton<_Event2Visibility>(
-                    icon: Styles().images?.getImage('chevron-down'),
+                    icon: Styles().images.getImage('chevron-down'),
                     isExpanded: true,
-                    style: Styles().textStyles?.getTextStyle("panel.create_event.dropdown_button.title.regular"),
-                    hint: Text(_event2VisibilityToDisplayString(_visibility),),
+                    style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                    hint: Text(_event2VisibilityToDisplayString(_visibility, _isGroupEvent),),
                     items: _buildVisibilityDropDownItems(),
                     onChanged: _onVisibilityChanged
                   ),
@@ -1562,7 +1665,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     for (_Event2Visibility value in _Event2Visibility.values) {
       menuItems.add(DropdownMenuItem<_Event2Visibility>(
         value: value,
-        child: Text(_event2VisibilityToDisplayString(value),),
+        child: Text(_event2VisibilityToDisplayString(value, _isGroupEvent),),
       ));
     }
     return menuItems;
@@ -1603,14 +1706,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     });
   }
 
-  //EventSelector section
-  Widget _buildEventSelectorSection() {
-    if(widget.eventSelector != null){
-      return widget.eventSelector!.buildWidget(this) ?? Container();
-    }
-    return Container();
-  }
-
   // Create Event
 
   Widget _buildCreateEventSection() => Padding(padding: Event2CreatePanel.sectionPadding, child:
@@ -1635,10 +1730,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     return Semantics(label: buttonTitle, hint: buttonHint, button: true, enabled: buttonEnabled, excludeSemantics: true, child:
       RoundedButton(
         label: buttonTitle,
-        textStyle: buttonEnabled ? Styles().textStyles?.getTextStyle('widget.button.title.large.fat') : Styles().textStyles?.getTextStyle('widget.button.disabled.title.large.fat'),
+        textStyle: buttonEnabled ? Styles().textStyles.getTextStyle('widget.button.title.large.fat') : Styles().textStyles.getTextStyle('widget.button.disabled.title.large.fat'),
         onTap: buttonEnabled ? _onTapCreateEvent : null,
-        backgroundColor: Styles().colors!.white,
-        borderColor: buttonEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+        backgroundColor: Styles().colors.white,
+        borderColor: buttonEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
         progress: _creatingEvent,
       )
     );
@@ -1736,8 +1831,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   Widget _buildCreateErrorStatus() {
     List<InlineSpan> descriptionList = <InlineSpan>[];
-    TextStyle? boldStyle = Styles().textStyles?.getTextStyle("panel.settings.error.text");
-    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("panel.settings.error.text.small");
+    TextStyle? boldStyle = Styles().textStyles.getTextStyle("panel.settings.error.text");
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle("panel.settings.error.text.small");
 
     List<String>? missingStringList = _errorMap[_ErrorCategory.missing];
     if ((missingStringList != null) && missingStringList.isNotEmpty) {
@@ -1775,7 +1870,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
     return Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
       Row(children: [ Expanded(child:
-        RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text: TextSpan(style: regularStyle, children: descriptionList))
+        RichText(textScaler: MediaQuery.of(context).textScaler, text: TextSpan(style: regularStyle, children: descriptionList))
       ),],),
     );
   }
@@ -1786,43 +1881,76 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     setStateIfMounted(() {
       _creatingEvent = true;
     });
-    await widget.eventSelector?.prepareSelection(this);
-    Future<dynamic> Function(Event2 source) serviceAPI = widget.eventSelector?.event2SelectorServiceAPI() ?? (widget.isCreate ? Events2().createEvent : Events2().updateEvent);
-    dynamic result = await serviceAPI(_createEventFromData());
+
+    dynamic result;
+    Event2 event = _createEventFromData();
+    Set<String> selectedGroupIds = Group.listToSetIds(_eventGroups) ?? <String>{};
+    String? eventId = event.id;
+    if (eventId == null) {
+      if (_eventGroups?.isNotEmpty != true) {
+        result = await Events2().createEvent(event);
+      }
+      else {
+        result = await _createEventForGroups(event, selectedGroupIds);
+      }
+    }
+    else {
+      bool eventModified = (event != widget.event);
+      if (eventModified) {
+        result = await Events2().updateEvent(event);
+      }
+      else {
+        result = event;
+      }
+
+      if (mounted && (result is Event2) && !DeepCollectionEquality().equals(selectedGroupIds, _initialGroupIds)) {
+        dynamic groupsResult = await Groups().saveUserGroupsHavingEvent(eventId, groupIds: selectedGroupIds, previousGroupIds: _initialGroupIds);
+        if (!(groupsResult is Iterable) && mounted) {
+          Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.create.groups.update.failed.msg', 'Failed to update event groups')).then((_) {
+            if (eventModified) {
+              Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
+                event: result,
+                survey: null,
+              )));
+            }
+          });
+          return;
+        }
+      }
+    }
 
     if (mounted) {
       if (result is Event2) {
-        _selectorEvent = result;
-        await widget.eventSelector?.performSelection(this);
         Survey? survey = widget.survey;
         if (widget.isCreate) {
           if (_survey != null) {
             bool? success = await Surveys().createEvent2Survey(_survey!, result);
-
-            setStateIfMounted(() {
-              _creatingEvent = false;
-            });
-            if (success == true && result.id != null) {
-              survey = await Surveys().loadEvent2Survey(result.id!);
-              Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
-                event: result,
-                survey: survey,
-                eventSelector: widget.eventSelector,
-              )));
-            }
-            else {
-              Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.create.survey.create.failed.msg', 'Failed to create event survey.')).then((_) {
-                Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
-                  event: result,
-                  survey: null,
-                  eventSelector: widget.eventSelector,
-                )));
-              });
+            if (mounted) {
+              if (success == true && result.id != null) {
+                survey = await Surveys().loadEvent2Survey(result.id!);
+                if (mounted) {
+                  Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
+                    event: result,
+                    survey: survey,
+                  )));
+                }
+              }
+              else {
+                setState(() {
+                  _creatingEvent = false;
+                });
+                Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.create.survey.create.failed.msg', 'Failed to create event survey.')).then((_) {
+                  Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
+                    event: result,
+                    survey: null,
+                  )));
+                });
+              }
             }
           }
           else {
             Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
-              event: result, eventSelector: widget.eventSelector,
+              event: result,
             )));
           }
         }
@@ -1848,24 +1976,25 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
               }
             }
           }
-          setState(() {
-            _creatingEvent = false;
-          });
-          if (surveyUpdateResult) {
-            Navigator.of(context).pop(Event2SetupSurveyParam(
-              event: result,
-              survey: survey,
-            ));
-          } else {
-            Event2Popup.showErrorResult(context,Localization().getStringEx('panel.event2.create.survey.update.failed.msg', 'Failed to set event survey, but the number of hours setting has been saved. Remember that other event admins may have modified the survey.')).then((_) {
+          if (mounted) {
+            setState(() {
+              _creatingEvent = false;
+            });
+            if (surveyUpdateResult) {
               Navigator.of(context).pop(Event2SetupSurveyParam(
                 event: result,
                 survey: survey,
               ));
-            });
+            } else {
+              Event2Popup.showErrorResult(context,Localization().getStringEx('panel.event2.create.survey.update.failed.msg', 'Failed to set event survey, but the number of hours setting has been saved. Remember that other event admins may have modified the survey.')).then((_) {
+                Navigator.of(context).pop(Event2SetupSurveyParam(
+                  event: result,
+                  survey: survey,
+                ));
+              });
+            }
           }
         }
-        widget.eventSelector?.finishSelection(this);
       }
       else  {
         setState(() {
@@ -1874,6 +2003,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
         Event2Popup.showErrorResult(context, result);
       }
     }
+  }
+
+  Future<dynamic> _createEventForGroups(Event2 source, Set<String> selectedGroupIds) async {
+    dynamic result = await Groups().createEventForGroupsV3(source, groupIds: selectedGroupIds);
+    return (result is CreateEventForGroupsV3Param) ? result.event : result;
   }
 
   bool get _onlineEventType => (_eventType == Event2Type.online) ||  (_eventType == Event2Type.hybrid);
@@ -1918,12 +2052,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
   bool get _hasValidWebsiteURL => UrlUtils.isValidUrl(_websiteController.text);
 
   DateTime? get _startDateTimeUtc =>
-    (_startDate != null) ? Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _startDate!, _startTime).toUtc() : null;
+    (_startDate != null) ? DateTime.fromMillisecondsSinceEpoch(Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _startDate!, _startTime).millisecondsSinceEpoch)  : null;
 
   DateTime? get _endDateTimeUtc =>
-    (_endDate != null) ? Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _endDate!, _endTime) : null;
+    (_endDate != null) ? DateTime.fromMillisecondsSinceEpoch(Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _endDate!, _endTime).millisecondsSinceEpoch) : null;
 
   bool get _private => (_visibility == _Event2Visibility.private);
+
+  bool get _isGroupEvent => CollectionUtils.isNotEmpty(_eventGroups);
 
   bool get _hasSurvey => (_survey != null) || (_surveyDetails?.isNotEmpty ?? false);
 
@@ -1938,6 +2074,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     (_free || _costController.text.isNotEmpty) &&
     (Events2().contentAttributes?.isSelectionValid(_attributes) ?? false) &&
     ((_registrationDetails?.type != Event2RegistrationType.external) || (_registrationDetails?.externalLink?.isNotEmpty ?? false)) &&
+    ((_registrationDetails?.type != Event2RegistrationType.internal) || ((_registrationDetails?.eventCapacity ?? 0) > 0)) &&
     (!_hasSurvey || _hasAttendanceDetails)
   );
 
@@ -1983,6 +2120,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
         _hasRegistrationDetails ||
         _hasAttendanceDetails ||
         _hasSurvey ||
+
+        !DeepCollectionEquality().equals(_eventGroups ?? <Group>[], widget.targetGroups ?? <Group>[]) ||
         
         (_sponsor != null) ||
         (_speaker != null) ||
@@ -2012,13 +2151,16 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
         ((widget.event?.free ?? true) != _free) ||
         ((widget.event?.cost ?? '') != _costController.text) ||
 
-        (widget.event?.registrationDetails != _registrationDetails) ||
+        !Event2RegistrationDetails.equals(widget.event?.registrationDetails, _registrationDetails) ||
+        //(widget.event?.registrationDetails != _registrationDetails) ||
         (widget.event?.attendanceDetails != _attendanceDetails) ||
         (widget.event?.surveyDetails != _surveyDetails) ||
         (widget.survey != _survey) ||
 
-        ((widget.event?.sponsor ?? '') != _sponsor) ||
-        ((widget.event?.speaker ?? '') != _speaker) ||
+        !DeepCollectionEquality().equals(Group.listToSetIds(_eventGroups) ?? <String>{}, _initialGroupIds ?? <String>{}) ||
+
+        (widget.event?.sponsor != _sponsor) ||
+        (widget.event?.speaker != _speaker) ||
         !DeepCollectionEquality().equals(widget.event?.contacts, _contacts);
     }
 
@@ -2058,8 +2200,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       private: _private,
       published: _published,
 
-      canceled: null, // NA
-      userRole: null, // NA
+      canceled: widget.event?.canceled, // NA
+      userRole: widget.event?.userRole, // NA
 
       free: _free,
       cost: Event2CreatePanel.textFieldValue(_costController),
@@ -2072,27 +2214,20 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       speaker: _speaker,
       contacts: _contacts,
     );
-
-  //EventSelector
-  @override
-  Event2SelectorData? selectorData;
-
-  //Selector
-  void _initSelector(){
-    widget.eventSelector?.init(this);
-  }
-
-  void set _selectorEvent(Event2 event) => selectorData?.event = event;
 }
 
 // _Event2Visibility
 
 enum _Event2Visibility { public, private }
 
-String _event2VisibilityToDisplayString(_Event2Visibility value) {
-  switch(value) {
-    case _Event2Visibility.public: return Localization().getStringEx('model.event2.event_type.public', 'Public');
-    case _Event2Visibility.private: return Localization().getStringEx('model.event2.event_type.private', 'Private');
+String _event2VisibilityToDisplayString(_Event2Visibility value, bool isGroupEvent) {
+  switch (value) {
+    case _Event2Visibility.public:
+      return Localization().getStringEx('model.event2.event_type.public', 'Public');
+    case _Event2Visibility.private:
+      return isGroupEvent
+          ? Localization().getStringEx('model.event2.event_type.group_members', 'Group Members Only')
+          : Localization().getStringEx('model.event2.event_type.private', 'Uploaded Guest List Only');
   }
 }
 

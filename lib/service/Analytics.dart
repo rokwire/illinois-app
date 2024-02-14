@@ -20,7 +20,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/mainImpl.dart';
-import 'package:illinois/model/wellness/ToDo.dart' as wellness;
+import 'package:illinois/model/wellness/WellnessToDo.dart' as wellness;
 import 'package:illinois/model/wellness/WellnessRing.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
@@ -605,7 +605,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     return (location != null) ? {
       'latitude': location.latitude,
       'longitude': location.longitude,
-      'timestamp': location.timestamp?.millisecondsSinceEpoch,
+      'timestamp': location.timestamp.millisecondsSinceEpoch,
     } : null;
   }
   
@@ -1015,7 +1015,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     logEvent(event);
   }
 
-  void logWellnessToDo({String? action, wellness.ToDoItem? item, String? source}) {
+  void logWellnessToDo({String? action, wellness.WellnessToDoItem? item, String? source}) {
     logWellness(
       category: LogWellnessCategoryToDo,
       action: action,

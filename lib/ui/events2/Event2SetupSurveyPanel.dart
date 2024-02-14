@@ -16,6 +16,7 @@
 
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Survey.dart';
@@ -31,16 +32,30 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
+import 'package:rokwire_plugin/ui/panels/survey_panel.dart';
 import 'package:rokwire_plugin/ui/popups/popup_message.dart';
-import 'package:rokwire_plugin/ui/widgets/survey.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Event2SetupSurveyPanel extends StatefulWidget {
+  static final String routeName = 'Event2SetupSurveyPanel';
+
   final Event2SetupSurveyParam surveyParam;
   final List<Survey>? surveysCache;
   final String? eventName;
 
   Event2SetupSurveyPanel({Key? key, required this.surveyParam, this.eventName, this.surveysCache}) : super(key: key);
+
+  static Future<Event2SetupSurveyParam?> push(BuildContext context, {Key? key, required Event2SetupSurveyParam surveyParam, List<Survey>? surveysCache, String? eventName}) =>
+    Navigator.push<Event2SetupSurveyParam>(context, CupertinoPageRoute(
+      settings: RouteSettings(name: routeName),
+      builder: (context) => Event2SetupSurveyPanel(
+        surveyParam: surveyParam,
+        eventName: eventName,
+        surveysCache: surveysCache,
+      ),
+    ));
+
+  static void popUntil(BuildContext context) => Navigator.of(context).popUntil((route) => route.settings.name == routeName);
 
   Event2SurveyDetails? get details => (surveyParam.event?.id != null) ? surveyParam.event?.surveyDetails : surveyParam.details;
 
@@ -62,8 +77,6 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   bool _modified = false;
   bool _loadingSurveys = false;
   bool _updatingSurvey = false;
-
-  late final SurveyWidgetController _surveyController = SurveyWidgetController();
 
   @override
   void initState() {
@@ -106,6 +119,8 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
   @override
   Widget build(BuildContext context) {
+    // TBD: Replace with PopScope
+    // ignore: deprecated_member_use
     return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBarBack), child: Platform.isIOS ?
       BackGestureDetector(onBack: _onHeaderBarBack, child:
         _buildScaffoldContent(),
@@ -117,7 +132,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors?.background
+    backgroundColor: Styles().colors.background
   );
 
   Widget _buildPanelContent() {
@@ -140,7 +155,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(Localization().getStringEx('panel.event2.setup.survey.explanation.title', 'Choose a survey template to be sent to attendees of this event after it completes.'),
-              style: Styles().textStyles?.getTextStyle('widget.description.regular')),
+              style: Styles().textStyles.getTextStyle('widget.description.regular')),
           SizedBox(height: 16.0),
           _buildSurveysSection(),
           _buildHoursSection(),
@@ -154,7 +169,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     return Column(children: [
       Expanded(flex: 1, child: Container(),),
       SizedBox(width: 32, height: 32, child:
-        CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,),
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
       ),
       Expanded(flex: 2, child: Container(),),
     ],);
@@ -164,7 +179,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     return Column(children: [
       Expanded(flex: 1, child: Container(),),
       Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
-        Text(message ?? '', textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18)),
+        Text(message ?? '', textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 18)),
       ),
       Expanded(flex: 2, child: Container(),),
     ],);
@@ -202,10 +217,10 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
       DropdownButtonHideUnderline(child:
         DropdownButton<Survey?>(
-          icon: Styles().images?.getImage('chevron-down'),
+          icon: Styles().images.getImage('chevron-down'),
           isExpanded: true,
           value: _survey,
-          style: Styles().textStyles?.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+          style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
           hint: Text((_survey != null) ? (_survey?.displayTitle ?? '') : nullSurveyTitle),
           items: _buildSurveyDropDownItems(),
           onChanged: _onSurveyChanged
@@ -272,18 +287,14 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
   // Survey Preview
 
-  Widget _buildSurveyPreviewSection() => Visibility(visible: _survey != null, child:
-    Column(crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(padding: EdgeInsets.only(bottom: 16), child: Container(height: 1, color: Styles().colors!.fillColorPrimaryTransparent015,),),
-        Text(Localization().getStringEx('panel.event2.setup.survey.preview.title', 'Survey Preview'), style: Styles().textStyles?.getTextStyle('widget.title.large.fat')),
-        Padding(
-          padding: const EdgeInsets.only(top: 8),
-          child: Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.survey.preview.subtitle', 'Optional: Try out the survey by filling out the sample below.')),
-        ),
-        SurveyWidget(survey: _displaySurvey, controller: _surveyController, summarizeResultRules: true, summarizeResultRulesWidget: _buildPreviewContinueWidget()),
-      ],
-    )
+  Widget _buildSurveyPreviewSection() => Visibility(visible: _survey != null,
+    child: Event2CreatePanel.buildButtonSectionWidget(
+      heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
+        title: Localization().getStringEx('panel.event2.setup.survey.preview.title', 'Survey Preview'),
+        subTitle: Localization().getStringEx('panel.event2.setup.survey.preview.subtitle', 'Try out the survey by filling out a sample.'),
+        onTap: _onSurveyPreview,
+      ),
+    ),
   );
 
   Widget _buildPreviewContinueWidget() {
@@ -294,15 +305,21 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
         child: Text(
           Localization().getStringEx('panel.event2.setup.survey.preview.continue.message',
             'Thank you for testing your event follow-up survey. At this point, the survey would be submitted, and the results would be available to view under the event admin settings.'),
-          style: Styles().textStyles?.getTextStyle('widget.detail.regular.fat'),
+          style: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),
         )
       ),
       buttonTitle: Localization().getStringEx("dialog.ok.title", "OK"),
       onTapButton: (context) {
-        Navigator.pop(context);
+        Event2SetupSurveyPanel.popUntil(context);
       },
     );
   }
+
+  String get surveyTitleMacro => '{{survey_title}}';
+
+  PreferredSizeWidget? _buildPreviewHeaderBar() => HeaderBar(
+    title: Localization().getStringEx('panel.event2.setup.survey.preview.headerbar.title', '$surveyTitleMacro Preview').replaceAll(surveyTitleMacro, _displaySurvey?.title ?? Localization().getStringEx("panel.event2.setup.survey.survey.title", "SURVEY")),
+  );
 
   // HeaderBar
 
@@ -460,6 +477,15 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
         Navigator.of(context).pop(surveyParam);
       }
     }
+  }
+
+  void _onSurveyPreview() {
+    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => SurveyPanel(
+        survey: _displaySurvey,
+        summarizeResultRules: true,
+        summarizeResultRulesWidget: _buildPreviewContinueWidget(),
+        headerBar: _buildPreviewHeaderBar(),
+    )));
   }
 }
 

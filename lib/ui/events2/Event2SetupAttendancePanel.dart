@@ -20,12 +20,13 @@ import 'package:sprintf/sprintf.dart';
 
 class Event2SetupAttendancePanel extends StatefulWidget {
   final Event2? event;
-  final Event2AttendanceDetails? attendanceDetails;
-  
-  Event2SetupAttendancePanel({Key? key, this.event, this.attendanceDetails}) : super(key: key);
-  
+  final Event2AttendanceDetails? _attendanceDetails;
+
+  Event2SetupAttendancePanel({ super.key, this.event, Event2AttendanceDetails? attendanceDetails, Event2RegistrationDetails? registrationDetails }) :
+    _attendanceDetails = attendanceDetails;
+
   String? get eventId => event?.id;
-  Event2AttendanceDetails? get details => (eventId != null) ? event?.attendanceDetails : attendanceDetails;
+  Event2AttendanceDetails? get attendanceDetails => (eventId != null) ? event?.attendanceDetails : _attendanceDetails;
 
   @override
   State<StatefulWidget> createState() => _Event2SetupAttendancePanelState();
@@ -56,7 +57,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   @override
   void initState() {
     _event = widget.event;
-    _initDetails(widget.details);
+    _initDetails(widget.attendanceDetails);
     if (_isEditing) {
       _attendanceTakersController.addListener(_checkModified);
     }
@@ -71,6 +72,8 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   @override
   Widget build(BuildContext context) {
+    // TBD: Replace with PopScope
+    // ignore: deprecated_member_use
     return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBarBack), child: Platform.isIOS ?
       BackGestureDetector(onBack: _onHeaderBarBack, child:
         _buildScaffoldContent(),
@@ -82,7 +85,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors!.white,
+    backgroundColor: Styles().colors.white,
   );
 
   Widget _buildPanelContent() {
@@ -105,7 +108,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   //EdgeInsetsGeometry get _togglePadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 12);
   //EdgeInsetsGeometry get _toggleDescriptionPadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 5);
-  //BoxBorder get _toggleBorder => Border.all(color: Styles().colors!.surfaceAccent!, width: 1);
+  //BoxBorder get _toggleBorder => Border.all(color: Styles().colors.surfaceAccent, width: 1);
   //BorderRadius get _toggleBorderRadius => BorderRadius.all(Radius.circular(4));
 
   // Scan
@@ -196,11 +199,11 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildAttendanceTakerSection() {
     return Padding(padding: Event2CreatePanel.sectionPadding, child:
       Column(children: [
-        Divider(color: Styles().colors?.dividerLineAccent, thickness: 1),
+        Divider(color: Styles().colors.dividerLineAccent, thickness: 1),
         Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
           Event2AttendanceTakerWidget(_event, updateController: _updateController,),
         ),
-        Divider(color: Styles().colors?.dividerLineAccent, thickness: 1),
+        Divider(color: Styles().colors.dividerLineAccent, thickness: 1),
       ],),
     );
   }
@@ -223,7 +226,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     ],),
   );
 
-  TextStyle? get _infoTextStype => Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
+  TextStyle? get _infoTextStype => Styles().textStyles.getTextStyle('widget.item.small.thin.italic');
 
   Future<void> _onRefresh() async {
     _updateController.add(Event2AttendanceTakerWidget.notifyRefresh);

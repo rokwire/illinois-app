@@ -1,15 +1,21 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/ui/groups/GroupWidgets.dart';
 
 class GroupAllEventsPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group? group;
@@ -23,7 +29,7 @@ class GroupAllEventsPanel extends StatefulWidget implements AnalyticsPageAttribu
   Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
 }
 
-class _GroupAllEventsState extends State<GroupAllEventsPanel>{
+class _GroupAllEventsState extends State<GroupAllEventsPanel> implements NotificationsListener {
   List<Event2>? _events;
   bool? _lastPageLoadedAll;
   int? _totalEventsCount;
@@ -35,9 +41,26 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      Events2.notifyUpdated,
+    ]);
     _scrollController.addListener(_scrollListener);
     _load();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Events2.notifyUpdated) {
+      _updateEventIfNeeded(param);
+    }
   }
 
   @override
@@ -52,7 +75,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
               Container(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18), child: _loadingEvents ? _loadingIndicator : _buildEvents())
             ])),
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         bottomNavigationBar: uiuc.TabBar());
   }
 
@@ -60,8 +83,8 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
     List<Widget> content = <Widget>[];
 
     if (_events != null) {
-      for (Event2? groupEvent in _events!) {
-        content.add(GroupEventCard(groupEvent: groupEvent, group: widget.group));
+      for (Event2 groupEvent in _events!) {
+        content.add(Padding(padding: EdgeInsets.only(bottom: 16), child: Event2Card(groupEvent, group: widget.group, onTap: () => _onTapEvent(groupEvent))));
       }
 
       if (_extendingEvents) {
@@ -77,7 +100,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
         padding: EdgeInsets.only(top: 150),
         child: Center(
             child: SizedBox(
-                width: 32, height: 32, child: CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3))));
+                width: 32, height: 32, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3))));
   }
 
   Widget get _extendingIndicator => Container(
@@ -88,7 +111,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
               width: 24,
               height: 24,
               child: CircularProgressIndicator(
-                  strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary)))));
+                  strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)))));
 
   void _load() {
     if (!_loadingEvents) {
@@ -107,6 +130,17 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
           _loadingEvents = false;
         });
       });
+    }
+  }
+
+  void _updateEventIfNeeded(dynamic event) {
+    if ((event is Event2) && (event.id != null) && mounted) {
+      int? index = Event2.indexInList(_events, id: event.id);
+      if (index != null) {
+        setState(() {
+          _events?[index] = event;
+        });
+      }
     }
   }
 
@@ -145,6 +179,16 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
           _extendingEvents = false;
         });
       }
+    }
+  }
+
+  void _onTapEvent(Event2 event) {
+    Analytics().logSelect(target: 'Group Event: ${event.name}');
+    if (event.hasGame) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game, event: event, group: widget.group,)));
+    }
+    else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, group: widget.group)));
     }
   }
 

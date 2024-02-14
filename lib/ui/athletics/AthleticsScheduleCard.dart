@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -27,11 +29,11 @@ import 'package:illinois/service/Sports.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AthleticsScheduleCard extends StatefulWidget {
   final Game? _game;
@@ -94,12 +96,12 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
       child: Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4.0), bottomRight: Radius.circular(4.0)),
-              boxShadow: [BoxShadow(color: Styles().colors!.fillColorPrimaryTransparent015!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(0, 2))]),
+              boxShadow: [BoxShadow(color: Styles().colors.fillColorPrimaryTransparent015, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(0, 2))]),
           child: Container(
             color: Colors.white,
             child: Column(
               children: <Widget>[
-                Container(height: 4, width: MediaQuery.of(context).size.width, color: Styles().colors!.fillColorPrimaryVariant),
+                Container(height: 4, width: MediaQuery.of(context).size.width, color: Styles().colors.fillColorPrimaryVariant),
                 Column(children: <Widget>[
                     Semantics(
                       label: "$title $subTitle $displayTime",
@@ -136,14 +138,14 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
                 padding: EdgeInsets.only(top: 16, right: 24),
                 child: Text(
                   widget._game!.title,
-                  style: Styles().textStyles?.getTextStyle('widget.card.title.large')
+                  style: Styles().textStyles.getTextStyle('widget.card.title.large')
                 )),
           ),
           Visibility(
             visible: starVisible,
             child: GestureDetector(child: Container(
                   padding: EdgeInsets.only(top: 20, right: 24),
-                  child: Styles().images?.getImage(isGameSaved ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)), onTap: _onTapSaveGame),
+                  child: Styles().images.getImage(isGameSaved ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)), onTap: _onTapSaveGame),
           )
         ],
       ),
@@ -159,7 +161,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
                 Expanded(
                     child: Text(
                   widget._game!.description!,
-                  style: Styles().textStyles?.getTextStyle('widget.card.detail.regular.fat')
+                  style: Styles().textStyles.getTextStyle('widget.card.detail.regular.fat')
                 ))
               ],
             ),
@@ -174,11 +176,11 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
         padding: EdgeInsets.only(top: 12, left: 24, right: 24),
         child: Row(
           children: <Widget>[
-            Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
+            Styles().images.getImage('calendar', excludeFromSemantics: true) ?? Container(),
             Padding(
               padding: EdgeInsets.only(right: 5),
             ),
-            Text(displayTime, style: Styles().textStyles?.getTextStyle('widget.card.detail.medium')),
+            Text(displayTime, style: Styles().textStyles.getTextStyle('widget.card.detail.medium')),
           ],
         ),
       );
@@ -200,7 +202,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
           children: <Widget>[
             Container(
               height: 1,
-              color: Styles().colors!.fillColorPrimaryTransparent015,
+              color: Styles().colors.fillColorPrimaryTransparent015,
             ),
             GestureDetector(
                 behavior: HitTestBehavior.opaque,
@@ -215,16 +217,16 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
                   visible: _hasTickets(),
                   child: Container(
                       height: 48,
-                      color: Styles().colors!.background,
+                      color: Styles().colors.background,
                       child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 24),
                           child: Row(children: <Widget>[
                             Text(_getTicketsInformationText(sport)!,
-                                style: Styles().textStyles?.getTextStyle('widget.card.title.small.fat')),
+                                style: Styles().textStyles.getTextStyle('widget.card.title.small.fat')),
                             Padding(
                               padding: EdgeInsets.only(left: 8),
                             ),
-                            Visibility(visible: hasTickets, child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container())
+                            Visibility(visible: hasTickets, child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container())
                           ]))),
                 ))
           ],
@@ -259,20 +261,20 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
         children: <Widget>[
           Container(
             height: 1,
-            color: Styles().colors!.fillColorPrimaryTransparent015,
+            color: Styles().colors.fillColorPrimaryTransparent015,
           ),
           Container(
               height: 48,
-              color: Styles().colors!.background,
+              color: Styles().colors.background,
               child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24),
                   child: Row(children: <Widget>[
                     Text(Localization().getStringEx("widget.schedule_card.final_score", "Final Score"),
-                        style: Styles().textStyles?.getTextStyle('widget.card.title.small.fat')),
+                        style: Styles().textStyles.getTextStyle('widget.card.title.small.fat')),
                     Expanded(
                       child: Container(),
                     ),
-                    Text(formattedResult, style: Styles().textStyles?.getTextStyle('widget.card.detail.medium')),
+                    Text(formattedResult, style: Styles().textStyles.getTextStyle('widget.card.detail.medium')),
                   ])))
         ],
       ),
@@ -298,15 +300,21 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
 
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
-        _pushTicketsWebPanel();
+        _openTicketsUrl();
       });
     } else {
-      _pushTicketsWebPanel();
+      _openTicketsUrl();
     }
   }
 
-  void _pushTicketsWebPanel() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: widget._game!.links!.tickets)));
+  void _openTicketsUrl() {
+    String? url = widget._game!.links!.tickets;
+    if (StringUtils.isNotEmpty(url)) {
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
+      }
+    }
   }
 
   bool _hasTickets() {

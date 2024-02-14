@@ -20,8 +20,8 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/WPGUFMRadio.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
-import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
-import 'package:illinois/ui/settings/SettingsProfileContentPanel.dart';
+import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -66,8 +66,8 @@ class HeaderBar extends rokwire.HeaderBar {
     titleWidget: titleWidget,
     title: title,
     textStyle: textStyle,
-    textColor: textColor ?? Styles().colors?.white,
-    fontFamily: fontFamily ?? Styles().fontFamilies?.extraBold,
+    textColor: textColor ?? Styles().colors.white,
+    fontFamily: fontFamily ?? Styles().fontFamilies.extraBold,
     fontSize: fontSize,
     letterSpacing: letterSpacing,
     maxLines: maxLines,
@@ -125,15 +125,15 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     pinned: pinned,
     floating: floating,
     expandedHeight: expandedHeight,
-    backgroundColor: backgroundColor ?? Styles().colors?.fillColorPrimaryVariant,
+    backgroundColor: backgroundColor ?? Styles().colors.fillColorPrimaryVariant,
 
     flexWidget: flexWidget,
     flexImageKey: flexImageKey,
     flexImageUrl: flexImageUrl,
-    flexBackColor: flexBackColor ?? Styles().colors?.background,
-    flexRightToLeftTriangleColor: flexRightToLeftTriangleColor ?? Styles().colors?.background,
+    flexBackColor: flexBackColor ?? Styles().colors.background,
+    flexRightToLeftTriangleColor: flexRightToLeftTriangleColor ?? Styles().colors.background,
     flexRightToLeftTriangleHeight: flexRightToLeftTriangleHeight,
-    flexLeftToRightTriangleColor: flexLeftToRightTriangleColor ?? Styles().colors?.fillColorSecondaryTransparent05,
+    flexLeftToRightTriangleColor: flexLeftToRightTriangleColor ?? Styles().colors.fillColorSecondaryTransparent05,
     flexLeftToRightTriangleHeight: flexLeftToRightTriangleHeight,
 
     leadingWidget: leadingWidget,
@@ -141,15 +141,15 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     leadingHint: leadingHint ?? Localization().getStringEx('headerbar.back.hint', ''),
     leadingPadding: leadingPadding,
     leadingOvalSize: leadingOvalSize,
-    leadingOvalColor: leadingOvalColor ?? Styles().colors?.fillColorPrimary,
+    leadingOvalColor: leadingOvalColor ?? Styles().colors.fillColorPrimary,
     leadingIconKey: leadingIconKey,
     onLeading: onLeading,
 
     titleWidget: titleWidget,
     title: title,
     textStyle: textStyle,
-    textColor: textColor ?? Styles().colors?.white,
-    fontFamily: fontFamily ?? Styles().fontFamilies?.extraBold,
+    textColor: textColor ?? Styles().colors.white,
+    fontFamily: fontFamily ?? Styles().fontFamilies.extraBold,
     fontSize: fontSize,
     letterSpacing: letterSpacing,
     maxLines: maxLines,
@@ -196,7 +196,7 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     pinned: pinned,
     floating: floating,
     elevation: elevation,
-    backgroundColor: backgroundColor ?? Styles().colors?.fillColorPrimaryVariant,
+    backgroundColor: backgroundColor ?? Styles().colors.fillColorPrimaryVariant,
 
     leadingWidget: leadingWidget,
     leadingLabel: leadingLabel ?? Localization().getStringEx('headerbar.back.title', 'Back'),
@@ -207,8 +207,8 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     titleWidget: titleWidget,
     title: title,
     textStyle: textStyle,
-    textColor: textColor ?? Styles().colors?.white,
-    fontFamily: fontFamily ?? Styles().fontFamilies?.extraBold,
+    textColor: textColor ?? Styles().colors.white,
+    fontFamily: fontFamily ?? Styles().fontFamilies.extraBold,
     fontSize: fontSize,
     letterSpacing: letterSpacing,
     maxLines: maxLines,
@@ -237,7 +237,7 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
         super(
         pinned: true,
         floating: false,
-        backgroundColor: backgroundColor ?? Styles().colors!.fillColorPrimaryVariant,
+        backgroundColor: backgroundColor ?? Styles().colors.fillColorPrimaryVariant,
         elevation: 0,
         leading: Visibility(visible: backVisible, child: Semantics(
             label: Localization().getStringEx('headerbar.back.title', 'Back'),
@@ -319,7 +319,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 
   @override
   Widget build(BuildContext context) => AppBar(
-    backgroundColor: Styles().colors?.fillColorPrimaryVariant,
+    backgroundColor: Styles().colors.fillColorPrimaryVariant,
     leading: _buildHeaderLeading(),
     title: _buildHeaderTitle(),
     actions: _buildHeaderActions(),
@@ -337,12 +337,12 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 
   Widget _buildHeaderHomeButton() {
     return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images?.getImage('university-logo', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapHome(),),);
+      IconButton(icon: Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapHome(),),);
   }
 
   Widget _buildHeaderBackButton() {
     return Semantics(label: Localization().getStringEx('headerbar.back.title', 'Back'), hint: Localization().getStringEx('headerbar.back.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images?.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapBack()));
+      IconButton(icon: Styles().images.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapBack()));
   }
 
   Widget _buildHeaderTitle() {
@@ -354,12 +354,12 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 
   Widget _buildHeaderTitleText() {
     return Semantics(label: widget.title, excludeSemantics: true, child:
-      Text(widget.title ?? '', style: Styles().textStyles?.getTextStyle("widget.heading.regular.extra_fat"),),);
+      Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),),);
   }
 
   Widget _buildHeaderRadioButton() {
     return Semantics(label: Localization().getStringEx('headerbar.radio.title', 'WPGU 107.1 FM'), hint: Localization().getStringEx('headerbar.radio.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images?.getImage('radio-white', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapRadio(),),);
+      IconButton(icon: Styles().images.getImage('radio-white', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapRadio(),),);
   }
 
   List<Widget> _buildHeaderActions() {
@@ -372,10 +372,10 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 
   Widget _buildHeaderSettingsButton() {
     return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
-//    IconButton(icon: Styles().images?.getImage('images/settings-white.png', excludeFromSemantics: true) ?? Container(), onPressed: () => onTapSettings())
+//    IconButton(icon: Styles().images.getImage('images/settings-white.png', excludeFromSemantics: true) ?? Container(), onPressed: () => onTapSettings())
       InkWell(onTap: () => _onTapSettings(), child:
         Padding(padding: EdgeInsets.only(top: 16, bottom: 16, right: 16, left: 6), child:
-          Styles().images?.getImage('settings-white', excludeFromSemantics: true),
+          Styles().images.getImage('settings-white', excludeFromSemantics: true),
         )
       )
     );
@@ -384,14 +384,14 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
   Widget _buildHeaderNotificationsButton() {
     int unreadMsgsCount = Inbox().unreadMessagesCount;
     return Semantics(label: Localization().getStringEx('headerbar.notifications.title', 'Notifications'), hint: Localization().getStringEx('headerbar.notifications.hint', ''), button: true, excludeSemantics: true, child:
-//    IconButton(icon: Styles().images?.getImage('images/notifications-white.png', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapNotifications())
+//    IconButton(icon: Styles().images.getImage('images/notifications-white.png', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapNotifications())
       InkWell(onTap: () => _onTapNotifications(), child:
         Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 2), child:
           Stack(alignment: Alignment.topRight, children: [
-            Center(child: Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Styles().images?.getImage('notification-white', excludeFromSemantics: true,))),
+            Center(child: Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Styles().images.getImage('notification-white', excludeFromSemantics: true,))),
             Opacity(opacity: (unreadMsgsCount > 0) ? 1 : 0, child:
               Align(alignment: Alignment.topRight, child: Container(padding: EdgeInsets.all(4), decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.red), child:
-                Text(unreadMsgsCount.toString(), style: Styles().textStyles?.getTextStyle("widget.title.light.tiny")))))
+                Text(unreadMsgsCount.toString(), style: Styles().textStyles.getTextStyle("widget.title.light.tiny")))))
           ])
         )
       )
@@ -400,7 +400,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 
   Widget _buildHeaderPersonalInfoButton() {
     return Semantics(label: Localization().getStringEx('headerbar.personal_information.title', 'Personal Information'), hint: Localization().getStringEx('headerbar.personal_information.hint', ''), button: true, excludeSemantics: true, child:
-//    IconButton(icon: Styles().images?.getImage('images/person-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations())
+//    IconButton(icon: Styles().images.getImage('images/person-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations())
       InkWell(onTap: () => _onTapPersonalInformation(), child:
         CollectionUtils.isNotEmpty(Auth2().authPicture) ?
           Padding(padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5), child:
@@ -411,7 +411,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
             )
           ) :
           Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 6), child:
-            Styles().images?.getImage('person-circle-white', excludeFromSemantics: true),
+            Styles().images.getImage('person-circle-white', excludeFromSemantics: true),
           ),
       )
     );
@@ -444,18 +444,18 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 
   void _onTapNotifications() {
     String? currentRouteName = ModalRoute.of(context)?.settings.name;
-    if (currentRouteName != SettingsNotificationsContentPanel.routeName) {
+    if (currentRouteName != NotificationsHomePanel.routeName) {
       Analytics().logSelect(target: "Notifications");
-      SettingsNotificationsContentPanel.present(context,
-          content: (Inbox().unreadMessagesCount > 0) ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
+      NotificationsHomePanel.present(context,
+          content: (Inbox().unreadMessagesCount > 0) ? NotificationsContent.unread : NotificationsContent.all);
     }
   }
 
   void _onTapPersonalInformation() {
     String? currentRouteName = ModalRoute.of(context)?.settings.name;
-    if (currentRouteName != SettingsProfileContentPanel.routeName) {
+    if (currentRouteName != ProfileHomePanel.routeName) {
       Analytics().logSelect(target: "Personal Information");
-      SettingsProfileContentPanel.present(context);
+      ProfileHomePanel.present(context);
     }
   }
 }

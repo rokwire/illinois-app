@@ -13,10 +13,9 @@ import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Guide.dart';
+import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
-import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
-import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
@@ -30,7 +29,7 @@ import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
+import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -111,8 +110,8 @@ extension FavoriteExt on Favorite {
   Color? get favoriteDetailTextColor {
     if (this is LaundryRoom) {
       switch((this as LaundryRoom).status) {
-        case LaundryRoomStatus.online: return Styles().colors?.fillColorPrimary;
-        case LaundryRoomStatus.offline: return Styles().colors?.disabledTextColor;
+        case LaundryRoomStatus.online: return Styles().colors.fillColorPrimary;
+        case LaundryRoomStatus.offline: return Styles().colors.disabledTextColor;
         default: return null;
       }
     }
@@ -121,28 +120,28 @@ extension FavoriteExt on Favorite {
 
   Widget? get favoriteDetailIcon {
     if (this is Event) {
-      return Styles().images?.getImage('events', excludeFromSemantics: true);
+      return Styles().images.getImage('events', excludeFromSemantics: true);
     }
     else if (this is Event2) {
-      return Styles().images?.getImage('events', excludeFromSemantics: true);
+      return Styles().images.getImage('events', excludeFromSemantics: true);
     }
     else if (this is Dining) {
-      return Styles().images?.getImage('dining', excludeFromSemantics: true);
+      return Styles().images.getImage('dining', excludeFromSemantics: true);
     }
     else if (this is Game) {
-      return Styles().images?.getImage('athletics', excludeFromSemantics: true);
+      return Styles().images.getImage('athletics', excludeFromSemantics: true);
     }
     else if (this is News) {
-      return Styles().images?.getImage('news', excludeFromSemantics: true);
+      return Styles().images.getImage('calendar', excludeFromSemantics: true);
     }
     else if (this is LaundryRoom) {
-      return Styles().images?.getImage('laundry', excludeFromSemantics: true);
+      return Styles().images.getImage('laundry', excludeFromSemantics: true);
     }
     else if (this is ExplorePOI) {
-      return Styles().images?.getImage('location', excludeFromSemantics: true);
+      return Styles().images.getImage('location', excludeFromSemantics: true);
     }
     else if (this is Appointment) {
-      return Styles().images?.getImage('appointments', excludeFromSemantics: true);
+      return Styles().images.getImage('appointments', excludeFromSemantics: true);
     }
     else {
       return null;
@@ -150,7 +149,7 @@ extension FavoriteExt on Favorite {
   }
 
   Widget? favoriteStarIcon({required bool selected}) {
-    return Styles().images?.getImage(selected ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true);
+    return Styles().images.getImage(selected ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true);
   }
 
   Color? get favoriteHeaderColor {
@@ -161,22 +160,22 @@ extension FavoriteExt on Favorite {
       return (this as Game).uiColor;
     }
     else if (this is News) {
-      return Styles().colors?.fillColorPrimary;
+      return Styles().colors.fillColorPrimary;
     }
     else if (this is LaundryRoom) {
-      return Styles().colors?.accentColor2;
+      return Styles().colors.accentColor2;
     }
     else if (this is MTDStop) {
-      return Styles().colors?.accentColor3;
+      return Styles().colors.accentColor3;
     }
     else if (this is GuideFavorite) {
-      return Styles().colors?.accentColor3;
+      return Styles().colors.accentColor3;
     }
     else if (this is InboxMessage) {
-      return Styles().colors?.fillColorSecondary;
+      return Styles().colors.fillColorSecondary;
     }
     else {
-      return Styles().colors?.fillColorSecondary;
+      return Styles().colors.fillColorSecondary;
     }
   }
 
@@ -220,7 +219,7 @@ extension FavoriteExt on Favorite {
       (this as ExplorePOI).launchDirections();
     }
     else if (this is InboxMessage) {
-      SettingsNotificationsContentPanel.launchMessageDetail(this as InboxMessage);
+      NotificationsHomePanel.launchMessageDetail(this as InboxMessage);
     }
   }
   
@@ -237,10 +236,10 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Dining); } ));
     }
     else if (lowerCaseKey == Game.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.events)));
     }
     else if (lowerCaseKey == News.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsListPanel()));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.news)));
     }
     else if (lowerCaseKey == LaundryRoom.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));

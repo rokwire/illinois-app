@@ -61,7 +61,7 @@ class _PollDetailPanelState extends State<PollDetailPanel> implements Notificati
     return Scaffold(
         appBar: HeaderBar(title: Localization().getStringEx('panel.poll.detail.header.title', 'Poll')),
         body: SingleChildScrollView(child: _buildContent()),
-        backgroundColor: Styles().colors!.white,
+        backgroundColor: Styles().colors.white,
         bottomNavigationBar: uiuc.TabBar());
   }
 

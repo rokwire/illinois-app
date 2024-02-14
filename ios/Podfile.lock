@@ -1,12 +1,12 @@
 PODS:
-  - "app_settings (3.0.0+1)":
+  - app_settings (5.1.1):
     - Flutter
   - audio_session (0.0.1):
     - Flutter
   - BerTlv (0.2.5)
-  - CocoaLumberjack (3.8.0):
-    - CocoaLumberjack/Core (= 3.8.0)
-  - CocoaLumberjack/Core (3.8.0)
+  - CocoaLumberjack (3.8.2):
+    - CocoaLumberjack/Core (= 3.8.2)
+  - CocoaLumberjack/Core (3.8.2)
   - connectivity_plus (0.0.1):
     - Flutter
     - ReachabilitySwift
@@ -14,34 +14,34 @@ PODS:
     - Flutter
   - device_info (0.0.1):
     - Flutter
-  - Firebase/CoreOnly (10.9.0):
-    - FirebaseCore (= 10.9.0)
-  - Firebase/Crashlytics (10.9.0):
+  - Firebase/CoreOnly (10.18.0):
+    - FirebaseCore (= 10.18.0)
+  - Firebase/Crashlytics (10.18.0):
     - Firebase/CoreOnly
-    - FirebaseCrashlytics (~> 10.9.0)
-  - Firebase/Messaging (10.9.0):
+    - FirebaseCrashlytics (~> 10.18.0)
+  - Firebase/Messaging (10.18.0):
     - Firebase/CoreOnly
-    - FirebaseMessaging (~> 10.9.0)
-  - firebase_core (2.13.0):
-    - Firebase/CoreOnly (= 10.9.0)
+    - FirebaseMessaging (~> 10.18.0)
+  - firebase_core (2.23.0):
+    - Firebase/CoreOnly (= 10.18.0)
     - Flutter
-  - firebase_crashlytics (3.3.1):
-    - Firebase/Crashlytics (= 10.9.0)
+  - firebase_crashlytics (3.4.5):
+    - Firebase/Crashlytics (= 10.18.0)
     - firebase_core
     - Flutter
-  - firebase_messaging (14.6.1):
-    - Firebase/Messaging (= 10.9.0)
+  - firebase_messaging (14.7.5):
+    - Firebase/Messaging (= 10.18.0)
     - firebase_core
     - Flutter
-  - FirebaseCore (10.9.0):
+  - FirebaseCore (10.18.0):
     - FirebaseCoreInternal (~> 10.0)
-    - GoogleUtilities/Environment (~> 7.8)
-    - GoogleUtilities/Logger (~> 7.8)
-  - FirebaseCoreExtension (10.10.0):
+    - GoogleUtilities/Environment (~> 7.12)
+    - GoogleUtilities/Logger (~> 7.12)
+  - FirebaseCoreExtension (10.20.0):
     - FirebaseCore (~> 10.0)
-  - FirebaseCoreInternal (10.10.0):
+  - FirebaseCoreInternal (10.20.0):
     - "GoogleUtilities/NSData+zlib (~> 7.8)"
-  - FirebaseCrashlytics (10.9.0):
+  - FirebaseCrashlytics (10.18.0):
     - FirebaseCore (~> 10.5)
     - FirebaseInstallations (~> 10.0)
     - FirebaseSessions (~> 10.5)
@@ -49,12 +49,12 @@ PODS:
     - GoogleUtilities/Environment (~> 7.8)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (~> 2.1)
-  - FirebaseInstallations (10.10.0):
+  - FirebaseInstallations (10.20.0):
     - FirebaseCore (~> 10.0)
     - GoogleUtilities/Environment (~> 7.8)
     - GoogleUtilities/UserDefaults (~> 7.8)
     - PromisesObjC (~> 2.1)
-  - FirebaseMessaging (10.9.0):
+  - FirebaseMessaging (10.18.0):
     - FirebaseCore (~> 10.0)
     - FirebaseInstallations (~> 10.0)
     - GoogleDataTransport (~> 9.2)
@@ -63,7 +63,7 @@ PODS:
     - GoogleUtilities/Reachability (~> 7.8)
     - GoogleUtilities/UserDefaults (~> 7.8)
     - nanopb (< 2.30910.0, >= 2.30908.0)
-  - FirebaseSessions (10.10.0):
+  - FirebaseSessions (10.20.0):
     - FirebaseCore (~> 10.5)
     - FirebaseCoreExtension (~> 10.0)
     - FirebaseInstallations (~> 10.0)
@@ -82,6 +82,8 @@ PODS:
     - Flutter
   - flutter_native_timezone (0.0.1):
     - Flutter
+  - flutter_pdfview (1.0.2):
+    - Flutter
   - fluttertoast (0.0.2):
     - Flutter
     - Toast
@@ -95,7 +97,7 @@ PODS:
   - google_maps_flutter_ios (0.0.1):
     - Flutter
     - GoogleMaps
-  - GoogleDataTransport (9.2.3):
+  - GoogleDataTransport (9.3.0):
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
@@ -104,22 +106,22 @@ PODS:
   - GoogleMaps/Base (7.2.0)
   - GoogleMaps/Maps (7.2.0):
     - GoogleMaps/Base
-  - GoogleUtilities/AppDelegateSwizzler (7.11.1):
+  - GoogleUtilities/AppDelegateSwizzler (7.12.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
     - GoogleUtilities/Network
-  - GoogleUtilities/Environment (7.11.1):
+  - GoogleUtilities/Environment (7.12.0):
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleUtilities/Logger (7.11.1):
+  - GoogleUtilities/Logger (7.12.0):
     - GoogleUtilities/Environment
-  - GoogleUtilities/Network (7.11.1):
+  - GoogleUtilities/Network (7.12.0):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
     - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (7.11.1)"
-  - GoogleUtilities/Reachability (7.11.1):
+  - "GoogleUtilities/NSData+zlib (7.12.0)"
+  - GoogleUtilities/Reachability (7.12.0):
     - GoogleUtilities/Logger
-  - GoogleUtilities/UserDefaults (7.11.1):
+  - GoogleUtilities/UserDefaults (7.12.0):
     - GoogleUtilities/Logger
   - image_picker_ios (0.0.1):
     - Flutter
@@ -129,11 +131,11 @@ PODS:
   - just_audio (0.0.1):
     - Flutter
   - Mixpanel (5.0.2)
-  - nanopb (2.30909.0):
-    - nanopb/decode (= 2.30909.0)
-    - nanopb/encode (= 2.30909.0)
-  - nanopb/decode (2.30909.0)
-  - nanopb/encode (2.30909.0)
+  - nanopb (2.30909.1):
+    - nanopb/decode (= 2.30909.1)
+    - nanopb/encode (= 2.30909.1)
+  - nanopb/decode (2.30909.1)
+  - nanopb/encode (2.30909.1)
   - OrigoSDK-Debug (1.10.0):
     - BerTlv
     - CocoaLumberjack
@@ -146,14 +148,18 @@ PODS:
     - Mixpanel (~> 5.0.2)
   - package_info (0.0.1):
     - Flutter
+  - package_info_plus (0.4.5):
+    - Flutter
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - PromisesObjC (2.2.0)
-  - PromisesSwift (2.2.0):
-    - PromisesObjC (= 2.2.0)
+  - PromisesObjC (2.3.1)
+  - PromisesSwift (2.3.1):
+    - PromisesObjC (= 2.3.1)
   - ReachabilitySwift (5.0.0)
-  - rokwire_plugin (1.5.4):
+  - record (0.0.1):
+    - Flutter
+  - rokwire_plugin (1.6.0):
     - Flutter
   - SeosMobileKeysSDK-Debug (7.7.5):
     - BerTlv
@@ -176,7 +182,7 @@ PODS:
   - sqflite (0.0.3):
     - Flutter
     - FMDB (>= 2.7.5)
-  - Toast (4.0.0)
+  - Toast (4.1.0)
   - Try (2.1.1)
   - uni_links (0.0.1):
     - Flutter
@@ -184,7 +190,8 @@ PODS:
     - Flutter
   - video_player_avfoundation (0.0.1):
     - Flutter
-  - wakelock (0.0.1):
+    - FlutterMacOS
+  - wakelock_plus (0.0.1):
     - Flutter
   - webview_flutter_wkwebview (0.0.1):
     - Flutter
@@ -207,6 +214,7 @@ DEPENDENCIES:
   - flutter_exif_rotation (from `.symlinks/plugins/flutter_exif_rotation/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_native_timezone (from `.symlinks/plugins/flutter_native_timezone/ios`)
+  - flutter_pdfview (from `.symlinks/plugins/flutter_pdfview/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - gallery_saver (from `.symlinks/plugins/gallery_saver/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
@@ -218,7 +226,9 @@ DEPENDENCIES:
   - OrigoSDK-Debug (from `../libs/hid-origo/ios/Debug/OrigoSDK-Debug.podspec`)
   - OrigoSDK-Release (from `../libs/hid-origo/ios/Release/OrigoSDK-Release.podspec`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
+  - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - record (from `.symlinks/plugins/record/ios`)
   - rokwire_plugin (from `.symlinks/plugins/rokwire_plugin/ios`)
   - SeosMobileKeysSDK-Debug (from `../libs/hid-origo/ios/Debug/SeosMobileKeysSDK-Debug.podspec`)
   - SeosMobileKeysSDK-Release (from `../libs/hid-origo/ios/Release/SeosMobileKeysSDK-Release.podspec`)
@@ -228,8 +238,8 @@ DEPENDENCIES:
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
   - uni_links (from `.symlinks/plugins/uni_links/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
-  - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/ios`)
-  - wakelock (from `.symlinks/plugins/wakelock/ios`)
+  - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/darwin`)
+  - wakelock_plus (from `.symlinks/plugins/wakelock_plus/ios`)
   - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
   - ZXingObjC (= 3.6.4)
 
@@ -288,6 +298,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
   flutter_native_timezone:
     :path: ".symlinks/plugins/flutter_native_timezone/ios"
+  flutter_pdfview:
+    :path: ".symlinks/plugins/flutter_pdfview/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
   gallery_saver:
@@ -308,8 +320,12 @@ EXTERNAL SOURCES:
     :path: "../libs/hid-origo/ios/Release/OrigoSDK-Release.podspec"
   package_info:
     :path: ".symlinks/plugins/package_info/ios"
+  package_info_plus:
+    :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  record:
+    :path: ".symlinks/plugins/record/ios"
   rokwire_plugin:
     :path: ".symlinks/plugins/rokwire_plugin/ios"
   SeosMobileKeysSDK-Debug:
@@ -329,74 +345,77 @@ EXTERNAL SOURCES:
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
   video_player_avfoundation:
-    :path: ".symlinks/plugins/video_player_avfoundation/ios"
-  wakelock:
-    :path: ".symlinks/plugins/wakelock/ios"
+    :path: ".symlinks/plugins/video_player_avfoundation/darwin"
+  wakelock_plus:
+    :path: ".symlinks/plugins/wakelock_plus/ios"
   webview_flutter_wkwebview:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
 
 SPEC CHECKSUMS:
-  app_settings: d103828c9f5d515c4df9ee754dabd443f7cedcf3
+  app_settings: 017320c6a680cdc94c799949d95b84cb69389ebc
   audio_session: 4f3e461722055d21515cf3261b64c973c062f345
   BerTlv: c94b89a7b93bf8c1881691a8d105ec87a4a10759
-  CocoaLumberjack: 78abfb691154e2a9df8ded4350d504ee19d90732
+  CocoaLumberjack: f8d89a516e7710fdb2e9b8f1560b16ec6040eef0
   connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
   device_calendar: 9cb33f88a02e19652ec7b8b122ca778f751b1f7b
   device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
-  Firebase: bd152f0f3d278c4060c5c71359db08ebcfd5a3e2
-  firebase_core: fc68c0f9eec4e800b9418deff14a7e0a504016f3
-  firebase_crashlytics: 6c82b5f80f225b2429ebc5fdadde5b7e7735ed4e
-  firebase_messaging: ffb4e7c95d4daca8cef4eca0283f0ddd2b365d40
-  FirebaseCore: b68d3616526ec02e4d155166bbafb8eca64af557
-  FirebaseCoreExtension: 8d93ebbf6838a874b4ed82a564c9d6705f8365dd
-  FirebaseCoreInternal: 971029061d326000d65bfdc21f5502c75c8b0893
-  FirebaseCrashlytics: b60329455285aff853e54139d8ddbfe1e5f2b9f9
-  FirebaseInstallations: 52153982b057d3afcb4e1fbb3eb0b6d00611e681
-  FirebaseMessaging: 6b7052cc3da7bc8e5f72bef871243e8f04a14eed
-  FirebaseSessions: 5f9e62cd4096e24d2011cbd845b0efceffaee1ec
+  Firebase: 414ad272f8d02dfbf12662a9d43f4bba9bec2a06
+  firebase_core: 29d66baf806970cda37c93621b27cd369b27db1b
+  firebase_crashlytics: d568dbe2dfb06c3f3ba985c7f6a59f2961288512
+  firebase_messaging: 0a39f2514e1f27b0274b0d2fa99048f57856ee7c
+  FirebaseCore: 2322423314d92f946219c8791674d2f3345b598f
+  FirebaseCoreExtension: 0659f035b88c5a7a15a9763c48c2e6ca8c0a2977
+  FirebaseCoreInternal: efeeb171ac02d623bdaefe121539939821e10811
+  FirebaseCrashlytics: 86d5bce01f42fa1db265f87ff1d591f04db610ec
+  FirebaseInstallations: 558b1da7d65afeb996fd5c814332f013234ece4e
+  FirebaseMessaging: 9bc34a98d2e0237e1b121915120d4d48ddcf301e
+  FirebaseSessions: 2f348975f6d1c139231c180e12194161da2e0cd6
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_barcode_scanner: 7a1144744c28dc0c57a8de7218ffe5ec59a9e4bf
   flutter_beep: 54fb393b22dfa0f0e4573c81b1c74dd71c4e5af8
   flutter_exif_rotation: de6b54e8bd54a687f28d6397d1a890391de41111
   flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
   flutter_native_timezone: 5f05b2de06c9776b4cc70e1839f03de178394d22
-  fluttertoast: fafc4fa4d01a6a9e4f772ecd190ffa525e9e2d9c
+  flutter_pdfview: 25f53dd6097661e6395b17de506e6060585946bd
+  fluttertoast: 31b00dabfa7fb7bacd9e7dbee580d7a2ff4bf265
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   gallery_saver: 9fc173c9f4fcc48af53b2a9ebea1b643255be542
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
   google_maps_flutter_ios: 3e0b99383a8003b8169d06e7e324170bd0424105
-  GoogleDataTransport: f0308f5905a745f94fb91fea9c6cbaf3831cb1bd
+  GoogleDataTransport: 57c22343ab29bc686febbf7cbb13bad167c2d8fe
   GoogleMaps: 65ce5426e2398bb81433c8076f2ab6419c2c5537
-  GoogleUtilities: 9aa0ad5a7bc171f8bae016300bfcfa3fb8425749
+  GoogleUtilities: 0759d1a57ebb953965c2dfe0ba4c82e95ccc2e34
   image_picker_ios: 4a8aadfbb6dc30ad5141a2ce3832af9214a705b5
   in_app_review: 318597b3a06c22bb46dc454d56828c85f444f99d
   JSONModel: 02ab723958366a3fd27da57ea2af2113658762e9
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   Mixpanel: 62e5fb088d56a7ba1369aeb335d0bff7ebae061e
-  nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
+  nanopb: d4d75c12cd1316f4a64e3c6963f879ecd4b5e0d5
   OrigoSDK-Debug: 425bf16ad0796cb41a1b9239031b09ba33946376
   OrigoSDK-Release: 5e57c26ed74121d287ad820d3b7001e018561fb9
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
-  path_provider_foundation: eaf5b3e458fc0e5fbb9940fb09980e853fe058b8
-  PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
-  PromisesSwift: cf9eb58666a43bbe007302226e510b16c1e10959
+  package_info_plus: 115f4ad11e0698c8c1c5d8a689390df880f47e85
+  path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
+  PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
+  PromisesSwift: 28dca69a9c40779916ac2d6985a0192a5cb4a265
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
-  rokwire_plugin: 6724fd03fa63d1076c62e37bb7045fba40cbcf8f
+  record: cae05d8dd3cdb1dea3511b20e5a5811a1ae00d0d
+  rokwire_plugin: 0553b4722ec910e78cf60a01da3129d887635b48
   SeosMobileKeysSDK-Debug: 41dc15710ad56f340a9ef3e82d987623c289d9ce
   SeosMobileKeysSDK-Release: add079b6221cd9d42b4c088407b2f8f365c0cd53
   share: 0b2c3e82132f5888bccca3351c504d0003b3b410
-  shared_preferences_foundation: e2dae3258e06f44cc55f49d42024fd8dd03c590c
+  shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
   speech_to_text: b43a7d99aef037bd758ed8e45d79bbac035d2dfe
   sqflite: 31f7eba61e3074736dff8807a9b41581e4f7f15a
-  Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
+  Toast: ec33c32b8688982cecc6348adeae667c1b9938da
   Try: 5ef669ae832617b3cee58cb2c6f99fb767a4ff96
   uni_links: d97da20c7701486ba192624d99bffaaffcfc298a
-  url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
-  video_player_avfoundation: 81e49bb3d9fb63dccf9fa0f6d877dc3ddbeac126
-  wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
+  url_launcher_ios: bf5ce03e0e2088bad9cc378ea97fa0ed5b49673b
+  video_player_avfoundation: e9e6f9cae7d7a6d9b43519b0aab382bca60fcfd1
+  wakelock_plus: 8b09852c8876491e4b6d179e17dfe2a0b5f60d47
   webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f
   ZXingObjC: 512b34b9b6920e8ef0461a4159d0814c5e48c28a
 
 PODFILE CHECKSUM: e4dceef7a484caba641d3b508b2df500c714aa77
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.15.0

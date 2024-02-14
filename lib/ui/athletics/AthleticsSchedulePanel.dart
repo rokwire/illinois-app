@@ -60,20 +60,20 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
     return Scaffold(
       appBar: HeaderBar(title: headerLabel,),
       body: _loading ? Center(child: CircularProgressIndicator()) : Column(children: <Widget>[
-        Container(color:Styles().colors!.fillColorPrimaryVariant, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(children: <Widget>[
+        Container(color:Styles().colors.fillColorPrimaryVariant, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(children: <Widget>[
           Row(children: <Widget>[
-            Styles().images?.getImage(widget.sport!.iconPath!, excludeFromSemantics: true) ?? Container(),
+            Styles().images.getImage(widget.sport!.iconPath!, excludeFromSemantics: true) ?? Container(),
             Padding(padding: EdgeInsets.only(left: 8)),
-            Text(widget.sport!.name!, style: Styles().textStyles?.getTextStyle("widget.athletics.heading.regular.variant")),
+            Text(widget.sport!.name!, style: Styles().textStyles.getTextStyle("widget.athletics.heading.regular.variant")),
           ],),
           Padding(padding: EdgeInsets.only(top: 8)),
           Row(children: <Widget>[
-            Expanded(child: Text(scheduleLabel, style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat")))
+            Expanded(child: Text(scheduleLabel, style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat")))
           ],)
         ],)
         ),),
 
-        Container(color:Styles().colors!.background, child:
+        Container(color:Styles().colors.background, child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:Row(children: <Widget>[
           Expanded(child:_ScheduleTabButton(
             text: Localization().getStringEx("panel.athletics_schedule.button.upcoming.title", "Upcoming"),
@@ -88,7 +88,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
         ],))
         ),
 
-        Expanded(child: Container(color:Styles().colors!.background, child:
+        Expanded(child: Container(color:Styles().colors.background, child:
         ListView.separated(
           shrinkWrap: true,
           separatorBuilder: (context, index) => Divider(color: Colors.transparent, height: 24,),
@@ -101,7 +101,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
         ))),
         Visibility(visible: (itemsCount > 1), child: Container(height: 48))
       ]),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -210,7 +210,7 @@ class _ScheduleTabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BorderSide borderSide = BorderSide(color: Styles().colors!.surfaceAccent!, width: 2, style: BorderStyle.solid);
+    BorderSide borderSide = BorderSide(color: Styles().colors.surfaceAccent, width: 2, style: BorderStyle.solid);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
@@ -220,9 +220,9 @@ class _ScheduleTabButton extends StatelessWidget {
           button: true,
           excludeSemantics: true,
           child:Container(
-            height: 32 + 16*MediaQuery.of(context).textScaleFactor,
+            height: MediaQuery.of(context).textScaler.scale(32 + 16),
             decoration: BoxDecoration(
-              color: selected! ? Colors.white : Styles().colors!.lightGray,
+              color: selected! ? Colors.white : Styles().colors.lightGray,
               border: Border.fromBorderSide(borderSide),
               borderRadius: left! ? BorderRadius.horizontal(left: Radius.circular(100.0)) : BorderRadius.horizontal(right: Radius.circular(100.0)),
             ),
@@ -231,7 +231,7 @@ class _ScheduleTabButton extends StatelessWidget {
             Expanded(child: Text(text!,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
-                    style: Styles().textStyles?.getTextStyle("widget.detail.medium"))),
+                    style: Styles().textStyles.getTextStyle("widget.detail.medium"))),
             ])
           )),
     );

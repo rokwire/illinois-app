@@ -33,13 +33,13 @@ class _SettingsLinkedAccountState extends State<SettingsLinkedAccountPanel>{
                   child: Column(children:[
                     Row(children: [ Expanded(child:
                       Text(_description,
-                        style: Styles().textStyles?.getTextStyle("widget.description.medium"),
+                        style: Styles().textStyles.getTextStyle("widget.description.medium"),
                       )
                     )],),
                     Container(height: 48),
                     LinkAccountContentWidget(linkedAccount: _linkedAccount, onTapDisconnect: _onTapDisconnect, mode: widget.mode, isLoading: _isLoading,),
                     Container(height: 36),
-                    Text(StringUtils.ensureNotEmpty(_errorMsg), style: Styles().textStyles?.getTextStyle("panel.settings.error.text")),
+                    Text(StringUtils.ensureNotEmpty(_errorMsg), style: Styles().textStyles.getTextStyle("panel.settings.error.text")),
           ]))))]),);
   }
 
@@ -145,34 +145,34 @@ class LinkAccountContentWidget extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(border: Border.all(color: Styles().colors!.lightGray!),borderRadius: BorderRadius.all(Radius.circular(4))),
+      decoration: BoxDecoration(border: Border.all(color: Styles().colors.lightGray),borderRadius: BorderRadius.all(Radius.circular(4))),
       child: Column(
         children: [
           Container(
             padding: EdgeInsets.symmetric(horizontal: 13),
-            color: Styles().colors!.white,
+            color: Styles().colors.white,
             child: Column(
               children: [
                 Container(height: 12,),
                 Row(
                   children: [
-                    Expanded(child: Text(_accountTypeText, style: Styles().textStyles?.getTextStyle("panel.settings.link_account.type.title")))
+                    Expanded(child: Text(_accountTypeText, style: Styles().textStyles.getTextStyle("panel.settings.link_account.type.title")))
                   ],
                 ),
                 Row(
                   children: [
-                    Expanded(child: Text(_identifier, style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat") ))
+                    Expanded(child: Text(_identifier, style: Styles().textStyles.getTextStyle("widget.detail.regular.fat") ))
                   ],
                 ),
                 Container(height: 12,),
               ],
             ),
           ),
-          Container(height: 1, color: Styles().colors?.lightGray!,),
+          Container(height: 1, color: Styles().colors.lightGray,),
           Container(
-            color: Styles().colors!.white,
+            color: Styles().colors.white,
             child: RibbonButton(
-              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               label: _buttonText,
               progress: isLoading,

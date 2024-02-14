@@ -69,33 +69,33 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
     List<Widget> contentList = Guide().isEntryReminder(widget.guideEntry) ? <Widget>[
       Padding(padding: EdgeInsets.only(right: 17), child:
         Text(reminderDate ?? '',
-          style: Styles().textStyles?.getTextStyle("widget.title.medium.extra_fat")),),
+          style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat")),),
       Container(height: 4),
       HtmlWidget(
           StringUtils.ensureNotEmpty(titleHtml),
           onTapUrl : (url) {_onTapLink(url); return true;},
-          textStyle: Styles().textStyles?.getTextStyle("widget.title.regular.medium_fat"),
+          textStyle: Styles().textStyles.getTextStyle("widget.title.regular.medium_fat"),
       )
     ] : <Widget>[
       Padding(padding: EdgeInsets.only(right: 17), child:
         HtmlWidget(
           StringUtils.ensureNotEmpty(titleHtml),
           onTapUrl : (url) {_onTapLink(url); return true;},
-          textStyle: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")
+          textStyle: Styles().textStyles.getTextStyle("widget.title.large.extra_fat")
         ),
       ),
       Container(height: 8),
       HtmlWidget(
         StringUtils.ensureNotEmpty(descriptionHtml),
         onTapUrl : (url) {_onTapLink(url); return true;},
-        textStyle: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
+        textStyle: Styles().textStyles.getTextStyle("widget.item.regular.thin")
       ),
     ];
 
     return Container(
       decoration: BoxDecoration(
-          color: Styles().colors?.white,
-          boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+          color: Styles().colors.white,
+          boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
       ),
       child: Stack(children: [
@@ -104,7 +104,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
           ),)),
-        Container(color: Styles().colors?.accentColor3, height: 4),
+        Container(color: Styles().colors.accentColor3, height: 4),
         Visibility(visible: _canFavorite, child:
           Align(alignment: Alignment.topRight, child:
           Semantics(
@@ -118,7 +118,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
             child:
             GestureDetector(onTap: _onTapFavorite, child:
               Container(padding: EdgeInsets.only(top:16, right:16, left: 20, bottom: 20), child:
-              Styles().images?.getImage(_isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
+              Styles().images.getImage(_isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
           ),)),),),
       ],),
     );

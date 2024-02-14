@@ -12,6 +12,6 @@ extension DiningExt on Dining {
         Analytics.LogAttributeLocation : location?.analyticsValue,
   };
 
-  Color? get uiColor => Styles().colors?.diningColor;
+  Color? get uiColor => Styles().colors.diningColor;
 
 }

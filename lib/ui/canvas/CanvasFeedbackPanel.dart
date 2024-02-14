@@ -39,7 +39,7 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
     return Scaffold(
         appBar: HeaderBar(title: Localization().getStringEx('panel.canvas_feedback.header.title', 'Feedback')),
         body: _buildContent(),
-        backgroundColor: Styles().colors!.white,
+        backgroundColor: Styles().colors.white,
         bottomNavigationBar: uiuc.TabBar());
   }
 
@@ -53,41 +53,41 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
             Text(
                 Localization()
                     .getStringEx('panel.canvas_feedback.file_ticket.label', 'File a ticket for a personal response from our support team.'),
-                style: Styles().textStyles?.getTextStyle("widget.message.medium.thin")),
+                style: Styles().textStyles.getTextStyle("widget.message.medium.thin")),
             Padding(
                 padding: EdgeInsets.only(top: 25),
                 child: Text(Localization().getStringEx('panel.canvas_feedback.subject.label', 'Subject'),
-                    style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"))),
+                    style: Styles().textStyles.getTextStyle("widget.title.regular.fat"))),
             Padding(
                 padding: EdgeInsets.only(top: 10),
                 child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     decoration: BoxDecoration(
-                        border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 1),
+                        border: Border.all(color: Styles().colors.fillColorSecondary, width: 1),
                         borderRadius: BorderRadius.all(Radius.circular(7))),
                     child: TextField(
                         controller: _subjectController,
-                        cursorColor: Styles().colors!.fillColorSecondary,
+                        cursorColor: Styles().colors.fillColorSecondary,
                         keyboardType: TextInputType.text,
-                        style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"),
+                        style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
                         decoration: InputDecoration(border: InputBorder.none)))),
             Padding(
                 padding: EdgeInsets.only(top: 25),
                 child: Text(Localization().getStringEx('panel.canvas_feedback.description.label', 'Description'),
-                    style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"))),
+                    style: Styles().textStyles.getTextStyle("widget.title.regular.fat"))),
             Padding(
                 padding: EdgeInsets.only(top: 10),
                 child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     decoration: BoxDecoration(
-                        border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 1),
+                        border: Border.all(color: Styles().colors.fillColorSecondary, width: 1),
                         borderRadius: BorderRadius.all(Radius.circular(7))),
                     child: TextField(
                         maxLines: 8,
                         controller: _descriptionController,
-                        cursorColor: Styles().colors!.fillColorSecondary,
+                        cursorColor: Styles().colors.fillColorSecondary,
                         keyboardType: TextInputType.text,
-                        style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"),
+                        style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
                         decoration: InputDecoration(border: InputBorder.none)))),
             Padding(
                 padding: EdgeInsets.only(top: 20),
@@ -96,11 +96,11 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
                   RoundedButton(
                       label: Localization().getStringEx('panel.canvas_feedback.submit.button', 'Submit'),
                       hint: Localization().getStringEx('panel.canvas_feedback.submit.hint', ''),
-                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                       onTap: _onTapSubmit,
                       contentWeight: 0.0,
-                      backgroundColor: Styles().colors!.white,
-                      borderColor: Styles().colors!.fillColorSecondary)
+                      backgroundColor: Styles().colors.white,
+                      borderColor: Styles().colors.fillColorSecondary)
                 ]))
           ])),
       Visibility(visible: _loading, child: CircularProgressIndicator())

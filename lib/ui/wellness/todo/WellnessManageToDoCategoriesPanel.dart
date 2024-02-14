@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/wellness/ToDo.dart';
+import 'package:illinois/model/wellness/WellnessToDo.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -28,7 +28,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class WellnessManageToDoCategoriesPanel extends StatefulWidget {
-  final ToDoCategory? category;
+  final WellnessToDoCategory? category;
   WellnessManageToDoCategoriesPanel({this.category});
 
   @override
@@ -38,8 +38,8 @@ class WellnessManageToDoCategoriesPanel extends StatefulWidget {
 class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCategoriesPanel> implements NotificationsListener {
   static final List<String> _availableCategoryHexColors = ['#E45434', '#F5821E', '#54A747', '#009FD4', '#1D58A7', '#662d91'];
 
-  ToDoCategory? _category;
-  List<ToDoCategory>? _categories;
+  WellnessToDoCategory? _category;
+  List<WellnessToDoCategory>? _categories;
   Color? _selectedColor;
   TextEditingController _nameController = TextEditingController();
   bool _loading = false;
@@ -74,7 +74,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
                 _buildEditCategoryButtons(),
                 _buildManageCategories()
               ]))),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -82,13 +82,13 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   Widget _buildCreateCategoryHeader() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(Localization().getStringEx('panel.wellness.categories.create.header.label', 'Create a Category'),
-          style: Styles().textStyles?.getTextStyle("widget.title.medium.fat")),
+          style: Styles().textStyles.getTextStyle("widget.title.medium.fat")),
       Padding(
           padding: EdgeInsets.only(top: 5),
           child: Text(
               Localization().getStringEx('panel.wellness.categories.create.header.description',
                   'Examples: an RSO or club, a specific class, or a miscellaneous task category.'),
-              style: Styles().textStyles?.getTextStyle("widget.detail.small")))
+              style: Styles().textStyles.getTextStyle("widget.detail.small")))
     ]);
   }
 
@@ -99,14 +99,14 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
           Padding(
               padding: EdgeInsets.only(bottom: 5),
               child: Text(Localization().getStringEx('panel.wellness.categories.name.field.label', 'NAME'),
-                  style: Styles().textStyles?.getTextStyle("widget.description.small.fat"))),
+                  style: Styles().textStyles.getTextStyle("widget.description.small.fat"))),
           Container(
               padding: EdgeInsets.symmetric(horizontal: 8),
-              decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),
+              decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
               child: TextField(
                   controller: _nameController,
                   decoration: InputDecoration(border: InputBorder.none),
-                  style: Styles().textStyles?.getTextStyle("widget.title.medium.fat")))
+                  style: Styles().textStyles.getTextStyle("widget.title.medium.fat")))
         ]));
   }
 
@@ -142,7 +142,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
                   visible: hasCategoryForEdit,
                   child: RoundedButton(
                       label: Localization().getStringEx('panel.wellness.categories.delete.button', 'Delete'),
-                      borderColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorPrimary,
                       progress: _loading,
                       padding: EdgeInsets.symmetric(horizontal: 46, vertical: 8),
                       onTap: _onTapDelete))),
@@ -162,14 +162,14 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
     return Padding(
         padding: EdgeInsets.only(top: 30),
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Container(height: 1, color: Styles().colors!.mediumGray2),
+          Container(height: 1, color: Styles().colors.mediumGray2),
           Padding(
               padding: EdgeInsets.only(top: 9),
               child: Row(children: [
                 Expanded(
                     child: Text(Localization().getStringEx('panel.wellness.categories.manage.existing.label', 'Manage Existing Categories'),
                         overflow: TextOverflow.ellipsis,
-                        style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")))
+                        style: Styles().textStyles.getTextStyle("widget.title.regular.fat")))
               ])),
           Padding(
               padding: EdgeInsets.only(top: 8),
@@ -182,19 +182,19 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
     if (_loading) {
       widgetList.add(CircularProgressIndicator());
     } else if (CollectionUtils.isNotEmpty(_categories)) {
-      for (ToDoCategory category in _categories!) {
+      for (WellnessToDoCategory category in _categories!) {
         widgetList.add(Padding(padding: EdgeInsets.only(top: 7), child: _buildCategoryCard(category)));
       }
     } else {
       widgetList.add(Row(children: [
         Expanded(child: Text(Localization().getStringEx('panel.wellness.categories.manage.empty.label', 'No current categories'),
-          style: Styles().textStyles?.getTextStyle("panel.wellness.todo.category.empty.msg")))
+          style: Styles().textStyles.getTextStyle("panel.wellness.todo.category.empty.msg")))
       ]));
     }
     return widgetList;
   }
 
-  Widget _buildCategoryCard(ToDoCategory category) {
+  Widget _buildCategoryCard(WellnessToDoCategory category) {
     return GestureDetector(
         onTap: () => _onTapEditCategory(category),
         child: Container(
@@ -203,13 +203,13 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
               Padding(
                   padding: EdgeInsets.only(left: 20, top: 10, bottom: 10),
                   child: Text(StringUtils.ensureNotEmpty(category.name),
-                      style: Styles().textStyles?.getTextStyle("panel.wellness.todo.category.card.title.regular"))),
+                      style: Styles().textStyles.getTextStyle("panel.wellness.todo.category.card.title.regular"))),
               Expanded(child: Container()),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child: Styles().images?.getImage('edit-white'))
+              Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child: Styles().images.getImage('edit-white'))
             ])));
   }
 
-  void _onTapEditCategory(ToDoCategory category) {
+  void _onTapEditCategory(WellnessToDoCategory category) {
     Analytics().logSelect(target: "Edit ${category.name}");
     _category = category;
     _nameController.text = StringUtils.ensureNotEmpty(_category?.name);
@@ -233,7 +233,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
         positiveCallback: () => _deleteCategory(_category!));
   }
 
-  void _deleteCategory(ToDoCategory category) {
+  void _deleteCategory(WellnessToDoCategory category) {
     _setLoading(true);
     Wellness().deleteToDoCategory(category.id!).then((success) {
       late String msg;
@@ -258,7 +258,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
       return;
     }
     _setLoading(true);
-    ToDoCategory cat = ToDoCategory(id: _category?.id, name: name, colorHex: UiColors.toHex(_selectedColor));
+    WellnessToDoCategory cat = WellnessToDoCategory(id: _category?.id, name: name, colorHex: UiColors.toHex(_selectedColor));
     Wellness().saveToDoCategory(cat).then((success) {
       late String msg;
       if (success) {

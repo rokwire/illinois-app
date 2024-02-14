@@ -39,7 +39,7 @@ class HorizontalDiningSpecials extends StatelessWidget {
     return hasOffers ? Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Container(height: 10,),
-        Text(Localization().getStringEx("panel.explore.label.dining_news.title", "Dining News"), style: Styles().textStyles?.getTextStyle("widget.item.regular.extra_fat")),
+        Text(Localization().getStringEx("panel.explore.label.dining_news.title", "Dining News"), style: Styles().textStyles.getTextStyle("widget.item.regular.extra_fat")),
         SingleChildScrollView(scrollDirection: Axis.horizontal, child:
           Row(children: offerWidgets,),
         )
@@ -113,7 +113,7 @@ class _SpecialOfferState extends State<_SpecialOffer> {
 
     return Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
       ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
-        Container(width: width, color: Styles().colors!.white, child:
+        Container(width: width, color: Styles().colors.white, child:
           Row(/*crossAxisAlignment: CrossAxisAlignment.stretch,*/ children: <Widget>[
             _hasImage ? ModalImageHolder(child:
               Image.network(widget.special!.imageUrl!, excludeFromSemantics: true, width: imageWidth, height: _imageHeight, fit: BoxFit.cover,)

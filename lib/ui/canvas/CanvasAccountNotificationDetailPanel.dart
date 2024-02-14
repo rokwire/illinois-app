@@ -40,7 +40,7 @@ class _CanvasAccountNotificationDetailPanelState extends State<CanvasAccountNoti
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.canvas_notification.header.title', 'Notification')),
       body: _buildContent(),
-      backgroundColor: Styles().colors!.white,
+      backgroundColor: Styles().colors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -60,24 +60,24 @@ class _CanvasAccountNotificationDetailPanelState extends State<CanvasAccountNoti
                     child: Text(StringUtils.ensureNotEmpty(widget.notification.subject),
                         maxLines: 5,
                         overflow: TextOverflow.ellipsis,
-                        style:  Styles().textStyles?.getTextStyle("panel.canvas.text.medium")))
+                        style:  Styles().textStyles.getTextStyle("panel.canvas.text.medium")))
               ]),
               Padding(
                   padding: EdgeInsets.only(top: 10),
                   child: Row(children: [
                     Expanded(
                         child: Text(StringUtils.ensureNotEmpty(widget.notification.startAtDisplayDate),
-                            style:  Styles().textStyles?.getTextStyle("widget.info.small") 
+                            style:  Styles().textStyles.getTextStyle("widget.info.small")
                           ))
                   ])),
               Visibility(
                   visible: StringUtils.isNotEmpty(widget.notification.message),
                   child: Html(data: widget.notification.message, onLinkTap: (url, context, element) => _onTapLink(url), style: {
                     "body": Style(
-                        color: Styles().colors!.textSurfaceAccent,
-                        fontFamily: Styles().fontFamilies!.bold,
+                        color: Styles().colors.textSurfaceAccent,
+                        fontFamily: Styles().fontFamilies.bold,
                         fontSize: FontSize(16),
-                        padding: EdgeInsets.zero,
+                        padding: HtmlPaddings.zero,
                         margin: Margins.zero)
                   }))
             ])));

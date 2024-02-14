@@ -62,8 +62,8 @@ class TabBar extends rokwire.TabBar {
       return rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.browse.title', 'Browse'),
         hint: Localization().getStringEx('tabbar.browse.hint', ''),
-        iconKey: 'campus-tools-outline-gray',
-        selectedIconKey: 'campus-tools-filled',
+        iconKey: 'browse-outline-gray',
+        selectedIconKey: 'browse-filled',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );

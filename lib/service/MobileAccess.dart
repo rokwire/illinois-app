@@ -306,14 +306,17 @@ class MobileAccess with Service implements NotificationsListener {
     return studentId;
   }
 
-  Future<StudentId?> renewMobileId() async {
+  Future<RenewMobileIdResult?> renewMobileId() async {
     if (!Auth2().isLoggedIn) {
       _onStudentId(null);
       return null;
     }
-    StudentId? studentId = await Identity().renewMobileId();
-    _onStudentId(studentId);
-    return studentId;
+    RenewMobileIdResult? renewResult = await Identity().renewMobileId();
+    if (renewResult?.isRenewed == true) {
+      StudentId? studentId = await loadStudentId();
+      _onStudentId(studentId);
+    }
+    return renewResult;
   }
 
   void _onStudentId(StudentId? studentId) {

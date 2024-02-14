@@ -6,13 +6,13 @@ extension RecentItemExt on RecentItem {
 
   Color? get headerColor {
     switch (type) {
-      case RecentItemType.event:   return Styles().colors?.eventColor;
-      case RecentItemType.event2:  return Styles().colors?.eventColor;
-      case RecentItemType.dining:  return  Styles().colors?.diningColor;
-      case RecentItemType.game:    return  Styles().colors?.fillColorPrimary;
-      case RecentItemType.news:    return  Styles().colors?.fillColorPrimary;
-      case RecentItemType.laundry: return  Styles().colors?.accentColor2;
-      case RecentItemType.guide:   return  Styles().colors?.accentColor3;
+      case RecentItemType.event:   return Styles().colors.eventColor;
+      case RecentItemType.event2:  return Styles().colors.eventColor;
+      case RecentItemType.dining:  return  Styles().colors.diningColor;
+      case RecentItemType.game:    return  Styles().colors.fillColorPrimary;
+      case RecentItemType.news:    return  Styles().colors.fillColorPrimary;
+      case RecentItemType.laundry: return  Styles().colors.accentColor2;
+      case RecentItemType.guide:   return  Styles().colors.accentColor3;
       default:                     return null;
     }
   }

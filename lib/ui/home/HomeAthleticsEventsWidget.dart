@@ -36,7 +36,7 @@ class HomeAthliticsEventsWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home.athletics_events.text.title', 'Athletics Events');
+  static String get title => Localization().getStringEx('widget.home.athletics_events.text.title', 'Big 10 Events');
 
   State<HomeAthliticsEventsWidget> createState() => _HomeAthleticsEventsWidgetState();
 }
@@ -123,7 +123,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
   @override
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: Localization().getStringEx('widget.home.athletics_events.text.title', 'Athletics Events'),
+      title: Localization().getStringEx('widget.home.athletics_events.text.title', 'Big 10 Events'),
       titleIconKey: 'calendar',
       child: _buildContent(),
     );
@@ -248,6 +248,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
     Events2Query query = Events2Query(
         attributes: Event2HomePanel.athleticsCategoryAttributes,
         limit: Config().homeAthleticsEventsCount,
+        groupings: Event2Grouping.individualEvents(),
         sortType: Event2SortType.dateTime);
     Events2ListResult? result = await Events2().loadEvents(query);
     return result?.events;

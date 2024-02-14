@@ -59,7 +59,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
         title: Localization().getStringEx('panel.canvas_modules.header.title', 'Modules')
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors!.white,
+      backgroundColor: Styles().colors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -96,7 +96,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
                 Localization()
                     .getStringEx('panel.canvas_modules.load.failed.error.msg', 'Failed to load modules. Please, try again later.'),
                 textAlign: TextAlign.center,
-                style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
+                style: Styles().textStyles.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildEmptyContent() {
@@ -104,7 +104,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 28),
             child: Text(Localization().getStringEx('panel.canvas_modules.empty.msg', 'There are no modules.'),
-                textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
+                textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildModulesContent() {
@@ -143,7 +143,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Expanded(
                     child: Text(StringUtils.ensureNotEmpty(label),
-                        style: Styles().textStyles?.getTextStyle("widget.title.medium.fat")))
+                        style: Styles().textStyles.getTextStyle("widget.title.medium.fat")))
               ])
             ])));
   }
@@ -155,7 +155,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
             onTap: () => _onTapModule(module),
             child: Container(
                 decoration: BoxDecoration(
-                    color: Styles().colors!.backgroundVariant!, border: Border.all(color: Styles().colors!.blackTransparent06!, width: 1)),
+                    color: Styles().colors.backgroundVariant, border: Border.all(color: Styles().colors.blackTransparent06, width: 1)),
                 padding: EdgeInsets.all(10),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -163,7 +163,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
                         child: Text(StringUtils.ensureNotEmpty(module.name),
                             maxLines: 4,
                             overflow: TextOverflow.ellipsis,
-                            style: Styles().textStyles?.getTextStyle("panel.canvas.text.medium")))
+                            style: Styles().textStyles.getTextStyle("panel.canvas.text.medium")))
                   ])
                 ]))));
   }
@@ -174,18 +174,18 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
   }
 
   Widget _buildCourseDropDownWidget() {
-    double height = MediaQuery.of(context).textScaleFactor * 62;
+    double height = MediaQuery.of(context).textScaler.scale(62);
     return Container(
         height: height,
         decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Styles().colors!.lightGray!, width: 1),
+            border: Border.all(color: Styles().colors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),
             child: DropdownButtonHideUnderline(
                 child: DropdownButton(
-                    style: Styles().textStyles?.getTextStyle("panel.canvas.item.regular.fat"),
+                    style: Styles().textStyles.getTextStyle("panel.canvas.item.regular.fat"),
                     items: _buildCourseDropDownItems,
                     value: _selectedCourseId,
                     itemHeight: null,
@@ -203,12 +203,12 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
       items.add(DropdownMenuItem(
           value: currentCourse.id,
           child: Text(StringUtils.ensureNotEmpty(currentCourse.name),
-              style: ((_selectedCourseId == currentCourse.id) ? Styles().textStyles?.getTextStyle("panel.canvas.item.regular.fat") :  Styles().textStyles?.getTextStyle("panel.canvas.item.regular")))));
+              style: ((_selectedCourseId == currentCourse.id) ? Styles().textStyles.getTextStyle("panel.canvas.item.regular.fat") :  Styles().textStyles.getTextStyle("panel.canvas.item.regular")))));
     }
     items.add(DropdownMenuItem(
         value: null,
         child: Text(Localization().getStringEx('panel.canvas.common.all_courses.label', 'All Courses'),
-            style: ((_selectedCourseId == null) ? Styles().textStyles?.getTextStyle("panel.canvas.item.regular.fat") :  Styles().textStyles?.getTextStyle("panel.canvas.item.regular")))));
+            style: ((_selectedCourseId == null) ? Styles().textStyles.getTextStyle("panel.canvas.item.regular.fat") :  Styles().textStyles.getTextStyle("panel.canvas.item.regular")))));
     return items;
   }
 

@@ -65,10 +65,10 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
             RoundedButton(
                 label: "Register",
                 enabled: (_isRegistered == false),
-                textColor: (_isRegistered == false) ? Styles().colors!.fillColorPrimary : Styles().colors!.disabledTextColor,
-                borderColor: (_isRegistered == false) ? Styles().colors!.fillColorSecondary : Styles().colors!.disabledTextColor,
-                backgroundColor: Styles().colors!.white,
-                fontFamily: Styles().fontFamilies!.bold,
+                textColor: (_isRegistered == false) ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor,
+                borderColor: (_isRegistered == false) ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
+                backgroundColor: Styles().colors.white,
+                fontFamily: Styles().fontFamilies.bold,
                 contentWeight: 0.0,
                 fontSize: 16,
                 borderWidth: 2,
@@ -77,10 +77,10 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
             RoundedButton(
                 label: "Unregister",
                 enabled: (_isRegistered == true),
-                textColor: (_isRegistered == true) ? Styles().colors!.fillColorPrimary : Styles().colors!.disabledTextColor,
-                borderColor: (_isRegistered == true) ? Styles().colors!.fillColorSecondary : Styles().colors!.disabledTextColor,
-                backgroundColor: Styles().colors!.white,
-                fontFamily: Styles().fontFamilies!.bold,
+                textColor: (_isRegistered == true) ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor,
+                borderColor: (_isRegistered == true) ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
+                backgroundColor: Styles().colors.white,
+                fontFamily: Styles().fontFamilies.bold,
                 contentWeight: 0.0,
                 fontSize: 16,
                 borderWidth: 2,
@@ -88,7 +88,7 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
                 onTap: _onUnregister)
           ]))
         ])),
-        backgroundColor: Styles().colors!.background);
+        backgroundColor: Styles().colors.background);
   }
 
   Widget _buildContent() {
@@ -97,19 +97,19 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
         Padding(
             padding: EdgeInsets.only(bottom: 4),
             child: Text("Invitation Code:",
-                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))),
+                style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary))),
         Stack(children: <Widget>[
           Semantics(
               textField: true,
               child: Container(
-                  color: Styles().colors!.white,
+                  color: Styles().colors.white,
                   child: TextField(
                       maxLines: 2,
                       controller: _invitationCodeController,
                       decoration: InputDecoration(
                           hintText: 'XXXX-XXXX-XXXX-XXXX',
                           border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-                      style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground)))),
+                      style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground)))),
           Align(
               alignment: Alignment.topRight,
               child: Semantics(
@@ -128,9 +128,9 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
                                   excludeSemantics: true,
                                   child: Text('X',
                                       style: TextStyle(
-                                          fontFamily: Styles().fontFamilies!.regular,
+                                          fontFamily: Styles().fontFamilies.regular,
                                           fontSize: 16,
-                                          color: Styles().colors!.fillColorPrimary))))))))
+                                          color: Styles().colors.fillColorPrimary))))))))
         ])
       ])
     ]);

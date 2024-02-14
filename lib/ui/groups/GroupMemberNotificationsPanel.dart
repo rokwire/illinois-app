@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -73,7 +73,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
             title: Localization().getStringEx('panel.group_member_notifications.header.title', 'Group Notifications'),
             textAlign: TextAlign.center),
         body: Column(children: [
-          Expanded(child: SingleChildScrollView(child: Container(color: Styles().colors!.background, child: _buildContent()))),
+          Expanded(child: SingleChildScrollView(child: Container(color: Styles().colors.background, child: _buildContent()))),
           Visibility(
               visible: (!_isLoading && (_member != null) && _toggleButtonEnabled),
               child: Padding(
@@ -81,7 +81,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
                   child: RoundedButton(
                       label: Localization().getStringEx('panel.group_member_notifications.save.button', 'Save'), onTap: _onTapSave)))
         ]),
-        backgroundColor: Styles().colors!.white);
+        backgroundColor: Styles().colors.white);
   }
 
 
@@ -110,7 +110,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
         child: Column(children: <Widget>[
       Container(height: MediaQuery.of(context).size.height / 3),
       Text(Localization().getStringEx('panel.group_member_notifications.member.load.failed.msg', 'Failed to load member data.'),
-          style: Styles().textStyles?.getTextStyle("panel.group_member_notifications.error.msg")),
+          style: Styles().textStyles.getTextStyle("panel.group_member_notifications.error.msg")),
       Container(height: MediaQuery.of(context).size.height)
     ]));
   }
@@ -128,12 +128,12 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
         toggled: memberPreferences?.overridePreferences ?? false,
         onTap: _toggleButtonEnabled ? _onToggleOverrideNotificationPreferences : null,
         textStyle: _toggleButtonEnabled
-            ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled")
-            : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled")));
+            ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled")
+            : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled")));
     preferenceWidgets.add(Row(children: [
       Expanded(
           child: Container(
-              color: Styles().colors!.white,
+              color: Styles().colors.white,
               child: Padding(
                   padding: EdgeInsets.only(left: 10),
                   child: Column(children: [
@@ -145,8 +145,8 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
                         defaultValue: (FirebaseMessaging().notifyGroupPostUpdates == true),
                         onTap: _groupSubNotificationsEnabled ? _onTogglePosts : null,
                         textStyle: _groupSubNotificationsEnabled
-                            ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                            : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                            ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                            : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                     _EnabledToggleButton(
                         enabled: _groupSubNotificationsEnabled,
                         borderRadius: BorderRadius.zero,
@@ -155,8 +155,8 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
                         defaultValue: FirebaseMessaging().notifyGroupEventsUpdates == true,
                         onTap: _groupSubNotificationsEnabled ? _onToggleEvents : null,
                         textStyle: _groupSubNotificationsEnabled
-                            ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                            : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                            ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                            : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                     _EnabledToggleButton(
                         enabled: _groupSubNotificationsEnabled,
                         borderRadius: BorderRadius.zero,
@@ -165,8 +165,8 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
                         defaultValue: (FirebaseMessaging().notifyGroupInvitationsUpdates == true),
                         onTap: _groupSubNotificationsEnabled ? _onToggleInvitations : null,
                         textStyle: _groupSubNotificationsEnabled
-                            ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                            : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                            ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                            : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                     _EnabledToggleButton(
                         enabled: _groupSubNotificationsEnabled,
                         borderRadius: BorderRadius.zero,
@@ -175,12 +175,12 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
                         defaultValue: (FirebaseMessaging().notifyGroupPollsUpdates == true),
                         onTap: _groupSubNotificationsEnabled ? _onTogglePolls : null,
                         textStyle: _groupSubNotificationsEnabled
-                            ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                            : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled"))
+                            ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                            : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled"))
                   ]))))
     ]));
 
-    preferenceWidgets.add(Container(color: Styles().colors?.white, height: 10,));
+    preferenceWidgets.add(Container(color: Styles().colors.white, height: 10,));
     preferenceWidgets.add(_buildDescription());
 
     return Container(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: preferenceWidgets));
@@ -201,35 +201,35 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               color: Colors.white,
               child: Text(Localization().getStringEx('panel.group_member_notifications.member.info.heading.msg', 'My global group notification preferences'), //TBD localize
-                  style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.underline")),
+                  style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.underline")),
             )
           )
         )
     ],));
 
-    widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors!.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
+    widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
       _DisabledToggleButton(
           toggled: groupPostNotificationsEnabled,
           label: Localization().getStringEx("panel.settings.notifications.group_updates.posts.label", "Posts"),
-          textStyle: groupPostNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+          textStyle: groupPostNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       ),
       _DisabledToggleButton(
           toggled: groupEventsNotificationsEnabled,
           label: Localization().getStringEx("panel.settings.notifications.group_updates.events.label", "Events"),
-          textStyle: groupEventsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+          textStyle: groupEventsNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       ),
       _DisabledToggleButton(
           toggled: groupInvitationsNotificationsEnabled,
           label: Localization().getStringEx("panel.settings.notifications.group_updates.invitations.label", "Group membership"),
-          textStyle: groupInvitationsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+          textStyle: groupInvitationsNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       ),
       _DisabledToggleButton(
           toggled:  groupPollsNotificationsEnabled,
           label: Localization().getStringEx("panel.settings.notifications.group_updates.polls.label", "Polls"),
-          textStyle: groupPollsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+          textStyle: groupPollsNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       )
     ]))))]));
-    widgets.add(Container(color:Styles().colors!.surfaceAccent,height: 1,));
+    widgets.add(Container(color:Styles().colors.surfaceAccent,height: 1,));
 
       return Container(
         child: Padding(padding: EdgeInsets.all(0), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets)),
@@ -272,7 +272,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
               padding: EdgeInsets.symmetric(horizontal: 16),
               color: Colors.white,
               child: Text("Custom notification preferences: $valuesMessage are muted.",
-                style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"),
+                style: Styles().textStyles.getTextStyle("widget.message.regular.fat"),
               ),
             ))
       ],)
@@ -387,7 +387,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
 
   void _onTapNotificationPreferences(){
     Analytics().logSelect(target: "Notifications");
-    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.preferences);
+    SettingsHomeContentPanel.present(context, content: SettingsContent.notifications);
   }
 
   void _updateOverrideValuesIfNeeded(){
@@ -443,8 +443,8 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
 
 class _DisabledToggleButton extends ToggleRibbonButton{
   static Map<bool, Widget> _rightIcons= {
-    true: Styles().images?.getImage('check-green', excludeFromSemantics: true) ?? Container(),
-    false: Styles().images?.getImage('close', excludeFromSemantics: true) ?? Container(),
+    true: Styles().images.getImage('check-accent', excludeFromSemantics: true) ?? Container(),
+    false: Styles().images.getImage('close', excludeFromSemantics: true) ?? Container(),
   };
 
   _DisabledToggleButton( {String? label,
@@ -472,5 +472,5 @@ class _EnabledToggleButton extends ToggleRibbonButton {
   // bool get toggled => (enabled == true) ? super.toggled == true : this.defaultValue == true;
 
   @override
-  Widget? get rightIconImage => Styles().images?.getImage((toggled) ? 'toggle-on' : 'toggle-off');  //Workaround for blurry images
+  Widget? get rightIconImage => Styles().images.getImage((toggled) ? 'toggle-on' : 'toggle-off');  //Workaround for blurry images
 }

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
+import 'dart:convert';
 import 'dart:core';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/StudentCourse.dart';
-import 'package:illinois/model/wellness/ToDo.dart';
+import 'package:illinois/model/wellness/WellnessToDo.dart';
 import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Gateway.dart';
@@ -32,9 +33,11 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:illinois/model/wellness/SuccessTeam.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+
 
 class Wellness with Service implements NotificationsListener, ContentItemCategoryClient {
   static const String notifyToDoCategoryChanged = "edu.illinois.rokwire.wellness.todo.category.changed";
@@ -142,7 +145,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
 
   // ToDo List
 
-  Future<List<ToDoCategory>?> loadToDoCategories() async {
+  Future<List<WellnessToDoCategory>?> loadToDoCategories() async {
     if (!isEnabled) {
       Log.w('Failed to load wellness todo categories. Missing wellness url.');
       return null;
@@ -152,7 +155,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
-      List<ToDoCategory>? categories = ToDoCategory.listFromJson(JsonUtils.decodeList(responseString));
+      List<WellnessToDoCategory>? categories = WellnessToDoCategory.listFromJson(JsonUtils.decodeList(responseString));
       return categories;
     } else {
       Log.w('Failed to load wellness todo categories. Response:\n$responseCode: $responseString');
@@ -160,7 +163,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
-  Future<bool> saveToDoCategory(ToDoCategory category) async {
+  Future<bool> saveToDoCategory(WellnessToDoCategory category) async {
     if (!isEnabled) {
       Log.w('Failed to save wellness todo category. Missing wellness url.');
       return false;
@@ -206,7 +209,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
-  Future<bool> createToDoItem(ToDoItem item) async {
+  Future<bool> createToDoItem(WellnessToDoItem item) async {
     if (!isEnabled) {
       Log.w('Failed to create wellness todo item. Missing wellness url.');
       return false;
@@ -226,7 +229,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
-  Future<bool> updateToDoItem(ToDoItem item) async {
+  Future<bool> updateToDoItem(WellnessToDoItem item) async {
     if (!isEnabled) {
       Log.w('Failed to update wellness todo item. Missing wellness url.');
       return false;
@@ -284,7 +287,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
-  Future<List<ToDoItem>?> loadToDoItems() async {
+  Future<List<WellnessToDoItem>?> loadToDoItems(int? limit, int? offset,) async {
     if (!isEnabled) {
       Log.w('Failed to load wellness todo items. Missing wellness url.');
       return null;
@@ -293,8 +296,24 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     http.Response? response = await Network().get(url, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
+    if (url.isNotEmpty) {
+      Map<String, String> queryParams = {};
+      if (limit != null) {
+        queryParams['limit'] = limit.toString();
+      }
+      if (offset != null) {
+        queryParams['offset'] = offset.toString();
+      }
+
+      // if (startDate != null) {
+      //   String? startDateFormatted = AppDateTime().dateTimeLocalToJson(startDate);
+      //   queryParams['start_date'] = startDateFormatted!;
+      // }
+
+    }
     if (responseCode == 200) {
-      List<ToDoItem>? items = ToDoItem.listFromJson(JsonUtils.decodeList(responseString));
+      List<WellnessToDoItem>? items = WellnessToDoItem.listFromJson(JsonUtils.decodeList(responseString));
+
       return items;
     } else {
       Log.w('Failed to load wellness todo items. Response:\n$responseCode: $responseString');
@@ -302,7 +321,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
-  Future<ToDoItem?> loadToDoItem(String? itemId) async {
+  Future<WellnessToDoItem?> loadToDoItem(String? itemId) async {
     if (StringUtils.isEmpty(itemId)) {
       Log.w('Failed to load wellness todo item. Missing id.');
       return null;
@@ -316,11 +335,67 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
-      ToDoItem? item = ToDoItem.fromJson(JsonUtils.decodeMap(responseString));
+      WellnessToDoItem? item = WellnessToDoItem.fromJson(JsonUtils.decodeMap(responseString));
       return item;
     } else {
       Log.w('Failed to load wellness todo item. Response:\n$responseCode: $responseString');
       return null;
+    }
+  }
+
+  // Success Team
+
+  Future<List<SuccessTeamMember?>> getPrimaryCareProviders() async {
+    String url = '${Config().gatewayUrl}/successteam/pcp?id=${Auth2().uin}';
+    http.Response? response = await Network().get(url, auth: Auth2(), headers: {'External-Authorization': Auth2().uiucToken?.accessToken});
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      try {
+        List<dynamic> responseList = json.decode(responseString!);
+        List<SuccessTeamMember?> primaryCareProviders = responseList.map((e) =>
+          SuccessTeamMember(
+            firstName: e['first_name'],
+            lastName: e['last_name'],
+            image: e['image'],
+            externalLink: e['external_link'])).toList();
+        return primaryCareProviders;
+      } on Exception catch (_) {
+        return [];
+      }
+    } else {
+      Log.w('Failed to load primary care providers. Response:\n$responseCode: $responseString');
+      return [];
+    }
+  }
+
+  Future<List<SuccessTeamMember?>> getAcademicAdvisors() async {
+    String classificationUrl = '${Config().identityUrl}/studentclassification';
+    http.Response? classificationResponse = await Network().get(classificationUrl, auth: Auth2(), headers: {'External-Authorization': Auth2().uiucToken?.accessToken});
+    Map<String, dynamic>? responseMap = (classificationResponse?.statusCode == 200) ? JsonUtils.decodeMap(classificationResponse?.body) : null;
+    String? departmentCode = (responseMap != null) ? JsonUtils.stringValue(responseMap['DepartmentCode']) : null;
+    if ((departmentCode != null) && departmentCode.isNotEmpty) {
+      String url = '${Config().gatewayUrl}/successteam/advisors?id=${Auth2().uin}&unitid=${departmentCode}';
+      http.Response? response = await Network().get(url, auth: Auth2(), headers: {'External-Authorization': Auth2().uiucToken?.accessToken});
+      int? responseCode = response?.statusCode;
+      String? responseString = response?.body;
+      if (responseCode == 200) {
+        try {
+          List<dynamic>? responseList = JsonUtils.decodeList(responseString!);
+          List<SuccessTeamMember?>? academicAdvisors = responseList?.map((e) =>
+            SuccessTeamMember.fromJson(JsonUtils.mapValue(e))).toList();
+          return academicAdvisors ?? [];
+        } on Exception catch (_) {
+          return [];
+        }
+      } else {
+        Log.w('Failed to load academic advisors. Response:\n$responseCode: $responseString');
+        return [];
+      }
+    }
+    else {
+      Log.w('Failed to load student classification. Response:\n${classificationResponse?.statusCode}: ${classificationResponse?.body}');
+      return [];
     }
   }
 

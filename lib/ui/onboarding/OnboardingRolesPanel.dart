@@ -50,7 +50,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles().colors!.white,
+      backgroundColor: Styles().colors.white,
       body: SafeArea(child: Column( children: <Widget>[
         Padding(padding: EdgeInsets.only(top: 10, bottom: 10),
           child: Row(children: <Widget>[
@@ -65,12 +65,12 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                 hint: Localization().getStringEx('panel.onboarding.roles.label.title.hint', 'Header 1').toLowerCase(),
                 excludeSemantics: true,
                 child: Text(Localization().getStringEx('panel.onboarding.roles.label.title', 'Who Are You?'),
-                  style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24, color: Styles().colors!.fillColorPrimary),
+                  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 24, color: Styles().colors.fillColorPrimary),
                 ),
               ),
               Padding(padding: EdgeInsets.only(top: 8),
                 child: Text(Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
-                  style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground),
+                  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),
                 ),
               )
             ],),),
@@ -79,19 +79,19 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
         ),
 
         Expanded(child: SingleChildScrollView(child: Padding(padding: EdgeInsets.only(left: 16, right: 8, ), child:
-          RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton, scaleFactor: MediaQuery.of(context).textScaleFactor,),
+          RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton, textScaler: MediaQuery.of(context).textScaler,),
         ),),),        
 
         Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 10, bottom: 20), child:
           RoundedButton(
             label: Localization().getStringEx('panel.onboarding.roles.button.continue.title', 'Explore Illinois'),
             hint: Localization().getStringEx('panel.onboarding.roles.button.continue.hint', ''),
-            textStyle: _allowNext ? Styles().textStyles?.getTextStyle("widget.button.title.large.fat.secondary") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.large.fat.variant"),
+            textStyle: _allowNext ? Styles().textStyles.getTextStyle("widget.button.title.large.fat.secondary") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat.variant"),
             enabled: _allowNext,
-            backgroundColor: (Styles().colors!.background),
+            backgroundColor: (Styles().colors.background),
             borderColor: (_allowNext
-                ? Styles().colors!.fillColorSecondary
-                : Styles().colors!.fillColorPrimaryTransparent03),
+                ? Styles().colors.fillColorSecondary
+                : Styles().colors.fillColorPrimaryTransparent03),
             progress: _updating,
             onTap: () => _onExploreClicked()),
         )

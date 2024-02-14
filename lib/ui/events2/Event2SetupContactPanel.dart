@@ -68,7 +68,7 @@ class _Event2SetupContactPanelState extends State<Event2SetupContactPanel>  {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.contact.header.title", "Event Contact")),
       body: _buildPanelContent(),
-      backgroundColor: Styles().colors!.white,
+      backgroundColor: Styles().colors.white,
     );
   }
 
@@ -181,10 +181,10 @@ class _Event2SetupContactPanelState extends State<Event2SetupContactPanel>  {
     return Semantics(label: buttonTitle, hint: buttonHint, button: true, excludeSemantics: true, child:
       RoundedButton(
         label: buttonTitle,
-        textStyle: buttonEnabled ? Styles().textStyles?.getTextStyle('widget.button.title.large.fat') : Styles().textStyles?.getTextStyle('widget.button.disabled.title.large.fat'),
+        textStyle: buttonEnabled ? Styles().textStyles.getTextStyle('widget.button.title.large.fat') : Styles().textStyles.getTextStyle('widget.button.disabled.title.large.fat'),
         onTap: buttonEnabled ? _onSubmit : null,
-        backgroundColor: Styles().colors!.white,
-        borderColor: buttonEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+        backgroundColor: Styles().colors.white,
+        borderColor: buttonEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
       )
     );
   }

@@ -15,7 +15,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -69,13 +69,13 @@ class _AccessCardState extends State<AccessCard> implements NotificationsListene
 
       return Padding(padding: widget.padding, child:
         Container(
-          decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+          decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
               Expanded(child:
                 Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16), child:
                   Text(sprintf(Localization().getStringEx('widget.access.$titleKey.unsatisfied.title', defaultTitle), [resourceName]),
-                    style: Styles().textStyles?.getTextStyle("widget.card.title.medium.fat"), semanticsLabel: '',
+                    style: Styles().textStyles.getTextStyle("widget.card.title.medium.fat"), semanticsLabel: '',
                   )
                 ),
               )
@@ -107,12 +107,12 @@ class AccessDialog extends StatefulWidget {
   @override
   _AccessDialogState createState() => _AccessDialogState();
 
-  static Future<void>? show({
+  static Future<bool?>? show({
     required String resource,
     required BuildContext context,
 
     bool barrierDismissible = true,
-  }) => _AccessContent.mayAccessResource(resource) ? null : showDialog(
+  }) => _AccessContent.mayAccessResource(resource) ? null : showDialog<bool>(
     context: context,
     barrierDismissible: barrierDismissible,
     routeSettings: RouteSettings(name: routeName),
@@ -146,8 +146,8 @@ class _AccessDialogState extends State<AccessDialog> implements NotificationsLis
 
       return ActionsMessage(
         title: sprintf(Localization().getStringEx('widget.access.$titleKey.title', defaultTitle), [resourceName]),
-        titleTextStyle: Styles().textStyles?.getTextStyle('widget.heading.regular.fat'),
-        titleBarColor: Styles().colors?.fillColorPrimary,
+        titleTextStyle: Styles().textStyles.getTextStyle('widget.heading.regular.fat'),
+        titleBarColor: Styles().colors.fillColorPrimary,
         bodyWidget: _AccessContent(messageKeys: messageKeys, resourceName: resourceName,),
       );
     }
@@ -163,7 +163,7 @@ class _AccessDialogState extends State<AccessDialog> implements NotificationsLis
         Navigator.popUntil(context, (route) {
           return route.settings.name == AccessDialog.routeName;
         });
-        Navigator.pop(context);
+        Navigator.pop(context, true);
         return;
       }
       setState(() {});
@@ -200,9 +200,9 @@ class _AccessContent extends StatelessWidget {
       if (ruleType != 'roles') {
         button ??= Padding(padding: const EdgeInsets.only(top: 16), child: RoundedButton(
           label: Localization().getStringEx('widget.access.$ruleType.unsatisfied.button.label', ruleType == 'privacy' ? 'Update privacy level' : 'Sign in'),
-          borderColor: Styles().colors?.fillColorSecondary,
-          backgroundColor: Styles().colors?.surface,
-          textStyle: Styles().textStyles?.getTextStyle('widget.detail.large.fat'),
+          borderColor: Styles().colors.fillColorSecondary,
+          backgroundColor: Styles().colors.surface,
+          textStyle: Styles().textStyles.getTextStyle('widget.detail.large.fat'),
           onTap: () => _onTapUpdateButton(context, ruleType),
         ));
       }
@@ -215,7 +215,7 @@ class _AccessContent extends StatelessWidget {
 
     List<Widget> content = [
       Row(children: [Expanded(child:
-        Text(message, style: Styles().textStyles?.getTextStyle('widget.description.regular'), semanticsLabel: '',)
+        Text(message, style: Styles().textStyles.getTextStyle('widget.description.regular'), semanticsLabel: '',)
       )])
     ];
     if (button != null) {
@@ -227,7 +227,8 @@ class _AccessContent extends StatelessWidget {
   void _onTapUpdateButton(BuildContext context, String ruleType) {
     switch (ruleType) {
       case 'privacy': Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,))); break;
-      case 'auth': SettingsHomeContentPanel.present(context, content: SettingsContent.sections); break;
+      // case 'auth': SettingsHomeContentPanel.present(context, content: SettingsContent.sections); break; //TBD remove and use profile.login instead
+      case 'auth' :  ProfileHomePanel.present(context, content: ProfileContent.login);
     }
   }
 
