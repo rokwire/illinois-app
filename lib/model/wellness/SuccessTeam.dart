@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'package:rokwire_plugin/utils/utils.dart';
+
 class SuccessTeamMember {
   final String firstName;
   final String lastName;
@@ -36,4 +38,15 @@ class SuccessTeamMember {
     this.externalLinkText,
     this.teamMemberId
   });
+
+  static SuccessTeamMember? fromJson(Map<String, dynamic>? json) {
+    String? firstName = JsonUtils.stringValue(json?['first_name']);
+    String? lastName = JsonUtils.stringValue(json?['last_name']);
+    String? image = JsonUtils.stringValue(json?['image']);
+    return ((firstName != null) && (lastName != null) && (image != null)) ? SuccessTeamMember(
+      firstName: firstName,
+      lastName: lastName,
+      image: image,
+    ) : null;
+  }
 }

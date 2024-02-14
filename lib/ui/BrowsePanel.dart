@@ -621,6 +621,7 @@ class _BrowseEntry extends StatelessWidget {
       case "wellness.my_appointments":          _onTapWellnessAppointments(context); break;
       case "wellness.wellness_tips":            _onTapWellnessTips(context); break;
       case "wellness.wellness_health_screener": _onTapWellnessHealthScreener(context); break;
+      case "wellness.wellness_success_team":    _onTapWellnessSuccessTeam(context); break;
     }
   }
 
@@ -1147,6 +1148,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapWellnessHealthScreener(BuildContext context) {
     Analytics().logSelect(target: "Illinois Health Screener");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.healthScreener,)));
+  }
+
+  void _onTapWellnessSuccessTeam(BuildContext context) {
+    Analytics().logSelect(target: "My Success Team");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.successTeam,)));
   }
 
   void _notImplemented(BuildContext context) {
