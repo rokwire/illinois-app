@@ -132,7 +132,7 @@ extension FavoriteExt on Favorite {
       return Styles().images.getImage('athletics', excludeFromSemantics: true);
     }
     else if (this is News) {
-      return Styles().images.getImage('news', excludeFromSemantics: true);
+      return Styles().images.getImage('calendar', excludeFromSemantics: true);
     }
     else if (this is LaundryRoom) {
       return Styles().images.getImage('laundry', excludeFromSemantics: true);
