@@ -139,11 +139,11 @@ class _StreakPanelState extends State<StreakPanel> {
                         titleTextStyle: Styles().textStyles.getTextStyle("widget.detail.large.fat") ?? TextStyle(),
                         leftChevronIcon: Icon(
                           Icons.chevron_left_rounded,
-                          color: Colors.white,
+                          color: Styles().colors.surface,
                         ),
                         rightChevronIcon: Icon(
                             Icons.chevron_right_rounded,
-                            color: Colors.white,
+                            color: Styles().colors.surface,
                         )
                       ),
                       availableCalendarFormats: const {

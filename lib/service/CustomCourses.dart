@@ -218,6 +218,8 @@ class CustomCourses with Service implements NotificationsListener {
       String? url = '${Config().lmsUrl}/users/courses/$key';
       http.Response? response = await Network().delete(url, auth: Auth2());
       if (response?.statusCode == 200) {
+        _userCourses?.removeWhere((courseKey, course) => courseKey == key);
+        _userUnits?.removeWhere((courseKey, userUnits) => courseKey == key);
         return true;
       }
 

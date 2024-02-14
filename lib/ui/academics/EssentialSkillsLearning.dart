@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -87,7 +88,7 @@ class _EssentialSkillsLearningState extends State<EssentialSkillsLearning> {
   }
 
   void _onTap() {
-    Navigator.of(context).popUntil((route) => route.isFirst);
+    Navigator.of(context).popUntil((route) => route.settings.name == AcademicsHomePanel.routeName || route.isFirst);
     widget.onStartCourse?.call(widget.selectedSkill);
   }
 

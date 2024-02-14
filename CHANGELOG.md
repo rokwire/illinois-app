@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Fixed
+- Essential Skills Coach fixes and improvements [#3971](https://github.com/rokwire/illinois-app/issues/3971)
+- Fix wrong icon resources [#3837](https://github.com/rokwire/illinois-app/issues/3837).
+- Fix wrong university url [#3935](https://github.com/rokwire/illinois-app/issues/3835).
 - Fixed Wellness Success Team handling in Browse panel and academic advisors loading [#3969](https://github.com/rokwire/illinois-app/issues/3969). 
 
 ## [5.1.28] - 2024-02-13

@@ -52,6 +52,7 @@ enum AcademicsContent { events,
 class AcademicsHomePanel extends StatefulWidget {
   static const String notifySelectContent = "edu.illinois.rokwire.academics.content.select";
   static const String contentItemKey = "content-item";
+  static final String routeName = 'AcademicsHomePanel';
 
   final AcademicsContent? content;
   final bool rootTabDisplay;
@@ -62,6 +63,9 @@ class AcademicsHomePanel extends StatefulWidget {
 
   @override
   _AcademicsHomePanelState createState() => _AcademicsHomePanelState();
+
+  static Future<void> push(BuildContext context, AcademicsContent content) =>
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: content), settings: RouteSettings(name: AcademicsHomePanel.routeName)));
 
   static bool get hasState {
     Set<NotificationsListener>? subscribers = NotificationService().subscribers(AcademicsHomePanel.notifySelectContent);

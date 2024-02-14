@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
@@ -8,16 +8,17 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 class PDFPanel extends StatefulWidget {
   final String? resourceName;
-  final String? path;
-  PDFPanel({Key? key, this.resourceName, this.path}) : super(key: key);
+  final Uint8List? pdfData;
+  PDFPanel({Key? key, this.resourceName, this.pdfData}) : super(key: key);
 
   _PDFPanelState createState() => _PDFPanelState();
 }
 
 class _PDFPanelState extends State<PDFPanel> with WidgetsBindingObserver {
-  final Completer<PDFViewController> _viewCompleter = Completer<PDFViewController>();
-  int? pages = 0;
-  int? currentPage = 0;
+  PDFViewController? _pdfViewController;
+
+  int? _pages;
+  int? currentPage;
   bool isReady = false;
   String errorMessage = '';
 
@@ -30,17 +31,17 @@ class _PDFPanelState extends State<PDFPanel> with WidgetsBindingObserver {
       body: Stack(
         children: <Widget>[
           PDFView(
-            filePath: widget.path,
+            pdfData: widget.pdfData,
             enableSwipe: true,
             swipeHorizontal: true,
             autoSpacing: false,
             pageFling: true,
             pageSnap: true,
-            defaultPage: currentPage!,
+            defaultPage: currentPage ?? 0,
             fitPolicy: FitPolicy.BOTH,
-            onRender: (_pages) {
+            onRender: (pages) {
               setState(() {
-                pages = _pages;
+                _pages = pages;
                 isReady = true;
               });
             },
@@ -55,7 +56,7 @@ class _PDFPanelState extends State<PDFPanel> with WidgetsBindingObserver {
               });
             },
             onViewCreated: (PDFViewController pdfViewController) {
-              _viewCompleter.complete(pdfViewController);
+              _pdfViewController = pdfViewController;
             },
             onPageChanged: (int? page, int? total) {
               setState(() {
@@ -64,6 +65,55 @@ class _PDFPanelState extends State<PDFPanel> with WidgetsBindingObserver {
             },
           ),
           errorMessage.isEmpty ? (isReady ? Container() : Center(child: CircularProgressIndicator(),)) : Center(child: Text(errorMessage),),
+          Column(
+            children: [
+              Expanded(child: Container()),
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      int previous = (currentPage ?? 0) - 1;
+                      if (previous >= 0) {
+                        _pdfViewController?.setPage(previous);
+                      }
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: SizedBox(
+                          height: 64.0,
+                          child: Visibility(
+                            visible: (currentPage ?? 0) > 0,
+                            child: Styles().images.getImage('chevron-left-bold', excludeFromSemantics: true, color: Styles().colors.fillColorPrimary) ?? Container()
+                          )
+                      ),
+                    ),
+                  ),
+                  Expanded(child: Container()),
+                  if (currentPage != null)
+                    Text('${currentPage! + 1}/$_pages', style: Styles().textStyles.getTextStyle('widget.detail.extra_large.fat'), textAlign: TextAlign.center,),
+                  Expanded(child: Container()),
+                  GestureDetector(
+                    onTap: () {
+                      int next = (currentPage ?? 0) + 1;
+                      if (next < (_pages ?? 0)) {
+                        _pdfViewController?.setPage(next);
+                      }
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: SizedBox(
+                          height: 64.0,
+                          child: Visibility(
+                            visible: (currentPage ?? 0) + 1 < (_pages ?? 0),
+                            child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true, color: Styles().colors.fillColorPrimary) ?? Container()
+                          )
+                      ),
+                    ),
+                  )
+                ]
+              ),
+            ],
+          ),
         ],
       ),
     );

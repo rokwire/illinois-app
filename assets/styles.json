@@ -796,10 +796,13 @@
     "filters": {"src": "images/icon-filters.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "size, color"},
     "sort": {"src": "images/icon-sort.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "size, color"},
     "recurrence": {"src": "images/icon-recurring-event.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
+    "attendance": {"src": "0xf7f3", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
+    "report": {"src": "0xf06a", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
 
     "clock": {"src": "f017", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
 
     "star-filled": {"src": "images/icon-star-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
+    "star-partially-filled": {"src": "0xf5c0", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 19},
     "thumbs-up-filled": {"src": "images/icon-thumbs-up-solid.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "campus-tools-filled": {"src": "images/tab-browse-selected.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "remove if not used"},
     "browse-filled": {"src": "0xf0c9", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18, "todo": "size"},
@@ -874,7 +877,7 @@
     "chevron-down-gray": {"src": "images/arrow-down-orange.png", "type": "flutter.asset", "color": "mediumGray", "size": 10, "todo": "size issue?"},
     "chevron-right-gray": {"src": "images/chevron-right-gray.png", "type": "flutter.asset", "color": "mediumGray", "size": 14, "todo": "size issue?"},
     "chevron-left-gray": {"src": "images/chevron-left-gray.png", "type": "flutter.asset", "color": "mediumGray", "size": 14, "todo": "size issue?"},
-    "star-gray": {"src": "0xf5c0", "type": "fa.icon", "weight": "regular", "color": "mediumGray", "size": 19},
+    "star-gray": {"src": "0xf5c0", "type": "fa.icon", "weight": "regular", "color": "mediumGray", "size": 19, "todo":  "remove if not used. Replaced with star-partially-filled"},
     "wellness-gray-0": {"src": "images/tab-wellness.png", "type": "flutter.asset", "color": "mediumGray", "size": 28, "todo": "size issue"},
     "wellness-gray": {"src": "images/tab-wellness-universal.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},
     "academics-gray-0": {"src": "images/tab-academics.png", "type": "flutter.asset", "size": 18, "todo": "color issue"},
