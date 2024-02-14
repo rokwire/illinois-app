@@ -177,7 +177,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   Semantics(label: Localization().getStringEx('panel.group.detail.post.button.report.label', "Report"), button: true, child:
                     GestureDetector( onTap: () => _onTapReportAbusePostOptions(), child:
                         Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
-                          Styles().images.getImage('feedback', excludeFromSemantics: true))))),
+                          Styles().images.getImage('report', excludeFromSemantics: true))))),
 
                 Visibility(visible: _isReplyVisible && !widget.hidePostOptions, child:
                   Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.reply.label', "Reply"), button: true, child:
@@ -560,12 +560,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
-                leftIconKey: "feedback",
+                leftIconKey: "report",
                 label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true), post: widget.post),
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
-                leftIconKey: "feedback",
+                leftIconKey: "report",
                 label: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), post: widget.post),
               )),

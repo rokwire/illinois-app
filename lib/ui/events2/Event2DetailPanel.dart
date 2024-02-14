@@ -465,7 +465,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       return <Widget>[
         InkWell(
             onTap: _onTapTakeAttendance,
-            child: _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.take_attendance.title', 'Take Attendance'), 'qr', underlined: true)),
+            child: _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.take_attendance.title', 'Take Attendance'), 'attendance', underlined: true)),
         _detailSpacerWidget
       ];
     } else {
