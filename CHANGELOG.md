@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Use display duration from app config for in-app notification toasts [#2774](https://github.com/rokwire/illinois-app/issues/2774).
+### Fixed
+- Fixed tappable area of SliverToutHeaderBar back button [#3827](https://github.com/rokwire/illinois-app/issues/3827).
 
 ## [5.1.29] - 2024-02-14
 ### Fixed
