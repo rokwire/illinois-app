@@ -219,6 +219,8 @@ class Config extends rokwire.Config {
 
   int get mobileAccessDeleteTimeoutMins   => JsonUtils.intValue(settings['mobileAccessDeleteTimeout']) ?? 10;
 
+  int get inAppNotificationToastTimeout   => JsonUtils.intValue(settings['inAppNotificationToastTimeout']) ?? 6;
+
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;
 
