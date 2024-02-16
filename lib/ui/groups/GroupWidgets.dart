@@ -622,7 +622,7 @@ class GroupCard extends StatefulWidget {
   _GroupCardState createState() => _GroupCardState();
 }
 
-class _GroupCardState extends State<GroupCard> {
+class _GroupCardState extends State<GroupCard> implements NotificationsListener {
   static const double _smallImageSize = 64;
 
   GroupStats? _groupStats;
@@ -630,8 +630,24 @@ class _GroupCardState extends State<GroupCard> {
 
   @override
   void initState() {
-    super.initState();
+    NotificationService().subscribe(this, [
+      Groups.notifyGroupStatsUpdated,
+    ]);
     _loadGroupStats();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if ((name == Groups.notifyGroupStatsUpdated) && (widget.group?.id == param)) {
+      _updateGroupStats();
+    }
   }
 
   @override
@@ -908,11 +924,21 @@ class _GroupCardState extends State<GroupCard> {
 
    void _loadGroupStats() {
     Groups().loadGroupStats(widget.group?.id).then((stats) {
-      _groupStats = stats;
       if (mounted) {
-        setState(() {});
+        setState(() {
+          _groupStats = stats;
+        });
       }
     });
+  }
+
+  void _updateGroupStats() {
+    GroupStats? cachedGroupStats = Groups().cachedGroupStat(widget.group?.id);
+    if ((cachedGroupStats != null) && (_groupStats != cachedGroupStats) && mounted) {
+      setState(() {
+        _groupStats = cachedGroupStats;
+      });
+    }
   }
 
   void _onTapCard(BuildContext context) {
@@ -2025,7 +2051,7 @@ class GroupPollCard extends StatefulWidget{
   }
 }
 
-class _GroupPollCardState extends State<GroupPollCard> {
+class _GroupPollCardState extends State<GroupPollCard> implements NotificationsListener {
   GroupStats? _groupStats;
 
   List<GlobalKey>? _progressKeys;
@@ -2033,20 +2059,27 @@ class _GroupPollCardState extends State<GroupPollCard> {
 
   @override
   void initState() {
-    _loadGroupStats();
+    NotificationService().subscribe(this, [
+      Groups.notifyGroupStatsUpdated,
+    ]);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalProgressWidths();
     });
+    _loadGroupStats();
     super.initState();
   }
 
-  void _loadGroupStats() {
-    Groups().loadGroupStats(widget.group?.id).then((stats) {
-      _groupStats = stats;
-      if (mounted) {
-        setState(() {});
-      }
-    });
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if ((name == Groups.notifyGroupStatsUpdated) && (widget.group?.id == param)) {
+      _updateGroupStats();
+    }
   }
 
   @override
@@ -2266,6 +2299,25 @@ class _GroupPollCardState extends State<GroupPollCard> {
           _progressWidth = progressWidth;
         });
       }
+    }
+  }
+
+  void _loadGroupStats() {
+    Groups().loadGroupStats(widget.group?.id).then((stats) {
+      if (mounted) {
+        setState(() {
+          _groupStats = stats;
+        });
+      }
+    });
+  }
+
+  void _updateGroupStats() {
+    GroupStats? cachedGroupStats = Groups().cachedGroupStat(widget.group?.id);
+    if ((cachedGroupStats != null) && (_groupStats != cachedGroupStats) && mounted) {
+      setState(() {
+        _groupStats = cachedGroupStats;
+      });
     }
   }
 
