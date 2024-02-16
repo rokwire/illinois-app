@@ -199,14 +199,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   @override
   void initState() {
-    super.initState();
-
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
       Groups.notifyUserMembershipUpdated,
       Groups.notifyGroupCreated,
       Groups.notifyGroupUpdated,
       Groups.notifyGroupEventsUpdated,
+      Groups.notifyGroupStatsUpdated,
       Groups.notifyGroupPostsUpdated,
       Polls.notifyCreated,
       Polls.notifyDeleted,
@@ -220,13 +219,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     _postId = widget.groupPostId;
     _loadGroup(loadEvents: true);
+
+    super.initState();
   }
 
   @override
   void dispose() {
-    super.dispose();
-
     NotificationService().unsubscribe(this);
+    super.dispose();
   }
 
   void _loadGroup({bool loadEvents = false}) {
@@ -420,6 +420,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     });
   }
 
+  void _updateGroupStats() {
+    GroupStats? cachedGroupStats = Groups().cachedGroupStats(widget.groupId);
+    if ((cachedGroupStats != null) && (_groupStats != cachedGroupStats) && mounted) {
+      setState(() {
+        _groupStats = cachedGroupStats;
+      });
+    }
+  }
+
   void _loadGroupAdmins() {
     _increaseProgress();
     Groups().loadMembers(groupId: widget.groupId, statuses: [GroupMemberStatus.admin]).then((admins) {
@@ -511,6 +520,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
     else if (name == Groups.notifyGroupEventsUpdated) {
       _loadEvents();
+    }
+    else if (name == Groups.notifyGroupStatsUpdated) {
+      _updateGroupStats();
     }
     else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)) {
       _loadGroup(loadEvents: true);

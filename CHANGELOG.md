@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Added ability close login widget in home panel [#3834](https://github.com/rokwire/illinois-app/issues/3834).
+### Added
+- Handled group stats update notifications [#3829](https://github.com/rokwire/illinois-app/issues/3829).
+- Added additional group analytics attributes [#3829](https://github.com/rokwire/illinois-app/issues/3829).
 
 ## [5.1.30] - 2024-02-15
 ### Changed
