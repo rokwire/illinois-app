@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Added ability close login widget in home panel [#3834](https://github.com/rokwire/illinois-app/issues/3834).
+
 ## [5.1.30] - 2024-02-15
 ### Changed
 - Use display duration from app config for in-app notification toasts [#2774](https://github.com/rokwire/illinois-app/issues/2774).

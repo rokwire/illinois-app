@@ -247,7 +247,8 @@ class HomeSlantWidget extends StatelessWidget {
   
   final Widget? child;
   final EdgeInsetsGeometry childPadding;
-  
+
+  final List<Widget>? actions;
   final String? favoriteId;
 
   const HomeSlantWidget({Key? key,
@@ -261,6 +262,7 @@ class HomeSlantWidget extends StatelessWidget {
     this.child,
     this.childPadding = EdgeInsets.zero,
     
+    this.actions,
     this.favoriteId,
   }) : super(key: key);
 
@@ -285,10 +287,11 @@ class HomeSlantWidget extends StatelessWidget {
                 )
               ),
 
-              
-              Opacity(opacity: (favoriteId != null) ? 1 : 0, child:
+              if (actions != null)
+                ...actions!,
+
+              if (favoriteId != null)
                 HomeFavoriteButton(favorite: HomeFavorite(favoriteId), style: FavoriteIconStyle.SlantHeader, prompt: true),
-              ),
             ],),
         ),),
       ),
