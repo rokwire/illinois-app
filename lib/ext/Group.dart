@@ -18,6 +18,7 @@ import 'dart:ui';
 
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -28,7 +29,9 @@ extension GroupExt on Group {
   Map<String, dynamic> get analyticsAttributes {
     return {
       Analytics.LogAttributeGroupId : id,
-      Analytics.LogAttributeGroupName : title
+      Analytics.LogAttributeGroupName : title,
+      Analytics.LogAttributeGroupHiddenForSearch: hiddenForSearch,
+      Analytics.LogAttributeGroupStats: Groups().cachedGroupStats(id)?.toJson(),
     };
   }
 
