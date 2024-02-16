@@ -933,7 +933,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
   }
 
   void _updateGroupStats() {
-    GroupStats? cachedGroupStats = Groups().cachedGroupStat(widget.group?.id);
+    GroupStats? cachedGroupStats = Groups().cachedGroupStats(widget.group?.id);
     if ((cachedGroupStats != null) && (_groupStats != cachedGroupStats) && mounted) {
       setState(() {
         _groupStats = cachedGroupStats;
@@ -2313,7 +2313,7 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
   }
 
   void _updateGroupStats() {
-    GroupStats? cachedGroupStats = Groups().cachedGroupStat(widget.group?.id);
+    GroupStats? cachedGroupStats = Groups().cachedGroupStats(widget.group?.id);
     if ((cachedGroupStats != null) && (_groupStats != cachedGroupStats) && mounted) {
       setState(() {
         _groupStats = cachedGroupStats;

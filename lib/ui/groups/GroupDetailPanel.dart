@@ -421,7 +421,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _updateGroupStats() {
-    GroupStats? cachedGroupStats = Groups().cachedGroupStat(widget.groupId);
+    GroupStats? cachedGroupStats = Groups().cachedGroupStats(widget.groupId);
     if ((cachedGroupStats != null) && (_groupStats != cachedGroupStats) && mounted) {
       setState(() {
         _groupStats = cachedGroupStats;
