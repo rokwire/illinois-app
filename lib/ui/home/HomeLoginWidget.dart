@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -27,11 +29,15 @@ class HomeLoginWidget extends StatefulWidget {
 
 class _HomeLoginWidgetState extends State<HomeLoginWidget> implements NotificationsListener {
 
+  bool? _visible;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
+      FlexUI.notifyChanged,
     ]);
+    _visible = Storage().homeLoginVisible;
     super.initState();
   }
 
@@ -43,7 +49,7 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> implements Notificati
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Auth2.notifyLoginChanged) {
+    if ((name == Auth2.notifyLoginChanged) || (name == FlexUI.notifyChanged)) {
       setStateIfMounted(() { });
     }
   }
@@ -54,41 +60,57 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> implements Notificati
   }
 
   Widget _buildConnectPrimarySection() {
-    List<Widget> contentList = [];
 
-    List<dynamic> codes = FlexUI()['home.connect'] ?? [];
-    for (String code in codes) {
-      if (code == 'netid') {
-        contentList.add(_HomeLoginNetIdWidget());
-      } else if (code == 'phone_or_email') {
-        contentList.add(_HomeLoginPhoneOrEmailWidget());
-      }
-    }
+    if (_visible != false) {
+      List<Widget> contentList = [];
 
-    if (CollectionUtils.isNotEmpty(contentList)) {
-      
-      List<Widget> content = <Widget>[];
-      for (Widget entry in contentList) {
-        if (content.isNotEmpty) {
-          content.add(Container(height: 10,),);
+      List<dynamic> codes = FlexUI()['home.connect'] ?? [];
+      for (String code in codes) {
+        if (code == 'netid') {
+          contentList.add(_HomeLoginNetIdWidget());
+        } else if (code == 'phone_or_email') {
+          contentList.add(_HomeLoginPhoneOrEmailWidget());
         }
-        content.add(entry);
       }
 
-      if (content.isNotEmpty) {
-        content.add(Container(height: 20,),);
-      }
+      if (CollectionUtils.isNotEmpty(contentList)) {
 
-      return HomeSlantWidget(favoriteId: widget.favoriteId,
-          title: Localization().getStringEx("panel.home.connect.not_logged_in.title", "Connect to Illinois"),
-          titleIconKey: 'person-circle',
-          childPadding: HomeSlantWidget.defaultChildPadding,
-          child: Column(children: content,),
-      );
+        List<Widget> content = <Widget>[];
+        for (Widget entry in contentList) {
+          if (content.isNotEmpty) {
+            content.add(Container(height: 10,),);
+          }
+          content.add(entry);
+        }
+
+        if (content.isNotEmpty) {
+          content.add(Container(height: 20,),);
+        }
+
+        return HomeSlantWidget(favoriteId: null /*widget.favoriteId*/, actions: [_closeButton],
+            title: Localization().getStringEx("panel.home.connect.not_logged_in.title", "Connect to Illinois"),
+            titleIconKey: 'person-circle',
+            childPadding: HomeSlantWidget.defaultChildPadding,
+            child: Column(children: content,),
+        );
+      }
     }
-    else {
-      return Container();
-    }
+    return Container();
+  }
+  
+  Widget get _closeButton => Semantics(label: Localization().getStringEx('widget.home.welcome.button.close.label', 'Close'), button: true, excludeSemantics: true, child:
+    InkWell(onTap: _onClose, child:
+      Padding(padding: const EdgeInsets.all(16), child:
+        Styles().images.getImage('close-circle-white', excludeFromSemantics: true)
+      ),
+    ),
+  );
+  
+  void _onClose() {
+    Analytics().logSelect(target: "Close", source: widget.runtimeType.toString());
+    setState(() {
+      Storage().homeLoginVisible = _visible = false;
+    });
   }
 }
 
