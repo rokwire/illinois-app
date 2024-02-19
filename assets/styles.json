@@ -811,7 +811,7 @@
 
     "circle-outline": {"src": "images/oval-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 24},
     "check-circle-outline": {"src": "0xf111", "type": "fa.icon", "weight": "thin", "color": "fillColorSecondary", "size": 20},
-    "check-circle-outline-2": {"src": "images/deselected.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 24},
+    "check-circle-outline-2": {"src": "images/deselected.png", "type": "flutter.asset", "color": "surface", "size": 24},
     "location-outline": {"src": "images/icon-map-view.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "size issue"},
     "list-outline": {"src": "images/icon-list-view.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "size issue"},
 
@@ -849,6 +849,7 @@
     "more-white": {"src": "images/groups-more-inactive.png", "type": "flutter.asset", "color": "surface", "size": 24},
     "circle-outline-white": {"src": "images/oval-orange.png", "type": "flutter.asset", "color": "surface", "size": 24},
     "check-circle-outline-gray-white":  {"src": "0xf111", "type": "fa.icon", "weight": "thin", "color": "surface", "size": 20, "todo": "remove if not needed"},
+    "check-circle-outline-gray-white-2":  {"src": "images/deselected.png", "type": "flutter.asset", "weight": "thin", "color": "surface", "size": 24, "todo": "remove if not needed"},
     "settings-white": {"src": "images/settings-white.png", "type": "flutter.asset", "color": "surface", "size": 16, "todo": "wrong size"},
     "chevron-left-white": {"src": "images/chevron-left-white.png", "type": "flutter.asset", "color": "surface", "size": 14, "todo": "size issue?"},
     "chevron-right-white": {"src": "images/chevron-right-white.png", "type": "flutter.asset", "color": "surface", "size": 14, "todo": "size issue?"},
