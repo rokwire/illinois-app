@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Android: background location permission [#3989](https://github.com/rokwire/illinois-app/issues/3989).
 ### Fixed
 - Fixed the panels loaded on "View All" from "My Bus Stops" and "My Destination" favorite widgets [#3987](https://github.com/rokwire/illinois-app/issues/3987).
+- Loading today games in "It's Game Day" widget [#3988](https://github.com/rokwire/illinois-app/issues/3988).
 
 ## [5.1.31] - 2024-02-16
 ### Changed
