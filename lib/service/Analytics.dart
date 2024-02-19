@@ -302,6 +302,8 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAttributeLaundryName            = "laundry_name";
   static const String   LogAttributeGroupId                = "group_id";
   static const String   LogAttributeGroupName              = "group_name";
+  static const String   LogAttributeGroupHiddenForSearch   = "group_hidden_for_search";
+  static const String   LogAttributeGroupStats             = "group_stats";
   static const String   LogAttributeGuide                  = "guide";
   static const String   LogAttributeGuideId                = "guide_id";
   static const String   LogAttributeGuideTitle             = "guide_title";

@@ -334,10 +334,14 @@ class Storage extends rokwire.Storage {
   int? get homeToutImageTime => getIntWithName(homeToutImageTimeKey);
   set homeToutImageTime(int? value) => setIntWithName(homeToutImageTimeKey, value);
 
-  // Home Welcome 
-  String get homeWelcomeVisibleKey => 'edu.illinois.rokwire.home.welcome.image.time';
+  // Home
+  String get homeWelcomeVisibleKey => 'edu.illinois.rokwire.home.welcome.visible';
   bool? get homeWelcomeVisible => getBoolWithName(homeWelcomeVisibleKey);
   set homeWelcomeVisible(bool? value) => setBoolWithName(homeWelcomeVisibleKey, value);
+
+  String get homeLoginVisibleKey => 'edu.illinois.rokwire.home.login.visible';
+  bool? get homeLoginVisible => getBoolWithName(homeLoginVisibleKey);
+  set homeLoginVisible(bool? value) => setBoolWithName(homeLoginVisibleKey, value);
 
   // Browse Tout
   String get browseToutImageUrlKey => 'edu.illinois.rokwire.browse.tout.image.url';

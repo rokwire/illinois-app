@@ -31,6 +31,7 @@ import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
 import 'package:illinois/ui/appointments/AppointmentCard.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -612,8 +613,9 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   void _onTapViewAll() {
     Analytics().logSelect(target: 'View All', source: '${widget.runtimeType.toString()}(${widget.favoriteKey})');
-    if ((widget.favoriteKey == MTDStop.favoriteKeyName) || (widget.favoriteKey == ExplorePOI.favoriteKeyName)) {
-      FavoriteExt.launchHome(context, key: widget.favoriteKey);
+    //FavoriteExt.launchHome(context, key: widget.favoriteKey);
+    if (widget.favoriteKey == MTDStop.favoriteKeyName) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.my)));
     } else if(widget.favoriteKey == Game.favoriteKeyName) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.my_events)));
     } else if(widget.favoriteKey == News.favoriteKeyName) {

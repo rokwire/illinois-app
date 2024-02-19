@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/AssistantPanel.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
@@ -693,6 +694,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       AppToast.show(context,
         toast: toast,
         gravity: ToastGravity.TOP,
+        duration: Duration(seconds: Config().inAppNotificationToastTimeout),
         child: InAppNotificationToast.message(body,
           actionText: Localization().getStringEx('dialog.show.title', 'Show'),
           onAction: (completion != null) ? () => _onFirebaseForegroundMessageCompletition(toast, completion) : null,

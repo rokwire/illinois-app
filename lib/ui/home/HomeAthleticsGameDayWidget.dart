@@ -22,6 +22,8 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -56,16 +58,17 @@ class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget>
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
       AppLivecycle.notifyStateChanged,
+      Auth2UserPrefs.notifyInterestsChanged,
     ]);
 
     widget.updateController?.stream.listen((String command) {
       if (command == HomePanel.notifyRefresh) {
         LiveStats().refresh();
-        _loadTodayGames();
+        _loadPreferredGames();
       }
     });
 
-    _loadTodayGames();
+    _loadPreferredGames();
   }
 
   @override
@@ -79,10 +82,13 @@ class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget>
   @override
   void onNotification(String name, dynamic param) {
     if (name == Connectivity.notifyStatusChanged) {
-      _loadTodayGames();
+      _loadPreferredGames();
     }
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
+    }
+    else if (name == Auth2UserPrefs.notifyInterestsChanged) {
+      _loadPreferredGames();
     }
   }
 
@@ -94,7 +100,7 @@ class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget>
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _loadTodayGames();
+          _loadPreferredGames();
         }
       }
     }
@@ -118,17 +124,13 @@ class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget>
     }
   }
 
-  void _loadTodayGames() {
+  void _loadPreferredGames() {
     if (Connectivity().isNotOffline) {
-      Sports().loadTopScheduleGames().then((List<Game>? games) {
-        if (mounted) {
-          setState(() {
-            _todayGames = Sports().getTodayGames(games);
-          });
-        }
+      Sports().loadPreferredTodayGames().then((List<Game>? games) {
+        setStateIfMounted(() {
+          _todayGames = games;
+        });
       });
     }
   }
-
-
 }

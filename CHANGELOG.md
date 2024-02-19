@@ -6,6 +6,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [5.1.32] - 2024-02-19
+### Removed
+- Android: background location permission [#3989](https://github.com/rokwire/illinois-app/issues/3989).
+### Fixed
+- Fixed the panels loaded on "View All" from "My Bus Stops" and "My Destination" favorite widgets [#3987](https://github.com/rokwire/illinois-app/issues/3987).
+- Loading today games in "It's Game Day" widget [#3988](https://github.com/rokwire/illinois-app/issues/3988).
+- Images for completed To-Do items [#3984](https://github.com/rokwire/illinois-app/issues/3984).
+
+## [5.1.31] - 2024-02-16
+### Changed
+- Added ability close login widget in home panel [#3834](https://github.com/rokwire/illinois-app/issues/3834).
+### Added
+- Handled group stats update notifications [#3829](https://github.com/rokwire/illinois-app/issues/3829).
+- Added additional group analytics attributes [#3829](https://github.com/rokwire/illinois-app/issues/3829).
+
+## [5.1.30] - 2024-02-15
+### Changed
+- Use display duration from app config for in-app notification toasts [#2774](https://github.com/rokwire/illinois-app/issues/2774).
+### Fixed
+- Fixed tappable area of SliverToutHeaderBar back button [#3827](https://github.com/rokwire/illinois-app/issues/3827).
+
 ## [5.1.29] - 2024-02-14
 ### Fixed
 - Essential Skills Coach fixes and improvements [#3971](https://github.com/rokwire/illinois-app/issues/3971)
