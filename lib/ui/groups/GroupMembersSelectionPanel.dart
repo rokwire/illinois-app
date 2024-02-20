@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -65,13 +66,8 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
   Widget build(BuildContext context) {
     bool hasGroupMembers = CollectionUtils.isNotEmpty(_selectedMembers);
 
-    // TBD: Replace with PopScope
-    // ignore: deprecated_member_use
-    return new WillPopScope(
-      onWillPop: () async{
-        _onTapDone();
-        return false;
-      },
+    return PopScopeFix(
+      onBack: _onTapDone,
       child: Scaffold(
         appBar: HeaderBar(
           title: Localization().getStringEx('panel.group.members.header.title', 'Members'),
