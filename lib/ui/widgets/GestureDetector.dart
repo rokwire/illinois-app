@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 
 
 class BackGestureDetector extends StatelessWidget {
-  final void Function()? onBack;
+  final int swipeSensitivityDx = 24;
+  final int swipeSensitivityMs = 300;
+
   final Widget child;
-  final int swipeSensitivity = 24;
+  final void Function()? onBack;
+
+  static int _lastDetectedTime = 0;
+
   BackGestureDetector({Key? key, required this.child, this.onBack}) : super(key: key);
   
   @override
@@ -14,8 +19,10 @@ class BackGestureDetector extends StatelessWidget {
   );
 
   void _onHorizontalDragUpdate(BuildContext context, DragUpdateDetails details) {
-    //debugPrint("onHorizontalDragUpdate: ${details.delta.dx}");
-    if (details.delta.dx > swipeSensitivity) {
+    int detectionTime = DateTime.now().millisecondsSinceEpoch;
+    //debugPrint("onHorizontalDragUpdate dy=${details.delta.dx}, time=$detectionTime");
+    if ((details.delta.dx > swipeSensitivityDx) && ((detectionTime - _lastDetectedTime) > swipeSensitivityMs)) {
+      _lastDetectedTime = detectionTime;
       if (onBack != null) {
         onBack!();
       }
