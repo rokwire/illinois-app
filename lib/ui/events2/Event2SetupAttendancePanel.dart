@@ -1,14 +1,13 @@
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
-import 'package:illinois/ui/widgets/GestureDetector.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -71,16 +70,8 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   }
 
   @override
-  Widget build(BuildContext context) {
-    // TBD: Replace with PopScope
-    // ignore: deprecated_member_use
-    return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBarBack), child: Platform.isIOS ?
-      BackGestureDetector(onBack: _onHeaderBarBack, child:
-        _buildScaffoldContent(),
-      ) :
-      _buildScaffoldContent()
-    );
-  }
+  Widget build(BuildContext context) =>
+    PopScopeFix(onBack: _onHeaderBarBack, child: _buildScaffoldContent());
 
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
@@ -88,8 +79,8 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     backgroundColor: Styles().colors.white,
   );
 
-  Widget _buildPanelContent() {
-    return RefreshIndicator(onRefresh: _onRefresh, child:
+  Widget _buildPanelContent() =>
+    RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
         Column(children: [
           Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
@@ -104,7 +95,6 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
         ],),
       )
     );
-  }
 
   //EdgeInsetsGeometry get _togglePadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 12);
   //EdgeInsetsGeometry get _toggleDescriptionPadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 5);
@@ -384,5 +374,6 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   void _onHeaderBarBack() {
     Analytics().logSelect(target: 'HeaderBar: Back');
     Navigator.of(context).pop(_isCreating ? _buildAttendanceDetails() : null);
+    //Future.delayed(Duration(seconds: 1), () {});
   }
 }

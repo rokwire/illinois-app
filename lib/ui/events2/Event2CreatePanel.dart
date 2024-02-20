@@ -22,9 +22,9 @@ import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:illinois/ui/widgets/GestureDetector.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
@@ -607,16 +607,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    // TBD: Replace with PopScope
-    // ignore: deprecated_member_use
-    return WillPopScope(onWillPop: _canGoBack, child: Platform.isIOS ?
-      BackGestureDetector(onBack: _onHeaderBack, child:
-        _buildScaffoldContent(),
-      ) :
-      _buildScaffoldContent(),
-    );
-  }
+  Widget build(BuildContext context) =>
+    PopScopeFix(onBack: _onHeaderBack, child: _buildScaffoldContent(),);
 
   Widget _buildScaffoldContent() => Scaffold(
     appBar: HeaderBar(title: widget.isCreate ?
@@ -627,8 +619,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     backgroundColor: Styles().colors.white,
   );
 
-  Widget _buildPanelContent() {
-    return SingleChildScrollView(child:
+  Widget _buildPanelContent() =>
+    SingleChildScrollView(child:
       Column(children: [
         _buildImageWidget(),
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
@@ -650,11 +642,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
             _buildCreateEventSection(),
           ]),
         )
-
       ],)
-
     );
-  }
 
   // Image
 
@@ -2090,7 +2079,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   void _onHeaderBack() {
     Analytics().logSelect(target: 'HeaderBar: Back');
     _canGoBack().then((bool result) {
-      if (result) {
+      if (result && mounted) {
         Navigator.of(context).pop();
       }
     });

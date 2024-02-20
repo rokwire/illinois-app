@@ -16,10 +16,12 @@
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
@@ -43,6 +45,7 @@ import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:illinois/ui/widgets/InAppNotificationToast.dart';
+import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:rokwire_plugin/model/actions.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -526,22 +529,19 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       panels.add(_panels[rootTab] ?? Container());
     }
 
-    // TBD: Replace with PopScope
-    // ignore: deprecated_member_use
-    return WillPopScope(
-        child: Container(
-          color: Colors.white,
-          child: Scaffold(
-            body: TabBarView(
-                controller: _tabBarController,
-                physics: NeverScrollableScrollPhysics(), //disable scrolling
-                children: panels,
-              ),
-            bottomNavigationBar: uiuc.TabBar(tabController: _tabBarController),
-            backgroundColor: Styles().colors.background,
+    return PopScopeFix(onBack: _onBack, child:
+      Container(color: Colors.white, child:
+        Scaffold(
+          body: TabBarView(
+            controller: _tabBarController,
+            physics: NeverScrollableScrollPhysics(), //disable scrolling
+            children: panels,
           ),
+          bottomNavigationBar: uiuc.TabBar(tabController: _tabBarController),
+          backgroundColor: Styles().colors.background,
         ),
-        onWillPop: _onWillPop);
+      ),
+    );
   }
 
   
@@ -593,19 +593,17 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     return _getTabPanelAtIndex(_currentTabIndex);
   }
 
-  Future<bool> _onWillPop() async {
+  void _onBack() {
     if (_currentTabIndex != 0) {
       _selectTab(0);
-      return Future.value(false);
     }
-    bool? result = await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return _buildExitDialog(context);
-      },
-    );
-    return result ?? false;
+    else if (Platform.isAndroid) {
+      showDialog<bool>(context: context, barrierDismissible: false, builder: _buildExitDialog,).then((bool? result) {
+        if ((result == true) && mounted) {
+          SystemNavigator.pop();
+        }
+      });
+    }
   }
 
   Widget _buildExitDialog(BuildContext context) {

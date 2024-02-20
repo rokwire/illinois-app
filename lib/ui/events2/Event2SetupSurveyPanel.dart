@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,8 +22,8 @@ import 'package:illinois/ext/Survey.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
-import 'package:illinois/ui/widgets/GestureDetector.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/survey.dart';
@@ -118,16 +117,8 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   }
 
   @override
-  Widget build(BuildContext context) {
-    // TBD: Replace with PopScope
-    // ignore: deprecated_member_use
-    return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBarBack), child: Platform.isIOS ?
-      BackGestureDetector(onBack: _onHeaderBarBack, child:
-        _buildScaffoldContent(),
-      ) :
-      _buildScaffoldContent()
-    );
-  }
+  Widget build(BuildContext context) =>
+    PopScopeFix(onBack: _onHeaderBarBack, child: _buildScaffoldContent());
 
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,

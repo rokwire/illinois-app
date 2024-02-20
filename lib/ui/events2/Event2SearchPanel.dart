@@ -15,7 +15,6 @@
  */
 
 import 'dart:collection';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -33,8 +32,8 @@ import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
-import 'package:illinois/ui/widgets/GestureDetector.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -181,19 +180,11 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
   // Widget
 
   @override
-  Widget build(BuildContext context) {
-    // TBD: Replace with PopScope
-    // ignore: deprecated_member_use
-    return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBarBack), child: Platform.isIOS ?
-      BackGestureDetector(onBack: _onHeaderBarBack, child:
-        _buildScaffoldContent(),
-      ) :
-      _buildScaffoldContent()
-    );
-  }
+  Widget build(BuildContext context) =>
+    PopScopeFix(onBack: _onHeaderBarBack, child: _buildScaffoldContent());
 
-  Widget _buildScaffoldContent() {
-    return Scaffold(
+  Widget _buildScaffoldContent() =>
+    Scaffold(
       appBar: HeaderBar(
         title: Localization().getStringEx("panel.event2.search.header.title", "Search"),
         onLeading: _onHeaderBarBack,
@@ -202,10 +193,9 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
-  }
 
-  Widget _buildPanelContent() {
-    return RefreshIndicator(onRefresh: _onRefresh, child:
+  Widget _buildPanelContent() =>
+    RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(scrollDirection: Axis.vertical, controller: _scrollController, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Container(color: Styles().colors.white, child:
@@ -218,7 +208,6 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
         ],),
       ),
     );
-  }
 
   Widget _buildSearchBar() => Container(decoration: _searchBarDecoration, padding: EdgeInsets.only(left: 16), child:
     Row(children: <Widget>[
