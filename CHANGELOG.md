@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 <!-- The next version number should be the version from pubspec.yaml - 5.2.0 -->
+### Fixed
+- Correct filtering of sport events [#3986](https://github.com/rokwire/illinois-app/issues/3986).
 
 ## [5.1.32] - 2024-02-19
 ### Removed
