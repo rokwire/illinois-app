@@ -301,14 +301,25 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
     if (CollectionUtils.isNotEmpty(_teamsFilter)) {
       late dynamic sportAttribute;
       if (_teamsFilter!.length == 1) {
-        sportAttribute = _teamsFilter!.first.name;
+        sportAttribute = _getSportFilterKey(_teamsFilter!.first);
       } else {
         sportAttribute = <String>[];
-        sportAttribute = List.from(_teamsFilter!.map((sport) => sport.name));
+        sportAttribute = List.from(_teamsFilter!.map((sport) {
+          return _getSportFilterKey(sport);
+        }));
       }
       attributes.addAll({'sport': sportAttribute});
     }
     return attributes;
+  }
+
+  String? _getSportFilterKey(SportDefinition? sport) {
+    // "Manually" select different property name for these sports because they do not match with labels in Calendar and Sports BB
+    if ((sport?.shortName == 'wrestling') || (sport?.shortName == 'wswim')) {
+      return sport?.customName;
+    } else {
+      return sport?.name;
+    }
   }
 
   bool get _favoritesMode => (widget.showFavorites == true);
