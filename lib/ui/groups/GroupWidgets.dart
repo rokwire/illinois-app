@@ -853,7 +853,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
       //     flex: 1,
       //     child:
       Semantics(
-          label: "post image",
+          label: "Group image",
           button: true,
           hint: "Double tap to zoom the image",
           child: GestureDetector(
