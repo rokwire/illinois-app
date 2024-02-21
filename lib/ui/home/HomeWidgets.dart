@@ -65,8 +65,8 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
       onLeave: (_) {
         _onDragLeave();
       },
-      onAccept: (HomeFavorite favorite) {
-        widget.dragAndDropHost?.onDragAndDrop(dragFavoriteId: favorite.favoriteId, dropFavoriteId: widget.favoriteId, dropAnchor: _dropAnchorAlignment);
+      onAcceptWithDetails: (DragTargetDetails<HomeFavorite> details) {
+        widget.dragAndDropHost?.onDragAndDrop(dragFavoriteId: details.data.favoriteId, dropFavoriteId: widget.favoriteId, dropAnchor: _dropAnchorAlignment);
       },
     );
   }
@@ -198,8 +198,8 @@ class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
       onLeave: (_) {
         _onDragLeave();
       },
-      onAccept: (HomeFavorite favorite) {
-        widget.dragAndDropHost?.onDragAndDrop(dragFavoriteId: favorite.favoriteId, dropFavoriteId: widget.favoriteId, dropAnchor: _dropAnchorAlignment);
+      onAcceptWithDetails: (DragTargetDetails<HomeFavorite> details) {
+        widget.dragAndDropHost?.onDragAndDrop(dragFavoriteId: details.data.favoriteId, dropFavoriteId: widget.favoriteId, dropAnchor: _dropAnchorAlignment);
       },
     );
   }
