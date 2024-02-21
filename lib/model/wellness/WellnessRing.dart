@@ -48,7 +48,7 @@ class WellnessRingDefinition {
   }
 
   @override
-  bool operator ==(dynamic other) =>
+  bool operator==(Object other) =>
       (other is WellnessRingDefinition) &&
           (id == other.id) &&
           (goal == other.goal) &&
@@ -129,7 +129,7 @@ class WellnessRingRecord {
   }
 
   @override
-  bool operator ==(dynamic other) =>
+  bool operator==(Object other) =>
       (other is WellnessRingRecord) &&
           (wellnessRingId == other.wellnessRingId) &&
           (value == other.value) &&

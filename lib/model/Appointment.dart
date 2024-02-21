@@ -115,7 +115,7 @@ class Appointment with Explore, Favorite {
   };
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is Appointment) &&
     (id == other.id) &&
     (type == other.type) &&
@@ -233,7 +233,7 @@ class AppointmentOnlineDetails {
   }
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is AppointmentOnlineDetails) &&
     (url == other.url) &&
     (meetingId == other.meetingId) &&
@@ -290,7 +290,7 @@ class AppointmentLocation {
   }
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is AppointmentLocation) &&
     (id == other.id) &&
     (latitude == other.latitude) &&
@@ -346,7 +346,7 @@ class AppointmentHost {
   }
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is AppointmentHost) &&
     (firstName == other.firstName) &&
     (lastName == other.lastName);
@@ -451,7 +451,7 @@ class AppointmentProvider {
   // Euality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is AppointmentProvider) &&
     (id == other.id) &&
     (name == other.name) &&
@@ -583,7 +583,7 @@ class AppointmentUnit {
   // Euality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is AppointmentUnit) &&
     (id == other.id) &&
     (providerId == other.providerId) &&
@@ -699,7 +699,7 @@ class AppointmentPerson {
   // Euality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is AppointmentPerson) &&
     (id == other.id) &&
     (providerId == other.providerId) &&
@@ -810,7 +810,7 @@ class AppointmentQuestion {
   // Euality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is AppointmentQuestion) &&
     (id == other.id) &&
     (providerId == other.providerId) &&
@@ -918,7 +918,7 @@ class AppointmentAnswer {
   // Euality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is AppointmentAnswer) &&
     (questionId == other.questionId) &&
     (providerId == other.providerId) &&
@@ -964,7 +964,7 @@ class AppointmentQuestionType {
   String toJson() => _value;
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is AppointmentQuestionType) && (other._value == _value);
 
   @override
@@ -1046,7 +1046,7 @@ class AppointmentTimeSlot {
   // Euality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is AppointmentTimeSlot) &&
     (id == other.id) &&
     (providerId == other.providerId) &&

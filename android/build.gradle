@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+/* Reason: https://docs.flutter.dev/release/breaking-changes/flutter-gradle-plugin-apply
 buildscript {
     ext {
         gradle_version = '7.0.0'
@@ -31,8 +32,9 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
+*/
 
-allprojects {
+ allprojects {
     repositories {
         google()
         mavenCentral()

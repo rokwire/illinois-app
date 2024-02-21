@@ -65,7 +65,7 @@ class MTDStop with Explore implements Favorite {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is MTDStop) &&
     (id == other.id) &&
     (name == other.name) &&
@@ -362,7 +362,7 @@ class MTDStops {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is MTDStops) &&
     (changesetId == other.changesetId) &&
     (DeepCollectionEquality().equals(stops, other.stops));
@@ -428,7 +428,7 @@ class MTDRoute {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is MTDRoute) &&
     (id == other.id) &&
     (shortName == other.shortName) &&
@@ -537,7 +537,7 @@ class MTDRoutes {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is MTDRoutes) &&
     (changesetId == other.changesetId) &&
     (DeepCollectionEquality().equals(routes, other.routes));
@@ -589,7 +589,7 @@ class MTDTrip {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is MTDTrip) &&
     (id == other.id) &&
     (headsign == other.headsign) &&
@@ -669,7 +669,7 @@ class MTDStopTime {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is MTDStopTime) &&
     (arrivalTimeString == other.arrivalTimeString) &&
     (departureTimeString == other.departureTimeString) &&
@@ -733,7 +733,7 @@ class MTDDepartureEdge {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is MTDDepartureEdge) &&
     (stopId == other.stopId);
 
@@ -768,7 +768,7 @@ class MTDLocation {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is MTDLocation) &&
     (latitude == other.latitude) &&
     (longitude == other.longitude);
@@ -861,7 +861,7 @@ class MTDDeparture {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is MTDDeparture) &&
     
     (stopId == other.stopId) &&
@@ -962,7 +962,7 @@ class MTDShape {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is MTDShape) &&
     (distance == other.distance) &&
     (latitude == other.latitude) &&
@@ -1044,7 +1044,7 @@ class MTDVehicle {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is MTDVehicle) &&
     (id == other.id) &&
     (trip == other.trip) &&
@@ -1124,7 +1124,7 @@ class MTDLegEdge {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is MTDLegEdge) &&
     (latitude == other.latitude) &&
     (longitude == other.longitude) &&
@@ -1202,7 +1202,7 @@ class MTDWalkLegAtom extends MTDLegAtom {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is MTDWalkLegAtom) &&
     (direction == other.direction) &&
     (distance == other.distance) &&
@@ -1243,7 +1243,7 @@ class MTDServiceLegAtom extends MTDLegAtom {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is MTDServiceLegAtom) &&
     (route == other.route) &&
     (trip == other.trip) &&
@@ -1354,7 +1354,7 @@ class MTDWalkLeg extends MTDLeg {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is MTDWalkLeg) &&
     (type == other.type) &&
     (walk == other.walk);
@@ -1394,7 +1394,7 @@ class MTDServiceLeg extends MTDLeg {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is MTDServiceLeg) &&
     (type == other.type) &&
     (DeepCollectionEquality().equals(services, other.services));
@@ -1437,7 +1437,7 @@ class MTDItinerary {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is MTDItinerary) &&
     (startTimeString == other.startTimeString) &&
     (endTimeString == other.endTimeString) &&

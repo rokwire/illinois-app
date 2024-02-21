@@ -36,7 +36,7 @@ class SpeechToText with Service {
 
     _speechToText.listen(
       onResult: (result) => _onSpeechResult(result, onResult),
-      cancelOnError: true
+      listenOptions: stt.SpeechListenOptions(cancelOnError: true),
     );
   }
 

@@ -11,7 +11,7 @@ class WellnessBuilding with Explore {
   WellnessBuilding({required this.building, required this.guideEntry});
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is WellnessBuilding) &&
     (building == other.building) &&
     (DeepCollectionEquality().equals(guideEntry, other.guideEntry));

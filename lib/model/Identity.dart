@@ -245,7 +245,7 @@ class StudentId {
   }
 
   @override
-  bool operator ==(dynamic other) =>
+  bool operator==(Object other) =>
       (other is StudentId) &&
       (fullName == other.fullName) &&
       (uin == other.uin) &&
@@ -312,7 +312,7 @@ class MobileIdCredential {
   }
 
   @override
-  bool operator ==(dynamic other) => (other is MobileIdCredential) && (id == other.id) && (expirationDate == other.expirationDate);
+  bool operator==(Object other) => (other is MobileIdCredential) && (id == other.id) && (expirationDate == other.expirationDate);
 
   @override
   int get hashCode => (id?.hashCode ?? 0) ^ (expirationDate?.hashCode ?? 0);

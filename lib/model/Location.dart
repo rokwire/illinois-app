@@ -30,7 +30,7 @@ class LatLng {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is LatLng) &&
     (latitude == other.latitude) &&
     (longitude == other.longitude);

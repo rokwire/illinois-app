@@ -34,7 +34,7 @@ class Questionnaire {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is Questionnaire) &&
     (id == other.id) &&
     (title == other.title) &&
@@ -132,7 +132,7 @@ class Question {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is Question) &&
     (id == other.id) &&
     (title == other.title) &&
@@ -211,7 +211,7 @@ class Answer {
   // Equality
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is Answer) &&
     (id == other.id) &&
     (title == other.title) &&
