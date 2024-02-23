@@ -372,15 +372,17 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     return Visibility(visible: showSynced || showUpdated,
       child: Container(child: Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
         Visibility(visible: showSynced,
-          child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Last sync:'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))),
-            Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))
-        ])),
+          child: Semantics(container: true, child:
+            Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Last sync:'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))),
+              Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))
+        ]))),
         Visibility(visible: showUpdated,
-          child: Padding(padding: EdgeInsets.only(top: 5), child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Last updated:'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))),
-            Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))
-        ])))
+          child: Semantics(container: true,
+            child: Padding(padding: EdgeInsets.only(top: 5), child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Last updated:'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))),
+              Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))
+        ]))))
     ]))));
   }
 
@@ -442,6 +444,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     Container(
         constraints: BoxConstraints(minHeight:  MediaQuery.of(context).size.height),
         child: BlockSemantics(child:
+          Semantics(label: "dismiss", child:
             GestureDetector(
               onTap: () {
                 Analytics().logSelect(target: 'Close Dropdown');
@@ -452,7 +455,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
               child: Container(color: Styles().colors.blackTransparent06)
             )
           )
-        );
+        )
+    );
   }
 
   Widget _buildStatusValuesWidget() {
@@ -649,7 +653,8 @@ class _GroupMemberCard extends StatelessWidget {
           children: <Widget>[
             ClipRRect(
                 borderRadius: BorderRadius.circular(65),
-                child: Container(width: 65, height: 65, child: GroupMemberProfileImage(userId: member?.userId))),
+                child: Semantics(label: "user image", hint: "Double tap to zoom", child:
+                  Container(width: 65, height: 65, child: GroupMemberProfileImage(userId: member?.userId)))),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(left: 11),
