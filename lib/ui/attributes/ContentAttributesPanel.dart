@@ -297,19 +297,21 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
             borderRadius: BorderRadius.all(Radius.circular(4))
           ),
           //padding: const EdgeInsets.only(left: 12, right: 8),
-          child: InkWell(onTap: () => enabled ? _onAttributeCheckbox(attribute) : null,
-            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Expanded(child:
-                Padding(padding: EdgeInsets.only(left: 12, top: 16, bottom: 16), child:
-                  Text(text ?? '', style: textStyle,)
+          child: Semantics(enabled: enabled, checked: displayValue?? false, child:
+            InkWell(onTap: () => enabled ? _onAttributeCheckbox(attribute) : null,
+              child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Expanded(child:
+                  Padding(padding: EdgeInsets.only(left: 12, top: 16, bottom: 16), child:
+                    Text(text ?? '', style: textStyle,)
+                  ),
                 ),
-              ),
-              Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
-                Styles().images.getImage(imageAsset, excludeFromSemantics: true,) ?? Container(),
-              ),
-            ]),
+                Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
+                  Styles().images.getImage(imageAsset, excludeFromSemantics: true,) ?? Container(),
+                ),
+              ]),
+            ),
           ),
-        ),
+        )
       ]),
     );
   }
