@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Upgrade to Flutter 3.19.0 [#3997](https://github.com/rokwire/illinois-app/issues/3997).
+- Acknowledged "Assistant Managed" group for enabling Assistant UI [#4002](https://github.com/rokwire/illinois-app/issues/4002).
 
 ## [5.2.0] - 2024-02-20
 ### Fixed
