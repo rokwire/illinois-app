@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Acknowledged "Assistant Managed" group for enabling Assistant UI [#4002](https://github.com/rokwire/illinois-app/issues/4002).
 ### Fixed
 - Correct filtering of sport events [#3986](https://github.com/rokwire/illinois-app/issues/3986).
+- Trim URL links before launching them, report URL parse failure when confirming URLs [#4001](https://github.com/rokwire/illinois-app/issues/4001).
 
 ## [5.1.32] - 2024-02-19
 ### Removed
