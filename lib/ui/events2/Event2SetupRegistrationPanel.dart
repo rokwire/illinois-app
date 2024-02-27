@@ -317,16 +317,17 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
 
   void _confirmLinkUrl(TextEditingController controller, { String? analyticsTarget }) {
     Analytics().logSelect(target: analyticsTarget ?? "Confirm URL");
-    if (controller.text.isNotEmpty) {
-      Uri? uri = Uri.tryParse(controller.text);
-      if (uri != null) {
-        Uri? fixedUri = UrlUtils.fixUri(uri);
-        if (fixedUri != null) {
-          controller.text = fixedUri.toString();
-          uri = fixedUri;
-        }
-        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
+    Uri? uri = controller.text.isNotEmpty ? Uri.tryParse(controller.text.trim()) : null;
+    if (uri != null) {
+      Uri? fixedUri = UrlUtils.fixUri(uri);
+      if (fixedUri != null) {
+        controller.text = fixedUri.toString();
+        uri = fixedUri;
       }
+      launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
+    }
+    else {
+      Event2Popup.showMessage(context, message: Localization().getStringEx('panel.event2.detail.parse.url.failed.message', 'Failed to parse URL.'));
     }
   }
 

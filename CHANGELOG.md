@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Upgrade to Flutter 3.19.0 [#3997](https://github.com/rokwire/illinois-app/issues/3997).
 - Acknowledged "Assistant Managed" group for enabling Assistant UI [#4002](https://github.com/rokwire/illinois-app/issues/4002).
+### Fixed
+- Trim URL links before launching them, report URL parse failure when confirming URLs [#4001](https://github.com/rokwire/illinois-app/issues/4001).
 
 ## [5.2.0] - 2024-02-20
 ### Fixed
