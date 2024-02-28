@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Created HomeEmptyContentWidget displayed when there is no favorites content [#3999](https://github.com/rokwire/illinois-app/issues/3999).
 ### Changed
 - Acknowledged "Assistant Managed" group for enabling Assistant UI [#4002](https://github.com/rokwire/illinois-app/issues/4002).
 ### Fixed
