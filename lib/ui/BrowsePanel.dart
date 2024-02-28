@@ -75,8 +75,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BrowsePanel extends StatefulWidget {
-
   static const String notifyRefresh      = "edu.illinois.rokwire.browse.refresh";
+  static const String notifySelect       = "edu.illinois.rokwire.browse.select";
 
   BrowsePanel();
 

@@ -193,6 +193,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Polls.notifyPresentResult,
       uiuc.TabBar.notifySelectionChanged,
       HomePanel.notifySelect,
+      BrowsePanel.notifySelect,
       ExploreMapPanel.notifySelect,
     ]);
 
@@ -478,7 +479,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onFirebaseGuideArticleNotification(param);
     }
     else if (name == HomePanel.notifySelect) {
-      _onSelectHome();
+      _onSelectTab(RootTab.Favorites);
+    }
+    else if (name == BrowsePanel.notifySelect) {
+      _onSelectTab(RootTab.Browse);
     }
     else if (name == ExploreMapPanel.notifySelect) {
       _onSelectMaps(param);
@@ -496,11 +500,11 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  void _onSelectHome() {
-    int? homeIndex = _getIndexByRootTab(RootTab.Favorites);
-    if (mounted && (homeIndex != null)) {
+  void _onSelectTab(RootTab tab) {
+    int? tabIndex = _getIndexByRootTab(tab);
+    if (mounted && (tabIndex != null)) {
       Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-      _selectTab(homeIndex);
+      _selectTab(tabIndex);
     }
   }
 
