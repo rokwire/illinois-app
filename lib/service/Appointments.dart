@@ -106,6 +106,10 @@ class Appointments with Service implements NotificationsListener {
     _processCachedAppointmentDetails();
   }
 
+  @override
+  Set<Service> get serviceDependsOn {
+    return Set.from([Storage(), Config(), Auth2()]);
+  }
 
   // NotificationsListener
 

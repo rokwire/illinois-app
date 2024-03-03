@@ -68,6 +68,11 @@ class WellnessRings with Service implements NotificationsListener{
     return super.initService();
   }
 
+  @override
+  Set<Service> get serviceDependsOn {
+    return Set.from([Config(), Auth2()]);
+  }
+
   //Init
   Future<void> _initRecords() async {
     await _initFromCache();
