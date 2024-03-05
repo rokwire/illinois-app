@@ -24,6 +24,8 @@ class Services extends rokwire.Services {
   
   bool _offlineChecked = false;
 
+  Set<rokwire.Service> _initializingServices = <rokwire.Service>{};
+
   // Singletone Factory
   
   @protected
@@ -49,7 +51,8 @@ class Services extends rokwire.Services {
     }
 
     if (kDebugMode) {
-      await NativeCommunicator().setLaunchScreenStatus(service.debugDisplayName);
+      _initializingServices.add(service);
+      await NativeCommunicator().setLaunchScreenStatus(_initializingServicesStatus);
     }
 
     rokwire.ServiceError? error;
@@ -61,10 +64,24 @@ class Services extends rokwire.Services {
     }
   
     if (kDebugMode) {
-      await NativeCommunicator().setLaunchScreenStatus(null);
+      _initializingServices.remove(service);
+      await NativeCommunicator().setLaunchScreenStatus(_initializingServicesStatus);
     }
 
     return error;
+  }
+
+  String? get _initializingServicesStatus {
+    String status = "";
+    if (_initializingServices.isNotEmpty) {
+      for (rokwire.Service service in _initializingServices) {
+        if (status.isNotEmpty) {
+          status += ', ';
+        }
+        status += service.debugDisplayName;
+      }
+    }
+    return status.isNotEmpty ? status : null;
   }
 
 }

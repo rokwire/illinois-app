@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Acknoledged new application services initialization in parallel [#408](https://github.com/rokwire/app-flutter-plugin/issues/408).
+### Fixed
+- Fixed local application services dependencies [#408](https://github.com/rokwire/app-flutter-plugin/issues/408).
+
 ## [5.2.2] - 2024-02-28
 ### Added
 - Created HomeEmptyContentWidget displayed when there is no favorites content [#3999](https://github.com/rokwire/illinois-app/issues/3999).
