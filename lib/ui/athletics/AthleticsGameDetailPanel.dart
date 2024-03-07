@@ -185,7 +185,7 @@ class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameD
                                     TileButton(
                                       title: Localization().getStringEx("panel.athletics_game_detail.button.schedule.title", "Schedule"),
                                       hint: Localization().getStringEx("panel.athletics_game_detail.button.schedule.hint", ""),
-                                      iconAsset: 'calendar', //images/2.0x/schedule-orange.png
+                                      iconKey: 'calendar', //images/2.0x/schedule-orange.png
                                       contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
                                       onTap: _onScheduleTap,
                                     ),
@@ -194,7 +194,7 @@ class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameD
                                     TileButton(
                                       title: Localization().getStringEx("panel.athletics_game_detail.button.news.title", "News"),
                                       hint: Localization().getStringEx("panel.athletics_game_detail.button.news.hint", ""),
-                                      iconAsset: 'news', //images/2.0x/teal.png
+                                      iconKey: 'news', //images/2.0x/teal.png
                                       contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
                                       onTap: _onTapNews,
                                     ),
@@ -208,7 +208,7 @@ class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameD
                                     TileButton(
                                       title: Localization().getStringEx("panel.athletics_game_detail.button.tickets.title", "Tickets"),
                                       hint: Localization().getStringEx("panel.athletics_game_detail.button.tickets.hint", ""),
-                                      iconAsset: 'images/2.0x/tickets_yellow.png',
+                                      iconKey: 'images/2.0x/tickets_yellow.png',
                                       contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
                                       onTap: _onTapTickets,
                                     ),
@@ -217,7 +217,7 @@ class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameD
                                     TileButton(
                                       title: Localization().getStringEx("panel.athletics_game_detail.button.teams.title", "Teams"),
                                       hint: Localization().getStringEx("panel.athletics_game_detail.button.teams.hint", ""),
-                                      iconAsset: 'images/2.0x/navy.png', // TODO - ICONS find an icon
+                                      iconKey: 'images/2.0x/navy.png', // TODO - ICONS find an icon
                                       contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
                                       onTap: _onTapTeams,
                                     ),
