@@ -16,6 +16,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -29,6 +30,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:share/share.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class GroupQrCodePanel extends StatefulWidget {
   final Group? group;
@@ -72,9 +74,9 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
       Uint8List? updatedImageBytes = await ImageUtils.applyLabelOverImage(_qrCodeBytes, groupName,
         width: _imageSize.toDouble(),
         height: _imageSize.toDouble(),
-        fontFamily: Styles().fontFamilies.bold,
+        fontFamily: AppFontFamilies.bold,
         fontSize: 54,
-        textColor: Styles().colors.textSurface,
+        textColor: illinois.AppColors.textSurface,
       );
       bool result = (updatedImageBytes != null);
       if (result) {
@@ -104,7 +106,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          color: Styles().colors.background,
+          color: AppColors.background,
           child: Padding(
             padding: EdgeInsets.all(24),
             child: Column(
@@ -120,7 +122,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
                       ? Semantics(
                           label: Localization().getStringEx('panel.group_qr_code.code.hint', "QR code image"),
                           child: Container(
-                            decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
+                            decoration: BoxDecoration(color: illinois.AppColors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
                             padding: EdgeInsets.all(5),
                             child: Image.memory(
                               _qrCodeBytes!,
@@ -135,7 +137,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
                           child: Align(
                             alignment: Alignment.center,
                             child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),
+                              valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorSecondary),
                               strokeWidth: 2,
                             ),
                           ),
@@ -147,8 +149,8 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
                     label: Localization().getStringEx('panel.group_qr_code.button.save.title', 'Save QR Code'),
                     hint: '',
                     textStyle: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
-                    backgroundColor: Styles().colors.background,
-                    borderColor: Styles().colors.fillColorSecondary,
+                    backgroundColor: AppColors.background,
+                    borderColor: AppColors.fillColorSecondary,
                     onTap: _onTapSave,
                   ),
                 ),
@@ -158,8 +160,8 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
                     label: Localization().getStringEx('panel.group_qr_code.button.share.title', 'Share Link'),
                     hint: '',
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                    backgroundColor: Styles().colors.background,
-                    borderColor: Styles().colors.fillColorSecondary,
+                    backgroundColor: AppColors.background,
+                    borderColor: AppColors.fillColorSecondary,
                     onTap: _onTapShare,
                     rightIcon: Styles().images.getImage('share-dark', excludeFromSemantics: true),
                     rightIconPadding: EdgeInsets.only(right: 75),
@@ -170,7 +172,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
           ),
         ),
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
     );
   }
 

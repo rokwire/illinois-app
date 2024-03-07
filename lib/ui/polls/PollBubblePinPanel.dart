@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -24,6 +25,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/service/Polls.dart' as illinois;
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class PollBubblePinPanel extends StatefulWidget {
 
@@ -118,7 +120,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
                 SingleChildScrollView(child:
                 Column(children: <Widget>[
                   Container(
-                    decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.circular(5)),
+                    decoration: BoxDecoration(color: AppColors.fillColorPrimary, borderRadius: BorderRadius.circular(5)),
                     child: Padding(padding: EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: _buildContent(),),),
                   ),
                 ],)),
@@ -173,7 +175,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
                             borderRadius: new BorderRadius.circular(15.0),
                             border: new Border.all(
                               width: 2.0,
-                              color: Styles().colors.fillColorSecondary,
+                              color: AppColors.fillColorSecondary,
                             ),
                           ),
                           child: Center(
@@ -245,7 +247,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
           onChanged: (values)=> nextCallBack(),
           decoration: new InputDecoration(
             filled: true,
-            fillColor: Styles().colors.white,
+            fillColor: illinois.AppColors.white,
             border: new OutlineInputBorder(
               borderRadius: const BorderRadius.all(
                 const Radius.circular(4),
@@ -265,10 +267,10 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
             label: Localization().getStringEx('dialog.continue.title', 'Continue'),
             hint: Localization().getStringEx('dialog.continue.hint', ''),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-            backgroundColor: Styles().colors.white,
+            backgroundColor: illinois.AppColors.white,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             progress: _loading,
-            borderColor: Styles().colors.fillColorSecondary,
+            borderColor: AppColors.fillColorSecondary,
             onTap: () { _onContinue(); }
           ),       
       );

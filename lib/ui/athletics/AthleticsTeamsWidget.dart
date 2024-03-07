@@ -19,6 +19,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -94,12 +95,12 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget> implements N
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       buildMenSectionHeader(),
-      Container(decoration: BoxDecoration(border:Border.all(color: Styles().colors.surfaceAccent, width: 1)), child:
+      Container(decoration: BoxDecoration(border:Border.all(color: AppColors.surfaceAccent, width: 1)), child:
         Column(children: buildSportList(_menSports),),
       ),
       Container(height: 20,),
       buildWomenSectionHeader(),
-      Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.surfaceAccent, width: 1)), child:
+      Container(decoration: BoxDecoration(border: Border.all(color: AppColors.surfaceAccent, width: 1)), child:
         Column(children: buildSportList(_womenSports),),
       ),
     ],);
@@ -112,7 +113,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget> implements N
       for (int index = 0; index < visibleCount; index++) {
         SportDefinition sport = sports[index];
         if (widgetList.isNotEmpty) {
-          widgetList.add(Divider(color: Styles().colors.surfaceAccent, height: 1,));
+          widgetList.add(Divider(color: AppColors.surfaceAccent, height: 1,));
         }
         widgetList.add(AthleticsSportItemWidget(
             sport: sport,
@@ -131,7 +132,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget> implements N
     bool allMenSelected = Sports.isAllSportsSelected(_menSports, _preferredSports);
     String menSelectClearTextKey = allMenSelected ? "widget.athletics_teams.label.clear" : "widget.athletics_teams.label.select_all";
     String menSelectClearImageKey = allMenSelected ? "close" : "check";
-    return Container(decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4))), child:
+    return Container(decoration: BoxDecoration(color: AppColors.fillColorPrimary, borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4))), child:
       Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 10, bottom: 10), child:
         Row(children: <Widget>[
           Expanded(child:
@@ -157,7 +158,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget> implements N
     bool allWomenSelected = Sports.isAllSportsSelected(_womenSports, _preferredSports);
     String womenSelectClearTextKey = allWomenSelected ? "widget.athletics_teams.label.clear" : "widget.athletics_teams.label.select_all";
     String womenSelectClearImageKey = allWomenSelected ? "close" : "check";
-    return Container(decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.only( topLeft: Radius.circular(4), topRight: Radius.circular(4))), child:
+    return Container(decoration: BoxDecoration(color: AppColors.fillColorPrimary, borderRadius: BorderRadius.only( topLeft: Radius.circular(4), topRight: Radius.circular(4))), child:
       Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 10, bottom: 10), child:
         Row(children: <Widget>[
           Expanded(child:

@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -59,7 +60,7 @@ class _SettingsFoodFiltersContentWidgetState extends State<SettingsFoodFiltersCo
                     Container(height: 20,),
                     Container(
                       decoration: BoxDecoration(
-                          color: Styles().colors.fillColorPrimary,
+                          color: AppColors.fillColorPrimary,
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(4),
                               topRight: Radius.circular(4))),
@@ -88,7 +89,7 @@ class _SettingsFoodFiltersContentWidgetState extends State<SettingsFoodFiltersCo
                     Container(height: 20,),
                     Container(
                       decoration: BoxDecoration(
-                          color: Styles().colors.fillColorPrimary,
+                          color: AppColors.fillColorPrimary,
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(4),
                               topRight: Radius.circular(4))),

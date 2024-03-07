@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class GroupAdvancedSettingsPanel extends StatefulWidget{
   final Group? group;
@@ -36,7 +38,7 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
           children: <Widget>[
             Expanded(
               child: Container(
-                color: Styles().colors.background,
+                color: AppColors.background,
                 child: CustomScrollView(
                     scrollDirection: Axis.vertical,
                     slivers: <Widget>[
@@ -44,7 +46,7 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
                       SliverList(
                         delegate: SliverChildListDelegate([
                         Container(
-                          color: Styles().colors.background,
+                          color: AppColors.background,
                           child: Column(children: <Widget>[
                             Padding(padding: EdgeInsets.only(top: 16),
                               child: _buildCanAutoJoinLayout(),),
@@ -71,7 +73,7 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
 
   //Buttons
   Widget _buildButtonsLayout() {
-    return SafeArea(child: Container( color: Styles().colors.white,
+    return SafeArea(child: Container( color: illinois.AppColors.white,
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Center(
         child:
@@ -82,7 +84,7 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
                 label: Localization().getStringEx("dialog.ok.title", "Ok"),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                 backgroundColor: Colors.white,
-                borderColor: Styles().colors.fillColorSecondary,
+                borderColor: AppColors.fillColorSecondary,
                 onTap: onTapSave,
               ),
             ),
@@ -92,7 +94,7 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
                 label: Localization().getStringEx( "dialog.cancel.title","Cancel"),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                 backgroundColor: Colors.white,
-                borderColor: Styles().colors.fillColorSecondary,
+                borderColor: AppColors.fillColorSecondary,
                 onTap: onTapCancel,
               ),
             ),
@@ -105,12 +107,12 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
   //Auto Join
   //Autojoin
   Widget _buildCanAutoJoinLayout(){
-    return Container( color: Styles().colors.background,
+    return Container( color: AppColors.background,
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: EnabledToggleButton(
           label:_isResearchProject? Localization().getStringEx('panel.groups_settings.auto_join.project.enabled.label', 'Does not require my screening of potential participants') : Localization().getStringEx("panel.groups_settings.auto_join.enabled.label", "Group can be joined automatically?"),
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+          border: Border.all(color: AppColors.surfaceAccent, width: 1),
           enabled: true,
           toggled: _settingCanJoinAutomatically,
           onTap: () {
@@ -126,12 +128,12 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
 
   Widget _buildPollsLayout(){
     return Container(
-      color: Styles().colors.background,
+      color: AppColors.background,
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: EnabledToggleButton(
           label: Localization().getStringEx("panel.groups_settings.only_admins_create_polls.enabled.label", "Only admins can create Polls"),
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+          border: Border.all(color: AppColors.surfaceAccent, width: 1),
           enabled: true,
           toggled: _settingOnlyAdminCanCreatePolls,
           onTap: () {

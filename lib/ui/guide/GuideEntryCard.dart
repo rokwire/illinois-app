@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -16,6 +17,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class GuideEntryCard extends StatefulWidget {
   final String? favoriteKey;
@@ -94,8 +96,8 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
 
     return Container(
       decoration: BoxDecoration(
-          color: Styles().colors.white,
-          boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+          color: illinois.AppColors.white,
+          boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
       ),
       child: Stack(children: [
@@ -104,7 +106,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
           ),)),
-        Container(color: Styles().colors.accentColor3, height: 4),
+        Container(color: AppColors.accentColor3, height: 4),
         Visibility(visible: _canFavorite, child:
           Align(alignment: Alignment.topRight, child:
           Semantics(

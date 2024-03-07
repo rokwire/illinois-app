@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/ui/academics/courses/EssentialSkillsCoachWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -47,7 +48,7 @@ class UnitInfoPanel extends StatelessWidget {
                           ),
                           style: ElevatedButton.styleFrom(
                             shape: CircleBorder(),
-                            side: BorderSide(color: color ?? Styles().colors.surface, width: 4.0, strokeAlign: BorderSide.strokeAlignOutside),
+                            side: BorderSide(color: color ?? AppColors.surface, width: 4.0, strokeAlign: BorderSide.strokeAlignOutside),
                             padding: EdgeInsets.all(8),
                             backgroundColor: colorAccent,
                           ),
@@ -82,7 +83,7 @@ class UnitInfoPanel extends StatelessWidget {
             ),
           ],
         ),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
       )
     );
   }

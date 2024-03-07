@@ -4,10 +4,12 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
 
@@ -17,11 +19,11 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       body: Stack(children: [
         Column(children: [
-          Container(color: Styles().colors.white, height: 90,),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
+          Container(color: illinois.AppColors.white, height: 90,),
+          CustomPaint(painter: TrianglePainter(painterColor: illinois.AppColors.white, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
             Container(height: 70,),
           ),
         ],),
@@ -83,8 +85,8 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
                 label: Localization().getStringEx('dialog.yes.title', 'Yes'),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                backgroundColor: Styles().colors.white,
-                borderColor: Styles().colors.fillColorSecondaryVariant,
+                backgroundColor: illinois.AppColors.white,
+                borderColor: AppColors.fillColorSecondaryVariant,
                 onTap: () => _onYes(context),
               ),
             ),
@@ -94,8 +96,8 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
                 label: Localization().getStringEx('dialog.no.title', 'No'),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                backgroundColor: Styles().colors.white,
-                borderColor: Styles().colors.fillColorSecondaryVariant,
+                backgroundColor: illinois.AppColors.white,
+                borderColor: AppColors.fillColorSecondaryVariant,
                 onTap: () => _onNo(context),
               ),
             ),

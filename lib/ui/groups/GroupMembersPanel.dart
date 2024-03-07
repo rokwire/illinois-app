@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -34,6 +35,7 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class GroupMembersPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group? group;
@@ -227,12 +229,12 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
       headerTitle = _isResearchProject ? "Participants" : Localization().getStringEx("panel.manage_members.header.member.title", "Members");
     }
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         appBar: HeaderBar(title: headerTitle),
         body: _isLoading
             ? Center(
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)))
+                    strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorSecondary)))
             : RefreshIndicator(
                 onRefresh: _onPullToRefresh,
                 child: SingleChildScrollView(
@@ -282,9 +284,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
           Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
             RibbonButton(
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-              backgroundColor: Styles().colors.white,
+              backgroundColor: illinois.AppColors.white,
               borderRadius: BorderRadius.all(Radius.circular(5)),
-              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+              border: Border.all(color: AppColors.surfaceAccent, width: 1),
                 rightIconKey: _statusValuesVisible ? 'chevron-up' : 'chevron-down',
                 label: _memberStatusToString(_selectedMemberStatus),
               onTap: _onTapRibbonButton))),
@@ -321,7 +323,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                     onSubmitted: (_) => _onTapSearch(),
                     autofocus: false,
                     focusNode: _searchFocus,
-                    cursorColor: Styles().colors.fillColorSecondary,
+                    cursorColor: AppColors.fillColorSecondary,
                     keyboardType: TextInputType.text,
                     style:  Styles().textStyles.getTextStyle('widget.group.members.search'),
                     decoration: InputDecoration(
@@ -452,7 +454,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                   _statusValuesVisible = false;
                 });
               },
-              child: Container(color: Styles().colors.blackTransparent06)
+              child: Container(color: illinois.AppColors.blackTransparent06)
             )
           )
         )
@@ -461,7 +463,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   Widget _buildStatusValuesWidget() {
     List<Widget> widgetList = <Widget>[];
-    widgetList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
+    widgetList.add(Container(color: AppColors.fillColorSecondary, height: 2));
     if ((_selectedMemberStatus != null) && (1 < CollectionUtils.length(_sortedMemberStatusList))) {
       widgetList.add(_buildStatusItem(null));
     }
@@ -477,8 +479,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   Widget _buildStatusItem(GroupMemberStatus? status) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+        backgroundColor: illinois.AppColors.white,
+        border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         rightIcon: null,
         label: _memberStatusToString(status),
@@ -587,9 +589,9 @@ class _PendingMemberCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Styles().colors.white,
+          color: illinois.AppColors.white,
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid)
+          border: Border.all(color: AppColors.surfaceAccent, width: 1, style: BorderStyle.solid)
       ),
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
@@ -612,8 +614,8 @@ class _PendingMemberCard extends StatelessWidget {
                         label: Localization().getStringEx("panel.manage_members.button.review_request.title", "Review Request"),
                         hint: Localization().getStringEx("panel.manage_members.button.review_request.hint", ""),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                        borderColor: Styles().colors.fillColorSecondary,
-                        backgroundColor: Styles().colors.white,
+                        borderColor: AppColors.fillColorSecondary,
+                        backgroundColor: illinois.AppColors.white,
                         rightIcon: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true),
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         onTap: (){
@@ -644,9 +646,9 @@ class _GroupMemberCard extends StatelessWidget {
       onTap: ()=>_onTapMemberCard(context),
       child: Container(
         decoration: BoxDecoration(
-            color: Styles().colors.white,
+            color: illinois.AppColors.white,
             borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid)
+            border: Border.all(color: AppColors.surfaceAccent, width: 1, style: BorderStyle.solid)
         ),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
@@ -692,7 +694,7 @@ class _GroupMemberCard extends StatelessWidget {
                                 child: Container(
                                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                        color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.all(Radius.circular(2))),
+                                        color: AppColors.fillColorPrimary, borderRadius: BorderRadius.all(Radius.circular(2))),
                                     child: Center(
                                         child: Text(Localization().getStringEx('widget.group.member.card.attended.label', 'ATTENDED'),
                                             style: Styles().textStyles.getTextStyle('widget.heading.small')))))),

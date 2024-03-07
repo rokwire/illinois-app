@@ -17,6 +17,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Onboarding2.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
@@ -27,6 +28,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class Onboarding2LoginEmailPanel extends StatefulWidget with OnboardingPanel {
 
@@ -44,7 +46,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
   static final Color _successColor = Colors.green.shade800;
   static final Color _errorColor = Colors.red.shade700;
-  static final Color? _messageColor = Styles().colors.fillColorPrimary;
+  static final Color? _messageColor = AppColors.fillColorPrimary;
   
   TextEditingController _emailController = TextEditingController();
   FocusNode _emailFocusNode = FocusNode();
@@ -113,7 +115,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
     EdgeInsetsGeometry backButtonInsets = EdgeInsets.only(left: 10, top: 20 + MediaQuery.of(context).padding.top, right: 20, bottom: 20);
 
-    return Scaffold(backgroundColor: Styles().colors.background, body:
+    return Scaffold(backgroundColor: AppColors.background, body:
       Stack(children: <Widget>[
         Styles().images.getImage("header-login", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
         SafeArea(child:
@@ -141,7 +143,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                         excludeSemantics: true,
                         value: _emailController.text,
                         child: Container(
-                          color: Styles().colors.background,
+                          color: AppColors.background,
                           child: TextField(
                             enabled: false,
                             controller: _emailController,
@@ -170,7 +172,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                         excludeSemantics: true,
                         value: _passwordController.text,
                         child: Container(
-                          color: Styles().colors.white,
+                          color: illinois.AppColors.white,
                           child: TextField(
                             controller: _passwordController,
                             focusNode: _passwordFocusNode,
@@ -178,7 +180,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                             autocorrect: false,
                             obscureText: !_showingPassword,
                             onSubmitted: (_) => _clearErrorMsg,
-                            cursorColor: Styles().colors.textBackground,
+                            cursorColor: illinois.AppColors.textBackground,
                             keyboardType: TextInputType.text,
                             style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                             decoration: InputDecoration(
@@ -204,7 +206,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                           excludeSemantics: true,
                           value: _confirmPasswordController.text,
                           child: Container(
-                            color: Styles().colors.white,
+                            color: illinois.AppColors.white,
                             child: TextField(
                               controller: _confirmPasswordController,
                               focusNode: _confirmPasswordFocusNode,
@@ -212,7 +214,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                               autocorrect: false,
                               obscureText: !_showingPassword,
                               onSubmitted: (_) => _clearErrorMsg,
-                              cursorColor: Styles().colors.textBackground,
+                              cursorColor: illinois.AppColors.textBackground,
                               keyboardType: TextInputType.text,
                               style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                               decoration: InputDecoration(
@@ -272,8 +274,8 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                 label: buttonTitle,
                 hint: buttonHint,
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                borderColor: Styles().colors.fillColorSecondary,
-                backgroundColor: Styles().colors.background,
+                borderColor: AppColors.fillColorSecondary,
+                backgroundColor: AppColors.background,
                 onTap: () => _onTapLogin()
               ),
             ),
@@ -284,8 +286,8 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                   label: Localization().getStringEx("panel.onboarding2.email.button.link.cancel.label", "Cancel"),
                   hint: Localization().getStringEx("panel.onboarding2.email.button.link.cancel.hint", ""),
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                  borderColor: Styles().colors.fillColorSecondary,
-                  backgroundColor: Styles().colors.background,
+                  borderColor: AppColors.fillColorSecondary,
+                  backgroundColor: AppColors.background,
                   onTap: () => _onTapCancel())
               ),
             )

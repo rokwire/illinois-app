@@ -10,6 +10,7 @@ import 'package:illinois/ui/academics/courses/EssentialSkillsCoachWidgets.dart';
 import 'package:illinois/ui/academics/courses/ResourcesPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -172,7 +173,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
             if (!widget.preview && helpContentWidgets.isNotEmpty)
               ExpansionPanelList(
                 expandedHeaderPadding: EdgeInsets.zero,
-                expandIconColor: Styles().colors.surface,
+                expandIconColor: AppColors.surface,
                 expansionCallback: (i, isOpen) => setState(() => _helpContentOpen = isOpen),
                 children: [
                   ExpansionPanel(
@@ -180,7 +181,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                     isExpanded: _helpContentOpen,
                     headerBuilder: (BuildContext context, bool isExpanded) {
                       return ListTile(
-                        iconColor: Styles().colors.surface,
+                        iconColor: AppColors.surface,
                         title: Text(Localization().getStringEx('panel.essential_skills_coach.assignment.help.header.title', "Helpful Information"), style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat"))
                       );
                     },
@@ -199,7 +200,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
               ),
           ],
         ),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
       ),
     );
   }
@@ -236,7 +237,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                     label: "",
                     textWidget: Icon(
                       Icons.thumb_up_alt_rounded,
-                      color: Styles().colors.surface,
+                      color: AppColors.surface,
                       size: 25,
                     ),
                     backgroundColor: isGoodExperience ? _color : _colorAccent,
@@ -254,7 +255,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
                       label: "",
                       textWidget: Icon(
                         Icons.thumb_down_alt_rounded,
-                        color: Styles().colors.surface,
+                        color: AppColors.surface,
                         size: 25,
                       ),
                       backgroundColor: isBadExperience ? _color : _colorAccent,
@@ -357,7 +358,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
               ),
               filled: true,
               hintStyle: TextStyle(color: Colors.grey[800]),
-              fillColor: Styles().colors.surface,
+              fillColor: AppColors.surface,
             ),
           )
         ),
@@ -365,8 +366,8 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
           child: Theme(data: Theme.of(context).copyWith(dividerColor: Colors.transparent), child: ExpansionTile(
             tilePadding: EdgeInsets.zero,
             title: Text(Localization().getStringEx("panel.essential_skills_coach.assignment.history.header", "History"), style: Styles().textStyles.getTextStyle("widget.detail.small.fat")),
-            iconColor: Styles().colors.fillColorPrimary,
-            collapsedIconColor: Styles().colors.fillColorPrimary,
+            iconColor: AppColors.fillColorPrimary,
+            collapsedIconColor: AppColors.fillColorPrimary,
             children: _buildTaskHistoryWidgets(),
             onExpansionChanged: (open) {
               _historyExpanded = open;
@@ -414,7 +415,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
   }
 
   Widget _buildSpeechToTextButton() => Material(
-    color: Styles().colors.background,
+    color: AppColors.background,
     child: IconButton(
       icon: Styles().images.getImage(_listening ? "skills-speech-pause" :"skills-speech-mic") ?? Container(),
       color: _color,

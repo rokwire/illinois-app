@@ -47,6 +47,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'HomeWidgets.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class HomeCampusResourcesWidget extends StatefulWidget {
 
@@ -451,7 +452,7 @@ class CampusResourceButton extends StatelessWidget {
     return InkWell(onTap: onTap, child:
       Semantics(label: title, hint: hint, button: true, excludeSemantics: true, child:
         Padding(padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6), child:
-          Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors.white, width: 2), boxShadow: [const BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
+          Container(decoration: BoxDecoration(color: illinois.AppColors.white, borderRadius: BorderRadius.circular(4), border: Border.all(color: illinois.AppColors.white, width: 2), boxShadow: [const BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
             Padding(padding: EdgeInsets.only(left: 16, bottom: 16), child: 
               Column(children: [
                 Row(crossAxisAlignment: CrossAxisAlignment.start, children: [

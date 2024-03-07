@@ -18,7 +18,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -40,7 +42,7 @@ class _CanvasAnnouncementDetailPanelState extends State<CanvasAnnouncementDetail
         title: Localization().getStringEx('panel.canvas_announcement.header.title', 'Announcement'),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: illinois.AppColors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -76,8 +78,8 @@ class _CanvasAnnouncementDetailPanelState extends State<CanvasAnnouncementDetail
                   visible: StringUtils.isNotEmpty(widget.announcement.message),
                   child: Html(data: widget.announcement.message, style: {
                     "body": Style(
-                        color: Styles().colors.textSurfaceAccent,
-                        fontFamily: Styles().fontFamilies.bold,
+                        color: illinois.AppColors.textSurfaceAccent,
+                        fontFamily: AppFontFamilies.bold,
                         fontSize: FontSize(16),
                         padding: HtmlPaddings.zero,
                         margin: Margins.zero)

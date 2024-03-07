@@ -29,6 +29,7 @@ import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class AppAlert {
   
@@ -108,7 +109,7 @@ class AppAlert {
   static Future<void> showPopup(BuildContext context, String? message) async {
     return showDialog(context: context, builder: (context) {
       return AlertDialog(contentPadding: EdgeInsets.zero, content:
-        Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)), child:
+        Container(decoration: BoxDecoration(color: illinois.AppColors.white, borderRadius: BorderRadius.circular(10.0)), child:
           Stack(alignment: Alignment.center, children: [
             Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32), child:
               Column(mainAxisSize: MainAxisSize.min, children: [
@@ -225,7 +226,7 @@ class AppSemantics {
     //                       semanticsLabel: "",
     //                       style: TextStyle(
     //                         color : Styles().colors.fillColorPrimary,
-    //                         fontFamily: Styles().fontFamilies.bold,
+    //                         fontFamily: AppFontFamilies.bold,
     //                         fontSize: 26,
     //                       ),),)
     //               )
@@ -245,7 +246,7 @@ class AppSemantics {
     //                       semanticsLabel: "",
     //                       style: TextStyle(
     //                         color : Styles().colors.fillColorPrimary,
-    //                         fontFamily: Styles().fontFamilies.bold,
+    //                         fontFamily: AppFontFamilies.bold,
     //                         fontSize: 26,
     //                       ),),)
     //               )

@@ -4,8 +4,10 @@ import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class DebugStudentCoursesPanel extends StatefulWidget {
   _DebugStudentCoursesPanelState createState() => _DebugStudentCoursesPanelState();
@@ -50,7 +52,7 @@ class _DebugStudentCoursesPanelState extends State<DebugStudentCoursesPanel> {
         title: "Student Courses",
         onLeading: _onHeaderBack,
       ),
-      backgroundColor: Styles().colors.surface,
+      backgroundColor: AppColors.surface,
       body: SafeArea(child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           ToggleRibbonButton(label: 'Use JSON Contnet:', toggled: _useDebugContent, onTap: _onToggleUseDebugContent),
@@ -61,14 +63,14 @@ class _DebugStudentCoursesPanelState extends State<DebugStudentCoursesPanel> {
                   maxLines: 1024,
                   controller: _rawContentController,
                   decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-                  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground,),
+                  style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: illinois.AppColors.textBackground,),
                   onChanged: _onRawContentChanged,
                   onEditingComplete: _onRawContentFinished,
                 ),
                 Visibility(visible: (_processingContent == true), child:
                   Align(alignment: Alignment.center, child:
                     SizedBox(height: 32, width: 32, child:
-                      CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
+                      CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorSecondary), )
                     ),
                   ),
                 ),
@@ -89,7 +91,7 @@ class _DebugStudentCoursesPanelState extends State<DebugStudentCoursesPanel> {
                       ),
                       InkWell(onTap: _onClear, child:
                         Padding(padding: EdgeInsets.only(top: 10, bottom: 10, left: 6, right: 14), child: 
-                          Text('X', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.fillColorPrimary,),), // Image.asset('images/icon-refresh.png'),
+                          Text('X', style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: AppColors.fillColorPrimary,),), // Image.asset('images/icon-refresh.png'),
                         ),
                       ),
                     ],),

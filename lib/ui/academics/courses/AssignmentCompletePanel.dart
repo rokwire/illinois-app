@@ -2,6 +2,7 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -41,7 +42,7 @@ class _AssignmentCompletePanelState extends State<AssignmentCompletePanel> {
       body: Column(
         children: _buildAssignmentCompleteWidgets(),
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
     );
   }
 

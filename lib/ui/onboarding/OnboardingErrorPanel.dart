@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -46,9 +47,9 @@ class _OnboardingErrorPanelState extends State<OnboardingErrorPanel> {
 
     String buttonTitle = Localization().getStringEx('panel.onboarding.error.button.try_again.title', 'Try Again');
     String? buttonHint = Localization().getStringEx('panel.onboarding.error.button.try_again.hint', '');
-    Color buttonBackColor = Styles().colors.fillColorSecondary;
+    Color buttonBackColor = AppColors.fillColorSecondary;
 
-    return Scaffold(backgroundColor: Styles().colors.background, body:
+    return Scaffold(backgroundColor: AppColors.background, body:
       Stack(children: [
         Styles().images.getImage('header-login', fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
         Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
@@ -58,13 +59,13 @@ class _OnboardingErrorPanelState extends State<OnboardingErrorPanel> {
                 Container(height: 148 + 48 + MediaQuery.of(context).padding.top),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 30), child:
                   Align(alignment: Alignment.center, child:
-                    Text(_error?.title ?? '', textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 32, color: Styles().colors.fillColorPrimary),),
+                    Text(_error?.title ?? '', textAlign: TextAlign.center, style: TextStyle(fontFamily: AppFontFamilies.bold, fontSize: 32, color: AppColors.fillColorPrimary),),
                   ),
                 ),
                 Container(height: 48),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 40), child:
                   Align(alignment: Alignment.topCenter, child:
-                    Text(_error?.description ?? '', textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary),),
+                    Text(_error?.description ?? '', textAlign: TextAlign.center, style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 20, color: AppColors.fillColorPrimary),),
                   ),
                 ),
               ],)
@@ -82,7 +83,7 @@ class _OnboardingErrorPanelState extends State<OnboardingErrorPanel> {
                             Padding(padding: EdgeInsets.all(0), child:
                               Semantics( excludeSemantics: true, child:
                                 Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                                  Text(buttonTitle, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 20, color: Colors.white,),),
+                                  Text(buttonTitle, textAlign: TextAlign.center, style: TextStyle(fontFamily: AppFontFamilies.bold, fontSize: 20, color: Colors.white,),),
                                 ],),
                               ),
                             ),

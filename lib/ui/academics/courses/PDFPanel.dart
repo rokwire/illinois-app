@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -25,7 +26,7 @@ class _PDFPanelState extends State<PDFPanel> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       appBar: HeaderBar(title: widget.resourceName ?? Localization().getStringEx('panel.essential_skills_coach.pdf_view.header.title', 'PDF View'),
         textStyle: Styles().textStyles.getTextStyle('header_bar'),),
       body: Stack(
@@ -83,7 +84,7 @@ class _PDFPanelState extends State<PDFPanel> with WidgetsBindingObserver {
                           height: 64.0,
                           child: Visibility(
                             visible: (currentPage ?? 0) > 0,
-                            child: Styles().images.getImage('chevron-left-bold', excludeFromSemantics: true, color: Styles().colors.fillColorPrimary) ?? Container()
+                            child: Styles().images.getImage('chevron-left-bold', excludeFromSemantics: true, color: AppColors.fillColorPrimary) ?? Container()
                           )
                       ),
                     ),
@@ -105,7 +106,7 @@ class _PDFPanelState extends State<PDFPanel> with WidgetsBindingObserver {
                           height: 64.0,
                           child: Visibility(
                             visible: (currentPage ?? 0) + 1 < (_pages ?? 0),
-                            child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true, color: Styles().colors.fillColorPrimary) ?? Container()
+                            child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true, color: AppColors.fillColorPrimary) ?? Container()
                           )
                       ),
                     ),

@@ -14,6 +14,7 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -24,6 +25,7 @@ import 'package:illinois/service/Twitter.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class HomeTwitterWidget extends StatefulWidget {
 
@@ -139,7 +141,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   Widget _buildHeader() {
     return Semantics(child:
       Padding(padding: EdgeInsets.zero, child: 
-        Container(color: Styles().colors.fillColorPrimary, child:
+        Container(color: AppColors.fillColorPrimary, child:
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
             HomeTitleIcon(image: Styles().images.getImage('news')),
@@ -195,9 +197,9 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
   Widget _buildSlant() {
     return Column(children: <Widget>[
-      Container(color:  Styles().colors.fillColorPrimary, height: 45,),
-      Container(color: Styles().colors.fillColorPrimary, child:
-        CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
+      Container(color:  AppColors.fillColorPrimary, height: 45,),
+      Container(color: AppColors.fillColorPrimary, child:
+        CustomPaint(painter: TrianglePainter(painterColor: AppColors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
           Container(height: 65,),
         )),
     ],);
@@ -224,7 +226,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
     if (_loadingPage == true) {
       pages.add(_TweetLoadingWidget(
-        progressColor: Styles().colors.white,
+        progressColor: illinois.AppColors.white,
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24)
       ));
     }
@@ -442,7 +444,7 @@ class _TwitterPanelState extends State<TwitterPanel> implements NotificationsLis
             _buildContent(),
           ),
         ],)),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
     );
   }
 
@@ -484,7 +486,7 @@ class _TwitterPanelState extends State<TwitterPanel> implements NotificationsLis
     if (_tweetsPages.isEmpty && _loadingPage == true) {
       return Center(child: 
         SizedBox(height: 32, width: 32, child:
-          CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), )
+          CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorPrimary), )
         ),
       );
     }
@@ -516,7 +518,7 @@ class _TwitterPanelState extends State<TwitterPanel> implements NotificationsLis
         margin: (0 < index) ? EdgeInsets.symmetric(horizontal: 16) : EdgeInsets.only(left: 16, right: 16, top: 16)
       ) :
       _TweetLoadingWidget(
-        progressColor: Styles().colors.fillColorPrimary,
+        progressColor: AppColors.fillColorPrimary,
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: _tweetsPages.isNotEmpty ? 48 : 192)
       );
   }
@@ -648,8 +650,8 @@ class _TweetWidget extends StatelessWidget {
     return Padding(padding: margin ?? EdgeInsets.zero, child:
       Container(
         decoration: BoxDecoration(
-            color: Styles().colors.white,
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            color: illinois.AppColors.white,
+            boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.all(Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
         ),
         clipBehavior: Clip.hardEdge,
@@ -704,7 +706,7 @@ class _TweetWidget extends StatelessWidget {
                          tweet!.html??"",
                           onTapUrl : (url) {_launchUrl(url, context: context); return true;},
                           textStyle:  Styles().textStyles.getTextStyle("widget.detail.medium"),
-                          // customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondaryVariant ?? Colors.blueAccent)} : null
+                          // customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(AppColors.fillColorSecondaryVariant ?? Colors.blueAccent)} : null
                       )
                     )
                   //   Container()

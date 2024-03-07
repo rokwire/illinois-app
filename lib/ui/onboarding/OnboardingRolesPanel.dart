@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -25,6 +26,7 @@ import 'package:illinois/ui/widgets/RoleGridButton.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class OnboardingRolesPanel extends StatefulWidget with OnboardingPanel {
   final Map<String, dynamic>? onboardingContext;
@@ -50,7 +52,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles().colors.white,
+      backgroundColor: illinois.AppColors.white,
       body: SafeArea(child: Column( children: <Widget>[
         Padding(padding: EdgeInsets.only(top: 10, bottom: 10),
           child: Row(children: <Widget>[
@@ -65,12 +67,12 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                 hint: Localization().getStringEx('panel.onboarding.roles.label.title.hint', 'Header 1').toLowerCase(),
                 excludeSemantics: true,
                 child: Text(Localization().getStringEx('panel.onboarding.roles.label.title', 'Who Are You?'),
-                  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 24, color: Styles().colors.fillColorPrimary),
+                  style: TextStyle(fontFamily: AppFontFamilies.extraBold, fontSize: 24, color: AppColors.fillColorPrimary),
                 ),
               ),
               Padding(padding: EdgeInsets.only(top: 8),
                 child: Text(Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
-                  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),
+                  style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: illinois.AppColors.textBackground),
                 ),
               )
             ],),),
@@ -88,10 +90,10 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
             hint: Localization().getStringEx('panel.onboarding.roles.button.continue.hint', ''),
             textStyle: _allowNext ? Styles().textStyles.getTextStyle("widget.button.title.large.fat.secondary") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat.variant"),
             enabled: _allowNext,
-            backgroundColor: (Styles().colors.background),
+            backgroundColor: (AppColors.background),
             borderColor: (_allowNext
-                ? Styles().colors.fillColorSecondary
-                : Styles().colors.fillColorPrimaryTransparent03),
+                ? AppColors.fillColorSecondary
+                : illinois.AppColors.fillColorPrimaryTransparent03),
             progress: _updating,
             onTap: () => _onExploreClicked()),
         )

@@ -4,7 +4,9 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class HomeTBDWidget extends StatelessWidget {
   final String? title;
@@ -21,7 +23,7 @@ class HomeTBDWidget extends StatelessWidget {
       //flatHeight: 0, slantHeight: 0, childPadding: EdgeInsets.all(16),
       child: Container(
         padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+        decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         child: Column(children: <Widget>[
           Row(children: <Widget>[
             Expanded(child:

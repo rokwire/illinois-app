@@ -21,10 +21,12 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/ui/canvas/CanvasModuleDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -59,7 +61,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
         title: Localization().getStringEx('panel.canvas_modules.header.title', 'Modules')
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: illinois.AppColors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -155,7 +157,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
             onTap: () => _onTapModule(module),
             child: Container(
                 decoration: BoxDecoration(
-                    color: Styles().colors.backgroundVariant, border: Border.all(color: Styles().colors.blackTransparent06, width: 1)),
+                    color: AppColors.backgroundVariant, border: Border.all(color: illinois.AppColors.blackTransparent06, width: 1)),
                 padding: EdgeInsets.all(10),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -179,7 +181,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
         height: height,
         decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Styles().colors.lightGray, width: 1),
+            border: Border.all(color: illinois.AppColors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),

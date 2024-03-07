@@ -18,12 +18,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Parking.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Transportation.dart';
 import 'package:illinois/ui/parking/ParkingEventPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class ParkingEventsPanel extends StatefulWidget{
 
@@ -62,7 +64,7 @@ class _ParkingEventsPanelState extends State<ParkingEventsPanel>{
         title: Localization().getStringEx("panel.parking_events.label.heading", "State Farm Center Parking"),
       ),
       body: _buildScaffoldBody(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -120,7 +122,7 @@ class _ParkingEventsPanelState extends State<ParkingEventsPanel>{
           ParkingEvent event = _events![index];
           return _ParkingEventWidget(event: event,);
         },
-        separatorBuilder: (context, index) => Container(height: 1, color: Styles().colors.lightGray,),
+        separatorBuilder: (context, index) => Container(height: 1, color: illinois.AppColors.lightGray,),
         itemCount: _events != null ? _events!.length : 0);
   }
 }

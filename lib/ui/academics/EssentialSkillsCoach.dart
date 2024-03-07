@@ -14,6 +14,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
@@ -42,9 +43,9 @@ class _EssentialSkillsCoachState extends State<EssentialSkillsCoach> {
   Widget build(BuildContext context) {
     return _loading ? Center(child: CircularProgressIndicator()) : SectionSlantHeader(
         headerWidget: _buildHeader(),
-        slantColor: Styles().colors.gradientColorPrimary,
+        slantColor: AppColors.gradientColorPrimary,
         slantPainterHeadingHeight: 0,
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         // children: [],
         childrenPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         allowOverlap: false,
@@ -60,7 +61,7 @@ class _EssentialSkillsCoachState extends State<EssentialSkillsCoach> {
         Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
           label: Localization().getStringEx("panel.essential_skills_coach.get_started.button.label", 'Get Started'),
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant"),
-          backgroundColor: Styles().colors.surface,
+          backgroundColor: AppColors.surface,
           onTap:_loadResults
         )),
       ]),),
@@ -70,8 +71,8 @@ class _EssentialSkillsCoachState extends State<EssentialSkillsCoach> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Styles().colors.fillColorPrimaryVariant,
-            Styles().colors.gradientColorPrimary,
+            AppColors.fillColorPrimaryVariant,
+            AppColors.gradientColorPrimary,
           ]
         )
       ),

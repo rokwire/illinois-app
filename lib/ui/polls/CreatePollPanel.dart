@@ -21,6 +21,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/UnderlinedButton.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -35,6 +36,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class CreatePollPanel extends StatefulWidget {
   final Group? group;
@@ -90,7 +92,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         ),
         body: SafeArea(
           child: Container(
-            color: Styles().colors.white,
+            color: illinois.AppColors.white,
             child: SingleChildScrollView(
               child: Column(children: [
                 _buildDescription(),
@@ -134,7 +136,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
 
   Widget _buildDescription() {
     return Container(
-        color: Styles().colors.white,
+        color: illinois.AppColors.white,
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 24),
             child: Text(
@@ -225,8 +227,8 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
           Container(
             padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
             decoration: BoxDecoration(
-              color: Styles().colors.white,
-              border: Border.all(color: Styles().colors.fillColorSecondary, width: 2.0),
+              color: illinois.AppColors.white,
+              border: Border.all(color: AppColors.fillColorSecondary, width: 2.0),
               borderRadius: BorderRadius.circular(24.0),
             ),
             child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
@@ -265,7 +267,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
     return Padding(
         padding: EdgeInsets.only(top: 3),
         child: Container(
-            color: Styles().colors.background,
+            color: AppColors.background,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 26),
               child: Semantics( label: additionalSettingsText, excludeSemantics: true, child:
@@ -288,7 +290,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
 
   Widget _buildSettingsList() {
     return Container(
-        color: Styles().colors.background,
+        color: AppColors.background,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
           child: Container(
@@ -380,7 +382,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                       label: Localization().getStringEx("panel.create_poll.setting.start.preview.title", "Start Poll Now"),
                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                       backgroundColor: Colors.white,
-                      borderColor: Styles().colors.fillColorSecondary,
+                      borderColor: AppColors.fillColorSecondary,
                       progress: (_progressPollStatus == PollStatus.opened),
                       onTap: () {
                         _onCreatePoll(status: PollStatus.opened);
@@ -395,8 +397,8 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                   UnderlinedButton(
                       title: Localization().getStringEx("panel.create_poll.setting.button.save.title", "Save poll for starting later"),//TBD localize
                       // backgroundColor: Colors.white,
-                      // borderColor: Styles().colors.fillColorPrimary,
-                      // textColor: Styles().colors.fillColorPrimary,
+                      // borderColor: AppColors.fillColorPrimary,
+                      // textColor: AppColors.fillColorPrimary,
                       progress: (_progressPollStatus == PollStatus.created),
                       onTap: () {
                         _onCreatePoll(status: PollStatus.created);
@@ -540,7 +542,7 @@ class _PollOptionViewState extends State<PollOptionView> {
         Stack(children: [
           Container(
             padding: EdgeInsets.only(left: 12, right: canClose ? 18 : 12),
-            decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+            decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1)),
             child: Semantics(label: widget.title, hint: Localization().getStringEx("panel.create_poll_panel.hint", ""), textField: true, excludeSemantics: true, child:
               TextField(
                   controller: widget.textController,

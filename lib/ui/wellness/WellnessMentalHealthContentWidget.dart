@@ -23,12 +23,14 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class WellnessMentalHealthContentWidget extends StatefulWidget {
   WellnessMentalHealthContentWidget();
@@ -197,8 +199,8 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
     final Widget emptyImagePlaceholder = Container(height: 102);
     return Container(
         decoration: BoxDecoration(
-            color: Styles().colors.white,
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            color: illinois.AppColors.white,
+            boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(4))),
         child: Stack(children: [
           Semantics(button: true,
@@ -218,7 +220,7 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
                             : emptyImagePlaceholder,
                         VideoPlayButton()
                       ])))),
-          Container(color: Styles().colors.accentColor3, height: 4)
+          Container(color: AppColors.accentColor3, height: 4)
         ]));
   }
 

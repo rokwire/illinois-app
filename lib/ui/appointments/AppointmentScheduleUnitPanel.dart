@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Appointment.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Storage.dart';
@@ -25,6 +26,7 @@ import 'package:illinois/ui/appointments/AppointmentSchedulePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -68,7 +70,7 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.appointment.schedule.unit.header.title', 'Schedule Appointment')),
       body: _buildContent(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       //bottomNavigationBar: uiuc.TabBar()
     );
   }
@@ -114,9 +116,9 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
       Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), container: true, child:
         RibbonButton(
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-          backgroundColor: Styles().colors.white,
+          backgroundColor: illinois.AppColors.white,
           borderRadius: BorderRadius.all(Radius.circular(5)),
-          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+          border: Border.all(color: AppColors.surfaceAccent, width: 1),
           rightIconKey: _isProvidersExpanded ? 'chevron-up' : 'chevron-down',
           label: (_selectedProvider != null) ? (_selectedProvider?.name ?? '') : 'Select a provider',
           onTap: _onProvidersDropdown
@@ -140,7 +142,7 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
     return Positioned.fill(child:
       BlockSemantics(child:
         GestureDetector(onTap: _onDismissProvidersDropdown, child:
-          Container(color: Styles().colors.blackTransparent06)
+          Container(color: illinois.AppColors.blackTransparent06)
         )
       )
     );
@@ -148,13 +150,13 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
 
   Widget _buildProvidersDropdownItems() {
     List<Widget> items = <Widget>[];
-    items.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
+    items.add(Container(color: AppColors.fillColorSecondary, height: 2));
 
     if (_providers != null) {
       for (AppointmentProvider provider in _providers!) {
         items.add(RibbonButton(
-          backgroundColor: Styles().colors.white,
-          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+          backgroundColor: illinois.AppColors.white,
+          border: Border.all(color: AppColors.surfaceAccent, width: 1),
           rightIconKey: null,
           label: provider.name,
           onTap: () => _onTapProvider(provider)
@@ -238,7 +240,7 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
   Widget _buildLoadingContent() {
     return Center(child:
       SizedBox(width: 32, height: 32, child:
-        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+        CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 3,),
       )
     );
   }
@@ -327,7 +329,7 @@ class _AppointmentUnitCard extends StatelessWidget {
     return InkWell(onTap: onTap, child:
       ClipRRect(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)), child:
         Stack(children: [
-          Container(decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
+          Container(decoration: BoxDecoration(color: AppColors.surface, border: Border.all(color: AppColors.surfaceAccent, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(provider?.name?.toUpperCase() ?? '', style: Styles().textStyles.getTextStyle('widget.item.small.semi_fat'),),
@@ -418,7 +420,7 @@ class _AppointmentUnitCard extends StatelessWidget {
               ]),
             ),
           ),
-          Container(color: Styles().colors.fillColorSecondary, height: 4,)
+          Container(color: AppColors.fillColorSecondary, height: 4,)
         ],)
       )
     );

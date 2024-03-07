@@ -5,6 +5,7 @@ import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -45,14 +46,14 @@ class _SettingsContactsContentWidgetState extends State<SettingsResearchContentW
       Container(height: 4),
       ToggleRibbonButton(
           label: Localization().getStringEx('panel.settings.home.calendar.research.toggle.title', 'Participate in research'),
-          border: Border.all(color: Styles().colors.surfaceAccent),
+          border: Border.all(color: AppColors.surfaceAccent),
           borderRadius: BorderRadius.all(Radius.circular(4)),
           toggled: Questionnaires().participateInResearch == true,
           onTap: _onResearchQuestionnaireToggled
       ),
       Container(height: 4),
       RibbonButton(
-          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+          border: Border.all(color: AppColors.surfaceAccent, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(4)),
           label: Localization().getStringEx("panel.settings.home.calendar.research.questionnaire.title", "Research interest form"),
           textStyle:  (Questionnaires().participateInResearch == true) ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),

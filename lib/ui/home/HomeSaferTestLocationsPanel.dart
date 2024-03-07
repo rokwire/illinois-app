@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart' as Core;
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -14,6 +15,7 @@ import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 /////////////////////////////////////////////
 // HomeSaferTestLocationsPanel
@@ -88,7 +90,7 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
     }
 
     return Scaffold(
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       appBar: HeaderBar(title: Localization().getStringEx("panel.home.safer.test_locations.header.title", "Test Locations"),),
       body: SafeArea(child:
         Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
@@ -222,9 +224,9 @@ class _TestLocation extends StatelessWidget {
         margin: EdgeInsets.only(top: 8, bottom: 8),
         padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         decoration: BoxDecoration(
-            color: Styles().colors.surface,
+            color: AppColors.surface,
             borderRadius: BorderRadius.all(Radius.circular(4)),
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+            boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -253,9 +255,9 @@ class _TestLocation extends StatelessWidget {
                   Text(
                     testLocation?.contact ??Localization().getStringEx("panel.home.safer.test_locations.label.contact.title", "Contact"),
                     style: TextStyle(
-                      fontFamily: Styles().fontFamilies.regular,
+                      fontFamily: AppFontFamilies.regular,
                       fontSize: 16,
-                      color: Styles().colors.textSurface,
+                      color: illinois.AppColors.textSurface,
                     ),
                   )
                 ],
@@ -326,9 +328,9 @@ class _TestLocation extends StatelessWidget {
                 Text(
                   waitTimeText!,
                   style: TextStyle(
-                    fontFamily: Styles().fontFamilies.regular,
+                    fontFamily: AppFontFamilies.regular,
                     fontSize: 16,
-                    color: Styles().colors.textSurface,
+                    color: illinois.AppColors.textSurface,
                   ),
                 )
               ],
@@ -608,13 +610,13 @@ class HealthServiceLocation {
   static Color? waitTimeColorHex(HealthLocationWaitTimeColor? color) {
     switch (color) {
       case HealthLocationWaitTimeColor.red:
-        return Styles().colors.saferLocationWaitTimeColorRed;
+        return illinois.AppColors.saferLocationWaitTimeColorRed;
       case HealthLocationWaitTimeColor.yellow:
-        return Styles().colors.saferLocationWaitTimeColorYellow;
+        return illinois.AppColors.saferLocationWaitTimeColorYellow;
       case HealthLocationWaitTimeColor.green:
-        return Styles().colors.saferLocationWaitTimeColorGreen;
+        return illinois.AppColors.saferLocationWaitTimeColorGreen;
       default:
-        return Styles().colors.saferLocationWaitTimeColorGrey;
+        return illinois.AppColors.saferLocationWaitTimeColorGrey;
     }
   }
 }

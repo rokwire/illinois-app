@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class PrivacyLevelSlider extends StatefulWidget {
   final double? initialValue;
@@ -16,9 +18,9 @@ class PrivacyLevelSlider extends StatefulWidget {
 
 class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
   double? _discreteValue;
-  Color? _mainColor = Styles().colors.white;
-  Color? _trackColor = Styles().colors.fillColorPrimaryVariant;
-  Color? _inactiveTrackColor = Styles().colors.surfaceAccent;
+  Color? _mainColor = illinois.AppColors.white;
+  Color? _trackColor = AppColors.fillColorPrimaryVariant;
+  Color? _inactiveTrackColor = AppColors.surfaceAccent;
 
   @override
   void initState() {
@@ -32,7 +34,7 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
     final ThemeData theme = Theme.of(context);
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 18),
-        color: widget.color ?? Styles().colors.white,
+        color: widget.color ?? illinois.AppColors.white,
         child: Column(
             children: <Widget>[
               Stack(
@@ -45,8 +47,8 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                             child: Container(
                                 height: 12,
                                 decoration: BoxDecoration(
-                                  color: Styles().colors.fillColorPrimaryVariant,
-                                  border: Border.all(color: Styles().colors.fillColorPrimaryVariant, width: 1),
+                                  color: AppColors.fillColorPrimaryVariant,
+                                  border: Border.all(color: AppColors.fillColorPrimaryVariant, width: 1),
                                   borderRadius: BorderRadius.circular(24.0),
                                 )),
                           )),
@@ -200,17 +202,17 @@ class _CustomThumbShape extends SliderComponentShape {
     );
 
     final ColorTween colorTween2 = ColorTween(
-      begin: Styles().colors.white,
-      end: Styles().colors.white,
+      begin: illinois.AppColors.white,
+      end: illinois.AppColors.white,
     );
 
     final ColorTween colorTween3 = ColorTween(
-      begin: Styles().colors.fillColorSecondary,
-      end: Styles().colors.fillColorSecondary,
+      begin: AppColors.fillColorSecondary,
+      end: AppColors.fillColorSecondary,
     );
     final ColorTween colorTween4 = ColorTween(
-      begin: Styles().colors.fillColorPrimary,
-      end: Styles().colors.fillColorPrimary,
+      begin: AppColors.fillColorPrimary,
+      end: AppColors.fillColorPrimary,
     );
 
     canvas.drawCircle(center, 25, Paint()..color = colorTween4.evaluate(enableAnimation)!);

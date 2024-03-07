@@ -10,11 +10,13 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class HomeWellnessTipsWidget extends StatefulWidget {
   
@@ -127,13 +129,13 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> impleme
   }
 
   Widget _buildLoading() {
-    return Container(color: Styles().colors.white, child:
+    return Container(color: illinois.AppColors.white, child:
       Padding(padding: EdgeInsets.all(32), child:
         Row(children: <Widget>[
           Expanded(child:
             Center(child:
               SizedBox(height: 24, width: 24, child:
-                CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(_tipColor ?? Styles().colors.fillColorSecondary), ),
+                CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(_tipColor ?? AppColors.fillColorSecondary), ),
               )
             ),
           ),
@@ -143,7 +145,7 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> impleme
   }
 
   Widget _buildTip() {
-    Color? backColor = Styles().colors.white; // _tipColor ?? Styles().colors.accentColor3;
+    Color? backColor = illinois.AppColors.white; // _tipColor ?? AppColors.accentColor3;
     return Container(color: backColor, child:
       Padding(padding: EdgeInsets.all(16), child:
         Row(children: <Widget>[

@@ -13,12 +13,14 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class Event2SetupRegistrationPanel extends StatefulWidget {
   final Event2? event;
@@ -116,7 +118,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors.white,
+    backgroundColor: illinois.AppColors.white,
   );
 
   Widget _buildPanelContent() =>
@@ -455,7 +457,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
         continue;
 
       if (contentList.isNotEmpty) {
-        contentList.add(Divider(color: Styles().colors.dividerLineAccent, thickness: 1, height: 1,));
+        contentList.add(Divider(color: illinois.AppColors.dividerLineAccent, thickness: 1, height: 1,));
       }
       contentList.add(_GuestListItemWidget(displayPerson, enabled: true, highlighted: false,));
     }
@@ -463,7 +465,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
       return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
         Center(child:
           SizedBox(width: 24, height: 24, child:
-            CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,)
+            CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 3,)
           ),
         ),
       );
@@ -500,7 +502,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 6), child:
               HtmlWidget(contentHtml, onTapUrl: _onTapHtmlLink, textStyle: mainStyle,
-                customStylesBuilder: (element) => (element.localName == "a") ? { "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor), "text-decoration-color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null,
+                customStylesBuilder: (element) => (element.localName == "a") ? { "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor), "text-decoration-color": ColorUtils.toHex(AppColors.fillColorSecondary)} : null,
               )
             ),
           ),

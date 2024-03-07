@@ -59,6 +59,7 @@ import 'package:illinois/ui/home/HomeWellnessRingsWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessTipsWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessResourcesWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -578,7 +579,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
           ),
         ]),
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: null,
     );
   }

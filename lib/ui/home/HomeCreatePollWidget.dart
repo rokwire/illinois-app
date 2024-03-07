@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -90,7 +91,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
     RoundedButton(
       label: Localization().getStringEx("widget.home_create_poll.button.create_poll.label","Create a Poll"),
       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-      borderColor: Styles().colors.fillColorSecondary,
+      borderColor: AppColors.fillColorSecondary,
       backgroundColor: Colors.white,
       contentWeight: 0.6,
       conentAlignment: MainAxisAlignment.start,
@@ -100,7 +101,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
       RoundedButton(
         label: Localization().getStringEx("widget.home_create_poll.button.login.label","Login"),
         textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-        borderColor: Styles().colors.fillColorSecondary,
+        borderColor: AppColors.fillColorSecondary,
         backgroundColor: Colors.white,
         progress: _authLoading,
         onTap: _onLogin,

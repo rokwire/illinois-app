@@ -16,11 +16,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class DebugStylesPanel extends StatefulWidget {
   _DebugStylesPanelState createState() => _DebugStylesPanelState();
@@ -62,12 +64,12 @@ class _DebugStylesPanelState extends State<DebugStylesPanel> implements Notifica
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles().colors.surface,
+      backgroundColor: AppColors.surface,
       appBar: HeaderBar( title: "Styles", ),
       body: Padding(padding: EdgeInsets.all(16), child:
         SafeArea(child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Content:', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary)),
+            Text('Content:', style: TextStyle(fontFamily: AppFontFamilies.bold, fontSize: 16, color: AppColors.fillColorPrimary)),
             Expanded(child:
               TextField(
                 maxLines: 1024,
@@ -75,22 +77,22 @@ class _DebugStylesPanelState extends State<DebugStylesPanel> implements Notifica
                 readOnly: true,
                 autocorrect: false,
                 decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-                style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground,),
+                style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: illinois.AppColors.textBackground,),
               ),
             ),
             Container(height: 8,),
-            Text('Debug:', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary)),
+            Text('Debug:', style: TextStyle(fontFamily: AppFontFamilies.bold, fontSize: 16, color: AppColors.fillColorPrimary)),
             Expanded(child:
               TextField(
                 maxLines: 1024,
                 controller: _debugContentController,
                 autocorrect: false,
                 decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-                style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground,),
+                style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: illinois.AppColors.textBackground,),
               ),
             ),
             Padding(padding: EdgeInsets.only(top: 16, bottom: 16), child:
-              RoundedButton(label: "Apply", backgroundColor: Styles().colors.white, fontSize: 16.0, textColor: Styles().colors.fillColorPrimary, borderColor: Styles().colors.fillColorPrimary, onTap: _onTapApply),
+              RoundedButton(label: "Apply", backgroundColor: illinois.AppColors.white, fontSize: 16.0, textColor: AppColors.fillColorPrimary, borderColor: AppColors.fillColorPrimary, onTap: _onTapApply),
             ),
           ],),
         ),

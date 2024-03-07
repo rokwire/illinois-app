@@ -4,11 +4,13 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class Event2TimeRangePanel extends StatefulWidget {
   static const String customStartTimeAttribute = 'custom-start-time';
@@ -75,7 +77,7 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.event2.attributes.filters.time_range.header.title', 'Date & Time'), actions: _isModified ? <Widget>[_buildApplyButton(enabled: _canApply)] : null,),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: illinois.AppColors.white,
     );
   }
 
@@ -205,7 +207,7 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
   }
 
   BoxDecoration get _dropdownDecoration => BoxDecoration(
-    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    border: Border.all(color: AppColors.surfaceAccent, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(4))
   );
 
@@ -222,7 +224,7 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
           Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
             Column(mainAxisSize: MainAxisSize.min, children: [
               Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: enabled ? Styles().colors.white : Styles().colors.whiteTransparent06, width: 1.5, ))),
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: enabled ? illinois.AppColors.white : illinois.AppColors.whiteTransparent06, width: 1.5, ))),
                 child: Text(title ?? '',
                   style: Styles().textStyles.getTextStyle(enabled ? "widget.heading.regular.fat" : "widget.heading.regular.fat.disabled")
                 ),

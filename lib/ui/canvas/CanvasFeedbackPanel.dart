@@ -17,11 +17,13 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class CanvasFeedbackPanel extends StatefulWidget {
@@ -39,7 +41,7 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
     return Scaffold(
         appBar: HeaderBar(title: Localization().getStringEx('panel.canvas_feedback.header.title', 'Feedback')),
         body: _buildContent(),
-        backgroundColor: Styles().colors.white,
+        backgroundColor: illinois.AppColors.white,
         bottomNavigationBar: uiuc.TabBar());
   }
 
@@ -63,11 +65,11 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
                 child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     decoration: BoxDecoration(
-                        border: Border.all(color: Styles().colors.fillColorSecondary, width: 1),
+                        border: Border.all(color: AppColors.fillColorSecondary, width: 1),
                         borderRadius: BorderRadius.all(Radius.circular(7))),
                     child: TextField(
                         controller: _subjectController,
-                        cursorColor: Styles().colors.fillColorSecondary,
+                        cursorColor: AppColors.fillColorSecondary,
                         keyboardType: TextInputType.text,
                         style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
                         decoration: InputDecoration(border: InputBorder.none)))),
@@ -80,12 +82,12 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
                 child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     decoration: BoxDecoration(
-                        border: Border.all(color: Styles().colors.fillColorSecondary, width: 1),
+                        border: Border.all(color: AppColors.fillColorSecondary, width: 1),
                         borderRadius: BorderRadius.all(Radius.circular(7))),
                     child: TextField(
                         maxLines: 8,
                         controller: _descriptionController,
-                        cursorColor: Styles().colors.fillColorSecondary,
+                        cursorColor: AppColors.fillColorSecondary,
                         keyboardType: TextInputType.text,
                         style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
                         decoration: InputDecoration(border: InputBorder.none)))),
@@ -99,8 +101,8 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                       onTap: _onTapSubmit,
                       contentWeight: 0.0,
-                      backgroundColor: Styles().colors.white,
-                      borderColor: Styles().colors.fillColorSecondary)
+                      backgroundColor: illinois.AppColors.white,
+                      borderColor: AppColors.fillColorSecondary)
                 ]))
           ])),
       Visibility(visible: _loading, child: CircularProgressIndicator())

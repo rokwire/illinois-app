@@ -28,6 +28,7 @@ import 'package:illinois/ui/home/HomeLaundryWidget.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
 import 'package:illinois/ui/appointments/AppointmentCard.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/model/explore.dart';
@@ -36,7 +37,6 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ExploreListPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -93,7 +93,7 @@ class _ExploreListPanelState extends State<ExploreListPanel> implements Notifica
         title: Localization().getStringEx("panel.explore_list.header.title", "Explore"),
       ),
       body: _buildBody(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

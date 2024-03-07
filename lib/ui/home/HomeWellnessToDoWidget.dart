@@ -10,11 +10,13 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class HomeWellnessToDoWidget extends StatefulWidget {
   
@@ -73,7 +75,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors.white, child:
+                Container(color: illinois.AppColors.white, child:
                   Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Row(children: [Expanded(child: Text(Localization().getStringEx('widget.home.wellness.todo.items.today.label', 'TODAY\'S ITEMS'), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("widget.label.tiny.fat")))]),
@@ -88,7 +90,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
                       ]),
                       Padding(padding: EdgeInsets.only(top: 20), child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                         RoundedButton(
-                          label: Localization().getStringEx('widget.home.wellness.todo.items.add.button', 'Add Item'), borderColor: Styles().colors.fillColorSecondary,
+                          label: Localization().getStringEx('widget.home.wellness.todo.items.add.button', 'Add Item'), borderColor: AppColors.fillColorSecondary,
                             textStyle: Styles().textStyles.getTextStyle("widget.button.title.small"),
                           leftIcon: Styles().images.getImage('plus-circle', excludeFromSemantics: true),
                           iconPadding: 8, rightIconPadding: EdgeInsets.only(right: 8), contentWeight: 0, padding: EdgeInsets.zero, onTap: _onTapAddItem),
@@ -111,7 +113,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
   }
 
   Widget _buildLoadingIndicator() {
-    return Visibility(visible: _loading, child: SizedBox(width: 30, height: 30, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2)));
+    return Visibility(visible: _loading, child: SizedBox(width: 30, height: 30, child: CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 2)));
   }
 
   Widget _buildTodayItemsWidget() {
@@ -141,7 +143,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
   }
 
   Widget _buildToDoItemWidget(WellnessToDoItem item) {
-    Widget? completedWidget = Styles().images.getImage(item.isCompleted ? 'check-circle-outline-gray-white-2' : 'circle-outline-white', color: Styles().colors.fillColorSecondary , excludeFromSemantics: true);
+    Widget? completedWidget = Styles().images.getImage(item.isCompleted ? 'check-circle-outline-gray-white-2' : 'circle-outline-white', color: AppColors.fillColorSecondary , excludeFromSemantics: true);
     return GestureDetector(onTap: () => _onTapToDoItem(item), child: Padding(padding: EdgeInsets.only(top: 10), child: Container(color: Colors.transparent, child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
       Padding(padding: EdgeInsets.only(right: 10), child: completedWidget),
       Expanded(child: Text(StringUtils.ensureNotEmpty(item.name), maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.start, style: Styles().textStyles.getTextStyle("widget.info.small")))

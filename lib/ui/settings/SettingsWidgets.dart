@@ -16,9 +16,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 typedef OnContinueCallback(List<String> selectedOptions, OnContinueProgressController progressController);
 typedef OnContinueProgressController({bool? loading});
@@ -41,7 +43,7 @@ class SettingsDialog extends StatefulWidget{
            Material(
              type: MaterialType.transparency,
              child: Container(
-               color: Styles().colors.blackTransparent06,
+               color: illinois.AppColors.blackTransparent06,
                child: SingleChildScrollView(child:
                Column(children:[
                    Stack(
@@ -83,12 +85,12 @@ class _SettingsDialogState extends State<SettingsDialog>{
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      decoration: BoxDecoration(color: illinois.AppColors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Container(
-            color: Styles().colors.fillColorPrimary,
+            color: AppColors.fillColorPrimary,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -113,7 +115,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
           ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(border:  Border.all(color: Styles().colors.fillColorPrimary,width: 1), borderRadius: BorderRadius.only(bottomRight: Radius.circular(4), bottomLeft: Radius.circular(4))),
+            decoration: BoxDecoration(border:  Border.all(color: AppColors.fillColorPrimary,width: 1), borderRadius: BorderRadius.only(bottomRight: Radius.circular(4), bottomLeft: Radius.circular(4))),
             child:
               Column(children: <Widget>[
               Container(height: 16,),
@@ -193,9 +195,9 @@ class _SettingsDialogState extends State<SettingsDialog>{
           alignment: Alignment.center,
 //          height: widget.longButtonTitle?56 : 42,
           decoration: BoxDecoration(
-            color: (Styles().colors.white),
+            color: (illinois.AppColors.white),
             border: Border.all(
-                color: Styles().colors.fillColorPrimary,
+                color: AppColors.fillColorPrimary,
                 width: 1),
             borderRadius: BorderRadius.circular(25),
           ),
@@ -219,9 +221,9 @@ class _SettingsDialogState extends State<SettingsDialog>{
                 alignment: Alignment.center,
 //                height: widget.longButtonTitle? 56: 42,
                 decoration: BoxDecoration(
-                  color: (_getIsContinueEnabled? Styles().colors.fillColorSecondaryVariant : Styles().colors.white),
+                  color: (_getIsContinueEnabled? AppColors.fillColorSecondaryVariant : illinois.AppColors.white),
                   border: Border.all(
-                      color: _getIsContinueEnabled? Styles().colors.fillColorSecondaryVariant: Styles().colors.fillColorPrimary,
+                      color: _getIsContinueEnabled? AppColors.fillColorSecondaryVariant: AppColors.fillColorPrimary,
                       width: 1),
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -237,7 +239,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
               SizedBox(width: _confirmSize!.width, height: _confirmSize!.height,
               child: Align(alignment: Alignment.center,
                 child: SizedBox(height: 24, width: 24,
-                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white), strokeWidth: 2,),),),
+                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(illinois.AppColors.white), strokeWidth: 2,),),),
               ) : Container(),
           )
         ],));
@@ -316,7 +318,7 @@ class InfoButton extends StatelessWidget {
     InkWell(onTap: onTap, child:
     Container(
       padding: EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
       child: Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -355,7 +357,7 @@ class InfoButton extends StatelessWidget {
         Column(
           children: <Widget>[
             Container(height: 12,),
-            Container(height: 1, color: Styles().colors.surfaceAccent,),
+            Container(height: 1, color: AppColors.surfaceAccent,),
             Container(height: 12),
             Text(additionalInfo!, style: Styles().textStyles.getTextStyle("widget.button.description.tiny"),),
           ],

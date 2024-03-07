@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Onboarding2.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -25,6 +26,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class Onboarding2LoginPhoneOrEmailStatementPanel extends StatefulWidget with OnboardingPanel {
 
@@ -53,7 +55,7 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
     String titleString = Localization().getStringEx('panel.onboarding2.phone_or_email_statement.title.text', 'Login by phone or email');
     EdgeInsetsGeometry backButtonInsets = EdgeInsets.only(left: 10, top: 20 + MediaQuery.of(context).padding.top, right: 20, bottom: 20);
 
-    return Scaffold(backgroundColor: Styles().colors.background, body:
+    return Scaffold(backgroundColor: AppColors.background, body:
       Stack(children: <Widget>[
         Styles().images.getImage("header-login", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
         Column(children:[
@@ -83,8 +85,8 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
                 hint: Localization().getStringEx('panel.onboarding2.phone_or_email_statement.continue.hint', ''),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                borderColor: Styles().colors.fillColorSecondary,
-                backgroundColor: Styles().colors.white,
+                borderColor: AppColors.fillColorSecondary,
+                backgroundColor: illinois.AppColors.white,
                 onTap: _onContinueTapped,
               ),
               Onboarding2UnderlinedButton(

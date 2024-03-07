@@ -1,9 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/Onboarding2.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 
 class Onboarding2PermissionsPanel extends StatefulWidget{
   @override
@@ -21,7 +21,7 @@ class _Onboarding2PermissionsPanelState extends State <Onboarding2PermissionsPan
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
     );
   }
 

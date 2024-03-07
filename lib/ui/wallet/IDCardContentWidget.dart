@@ -32,6 +32,7 @@ import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
@@ -45,6 +46,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 // import 'package:url_launcher/url_launcher.dart';
 
 class IDCardContentWidget extends StatefulWidget {
@@ -64,8 +66,8 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   final double _buildingAccessIconSize = 84;
 
   Color? _activeColor;
-  Color get _activeBorderColor{ return _activeColor ?? Styles().colors.fillColorSecondary; }
-  Color get _activeHeadingColor{ return _activeColor ?? Styles().colors.fillColorPrimary; }
+  Color get _activeBorderColor{ return _activeColor ?? AppColors.fillColorSecondary; }
+  Color get _activeHeadingColor{ return _activeColor ?? AppColors.fillColorPrimary; }
 
   MemoryImage? _photoImage;
   bool? _buildingAccess;
@@ -266,7 +268,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
       buildingAccessIcon = Container(width: _buildingAccessIconSize, height: _buildingAccessIconSize, child:
         Align(alignment: Alignment.center, child: 
           SizedBox(height: 42, width: 42, child:
-            CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
+            CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorSecondary), )
           )
         ,),);
     }
@@ -292,11 +294,11 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: LinearGradient(
-                        colors: [ Styles().colors.fillColorSecondary, _activeBorderColor],
+                        colors: [ AppColors.fillColorSecondary, _activeBorderColor],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         stops: [0.0, 1.0],),
-                      color: Styles().colors.fillColorSecondary,),
+                      color: AppColors.fillColorSecondary,),
                   ),
                 ),
                 _buildPhotoImage()
@@ -307,11 +309,11 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
-                  colors: [Styles().colors.fillColorSecondary, Styles().colors.fillColorSecondary],
+                  colors: [AppColors.fillColorSecondary, AppColors.fillColorSecondary],
                   begin: Alignment.topCenter,
                   end:Alignment.bottomCenter,
                   stops: [0.0, 1.0],),
-                color: Styles().colors.fillColorSecondary,),
+                color: AppColors.fillColorSecondary,),
               child: Padding(padding: EdgeInsets.all(16),
                 child: Container(decoration: BoxDecoration(
                   shape: BoxShape.circle,
@@ -363,7 +365,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
       Container(height: 15),
       Semantics( container: true,
         child: Column(children: <Widget>[
-          // Text((0 < (Auth2().authCard?.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN') : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: Styles().fontFamilies.regular, fontSize: 14)),
+          // Text((0 < (Auth2().authCard?.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN') : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: AppFontFamilies.regular, fontSize: 14)),
           Text(Auth2().authCard?.uin ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.extra_large")),
         ],),
       ),
@@ -394,12 +396,12 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     if (!_isIcardMobileAvailable) {
       return Container();
     } else if (_isMobileAccessLoading) {
-      return Center(child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary));
+      return Center(child: CircularProgressIndicator(color: AppColors.fillColorSecondary));
     } else {
       return Padding(
         padding: EdgeInsets.only(bottom: 30),
         child: Column(children: [
-          Container(color: Styles().colors.dividerLine, height: 1),
+          Container(color: AppColors.dividerLine, height: 1),
           Padding(padding: EdgeInsets.only(top: 20), child: Styles().images.getImage('mobile-access-logo', excludeFromSemantics: true)),
           (_hasMobileAccess ? _buildExistingMobileAccessContent() : _buildMissingMobileAccessContent())
         ]));
@@ -465,7 +467,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
               backgroundColor: Colors.white,
               contentWeight: 0.0,
               progress: _renewingMobileId,
-              borderColor: Styles().colors.fillColorSecondary,
+              borderColor: AppColors.fillColorSecondary,
               onTap: _onTapRenewMobileAccessButton)))
     ]);
   }
@@ -489,7 +491,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
               backgroundColor: Colors.white,
               enabled: _submitButtonEnabled,
               contentWeight: 0.0,
-              borderColor: _submitButtonEnabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
+              borderColor: _submitButtonEnabled ? AppColors.fillColorSecondary : illinois.AppColors.disabledTextColor,
               progress: _submittingDeviceRegistration,
               onTap: _onTapSubmitMobileAccessButton)),
       Visibility(visible: MobileAccess().isMobileAccessWaiting, child: Padding(padding: EdgeInsets.only(bottom: 10), child: Text(

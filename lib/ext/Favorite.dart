@@ -13,6 +13,7 @@ import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Guide.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
@@ -31,6 +32,7 @@ import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -110,8 +112,8 @@ extension FavoriteExt on Favorite {
   Color? get favoriteDetailTextColor {
     if (this is LaundryRoom) {
       switch((this as LaundryRoom).status) {
-        case LaundryRoomStatus.online: return Styles().colors.fillColorPrimary;
-        case LaundryRoomStatus.offline: return Styles().colors.disabledTextColor;
+        case LaundryRoomStatus.online: return AppColors.fillColorPrimary;
+        case LaundryRoomStatus.offline: return illinois.AppColors.disabledTextColor;
         default: return null;
       }
     }
@@ -160,22 +162,22 @@ extension FavoriteExt on Favorite {
       return (this as Game).uiColor;
     }
     else if (this is News) {
-      return Styles().colors.fillColorPrimary;
+      return AppColors.fillColorPrimary;
     }
     else if (this is LaundryRoom) {
-      return Styles().colors.accentColor2;
+      return AppColors.accentColor2;
     }
     else if (this is MTDStop) {
-      return Styles().colors.accentColor3;
+      return AppColors.accentColor3;
     }
     else if (this is GuideFavorite) {
-      return Styles().colors.accentColor3;
+      return AppColors.accentColor3;
     }
     else if (this is InboxMessage) {
-      return Styles().colors.fillColorSecondary;
+      return AppColors.fillColorSecondary;
     }
     else {
-      return Styles().colors.fillColorSecondary;
+      return AppColors.fillColorSecondary;
     }
   }
 

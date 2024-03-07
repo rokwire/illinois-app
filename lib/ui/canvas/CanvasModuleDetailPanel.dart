@@ -22,6 +22,7 @@ import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -52,7 +53,7 @@ class _CanvasModuleDetailPanelState extends State<CanvasModuleDetailPanel> {
     return Scaffold(
       appBar: HeaderBar(title: StringUtils.ensureNotEmpty(widget.module.name), maxLines: 3,),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: illinois.AppColors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -115,12 +116,12 @@ class _CanvasModuleDetailPanelState extends State<CanvasModuleDetailPanel> {
 
   Widget _buildItem(CanvasModuleItem item, {bool isFirst = false}) {
     double innerPadding = 10;
-    BorderSide borderSide = BorderSide(color: Styles().colors.blackTransparent06, width: 1);
+    BorderSide borderSide = BorderSide(color: illinois.AppColors.blackTransparent06, width: 1);
     return GestureDetector(
         onTap: () => _onTapItem(item),
         child: Container(
             decoration: BoxDecoration(
-                color: Styles().colors.white,
+                color: illinois.AppColors.white,
                 border: Border(left: borderSide, top: (isFirst ? borderSide : BorderSide.none), right: borderSide, bottom: borderSide)),
             padding: EdgeInsets.only(
                 left: ((item.indent ?? 0) * 20 + innerPadding), top: innerPadding, right: innerPadding, bottom: innerPadding),

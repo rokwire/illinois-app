@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -30,6 +31,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 
 class GroupEventDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -100,7 +102,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
           )
         ],
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
       body: Column(children: <Widget>[
         Expanded(
@@ -111,7 +113,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
               children: [
                 _eventImageHeader(),
                 Container(
-                  color: Styles().colors.white,
+                  color: illinois.AppColors.white,
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
                     children: [
@@ -154,19 +156,19 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     String? imageUrl = widget.event?.imageUrl;
     return Container(
       height: 200,
-      color: Styles().colors.background,
+      color: AppColors.background,
       child:Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
           StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child: ModalImageHolder(child: Image.network(imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true))) : Container(),
           CustomPaint(
-            painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
+            painter: TrianglePainter(painterColor: illinois.AppColors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
             child: Container(
               height: 53,
             ),
           ),
           CustomPaint(
-            painter: TrianglePainter(painterColor: Styles().colors.white),
+            painter: TrianglePainter(painterColor: illinois.AppColors.white),
             child: Container(
               height: 30,
             ),
@@ -238,7 +240,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       return Container();
     }
     String eventType = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
-    BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1)));
+    BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.fillColorSecondary, width: 1)));
     String iconKey = "location" ;
     String? locationId = widget.event?.location?.id;
     String? locationText = _event?.getLongDisplayLocation(null); // if we need distance calculation - pass _locationData
@@ -290,7 +292,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     }
 
     String eventType = Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event");
-    BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1)));
+    BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.fillColorSecondary, width: 1)));
     String iconKey = "laptop";
     String? virtualUrl = widget.event?.onlineDetails?.url;
     String locationDescription = StringUtils.ensureNotEmpty(widget.event?.location?.description);
@@ -472,8 +474,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
               label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
               hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-              backgroundColor: hasRegistrationUrl ? Styles().colors.background : Colors.white,
-              borderColor: hasRegistrationUrl ? Styles().colors.fillColorPrimary: Styles().colors.fillColorSecondary,
+              backgroundColor: hasRegistrationUrl ? AppColors.background : Colors.white,
+              borderColor: hasRegistrationUrl ? AppColors.fillColorPrimary: AppColors.fillColorSecondary,
               rightIcon: Styles().images.getImage(hasRegistrationUrl ? 'external-link-dark' : 'external-link'),
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               onTap: () {
@@ -492,7 +494,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
             hint: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.hint', ''),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
             backgroundColor: Colors.white,
-            borderColor: Styles().colors.fillColorSecondary,
+            borderColor: AppColors.fillColorSecondary,
             rightIcon: Styles().images.getImage('external-link'),
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             onTap: () {
@@ -540,7 +542,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         ),
         Container(
           height: 1,
-          color: Styles().colors.surfaceAccent,
+          color: AppColors.surfaceAccent,
         ),
         Container(
           height: 14,
@@ -714,7 +716,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                   label: Localization().getStringEx('panel.groups_event_detail.button.add.title', "ADD "),
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                   backgroundColor: Colors.white,
-                  borderColor: Styles().colors.fillColorSecondary,
+                  borderColor: AppColors.fillColorSecondary,
                   onTap: (){
                     Analytics().logSelect(target: 'Add');
                     setState(() {

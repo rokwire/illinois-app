@@ -7,6 +7,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -25,6 +26,7 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class GuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final String? favoriteKey;
@@ -69,7 +71,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> {
           ),
         ),
       ],),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: widget.showTabBar ? uiuc.TabBar() : null,
     );
   }
@@ -179,7 +181,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
         )
           // Html(data: titleHtml,
           //   onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-          //   style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: FontSize(36), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+          //   style: { "body": Style(color: AppColors.fillColorPrimary, fontFamily: AppFontFamilies.extraBold, fontSize: FontSize(36), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
       ),);
     }
     
@@ -244,7 +246,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
     }
 
     return (0 < contentList.length) ? 
-      Container(color: widget.headingColor ?? Styles().colors.white, padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
+      Container(color: widget.headingColor ?? illinois.AppColors.white, padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
         Row(children: [
           Expanded(child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList),
@@ -262,7 +264,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
           label: "Image",
           button: true,
           child:Stack(alignment: Alignment.bottomCenter, children: [
-            Container(color: widget.headingColor ?? Styles().colors.white, padding: EdgeInsets.all(16), child:
+            Container(color: widget.headingColor ?? illinois.AppColors.white, padding: EdgeInsets.all(16), child:
               Row(children: [
                 Expanded(child:
                   Column(children: [
@@ -271,7 +273,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
                 ),
               ],)
             ),
-            Container(color: Styles().colors.background, height: 48, width: MediaQuery.of(context).size.width),
+            Container(color: AppColors.background, height: 48, width: MediaQuery.of(context).size.width),
             Container(padding: EdgeInsets.all(16), child:
               Row(children: [
                 Expanded(child:
@@ -348,12 +350,12 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
 
                   Map<String, dynamic>? number = JsonUtils.mapValue(entry['number']);
                   String numberTextFormat = ((number != null) ? JsonUtils.stringValue(number['text']) : null) ?? '%d.';
-                  Color? numberColor = ((number != null) ? ColorUtils.fromHex(JsonUtils.stringValue(number['color'])) : null) ?? Styles().colors.textBackground;
+                  Color? numberColor = ((number != null) ? ColorUtils.fromHex(JsonUtils.stringValue(number['color'])) : null) ?? illinois.AppColors.textBackground;
                   
                   Map<String, dynamic>? numberFont = (number != null) ? JsonUtils.mapValue(number['font']) : null;
                   double numberFontSize = ((numberFont != null) ? JsonUtils.doubleValue(numberFont['size']) : null) ?? 20;
                   String? numberFontFamilyCode = (numberFont != null) ? JsonUtils.stringValue(numberFont['family']) : null;
-                  String? numberFontFamily = Styles().fontFamilies.fromCode(numberFontFamilyCode) ?? Styles().fontFamilies.regular;
+                  String? numberFontFamily = Styles().fontFamilies.fromCode(numberFontFamilyCode) ?? AppFontFamilies.regular;
 
                   Map<String, dynamic>? numberPadding = (number != null) ? JsonUtils.mapValue(number['padding']) : null;
                   double numberLeftPadding = ((numberPadding != null) ? JsonUtils.doubleValue(numberPadding['left']) : null) ?? 16;
@@ -387,12 +389,12 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
                 if (bullets != null) {
                   Map<String, dynamic>? bullet = JsonUtils.mapValue(entry['bullet']);
                   String bulletText = ((bullet != null) ? JsonUtils.stringValue(bullet['text']) : null) ?? '\u2022';
-                  Color? bulletColor = ((bullet != null) ? ColorUtils.fromHex(JsonUtils.stringValue(bullet['color'])) : null) ?? Styles().colors.textBackground;
+                  Color? bulletColor = ((bullet != null) ? ColorUtils.fromHex(JsonUtils.stringValue(bullet['color'])) : null) ?? illinois.AppColors.textBackground;
                   
                   Map<String, dynamic>? bulletFont = (bullet != null) ? JsonUtils.mapValue(bullet['font']) : null;
                   double bulletFontSize = ((bulletFont != null) ? JsonUtils.doubleValue(bulletFont['size']) : null) ?? 20;
                   String? bulletFontFamilyCode = (bulletFont != null) ? JsonUtils.stringValue(bulletFont['family']) : null;
-                  String? bulletFontFamily = Styles().fontFamilies.fromCode(bulletFontFamilyCode) ?? Styles().fontFamilies.regular;
+                  String? bulletFontFamily = Styles().fontFamilies.fromCode(bulletFontFamilyCode) ?? AppFontFamilies.regular;
 
                   Map<String, dynamic>? bulletPadding = (bullet != null) ? JsonUtils.mapValue(bullet['padding']) : null;
                   double bulletLeftPadding = ((bulletPadding != null) ? JsonUtils.doubleValue(bulletPadding['left']) : null) ?? 16;
@@ -442,8 +444,8 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
               Padding(padding: EdgeInsets.only(top: 16), child:
                 RoundedButton(label: text ?? '',
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                  backgroundColor: Styles().colors.white,
-                  borderColor: Styles().colors.fillColorSecondary,
+                  backgroundColor: illinois.AppColors.white,
+                  borderColor: AppColors.fillColorSecondary,
                   borderWidth: 2,
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   onTap:() { _onTapLink(url);  },

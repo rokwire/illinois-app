@@ -22,6 +22,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -36,6 +37,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final GroupPost? post;
@@ -111,7 +113,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               Localization().getStringEx('panel.group.detail.post.header.title', 'Post'),
               style:  Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),),
             centerTitle: false),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         bottomNavigationBar: uiuc.TabBar(),
         body: _buildContent(),
       );
@@ -130,7 +132,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           _buildRepliesSection(),
           _buildPostEdit(),
           ],)),
-          Container(key: _sliverHeaderKey, color: Styles().colors.background, padding: EdgeInsets.only(left: _outerPadding, bottom: 3), child:
+          Container(key: _sliverHeaderKey, color: AppColors.background, padding: EdgeInsets.only(left: _outerPadding, bottom: 3), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
               Row(children: [
                 Expanded(child:
@@ -237,7 +239,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                             hintText: Localization().getStringEx("panel.group.detail.post.edit.hint", "Edit the post"),
                                             border: OutlineInputBorder(
                                                 borderSide: BorderSide(
-                                                    color: Styles().colors.mediumGray,
+                                                    color: illinois.AppColors.mediumGray,
                                                     width: 0.0))),
                                         style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
                                        )),
@@ -247,8 +249,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                       child: RoundedButton(
                                           label: Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update'),
                                           textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                                          borderColor: Styles().colors.fillColorSecondary,
-                                          backgroundColor: Styles().colors.white,
+                                          borderColor: AppColors.fillColorSecondary,
+                                          backgroundColor: illinois.AppColors.white,
                                           onTap: _onTapUpdateMainPost)),
                                 ])
 
@@ -347,8 +349,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                           Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update') :
                           Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send'),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                        borderColor: Styles().colors.fillColorSecondary,
-                        backgroundColor: Styles().colors.white,
+                        borderColor: AppColors.fillColorSecondary,
+                        backgroundColor: illinois.AppColors.white,
                         onTap: _onTapSend)),
                 Container(width: 20),
                 Flexible(
@@ -358,8 +360,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                             'panel.group.detail.post.create.button.cancel.title',
                             'Cancel'),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                        borderColor: Styles().colors.textSurface,
-                        backgroundColor: Styles().colors.white,
+                        borderColor: illinois.AppColors.textSurface,
+                        backgroundColor: illinois.AppColors.white,
                         onTap: _onTapCancel))
               ])
             ])));
@@ -461,7 +463,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             Expanded(
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 6, horizontal: _outerPadding),
-                color: Styles().colors.fillColorPrimary,
+                color: AppColors.fillColorPrimary,
                 child: Text("Replies",
                     style: Styles().textStyles.getTextStyle("widget.heading.medium"),
                 ),
@@ -549,7 +551,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     Analytics().logSelect(target: 'Post Options');
     showModalBottomSheet(
       context: context,
-      backgroundColor: Styles().colors.white,
+      backgroundColor: illinois.AppColors.white,
       isScrollControlled: true,
       isDismissible: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),
@@ -579,7 +581,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     Analytics().logSelect(target: 'Reply Options');
     showModalBottomSheet(
       context: context,
-      backgroundColor: Styles().colors.white,
+      backgroundColor: illinois.AppColors.white,
       isScrollControlled: true,
       isDismissible: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),

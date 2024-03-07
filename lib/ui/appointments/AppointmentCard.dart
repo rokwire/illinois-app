@@ -23,6 +23,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -63,7 +64,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
     String semanticsImageHint = 'Double tap to expand image';
 
     String typeImageKey = (widget.appointment.type == AppointmentType.online) ? 'laptop' : 'location';
-    Color? headerColor = (widget.appointment.isUpcoming ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimary);
+    Color? headerColor = (widget.appointment.isUpcoming ? AppColors.fillColorSecondary : AppColors.fillColorPrimary);
     String? displayTime = widget.appointment.displayShortScheduleTime;
     String? displayType = widget.appointment.displayType;
     String? displayHost = widget.appointment.host?.displayName;
@@ -83,8 +84,8 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
         Stack(children: [
           Container(
             decoration: BoxDecoration(
-              color: Styles().colors.surface,
-              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+              color: AppColors.surface,
+              border: Border.all(color: AppColors.surfaceAccent, width: 1),
               borderRadius: BorderRadius.all(Radius.circular(4))
             ),
             child: Padding(padding: EdgeInsets.only(left: 16, bottom: 16), child:

@@ -17,11 +17,13 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/ui/athletics/AthleticsEventsContentWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDayContentWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsContentWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -106,16 +108,16 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
         appBar: _headerBar,
         body: Column(children: <Widget>[
           Container(
-              color: Styles().colors.fillColorPrimary,
+              color: AppColors.fillColorPrimary,
               padding: EdgeInsets.all(16),
               child: Semantics(
                   hint: Localization().getStringEx("dropdown.hint", "DropDown"),
                   container: true,
                   child: RibbonButton(
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-                      backgroundColor: Styles().colors.white,
+                      backgroundColor: illinois.AppColors.white,
                       borderRadius: BorderRadius.all(Radius.circular(5)),
-                      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                      border: Border.all(color: AppColors.surfaceAccent, width: 1),
                       rightIconKey: (_contentValuesVisible ? 'icon-up-orange' : 'icon-down-orange'),
                       label: _getContentLabel(_selectedContent),
                       onTap: _changeSettingsContentValuesVisibility))),
@@ -125,7 +127,7 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
             _buildContentValuesContainer()
           ]))
         ]),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         bottomNavigationBar: uiuc.TabBar());
   }
 
@@ -144,12 +146,12 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
                     _contentValuesVisible = false;
                   });
                 },
-                child: Container(color: Styles().colors.blackTransparent06))));
+                child: Container(color: illinois.AppColors.blackTransparent06))));
   }
 
   Widget _buildContentValuesWidget() {
     List<Widget> sectionList = <Widget>[];
-    sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
+    sectionList.add(Container(color: AppColors.fillColorSecondary, height: 2));
 
     if (CollectionUtils.isNotEmpty(_contentValues)) {
       for (AthleticsContent content in _contentValues!) {
@@ -163,8 +165,8 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
 
   Widget _buildContentItem(AthleticsContent contentItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+        backgroundColor: illinois.AppColors.white,
+        border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentItem),
         onTap: () => _onTapContentItem(contentItem));

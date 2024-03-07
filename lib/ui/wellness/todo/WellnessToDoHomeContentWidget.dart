@@ -25,12 +25,14 @@ import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessManageToDoCategoriesPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/scroll_pager.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class WellnessToDoHomeContentWidget extends StatefulWidget {
   WellnessToDoHomeContentWidget();
@@ -153,7 +155,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                   label: Localization().getStringEx('panel.wellness.todo.items.add.button', 'Add Item'),
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.fat"),
                   rightIconPadding: EdgeInsets.symmetric(horizontal: 12),
-                  borderColor: Styles().colors.fillColorSecondary,
+                  borderColor: AppColors.fillColorSecondary,
                   leftIcon: Styles().images.getImage('plus-dark', excludeFromSemantics: true),
                   onTap: _onTapAddItem)),
           Container(width: 15),
@@ -162,7 +164,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
               child: RoundedButton(
                   label: Localization().getStringEx('panel.wellness.todo.categories.manage.button', 'Manage Categories'),
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.fat"),
-                  borderColor: Styles().colors.fillColorPrimary,
+                  borderColor: AppColors.fillColorPrimary,
                   onTap: _onTapManageCategories))
         ]));
   }
@@ -175,7 +177,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
             child: RoundedButton(
                 label: Localization().getStringEx('panel.wellness.todo.items.completed.clear.button', 'Clear Completed Items'),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.regular"),
-                borderColor: Styles().colors.fillColorPrimary,
+                borderColor: AppColors.fillColorPrimary,
                 contentWeight: 0.75,
                 padding: EdgeInsets.symmetric(vertical: 8),
                 onTap: _onTapClearCompletedItems)));
@@ -227,8 +229,8 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
               padding: EdgeInsets.only(top: 5),
               child: Container(
                   height: 176,
-                  decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(5), boxShadow: [
-                    BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
+                  decoration: BoxDecoration(color: illinois.AppColors.white, borderRadius: BorderRadius.circular(5), boxShadow: [
+                    BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
                   ]),
                   child: Stack(children: [
                     _buildCalendarVerticalDelimiters(),
@@ -251,11 +253,11 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   Widget _buildCalendarHotizontalDelimiter() {
-    return Padding(padding: EdgeInsets.only(top: 32), child: Container(height: 1, color: Styles().colors.lightGray));
+    return Padding(padding: EdgeInsets.only(top: 32), child: Container(height: 1, color: illinois.AppColors.lightGray));
   }
 
   Widget _buildCalendarVerticalDelimiter() {
-    return Container(width: 1, color: Styles().colors.lightGray);
+    return Container(width: 1, color: illinois.AppColors.lightGray);
   }
 
   Widget _buildCalendarHeaderDatesWidget() {
@@ -375,7 +377,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         contentPadding: EdgeInsets.all(0),
         contentWidget: Container(
             height: 250,
-            decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)),
+            decoration: BoxDecoration(color: illinois.AppColors.white, borderRadius: BorderRadius.circular(10.0)),
             child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
               Padding(
                   padding: EdgeInsets.all(30),
@@ -925,7 +927,7 @@ class _TabButton extends StatelessWidget {
             child: Container(
                 height: 24 + MediaQuery.of(context).textScaler.scale(16),
                 decoration: BoxDecoration(
-                    color: selected! ? Colors.white : Styles().colors.lightGray, border: _border, borderRadius: _borderRadius),
+                    color: selected! ? Colors.white : illinois.AppColors.lightGray, border: _border, borderRadius: _borderRadius),
                 child: Center(
                     child: Text(label!,
                         overflow: TextOverflow.ellipsis,
@@ -945,7 +947,7 @@ class _TabButton extends StatelessWidget {
   }
 
   BoxBorder? get _border {
-    BorderSide borderSide = BorderSide(color: Styles().colors.surfaceAccent, width: 2, style: BorderStyle.solid);
+    BorderSide borderSide = BorderSide(color: AppColors.surfaceAccent, width: 2, style: BorderStyle.solid);
     switch (position) {
       case _TabButtonPosition.first:
         return Border.fromBorderSide(borderSide);

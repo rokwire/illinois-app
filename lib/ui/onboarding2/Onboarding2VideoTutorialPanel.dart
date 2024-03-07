@@ -36,6 +36,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:video_player/video_player.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class Onboarding2VideoTutorialPanel extends StatefulWidget {
   @override
@@ -165,7 +166,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   Widget build(BuildContext context) {
     double buttonWidth = MediaQuery.of(context).textScaler.scale(120);
     return Scaffold(
-        backgroundColor: Styles().colors.blackTransparent06,
+        backgroundColor: illinois.AppColors.blackTransparent06,
         body: SafeArea(
             child: Stack(alignment: Alignment.center, children: [
           _buildVideoContent(),
@@ -232,7 +233,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
                         height: 30,
                         decoration: BoxDecoration(
                             border: Border.all(
-                                color: (_ccEnabled ? Styles().colors.white : Styles().colors.disabledTextColorTwo), width: 2),
+                                color: (_ccEnabled ? illinois.AppColors.white : illinois.AppColors.disabledTextColorTwo), width: 2),
                             borderRadius: BorderRadius.all(Radius.circular(6))),
                         child: Center(
                             child: Text('CC',

@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -35,7 +36,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
         'panel.onboarding.location.button.dont_allow.title',
         'Not right now');
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         body: SwipeDetector(
             onSwipeLeft: () => _goNext(context),
             onSwipeRight: () => _goBack(context),
@@ -70,9 +71,9 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                               child: Text(titleText,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    fontFamily: Styles().fontFamilies.bold,
+                                    fontFamily: AppFontFamilies.bold,
                                     fontSize: 32,
-                                    color: Styles().colors.fillColorPrimary),
+                                    color: AppColors.fillColorPrimary),
                               )),
                         )),
                     Container(
@@ -88,9 +89,9 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                               "Share your location to know what's nearest to you while on campus."),
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontFamily: Styles().fontFamilies.regular,
+                              fontFamily: AppFontFamilies.regular,
                               fontSize: 20,
-                              color: Styles().colors.fillColorPrimary),
+                              color: AppColors.fillColorPrimary),
                         ),
                       )),
                     ]),
@@ -108,8 +109,8 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                           'panel.onboarding.location.button.allow.hint',
                           ''),
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                      borderColor: Styles().colors.fillColorSecondary,
-                      backgroundColor: Styles().colors.background,
+                      borderColor: AppColors.fillColorSecondary,
+                      backgroundColor: AppColors.background,
                       onTap: () => _requestLocation(context),
                     ),
                     GestureDetector(
@@ -129,11 +130,11 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                               child: Text(
                                 notRightNow,
                                 style: TextStyle(
-                                    fontFamily: Styles().fontFamilies.medium,
+                                    fontFamily: AppFontFamilies.medium,
                                     fontSize: 16,
-                                    color: Styles().colors.fillColorPrimary,
+                                    color: AppColors.fillColorPrimary,
                                     decoration: TextDecoration.underline,
-                                    decorationColor: Styles().colors.fillColorSecondary,
+                                    decorationColor: AppColors.fillColorSecondary,
                                     decorationThickness: 1,
                                     decorationStyle:
                                         TextDecorationStyle.solid),
@@ -186,7 +187,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                 message,
                 textAlign: TextAlign.left,
                 style: TextStyle(
-                    fontFamily: Styles().fontFamilies.medium,
+                    fontFamily: AppFontFamilies.medium,
                     fontSize: 16,
                     color: Colors.black),
               ),

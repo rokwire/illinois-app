@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -48,7 +49,7 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
         title: Localization().getStringEx("panel.settings.verify_identity.label.title", "Verify your Identity"),
       ),
       body: SingleChildScrollView(child: _buildContent()),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import 'package:illinois/gen/styles.dart' as illinois;
 
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Sports.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -75,7 +77,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
                         children: <Widget> [
                           _buildFilterLabel(),
                           Expanded(
-                            child: Padding(padding: EdgeInsets.only(top: 2),child:_wrapWithBottomBorder(Styles().colors.fillColorSecondaryVariant, FilterSelector(
+                            child: Padding(padding: EdgeInsets.only(top: 2),child:_wrapWithBottomBorder(AppColors.fillColorSecondaryVariant, FilterSelector(
                               title: _filters[_selectedFilterIndex],
                               active: _filterOptionsVisible,
                               expanded: true,
@@ -101,7 +103,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
               _buildFilterValuesContainer()
               ],),),
             ]),
-            backgroundColor: Styles().colors.background,
+            backgroundColor: AppColors.background,
             bottomNavigationBar: uiuc.TabBar(),
           );
   }
@@ -156,7 +158,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
 
           return StringUtils.isNotEmpty(news.imageUrl) ? ImageSlantHeader(
             imageUrl: news.imageUrl,
-            slantImageColor: Styles().colors.fillColorPrimaryTransparent03,
+            slantImageColor: illinois.AppColors.fillColorPrimaryTransparent03,
             slantImageKey:  'slant-dark',
             child: _buildAthleticsNewsCard(news)
           ) : _buildAthleticsNewsCard(news);
@@ -191,14 +193,14 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
     return Visibility(visible: _filterOptionsVisible, child: Padding(
         padding: EdgeInsets.only(left: 16, right: 16, top: 95, bottom: 40),
         child: Container(decoration: BoxDecoration(
-          color: Styles().colors.fillColorSecondary,
+          color: AppColors.fillColorSecondary,
           borderRadius: BorderRadius.circular(5.0),), child: Padding(
           padding: EdgeInsets.only(top: 2),
           child: Container(color: Colors.white,
             child: ListView.separated(shrinkWrap: true, separatorBuilder: (context, index) =>
                 Divider(
                   height: 1,
-                  color: Styles().colors.fillColorPrimaryTransparent03,
+                  color: illinois.AppColors.fillColorPrimaryTransparent03,
                 ),
               itemCount: filterValues.length,
               itemBuilder: (context, index) {
@@ -222,7 +224,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
   }
 
   Widget _buildFilterLabel(){
-    return _wrapWithBottomBorder(Styles().colors.surfaceAccent,
+    return _wrapWithBottomBorder(AppColors.surfaceAccent,
         Padding(padding: EdgeInsets.only(top: 14),
         child:Text(Localization().getStringEx("panel.athletics_news_list.label.filter_by", "Filter by"),
           style: Styles().textStyles.getTextStyle("widget.item.regular.thin")),));

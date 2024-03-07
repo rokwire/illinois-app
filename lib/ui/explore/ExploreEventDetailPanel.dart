@@ -22,6 +22,7 @@ import 'package:illinois/ext/Event.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -43,6 +44,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class ExploreEventDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Event? event;
@@ -182,7 +184,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             ),
           ],
         ),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         bottomNavigationBar: uiuc.TabBar(),
       );
   }
@@ -319,7 +321,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       padding: EdgeInsets.symmetric(vertical: 0),
       child: Container(
         height: 1,
-        color: Styles().colors.fillColorPrimaryTransparent015,
+        color: illinois.AppColors.fillColorPrimaryTransparent015,
       ),
     );
   }
@@ -509,7 +511,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Row(children: <Widget>[
-                Expanded(child: Container(height: 1, color: Styles().colors.surfaceAccent,),)
+                Expanded(child: Container(height: 1, color: AppColors.surfaceAccent,),)
               ],),
             ),
             Row(
@@ -590,7 +592,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   Widget _buildPreviewHeader(){
     return !widget.previewMode? Container():
     Container(
-      color: Styles().colors.fillColorPrimaryVariant,
+      color: AppColors.fillColorPrimaryVariant,
       height: 56,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16),
@@ -630,8 +632,8 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               label: Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website'),
               hint: Localization().getStringEx('panel.explore_detail.button.visit_website.hint', ''),
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-              backgroundColor: hasRegistrationUrl ? Styles().colors.background : Colors.white,
-              borderColor: hasRegistrationUrl ? Styles().colors.fillColorPrimary: Styles().colors.fillColorSecondary,
+              backgroundColor: hasRegistrationUrl ? AppColors.background : Colors.white,
+              borderColor: hasRegistrationUrl ? AppColors.fillColorPrimary: AppColors.fillColorSecondary,
               rightIcon: Styles().images.getImage(hasRegistrationUrl ? 'external-link-dark' : 'external-link'),
               onTap: () {
                 Analytics().logSelect(target: "Website");
@@ -650,7 +652,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                 hint: Localization().getStringEx('panel.explore_detail.button.get_tickets.hint', ''),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                 backgroundColor: Colors.white,
-                borderColor: Styles().colors.fillColorSecondary,
+                borderColor: AppColors.fillColorSecondary,
                 rightIcon: Styles().images.getImage('external-link'),
                 onTap: () {
                 Analytics().logSelect(target: "Website");
@@ -691,7 +693,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                 hint: Localization().getStringEx('panel.explore_detail.button.modify.hint', '') ,
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                 backgroundColor: Colors.white,
-                borderColor: Styles().colors.fillColorPrimary,
+                borderColor: AppColors.fillColorPrimary,
                 onTap: ()=>_onTapModify,
               )),
           Container(
@@ -703,7 +705,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                 hint: Localization().getStringEx('panel.explore_detail.button.publish.hint', 'Publish'),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                 backgroundColor: Colors.white,
-                borderColor: Styles().colors.fillColorSecondary,
+                borderColor: AppColors.fillColorSecondary,
                 onTap: ()=>_onTapPublish,
               ))
         ],
@@ -725,7 +727,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                   Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                 backgroundColor: Colors.white,
-                borderColor: Styles().colors.fillColorPrimary,
+                borderColor: AppColors.fillColorPrimary,
                 progress: _addToGroupInProgress,
                 onTap: _onTapAddToGroup,
               ),

@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/model/sport/Team.dart';
 import 'package:illinois/service/Sports.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -26,6 +27,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class AthleticsSchedulePanel extends StatefulWidget {
   final SportDefinition? sport;
@@ -60,7 +62,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
     return Scaffold(
       appBar: HeaderBar(title: headerLabel,),
       body: _loading ? Center(child: CircularProgressIndicator()) : Column(children: <Widget>[
-        Container(color:Styles().colors.fillColorPrimaryVariant, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(children: <Widget>[
+        Container(color:AppColors.fillColorPrimaryVariant, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(children: <Widget>[
           Row(children: <Widget>[
             Styles().images.getImage(widget.sport!.iconPath!, excludeFromSemantics: true) ?? Container(),
             Padding(padding: EdgeInsets.only(left: 8)),
@@ -73,7 +75,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
         ],)
         ),),
 
-        Container(color:Styles().colors.background, child:
+        Container(color:AppColors.background, child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:Row(children: <Widget>[
           Expanded(child:_ScheduleTabButton(
             text: Localization().getStringEx("panel.athletics_schedule.button.upcoming.title", "Upcoming"),
@@ -88,7 +90,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
         ],))
         ),
 
-        Expanded(child: Container(color:Styles().colors.background, child:
+        Expanded(child: Container(color:AppColors.background, child:
         ListView.separated(
           shrinkWrap: true,
           separatorBuilder: (context, index) => Divider(color: Colors.transparent, height: 24,),
@@ -101,7 +103,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
         ))),
         Visibility(visible: (itemsCount > 1), child: Container(height: 48))
       ]),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -210,7 +212,7 @@ class _ScheduleTabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BorderSide borderSide = BorderSide(color: Styles().colors.surfaceAccent, width: 2, style: BorderStyle.solid);
+    BorderSide borderSide = BorderSide(color: AppColors.surfaceAccent, width: 2, style: BorderStyle.solid);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
@@ -222,7 +224,7 @@ class _ScheduleTabButton extends StatelessWidget {
           child:Container(
             height: MediaQuery.of(context).textScaler.scale(32 + 16),
             decoration: BoxDecoration(
-              color: selected! ? Colors.white : Styles().colors.lightGray,
+              color: selected! ? Colors.white : illinois.AppColors.lightGray,
               border: Border.fromBorderSide(borderSide),
               borderRadius: left! ? BorderRadius.horizontal(left: Radius.circular(100.0)) : BorderRadius.horizontal(right: Radius.circular(100.0)),
             ),

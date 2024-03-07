@@ -22,8 +22,10 @@ import 'package:illinois/ui/debug/mobile_access/DebugMobileAccessLockServicesCod
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:sprintf/sprintf.dart';
 
 class DebugMobileAccessHomePanel extends StatefulWidget {
@@ -45,32 +47,32 @@ class _DebugMobileAccessHomePanelState extends State<DebugMobileAccessHomePanel>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: HeaderBar(title: 'Mobile Access'),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         bottomNavigationBar: uiuc.TabBar(),
         body: Column(children: <Widget>[
           Expanded(
               child: SingleChildScrollView(
                   child: Container(
-                      color: Styles().colors.background,
+                      color: AppColors.background,
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                         Container(height: 16),
                         Padding(
                             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                             child: RoundedButton(
                                 label: 'Register Device',
-                                backgroundColor: Styles().colors.background,
+                                backgroundColor: AppColors.background,
                                 fontSize: 16.0,
-                                textColor: Styles().colors.fillColorPrimary,
-                                borderColor: Styles().colors.fillColorPrimary,
+                                textColor: AppColors.fillColorPrimary,
+                                borderColor: AppColors.fillColorPrimary,
                                 onTap: _onTapRegisterDevice)),
                         Padding(
                             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                             child: RoundedButton(
                                 label: 'Lock Service Codes',
-                                backgroundColor: Styles().colors.background,
+                                backgroundColor: AppColors.background,
                                 fontSize: 16.0,
-                                textColor: Styles().colors.fillColorPrimary,
-                                borderColor: Styles().colors.fillColorPrimary,
+                                textColor: AppColors.fillColorPrimary,
+                                borderColor: AppColors.fillColorPrimary,
                                 onTap: _onTapLockServiceCodes)),
                         Padding(padding: EdgeInsets.all(16), child: _buildTwistAndGoWidget()),
                         Container(height: 16)
@@ -86,8 +88,8 @@ class _DebugMobileAccessHomePanelState extends State<DebugMobileAccessHomePanel>
             Expanded(
                 child: Container(
                     decoration: BoxDecoration(
-                        color: Styles().colors.white,
-                        border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
+                        color: illinois.AppColors.white,
+                        border: Border.all(color:illinois.AppColors.blackTransparent018, width: 1),
                         borderRadius: BorderRadius.all(Radius.circular(4))),
                     child: Padding(
                         padding: EdgeInsets.all(16),
@@ -114,7 +116,7 @@ class _DebugMobileAccessHomePanelState extends State<DebugMobileAccessHomePanel>
                               child: Styles().images.getImage(_twistAndGoEnabled ? 'toggle-on' : 'toggle-off'))
                         ]))))
           ])),
-      Visibility(visible: _twistAndGoLoading, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary))
+      Visibility(visible: _twistAndGoLoading, child: CircularProgressIndicator(color: AppColors.fillColorSecondary))
     ]);
   }
 

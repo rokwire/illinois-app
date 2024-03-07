@@ -62,6 +62,7 @@ import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/device_calendar.dart';
@@ -278,9 +279,9 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
         //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
         title: Localization().getStringEx('app.title', 'Illinois'),
         theme: ThemeData(
-          appBarTheme: AppBarTheme(backgroundColor: Styles().colors.fillColorPrimaryVariant),
-          primaryColor: Styles().colors.fillColorPrimaryVariant,
-          fontFamily: Styles().fontFamilies.extraBold),
+          appBarTheme: AppBarTheme(backgroundColor: AppColors.fillColorPrimaryVariant),
+          primaryColor: AppColors.fillColorPrimaryVariant,
+          fontFamily: AppFontFamilies.extraBold),
         home: _homePanel,
       ),
     );

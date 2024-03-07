@@ -22,6 +22,7 @@ import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events2.dart';
@@ -104,11 +105,11 @@ class _AcademicsEventsContentWidgetState extends State<AcademicsEventsContentWid
   Widget get _extendIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
     Align(alignment: Alignment.center, child:
       SizedBox(width: 24, height: 24, child:
-        CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),),),),);
+        CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorSecondary),),),),);
 
   Widget _buildLoadingContent() => Padding(padding: EdgeInsets.only(left: 16, right: 16, top: _screenHeight / 4, bottom: 3 * _screenHeight / 4), child:
     Center(child:
-      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+      CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 3,),
     ),
   );
 

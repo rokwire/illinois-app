@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
@@ -71,7 +72,7 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
     }
     
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         body: SwipeDetector(
             onSwipeLeft: () => _goNext(context),
             onSwipeRight: () => _goBack(context),
@@ -106,9 +107,9 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
                                 titleText,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    fontFamily: Styles().fontFamilies.bold,
+                                    fontFamily: AppFontFamilies.bold,
                                     fontSize: 32,
-                                    color: Styles().colors.fillColorPrimary),
+                                    color: AppColors.fillColorPrimary),
                               ),
                             )),
                       ),
@@ -123,9 +124,9 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
                                   descriptionText,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      fontFamily: Styles().fontFamilies.regular,
+                                      fontFamily: AppFontFamilies.regular,
                                       fontSize: 20,
-                                      color: Styles().colors.fillColorPrimary),
+                                      color: AppColors.fillColorPrimary),
                                 )),
                           )),
                     ]),
@@ -142,8 +143,8 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
                         label: Localization().getStringEx('panel.onboarding.privacy.button.continue.title', 'Set your privacy level'),
                         hint: Localization().getStringEx('panel.onboarding.privacy.button.continue.hint', ''),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                        backgroundColor: Styles().colors.background,
-                        borderColor: Styles().colors.fillColorSecondaryVariant,
+                        backgroundColor: AppColors.background,
+                        borderColor: AppColors.fillColorSecondaryVariant,
                         onTap: () => _goNext(context),
                       ),),
                   ],

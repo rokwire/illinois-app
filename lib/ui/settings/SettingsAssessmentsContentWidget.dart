@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
@@ -27,6 +28,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class SettingsAssessmentsContentWidget extends StatefulWidget {
   @override
@@ -111,7 +113,7 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
         contentList.add(ToggleRibbonButton(
             label: Localization().getStringEx('panel.settings.home.assessments.skills_self_evaluation.save_results.label', 'Save my results to compare to future results'),
             toggled: Storage().assessmentsSaveResultsMap?[name] ?? Auth2().privacyMatch(4),
-            border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
+            border: Border.all(color:illinois.AppColors.blackTransparent018, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4)),
             onTap: () => _onSave(name)));
       } else if (code == 'save_progress') {
@@ -155,7 +157,7 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
         ),
       );
       showDialog(context: context, builder: (_) => InfoPopup(
-        backColor: Styles().colors.surface,
+        backColor: AppColors.surface,
         padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
         alignment: Alignment.center,
         infoTextWidget: infoTextWidget,

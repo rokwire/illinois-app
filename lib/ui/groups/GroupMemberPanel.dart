@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -29,6 +30,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class GroupMemberPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group group;
@@ -117,10 +119,10 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       appBar: HeaderBar(),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), ))
+          ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorSecondary), ))
           : Column(
             children: <Widget>[
               Expanded(
@@ -202,7 +204,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                         toggled: _isAdmin,
                         onTap: _updateMemberStatus
                     ),
-                    _updating ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), ) : Container()
+                    _updating ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorPrimary), ) : Container()
                   ],
                 ),
               ),
@@ -225,9 +227,9 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
             Localization().getStringEx("panel.member_detail.button.remove.title.project", "Remove from Project") :
             Localization().getStringEx("panel.member_detail.button.remove.title", 'Remove from Group'),
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-          backgroundColor: Styles().colors.white,
+          backgroundColor: illinois.AppColors.white,
           padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-          borderColor: Styles().colors.fillColorPrimary,
+          borderColor: AppColors.fillColorPrimary,
           borderWidth: 2,
           onTap: (){
             Analytics().logSelect(target: 'Remove from Group');
@@ -238,7 +240,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
 
   Widget _buildRemoveFromGroupDialog(BuildContext context) {
     return Dialog(
-      backgroundColor: Styles().colors.fillColorPrimary,
+      backgroundColor: AppColors.fillColorPrimary,
       child: StatefulBuilder(
         builder: (context, setStateEx){
           return Padding(
@@ -263,8 +265,8 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                     RoundedButton(
                       label: Localization().getStringEx("panel.member_detail.button.back.title", "Back"),
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.thin"),
-                      borderColor: Styles().colors.white,
-                      backgroundColor: Styles().colors.white,
+                      borderColor: illinois.AppColors.white,
+                      backgroundColor: illinois.AppColors.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                       contentWeight: 0.0,
                       onTap: (){
@@ -276,8 +278,8 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                         RoundedButton(
                           label: Localization().getStringEx("panel.member_detail.dialog.button.remove.title", "Remove"),
                           textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                          borderColor: Styles().colors.white,
-                          backgroundColor: Styles().colors.white,
+                          borderColor: illinois.AppColors.white,
+                          backgroundColor: illinois.AppColors.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                           contentWeight: 0.0,
                           progress: _removing,

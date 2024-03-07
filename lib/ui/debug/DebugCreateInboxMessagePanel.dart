@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class DebugCreateInboxMessagePanel extends StatefulWidget {
   DebugCreateInboxMessagePanel();
@@ -74,7 +75,7 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
           _buildSend(),
         ],),
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
     );
   }
 
@@ -83,15 +84,15 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
 
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 4),
-          child: Text("Recepients:", style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
+          child: Text("Recepients:", style: TextStyle(fontFamily: AppFontFamilies.bold, fontSize: 16, color: AppColors.fillColorPrimary),),
         ),
         Stack(children: <Widget>[
-          Semantics(textField: true, child:Container(color: Styles().colors.white,
+          Semantics(textField: true, child:Container(color: illinois.AppColors.white,
             child: TextField(
               maxLines: 2,
               controller: _recepientsController,
               decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-              style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground,),
+              style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: illinois.AppColors.textBackground,),
             ),
           )),
           Align(alignment: Alignment.topRight,
@@ -99,7 +100,7 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
               child: GestureDetector(onTap: () { _recepientsController!.text = ''; },
                 child: Container(width: 36, height: 36,
                   child: Align(alignment: Alignment.center,
-                    child: Semantics( excludeSemantics: true,child:Text('X', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.fillColorPrimary,),)),
+                    child: Semantics( excludeSemantics: true,child:Text('X', style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: AppColors.fillColorPrimary,),)),
                   ),
                 ),
               ),
@@ -111,15 +112,15 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
 
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 4),
-          child: Text("Subject:", style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
+          child: Text("Subject:", style: TextStyle(fontFamily: AppFontFamilies.bold, fontSize: 16, color: AppColors.fillColorPrimary),),
         ),
         Stack(children: <Widget>[
-          Semantics(textField: true, child:Container(color: Styles().colors.white,
+          Semantics(textField: true, child:Container(color: illinois.AppColors.white,
             child: TextField(
               maxLines: 1,
               controller: _subjectController,
               decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-              style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground,),
+              style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: illinois.AppColors.textBackground,),
             ),
           )),
           Align(alignment: Alignment.topRight,
@@ -127,7 +128,7 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
               child: GestureDetector(onTap: () { _subjectController!.text = ''; },
                 child: Container(width: 36, height: 36,
                   child: Align(alignment: Alignment.center,
-                    child: Semantics( excludeSemantics: true,child:Text('X', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.fillColorPrimary,),)),
+                    child: Semantics( excludeSemantics: true,child:Text('X', style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: AppColors.fillColorPrimary,),)),
                   ),
                 ),
               ),
@@ -139,15 +140,15 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
 
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 4),
-          child: Text("Body:", style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
+          child: Text("Body:", style: TextStyle(fontFamily: AppFontFamilies.bold, fontSize: 16, color: AppColors.fillColorPrimary),),
         ),
         Stack(children: <Widget>[
-          Semantics(textField: true, child:Container(color: Styles().colors.white,
+          Semantics(textField: true, child:Container(color: illinois.AppColors.white,
             child: TextField(
               maxLines: 6,
               controller: _bodyController,
               decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-              style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground,),
+              style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: illinois.AppColors.textBackground,),
             ),
           )),
           Align(alignment: Alignment.topRight,
@@ -155,7 +156,7 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
               child: GestureDetector(onTap: () { _bodyController!.text = ''; },
                 child: Container(width: 36, height: 36,
                   child: Align(alignment: Alignment.center,
-                    child: Semantics( excludeSemantics: true,child:Text('X', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.fillColorPrimary,),)),
+                    child: Semantics( excludeSemantics: true,child:Text('X', style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: AppColors.fillColorPrimary,),)),
                   ),
                 ),
               ),
@@ -167,15 +168,15 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
 
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 4),
-          child: Text("Data:", style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
+          child: Text("Data:", style: TextStyle(fontFamily: AppFontFamilies.bold, fontSize: 16, color: AppColors.fillColorPrimary),),
         ),
         Stack(children: <Widget>[
-          Semantics(textField: true, child:Container(color: Styles().colors.white,
+          Semantics(textField: true, child:Container(color: illinois.AppColors.white,
             child: TextField(
               maxLines: 6,
               controller: _dataController,
               decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-              style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground,),
+              style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: illinois.AppColors.textBackground,),
             ),
           )),
           Align(alignment: Alignment.topRight,
@@ -183,7 +184,7 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
               child: GestureDetector(onTap: () { _dataController!.text = ''; },
                 child: Container(width: 36, height: 36,
                   child: Align(alignment: Alignment.center,
-                    child: Semantics( excludeSemantics: true,child:Text('X', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.fillColorPrimary,),)),
+                    child: Semantics( excludeSemantics: true,child:Text('X', style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: AppColors.fillColorPrimary,),)),
                   ),
                 ),
               ),
@@ -200,10 +201,10 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
       Row(children: <Widget>[
         Expanded(child: Container(),),
         RoundedButton(label: "Send Message",
-          textColor: Styles().colors.fillColorPrimary, // Styles().colors.disabledTextColor,
-          borderColor: Styles().colors.fillColorSecondary, // Styles().colors.disabledTextColor
-          backgroundColor: Styles().colors.white,
-          fontFamily: Styles().fontFamilies.bold,
+          textColor: AppColors.fillColorPrimary, // illinois.AppColors.disabledTextColor,
+          borderColor: AppColors.fillColorSecondary, // illinois.AppColors.disabledTextColor
+          backgroundColor: illinois.AppColors.white,
+          fontFamily: AppFontFamilies.bold,
           contentWeight: 0.0,
           fontSize: 16,
           borderWidth: 2,

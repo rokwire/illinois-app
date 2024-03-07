@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -23,6 +24,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class GroupTagsPanel extends StatefulWidget {
   final List<String>? selectedTags;
@@ -62,13 +64,13 @@ class _GroupTagsState extends State<GroupTagsPanel> {
       appBar: HeaderBar(
         title: Localization().getStringEx('panel.group.tags.header.title', 'Group Tags'),
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       body: Stack(alignment: Alignment.center, children: <Widget>[
         SingleChildScrollView(
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Padding(padding: EdgeInsets.only(top: 12), child: Row(children: [
                 Expanded(child: Container()),
-                RoundedButton(label: Localization().getStringEx('panel.group.tags.button.done.title', 'Done'), textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"), contentWeight: 0.0, borderColor: Styles().colors.fillColorSecondary, backgroundColor: Styles().colors.white, onTap: _onTapDone)
+                RoundedButton(label: Localization().getStringEx('panel.group.tags.button.done.title', 'Done'), textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"), contentWeight: 0.0, borderColor: AppColors.fillColorSecondary, backgroundColor: illinois.AppColors.white, onTap: _onTapDone)
               ])),
               Padding(padding: EdgeInsets.only(top: 12), child: _buildSearchWidget()),
               Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.search.label', "SEARCH")))),
@@ -78,7 +80,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
               Visibility(visible: !_searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.all.label', "ALL TAGS")))),
               Visibility(visible: !_searchView, child: _buildTagsWidget(_allTags))
             ]))),
-        Visibility(visible: _loading, child: Container(alignment: Alignment.center, color: Styles().colors.background, child: CircularProgressIndicator()))
+        Visibility(visible: _loading, child: Container(alignment: Alignment.center, color: AppColors.background, child: CircularProgressIndicator()))
       ])
     );
   }
@@ -100,7 +102,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
     List<Widget> tagWidgets = [];
     for (String tag in tags!) {
       if (CollectionUtils.isNotEmpty(tagWidgets)) {
-        tagWidgets.add(Container(height: 1, color: Styles().colors.surfaceAccent));
+        tagWidgets.add(Container(height: 1, color: AppColors.surfaceAccent));
       }
       tagWidgets.add(_TagSelectionWidget(label: tag, selected: _isTagSelected(tag), onTap: () => _onTagTaped(tag)));
     }
@@ -108,7 +110,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
             borderRadius: BorderRadius.circular(15),
             child: Container(
                 foregroundDecoration: BoxDecoration(
-                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1.0),
+                  border: Border.all(color: AppColors.surfaceAccent, width: 1.0),
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: Column(children: tagWidgets)));
@@ -146,7 +148,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
   Widget _buildSearchWidget() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
-      color: Styles().colors.surface,
+      color: AppColors.surface,
       height: 48,
       child: Row(
         children: <Widget>[
@@ -160,7 +162,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
                   controller: _searchController,
                   onChanged: (text) => _onTextChanged(text),
                   onSubmitted: (_) => () {},
-                  cursorColor: Styles().colors.fillColorSecondary,
+                  cursorColor: AppColors.fillColorSecondary,
                   keyboardType: TextInputType.text,
                   style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                   decoration: InputDecoration(

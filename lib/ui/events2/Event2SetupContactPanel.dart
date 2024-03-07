@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class Event2SetupContactPanel extends StatefulWidget {
   final Event2Contact? contact;
@@ -68,7 +70,7 @@ class _Event2SetupContactPanelState extends State<Event2SetupContactPanel>  {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.contact.header.title", "Event Contact")),
       body: _buildPanelContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: illinois.AppColors.white,
     );
   }
 
@@ -183,8 +185,8 @@ class _Event2SetupContactPanelState extends State<Event2SetupContactPanel>  {
         label: buttonTitle,
         textStyle: buttonEnabled ? Styles().textStyles.getTextStyle('widget.button.title.large.fat') : Styles().textStyles.getTextStyle('widget.button.disabled.title.large.fat'),
         onTap: buttonEnabled ? _onSubmit : null,
-        backgroundColor: Styles().colors.white,
-        borderColor: buttonEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+        backgroundColor: illinois.AppColors.white,
+        borderColor: buttonEnabled ? AppColors.fillColorSecondary : AppColors.surfaceAccent,
       )
     );
   }

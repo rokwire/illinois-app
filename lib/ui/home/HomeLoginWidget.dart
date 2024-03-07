@@ -6,6 +6,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -15,6 +16,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class HomeLoginWidget extends StatefulWidget {
 
@@ -130,7 +132,7 @@ class _HomeLoginNetIdWidgetState extends State<_HomeLoginNetIdWidget> {
   Widget build(BuildContext context) {
     return Semantics(container: true, child: Container(
       padding: EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -144,14 +146,14 @@ class _HomeLoginNetIdWidgetState extends State<_HomeLoginNetIdWidget> {
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_5", "? Sign in with your NetID to access features connected to your university account.")),
           ],),
           )),
-          Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors.fillColorPrimaryTransparent015,),
+          Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: illinois.AppColors.fillColorPrimaryTransparent015,),
           Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
           Semantics(explicitChildNodes: true, child: RoundedButton(
             label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.title", "Sign In with your NetID"),
             hint: '',
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-            borderColor: Styles().colors.fillColorSecondary,
-            backgroundColor: Styles().colors.surface,
+            borderColor: AppColors.fillColorSecondary,
+            backgroundColor: AppColors.surface,
             progress: (_authLoading == true),
             onTap: ()=> _onTapConnectNetIdClicked(context),
           )),
@@ -187,7 +189,7 @@ class _HomeLoginPhoneOrEmailWidget extends StatelessWidget{
   Widget build(BuildContext context) {
     return Semantics(container: true, child: Container(
       padding: EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.symmetric(horizontal: 16),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -199,15 +201,15 @@ class _HomeLoginPhoneOrEmailWidget extends StatelessWidget{
             ],),
             )),
 
-            Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors.fillColorPrimaryTransparent015,),
+            Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: illinois.AppColors.fillColorPrimaryTransparent015,),
 
             Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
             Semantics(explicitChildNodes: true, child: RoundedButton(
               label: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.title", "Continue"),
               hint: '',
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-              borderColor: Styles().colors.fillColorSecondary,
-              backgroundColor: Styles().colors.surface,
+              borderColor: AppColors.fillColorSecondary,
+              backgroundColor: AppColors.surface,
               onTap: ()=> _onTapPhoneOrEmailClicked(context),
             )),
             ),

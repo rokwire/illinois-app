@@ -15,12 +15,14 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
   
@@ -66,7 +68,7 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
                                     strPersonalizedRecommendations,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontFamily: Styles().fontFamilies.medium,
+                                      fontFamily: AppFontFamilies.medium,
                                       fontSize: 20,
                                       color: Colors.white,
                                     ),
@@ -91,10 +93,10 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
                                     'panel.onboarding.get_started.button.get_started.hint',
                                     ''),
                                 textStyle: Styles().textStyles.getTextStyle("widget.colourful_button.title.large.accent"),
-                                backgroundColor: Styles().colors.fillColorPrimary,
+                                backgroundColor: AppColors.fillColorPrimary,
                                 onTap: () => _goNext(context),
-                                borderColor: Styles().colors.fillColorPrimary,
-                                secondaryBorderColor: Styles().colors.white,
+                                borderColor: AppColors.fillColorPrimary,
+                                secondaryBorderColor: illinois.AppColors.white,
                               ),
                             )
                           ],

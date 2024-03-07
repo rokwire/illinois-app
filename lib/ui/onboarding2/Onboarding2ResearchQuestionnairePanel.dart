@@ -8,10 +8,12 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class Onboarding2ResearchQuestionnairePanel extends StatefulWidget {
 
@@ -64,7 +66,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(title: _questionnaire?.title ?? ''),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       body: SafeArea(child:
         _buildContent(),
       ),
@@ -91,7 +93,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
 
     if (description.isNotEmpty) {
       contentList.add(
-        Container(color: Styles().colors.white, child:
+        Container(color: illinois.AppColors.white, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
             Semantics(label: description, hint: '', excludeSemantics: true, child:
               Row(children: [
@@ -116,7 +118,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
           Column(children: contentList,),
         ),
       ),
-      Container(height: 1, color: Styles().colors.surfaceAccent),
+      Container(height: 1, color: AppColors.surfaceAccent),
       Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 12, bottom: 12,), child:
         Row(children: [
           Expanded(child:
@@ -125,8 +127,8 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
               hint: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.cancel.hint', ''),
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium"),
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              borderColor: Styles().colors.fillColorPrimary,
-              backgroundColor: Styles().colors.white,
+              borderColor: AppColors.fillColorPrimary,
+              backgroundColor: illinois.AppColors.white,
               onTap: () => _onCancel(),
             ),
           ),
@@ -137,8 +139,8 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
               hint: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.submit.hint', ''),
               textStyle: submitEnabled ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              borderColor: submitEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-              backgroundColor: Styles().colors.white,
+              borderColor: submitEnabled ? AppColors.fillColorSecondary : AppColors.surfaceAccent,
+              backgroundColor: illinois.AppColors.white,
               onTap: () => _onSubmit(),
             ),
           ),
@@ -208,8 +210,8 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
     return Stack(children: [
       Column(children: [
         Column(children: [
-          Container(color: Styles().colors.backgroundVariant, height: 100,),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.backgroundVariant, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
+          Container(color: AppColors.backgroundVariant, height: 100,),
+          CustomPaint(painter: TrianglePainter(painterColor: AppColors.backgroundVariant, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
             Container(height: 40,),
           ),
         ],),
@@ -243,7 +245,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
         value: selected ?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
         child: InkWell(onTap: () { _onAnswer(answer, question: question); AppSemantics.announceCheckBoxStateChange(context, !selected, title);}, child:
       Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
-        Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: selected ? Styles().colors.fillColorPrimary : Styles().colors.white, width: 1)), child:
+        Container(decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: selected ? AppColors.fillColorPrimary : illinois.AppColors.white, width: 1)), child:
           Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
             Row(children: [
               Padding(padding: EdgeInsets.only(right: 12), child:
@@ -383,7 +385,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
         Column(children: [
           Expanded(child:
             Align(alignment: Alignment.center, child:
-              CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3, )
+              CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 3, )
             ),
           ),
         ],))

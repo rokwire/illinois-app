@@ -16,6 +16,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class Event2SetupAttendancePanel extends StatefulWidget {
   final Event2? event;
@@ -76,7 +77,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors.white,
+    backgroundColor: illinois.AppColors.white,
   );
 
   Widget _buildPanelContent() =>
@@ -98,7 +99,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   //EdgeInsetsGeometry get _togglePadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 12);
   //EdgeInsetsGeometry get _toggleDescriptionPadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 5);
-  //BoxBorder get _toggleBorder => Border.all(color: Styles().colors.surfaceAccent, width: 1);
+  //BoxBorder get _toggleBorder => Border.all(color: AppColors.surfaceAccent, width: 1);
   //BorderRadius get _toggleBorderRadius => BorderRadius.all(Radius.circular(4));
 
   // Scan
@@ -189,11 +190,11 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildAttendanceTakerSection() {
     return Padding(padding: Event2CreatePanel.sectionPadding, child:
       Column(children: [
-        Divider(color: Styles().colors.dividerLineAccent, thickness: 1),
+        Divider(color: illinois.AppColors.dividerLineAccent, thickness: 1),
         Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
           Event2AttendanceTakerWidget(_event, updateController: _updateController,),
         ),
-        Divider(color: Styles().colors.dividerLineAccent, thickness: 1),
+        Divider(color: illinois.AppColors.dividerLineAccent, thickness: 1),
       ],),
     );
   }

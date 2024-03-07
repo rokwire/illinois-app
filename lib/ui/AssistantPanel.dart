@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -13,6 +14,7 @@ import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TypingIndicator.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -140,7 +142,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
             _buildChatBar(),
           ]),
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: null,
     );
   }
@@ -188,9 +190,9 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
         sourceLinks.add(Material(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: Styles().colors.fillColorSecondary, width: 1),
+            side: BorderSide(color: AppColors.fillColorSecondary, width: 1),
           ),
-          color: Styles().colors.fillColorPrimaryVariant,
+          color: AppColors.fillColorPrimaryVariant,
           child: InkWell(
             onTap: () => _onTapSourceLink(source),
             borderRadius: BorderRadius.circular(16.0),
@@ -220,7 +222,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                 child: Opacity(
                   opacity: message.example ? 0.5 : 1.0,
                   child: Material(
-                    color: message.user ? message.example ? Styles().colors.background : Styles().colors.surface : Styles().colors.fillColorPrimary,
+                    color: message.user ? message.example ? AppColors.background : AppColors.surface : AppColors.fillColorPrimary,
                     borderRadius: BorderRadius.circular(16.0),
                     child: InkWell(
                       onTap: message.example ? () {
@@ -229,7 +231,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                       } : null,
                       child: Container(
                         decoration: message.example ? BoxDecoration(borderRadius: BorderRadius.circular(16.0),
-                            border: Border.all(color: Styles().colors.fillColorPrimary)) : null,
+                            border: Border.all(color: AppColors.fillColorPrimary)) : null,
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
@@ -278,21 +280,21 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                   children: [// TODO: Handle material icons in styles images
                     IconButton(onPressed: _onTapFeedbackInfo,
                         icon: Icon(Icons.info_outline,
-                            size: 24, color: Styles().colors.fillColorPrimary),
+                            size: 24, color: AppColors.fillColorPrimary),
                         iconSize: 24,
                         splashRadius: 24),
                     IconButton(onPressed: message.feedbackExplanation == null ? () {
                       _sendFeedback(message, true);
                     }: null,
                       icon: Icon(message.feedback == MessageFeedback.good ? Icons.thumb_up : Icons.thumb_up_outlined,
-                          size: 24, color: message.feedbackExplanation == null ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor),
+                          size: 24, color: message.feedbackExplanation == null ? AppColors.fillColorPrimary : illinois.AppColors.disabledTextColor),
                       iconSize: 24,
                       splashRadius: 24),
                     IconButton(onPressed: message.feedbackExplanation == null ? () {
                       _sendFeedback(message, false);
                     }: null,
                       icon: Icon(message.feedback == MessageFeedback.bad ? Icons.thumb_down :Icons.thumb_down_outlined,
-                          size: 24, color: Styles().colors.fillColorPrimary),
+                          size: 24, color: AppColors.fillColorPrimary),
                       iconSize: 24,
                       splashRadius: 24),
                   ],
@@ -360,13 +362,13 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
         width: 100,
         height: 50,
         child: Material(
-          color: Styles().colors.fillColorPrimary,
+          color: AppColors.fillColorPrimary,
           borderRadius: BorderRadius.circular(16.0),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: TypingIndicator(
-              flashingCircleBrightColor: Styles().colors.surface,
-              flashingCircleDarkColor: Styles().colors.fillColorPrimary),
+              flashingCircleBrightColor: AppColors.surface,
+              flashingCircleDarkColor: AppColors.fillColorPrimary),
           ),
         ),
       ),
@@ -392,7 +394,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
     return Padding(
       padding: padding,
       child: Material(
-        color: Styles().colors.fillColorPrimary,
+        color: AppColors.fillColorPrimary,
         borderRadius: BorderRadius.circular(8.0),
         child: InkWell(
           borderRadius: BorderRadius.circular(8.0),
@@ -420,7 +422,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   Widget _buildChatBar() {
     bool enabled = _feedbackMessage != null || _queryLimit == null || _queryLimit! > 0;
     return Material(
-      color: Styles().colors.surface,
+      color: AppColors.surface,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
         child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center,
@@ -431,7 +433,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                   visible: enabled && SpeechToText().isEnabled,
                   child: IconButton(//TODO: Enable support for material icons in styles images
                     splashRadius: 24,
-                    icon: Icon(_listening ? Icons.stop_circle_outlined : Icons.mic, color: Styles().colors.fillColorSecondary),
+                    icon: Icon(_listening ? Icons.stop_circle_outlined : Icons.mic, color: AppColors.fillColorSecondary),
                     onPressed: enabled ? () {
                       if (_listening) {
                         _stopListening();
@@ -443,7 +445,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                 ),
                 Expanded(
                   child: Material(
-                    color: Styles().colors.background,
+                    color: AppColors.background,
                     borderRadius: BorderRadius.circular(16.0),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -472,7 +474,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                 ),
                 IconButton(//TODO: Enable support for material icons in styles images
                   splashRadius: 24,
-                  icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor),
+                  icon: Icon(Icons.send, color: enabled ? AppColors.fillColorSecondary : illinois.AppColors.disabledTextColor),
                   onPressed: enabled ? () {
                     _submitMessage(_inputController.text);
                   }: null,
@@ -499,8 +501,8 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
           height: 10,
           width: 10,
           decoration: BoxDecoration(
-            color: (_queryLimit ?? 0) > 0 ? Styles().colors.saferLocationWaitTimeColorGreen :
-              Styles().colors.saferLocationWaitTimeColorRed,
+            color: (_queryLimit ?? 0) > 0 ? illinois.AppColors.saferLocationWaitTimeColorGreen :
+            illinois.AppColors.saferLocationWaitTimeColorRed,
             shape: BoxShape.circle
           ),
         ),

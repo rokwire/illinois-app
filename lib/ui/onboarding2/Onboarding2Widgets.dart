@@ -1,10 +1,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class Onboarding2TitleWidget extends StatelessWidget{
   final String? title;
@@ -13,8 +15,8 @@ class Onboarding2TitleWidget extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    Color? backColor = Styles().colors.fillColorSecondary;
-    Color? leftTriangleColor = Styles().colors.background;
+    Color? backColor = AppColors.fillColorSecondary;
+    Color? leftTriangleColor = AppColors.background;
     Color? rightTriangleColor = UiColors.fromHex("cc3e1e");
 
     return Container(child:
@@ -102,7 +104,7 @@ class Onboarding2ToggleButton extends StatelessWidget{
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[ Expanded(
                 child: Container(
                   padding: padding,
-                  decoration: BoxDecoration(color: Styles().colors.background, border:Border(top: BorderSide(width: 2, color: Styles().colors.surfaceAccent)),),
+                  decoration: BoxDecoration(color: AppColors.background, border:Border(top: BorderSide(width: 2, color: AppColors.surfaceAccent)),),
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 20),
                     child:  Row(
@@ -135,8 +137,8 @@ class Onboarding2ToggleButton extends StatelessWidget{
 }
 
 class Onboarding2InfoDialog extends StatelessWidget{
-  static final TextStyle titleStyle = Styles().textStyles.getTextStyle("widget.title.large.fat") ?? TextStyle(fontSize: 20.0, color: Styles().colors.fillColorPrimary,fontFamily: Styles().fontFamilies.bold);
-  static final TextStyle contentStyle = Styles().textStyles.getTextStyle("widget.info.regular.thin") ?? TextStyle(fontSize: 16.0, color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.regular);
+  static final TextStyle titleStyle = Styles().textStyles.getTextStyle("widget.title.large.fat") ?? TextStyle(fontSize: 20.0, color: AppColors.fillColorPrimary,fontFamily: AppFontFamilies.bold);
+  static final TextStyle contentStyle = Styles().textStyles.getTextStyle("widget.info.regular.thin") ?? TextStyle(fontSize: 16.0, color: illinois.AppColors.textSurface, fontFamily: AppFontFamilies.regular);
 
   final Widget? content;
   final BuildContext? context;
@@ -161,7 +163,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
           return ClipRRect(
               borderRadius: BorderRadius.all(Radius.circular(8)),
               child: Dialog(
-                backgroundColor: Styles().colors.surface,
+                backgroundColor: AppColors.surface,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -189,7 +191,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
 //                            text: new TextSpan(
 //                                children: <TextSpan>[
 //                                  TextSpan(text: Localization().getStringEx("panel.onboarding2.dialog.learn_more.collected_information_disclosure", "All of this information is collected and used in accordance with our "), style: Onboarding2InfoDialog.contentStyle,),
-//                                  TextSpan(text:Localization().getStringEx("panel.onboarding2.dialog.learn_more.button.privacy_policy.title", "Privacy Policy "), style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary),
+//                                  TextSpan(text:Localization().getStringEx("panel.onboarding2.dialog.learn_more.button.privacy_policy.title", "Privacy Policy "), style: TextStyle(color: AppColors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: AppColors.fillColorSecondary),
 //                                      recognizer: TapGestureRecognizer()..onTap = _openPrivacyPolicy, children: [
 //                                        WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Image.asset("images/icon-external-link-blue.png", excludeFromSemantics: true,)))
 //                                      ]),
@@ -205,7 +207,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
                                   WidgetSpan(child: Onboarding2UnderlinedButton(title: Localization().getStringEx("panel.onboarding2.dialog.learn_more.button.privacy_policy.title", "Privacy notice "), onTap: () => _openPrivacyPolicy(context), padding: EdgeInsets.all(0), textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.underline"))),
                                   WidgetSpan(child: Container(
                                       decoration: BoxDecoration(
-                                          border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)
+                                          border: Border(bottom: BorderSide(color: AppColors.fillColorSecondary, width: 1, ),)
                                       ),
                                       padding: EdgeInsets.only(bottom: 2),
                                       child: Container(

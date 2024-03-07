@@ -21,12 +21,14 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/ui/laundry/LaundrySubmittedIssuePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class LaundryIssueContactInfoPanel extends StatefulWidget {
   final LaundryIssueRequest issueRequest;
@@ -53,12 +55,12 @@ class _LaundryIssueContactInfoPanelState extends State<LaundryIssueContactInfoPa
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [_buildLaundryColorSection(), _buildContactInfoHeader(), _buildInputFieldsSection(), _buildCompleteSection()])),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         bottomNavigationBar: uiuc.TabBar());
   }
 
   Widget _buildLaundryColorSection() {
-    return Container(color: Styles().colors.accentColor2, height: 4);
+    return Container(color: AppColors.accentColor2, height: 4);
   }
 
   Widget _buildContactInfoHeader() {
@@ -90,10 +92,10 @@ class _LaundryIssueContactInfoPanelState extends State<LaundryIssueContactInfoPa
     return Padding(
         padding: EdgeInsets.only(top: 10),
         child: Container(
-            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.disabledTextColor, width: 2))),
+            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: illinois.AppColors.disabledTextColor, width: 2))),
             child: TextField(
                 controller: controller,
-                cursorColor: Styles().colors.mediumGray2,
+                cursorColor: illinois.AppColors.mediumGray2,
                 style: Styles().textStyles.getTextStyle("widget.input_field.dark.text.large"),
                 decoration: InputDecoration(
                     border: InputBorder.none,
@@ -106,10 +108,10 @@ class _LaundryIssueContactInfoPanelState extends State<LaundryIssueContactInfoPa
         padding: EdgeInsets.only(top: 40),
         child: Stack(alignment: Alignment.center, children: [
           RoundedButton(
-            backgroundColor: Styles().colors.fillColorPrimary,
+            backgroundColor: AppColors.fillColorPrimary,
             textStyle: Styles().textStyles.getTextStyle("widget.colourful_button.title.large.accent"),
             contentWeight: 0.73,
-            borderColor: Styles().colors.fillColorPrimary,
+            borderColor: AppColors.fillColorPrimary,
             label: Localization().getStringEx('panel.laundry.issues_contact_info.complete.button', 'Complete Request'),
             onTap: _onTapComplete,
             rightIcon: Styles().images.getImage('chevron-right-white', excludeFromSemantics: true)),

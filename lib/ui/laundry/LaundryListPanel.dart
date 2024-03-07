@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -50,7 +51,7 @@ class _LaundryListPanelState extends State<LaundryListPanel>  {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx("panel.laundry_detail.header.title", "Laundry"),),
       body: _buildContentWidget(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -58,10 +59,10 @@ class _LaundryListPanelState extends State<LaundryListPanel>  {
   Widget _buildContentWidget() {
     return Column(children: <Widget>[
       Expanded(child: 
-        Container(color: Styles().colors.background, child:
+        Container(color: AppColors.background, child:
           Padding(padding: EdgeInsets.only(top: 16), child:
             SingleChildScrollView(scrollDirection: Axis.vertical, child:
-              Container(color: Styles().colors.background, child:
+              Container(color: AppColors.background, child:
                 Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
                   Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 80), child:
                     ListView.separated(
@@ -117,7 +118,7 @@ class LaundryRoomRibbonButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(onTap: onTap, child:
       Semantics(label: label, hint: Localization().getStringEx('panel.laundry_list.button.item.hint', ''), button: true, excludeSemantics: true, child:
-        Container(decoration: BoxDecoration(color: backgroundColor, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: borderRadius), child:
+        Container(decoration: BoxDecoration(color: backgroundColor, border: Border.all(color: AppColors.surfaceAccent, width: 1), borderRadius: borderRadius), child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14), child:
             Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
               Expanded(child:

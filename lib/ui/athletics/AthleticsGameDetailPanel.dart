@@ -23,6 +23,7 @@ import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -38,6 +39,7 @@ import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/tile_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class AthleticsGameDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Game? game;
@@ -99,7 +101,7 @@ class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameD
         onRefresh: _onPullToRefresh,
         child: _buildContent(),
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -119,14 +121,14 @@ class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameD
       slivers: <Widget>[
         SliverToutHeaderBar(
           flexImageUrl: game?.imageUrl,
-          flexBackColor: Styles().colors.fillColorPrimary,
-          flexRightToLeftTriangleColor: Styles().colors.fillColorPrimary,
-          flexLeftToRightTriangleColor: Styles().colors.fillColorSecondaryTransparent05,
+          flexBackColor: AppColors.fillColorPrimary,
+          flexRightToLeftTriangleColor: AppColors.fillColorPrimary,
+          flexLeftToRightTriangleColor: illinois.AppColors.fillColorSecondaryTransparent05,
         ),
         SliverList(
           delegate: SliverChildListDelegate([
             Container(
-              color: Styles().colors.background,
+              color: AppColors.background,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,7 +147,7 @@ class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameD
                       Column(
                         children: <Widget>[
                           Container(
-                            color: Styles().colors.fillColorPrimary,
+                            color: AppColors.fillColorPrimary,
                             height: 40,
                           ),
                           Container(
@@ -280,7 +282,7 @@ class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameD
             Visibility(
                 visible: !_newsExpanded,
                 child: Container(
-                  color: Styles().colors.fillColorSecondary,
+                  color: AppColors.fillColorSecondary,
                   height: 1,
                 )),
             GestureDetector(

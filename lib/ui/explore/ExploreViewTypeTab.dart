@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 
@@ -46,7 +47,7 @@ class ExploreViewTypeTab extends StatelessWidget {
         Expanded(child: Container(),),
         Container(
           //color: Colors.amber,
-          decoration: selected ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary,width: 2, style: BorderStyle.solid))) : null,
+          decoration: selected ? BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.fillColorSecondary,width: 2, style: BorderStyle.solid))) : null,
           child:Padding(padding: EdgeInsets.symmetric(vertical:3, horizontal: 5), child:Column(children: <Widget>[
             Row(children: <Widget>[
               Styles().images.getImage(iconKey, excludeFromSemantics: true) ?? Container(),

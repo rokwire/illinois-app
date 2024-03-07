@@ -20,6 +20,7 @@ import 'package:illinois/service/Canvas.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class CanvasCourseCard extends StatefulWidget {
   final CanvasCourse course;
@@ -62,7 +63,7 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
         height: cardHeight,
         decoration: BoxDecoration(
             borderRadius: (widget.isSmall ? BorderRadius.circular(borderRadiusValue) : null),
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))]),
+            boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))]),
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Column(children: [
             Expanded(
@@ -75,7 +76,7 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
                             padding: EdgeInsets.symmetric(horizontal: cardInnerPadding),
                             child: Container(
                                 padding: EdgeInsets.symmetric(vertical: 2, horizontal: 6),
-                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Styles().colors.white),
+                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: illinois.AppColors.white),
                                 child: _buildGradeScoreWidget(courseColor: defaultColor))))))
           ]),
           Expanded(
@@ -83,7 +84,7 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
             Expanded(
                 child: Container(
                     decoration: BoxDecoration(
-                        color: Styles().colors.white,
+                        color: illinois.AppColors.white,
                         borderRadius: (widget.isSmall ? BorderRadius.horizontal(right: Radius.circular(borderRadiusValue)) : null)),
                     child: Padding(
                         padding: EdgeInsets.all(cardInnerPadding),

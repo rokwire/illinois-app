@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -31,6 +32,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 
 class CreateStadiumPollPanel extends StatefulWidget {
@@ -82,7 +84,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
           onLeading: _onTapCancel,
         ),
         body: Container(
-            color: Styles().colors.white,
+            color: illinois.AppColors.white,
             child: SingleChildScrollView(
                       child: Column(children: [
                         _buildGeofenceDetails(),
@@ -239,8 +241,8 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
           Container(
             padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
             decoration: BoxDecoration(
-              color: Styles().colors.white,
-              border: Border.all(color: Styles().colors.fillColorSecondary, width: 2.0),
+              color: illinois.AppColors.white,
+              border: Border.all(color: AppColors.fillColorSecondary, width: 2.0),
               borderRadius: BorderRadius.circular(24.0),
             ),
             child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
@@ -279,7 +281,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
     return Padding(
         padding: EdgeInsets.only(top: 3),
         child: Container(
-            color: Styles().colors.background,
+            color: AppColors.background,
             child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 26),
                 child: Semantics( label: additionalSettingsText, excludeSemantics: true, child:
@@ -300,7 +302,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
 
   Widget _buildSettingsList() {
     return Container(
-        color: Styles().colors.background,
+        color: AppColors.background,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
           child: Container(
@@ -377,7 +379,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                         label: Localization().getStringEx("panel.create_stadium_poll.setting.button.save.title", "Save"),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                         backgroundColor: Colors.white,
-                        borderColor: Styles().colors.fillColorPrimary,
+                        borderColor: AppColors.fillColorPrimary,
                         progress: (_progressPollStatus == PollStatus.created),
                         onTap: () {
                           _onCreatePoll(status: PollStatus.created);
@@ -393,7 +395,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                         label: Localization().getStringEx("panel.create_stadium_poll.setting.start.preview.title", "Start poll!"),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                         backgroundColor: Colors.white,
-                        borderColor: Styles().colors.fillColorSecondary,
+                        borderColor: AppColors.fillColorSecondary,
                         progress: (_progressPollStatus == PollStatus.opened),
                         onTap: () {
                           _onCreatePoll(status: PollStatus.opened);

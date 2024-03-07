@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
@@ -25,6 +26,7 @@ import 'package:illinois/ui/appointments/AppointmentScheduleQuestionsPanel.dart'
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 //import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -89,7 +91,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
         Localization().getStringEx('panel.appointment.reschedule.time.header.title', 'Reschedule Appointment')
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       //bottomNavigationBar: uiuc.TabBar()
     );
   }
@@ -130,7 +132,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   Widget _buildLoading() {
     return Center(child:
       SizedBox(width: 32, height: 32, child:
-        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,),
+        CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 2,),
       )
     );
   }
@@ -180,15 +182,15 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     Color? backColor;
     String textStyle;
     if (timeSlot?.available != true) {
-      backColor = Styles().colors.background;
+      backColor = AppColors.background;
       textStyle = 'widget.button.title.disabled';
     }
     else if (_selectedSlot == timeSlot) {
-      backColor = Styles().colors.fillColorPrimary;
+      backColor = AppColors.fillColorPrimary;
       textStyle = 'widget.colourful_button.title.accent';
     }
     else {
-      backColor = Styles().colors.white;
+      backColor = illinois.AppColors.white;
       textStyle = 'widget.button.title.enabled';
     }
 
@@ -199,7 +201,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
           decoration: BoxDecoration(
             color: backColor,
             borderRadius: BorderRadius.all(Radius.circular(4)),
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
           ),
           child: InkWell(onTap: () => _onTimeSlot(timeSlot),
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -273,9 +275,9 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
           RoundedButton(
             label: Localization().getStringEx("panel.appointment.schedule.time.button.select.date.title", "Select Alternative Date"),
             hint: Localization().getStringEx("panel.appointment.schedule.time.button.select.date.hint", ""),
-            backgroundColor: Styles().colors.surface,
+            backgroundColor: AppColors.surface,
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-            borderColor: Styles().colors.fillColorSecondary,
+            borderColor: AppColors.fillColorSecondary,
             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             onTap: _onEditDate,
           ),
@@ -328,9 +330,9 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
         RoundedButton(
           label: Localization().getStringEx("panel.appointment.schedule.time.button.continue.title", "Next"),
           hint: Localization().getStringEx("panel.appointment.schedule.time.button.continue.hint", ""),
-          backgroundColor: Styles().colors.surface,
+          backgroundColor: AppColors.surface,
           textStyle: _canContinue ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
-          borderColor: _canContinue ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+          borderColor: _canContinue ? AppColors.fillColorSecondary : AppColors.surfaceAccent,
           onTap: ()=> _onContinue(),
         ),
       ),

@@ -24,11 +24,13 @@ import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class SettingsICardContentWidget extends StatefulWidget {
   @override
@@ -77,7 +79,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
   Widget build(BuildContext context) {
     return Container(
         padding: EdgeInsets.all(16),
-        color: Styles().colors.background,
+        color: AppColors.background,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Text(Localization().getStringEx('panel.settings.icard.mobile_access.label', 'Allow mobile access when'),
               style: Styles().textStyles.getTextStyle('widget.message.regular.fat')),
@@ -107,7 +109,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
                       child: ToggleRibbonButton(
                           label: Localization().getStringEx('panel.settings.icard.play_sound.button', 'Play sound when unlocking'),
                           toggled: _soundEnabled,
-                          border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
+                          border: Border.all(color:illinois.AppColors.blackTransparent018, width: 1),
                           borderRadius: BorderRadius.all(Radius.circular(4)),
                           onTap: _onTapPlaySound)),
                   Padding(
@@ -115,7 +117,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
                       child: ToggleRibbonButton(
                           label: Localization().getStringEx('panel.settings.icard.vibrate.button', 'Vibrate when unlocking'),
                           toggled: _vibrationEnabled,
-                          border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
+                          border: Border.all(color:illinois.AppColors.blackTransparent018, width: 1),
                           borderRadius: BorderRadius.all(Radius.circular(4)),
                           onTap: _onTapVibrate)),
                 ])),
@@ -143,7 +145,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
             onTap: () => _onTapBluetoothSensitivity(MobileAccessBleRssiSensitivity.low),
             selected: (_rssiSensitivity == MobileAccessBleRssiSensitivity.low)),
       ]),
-      Visibility(visible: _rssiLoading, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary))
+      Visibility(visible: _rssiLoading, child: CircularProgressIndicator(color: AppColors.fillColorSecondary))
     ]);
   }
 
@@ -171,7 +173,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
   }
 
   Widget _buildDividerWidget() {
-    return Padding(padding: EdgeInsets.only(left: 16), child: Divider(color: Styles().colors.mediumGray, height: 1));
+    return Padding(padding: EdgeInsets.only(left: 16), child: Divider(color: illinois.AppColors.mediumGray, height: 1));
   }
 
   Widget _buildOpenIOSSystemSettingsWidget() {
@@ -181,8 +183,8 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
           Expanded(
               child: Container(
                   decoration: BoxDecoration(
-                      color: Styles().colors.white,
-                      border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
+                      color: illinois.AppColors.white,
+                      border: Border.all(color:illinois.AppColors.blackTransparent018, width: 1),
                       borderRadius: BorderRadius.all(Radius.circular(4))),
                   child: Padding(
                       padding: EdgeInsets.all(16),

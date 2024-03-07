@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/widgets/UnderlinedButton.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -17,6 +18,7 @@ import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class NotificationsInboxPage extends StatefulWidget {
   final bool? unread;
@@ -113,7 +115,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
       ),
       Visibility(visible: (_loading == true), child:
         Align(alignment: Alignment.center, child:
-          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
+          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorSecondary), )
         )
       ),
       Visibility(visible: (_selectedFilter != null), child:
@@ -160,7 +162,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
   }
 
   Widget _buildListHeading({String? text}) {
-    return Container(color: Styles().colors.fillColorPrimary, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
+    return Container(color: AppColors.fillColorPrimary, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
         Semantics(header: true, child:
           Text(text ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),)
         )
@@ -171,7 +173,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
     return Container(padding: EdgeInsets.all(6), child:
       Align(alignment: Alignment.center, child:
         SizedBox(width: 24, height: 24, child:
-          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),),),),);
+          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorSecondary),),),),);
   }
 
   void _onTapMessage(InboxMessage message) {
@@ -211,7 +213,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
         onTap: _onTapBanner,
         child:Container(
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-          color: Styles().colors.saferLocationWaitTimeColorYellow,
+          color: illinois.AppColors.saferLocationWaitTimeColorYellow,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -307,12 +309,12 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
     }
 
     return Padding(padding: EdgeInsets.only(top: 6, left: 16, right: 16, bottom: 32), child:
-      Container(decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.circular(5.0)), child: 
+      Container(decoration: BoxDecoration(color: AppColors.fillColorSecondary, borderRadius: BorderRadius.circular(5.0)), child:
         Padding(padding: EdgeInsets.only(top: 2), child:
           Container(color: Colors.white, child:
             ListView.separated(
               shrinkWrap: true,
-              separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors.fillColorPrimaryTransparent03,),
+              separatorBuilder: (context, index) => Divider(height: 1, color: illinois.AppColors.fillColorPrimaryTransparent03,),
               itemCount: filterValues.length,
               itemBuilder: (context, index) {
                 return  FilterListItem(
@@ -411,7 +413,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
         Visibility(visible: (_processingOption == true), child:
           Container(padding: EdgeInsets.all(13), child:
             SizedBox(width: 22, height: 22, child:
-              CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white),),
+              CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(illinois.AppColors.white),),
             ),
           ),
         ),
@@ -460,7 +462,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
           )]),
         ),
 
-        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimaryTransparent015, height: 1))]),
+        Row(children:<Widget>[Expanded(child: Container(color: illinois.AppColors.fillColorPrimaryTransparent015, height: 1))]),
 
         InkWell(onTap: () => _onDelete(context), child:
           Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
@@ -475,7 +477,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
           )
         ),
 
-        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimaryTransparent015, height: 1))]),
+        Row(children:<Widget>[Expanded(child: Container(color: illinois.AppColors.fillColorPrimaryTransparent015, height: 1))]),
 
         InkWell(onTap: () => _onCancelOptions(context), child:
           Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
@@ -490,7 +492,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
           )
         ),
 
-        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimaryTransparent015, height: 1))]),
+        Row(children:<Widget>[Expanded(child: Container(color: illinois.AppColors.fillColorPrimaryTransparent015, height: 1))]),
       ]),
     );
   }
@@ -502,7 +504,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
           Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
             Row(children: <Widget>[
               Expanded(child:
-                Container(decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.vertical(top: Radius.circular(8)), ), child:
+                Container(decoration: BoxDecoration(color: AppColors.fillColorPrimary, borderRadius: BorderRadius.vertical(top: Radius.circular(8)), ), child:
                   Padding(padding: EdgeInsets.all(16), child:
                     Row(children: <Widget>[
                       Expanded(child:
@@ -510,7 +512,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
                       ),
                       Semantics(label: "Close", button: true,  child:
                         GestureDetector(onTap: () => Navigator.pop(context), child:
-                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white, width: 2), ), child:
+                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: illinois.AppColors.white, width: 2), ), child:
                             Center(child:
                               Text('\u00D7', style: Styles().textStyles.getTextStyle("widget.dialog.message.large.fat"), semanticsLabel: "",),
                             ),
@@ -530,11 +532,11 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
                 Container(height: 32),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                   Expanded(child:
-                    RoundedButton(label: negativeButtonTitle ?? '', onTap: () => _onCancelConfirmation(message: message, selection: negativeButtonTitle), textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"), backgroundColor: Colors.transparent, borderColor: Styles().colors.fillColorPrimary,),
+                    RoundedButton(label: negativeButtonTitle ?? '', onTap: () => _onCancelConfirmation(message: message, selection: negativeButtonTitle), textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"), backgroundColor: Colors.transparent, borderColor: AppColors.fillColorPrimary,),
                   ),
                   Container(width: 8, ),
                   Expanded(child:
-                    RoundedButton(label: positiveButtonTitle ?? '', onTap: onPositive ?? (){}, textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant2"), backgroundColor: Styles().colors.fillColorSecondaryVariant, borderColor: Styles().colors.fillColorSecondaryVariant),
+                    RoundedButton(label: positiveButtonTitle ?? '', onTap: onPositive ?? (){}, textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant2"), backgroundColor: AppColors.fillColorSecondaryVariant, borderColor: AppColors.fillColorSecondaryVariant),
                   ),
                 ],)
               ],)
@@ -922,9 +924,9 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
     String mutedStatus = Localization().getStringEx('widget.inbox_message_card.status.muted', 'Muted');
     return Container(
         decoration: BoxDecoration(
-          color: Styles().colors.white,
+          color: illinois.AppColors.white,
           borderRadius: BorderRadius.all(Radius.circular(4)),
-          boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+          boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
         ),
         clipBehavior: Clip.none,
         child: Stack(children: [
@@ -949,7 +951,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
                             Text(widget.message?.subject ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.subject.hint', 'Subject: %s'), [widget.message?.subject ?? '']), style: Styles().textStyles.getTextStyle("widget.card.title.medium.extra_fat"))
                           ),
                           (widget.message?.mute == true) ? Semantics(label: sprintf(Localization().getStringEx('widget.inbox_message_card.status.hint', 'status: %s ,for: '), [mutedStatus.toLowerCase()]), excludeSemantics: true, child:
-                            Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2))), child:
+                            Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: AppColors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2))), child:
                               Text(mutedStatus.toUpperCase(), style: Styles().textStyles.getTextStyle("widget.heading.small"))
                           )) : Container()
                         ])
@@ -971,7 +973,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
               ],)
             ),
           ),
-          Container(color: Styles().colors.fillColorSecondary, height: 4),
+          Container(color: AppColors.fillColorSecondary, height: 4),
         ],)
     );
   }

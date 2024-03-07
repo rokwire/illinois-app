@@ -20,6 +20,7 @@ import 'package:illinois/model/PrivacyData.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -32,6 +33,7 @@ import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class SettingsPrivacyCenterContentWidget extends StatefulWidget{
   @override
@@ -166,23 +168,23 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
     }
     return Container(
         padding: EdgeInsets.only(bottom: 20),
-        color: Styles().colors.background,
+        color: AppColors.background,
         child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Container(
                   height: 60,
                   width: 60,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                      border: Border.all(color: Styles().colors.fillColorPrimary, width: 2),
-                      color: Styles().colors.white,
+                      border: Border.all(color: AppColors.fillColorPrimary, width: 2),
+                      color: illinois.AppColors.white,
                       borderRadius: BorderRadius.all(Radius.circular(100))),
                   child: Container(
                       height: 52,
                       width: 52,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                          border: Border.all(color: Styles().colors.fillColorSecondary, width: 2),
-                          color: Styles().colors.white,
+                          border: Border.all(color: AppColors.fillColorSecondary, width: 2),
+                          color: illinois.AppColors.white,
                           borderRadius: BorderRadius.all(Radius.circular(100))),
                       child: Semantics(
                           label: Localization().getStringEx("panel.settings.privacy.label.privacy_level.title", "Privacy Level: "),
@@ -261,8 +263,8 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
       padding: EdgeInsets.only(top: 40),
       child: Column(children: <Widget>[
         RoundedButton(
-          backgroundColor: Styles().colors.white,
-          borderColor: Styles().colors.white,
+          backgroundColor: illinois.AppColors.white,
+          borderColor: illinois.AppColors.white,
           label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Delete My Account"),
           hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.thin.secondary"),
@@ -358,7 +360,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
   Widget _buildLoading() => Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 64), child:
     Center(child:
       SizedBox(width: 32, height: 32, child:
-        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+        CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 3,),
       ),
     ),
   );

@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/ext/Game.dart';
@@ -34,6 +35,7 @@ import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class AthleticsScheduleCard extends StatefulWidget {
   final Game? _game;
@@ -96,12 +98,12 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
       child: Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4.0), bottomRight: Radius.circular(4.0)),
-              boxShadow: [BoxShadow(color: Styles().colors.fillColorPrimaryTransparent015, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(0, 2))]),
+              boxShadow: [BoxShadow(color: illinois.AppColors.fillColorPrimaryTransparent015, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(0, 2))]),
           child: Container(
             color: Colors.white,
             child: Column(
               children: <Widget>[
-                Container(height: 4, width: MediaQuery.of(context).size.width, color: Styles().colors.fillColorPrimaryVariant),
+                Container(height: 4, width: MediaQuery.of(context).size.width, color: AppColors.fillColorPrimaryVariant),
                 Column(children: <Widget>[
                     Semantics(
                       label: "$title $subTitle $displayTime",
@@ -202,7 +204,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
           children: <Widget>[
             Container(
               height: 1,
-              color: Styles().colors.fillColorPrimaryTransparent015,
+              color: illinois.AppColors.fillColorPrimaryTransparent015,
             ),
             GestureDetector(
                 behavior: HitTestBehavior.opaque,
@@ -217,7 +219,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
                   visible: _hasTickets(),
                   child: Container(
                       height: 48,
-                      color: Styles().colors.background,
+                      color: AppColors.background,
                       child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 24),
                           child: Row(children: <Widget>[
@@ -261,11 +263,11 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
         children: <Widget>[
           Container(
             height: 1,
-            color: Styles().colors.fillColorPrimaryTransparent015,
+            color: illinois.AppColors.fillColorPrimaryTransparent015,
           ),
           Container(
               height: 48,
-              color: Styles().colors.background,
+              color: AppColors.background,
               child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24),
                   child: Row(children: <Widget>[

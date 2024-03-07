@@ -25,6 +25,7 @@ import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -44,6 +45,7 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class GroupCreatePanel extends StatefulWidget {
   final Group? group;
@@ -148,7 +150,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: Styles().colors.background, body:
+    return Scaffold(backgroundColor: AppColors.background, body:
       Column(children: <Widget>[
         Expanded(child:
           _loading ? _buildLoading() : _buildContent()
@@ -218,7 +220,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     else {
       contentLayout.addAll(<Widget>[
         //Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
-        //  Container(height: 1, color: Styles().colors.surfaceAccent,),
+        //  Container(height: 1, color: AppColors.surfaceAccent,),
         //),
         //_buildTitle("Research", "images/icon-gear.png"),
         //_buildResearchOptionLayout(),
@@ -252,7 +254,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
         SliverHeaderBar(title: barTitle,),
         SliverList(delegate: SliverChildListDelegate([
-          Container(color: Styles().colors.background, child:
+          Container(color: AppColors.background, child:
             Column(children: contentLayout),
           )
         ]),),
@@ -265,7 +267,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       Container(
         child: Align(alignment: Alignment.center,
           child: SizedBox(height: 24, width: 24,
-              child: Semantics(label: "Loading." ,container: true, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), ))
+              child: Semantics(label: "Loading." ,container: true, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorPrimary), ))
           ),
         ),
       ),
@@ -278,13 +280,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
     return Semantics(container: true,  child: Container(
         height: _imageHeight,
-        color: Styles().colors.background,
+        color: AppColors.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           StringUtils.isNotEmpty(_group?.imageURL)
               ? Positioned.fill(child: ModalImageHolder(child:Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders)))
               : Container(),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container(height: 30)),
+          CustomPaint(painter: TrianglePainter(painterColor: illinois.AppColors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
+          CustomPaint(painter: TrianglePainter(painterColor: AppColors.background), child: Container(height: 30)),
           Container(
               height: _imageHeight,
               child: Center(
@@ -328,7 +330,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         children: <Widget>[
          GroupSectionTitle(title: title, requiredMark: true),
           Container(
-            decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
+            decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1),color: illinois.AppColors.white),
             child: Semantics(
                 label: fieldTitle,
                 hint: fieldHint,
@@ -373,7 +375,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           GroupSectionTitle(title: title, description: description),
           Container(height: 5,),
           Container(
-            decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
+            decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1),color: illinois.AppColors.white),
             child:
             Row(children: [
               Expanded(child:
@@ -430,7 +432,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                     decoration: BoxDecoration(
                         color: Colors.white,
                         border: Border.all(
-                            color: Styles().colors.fillColorPrimary,
+                            color: AppColors.fillColorPrimary,
                             width: 1)),
                     child: TextField(
                       controller: _linkController,
@@ -487,7 +489,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           GroupSectionTitle(title: title),
-          Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white), child:
+          Container(decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1), color: illinois.AppColors.white), child:
             Row(children: [
               Expanded(child:
                 Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, value: _researchConsentDetailsController.text, child:
@@ -524,7 +526,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         Visibility(visible: _researchRequiresConsentConfirmation, child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             GroupSectionTitle(title: title),
-            Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white), child:
+            Container(decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1), color: illinois.AppColors.white), child:
               Row(children: [
                 Expanded(child:
                   Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, child:
@@ -532,7 +534,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                         controller: _researchConsentStatementController,
                         maxLines: 5,
                         decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                        style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                        style: TextStyle(color: illinois.AppColors.textBackground, fontSize: 16, fontFamily: AppFontFamilies.regular),
                         onChanged: (text) => setState(() { _group?.researchConsentStatement = text; }),
                     )
                   ),
@@ -575,8 +577,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               label: Localization().getStringEx("panel.groups_create.button.attributes.title", "Edit"),
               hint: Localization().getStringEx("panel.groups_create.button.attributes.hint", ""),
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-              backgroundColor: Styles().colors.white,
-              borderColor: Styles().colors.fillColorSecondary,
+              backgroundColor: illinois.AppColors.white,
+              borderColor: AppColors.fillColorSecondary,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               onTap: _onTapAttributes,
             )
@@ -721,7 +723,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         ? (questionsCount.toString() + " " + Localization().getStringEx("panel.groups_create.questions.existing.label", "Question(s)"))
         : Localization().getStringEx("panel.groups_create.questions.missing.label", "No questions");
 
-    return Container(color: Styles().colors.background, padding: EdgeInsets.symmetric(horizontal: 16), child:
+    return Container(color: AppColors.background, padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(children: <Widget>[
         Container(height: 12),
         Semantics(explicitChildNodes: true, child:
@@ -741,8 +743,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         onTap: onTap,
         child: Container(
             decoration: BoxDecoration(
-                color: Styles().colors.white,
-                border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                color: illinois.AppColors.white,
+                border: Border.all(color: AppColors.surfaceAccent, width: 1),
                 borderRadius: BorderRadius.all(Radius.circular(4))),
             padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -820,7 +822,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       Localization().getStringEx("panel.groups_settings.audience.button.question.description.default", "All Potential Participants");
 
     return Container(
-      color: Styles().colors.background,
+      color: AppColors.background,
       padding: EdgeInsets.only(left: 16, right: 16, top: 8),
       child: Column(children: <Widget>[
         Semantics(
@@ -875,7 +877,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   requiredMark: true
                 ),
                 Container(
-                    decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white),
+                    decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1), color: illinois.AppColors.white),
                     child: TextField(
                       onChanged: _onAuthManGroupNameChanged,
                       controller: _authManGroupNameController,
@@ -931,7 +933,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       child:  RibbonButton(
           label: Localization().getStringEx('panel.groups_settings.button.advanced_settings.title', 'Advanced Settings'), //Localize
           hint: Localization().getStringEx('panel.groups_settings.button.advanced_settings.hint', ''),
-          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+          border: Border.all(color: AppColors.surfaceAccent, width: 1),
           borderRadius: BorderRadius.circular(4),
           onTap: (){
             Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAdvancedSettingsPanel(group: _group,))).then((_){
@@ -951,7 +953,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       EnabledToggleButton(
         label: Localization().getStringEx('panel.groups_settings.auto_join.project.enabled.label', 'Does not require my screening of potential participants'),
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+        border: Border.all(color: AppColors.surfaceAccent, width: 1),
         enabled: true,
         toggled: _group?.canJoinAutomatically == true,
         onTap: _onTapJoinAutomatically
@@ -967,7 +969,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   } */
   //Buttons
   Widget _buildButtonsLayout() {
-    return Semantics(container: true, child: Container( color: Styles().colors.white,
+    return Semantics(container: true, child: Container( color: illinois.AppColors.white,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Center(
             child: RoundedButton(
@@ -975,8 +977,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 Localization().getStringEx("panel.groups_create.button.create.project.title", "Create Project") :
                 Localization().getStringEx("panel.groups_create.button.create.title", "Create Group"),
               textStyle: _canSave ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
-              backgroundColor: Styles().colors.white,
-              borderColor: _canSave ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+              backgroundColor: illinois.AppColors.white,
+              borderColor: _canSave ? AppColors.fillColorSecondary : AppColors.surfaceAccent,
               enabled: _canSave,
               progress:  _creating,
               onTap: _onTapCreate,
@@ -1099,8 +1101,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return Semantics(label: title, value: semanticsValue, button: true, child:
       Container(
         decoration: BoxDecoration(
-            color: Styles().colors.white,
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+            color: illinois.AppColors.white,
+            border: Border.all(color: AppColors.surfaceAccent, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))
         ),
         padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),

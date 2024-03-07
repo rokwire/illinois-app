@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -25,6 +26,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:illinois/service/Polls.dart' as illinois;
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class PollBubblePromptPanel extends StatefulWidget {
   final String? pollId;
@@ -48,7 +50,7 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel>  {
                     child: Stack(children: <Widget>[
                           SingleChildScrollView(child:
                           Column(children: <Widget>[ Container(
-                            decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.circular(5)),
+                            decoration: BoxDecoration(color: AppColors.fillColorPrimary, borderRadius: BorderRadius.circular(5)),
                             child: Padding(padding: EdgeInsets.all(20), child:  PollContentWidget(pollId: widget.pollId,),),
                           ),],)),
                       Container(alignment: Alignment.topRight, child: _buildCloseButton()),
@@ -97,9 +99,9 @@ class _PollContentState extends State<PollContentWidget> implements Notification
   late Color? _doneButtonColor;
   @override
   void initState() {
-    _backgroundColor = widget.backgroundColor ?? Styles().colors.fillColorPrimary;
-    _textColor = widget.textColor ?? Styles().colors.white;
-    _doneButtonColor = widget.doneButtonColor ?? Styles().colors.white;
+    _backgroundColor = widget.backgroundColor ?? AppColors.fillColorPrimary;
+    _textColor = widget.textColor ?? illinois.AppColors.white;
+    _doneButtonColor = widget.doneButtonColor ?? illinois.AppColors.white;
 
     NotificationService().subscribe(this, [
       Polls.notifyResultsChanged,
@@ -232,10 +234,10 @@ class _PollContentState extends State<PollContentWidget> implements Notification
       Stack(children: <Widget>[
         RoundedButton(
             label: _poll!.options![optionIndex],
-            backgroundColor: (0 < _optionVotes(optionIndex)) ? Styles().colors.fillColorSecondary : _backgroundColor,
+            backgroundColor: (0 < _optionVotes(optionIndex)) ? AppColors.fillColorSecondary : _backgroundColor,
             hint: Localization().getStringEx("panel.poll_prompt.hint.select_option","Double tab to select this option"),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled")?.copyWith(color: _textColor),
-            borderColor: Styles().colors.fillColorSecondary,
+            borderColor: AppColors.fillColorSecondary,
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             onTap: () { _onButtonOption(optionIndex); }
         ),
@@ -296,7 +298,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
               ),
             ],),),
             Expanded(key: progressKey, child:Stack(children: <Widget>[
-              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.fillColorPrimary, progressColor: Styles().colors.lightGray.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+              CustomPaint(painter: PollProgressPainter(backgroundColor: AppColors.fillColorPrimary, progressColor: illinois.AppColors.lightGray.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
               Container(height: 15 + MediaQuery.of(context).textScaler.scale(16), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                 Padding(padding: EdgeInsets.only(left: 5), child:
                 Row(children: <Widget>[
@@ -344,7 +346,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
         Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage(checkboxImageKey, excludeFromSemantics: true)),
         Expanded(
             key: progressKey, child:Stack(children: <Widget>[
-          CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.fillColorPrimary, progressColor: Styles().colors.lightGray.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+          CustomPaint(painter: PollProgressPainter(backgroundColor: AppColors.fillColorPrimary, progressColor: illinois.AppColors.lightGray.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
           Container(/*height: 30,*/ child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
             Padding(padding: EdgeInsets.only(left: 5), child:
             Text(_poll!.options![optionIndex],  maxLines: 5, overflow:TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("panel.poll.bubble.prompt.detail.regular")?.copyWith(color: _textColor)),),

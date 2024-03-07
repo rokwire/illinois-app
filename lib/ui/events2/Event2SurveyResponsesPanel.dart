@@ -17,9 +17,9 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/widget_builders/survey.dart';
 import 'package:rokwire_plugin/ui/widgets/scroll_pager.dart';
@@ -62,7 +62,7 @@ class _Event2SurveyResponsesPanelState extends State<Event2SurveyResponsesPanel>
     return Scaffold(
         appBar: _headerBar,
         body: _buildContent(),
-        backgroundColor: Styles().colors.background);
+        backgroundColor: AppColors.background);
   }
 
   Widget _buildContent() {
@@ -99,7 +99,7 @@ class _Event2SurveyResponsesPanelState extends State<Event2SurveyResponsesPanel>
         Text(
             Localization().getStringEx('panel.event2.survey.responses.surveys.empty.msg', 'There are no survey responses available.'),
             textAlign: TextAlign.center,
-            style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 18)
+            style: TextStyle(color: AppColors.fillColorPrimary, fontSize: 18)
         ),
       ),
     ];

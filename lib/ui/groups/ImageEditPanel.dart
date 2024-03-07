@@ -26,6 +26,7 @@ import 'package:flutter/services.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:path/path.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -33,6 +34,7 @@ import 'package:image_cropping/image_cropping.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:mime_type/mime_type.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class ImageEditPanel extends StatefulWidget {
   final String? storagePath;
@@ -73,7 +75,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildHeaderBar(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
       body: buildContent()
     );
@@ -141,7 +143,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
                 Container(
                   child: Align(alignment: Alignment.center,
                     child: SizedBox(height: 24, width: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
+                        child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorSecondary), )
                     ),
                   ),
                 ),
@@ -242,10 +244,10 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
         onImageEndLoading: _hideLoader,
         visibleOtherAspectRatios: true,
         squareBorderWidth: 2,
-        squareCircleColor: Styles().colors.fillColorPrimary,
-        defaultTextColor: Styles().colors.fillColorPrimary,
-        selectedTextColor: Styles().colors.fillColorSecondary,
-        colorForWhiteSpace: Styles().colors.white,
+        squareCircleColor: AppColors.fillColorPrimary,
+        defaultTextColor: AppColors.fillColorPrimary,
+        selectedTextColor: AppColors.fillColorSecondary,
+        colorForWhiteSpace: illinois.AppColors.white,
       );
     }
   }

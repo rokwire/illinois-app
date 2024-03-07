@@ -6,9 +6,11 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:in_app_review/in_app_review.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class SettingsContactsContentWidget extends StatefulWidget{
   @override
@@ -46,8 +48,8 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
 
   Widget _buildLinkButton({String? label, Function? onTap, BorderRadius? borderRadius}) =>
       RibbonButton(
-          backgroundColor: Styles().colors.white,
-          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+          backgroundColor: illinois.AppColors.white,
+          border: Border.all(color: AppColors.surfaceAccent, width: 1),
           rightIconKey: "external-link-medium",
           borderRadius: borderRadius,
           label: label,
@@ -72,7 +74,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
             StringUtils.ensureNotEmpty(descriptionHtml),
             onTapUrl : (url) {_processUrl(url); return true;},
             textStyle:  Styles().textStyles.getTextStyle("widget.item.regular.thin"),
-            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.textBackground)} : null
+            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(illinois.AppColors.textBackground)} : null
         )));
   }
 
@@ -113,7 +115,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
   String get _appVersion => Config().appVersion ?? '';
 
   Widget get _dividerWidget =>
-      Container(color: Styles().colors.surfaceAccent, height: 1,);
+      Container(color: AppColors.surfaceAccent, height: 1,);
 
   void _onReviewClicked() {
     Analytics().logSelect(target: "Provide Review");

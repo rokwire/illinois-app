@@ -25,6 +25,7 @@ import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/events2.dart';
@@ -123,7 +124,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors.background
+    backgroundColor: AppColors.background
   );
 
   Widget _buildPanelContent() {
@@ -160,7 +161,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     return Column(children: [
       Expanded(flex: 1, child: Container(),),
       SizedBox(width: 32, height: 32, child:
-        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+        CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 3,),
       ),
       Expanded(flex: 2, child: Container(),),
     ],);
@@ -170,7 +171,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     return Column(children: [
       Expanded(flex: 1, child: Container(),),
       Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
-        Text(message ?? '', textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 18)),
+        Text(message ?? '', textAlign: TextAlign.center, style: TextStyle(color: AppColors.fillColorPrimary, fontSize: 18)),
       ),
       Expanded(flex: 2, child: Container(),),
     ],);

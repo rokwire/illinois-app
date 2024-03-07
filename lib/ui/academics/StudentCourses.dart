@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/StudentCourse.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -9,6 +10,7 @@ import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -134,7 +136,7 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
         _buildTermsDropDown(),
       ),
       Expanded(flex: 1, child: Container()),
-      CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),),
+      CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorSecondary),),
       Expanded(flex: 4, child: Container()),
     ]);
   }
@@ -235,8 +237,8 @@ class StudentCourseCard extends StatelessWidget {
         Stack(children: [
           Container(
             decoration: BoxDecoration(
-              color: Styles().colors.surface,
-              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+              color: AppColors.surface,
+              border: Border.all(color: AppColors.surfaceAccent, width: 1),
               borderRadius: BorderRadius.all(Radius.circular(4)),
             ),
             child:
@@ -295,7 +297,7 @@ class StudentCourseCard extends StatelessWidget {
                 ],)
               ),
           ),
-          Container(color: Styles().colors.fillColorSecondary, height: 4),
+          Container(color: AppColors.fillColorSecondary, height: 4),
         ]),
       ),
     );
@@ -321,7 +323,7 @@ class StudentCoursesListPanel extends StatelessWidget {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.student_courses.header.title', 'My Courses')),
       body: Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child: StudentCoursesContentWidget()),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: illinois.AppColors.white,
       bottomNavigationBar: uiuc.TabBar()
     );
   }
@@ -336,7 +338,7 @@ class StudentCourseDetailPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: illinois.AppColors.white,
       bottomNavigationBar: uiuc.TabBar()
     );
   }

@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class DeviceCalendarAddEventPrompt extends DeviceCalendarPrompt {
   static String get message => Localization().getStringEx('model.device_calendar.prompt.add.event', 'Would you like to add this event to your device\'s calendar?');
@@ -57,8 +59,8 @@ class _DeviceCalendarPromptState extends State<DeviceCalendarPrompt>{
                         child: RoundedButton(
                           label: Localization().getStringEx("dialog.no.title","No"),
                           textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-                          borderColor: Styles().colors.fillColorPrimary,
-                          backgroundColor: Styles().colors.white,
+                          borderColor: AppColors.fillColorPrimary,
+                          backgroundColor: illinois.AppColors.white,
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           onTap: _onDecline
                           ))),
@@ -67,8 +69,8 @@ class _DeviceCalendarPromptState extends State<DeviceCalendarPrompt>{
                         child: RoundedButton(
                           label: Localization().getStringEx("dialog.yes.title","Yes"),
                           textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-                          borderColor: Styles().colors.fillColorSecondary,
-                          backgroundColor: Styles().colors.white,
+                          borderColor: AppColors.fillColorSecondary,
+                          backgroundColor: illinois.AppColors.white,
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           onTap: _onConfirm
                         ))),
@@ -76,7 +78,7 @@ class _DeviceCalendarPromptState extends State<DeviceCalendarPrompt>{
                 Container(height: 16,),
                 ToggleRibbonButton(
                     label: Localization().getStringEx('panel.settings.home.calendar.settings.prompt.label', 'Prompt when saving events or appointments to calendar'),
-                    border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
+                    border: Border.all(color:illinois.AppColors.blackTransparent018, width: 1),
                     borderRadius: BorderRadius.all(Radius.circular(4)),
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium"),
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -126,8 +128,8 @@ class DeviceCalendarMessage extends StatelessWidget {
                 RoundedButton(
                   label: Localization().getStringEx("dialog.ok.title", "OK"),
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-                  borderColor: Styles().colors.fillColorPrimary,
-                  backgroundColor: Styles().colors.white,
+                  borderColor: AppColors.fillColorPrimary,
+                  backgroundColor: illinois.AppColors.white,
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   onTap: () => Navigator.of(context).pop()
                   )

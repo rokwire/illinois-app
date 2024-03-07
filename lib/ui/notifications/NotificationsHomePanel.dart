@@ -22,12 +22,14 @@ import 'package:illinois/ui/notifications/NotificationsInboxPage.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 enum NotificationsContent { all, unread }
 
@@ -55,7 +57,7 @@ class NotificationsHomePanel extends StatefulWidget {
         useRootNavigator: true,
         routeSettings: RouteSettings(name: routeName),
         clipBehavior: Clip.antiAlias,
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         constraints: BoxConstraints(maxHeight: height, minHeight: height),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
         builder: (context) {
@@ -197,7 +199,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
     return Scaffold(
       appBar: RootHeaderBar(key: _headerBarKey, title: Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'Notifications')),
       body: _buildPage(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(key: _tabBarKey)
     );
   }*/
@@ -205,7 +207,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
   Widget _buildSheet(BuildContext context) {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
     return Column(children: [
-      Container(color: Styles().colors.white, child:
+      Container(color: illinois.AppColors.white, child:
         Row(key: _sheetHeaderKey, children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:
@@ -222,7 +224,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
 
         ],),
       ),
-      Container(color: Styles().colors.surfaceAccent, height: 1,),
+      Container(color: AppColors.surfaceAccent, height: 1,),
       Expanded(child:
         _buildPage(context),
       )
@@ -240,14 +242,14 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
   }
 
   Widget _buildContent() {
-    return Container(color: Styles().colors.background, child:
+    return Container(color: AppColors.background, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(key: _contentDropDownKey, padding: EdgeInsets.only(left: _defaultPadding, top: _defaultPadding, right: _defaultPadding), child:
           RibbonButton(
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-            backgroundColor: Styles().colors.white,
+            backgroundColor: illinois.AppColors.white,
             borderRadius: BorderRadius.all(Radius.circular(5)),
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+            border: Border.all(color: AppColors.surfaceAccent, width: 1),
             rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
             label: _getContentItemName(_selectedContent),
             onTap: _changeSettingsContentValuesVisibility
@@ -283,12 +285,12 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
                     _contentValuesVisible = false;
                   });
                 },
-                child: Container(color: Styles().colors.blackTransparent06))));
+                child: Container(color: illinois.AppColors.blackTransparent06))));
   }
 
   Widget _buildContentValuesWidget() {
     List<Widget> contentList = <Widget>[];
-    contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
+    contentList.add(Container(color: AppColors.fillColorSecondary, height: 2));
     for (NotificationsContent contentItem in NotificationsContent.values) {
       if (_isContentItemEnabled(contentItem) && (_selectedContent != contentItem)) {
         contentList.add(_buildContentItem(contentItem));
@@ -299,8 +301,8 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
 
   Widget _buildContentItem(NotificationsContent contentItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+        backgroundColor: illinois.AppColors.white,
+        border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentItemName(contentItem),
         onTap: () => _onTapContentItem(contentItem));

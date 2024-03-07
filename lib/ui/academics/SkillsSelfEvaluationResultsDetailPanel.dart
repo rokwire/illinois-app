@@ -15,6 +15,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Video.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
@@ -22,6 +23,7 @@ import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/web_panel.dart';
@@ -41,9 +43,9 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
       appBar: RootHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results_detail.header.title', 'Skills Self-Evaluation'), leading: RootHeaderBarLeading.Back,),
       body: SingleChildScrollView(child: content != null ? SectionSlantHeader(
         headerWidget: content!.header != null ? _buildHeader() : null,
-        slantColor: Styles().colors.gradientColorPrimary,
+        slantColor: AppColors.gradientColorPrimary,
         slantPainterHeadingHeight: 0,
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         children: _buildContent(context),
         childrenPadding: const EdgeInsets.only(left: 24, right: 24, bottom: 24),
         childrenAlignment: CrossAxisAlignment.start,
@@ -53,7 +55,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
         style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title'),
         textAlign: TextAlign.center,
       ))),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -77,8 +79,8 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Styles().colors.fillColorPrimaryVariant,
-            Styles().colors.gradientColorPrimary,
+            AppColors.fillColorPrimaryVariant,
+            AppColors.gradientColorPrimary,
           ]
         )
       ),
@@ -195,8 +197,8 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
     final Widget emptyImagePlaceholder = Container(height: 102);
     return Container(
         decoration: BoxDecoration(
-            color: Styles().colors.white,
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            color: illinois.AppColors.white,
+            boxShadow: [BoxShadow(color: illinois.AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(4))),
         child: Stack(children: [
           GestureDetector(
@@ -221,7 +223,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
                           VideoPlayButton()
                         ])
                       ])))),
-          Container(color: Styles().colors.accentColor3, height: 4)
+          Container(color: AppColors.accentColor3, height: 4)
         ]));
   }
 

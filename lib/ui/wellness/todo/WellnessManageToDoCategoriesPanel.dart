@@ -21,11 +21,13 @@ import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class WellnessManageToDoCategoriesPanel extends StatefulWidget {
   final WellnessToDoCategory? category;
@@ -74,7 +76,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
                 _buildEditCategoryButtons(),
                 _buildManageCategories()
               ]))),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -102,7 +104,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
                   style: Styles().textStyles.getTextStyle("widget.description.small.fat"))),
           Container(
               padding: EdgeInsets.symmetric(horizontal: 8),
-              decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
+              decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: illinois.AppColors.mediumGray, width: 1)),
               child: TextField(
                   controller: _nameController,
                   decoration: InputDecoration(border: InputBorder.none),
@@ -142,7 +144,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
                   visible: hasCategoryForEdit,
                   child: RoundedButton(
                       label: Localization().getStringEx('panel.wellness.categories.delete.button', 'Delete'),
-                      borderColor: Styles().colors.fillColorPrimary,
+                      borderColor: AppColors.fillColorPrimary,
                       progress: _loading,
                       padding: EdgeInsets.symmetric(horizontal: 46, vertical: 8),
                       onTap: _onTapDelete))),
@@ -162,7 +164,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
     return Padding(
         padding: EdgeInsets.only(top: 30),
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Container(height: 1, color: Styles().colors.mediumGray2),
+          Container(height: 1, color: illinois.AppColors.mediumGray2),
           Padding(
               padding: EdgeInsets.only(top: 9),
               child: Row(children: [

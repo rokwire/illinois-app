@@ -17,11 +17,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2VideoTutorialPanel.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class Onboarding2GetStartedPanel extends StatelessWidget {
   Onboarding2GetStartedPanel();
@@ -30,7 +32,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Scaffold(body:
-      Container(color: Styles().colors.background, child:
+      Container(color: AppColors.background, child:
         Column(children: [
           Expanded(child:
             SingleChildScrollView(child:
@@ -54,8 +56,8 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                   hint: Localization().getStringEx("panel.onboarding2.get_started.button.continue.hint", ''),
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  borderColor: Styles().colors.fillColorSecondary,
-                  backgroundColor: Styles().colors.white,
+                  borderColor: AppColors.fillColorSecondary,
+                  backgroundColor: illinois.AppColors.white,
                   onTap: () => _onGoNext(context),
                 ),
                 Onboarding2UnderlinedButton(

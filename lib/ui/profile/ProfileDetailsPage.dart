@@ -23,6 +23,7 @@ import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:illinois/ui/settings/SettingsVoiceRecordigWidgets.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -34,6 +35,7 @@ import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class ProfileDetailsPage extends StatefulWidget {
   final String? parentRouteName;
@@ -159,7 +161,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
           textField: true, excludeSemantics: true,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+            decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: AppColors.fillColorPrimary, width: 1)),
 //          height: 48,
             child: TextField(
               controller: _nameController,
@@ -186,7 +188,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
             textField: true, excludeSemantics: true,
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+                decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: AppColors.fillColorPrimary, width: 1)),
 //                height: 48,
                 child: TextField(
                   controller: _emailController,
@@ -218,7 +220,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
           textField: true, excludeSemantics: true,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+            decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: AppColors.fillColorPrimary, width: 1)),
 //          height: 48,
             child: TextField(
               controller: _nameController,
@@ -244,7 +246,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
             textField: true, excludeSemantics: true,
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+                decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: AppColors.fillColorPrimary, width: 1)),
 //                height: 48,
                 child: TextField(
                   controller: _phoneController,
@@ -284,8 +286,8 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
       label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
       hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
       textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-      backgroundColor: Styles().colors.background,
-      borderColor: Styles().colors.fillColorSecondary,
+      backgroundColor: AppColors.background,
+      borderColor: AppColors.fillColorSecondary,
       borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
       onTap: _onSignOutClicked,
     );
@@ -297,8 +299,8 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
       hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
        textStyle: _canSave ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
       enabled: _canSave,
-      backgroundColor: _canSave ? Styles().colors.white : Styles().colors.background,
-      borderColor: _canSave? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+      backgroundColor: _canSave ? illinois.AppColors.white : AppColors.background,
+      borderColor: _canSave? AppColors.fillColorSecondary : AppColors.surfaceAccent,
       progress: _isSaving,
       onTap: _onSaveChangesClicked,
     );
@@ -405,7 +407,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
         child: GestureDetector(
         onTap: onTap,
         child: Container(
-            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1))),
+            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.fillColorSecondary, width: 1))),
             padding: EdgeInsets.only(bottom: 2),
             child: Text(title,
                 semanticsLabel: "",
@@ -600,8 +602,8 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
   Widget _buildDeleteMyAccount() {
     return Padding(padding: EdgeInsets.only(top: 24, bottom: 12), child:
     RoundedButton(
-        backgroundColor: Styles().colors.white,
-        borderColor: Styles().colors.white,
+        backgroundColor: illinois.AppColors.white,
+        borderColor: illinois.AppColors.white,
         label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Delete My Account"),
         hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.thin.secondary"),

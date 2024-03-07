@@ -30,11 +30,13 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class HomeVideoTutorialsWidget extends StatefulWidget {
 
@@ -209,8 +211,8 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
     final Widget emptyImagePlaceholder = Container(height: 102);
     return Container(
         decoration: BoxDecoration(
-            color: Styles().colors.white,
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            color: illinois.AppColors.white,
+            boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(4))),
         child: Stack(children: [
           GestureDetector(
@@ -236,7 +238,7 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
                           VideoPlayButton(hasBackground: !hasImage)
                         ])
                       ])))),
-          Container(color: Styles().colors.accentColor3, height: 4)
+          Container(color: AppColors.accentColor3, height: 4)
         ]));
   }
 

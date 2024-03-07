@@ -19,6 +19,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -88,7 +89,7 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
                 ),
                 Visibility(visible: StringUtils.isNotEmpty(widget.roster.htmlBio), child: Container(
                     padding: EdgeInsets.only(top:16,left: 8,right: 8,bottom: 12),
-                    color: Styles().colors.background,
+                    color: AppColors.background,
                     child: Column(
                         children: <Widget>[
                           HtmlWidget(
@@ -104,7 +105,7 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
           ),
         ],
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -178,7 +179,7 @@ class _RosterDetailHeading extends StatelessWidget{
             child: Stack(
               children: <Widget>[
                 Container(
-                  color: Styles().colors.fillColorPrimaryVariant,
+                  color: AppColors.fillColorPrimaryVariant,
                   child: Container(
                     margin: EdgeInsets.only(right:(photoWidth + (photoMargin + horizontalMargin))),
                     child: Padding(
@@ -231,7 +232,7 @@ class _RosterDetailHeading extends StatelessWidget{
                     onTap: onTapPhoto,
                     child: Container(
                       margin: EdgeInsets.only(right: horizontalMargin + photoMargin, top: photoMargin),
-                      decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
+                      decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
                       child: (StringUtils.isNotEmpty(roster?.thumbPhotoUrl) ?
                       Image.network(roster!.thumbPhotoUrl!, semanticLabel: "roster", width: photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter):
                       Container(height: 112, width: photoWidth, color: Colors.white,)

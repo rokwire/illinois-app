@@ -15,12 +15,14 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class SettingsLocationPanel extends StatefulWidget {
   @override
@@ -35,7 +37,7 @@ class _SettingsLocationPanelState extends State<SettingsLocationPanel> {
         title: Localization().getStringEx("panel.settings.location.label.title", "Location"),
       ),
       body: SingleChildScrollView(child: _buildContent()),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -141,9 +143,9 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
     return Container(
           padding: EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-              color: Styles().colors.surface,
+              color: AppColors.surface,
               borderRadius: BorderRadius.all(Radius.circular(4)),
-              boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
+              boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -205,7 +207,7 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
               ),
               Container(
                 height: 1,
-                color: widget.enabled? Styles().colors.surfaceAccent: Styles().colors.surfaceAccentTransparent15,
+                color: widget.enabled? AppColors.surfaceAccent: illinois.AppColors.surfaceAccentTransparent15,
               ),
               Container(height: 12),
               Text(

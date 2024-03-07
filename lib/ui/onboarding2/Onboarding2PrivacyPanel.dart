@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -29,6 +30,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 import 'Onboarding2Widgets.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class Onboarding2PrivacyPanel extends StatefulWidget{
 
@@ -55,19 +57,19 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
         'YOUR PRIVACY LEVEL IS');*/
 
     return Scaffold(
-        backgroundColor: Styles().colors.fillColorPrimary,
+        backgroundColor: AppColors.fillColorPrimary,
         body: SafeArea(child: SwipeDetector(
           onSwipeLeft: () => _goNext(context),
           onSwipeRight: () => _goBack(context),
           child:
-          Container(color: Styles().colors.background, child:
+          Container(color: AppColors.background, child:
             Column(children: [
               Expanded(child:
                 SingleChildScrollView(child:
                   Column(
                     children:[
                     Container(
-                        color: Styles().colors.fillColorPrimary,
+                        color: AppColors.fillColorPrimary,
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
@@ -76,7 +78,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 //                                padding: EdgeInsets.symmetric(vertical: 19),
                                 child: Row(children: [
                                 Onboarding2BackButton(padding: const EdgeInsets.only(top:19,left: 17, right: 20, bottom: 19),
-                                    color: Styles().colors.white,
+                                    color: illinois.AppColors.white,
                                     onTap: () {
                                       Analytics().logSelect(target: "Back");
                                       _goBack(context);
@@ -100,11 +102,11 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 //                                          child: Text(
 //                                            "Skip",
 //                                            style: TextStyle(
-//                                                fontFamily: Styles().fontFamilies.regular,
+//                                                fontFamily: AppFontFamilies.regular,
 //                                                fontSize: 16,
-//                                                color: Styles().colors.white,
+//                                                color: illinois.AppColors.white,
 //                                                decoration: TextDecoration.underline,
-//                                                decorationColor: Styles().colors.fillColorSecondary,
+//                                                decorationColor: AppColors.fillColorSecondary,
 //                                                decorationThickness: 1,
 //                                                decorationStyle:
 //                                                TextDecorationStyle.solid),
@@ -128,9 +130,9 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 //                                        child: Text(
 //                                            titleText,
 //                                            style: TextStyle(
-//                                                color: Styles().colors.white,
+//                                                color: illinois.AppColors.white,
 //                                                fontSize: 24,
-//                                                fontFamily: Styles().fontFamilies.bold
+//                                                fontFamily: AppFontFamilies.bold
 //                                            ))
 //                                    ),
 //                                  )),
@@ -164,13 +166,13 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                                               children: [
                                                 CustomPaint(
                                                   painter: TrianglePainter(
-                                                    painterColor: Styles().colors.background,),
+                                                    painterColor: AppColors.background,),
                                                   child: Container(
                                                     height: 90,
                                                   ),
                                                 ),
                                                 Container(height: 0,
-                                                  color: Styles().colors.background,)
+                                                  color: AppColors.background,)
                                               ]),
                                         ),
                                       ),
@@ -213,8 +215,8 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                         hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        backgroundColor: Styles().colors.white,
-                        borderColor: Styles().colors.fillColorSecondaryVariant,
+                        backgroundColor: illinois.AppColors.white,
+                        borderColor: AppColors.fillColorSecondaryVariant,
                         onTap: () => _goNext(context),
                       ),),
                     Container(height: 16,)
@@ -243,7 +245,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                   padding: EdgeInsets.symmetric(horizontal: 15),
                   child: Container(
                       height: 1,
-                      color: Styles().colors.white,
+                      color: illinois.AppColors.white,
                     )
               ))
             ]),
@@ -269,7 +271,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: _privacyLevel==1? selectedTextSize: deselectedTextSize,
-                          color: Styles().colors.white
+                          color: illinois.AppColors.white
                         ),
                       )
                     )
@@ -296,7 +298,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: _privacyLevel==2? selectedTextSize: deselectedTextSize,
-                              color: Styles().colors.white
+                              color: illinois.AppColors.white
                           ),
                         )
                     )
@@ -323,7 +325,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: _privacyLevel==3? selectedTextSize: deselectedTextSize,
-                              color: Styles().colors.white
+                              color: illinois.AppColors.white
                           ),
                         )
                     )
@@ -350,7 +352,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: _privacyLevel==4? selectedTextSize: deselectedTextSize,
-                              color: Styles().colors.white
+                              color: illinois.AppColors.white
                           ),
                         )
                     )
@@ -377,7 +379,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: _privacyLevel==5? selectedTextSize: deselectedTextSize,
-                              color: Styles().colors.white
+                              color: illinois.AppColors.white
                           ),
                         )
                     )
@@ -444,7 +446,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
           padding: EdgeInsets.symmetric(vertical: 19),
           child:Container(
             decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)
+                border: Border(bottom: BorderSide(color: AppColors.fillColorSecondary, width: 1, ),)
             ),
             padding: EdgeInsets.only(bottom: 2),
             child:
@@ -467,13 +469,13 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
     return
       Container(
           padding: EdgeInsets.symmetric(vertical:24, horizontal: 20),
-          color: Styles().colors.background,
+          color: AppColors.background,
           child: SafeArea(
               top: false,
               child: Column(children: <Widget>[
                 Container(height: 6,),
                 PrivacyLevelSlider(
-                  color: Styles().colors.background,
+                  color: AppColors.background,
                   readOnly: true,
                   initialValue: _privacyLevel.toDouble()),
               ],)

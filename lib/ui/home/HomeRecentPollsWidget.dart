@@ -13,6 +13,7 @@ import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
@@ -21,8 +22,8 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class HomeRecentPollsWidget extends StatefulWidget {
 
@@ -166,11 +167,11 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
 
       if (_loadingPollsPage) {
         pages.add(Padding(key: _contentKeys['last'] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
-          Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(5)), child:
+          Container(decoration: BoxDecoration(color: illinois.AppColors.white, borderRadius: BorderRadius.circular(5)), child:
             HomeProgressWidget(
               padding: EdgeInsets.symmetric(horizontal: 32, vertical: (_pageHeight - 24) / 2),
               progessSize: Size(24, 24),
-              progressColor: Styles().colors.fillColorPrimary,
+              progressColor: AppColors.fillColorPrimary,
             ),
           ),
         ));

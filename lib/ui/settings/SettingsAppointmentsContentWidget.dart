@@ -22,6 +22,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 //TBD Update content
 class SettingsAppointmentsContentWidget extends StatefulWidget {
@@ -53,7 +54,7 @@ class _SettingsAppointmentsContentWidgetState extends State<SettingsAppointments
       ToggleRibbonButton(
           label: Localization().getStringEx('panel.settings.home.appointments.mckinley.label', 'MyMcKinley'),
           toggled: Storage().appointmentsCanDisplay ?? false,
-          border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
+          border: Border.all(color:illinois.AppColors.blackTransparent018, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(4)),
           onTap: _onToggleMcKinley)
     ]));

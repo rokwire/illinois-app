@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Onboarding2.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -27,6 +27,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 import 'package:sprintf/sprintf.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class OnboardingLoginPhoneConfirmPanel extends StatefulWidget with OnboardingPanel {
 
@@ -93,7 +94,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                         "Confirm your code"),
                     textAlign: TextAlign.center,
                     style:
-                        TextStyle(fontSize: 36, color: Styles().colors.fillColorPrimary),
+                        TextStyle(fontSize: 36, color: AppColors.fillColorPrimary),
                   ),
                 ),
                 Container(
@@ -106,8 +107,8 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: 18,
-                        color: Styles().colors.fillColorPrimary,
-                        fontFamily: Styles().fontFamilies.regular),
+                        color: AppColors.fillColorPrimary,
+                        fontFamily: AppFontFamilies.regular),
                   ),
                 ),
                 Container(
@@ -120,8 +121,8 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         fontSize: 16,
-                        color: Styles().colors.fillColorPrimary,
-                        fontFamily: Styles().fontFamilies.bold),
+                        color: AppColors.fillColorPrimary,
+                        fontFamily: AppFontFamilies.bold),
                   ),
                 ),
                 Padding(
@@ -135,12 +136,12 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                         controller: _codeController,
                         autofocus: false,
                         onSubmitted: (_) => _clearErrorMsg,
-                        cursorColor: Styles().colors.textBackground,
+                        cursorColor: illinois.AppColors.textBackground,
                         keyboardType: TextInputType.number,
                         style: TextStyle(
                             fontSize: 16,
-                            fontFamily: Styles().fontFamilies.regular,
-                            color: Styles().colors.textBackground),
+                            fontFamily: AppFontFamilies.regular,
+                            color: illinois.AppColors.textBackground),
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
@@ -164,7 +165,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                       style: TextStyle(
                           color: Colors.red,
                           fontSize: 14,
-                          fontFamily: Styles().fontFamilies.medium),
+                          fontFamily: AppFontFamilies.medium),
                     ),
                   ),
                 ),
@@ -177,8 +178,8 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                     hint: Localization().getStringEx(
                         "panel.onboarding.confirm_phone.button.confirm.hint", ""),
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                    borderColor: Styles().colors.fillColorSecondary,
-                    backgroundColor: Styles().colors.background,
+                    borderColor: AppColors.fillColorSecondary,
+                    backgroundColor: AppColors.background,
                     onTap: () => _onTapConfirm())
                 ),
                 Visibility(
@@ -191,8 +192,8 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                       hint: Localization().getStringEx(
                           "panel.onboarding.confirm_phone.button.link.cancel.hint", ""),
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                      borderColor: Styles().colors.fillColorSecondary,
-                      backgroundColor: Styles().colors.background,
+                      borderColor: AppColors.fillColorSecondary,
+                      backgroundColor: AppColors.background,
                       onTap: () => _onTapCancel())
                   ),
                 ),

@@ -15,8 +15,8 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class VideoPlayButton extends StatelessWidget {
   final bool hasBackground;
@@ -28,7 +28,7 @@ class VideoPlayButton extends StatelessWidget {
     final double buttonWidth = 80;
     final double buttonHeight = 50;
     return Container(
-            decoration: BoxDecoration(color: (hasBackground ? Styles().colors.iconColor : Colors.transparent), borderRadius: BorderRadius.all(Radius.circular(10))),
+            decoration: BoxDecoration(color: (hasBackground ? illinois.AppColors.iconColor : Colors.transparent), borderRadius: BorderRadius.all(Radius.circular(10))),
             width: buttonWidth,
             height: buttonHeight,
             child: Center(
@@ -37,16 +37,16 @@ class VideoPlayButton extends StatelessWidget {
                   width: (buttonHeight / 2),
                   child: CustomPaint(
                       painter: TrianglePainter(
-                          painterColor: Styles().colors.white,
+                          painterColor: illinois.AppColors.white,
                           horzDir: TriangleHorzDirection.rightToLeft,
                           vertDir: TriangleVertDirection.topToBottom),
                       child: Container(height: (buttonHeight / 4)))),
-              Container(width: (buttonHeight / 2), height: 1, color: Styles().colors.white),
+              Container(width: (buttonHeight / 2), height: 1, color: illinois.AppColors.white),
               Container(
                   width: (buttonHeight / 2),
                   child: CustomPaint(
                       painter: TrianglePainter(
-                          painterColor: Styles().colors.white,
+                          painterColor: illinois.AppColors.white,
                           horzDir: TriangleHorzDirection.rightToLeft,
                           vertDir: TriangleVertDirection.bottomToTop),
                       child: Container(height: (buttonHeight / 4))))

@@ -8,6 +8,7 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wallet/ICardHomeContentPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -17,6 +18,7 @@ import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
 import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class HomeSaferWidget extends StatefulWidget {
 
@@ -128,8 +130,8 @@ class _HomeSaferWidgetState extends HomeCompoundWidgetState<HomeSaferWidget> {
 
   Widget _buildPrivacyLevelWidget() {
     String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
-    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration( border: Border.all(color: Styles().colors.fillColorPrimary, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration( border: Border.all(color: Styles().colors.fillColorSecondary, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)), ), child:
+    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration( border: Border.all(color: AppColors.fillColorPrimary, width: 2), color: illinois.AppColors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration( border: Border.all(color: AppColors.fillColorSecondary, width: 2), color: illinois.AppColors.white, borderRadius: BorderRadius.all(Radius.circular(100)), ), child:
         Text(privacyLevel.toString(), style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat"))));
   }
 

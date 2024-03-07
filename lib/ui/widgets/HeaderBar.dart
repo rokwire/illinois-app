@@ -22,12 +22,14 @@ import 'package:illinois/service/WPGUFMRadio.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/header_bar.dart' as rokwire;
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class HeaderBar extends rokwire.HeaderBar {
 
@@ -66,8 +68,8 @@ class HeaderBar extends rokwire.HeaderBar {
     titleWidget: titleWidget,
     title: title,
     textStyle: textStyle,
-    textColor: textColor ?? Styles().colors.white,
-    fontFamily: fontFamily ?? Styles().fontFamilies.extraBold,
+    textColor: textColor ?? illinois.AppColors.white,
+    fontFamily: fontFamily ?? AppFontFamilies.extraBold,
     fontSize: fontSize,
     letterSpacing: letterSpacing,
     maxLines: maxLines,
@@ -125,15 +127,15 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     pinned: pinned,
     floating: floating,
     expandedHeight: expandedHeight,
-    backgroundColor: backgroundColor ?? Styles().colors.fillColorPrimaryVariant,
+    backgroundColor: backgroundColor ?? AppColors.fillColorPrimaryVariant,
 
     flexWidget: flexWidget,
     flexImageKey: flexImageKey,
     flexImageUrl: flexImageUrl,
-    flexBackColor: flexBackColor ?? Styles().colors.background,
-    flexRightToLeftTriangleColor: flexRightToLeftTriangleColor ?? Styles().colors.background,
+    flexBackColor: flexBackColor ?? AppColors.background,
+    flexRightToLeftTriangleColor: flexRightToLeftTriangleColor ?? AppColors.background,
     flexRightToLeftTriangleHeight: flexRightToLeftTriangleHeight,
-    flexLeftToRightTriangleColor: flexLeftToRightTriangleColor ?? Styles().colors.fillColorSecondaryTransparent05,
+    flexLeftToRightTriangleColor: flexLeftToRightTriangleColor ?? illinois.AppColors.fillColorSecondaryTransparent05,
     flexLeftToRightTriangleHeight: flexLeftToRightTriangleHeight,
 
     leadingWidget: leadingWidget,
@@ -141,15 +143,15 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     leadingHint: leadingHint ?? Localization().getStringEx('headerbar.back.hint', ''),
     leadingPadding: leadingPadding,
     leadingOvalSize: leadingOvalSize,
-    leadingOvalColor: leadingOvalColor ?? Styles().colors.fillColorPrimary,
+    leadingOvalColor: leadingOvalColor ?? AppColors.fillColorPrimary,
     leadingIconKey: leadingIconKey,
     onLeading: onLeading,
 
     titleWidget: titleWidget,
     title: title,
     textStyle: textStyle,
-    textColor: textColor ?? Styles().colors.white,
-    fontFamily: fontFamily ?? Styles().fontFamilies.extraBold,
+    textColor: textColor ?? illinois.AppColors.white,
+    fontFamily: fontFamily ?? AppFontFamilies.extraBold,
     fontSize: fontSize,
     letterSpacing: letterSpacing,
     maxLines: maxLines,
@@ -196,7 +198,7 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     pinned: pinned,
     floating: floating,
     elevation: elevation,
-    backgroundColor: backgroundColor ?? Styles().colors.fillColorPrimaryVariant,
+    backgroundColor: backgroundColor ?? AppColors.fillColorPrimaryVariant,
 
     leadingWidget: leadingWidget,
     leadingLabel: leadingLabel ?? Localization().getStringEx('headerbar.back.title', 'Back'),
@@ -207,8 +209,8 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     titleWidget: titleWidget,
     title: title,
     textStyle: textStyle,
-    textColor: textColor ?? Styles().colors.white,
-    fontFamily: fontFamily ?? Styles().fontFamilies.extraBold,
+    textColor: textColor ?? illinois.AppColors.white,
+    fontFamily: fontFamily ?? AppFontFamilies.extraBold,
     fontSize: fontSize,
     letterSpacing: letterSpacing,
     maxLines: maxLines,
@@ -237,7 +239,7 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
         super(
         pinned: true,
         floating: false,
-        backgroundColor: backgroundColor ?? Styles().colors.fillColorPrimaryVariant,
+        backgroundColor: backgroundColor ?? AppColors.fillColorPrimaryVariant,
         elevation: 0,
         leading: Visibility(visible: backVisible, child: Semantics(
             label: Localization().getStringEx('headerbar.back.title', 'Back'),
@@ -319,7 +321,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 
   @override
   Widget build(BuildContext context) => AppBar(
-    backgroundColor: Styles().colors.fillColorPrimaryVariant,
+    backgroundColor: AppColors.fillColorPrimaryVariant,
     leading: _buildHeaderLeading(),
     title: _buildHeaderTitle(),
     actions: _buildHeaderActions(),

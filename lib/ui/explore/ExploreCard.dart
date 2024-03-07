@@ -26,6 +26,7 @@ import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
@@ -48,6 +49,7 @@ import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class ExploreCard extends StatefulWidget {
   final GestureTapCallback? onTap;
@@ -157,7 +159,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                     _buildConvergeButton(),
                     Visibility(visible: _showInterests(), child:
                       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                        Container(height: 1, color: Styles().colors.surfaceAccent,),
+                        Container(height: 1, color: AppColors.surfaceAccent,),
                         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
                           Row(children: <Widget>[
                             Flexible(flex: 8, child:
@@ -503,7 +505,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       padding: EdgeInsets.symmetric(vertical: 0),
       child: Container(
         height: 1,
-        color: Styles().colors.fillColorPrimaryTransparent015,
+        color: illinois.AppColors.fillColorPrimaryTransparent015,
       ),
     );
   }
@@ -657,9 +659,9 @@ class _EventSmallCard extends StatelessWidget {
           width: _cardWidth,
           height: scaledHeight,
           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(
-              color: Styles().colors.surfaceAccent, width: borderWidth)),
+              color: AppColors.surfaceAccent, width: borderWidth)),
           child: Column(children: <Widget>[
-            Container(height: topBorderHeight, color: Styles().colors.fillColorSecondary),
+            Container(height: topBorderHeight, color: AppColors.fillColorSecondary),
             Padding(padding: EdgeInsets.all(internalPadding),
               child: SizedBox(height: internalHeight, width: internalWidth, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 Expanded(child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,

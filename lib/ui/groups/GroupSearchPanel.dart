@@ -17,6 +17,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -86,7 +87,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
         title: Localization().getStringEx("panel.groups_search.header.title", "Search"),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -116,7 +117,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
                         onChanged: (text) => _onTextChanged(text),
                         onSubmitted: (_) => _onTapSearch(),
                         autofocus: true,
-                        cursorColor: Styles().colors.fillColorSecondary,
+                        cursorColor: AppColors.fillColorSecondary,
                         keyboardType: TextInputType.text,
                         style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                         decoration: InputDecoration(

@@ -19,6 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/events.dart';
@@ -40,6 +41,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as timezone;
 import 'package:rokwire_plugin/service/config.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 
 class CreateEventPanel extends StatefulWidget {
@@ -125,7 +127,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
           onLeading: _onTapBack,
         ),
         body: _buildContent(),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         bottomNavigationBar: uiuc.TabBar(),
     );
 }
@@ -146,7 +148,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                         Semantics(label:_panelTitleText,
                         hint: Localization().getStringEx("panel.create_event.hint", ""), header: true, excludeSemantics: true, child:
                           Container(
-                            color: Styles().colors.fillColorPrimaryVariant,
+                            color: AppColors.fillColorPrimaryVariant,
                             height: 56,
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 16),
@@ -168,15 +170,15 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                         ),
                         Container(
                           height: 200,
-                          color: Styles().colors.background,
+                          color: AppColors.background,
                           child: Stack(
                             alignment: Alignment.bottomCenter,
                             children: <Widget>[
                               StringUtils.isNotEmpty(_imageUrl)
                                   ? Positioned.fill(child: Image.network(_imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders))
                                   : Container(),
-                              CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
-                              CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white), child: Container(height: 30)),
+                              CustomPaint(painter: TrianglePainter(painterColor: illinois.AppColors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
+                              CustomPaint(painter: TrianglePainter(painterColor: illinois.AppColors.white), child: Container(height: 30)),
                               Container(
                                 height: _imageHeight,
                                 child: Center(
@@ -187,8 +189,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
                                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                                       onTap: _onTapAddImage,
-                                      backgroundColor: Styles().colors.white,
-                                      borderColor: Styles().colors.fillColorSecondary,
+                                      backgroundColor: illinois.AppColors.white,
+                                      borderColor: AppColors.fillColorSecondary,
                                       contentWeight: 0.67,
                                     )
                                   ),
@@ -437,7 +439,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                     onTap: _onAllDayToggled,
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(4)),
-                                    border: Border.all(color: Styles().colors.fillColorPrimary),
+                                    border: Border.all(color: AppColors.fillColorPrimary),
                                   )),
                                   Container(height: 8,),
                                   Semantics(label:Localization().getStringEx("panel.create_event.date_time.online","Make this an online event"),
@@ -447,7 +449,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                         label: Localization().getStringEx("panel.create_event.date_time.online","Make this an online event"),
                                         toggled: _isOnline,
                                         onTap: _onOnlineToggled,
-                                        border: Border.all(color: Styles().colors.fillColorPrimary),
+                                        border: Border.all(color: AppColors.fillColorPrimary),
                                         borderRadius: BorderRadius.all(Radius.circular(4)),
                                       )),
                                   Container(height: 8,),
@@ -458,7 +460,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                         label: Localization().getStringEx("panel.create_event.date_time.in_person","Make this an in-person event"),
                                         toggled: _isInPerson,
                                         onTap: _onInPersonToggled,
-                                        border: Border.all(color: Styles().colors.fillColorPrimary),
+                                        border: Border.all(color: AppColors.fillColorPrimary),
                                         borderRadius: BorderRadius.all(Radius.circular(4)),
                                       ))
                                 ])),
@@ -467,7 +469,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                         _buildPriceSection(),
                         _buildPrivacyDropdown(),
                         Container(
-                          color: Styles().colors.background,
+                          color: AppColors.background,
                           child: Padding(
                             padding: EdgeInsets.only(
                                 left: 16, right: 16, top: 2, bottom: 2),
@@ -488,9 +490,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 //                                              child: Text(
 //                                                Localization().getStringEx("panel.create_event.additional_info.title","Additional event information"),
 //                                                style: TextStyle(
-//                                                    color: Styles().colors.fillColorPrimary,
+//                                                    color: AppColors.fillColorPrimary,
 //                                                    fontSize: 16,
-//                                                    fontFamily: Styles().fontFamilies.bold),
+//                                                    fontFamily: AppFontFamilies.bold),
 //                                              ),
 //                                            )
 //                                          )
@@ -548,7 +550,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                     label:  Localization().getStringEx("panel.create_event.additional_info.button.cancel.title","Cancel"),
                                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                                     backgroundColor: Colors.white,
-                                    borderColor: Styles().colors.fillColorPrimary,
+                                    borderColor: AppColors.fillColorPrimary,
                                     onTap: _onTapCancel,
                                   )),
                               (widget.group!=null)? Container():
@@ -562,7 +564,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                 Localization().getStringEx("panel.create_event.additional_info.button.preview.title","Preview"),
                                 textStyle: isValid ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
                                 backgroundColor: Colors.white,
-                                borderColor: isValid ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+                                borderColor: isValid ? AppColors.fillColorSecondary : AppColors.surfaceAccent,
                                 onTap: isEdit? _onTapUpdate : _onTapPreview,
                               )),
                               (widget.group==null)? Container():
@@ -572,7 +574,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                     Localization().getStringEx("panel.create_event.additional_info.button.create.title","Create event"),
                                     textStyle: isValid ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
                                     backgroundColor: Colors.white,
-                                    borderColor: isValid ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+                                    borderColor: isValid ? AppColors.fillColorSecondary : AppColors.surfaceAccent,
                                     onTap: isEdit? _onTapUpdate : _onTapCreate,
                                   ))
                             ],
@@ -627,7 +629,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
               child: Container(
                 decoration: BoxDecoration(
                     border: Border.all(
-                        color: Styles().colors.surfaceAccent,
+                        color: AppColors.surfaceAccent,
                         width: 1),
                     borderRadius:
                     BorderRadius.all(Radius.circular(4))),
@@ -690,7 +692,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                   padding: EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
                       border: Border.all(
-                          color: Styles().colors.fillColorPrimary,
+                          color: AppColors.fillColorPrimary,
                           width: 1)),
                   constraints: BoxConstraints(
                     minHeight: 90,
@@ -757,7 +759,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                           decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                  color: Styles().colors.fillColorPrimary,
+                                  color: AppColors.fillColorPrimary,
                                   width: 1)),
                           height: 120,
                           child: TextField(
@@ -815,7 +817,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                 child: Container(
                   decoration: BoxDecoration(
                       border: Border.all(
-                          color: Styles().colors.surfaceAccent,
+                          color: AppColors.surfaceAccent,
                           width: 1),
                       borderRadius:
                       BorderRadius.all(Radius.circular(4))),
@@ -845,7 +847,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   _buildLocationSection(){
     return Container(
-      color: Styles().colors.background,
+      color: AppColors.background,
       child: Column(children: [
       Padding(
           padding: EdgeInsets.only(left: 16, right: 16, top: 16),
@@ -896,9 +898,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               padding:
                               EdgeInsets.symmetric(horizontal: 12),
                               decoration: BoxDecoration(
-                                  color: Styles().colors.white,
+                                  color: illinois.AppColors.white,
                                   border: Border.all(
-                                      color: Styles().colors.fillColorPrimary,
+                                      color: AppColors.fillColorPrimary,
                                       width: 1)),
                               height: 48,
                               child: TextField(
@@ -935,9 +937,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               padding:
                               EdgeInsets.symmetric(horizontal: 12),
                               decoration: BoxDecoration(
-                                  color: Styles().colors.white,
+                                  color: illinois.AppColors.white,
                                   border: Border.all(
-                                      color: Styles().colors.fillColorPrimary,
+                                      color: AppColors.fillColorPrimary,
                                       width: 1)),
                               height: 48,
                               child: TextField(
@@ -974,9 +976,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               padding:
                               EdgeInsets.symmetric(horizontal: 12),
                               decoration: BoxDecoration(
-                                  color: Styles().colors.white,
+                                  color: illinois.AppColors.white,
                                   border: Border.all(
-                                      color: Styles().colors.fillColorPrimary,
+                                      color: AppColors.fillColorPrimary,
                                       width: 1)),
                               height: 48,
                               child: TextField(
@@ -998,8 +1000,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   child: RoundedButton(
                                     label: Localization().getStringEx("panel.create_event.location.button.select_location.title","Select location on a map"),
                                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                                    backgroundColor: Styles().colors.white,
-                                    borderColor: Styles().colors.fillColorSecondary,
+                                    backgroundColor: illinois.AppColors.white,
+                                    borderColor: AppColors.fillColorSecondary,
                                     onTap: _onTapSelectLocation,
                                   ))
                             ],
@@ -1026,7 +1028,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   border: Border.all(
-                                      color: Styles().colors.fillColorPrimary,
+                                      color: AppColors.fillColorPrimary,
                                       width: 1)),
                               height: 48,
                               child: TextField(
@@ -1072,7 +1074,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   border: Border.all(
-                                      color: Styles().colors.fillColorPrimary,
+                                      color: AppColors.fillColorPrimary,
                                       width: 1)),
                               height: 48,
                               child: TextField(
@@ -1124,7 +1126,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   decoration: BoxDecoration(
                                       color: Colors.white,
                                       border: Border.all(
-                                          color: Styles().colors.fillColorPrimary,
+                                          color: AppColors.fillColorPrimary,
                                           width: 1)),
                                   height: 48,
                                   child: TextField(
@@ -1159,7 +1161,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   Widget _buildPriceSection(){
     return Container(
-      color: Styles().colors.background,
+      color: AppColors.background,
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(children: [
         Semantics(label:Localization().getStringEx("panel.create_event.button.free.title","Is this event free?"),
@@ -1169,7 +1171,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
               label: Localization().getStringEx("panel.create_event.button.free.title","Is this event free?"),
               toggled: _isFree,
               onTap: _onFreeToggled,
-              border: Border.all(color: Styles().colors.fillColorPrimary),
+              border: Border.all(color: AppColors.fillColorPrimary),
               borderRadius:
               BorderRadius.all(Radius.circular(4)),
             )),
@@ -1205,7 +1207,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                       decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(
-                              color: Styles().colors.fillColorPrimary,
+                              color: AppColors.fillColorPrimary,
                               width: 1),
                           borderRadius:
                           BorderRadius.all(Radius.circular(4))),
@@ -1229,7 +1231,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   Widget _buildPrivacyDropdown(){
     return Semantics(container: true, child: Container(
-        color: Styles().colors.background,
+        color: AppColors.background,
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -1263,7 +1265,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                         decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(
-                                color: Styles().colors.fillColorPrimary,
+                                color: AppColors.fillColorPrimary,
                                 width: 1),
                             borderRadius:
                             BorderRadius.all(Radius.circular(4))),
@@ -1308,7 +1310,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
           label: Localization().getStringEx("panel.create_event.button.attendance.title","Attendance required"),
           toggled: _isAttendanceRequired,
           onTap: _onAttendanceRequiredToggled,
-          border: Border.all(color: Styles().colors.fillColorPrimary),
+          border: Border.all(color: AppColors.fillColorPrimary),
           borderRadius:
           BorderRadius.all(Radius.circular(4)),
         )));
@@ -1984,7 +1986,7 @@ class _EventDateDisplayView extends StatelessWidget {
         height: 48,
 //        width: 142,
         decoration: BoxDecoration(
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+            border: Border.all(color: AppColors.surfaceAccent, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         padding: EdgeInsets.symmetric(horizontal: 12),
         child: Row(

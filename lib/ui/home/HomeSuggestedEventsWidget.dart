@@ -26,6 +26,7 @@ import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -297,9 +298,9 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
 
   Widget _buildSlant() {
     return Column(children: <Widget>[
-      Container(color:  Styles().colors.fillColorPrimary, height: 45,),
-      Container(color: Styles().colors.fillColorPrimary, child:
-        CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
+      Container(color:  AppColors.fillColorPrimary, height: 45,),
+      Container(color: AppColors.fillColorPrimary, child:
+        CustomPaint(painter: TrianglePainter(painterColor: AppColors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
           Container(height: 65,),
         )),
     ],);
@@ -460,7 +461,7 @@ class _EventsRibbonHeader extends StatelessWidget {
 
     titleList.add(HomeFavoriteButton(favorite: HomeFavorite(favoriteId), style: FavoriteIconStyle.SlantHeader, prompt: true));
 
-    Widget contentWidget = Container(color: Styles().colors.fillColorPrimary, child:
+    Widget contentWidget = Container(color: AppColors.fillColorPrimary, child:
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: titleList,),
     );
 

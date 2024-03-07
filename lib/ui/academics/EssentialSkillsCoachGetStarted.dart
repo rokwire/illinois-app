@@ -18,6 +18,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/academics/EssentialSkillsResults.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -52,14 +53,14 @@ class _EssentialSkillsCoachGetStartedState extends State<EssentialSkillsCoachGet
       appBar: RootHeaderBar(title: Localization().getStringEx('panel.essential_skills_coach.get_started.header.title', 'Take the Self-Evaluation'), leading: RootHeaderBarLeading.Back,),
       body: SectionSlantHeader(
         headerWidget: _buildHeader(),
-        slantColor: Styles().colors.gradientColorPrimary,
+        slantColor: AppColors.gradientColorPrimary,
         slantPainterHeadingHeight: 0,
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         children: [
           Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
             label: Localization().getStringEx("panel.essential_skills_coach.get_started.button.start.label", 'Start Evaluation'),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant"),
-            backgroundColor: Styles().colors.surface,
+            backgroundColor: AppColors.surface,
             onTap: _onTapStartEvaluation,
           )),
         ],
@@ -84,8 +85,8 @@ class _EssentialSkillsCoachGetStartedState extends State<EssentialSkillsCoachGet
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Styles().colors.fillColorPrimaryVariant,
-                Styles().colors.gradientColorPrimary,
+                AppColors.fillColorPrimaryVariant,
+                AppColors.gradientColorPrimary,
               ]
           )
       ),

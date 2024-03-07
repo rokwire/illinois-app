@@ -6,6 +6,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -85,7 +86,7 @@ class _VideoPanelState extends State<VideoPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       appBar: HeaderBar(title: widget.resourceName ?? Localization().getStringEx('panel.essential_skills_coach.video.header.title', 'Video'),
         textStyle: Styles().textStyles.getTextStyle('header_bar'),),
       body: Center(child: _buildVideoContent()),

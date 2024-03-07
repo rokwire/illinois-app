@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class EssentialSkillsCoachModuleHeader extends StatelessWidget {
@@ -50,7 +51,7 @@ class EssentialSkillsCoachDropdown<T> extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.only(top: 4.0, bottom: 8.0),
       decoration: BoxDecoration(
-        color: Styles().colors.surface,
+        color: AppColors.surface,
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.all(Radius.circular(4.0)),
       ),
@@ -59,11 +60,11 @@ class EssentialSkillsCoachDropdown<T> extends StatelessWidget {
           child: DropdownButton(
               alignment: AlignmentDirectional.centerStart,
               value: value,
-              iconDisabledColor: Styles().colors.fillColorSecondary,
-              iconEnabledColor: Styles().colors.fillColorSecondary,
-              focusColor: Styles().colors.surface,
-              dropdownColor: Styles().colors.surface,
-              underline: Divider(color: Styles().colors.fillColorSecondary, height: 1.0, indent: 16.0, endIndent: 16.0),
+              iconDisabledColor: AppColors.fillColorSecondary,
+              iconEnabledColor: AppColors.fillColorSecondary,
+              focusColor: AppColors.surface,
+              dropdownColor: AppColors.surface,
+              underline: Divider(color: AppColors.fillColorSecondary, height: 1.0, indent: 16.0, endIndent: 16.0),
               borderRadius: BorderRadius.all(Radius.circular(4.0)),
               isExpanded: true,
               items: items,

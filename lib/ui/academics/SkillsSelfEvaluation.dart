@@ -14,6 +14,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Occupations.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationInfoPanel.dart';
@@ -22,6 +23,7 @@ import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -103,9 +105,9 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   Widget build(BuildContext context) {
     return SectionSlantHeader(
         headerWidget: _buildHeader(),
-        slantColor: Styles().colors.gradientColorPrimary,
+        slantColor: AppColors.gradientColorPrimary,
         slantPainterHeadingHeight: 0,
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         children: _buildInfoAndSettings(),
         childrenPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         allowOverlap: false,
@@ -130,7 +132,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
         Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
           label: Localization().getStringEx("panel.skills_self_evaluation.get_started.button.label", 'Get Started'),
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant"),
-          backgroundColor: Styles().colors.surface,
+          backgroundColor: AppColors.surface,
           onTap: _onTapStartEvaluation
         )),
       ]),),
@@ -140,8 +142,8 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Styles().colors.fillColorPrimaryVariant,
-            Styles().colors.gradientColorPrimary,
+            AppColors.fillColorPrimaryVariant,
+            AppColors.gradientColorPrimary,
           ]
         )
       ),
@@ -195,7 +197,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   void _onTapShowBottomSheet() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Styles().colors.surface,
+      backgroundColor: AppColors.surface,
       isScrollControlled: true,
       isDismissible: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
@@ -208,7 +210,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
                   child: GestureDetector(onTap: () => Navigator.of(context).pop(),
                       child: Container(height: 8, width: 48,
                           decoration: BoxDecoration(borderRadius: BorderRadius.circular(8),
-                              color: Styles().colors.mediumGray)))),
+                              color: illinois.AppColors.mediumGray)))),
               SizedBox(height: 16),
               RibbonButton(
                 rightIconKey: "chevron-right-bold",
@@ -261,7 +263,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
       textAlign: TextAlign.center,
     );
     showDialog(context: context, builder: (_) => InfoPopup(
-      backColor: Styles().colors.surface,
+      backColor: AppColors.surface,
       padding: EdgeInsets.only(left: 32, right: 32, top: 40, bottom: 32),
       alignment: Alignment.center,
       infoTextWidget: textWidget,

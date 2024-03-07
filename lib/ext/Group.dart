@@ -17,11 +17,12 @@
 import 'dart:ui';
 
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -40,7 +41,7 @@ extension GroupExt on Group {
     if(member?.status != null){
       return groupMemberStatusToColor(member!.status);
     }
-    return Styles().colors.white;
+    return illinois.AppColors.white;
   }
 
   String? get displayUpdateTime {
@@ -206,10 +207,10 @@ String? researchParticipantStatusToDisplayString(GroupMemberStatus? value) {
 Color? groupMemberStatusToColor(GroupMemberStatus? value) {
   if (value != null) {
     switch(value){
-      case GroupMemberStatus.admin    :  return Styles().colors.fillColorSecondary;
-      case GroupMemberStatus.member   :  return Styles().colors.fillColorPrimary;
-      case GroupMemberStatus.pending  :  return Styles().colors.mediumGray1;
-      case GroupMemberStatus.rejected :  return Styles().colors.mediumGray1;
+      case GroupMemberStatus.admin    :  return AppColors.fillColorSecondary;
+      case GroupMemberStatus.member   :  return AppColors.fillColorPrimary;
+      case GroupMemberStatus.pending  :  return illinois.AppColors.mediumGray1;
+      case GroupMemberStatus.rejected :  return illinois.AppColors.mediumGray1;
     }
   }
   return null;

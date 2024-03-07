@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
@@ -34,6 +35,7 @@ import 'package:illinois/ui/canvas/CanvasCoursesContentWidget.dart';
 import 'package:illinois/ui/gies/CheckListContentWidget.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -119,7 +121,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     return Scaffold(
         appBar: _headerBar,
         body: _bodyWidget,
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         bottomNavigationBar: _navigationBar,
       );
   }
@@ -140,16 +142,16 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   Widget get _bodyWidget {
     return Column(children: <Widget>[
       Container(
-        color: _skillsSelfEvaluationSelected ? Styles().colors.fillColorPrimaryVariant : Styles().colors.background,
+        color: _skillsSelfEvaluationSelected ? AppColors.fillColorPrimaryVariant : AppColors.background,
         padding: EdgeInsets.only(left: 16, top: 16, right: 16),
         child: Semantics(
           hint:  Localization().getStringEx("dropdown.hint", "DropDown"),
           container: true,
           child: RibbonButton(
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-            backgroundColor: Styles().colors.white,
+            backgroundColor: illinois.AppColors.white,
             borderRadius: BorderRadius.all(Radius.circular(5)),
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+            border: Border.all(color: AppColors.surfaceAccent, width: 1),
             rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
             label: _getContentLabel(_selectedContent),
             onTap: _onTapRibbonButton
@@ -183,12 +185,12 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
                     _contentValuesVisible = false;
                   });
                 },
-                child: Container(color: Styles().colors.blackTransparent06))));
+                child: Container(color: illinois.AppColors.blackTransparent06))));
   }
 
   Widget _buildContentValuesWidget() {
     List<Widget> sectionList = <Widget>[];
-    sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
+    sectionList.add(Container(color: AppColors.fillColorSecondary, height: 2));
     if (CollectionUtils.isNotEmpty(_contentValues)) {
       for (AcademicsContent section in _contentValues!) {
         if ((_selectedContent != section)) {
@@ -201,8 +203,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
 
   Widget _buildContentItem(AcademicsContent contentItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+        backgroundColor: illinois.AppColors.white,
+        border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         rightIcon: _buildContentItemRightIcon(contentItem),
         label: _getContentLabel(contentItem),
@@ -424,7 +426,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return WellnessToDoHomeContentWidget();
       case AcademicsContent.due_date_catalog:
         String? guideId = Guide().detailIdFromUrl(Config().dateCatalogUrl);
-        return (guideId != null) ? GuideDetailWidget(key: _dueDateCatalogKey, guideEntryId: guideId, headingColor: Styles().colors.background) : Container();
+        return (guideId != null) ? GuideDetailWidget(key: _dueDateCatalogKey, guideEntryId: guideId, headingColor: AppColors.background) : Container();
       case AcademicsContent.appointments:
         return AcademicsAppointmentsContentWidget();
       default:

@@ -28,6 +28,7 @@ import 'package:illinois/ui/settings/SettingsLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -48,6 +49,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class SettingsSectionsContentWidget extends StatefulWidget {// TBD REMOVE
 
@@ -60,7 +62,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
   static BorderRadius _bottomRounding = BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5));
   static BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5));
   static BorderRadius _allRounding = BorderRadius.all(Radius.circular(5));
-  static Border _allBorder = Border.all(color: Styles().colors.surfaceAccent, width: 1);
+  static Border _allBorder = Border.all(color: AppColors.surfaceAccent, width: 1);
 
   String _versionName = "";
   bool _connectingNetId = false;
@@ -273,9 +275,9 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                    color: Styles().colors.white,
+                    color: illinois.AppColors.white,
                     borderRadius: BorderRadius.all(Radius.circular(4)),
-                    border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+                    border: Border.all(color: AppColors.fillColorPrimary, width: 1)),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList))));
   }
 
@@ -509,7 +511,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
           if (code == 'info') {
             contentList.add(Container(
                 width: double.infinity,
-                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors.surfaceAccent, width: 1)),
+                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: AppColors.surfaceAccent, width: 1)),
                 child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     child: Column(
@@ -542,7 +544,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
           if (code == 'info') {
             contentList.add(GestureDetector(onTap: (){_onTapAlternatePhone(linked);}, child: Container(
                 width: double.infinity,
-                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors.surfaceAccent, width: 1)),
+                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: AppColors.surfaceAccent, width: 1)),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -581,7 +583,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
           if (code == 'info') {
             contentList.add(GestureDetector(onTap: (){_onTapAlternateEmail(linked);}, child: Container(
                 width: double.infinity,
-                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors.surfaceAccent, width: 1)),
+                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: AppColors.surfaceAccent, width: 1)),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -618,7 +620,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       if (code == 'netid') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: Styles().colors.white,
+            backgroundColor: illinois.AppColors.white,
             border: _allBorder, 
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Add a NetID"),
@@ -629,7 +631,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       else if (code == 'phone') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: Styles().colors.white,
+            backgroundColor: illinois.AppColors.white,
             border: _allBorder, 
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
@@ -639,7 +641,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       else if (code == 'email') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: Styles().colors.white,
+            backgroundColor: illinois.AppColors.white,
             border: _allBorder, 
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
@@ -996,7 +998,7 @@ class _OptionsSection extends StatelessWidget {
           Stack(alignment: Alignment.topCenter, children: [
             Container(
               decoration: (showBox == false) ? null : BoxDecoration(
-                border: Border.all(color: Styles().colors.surfaceAccent, width: 0.5),
+                border: Border.all(color: AppColors.surfaceAccent, width: 0.5),
                 borderRadius: BorderRadius.circular(5.0),
               ),
               child: Padding(padding: EdgeInsets.all(0), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets!)),

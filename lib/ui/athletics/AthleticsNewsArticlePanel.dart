@@ -21,8 +21,10 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/model/News.dart';
@@ -104,7 +106,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildContent(context),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
 }
@@ -123,12 +125,12 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
     return CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
       SliverToutHeaderBar(
         flexImageUrl: _article?.imageUrl,
-        flexBackColor: Styles().colors.white,
-        flexRightToLeftTriangleColor: Styles().colors.white,
-        flexLeftToRightTriangleColor: Styles().colors.fillColorSecondaryTransparent05,
+        flexBackColor: illinois.AppColors.white,
+        flexRightToLeftTriangleColor: illinois.AppColors.white,
+        flexLeftToRightTriangleColor: illinois.AppColors.fillColorSecondaryTransparent05,
       ),
       SliverList(delegate: SliverChildListDelegate([
-        Container(color: Styles().colors.background, child:
+        Container(color: AppColors.background, child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Column(children: <Widget>[
               Container(color: Colors.white, child:
@@ -137,7 +139,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
                     Row(children: <Widget>[
                       Container(
                         constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 86),
-                        color: Styles().colors.fillColorPrimary,
+                        color: AppColors.fillColorPrimary,
                         child: Padding(padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                           child: Text(_article?.category?.toUpperCase() ?? '',
                             style: Styles().textStyles.getTextStyle("widget.title.light.small.fat.spaced"),
@@ -181,8 +183,8 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
                 RoundedButton(
                   label: 'Share this article', //TBD localize
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                  backgroundColor: Styles().colors.background,
-                  borderColor: Styles().colors.fillColorSecondary,
+                  backgroundColor: AppColors.background,
+                  borderColor: AppColors.fillColorSecondary,
                   onTap: _shareArticle,
                 ),
               ) : Container()

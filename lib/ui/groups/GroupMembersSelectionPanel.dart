@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/PopScopeFix.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -27,6 +28,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ext/Group.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class GroupMembersSelectionPanel extends StatefulWidget {
   final String? groupId;
@@ -73,7 +75,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
           title: Localization().getStringEx('panel.group.members.header.title', 'Members'),
           onLeading: _onTapDone,
         ),
-        backgroundColor: Styles().colors.white,
+        backgroundColor: illinois.AppColors.white,
         body: Stack(alignment: Alignment.center, children: <Widget>[
           Column(
             children:[
@@ -82,11 +84,11 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     // Padding(padding: EdgeInsets.only(top: 12), child: Row(children: [
                     //   Expanded(child: Container()),
-                    //   RoundedButton(label: Localization().getStringEx('panel.group.members.button.done.title', 'Done'), contentWeight: 0.0, textColor: Styles().colors.fillColorPrimary, borderColor: Styles().colors.fillColorSecondary, backgroundColor: Styles().colors.white, onTap: _onTapDone)
+                    //   RoundedButton(label: Localization().getStringEx('panel.group.members.button.done.title', 'Done'), contentWeight: 0.0, textColor: AppColors.fillColorPrimary, borderColor: AppColors.fillColorSecondary, backgroundColor: illinois.AppColors.white, onTap: _onTapDone)
                     // ])),
                     Container(
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                        color: Styles().colors.fillColorPrimary,
+                        color: AppColors.fillColorPrimary,
                         child: Semantics(
                           label: Localization().getStringEx("panel.group.members.label.tap_to_follow_team.title", "Tap the checkmark to select members"),
                           hint: Localization().getStringEx("panel.group.members.label.tap_to_follow_team.hint", ""),
@@ -126,13 +128,13 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
               RoundedButton(label: Localization().getStringEx('panel.group.members.button.done.title', 'Done'),
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                   contentWeight: 0.5,
-                  borderColor: Styles().colors.fillColorSecondary,
-                  backgroundColor: Styles().colors.white,
+                  borderColor: AppColors.fillColorSecondary,
+                  backgroundColor: illinois.AppColors.white,
                   onTap: _onTapDone),
               ),
             ]),
 
-          Visibility(visible: _loading, child: Container(alignment: Alignment.center, color: Styles().colors.background, child: CircularProgressIndicator()))
+          Visibility(visible: _loading, child: Container(alignment: Alignment.center, color: AppColors.background, child: CircularProgressIndicator()))
         ])
     ));
   }
@@ -164,7 +166,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
     List<Widget> memberWidgets = [];
     for (Member member in members!) {
       if (CollectionUtils.isNotEmpty(memberWidgets)) {
-        memberWidgets.add(Container(height: 1, color: Styles().colors.surfaceAccent));
+        memberWidgets.add(Container(height: 1, color: AppColors.surfaceAccent));
       }
       memberWidgets.add(_MemberSelectionWidget(member: member, label: _getMemberDisplayData(member), selected: _isMemberSelected(member), onTap: () => _onMemberTaped(member)));
     }
@@ -172,7 +174,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
         borderRadius: BorderRadius.circular(15),
         child: Container(
             foregroundDecoration: BoxDecoration(
-              border: Border.all(color: Styles().colors.surfaceAccent, width: 1.0),
+              border: Border.all(color: AppColors.surfaceAccent, width: 1.0),
               borderRadius: BorderRadius.circular(15),
             ),
             child: Column(children: memberWidgets)));
@@ -244,7 +246,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
               child: Text(Localization().getStringEx("panel.group.members.list.search.description","Search for a particular member:"),style: Styles().textStyles.getTextStyle("widget.message.regular.fat"),)), //TBD localize
           Container(
           padding: EdgeInsets.symmetric(horizontal: 0),
-          color: Styles().colors.surface,
+          color: AppColors.surface,
           height: 48,
           child: Row(
             children: <Widget>[
@@ -258,7 +260,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                       controller: _searchController,
                       onChanged: (text) => _onTextChanged(text),
                       onSubmitted: (_) => () {},
-                      cursorColor: Styles().colors.fillColorSecondary,
+                      cursorColor: AppColors.fillColorSecondary,
                       keyboardType: TextInputType.text,
                       style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                       decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)))

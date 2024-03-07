@@ -13,12 +13,14 @@ import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class Event2AttendanceTakerPanel extends StatelessWidget {
   final Event2? event;
@@ -36,7 +38,7 @@ class Event2AttendanceTakerPanel extends StatelessWidget {
         ),
       ),
     ),
-    backgroundColor: Styles().colors.white,
+    backgroundColor: illinois.AppColors.white,
   );
 
   Future<void> _onRefresh() async {
@@ -187,7 +189,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
             (loading == true) ?
               Padding(padding: EdgeInsets.all(2.5), child:
                 SizedBox(width: 16, height: 16, child:
-                  CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,),
+                  CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 2,),
                 ),
               ) :
               Text(valueLabel, style: valueTextStyle ?? Styles().textStyles.getTextStyle('widget.label.medium.fat'),)
@@ -241,7 +243,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     List<Widget> contentList = <Widget>[];
     for (Event2Person displayPerson in _displayList) {
       if (contentList.isNotEmpty) {
-        contentList.add(Divider(color: Styles().colors.dividerLineAccent, thickness: 1, height: 1,));
+        contentList.add(Divider(color: illinois.AppColors.dividerLineAccent, thickness: 1, height: 1,));
       }
       contentList.add(_AttendeeListItemWidget(displayPerson,
         enabled: widget.manualCheckEnabled,
@@ -255,7 +257,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
         Center(child:
           SizedBox(width: 24, height: 24, child:
-            CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,)
+            CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 3,)
           ),
         ),
       );
@@ -394,7 +396,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 6), child:
               HtmlWidget(contentHtml, onTapUrl: _onTapHtmlLink, textStyle: mainStyle,
-                customStylesBuilder: (element) => (element.localName == "a") ? { "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor), "text-decoration-color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null,
+                customStylesBuilder: (element) => (element.localName == "a") ? { "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor), "text-decoration-color": ColorUtils.toHex(AppColors.fillColorSecondary)} : null,
               )
             ),
           ),
@@ -440,9 +442,9 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         Padding(padding: EdgeInsets.all(16), child:
           _manualInputProgress ? Padding(padding: EdgeInsets.all(2), child:
             SizedBox(width: 14, height: 14, child:
-              CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,)
+              CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 2,)
             )
-          ) : Styles().images.getImage('plus-circle', color: widget.manualCheckEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent)
+          ) : Styles().images.getImage('plus-circle', color: widget.manualCheckEnabled ? AppColors.fillColorSecondary : AppColors.surfaceAccent)
         ),
       )
     ],)
@@ -542,8 +544,8 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     RoundedButton(
       label: Localization().getStringEx('panel.event2.detail.attendance.scan.button', 'Scan Illini ID'),
       textStyle: Styles().textStyles.getTextStyle(widget.scanEnabled ? 'widget.button.title.large.fat' : 'widget.button.title.large.fat.variant3'),
-      borderColor: widget.scanEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-      backgroundColor: Styles().colors.white,
+      borderColor: widget.scanEnabled ? AppColors.fillColorSecondary : AppColors.surfaceAccent,
+      backgroundColor: illinois.AppColors.white,
       onTap: _onTapScanButton,
       contentWeight: 0.5,
       progress: _scanning,
@@ -568,7 +570,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         _onScanFinished("$uin");
       }); */
       
-      String lineColor = UiColors.toHex(Styles().colors.fillColorSecondary) ?? '#E84A27';
+      String lineColor = UiColors.toHex(AppColors.fillColorSecondary) ?? '#E84A27';
       String cancelButtonTitle = Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel');
       FlutterBarcodeScanner.scanBarcode(lineColor, cancelButtonTitle, true, ScanMode.QR).then((String scanResult) {
         if (mounted) {
@@ -883,17 +885,17 @@ class _AttendeeListItemWidget extends StatelessWidget {
         return Styles().images.getImage('check-circle-outline', );
       }
       else if (selected) {
-        return Styles().images.getImage('check-circle-outline-gray-2', color: Styles().colors.surfaceAccent);
+        return Styles().images.getImage('check-circle-outline-gray-2', color: AppColors.surfaceAccent);
       }
       else {
-        return Styles().images.getImage('circle-outline-gray', color: Styles().colors.surfaceAccent);
+        return Styles().images.getImage('circle-outline-gray', color: AppColors.surfaceAccent);
       }
     }
   }
 
   Widget get _progressMarkWidget => Padding(padding: EdgeInsets.symmetric(horizontal: 18, vertical: 18), child:
     SizedBox(width: 20, height: 20, child:
-      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,)
+      CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 2,)
     )
   );
 

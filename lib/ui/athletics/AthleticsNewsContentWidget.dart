@@ -22,7 +22,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/athletics/AthleticsWidgets.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/News.dart';
@@ -77,7 +79,7 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: Styles().colors.white,
+        color: illinois.AppColors.white,
         child: Column(children: [
           AthleticsTeamsFilterWidget(favoritesMode: _favoritesMode),
           Expanded(child: _buildContent())
@@ -133,7 +135,7 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
   }
 
   Widget _buildLoadingContent() {
-    return _buildCenteredWidget(CircularProgressIndicator(color: Styles().colors.fillColorSecondary));
+    return _buildCenteredWidget(CircularProgressIndicator(color: AppColors.fillColorSecondary));
   }
 
   Widget _buildEmptyContent() {
@@ -163,7 +165,7 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
       if (StringUtils.isNotEmpty(imageUrl)) {
         card = ImageSlantHeader(
             imageUrl: news.imageUrl,
-            slantImageColor: Styles().colors.fillColorPrimaryTransparent03,
+            slantImageColor: illinois.AppColors.fillColorPrimaryTransparent03,
             slantImageKey: 'slant-dark',
             child: _buildAthleticsNewsCard(news));
       } else {

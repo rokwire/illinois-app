@@ -3,6 +3,7 @@ import 'package:illinois/model/Occupation.dart';
 import 'package:illinois/service/Occupations.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -18,7 +19,7 @@ class SkillsSelfEvaluationOccupationDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       appBar: HeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.occupation_details.header.title', 'Skills Self-Evaluation')),
       body: FutureBuilder(
           future: Occupations().getOccupation(occupationCode: occupationMatch.occupation?.code ?? ""),
@@ -39,9 +40,9 @@ class SkillsSelfEvaluationOccupationDetails extends StatelessWidget {
             return SingleChildScrollView(
               child: SectionSlantHeader(
                 headerWidget: _buildHeader(occupation),
-                slantColor: Styles().colors.gradientColorPrimary,
+                slantColor: AppColors.gradientColorPrimary,
                 slantPainterHeadingHeight: 0,
-                backgroundColor: Styles().colors.background,
+                backgroundColor: AppColors.background,
                 children: Connectivity().isOffline ? _buildOfflineMessage() : _buildContent(context, occupation),
                 childrenPadding: const EdgeInsets.only(top: 40, left: 24, right: 24, bottom: 24),
                 childrenAlignment: CrossAxisAlignment.start,
@@ -58,8 +59,8 @@ class SkillsSelfEvaluationOccupationDetails extends StatelessWidget {
       decoration: BoxDecoration(
           shape: BoxShape.rectangle,
           gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-            Styles().colors.fillColorPrimaryVariant,
-            Styles().colors.gradientColorPrimary,
+            AppColors.fillColorPrimaryVariant,
+            AppColors.gradientColorPrimary,
           ])),
       child: Column(
         children: [
@@ -117,8 +118,8 @@ class SkillsSelfEvaluationOccupationDetails extends StatelessWidget {
         ),
         tilePadding: EdgeInsets.zero,
         children: [_buildScoresHeader()] + occupation.workStyles!.map((workstyle) => WorkStyleListTile(workstyle: workstyle, percentages: percentages)).toList(),
-        iconColor: Styles().colors.getColor('fillColorPrimary'),
-        collapsedIconColor: Styles().colors.getColor('fillColorPrimary'),
+        iconColor: AppColors.fillColorPrimary,
+        collapsedIconColor: AppColors.fillColorPrimary,
       )),
       Theme(data: Theme.of(context).copyWith(dividerColor: Colors.transparent), child: ExpansionTile(
         title: Text(
@@ -127,8 +128,8 @@ class SkillsSelfEvaluationOccupationDetails extends StatelessWidget {
         ),
         tilePadding: EdgeInsets.zero,
         children: occupation.technologySkills!.map((e) => TechnologySkillListTile(technologySkill: e)).toList(),
-        iconColor: Styles().colors.getColor('fillColorPrimary'),
-        collapsedIconColor: Styles().colors.getColor('fillColorPrimary'),
+        iconColor: AppColors.fillColorPrimary,
+        collapsedIconColor: AppColors.fillColorPrimary,
       )),
       Center(
         child: Padding(padding: const EdgeInsets.only(top: 16), child: InkWell(
@@ -157,7 +158,7 @@ class SkillsSelfEvaluationOccupationDetails extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Divider(color: Styles().colors.fillColorPrimary, thickness: 2),
+        Divider(color: AppColors.fillColorPrimary, thickness: 2),
         Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Flexible(flex: 2, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.occupation_details.work_style_name.title', 'NAME'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.table.header.dark'),)),
           Flexible(flex: 1, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.occupation_details.survey_scores.title', 'YOUR SCORE'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.table.header.dark'),)),

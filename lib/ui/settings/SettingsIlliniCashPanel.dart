@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/IlliniCash.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -39,6 +40,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class SettingsIlliniCashPanel extends StatefulWidget {
 
@@ -130,7 +132,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildScaffoldBody(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: widget.scrollController == null
           ? uiuc.TabBar()
           : Container(height: 0,),
@@ -214,9 +216,9 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                 label: Localization().getStringEx('panel.settings.illini_cash.button.log_in.title', 'Sign in to View'),
                 hint: Localization().getStringEx('panel.settings.illini_cash.button.log_in.hint', ''),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-                backgroundColor: Styles().colors.white,
+                backgroundColor: illinois.AppColors.white,
                 textAlign: TextAlign.center,
-                borderColor: Styles().colors.fillColorSecondary,
+                borderColor: AppColors.fillColorSecondary,
                 onTap: _onTapLogIn,
               ),
             ),
@@ -246,7 +248,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                   StringUtils.ensureNotEmpty(contentHtml),
                   onTapUrl : (url) {_onTapLink(context, url); return true;},
                   textStyle: Styles().textStyles.getTextStyle("widget.message.small"),
-                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondaryVariant)} : null
+                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(AppColors.fillColorSecondaryVariant)} : null
               )
             ),
             Row(
@@ -261,8 +263,8 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                       hint: Localization().getStringEx(
                           'panel.settings.illini_cash.button.add_cash.hint', ''),
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-                      backgroundColor: Styles().colors.white,
-                      borderColor: Styles().colors.fillColorSecondary,
+                      backgroundColor: illinois.AppColors.white,
+                      borderColor: AppColors.fillColorSecondary,
                       onTap: _onAddIlliniCashTapped,
                     ),
                   ),
@@ -292,7 +294,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
       header: true,
       excludeSemantics: true,
       child: Container(
-        color: Styles().colors.fillColorPrimaryVariant,
+        color: AppColors.fillColorPrimaryVariant,
         height: 56,
         child: Align(
           alignment: Alignment.centerLeft,
@@ -360,7 +362,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
               hint: Localization().getStringEx('panel.settings.illini_cash.button.view_history.hint', ''),
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
               backgroundColor: Colors.white,
-              borderColor: Styles().colors.fillColorSecondary,
+              borderColor: AppColors.fillColorSecondary,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               onTap: _onTapViewHistory,)),
           ],)
@@ -479,7 +481,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   }
 
   Widget _buildBalanceTableHeaderItem(String text){
-      return _buildBalanceTableItem(text: text, backColor: Styles().colors.fillColorPrimaryVariant,
+      return _buildBalanceTableItem(text: text, backColor: AppColors.fillColorPrimaryVariant,
           showBorder: false,
           textStyle: Styles().textStyles.getTextStyle("widget.heading.medium_small"));
   }
@@ -491,13 +493,13 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
              height: 40,
              alignment: Alignment.centerLeft,
              decoration: BoxDecoration(
-               color: backColor ?? Styles().colors.background,
+               color: backColor ?? AppColors.background,
                border: showBorder?
                Border.all(
-                   color: Styles().colors.surfaceAccent,
+                   color: AppColors.surfaceAccent,
                    width: 1,
                    style: BorderStyle.solid) :
-               Border.all(color: backColor ?? Styles().colors.background,width: 0)
+               Border.all(color: backColor ?? AppColors.background,width: 0)
              ),
               child: Padding(
                   padding: EdgeInsets.all(8),
@@ -511,7 +513,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   }
 
   Widget _buildAmountView(String balance){
-    return _buildBalanceTableItem(text: balance, backColor: Styles().colors.background,
+    return _buildBalanceTableItem(text: balance, backColor: AppColors.background,
         textStyle: Styles().textStyles.getTextStyle("panel.settings.detail.title.small.fat"));
   }
 
@@ -540,8 +542,8 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
 
   Widget _buildPrivacyLevelIcon() {
     String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
-    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorSecondary, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 2), color: illinois.AppColors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorSecondary, width: 2), color: illinois.AppColors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
         Text(privacyLevel, style:  Styles().textStyles.getTextStyle("widget.title.medium.extra_fat"))
       ),
     );
@@ -706,7 +708,7 @@ class _DateLabel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Text(label!, style: Styles().textStyles.getTextStyle("panel.settings.detail.title.regular"),),
-        Container(height: 2, color: Styles().colors.surfaceAccent,)
+        Container(height: 2, color: AppColors.surfaceAccent,)
       ],),);
   }
 }
@@ -727,7 +729,7 @@ class _DateValue extends StatelessWidget {
         children: <Widget>[
           Text(title!, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),),
           Styles().images.getImage('chevron-down', excludeFromSemantics: true) ?? Container(),
-        ],), Container(height: 2, color: Styles().colors.fillColorSecondary,)
+        ],), Container(height: 2, color: AppColors.fillColorSecondary,)
     ],),),);
   }
 }

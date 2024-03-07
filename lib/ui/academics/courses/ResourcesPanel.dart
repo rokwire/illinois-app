@@ -8,6 +8,7 @@ import 'package:illinois/ui/academics/courses/PDFPanel.dart';
 import 'package:illinois/ui/academics/courses/VideoPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/content.dart' as con;
@@ -67,7 +68,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
           ),
         ),
       ],),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
     );
   }
 
@@ -82,7 +83,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Material(
-              color: Styles().colors.surface,
+              color: AppColors.surface,
               borderRadius: BorderRadius.all(Radius.circular(8.0)),
               clipBehavior: Clip.hardEdge,
               elevation: 1.0,
@@ -139,7 +140,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
 
   Widget _buildResourcesHeaderWidget(){
     return Container(
-      color: Styles().colors.fillColorPrimary,
+      color: AppColors.fillColorPrimary,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
         child: Row(
@@ -160,7 +161,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
               flex: 1,
               child: Container(
                   decoration: BoxDecoration(
-                    color: Styles().colors.surface,
+                    color: AppColors.surface,
                     shape: BoxShape.circle,
                   ),
                   child: Padding(

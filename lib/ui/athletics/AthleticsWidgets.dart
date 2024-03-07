@@ -23,6 +23,7 @@ import 'package:illinois/ext/Game.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Sports.dart';
@@ -30,6 +31,7 @@ import 'package:illinois/ui/athletics/AthleticsMyTeamsPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -127,7 +129,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
               showImage
                   ? Container(
                       height: 72,
-                      color: Styles().colors.fillColorSecondaryTransparent05,
+                      color: illinois.AppColors.fillColorSecondaryTransparent05,
                     )
                   : Container(height: 0)
             ]),
@@ -137,7 +139,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
                     width: double.infinity,
                     child: Styles().images.getImage('slant', fit: BoxFit.fill, excludeFromSemantics: true))
                 : Container(),
-            showImage ? Container(height: 140, color: Styles().colors.background) : Container()
+            showImage ? Container(height: 140, color: AppColors.background) : Container()
           ]),
           Padding(
               padding: widget.margin,
@@ -159,7 +161,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
                                         child: Padding(
                                             padding: EdgeInsets.only(top: 24),
                                             child: Container(
-                                                color: Styles().colors.fillColorPrimary,
+                                                color: AppColors.fillColorPrimary,
                                                 child: Padding(
                                                     padding: EdgeInsets.all(5),
                                                     child: Text(sportName.toUpperCase(),
@@ -201,7 +203,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
                           Visibility(
                               visible: showInterests,
                               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                                Container(height: 1, color: Styles().colors.surfaceAccent),
+                                Container(height: 1, color: AppColors.surfaceAccent),
                                 Padding(
                                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -220,10 +222,10 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
                                       hint: Localization().getStringEx('widget.athletics_card.button.get_tickets.hint', ''),
                                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                                       backgroundColor: Colors.white,
-                                      borderColor: Styles().colors.fillColorSecondary,
+                                      borderColor: AppColors.fillColorSecondary,
                                       onTap: _onTapGetTickets)))
                         ]))),
-                !showImage ? Container(height: 7, color: Styles().colors.fillColorPrimary) : Container(),
+                !showImage ? Container(height: 7, color: AppColors.fillColorPrimary) : Container(),
               ]))
         ]));
   }
@@ -337,7 +339,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
       padding: EdgeInsets.symmetric(vertical: 0),
       child: Container(
         height: 1,
-        color: Styles().colors.fillColorPrimaryTransparent015,
+        color: illinois.AppColors.fillColorPrimaryTransparent015,
       ),
     );
   }
@@ -395,7 +397,7 @@ class _AthleticsTeamsFilterWidgetState extends State<AthleticsTeamsFilterWidget>
   Widget build(BuildContext context) {
     return Column(children: [
       Container(
-          color: _showFilterDescription ? Styles().colors.white : null,
+          color: _showFilterDescription ? illinois.AppColors.white : null,
           decoration: !_showFilterDescription ? _filterDecoration : null,
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -405,7 +407,7 @@ class _AthleticsTeamsFilterWidgetState extends State<AthleticsTeamsFilterWidget>
                     onTap: () => _onTapTeamsFilter(context),
                     child: Container(
                         decoration: BoxDecoration(
-                            border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
+                            border: Border.all(color: illinois.AppColors.disabledTextColor, width: 1),
                             borderRadius: BorderRadius.circular(16)),
                         child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
@@ -422,7 +424,7 @@ class _AthleticsTeamsFilterWidgetState extends State<AthleticsTeamsFilterWidget>
       Visibility(
           visible: _showFilterDescription,
           child: Column(children: [
-            Divider(thickness: 1, color: Styles().colors.lightGray, height: 1),
+            Divider(thickness: 1, color: illinois.AppColors.lightGray, height: 1),
             Container(
                 decoration: _showFilterDescription ? _filterDecoration : null,
                 child: Padding(
@@ -472,7 +474,7 @@ class _AthleticsTeamsFilterWidgetState extends State<AthleticsTeamsFilterWidget>
 
   bool get _filterApplied => CollectionUtils.isNotEmpty(Auth2().prefs?.sportsInterests);
 
-  BoxDecoration get _filterDecoration => BoxDecoration(color: Styles().colors.white, boxShadow: kElevationToShadow[2]);
+  BoxDecoration get _filterDecoration => BoxDecoration(color: illinois.AppColors.white, boxShadow: kElevationToShadow[2]);
 
   // Notifications Listener
 

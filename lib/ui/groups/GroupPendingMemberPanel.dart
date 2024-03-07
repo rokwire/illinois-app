@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -29,6 +30,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class GroupPendingMemberPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Member? member;
@@ -59,11 +61,11 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       appBar: HeaderBar(),
       body:
       Container(
-        color:  Styles().colors.white,
+        color:  illinois.AppColors.white,
         child:Column(
         children: <Widget>[
           Expanded(
@@ -84,7 +86,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
 
   Widget _buildHeading(){
     return
-      Container(color: Styles().colors.background,
+      Container(color: AppColors.background,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child:Column(
         children: [
@@ -120,7 +122,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         _buildQuestions(),
-        Container(height: 1, color: Styles().colors.surfaceAccent,),
+        Container(height: 1, color: AppColors.surfaceAccent,),
         _buildApproval()
       ],
     );
@@ -138,7 +140,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
 
     return
       Container(
-        color: Styles().colors.background,
+        color: AppColors.background,
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,7 +151,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
   }
 
   Widget _buildApproval(){
-    return Container(color: Styles().colors.white, padding: EdgeInsets.symmetric(horizontal: 16), child:
+    return Container(color: illinois.AppColors.white, padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Container(height: 28,),
         Row(children: [
@@ -162,7 +164,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
         Container(height: 21,),
         ToggleRibbonButton(
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Styles().colors.fillColorPrimary),
+          border: Border.all(color: AppColors.fillColorPrimary),
           label: Localization().getStringEx("panel.pending_member_detail.button.approve.text", "Approve "),
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           toggled: _approved,
@@ -175,7 +177,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
           }
         ),
         Container(height: 21,),
-        Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors.fillColorPrimary),), child:
+        Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), border: Border.all(color: AppColors.fillColorPrimary),), child:
           Column(children: [
             ToggleRibbonButton(
               label: Localization().getStringEx("panel.pending_member_detail.button.deny.text", "Deny"),
@@ -197,7 +199,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
             ),
             Container(height: 8,),
             Container(height: 114, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-              Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors.fillColorPrimary), ), child:
+              Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), border: Border.all(color: AppColors.fillColorPrimary), ), child:
                 Row(children: [
                   Expanded(child:
                     TextField(
@@ -221,7 +223,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
 
   Widget _buildBottomButtons(BuildContext context){
     return SafeArea(child: Container(
-      color: Styles().colors.white,
+      color: illinois.AppColors.white,
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
         children: <Widget>[
@@ -230,8 +232,8 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                 label: _continueButtonText ?? '',
                 hint: Localization().getStringEx("panel.pending_member_detail.button.add.hint", ""),
                 textStyle: _canContinue ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
-                backgroundColor: Styles().colors.white,
-                borderColor: _canContinue? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+                backgroundColor: illinois.AppColors.white,
+                borderColor: _canContinue? AppColors.fillColorSecondary : AppColors.surfaceAccent,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 13),
                 progress: _updating,
                 onTap: () {
@@ -309,8 +311,8 @@ class _MembershipAnswer extends StatelessWidget{
         Container(
           padding: EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Styles().colors.white,
-            border: Border.all(color: Styles().colors.fillColorPrimary)
+            color: illinois.AppColors.white,
+            border: Border.all(color: AppColors.fillColorPrimary)
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

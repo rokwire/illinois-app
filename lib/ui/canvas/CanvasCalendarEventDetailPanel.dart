@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
@@ -67,7 +68,7 @@ class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDeta
         title: Localization().getStringEx('panel.canvas_calendar_event.header.title', 'Calendar Event')
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: illinois.AppColors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

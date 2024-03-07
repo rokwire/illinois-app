@@ -5,6 +5,7 @@ import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -13,7 +14,6 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
@@ -75,7 +75,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel> implements Notific
               Container(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18), child: _loadingEvents ? _loadingIndicator : _buildEvents())
             ])),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         bottomNavigationBar: uiuc.TabBar());
   }
 
@@ -100,7 +100,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel> implements Notific
         padding: EdgeInsets.only(top: 150),
         child: Center(
             child: SizedBox(
-                width: 32, height: 32, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3))));
+                width: 32, height: 32, child: CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 3))));
   }
 
   Widget get _extendingIndicator => Container(
@@ -111,7 +111,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel> implements Notific
               width: 24,
               height: 24,
               child: CircularProgressIndicator(
-                  strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)))));
+                  strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorSecondary)))));
 
   void _load() {
     if (!_loadingEvents) {

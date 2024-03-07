@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -70,7 +71,7 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
             Column(children: <Widget>[_buildPollsContent()])
           ]))
         ]),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         bottomNavigationBar: uiuc.TabBar());
   }
 

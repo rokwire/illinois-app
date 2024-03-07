@@ -14,6 +14,7 @@ import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/wallet/ICardHomeContentPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -21,6 +22,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/section.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class HomeWalletWidget extends StatefulWidget {
   
@@ -156,7 +158,7 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors.white, child:
+                Container(color: illinois.AppColors.white, child:
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(child:
                       Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
@@ -165,8 +167,8 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
                     HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true)
                   ])
                 ),
-                Container(color: Styles().colors.backgroundVariant, height: 1,),
-                Container(color: Styles().colors.white, child:
+                Container(color: AppColors.backgroundVariant, height: 1,),
+                Container(color: illinois.AppColors.white, child:
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
@@ -174,7 +176,7 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
                       ),
                       Visibility(visible: SettingsAddIlliniCashPanel.canPresent, child:
                         Semantics(button: true, excludeSemantics: true, label: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.title', 'Add Illini Cash'), hint: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.hint', ''), child:
-                          IconButton(color: Styles().colors.fillColorPrimary, icon: Styles().images.getImage('plus-circle-large', excludeFromSemantics: true) ?? Container(), onPressed: _onTapPlus)
+                          IconButton(color: AppColors.fillColorPrimary, icon: Styles().images.getImage('plus-circle-large', excludeFromSemantics: true) ?? Container(), onPressed: _onTapPlus)
                         ),
                       )
                     ]),
@@ -310,7 +312,7 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors.white, child:
+                Container(color: illinois.AppColors.white, child:
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(child:
                       Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
@@ -320,8 +322,8 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
                     HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true)
                   ]),
               ),
-                Container(color: Styles().colors.backgroundVariant, height: 1,),
-                Container(color: Styles().colors.white, child:
+                Container(color: AppColors.backgroundVariant, height: 1,),
+                Container(color: illinois.AppColors.white, child:
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     contentWidget,
                   ),
@@ -393,7 +395,7 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors.white, child:
+                Container(color: illinois.AppColors.white, child:
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(child:
                       Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
@@ -403,8 +405,8 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
                     HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true)
                   ]),
                 ),
-                Container(color: Styles().colors.backgroundVariant, height: 1,),
-                Container(color: Styles().colors.white, child:
+                Container(color: AppColors.backgroundVariant, height: 1,),
+                Container(color: illinois.AppColors.white, child:
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
@@ -498,7 +500,7 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors.white, child:
+                Container(color: illinois.AppColors.white, child:
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(child:
                       Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
@@ -508,8 +510,8 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
                     HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true),
                   ]),
                 ),
-                Container(color: Styles().colors.backgroundVariant, height: 1,),
-                Container(color: Styles().colors.white, child:
+                Container(color: AppColors.backgroundVariant, height: 1,),
+                Container(color: illinois.AppColors.white, child:
                   Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
@@ -596,7 +598,7 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors.white, child:
+                Container(color: illinois.AppColors.white, child:
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(child:
                       Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
@@ -606,8 +608,8 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
                     HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true),
                   ]),
                 ),
-                Container(color: Styles().colors.backgroundVariant, height: 1,),
-                Container(color: Styles().colors.white, child:
+                Container(color: AppColors.backgroundVariant, height: 1,),
+                Container(color: illinois.AppColors.white, child:
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
@@ -618,7 +620,7 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
                             margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           ) :
                           Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 8), child:
-                            Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors.fillColorSecondary, width: 3))), child:
+                            Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: AppColors.fillColorSecondary, width: 3))), child:
                               Padding(padding: EdgeInsets.only(left: 10), child:
                                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                                   Container(height: 50, decoration: BoxDecoration(

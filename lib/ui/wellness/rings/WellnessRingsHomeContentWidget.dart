@@ -25,10 +25,12 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingSelectPredefinedPanel.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class WellnessRingsHomeContentWidget extends StatefulWidget {
   WellnessRingsHomeContentWidget();
@@ -176,7 +178,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
           },
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
           backgroundColor: Colors.white,
-          borderColor: Styles().colors.fillColorSecondary,
+          borderColor: AppColors.fillColorSecondary,
           rightIcon: Container(),
         ),
       )
@@ -247,7 +249,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
           // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Expanded(child:
-              Container(decoration: BoxDecoration(color: enabled? Colors.white : disabledBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors.surfaceAccent, width: 1)), child:
+              Container(decoration: BoxDecoration(color: enabled? Colors.white : disabledBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: AppColors.surfaceAccent, width: 1)), child:
               Padding(padding: EdgeInsets.only(left: 18, top: 16, bottom: 16, right: 16), child:
               Row( crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -283,7 +285,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
         contentPadding: EdgeInsets.all(0),
         contentWidget: Container(
             height: 300,
-            decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)),
+            decoration: BoxDecoration(color: illinois.AppColors.white, borderRadius: BorderRadius.circular(10.0)),
             child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
               Padding(
                   padding: EdgeInsets.all(19),
@@ -363,7 +365,7 @@ class _TabButton extends StatelessWidget {
             child: Container(
                 height: 24 + MediaQuery.of(context).textScaler.scale(16),
                 decoration: BoxDecoration(
-                    color: selected! ? Colors.white : Styles().colors.lightGray, border: _border, borderRadius: _borderRadius),
+                    color: selected! ? Colors.white : illinois.AppColors.lightGray, border: _border, borderRadius: _borderRadius),
                 child: Center(
                     child: Text(label!,
                         overflow: TextOverflow.ellipsis,
@@ -383,7 +385,7 @@ class _TabButton extends StatelessWidget {
   }
 
   BoxBorder? get _border {
-    BorderSide borderSide = BorderSide(color: Styles().colors.surfaceAccent, width: 2, style: BorderStyle.solid);
+    BorderSide borderSide = BorderSide(color: AppColors.surfaceAccent, width: 2, style: BorderStyle.solid);
     switch (position) {
       case _TabButtonPosition.first:
         return Border.fromBorderSide(borderSide);

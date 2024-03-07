@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -22,6 +23,7 @@ import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class OnboardingSportPrefsPanel extends StatefulWidget with OnboardingPanel {
   final Map<String, dynamic>? onboardingContext;
@@ -53,7 +55,7 @@ class _OnboardingSportPrefsPanelState extends State<OnboardingSportPrefsPanel> {
                         child: Stack(
                           alignment: Alignment.bottomCenter,
                           children: <Widget>[
-                            Container(decoration: BoxDecoration(color: Styles().colors.background)),
+                            Container(decoration: BoxDecoration(color: AppColors.background)),
                             Padding(
                                 padding: EdgeInsets.only(left: 64, right: 64, top: 30),
                                 child: Align(
@@ -64,7 +66,7 @@ class _OnboardingSportPrefsPanelState extends State<OnboardingSportPrefsPanel> {
                                     excludeSemantics: true,
                                     child: Text(
                                       getTitleText(),
-                                      style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 24, color: Styles().colors.fillColorPrimary),
+                                      style: TextStyle(fontFamily: AppFontFamilies.extraBold, fontSize: 24, color: AppColors.fillColorPrimary),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
@@ -97,8 +99,8 @@ class _OnboardingSportPrefsPanelState extends State<OnboardingSportPrefsPanel> {
                           hint: Localization().getStringEx('panel.onboarding.sports.button.continue.hint', ''),
                           textStyle: _allowNext ? Styles().textStyles.getTextStyle("widget.button.title.large.fat.secondary") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat.variant"),
                           enabled: _allowNext,
-                          backgroundColor: (Styles().colors.background),
-                          borderColor: (_allowNext ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimaryTransparent03),
+                          backgroundColor: (AppColors.background),
+                          borderColor: (_allowNext ? AppColors.fillColorSecondary : illinois.AppColors.fillColorPrimaryTransparent03),
                           onTap: () => pushNextPanel()),
                     ),
                   )

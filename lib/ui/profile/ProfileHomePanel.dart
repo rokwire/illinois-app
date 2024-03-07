@@ -25,10 +25,12 @@ import 'package:illinois/ui/profile/ProfileDetailsPage.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
 import 'package:illinois/ui/profile/ProfileRolesPage.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 enum ProfileContent { login, profile, who_are_you, }
 
@@ -53,7 +55,7 @@ class ProfileHomePanel extends StatefulWidget {
         useRootNavigator: true,
         routeSettings: RouteSettings(name: routeName),
         clipBehavior: Clip.antiAlias,
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         constraints: BoxConstraints(maxHeight: height, minHeight: height),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
         builder: (context) {
@@ -124,7 +126,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile')),
       body: _buildPage(context),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar()
     );
   }*/
@@ -132,7 +134,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   Widget _buildSheet(BuildContext context) {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
     return Column(children: [
-      Container(color: Styles().colors.white, child:
+      Container(color: illinois.AppColors.white, child:
         Row(children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:
@@ -158,7 +160,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
         ],),
       ),
-      Container(color: Styles().colors.surfaceAccent, height: 1,),
+      Container(color: AppColors.surfaceAccent, height: 1,),
       Expanded(child:
         _buildPage(context),
       )
@@ -168,15 +170,15 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   Widget _buildPage(BuildContext context) {
     return Column(key: _pageKey, children: <Widget>[
       Expanded(child:
-        Container(color: Styles().colors.background, child:
+        Container(color: AppColors.background, child:
           SingleChildScrollView(physics: _contentValuesVisible ? NeverScrollableScrollPhysics() : null, child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Padding(key: _pageHeadingKey, padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
                 RibbonButton(
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-                  backgroundColor: Styles().colors.white,
+                  backgroundColor: illinois.AppColors.white,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
-                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                  border: Border.all(color: AppColors.surfaceAccent, width: 1),
                   rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
                   label: _getContentItemName(_selectedContent) ?? '',
                   onTap: _onTapContentSwitch
@@ -214,7 +216,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     return Positioned.fill(child:
       BlockSemantics(child:
         GestureDetector(onTap: _onTapDismissLayer, child:
-          Container(color: Styles().colors.blackTransparent06)
+          Container(color: illinois.AppColors.blackTransparent06)
         )
       )
     );
@@ -222,7 +224,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   Widget _buildContentValuesWidget() {
     List<Widget> contentList = <Widget>[];
-    contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
+    contentList.add(Container(color: AppColors.fillColorSecondary, height: 2));
     for (ProfileContent contentItem in ProfileContent.values) {
       if (_isContentItemEnabled(contentItem) && (_selectedContent != contentItem)) {
         contentList.add(_buildContentItem(contentItem));
@@ -237,8 +239,8 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   Widget _buildContentItem(ProfileContent contentItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+        backgroundColor: illinois.AppColors.white,
+        border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentItemName(contentItem),
         onTap: () => _onTapContentItem(contentItem));

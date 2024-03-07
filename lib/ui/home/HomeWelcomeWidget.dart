@@ -9,11 +9,13 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class HomeWelcomeWidget extends StatefulWidget {
   final String? favoriteId;
@@ -87,9 +89,9 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: _visible ?? true, child:
-      Container(color: Styles().colors.fillColorPrimary, child:
+      Container(color: AppColors.fillColorPrimary, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Container(height: 1, color: Styles().colors.disabledTextColor),
+          Container(height: 1, color: illinois.AppColors.disabledTextColor),
           Row(children: [
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16), child:
@@ -110,7 +112,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
           Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16), child: 
             _buildVideoEntry()
           ),
-          Container(height: 1, color: Styles().colors.disabledTextColor),
+          Container(height: 1, color: illinois.AppColors.disabledTextColor),
         ],),
       )
     );
@@ -120,7 +122,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
 
   Widget imagePlaceholder({ Widget? child}) =>
     AspectRatio(aspectRatio: (8000.0 / 4500.0), child:
-      Container(color: Styles().colors.fillColorPrimary, child: child,)
+      Container(color: AppColors.fillColorPrimary, child: child,)
     );
 
   Widget _buildVideoEntry() {
@@ -135,7 +137,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
               ClipRRect(borderRadius: BorderRadius.circular(4), child:
                 Image.network(_video!.thumbUrl!, loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                   return imagePlaceholder(child: (loadingProgress != null) ? Center(child:
-                    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white), ) 
+                    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(illinois.AppColors.white), )
                   ) : child);
                 })
               ) :

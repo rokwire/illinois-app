@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -40,6 +41,7 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class GroupsHomePanel extends StatefulWidget {
   final rokwire.GroupsContentType? contentType;
@@ -96,7 +98,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx("panel.groups_home.label.heading","Groups"), leading: RootHeaderBarLeading.Back,),
       body: _buildContent(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -221,8 +223,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           Column(children: [
             _buildFunctionalBar(),
             Expanded(child: _isLoading
-              ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), ),)
-              : Container(color: Styles().colors.background, child:
+              ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorPrimary), ),)
+              : Container(color: AppColors.background, child:
                   RefreshIndicator(onRefresh: _onPullToRefresh, child:
                     SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
                       Column(children: <Widget>[ _buildGroupsContent(), ],),
@@ -245,7 +247,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Widget _buildTypesValuesWidget() {
     List<Widget> typeWidgetList = <Widget>[];
-    typeWidgetList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
+    typeWidgetList.add(Container(color: AppColors.fillColorSecondary, height: 2));
     for (rokwire.GroupsContentType type in rokwire.GroupsContentType.values) {
       if ((_selectedContentType != type)) {
         typeWidgetList.add(_buildContentItem(type));
@@ -256,8 +258,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Widget _buildContentItem(rokwire.GroupsContentType contentType) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+        backgroundColor: illinois.AppColors.white,
+        border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentType),
         onTap: () => _onTapContentType(contentType));
@@ -267,9 +269,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     return Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child: RibbonButton(
       progress: _myGroupsBusy,
       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: illinois.AppColors.white,
       borderRadius: BorderRadius.all(Radius.circular(5)),
-      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+      border: Border.all(color: AppColors.surfaceAccent, width: 1),
       rightIconKey: _contentTypesVisible ? 'chevron-up' : 'chevron-down',
       label: _getContentLabel(_selectedContentType),
       onTap: _canTapGroupsContentType ? _changeContentTypesVisibility : null
@@ -311,15 +313,15 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
               ],),
               /*Container(
                 decoration: BoxDecoration(border:
-                  Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1.5, ))
+                  Border(bottom: BorderSide(color: AppColors.fillColorSecondary, width: 1.5, ))
                 ),
                 child: Text(filtersTitle, style: TextStyle(
-                  fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary,
+                  fontFamily: AppFontFamilies.bold, fontSize: 16, color: AppColors.fillColorPrimary,
                 ),),
               ),*/
               /*Text(filtersTitle, style: TextStyle(
-                fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary,
-                decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary, decorationStyle: TextDecorationStyle.solid, decorationThickness: 1
+                fontFamily: AppFontFamilies.bold, fontSize: 16, color: AppColors.fillColorPrimary,
+                decoration: TextDecoration.underline, decorationColor: AppColors.fillColorSecondary, decorationStyle: TextDecorationStyle.solid, decorationThickness: 1
               ),)*/
             )
           ),
@@ -518,12 +520,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         }
       }
       return Stack(children: [
-          Container(height: 112, color: Styles().colors.backgroundVariant, child:
+          Container(height: 112, color: AppColors.backgroundVariant, child:
             Column(children: [
               Container(height: 80,),
               Container(height: 32, child:
                 CustomPaint(painter:
-                  TrianglePainter(painterColor: Styles().colors.background), child:
+                  TrianglePainter(painterColor: AppColors.background), child:
                     Container(),
                 ),
               ),

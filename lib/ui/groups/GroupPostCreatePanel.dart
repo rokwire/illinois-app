@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -15,6 +16,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 import 'GroupWidgets.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class GroupPostCreatePanel extends StatefulWidget{
   final Group group;
@@ -60,7 +62,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
             style: Styles().textStyles.getTextStyle("panel.group_post_create.heading.regular")
           ),
           centerTitle: false),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         bottomNavigationBar: uiuc.TabBar(),
         body: Stack(alignment: Alignment.topCenter, children: [
           SingleChildScrollView(child:
@@ -96,7 +98,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                         hintText: Localization().getStringEx('panel.group.detail.post.create.subject.field.hint', 'Write a Subject'),
                         border: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Styles().colors.mediumGray,
+                              color: illinois.AppColors.mediumGray,
                               width: 0.0))),
                       style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"))),
                   PostInputField(
@@ -109,7 +111,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                     child: EnabledToggleButton(
                         label: "Also send to additional groups...",
                         borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                        border: Border.all(color: AppColors.surfaceAccent, width: 1),
                         enabled: CollectionUtils.isEmpty(_selectedMembers),
                         toggled: _allowSenPostToOtherGroups,
                         textStyle: CollectionUtils.isEmpty(_selectedMembers) ?
@@ -131,8 +133,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                       child: RoundedButton(
                         label: Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send'),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                        borderColor: Styles().colors.fillColorSecondary,
-                        backgroundColor: Styles().colors.white,
+                        borderColor: AppColors.fillColorSecondary,
+                        backgroundColor: illinois.AppColors.white,
                         onTap: _onTapSend)),
                     Container(width: 20),
                     Flexible(
@@ -140,8 +142,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                       child: RoundedButton(
                         label: Localization().getStringEx('panel.group.detail.post.create.button.cancel.title', 'Cancel'),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                        borderColor: Styles().colors.textSurface,
-                        backgroundColor: Styles().colors.white,
+                        borderColor: illinois.AppColors.textSurface,
+                        backgroundColor: illinois.AppColors.white,
                         onTap: _onTapCancel))
                   ])
               ],),
@@ -173,13 +175,13 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
               child: Container(
                   height: 48,
                   decoration: BoxDecoration(
-                      border: Border.all(color: Styles().colors.mediumGray, width: 1),
+                      border: Border.all(color: illinois.AppColors.mediumGray, width: 1),
                       borderRadius: BorderRadius.all(Radius.circular(4))),
                   child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       child: DropdownButtonHideUnderline(
                           child: DropdownButton<GroupPostNudge?>(
-                              icon: Icon(Icons.arrow_drop_down, color: Styles().colors.fillColorSecondary),
+                              icon: Icon(Icons.arrow_drop_down, color: AppColors.fillColorSecondary),
                               isExpanded: true,
                               style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                               items: _nudgesDropDownItems,

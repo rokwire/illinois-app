@@ -19,8 +19,10 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -55,7 +57,7 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
         title: Localization().getStringEx('panel.canvas_collaborations.header.title', 'Collaborations'),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: illinois.AppColors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -127,7 +129,7 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
         padding: EdgeInsets.only(bottom: 16),
         child: Container(
             decoration: BoxDecoration(
-                color: Styles().colors.backgroundVariant, border: Border.all(color: Styles().colors.blackTransparent06, width: 1)),
+                color: AppColors.backgroundVariant, border: Border.all(color: illinois.AppColors.blackTransparent06, width: 1)),
             padding: EdgeInsets.all(10),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -145,11 +147,11 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
             onTap: () => _onTapCollaboration(collaboration),
             child: Container(
                 decoration: BoxDecoration(
-                    color: Styles().colors.white,
+                    color: illinois.AppColors.white,
                     borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: Styles().colors.lightGray, width: 1),
+                    border: Border.all(color: illinois.AppColors.lightGray, width: 1),
                     boxShadow: [
-                      BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))
+                      BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))
                     ]),
                 padding: EdgeInsets.all(10),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -178,7 +180,7 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
         height: height,
         decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Styles().colors.lightGray, width: 1),
+            border: Border.all(color: illinois.AppColors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),

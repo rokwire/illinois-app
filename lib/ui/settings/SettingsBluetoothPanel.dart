@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
@@ -36,7 +37,7 @@ class _SettingsBluetoothPanelState extends State<SettingsBluetoothPanel> {
         title: Localization().getStringEx("panel.settings.bluetooth.label.title", "Bluetooth"),
       ),
       body: SingleChildScrollView(child: _buildContent()),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

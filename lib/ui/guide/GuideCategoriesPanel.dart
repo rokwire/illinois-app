@@ -4,6 +4,7 @@ import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
@@ -109,7 +110,7 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
           ),
           uiuc.TabBar(),
         ],),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
     );
   }
 
@@ -159,7 +160,7 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
   Widget _buildEntry(GuideSection section, { String? category }) {
     return GestureDetector(onTap: () => _onTapSection(section, category: category), child:
       Padding(padding: EdgeInsets.only(left:16, right: 16, top: 4), child:
-        Container(color: Styles().colors.fillColorPrimary, child:
+        Container(color: AppColors.fillColorPrimary, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
             Semantics(button: true, child:
               Row(children: [

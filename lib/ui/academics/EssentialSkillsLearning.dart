@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -40,15 +41,15 @@ class _EssentialSkillsLearningState extends State<EssentialSkillsLearning> {
       appBar: RootHeaderBar(title: Localization().getStringEx('panel.essential_skills_coach.start_learning.header.title', 'Let\'s Get Started'), leading: RootHeaderBarLeading.Back,),
       body: SectionSlantHeader(
         headerWidget: _buildHeader(),
-        slantColor: Styles().colors.gradientColorPrimary,
+        slantColor: AppColors.gradientColorPrimary,
         slantPainterHeadingHeight: 0,
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         children: [
-          Styles().images.getImage("streak", color: Styles().colors.fillColorPrimary) ?? Container(),
+          Styles().images.getImage("streak", color: AppColors.fillColorPrimary) ?? Container(),
           Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
               label: Localization().getStringEx("panel.essential_skills_coach.start_learning.button.start.label", 'Start'),
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant"),
-              backgroundColor: Styles().colors.surface,
+              backgroundColor: AppColors.surface,
               onTap: _onTap
           )),
 
@@ -79,8 +80,8 @@ class _EssentialSkillsLearningState extends State<EssentialSkillsLearning> {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Styles().colors.fillColorPrimaryVariant,
-                Styles().colors.gradientColorPrimary,
+                AppColors.fillColorPrimaryVariant,
+                AppColors.gradientColorPrimary,
               ]
           )
       ),

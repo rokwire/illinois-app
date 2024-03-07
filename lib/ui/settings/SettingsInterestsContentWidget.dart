@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -103,14 +104,14 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
         ? headerMsg.substring(iconMacroPosition + iconMacro.length)
         : '';
     return Container(
-        color: Styles().colors.background,
+        color: AppColors.background,
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
           Semantics(
               label: headerMsg,
               excludeSemantics: true,
               child: Container(
                   alignment: Alignment.topCenter,
-                  color: Styles().colors.fillColorPrimary,
+                  color: AppColors.fillColorPrimary,
                   child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       child: RichText(
@@ -159,7 +160,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
           child: Container(
             foregroundDecoration: BoxDecoration(
               border: Border.all(
-                color: Styles().colors.surfaceAccent,
+                color: AppColors.surfaceAccent,
                 width: 1.0,
               ),
               borderRadius: BorderRadius.circular(15),
@@ -179,7 +180,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
         if (categoryWidgets.isNotEmpty) {
           categoryWidgets.add(Container(
             height: 1,
-            color: Styles().colors.surfaceAccent,
+            color: AppColors.surfaceAccent,
           ));
         }
 
@@ -230,7 +231,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
   Widget _buildSearchField() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
-      color: Styles().colors.surface,
+      color: AppColors.surface,
       height: 48,
       child: Row(
         children: <Widget>[
@@ -245,7 +246,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
                   onChanged: (text) => _onTextChanged(text),
                   onSubmitted: (_) => () {},
                   autofocus: true,
-                  cursorColor: Styles().colors.fillColorSecondary,
+                  cursorColor: AppColors.fillColorSecondary,
                   keyboardType: TextInputType.text,
                   style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
                   decoration: InputDecoration(
@@ -322,7 +323,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
           child: Container(
             foregroundDecoration: BoxDecoration(
               border: Border.all(
-                color: Styles().colors.surfaceAccent,
+                color: AppColors.surfaceAccent,
                 width: 1.0,
               ),
               borderRadius: BorderRadius.circular(15),
@@ -342,7 +343,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
         if (tagsWidgets.isNotEmpty) {
           tagsWidgets.add(Container(
             height: 1,
-            color: Styles().colors.surfaceAccent,
+            color: AppColors.surfaceAccent,
           ));
         }
 

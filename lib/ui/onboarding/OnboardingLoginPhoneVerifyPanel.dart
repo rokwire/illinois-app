@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
@@ -28,6 +29,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class OnboardingLoginPhoneVerifyPanel extends StatefulWidget with OnboardingPanel {
 
@@ -57,7 +59,7 @@ class _OnboardingLoginPhoneVerifyPanelState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         body: GestureDetector(
           excludeFromSemantics: true,
           behavior: HitTestBehavior.translucent,
@@ -76,9 +78,9 @@ class _OnboardingLoginPhoneVerifyPanelState
                               'Connect to Illinois'),
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontFamily: Styles().fontFamilies.bold,
+                              fontFamily: AppFontFamilies.bold,
                               fontSize: 36,
-                              color: Styles().colors.fillColorPrimary))),
+                              color: AppColors.fillColorPrimary))),
                   Container(
                     height: 48,
                   ),
@@ -90,9 +92,9 @@ class _OnboardingLoginPhoneVerifyPanelState
                               "To verify your phone number, choose your preferred contact channel, and we'll send you a one-time authentication code."),
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontFamily: Styles().fontFamilies.regular,
+                              fontFamily: AppFontFamilies.regular,
                               fontSize: 18,
-                              color: Styles().colors.fillColorPrimary))),
+                              color: AppColors.fillColorPrimary))),
                   Padding(
                     padding: EdgeInsets.only(left: 12, top: 12, bottom: 6),
                     child: Text(
@@ -102,8 +104,8 @@ class _OnboardingLoginPhoneVerifyPanelState
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           fontSize: 16,
-                          color: Styles().colors.fillColorPrimary,
-                          fontFamily: Styles().fontFamilies.bold),
+                          color: AppColors.fillColorPrimary,
+                          fontFamily: AppFontFamilies.bold),
                     ),
                   ),
                   Padding(
@@ -122,12 +124,12 @@ class _OnboardingLoginPhoneVerifyPanelState
                         controller: _phoneNumberController,
                         autofocus: false,
                         onSubmitted: (_) => _clearErrorMsg,
-                        cursorColor: Styles().colors.textBackground,
+                        cursorColor: illinois.AppColors.textBackground,
                         keyboardType: TextInputType.phone,
                         style: TextStyle(
                             fontSize: 16,
-                            fontFamily: Styles().fontFamilies.regular,
-                            color: Styles().colors.textBackground),
+                            fontFamily: AppFontFamilies.regular,
+                            color: illinois.AppColors.textBackground),
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
@@ -155,7 +157,7 @@ class _OnboardingLoginPhoneVerifyPanelState
                             selected: _verificationMethod == Auth2PhoneVerificationMethod.sms,
                             button: true,
                             child: Radio(
-                              activeColor: Styles().colors.fillColorSecondary,
+                              activeColor: AppColors.fillColorSecondary,
                               value: Auth2PhoneVerificationMethod.sms,
                               groupValue: _verificationMethod,
                               onChanged: _onMethodChanged,
@@ -167,7 +169,7 @@ class _OnboardingLoginPhoneVerifyPanelState
                                   "panel.onboarding.verify_phone.text_me.label",
                                   "Text me"),
                               style: TextStyle(
-                                  fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                                  fontSize: 16, fontFamily: AppFontFamilies.regular),
                             ))
                         ],
                       ),
@@ -182,7 +184,7 @@ class _OnboardingLoginPhoneVerifyPanelState
                         style: TextStyle(
                             color: Colors.red,
                             fontSize: 14,
-                            fontFamily: Styles().fontFamilies.medium),
+                            fontFamily: AppFontFamilies.medium),
                       ),
                     ),
                   ),
@@ -211,8 +213,8 @@ class _OnboardingLoginPhoneVerifyPanelState
                 hint: Localization().getStringEx(
                     "panel.onboarding.verify_phone.button.next.hint", ""),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                borderColor: Styles().colors.fillColorSecondary,
-                backgroundColor: Styles().colors.background,
+                borderColor: AppColors.fillColorSecondary,
+                backgroundColor: AppColors.background,
                 onTap: () => _onTapNext()),),)
           ],),
         ));

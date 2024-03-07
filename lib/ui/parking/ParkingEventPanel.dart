@@ -19,6 +19,7 @@ import 'package:illinois/model/Parking.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Transportation.dart';
@@ -69,7 +70,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
         title: Localization().getStringEx("panel.parking_lots.label.heading","Parking Spots"),
       ),
       body: _buildScaffoldBody(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -226,7 +227,7 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
             hint: Localization().getStringEx('panel.parking_lots.button.directions.hint', ''),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
             backgroundColor: Colors.white,
-            borderColor: Styles().colors.fillColorSecondary,
+            borderColor: AppColors.fillColorSecondary,
             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             onTap: _onTapDirections),),))
         )

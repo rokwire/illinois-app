@@ -29,6 +29,7 @@ import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:video_player/video_player.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class SettingsVideoTutorialPanel extends StatefulWidget {
   final Video videoTutorial;
@@ -125,7 +126,7 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Styles().colors.blackTransparent06,
+        backgroundColor: illinois.AppColors.blackTransparent06,
         appBar: HeaderBar(
             title: StringUtils.ensureNotEmpty(widget.videoTutorial.title,
                 defaultValue: Localization().getStringEx("panel.settings.video_tutorial.header.title", "Video Tutorial"))),
@@ -198,7 +199,7 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
                         height: 30,
                         decoration: BoxDecoration(
                             border: Border.all(
-                                color: (_ccEnabled ? Styles().colors.white : Styles().colors.disabledTextColorTwo), width: 2),
+                                color: (_ccEnabled ? illinois.AppColors.white : illinois.AppColors.disabledTextColorTwo), width: 2),
                             borderRadius: BorderRadius.all(Radius.circular(6))),
                         child: Center(
                             child: Text('CC',

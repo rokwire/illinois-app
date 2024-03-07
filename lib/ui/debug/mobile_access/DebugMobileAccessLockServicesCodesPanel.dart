@@ -18,9 +18,10 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class DebugMobileAccessLockServicesCodesPanel extends StatefulWidget {
   DebugMobileAccessLockServicesCodesPanel();
@@ -59,10 +60,10 @@ class _DebugMobileAccessLockServicesCodesPanelState extends State<DebugMobileAcc
                 RoundedButton(
                     label: "Change",
                     enabled: !_loading,
-                    textColor: (!_loading) ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor,
-                    borderColor: (!_loading) ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
-                    backgroundColor: Styles().colors.white,
-                    fontFamily: Styles().fontFamilies.bold,
+                    textColor: (!_loading) ? AppColors.fillColorPrimary : illinois.AppColors.disabledTextColor,
+                    borderColor: (!_loading) ? AppColors.fillColorSecondary : illinois.AppColors.disabledTextColor,
+                    backgroundColor: illinois.AppColors.white,
+                    fontFamily: AppFontFamilies.bold,
                     contentWeight: 0.0,
                     fontSize: 16,
                     borderWidth: 2,
@@ -70,7 +71,7 @@ class _DebugMobileAccessLockServicesCodesPanelState extends State<DebugMobileAcc
                     onTap: _onTapChange)
               ]))
         ])),
-        backgroundColor: Styles().colors.background);
+        backgroundColor: AppColors.background);
   }
 
   Widget _buildContent() {
@@ -79,17 +80,17 @@ class _DebugMobileAccessLockServicesCodesPanelState extends State<DebugMobileAcc
         Padding(
             padding: EdgeInsets.only(bottom: 4),
             child: Text("Lock Service Codes (comma separated integers):",
-                style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary))),
+                style: TextStyle(fontFamily: AppFontFamilies.bold, fontSize: 16, color: AppColors.fillColorPrimary))),
         Stack(children: <Widget>[
           Semantics(
               textField: true,
               child: Container(
-                  color: Styles().colors.white,
+                  color: illinois.AppColors.white,
                   child: TextField(
                       maxLines: 2,
                       controller: _codesController,
                       decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-                      style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground)))),
+                      style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: illinois.AppColors.textBackground)))),
           Align(
               alignment: Alignment.topRight,
               child: Semantics(
@@ -108,9 +109,9 @@ class _DebugMobileAccessLockServicesCodesPanelState extends State<DebugMobileAcc
                                   excludeSemantics: true,
                                   child: Text('X',
                                       style: TextStyle(
-                                          fontFamily: Styles().fontFamilies.regular,
+                                          fontFamily: AppFontFamilies.regular,
                                           fontSize: 16,
-                                          color: Styles().colors.fillColorPrimary))))))))
+                                          color: AppColors.fillColorPrimary))))))))
         ])
       ])
     ]);

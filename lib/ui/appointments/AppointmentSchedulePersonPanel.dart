@@ -23,6 +23,7 @@ import 'package:illinois/ui/appointments/AppointmentSchedulePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentScheduleTimePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -60,7 +61,7 @@ class _AppointmentSchedulePersonPanelState extends State<AppointmentSchedulePers
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.appointment.schedule.person.header.title', 'Schedule Appointment')),
       body: _buildContent(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       //bottomNavigationBar: uiuc.TabBar()
     );
   }
@@ -112,7 +113,7 @@ class _AppointmentSchedulePersonPanelState extends State<AppointmentSchedulePers
   Widget _buildLoadingContent() {
     return Center(child:
       SizedBox(width: 32, height: 32, child:
-        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+        CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 3,),
       )
     );
   }
@@ -170,7 +171,7 @@ class _AppointmentPersonCard extends StatelessWidget {
     return InkWell(onTap: onTap, child:
       ClipRRect(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)), child:
         Stack(children: [
-          Container(decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
+          Container(decoration: BoxDecoration(color: AppColors.surface, border: Border.all(color: AppColors.surfaceAccent, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 //Text(person.speciality?.toUpperCase() ?? '', style: Styles().textStyles.getTextStyle('widget.item.small.semi_fat'),),
@@ -266,7 +267,7 @@ class _AppointmentPersonCard extends StatelessWidget {
               ])
             )
           ),
-          Container(color: Styles().colors.accentColor3, height: 4,)
+          Container(color: AppColors.accentColor3, height: 4,)
         ],)
       )
     );

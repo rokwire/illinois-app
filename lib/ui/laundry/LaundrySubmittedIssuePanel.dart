@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/laundry/LaundryRequestIssuePanel.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -44,12 +45,12 @@ class _LaundrySubmittedIssuePanelState extends State<LaundrySubmittedIssuePanel>
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [_buildSuccessHeader(), _buildSuccessDescription(), _buildReturnWidget()]))
         ])),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         bottomNavigationBar: uiuc.TabBar());
   }
 
   Widget _buildLaundryColorSection() {
-    return Container(color: Styles().colors.accentColor2, height: 4);
+    return Container(color: AppColors.accentColor2, height: 4);
   }
 
   Widget _buildSuccessHeader() {
@@ -76,9 +77,9 @@ class _LaundrySubmittedIssuePanelState extends State<LaundrySubmittedIssuePanel>
     return RoundedButton(
         label: Localization().getStringEx('panel.laundry.issues_submitted.return.button', 'Return'),
         textStyle: Styles().textStyles.getTextStyle("widget.colourful_button.title.large.accent"),
-        backgroundColor: Styles().colors.fillColorPrimary,
+        backgroundColor: AppColors.fillColorPrimary,
         contentWeight: 0.5,
-        borderColor: Styles().colors.fillColorPrimary,
+        borderColor: AppColors.fillColorPrimary,
         onTap: _onTapBack,
         leftIcon: Styles().images.getImage('chevron-left-white', excludeFromSemantics: true));
   }

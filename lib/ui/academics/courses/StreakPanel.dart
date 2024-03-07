@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/model/CustomCourses.dart';
@@ -89,7 +91,7 @@ class _StreakPanelState extends State<StreakPanel> {
                   child: Stack(
                     alignment: AlignmentDirectional.centerStart,
                     children: [
-                      Align(alignment: AlignmentDirectional.centerEnd, child: Opacity(opacity: 0.2, child: Styles().images.getImage("streak", color: Styles().colors.fillColorPrimary))),
+                      Align(alignment: AlignmentDirectional.centerEnd, child: Opacity(opacity: 0.2, child: Styles().images.getImage("streak", color: AppColors.fillColorPrimary))),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -100,11 +102,11 @@ class _StreakPanelState extends State<StreakPanel> {
                                 width: streakCircleSize,
                                 height: streakCircleSize,
                                 decoration: new BoxDecoration(
-                                  color: Styles().colors.fillColorPrimary,
+                                  color: AppColors.fillColorPrimary,
                                   shape: BoxShape.circle,
                                 ),
                               ),
-                              Text(_streak.toString(), style: TextStyle(fontSize: 80, color: Styles().colors.surface), textAlign: TextAlign.center,)
+                              Text(_streak.toString(), style: TextStyle(fontSize: 80, color: AppColors.surface), textAlign: TextAlign.center,)
                             ],
                           ),
                           Padding(
@@ -124,7 +126,7 @@ class _StreakPanelState extends State<StreakPanel> {
                   padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 16.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: Styles().colors.dividerLineAccent),
+                      border: Border.all(color: illinois.AppColors.dividerLineAccent),
                       borderRadius: BorderRadius.all(
                           Radius.circular(5.0)
                       ),
@@ -139,11 +141,11 @@ class _StreakPanelState extends State<StreakPanel> {
                         titleTextStyle: Styles().textStyles.getTextStyle("widget.detail.large.fat") ?? TextStyle(),
                         leftChevronIcon: Icon(
                           Icons.chevron_left_rounded,
-                          color: Styles().colors.surface,
+                          color: AppColors.surface,
                         ),
                         rightChevronIcon: Icon(
                             Icons.chevron_right_rounded,
-                            color: Styles().colors.surface,
+                            color: AppColors.surface,
                         )
                       ),
                       availableCalendarFormats: const {
@@ -183,7 +185,7 @@ class _StreakPanelState extends State<StreakPanel> {
                   padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 16.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: Styles().colors.dividerLineAccent),
+                      border: Border.all(color: illinois.AppColors.dividerLineAccent),
                       borderRadius: BorderRadius.all(
                           Radius.circular(5.0)
                       ),
@@ -216,17 +218,17 @@ class _StreakPanelState extends State<StreakPanel> {
           ),
         ),
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
     );
   }
 
   Widget? _buildSelected(BuildContext context, DateTime day, DateTime focusedDay) {
     double radius = 20.0;
     double cellWidth = 54.0;
-    BoxDecoration singleDecoration = BoxDecoration(color: Styles().colors.fillColorPrimary, shape: BoxShape.circle);
-    BoxDecoration rangeMiddleDecoration = BoxDecoration(color: Styles().colors.fillColorPrimary, shape: BoxShape.rectangle);
-    BoxDecoration rangeStartDecoration = BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.only(topLeft: Radius.circular(radius), bottomLeft: Radius.circular(radius)));
-    BoxDecoration rangeEndDecoration = BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.only(topRight: Radius.circular(radius), bottomRight: Radius.circular(radius)));
+    BoxDecoration singleDecoration = BoxDecoration(color: AppColors.fillColorPrimary, shape: BoxShape.circle);
+    BoxDecoration rangeMiddleDecoration = BoxDecoration(color: AppColors.fillColorPrimary, shape: BoxShape.rectangle);
+    BoxDecoration rangeStartDecoration = BoxDecoration(color: AppColors.fillColorPrimary, borderRadius: BorderRadius.only(topLeft: Radius.circular(radius), bottomLeft: Radius.circular(radius)));
+    BoxDecoration rangeEndDecoration = BoxDecoration(color: AppColors.fillColorPrimary, borderRadius: BorderRadius.only(topRight: Radius.circular(radius), bottomRight: Radius.circular(radius)));
 
     DateTime dayBefore = day.subtract(const Duration(days: 1));
     DateTime dayAfter = day.add(const Duration(days: 1));
@@ -266,7 +268,7 @@ class _StreakPanelState extends State<StreakPanel> {
           Container(
             width: 40,
             height: 40,
-            decoration: BoxDecoration(color: Styles().colors.background, border: Border.all(color: Styles().colors.fillColorPrimary, width: 2.0), shape: BoxShape.circle),
+            decoration: BoxDecoration(color: AppColors.background, border: Border.all(color: AppColors.fillColorPrimary, width: 2.0), shape: BoxShape.circle),
           ),
           Align(
             alignment: AlignmentDirectional.bottomCenter,
@@ -286,7 +288,7 @@ class _StreakPanelState extends State<StreakPanel> {
           Container(
             width: 40,
             height: 40,
-            decoration: BoxDecoration(color: Styles().colors.surfaceAccent, shape: BoxShape.circle),
+            decoration: BoxDecoration(color: AppColors.surfaceAccent, shape: BoxShape.circle),
           ),
           Text(day.day.toString(), style: Styles().textStyles.getTextStyle("widget.detail.large.fat"), textAlign: TextAlign.center,)
         ],

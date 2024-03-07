@@ -17,8 +17,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/settings/SettingsBluetoothPanel.dart';
 import 'package:illinois/ui/settings/SettingsLocationPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
@@ -34,7 +34,7 @@ class SettingsNotificationsPreferencesPanel extends StatelessWidget{
         title: Localization().getStringEx("panel.settings.notification_prefferences.label.title", "Notifications Preferences"),
       ),
       body: SingleChildScrollView(child: _buildContent(context)),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

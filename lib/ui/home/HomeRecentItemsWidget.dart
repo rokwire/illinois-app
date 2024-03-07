@@ -35,6 +35,7 @@ import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/News.dart';
@@ -277,7 +278,7 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
             ,),
           ),
         ],)),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
     );
   }
 
@@ -455,7 +456,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
   }
 
   Widget _topBorder() {
-    return Container(height: 7, color: widget.recentItem.headerColor ?? Styles().colors.fillColorPrimary);
+    return Container(height: 7, color: widget.recentItem.headerColor ?? AppColors.fillColorPrimary);
   }
 
   void _onTapFavorite() {

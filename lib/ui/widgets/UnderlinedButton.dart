@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class UnderlinedButton extends StatelessWidget {
@@ -38,17 +39,17 @@ class UnderlinedButton extends StatelessWidget {
                         child: Container(
                             decoration: BoxDecoration(
                                 border: Border(bottom: BorderSide(
-                                  color: Styles().colors.fillColorSecondary,
+                                  color: AppColors.fillColorSecondary,
                                   width: 1,),)
                             ),
                             padding: EdgeInsets.only(bottom: 2),
                             child: Text(
                               title!,
-                              style: Styles().textStyles.getTextStyle("widget.button.title.medium")?.copyWith(fontSize: fontSize, fontFamily: fontFamily ?? Styles().fontFamilies.medium),
+                              style: Styles().textStyles.getTextStyle("widget.button.title.medium")?.copyWith(fontSize: fontSize, fontFamily: fontFamily ?? AppFontFamilies.medium),
                             )))),
                 progress ?
                 Align(alignment: Alignment.center,
-                    child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
+                    child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorSecondary), )
                 ) : Container(),
               ],
             )

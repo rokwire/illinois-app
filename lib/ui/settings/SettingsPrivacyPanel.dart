@@ -20,6 +20,7 @@ import "package:flutter/material.dart";
 import "package:illinois/model/PrivacyData.dart";
 import "package:illinois/service/Analytics.dart";
 import 'package:illinois/utils/AppUtils.dart';
+import "package:rokwire_plugin/gen/styles.dart";
 import 'package:rokwire_plugin/service/auth2.dart';
 import "package:illinois/service/Config.dart";
 import "package:illinois/service/FlexUI.dart";
@@ -35,6 +36,7 @@ import "package:rokwire_plugin/ui/widgets/rounded_button.dart";
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import "package:rokwire_plugin/utils/utils.dart";
 import "package:rokwire_plugin/service/styles.dart";
+import 'package:illinois/gen/styles.dart' as illinois;
 
 enum SettingsPrivacyPanelMode { regular, onboarding, update }
 
@@ -117,7 +119,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
         ? HeaderBar(title: Localization().getStringEx("panel.settings.privacy.privacy.label.title", "Choose Your Privacy Level"),)
         : null,
       body: _loading ? _buildLoadingWidget() : _buildContentWidget(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: (widget.mode == SettingsPrivacyPanelMode.regular) ? uiuc.TabBar() : null,
     );
   }
@@ -159,7 +161,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
     return
       Container(
         padding: EdgeInsets.symmetric(vertical:18),
-        color: Styles().colors.white,
+        color: illinois.AppColors.white,
         child: SafeArea(
           top: false,
           child: Column(children: <Widget>[
@@ -180,7 +182,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
 
   Widget _buildSaveButton() {
     return Container(
-        color: Styles().colors.fillColorPrimaryVariant,
+        color: AppColors.fillColorPrimaryVariant,
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: Row(
@@ -195,8 +197,8 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                           ? Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.disabled.hint", "")
                           : Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.hint", ""),
                       textStyle: _disabled ? Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat.variant_two") : Styles().textStyles.getTextStyle("widget.colourful_button.title.large.accent"),
-                      borderColor: _disabled ? Styles().colors.disabledTextColorTwo : Styles().colors.fillColorSecondary,
-                      backgroundColor: Styles().colors.fillColorPrimaryVariant,
+                      borderColor: _disabled ? illinois.AppColors.disabledTextColorTwo : AppColors.fillColorSecondary,
+                      backgroundColor: AppColors.fillColorPrimaryVariant,
                       progress: _updating,
                       onTap: () => _onSaveClicked()),
                 )
@@ -206,7 +208,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
 
   Widget _buildUpdatePrivacyDialog(BuildContext context) {
     return Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
-      Material(color: Styles().colors.fillColorPrimary, child:
+      Material(color: AppColors.fillColorPrimary, child:
         Padding(padding: const EdgeInsets.all(16.0), child:
           Column(children: [
             Align(alignment: Alignment.centerRight, child:
@@ -229,22 +231,22 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
       Column(children: <Widget>[
         Stack(alignment: Alignment.center, children: <Widget>[
           Column(children: <Widget>[
-            Container(height: 48, color: Styles().colors.fillColorPrimary,),
-            Container(height: 48, color: Styles().colors.white,),
+            Container(height: 48, color: AppColors.fillColorPrimary,),
+            Container(height: 48, color: illinois.AppColors.white,),
           ],),
           Center(child:
             Container(height: 86, width: 86, child:
               Padding(padding: EdgeInsets.all(6), child:
                 Container(padding: EdgeInsets.all(1),
                   decoration: BoxDecoration(
-                    color: Styles().colors.white,
+                    color: illinois.AppColors.white,
                     borderRadius: BorderRadius.circular(100),
-                    border: Border.all(width:2, color: Styles().colors.fillColorPrimary,)),
+                    border: Border.all(width:2, color: AppColors.fillColorPrimary,)),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Styles().colors.white,
+                      color: illinois.AppColors.white,
                       borderRadius: BorderRadius.circular(100),
-                      border: Border.all(width:2, color: Styles().colors.fillColorSecondary,)
+                      border: Border.all(width:2, color: AppColors.fillColorSecondary,)
                     ),
                     child: Center(child:
                       Semantics(label: Localization().getStringEx("panel.settings.privacy.privacy.dialog.label.new_privacy", "Privacy Level: "), child:
@@ -305,7 +307,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
             Row(children: <Widget>[
               Container(
                 width: 8, height: 8,
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(100), color: Styles().colors.fillColorSecondary,),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(100), color: AppColors.fillColorSecondary,),
               ),
               SizedBox(width: 8),
               Expanded( child:
@@ -367,7 +369,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
   Widget _buildContentHeadingWidget() {
     if (widget.mode == SettingsPrivacyPanelMode.onboarding) {
       return Semantics(explicitChildNodes: true, child:
-        Container(color: Styles().colors.surface, child:
+        Container(color: AppColors.surface, child:
           Stack(children: <Widget>[
             _titleLayout(),
             OnboardingBackButton(
@@ -399,7 +401,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
         excludeSemantics: true,
         header: true,
         child: Container(
-            color: Styles().colors.surface,
+            color: AppColors.surface,
             child: Padding(
               padding: EdgeInsets.only(left: 10, right: 10, top: 10),
               child: Center(
@@ -419,7 +421,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
           excludeSemantics: true,
           header: true,
           child: Container(
-              color: Styles().colors.surface,
+              color: AppColors.surface,
               child: Padding(
                 padding: EdgeInsets.only(left: 10, right: 10, top: 5),
                 child: Center(
@@ -441,7 +443,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
   Widget _buildSliderInstructions(){
     return Container(
       padding: EdgeInsets.only(left: 22, right: 22,),
-      color: Styles().colors.white,
+      color: illinois.AppColors.white,
       child: Row(children: <Widget>[
         Expanded(child:
         Text(
@@ -472,7 +474,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
     return ConstrainedBox(
       constraints: BoxConstraints(minHeight: 180),
       child: Container(
-        color: Styles().colors.white,
+        color: illinois.AppColors.white,
         child: Padding(
             padding: EdgeInsets.only(top: 24, left: 22, right: 22, bottom: 8),
             child: Row(
@@ -483,8 +485,8 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                 width: 60,
                 alignment: Alignment.center,
                 decoration:  BoxDecoration(
-                  border: Border.all(color: Styles().colors.fillColorPrimary,width: 2),
-                  color: Styles().colors.white,
+                  border: Border.all(color: AppColors.fillColorPrimary,width: 2),
+                  color: illinois.AppColors.white,
                   borderRadius: BorderRadius.all(Radius.circular(100)),
                 ),
                 child: Container(
@@ -492,8 +494,8 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                   width: 52,
                   alignment: Alignment.center,
                   decoration:  BoxDecoration(
-                    border: Border.all(color: Styles().colors.fillColorSecondary, width: 2),
-                    color: Styles().colors.white,
+                    border: Border.all(color: AppColors.fillColorSecondary, width: 2),
+                    color: illinois.AppColors.white,
                     borderRadius: BorderRadius.all(Radius.circular(100)),
                   ),
                   child: Semantics( label:Localization().getStringEx("panel.settings.privacy.label.privacy_level.title", "Privacy Level: "),
@@ -513,7 +515,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
 
   Widget _buildLoadingWidget() => Center(child:
     SizedBox(width: 32, height: 32, child:
-      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+      CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 3,),
     )
   );
 
@@ -584,7 +586,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
                 Semantics(
                   button: true,
                   child: Container(
-                    decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Styles().colors.fillColorSecondary))),
+                    decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: AppColors.fillColorSecondary))),
                     child: GestureDetector(
                       onTap: _onTapExpandAll,
                       child: Text(
@@ -627,10 +629,10 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Container(
-        decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors.surfaceAccent, width: 1)),
+        decoration: BoxDecoration(color: AppColors.fillColorPrimary, borderRadius: BorderRadius.circular(4), border: Border.all(color: AppColors.surfaceAccent, width: 1)),
         padding: EdgeInsets.symmetric(horizontal: 0),
-        child: Theme(data: ThemeData(/*accentColor: Styles().colors.white,*/
-            /*backgroundColor: Styles().colors.white,*/
+        child: Theme(data: ThemeData(/*accentColor: illinois.AppColors.white,*/
+            /*backgroundColor: illinois.AppColors.white,*/
             dividerColor: Colors.white,
             ),
             child: ExpansionTile(
@@ -641,11 +643,11 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
                   hint: Localization().getStringEx("panel.settings.privacy.label.hint","Double tap to ") + (expanded ? "Hide" : "Show") + " information",
                   excludeSemantics:true,child:
                   Container(child: Text(Localization().getString(category.titleKey, defaults:category.title) ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.fat")))),
-              backgroundColor: Styles().colors.fillColorPrimary,
+              backgroundColor: AppColors.fillColorPrimary,
               children: _buildCategoryEntries(category),
               trailing: RotationTransition(
                   turns: _iconTurns,
-                  child: Icon(Icons.arrow_drop_down, color: Styles().colors.white,)),
+                  child: Icon(Icons.arrow_drop_down, color: illinois.AppColors.white,)),
               onExpansionChanged: (bool expand) {
                 if (expand) {
                   _controller.forward();
@@ -740,7 +742,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
       Semantics( container: true,
         child: Container(
         padding: EdgeInsets.only(top: 14, bottom: 19, left: 14, right: 24),
-        color: Styles().colors.white,
+        color: illinois.AppColors.white,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -817,7 +819,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.only(left: 8),
                 decoration: BoxDecoration(
-                    border: Border(left: BorderSide(width: 1, color: Styles().colors.fillColorSecondary))
+                    border: Border(left: BorderSide(width: 1, color: AppColors.fillColorSecondary))
                 ),
                 child: Text(dataUsageInfo!,
                     style: isEnabled? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.disabled")),

@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:rokwire_plugin/model/survey.dart';
@@ -91,9 +92,9 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     return SectionSlantHeader(
       titleIconKey: 'health',
       headerWidget: _buildHeader(),
-      slantColor: Styles().colors.gradientColorPrimary,
+      slantColor: AppColors.gradientColorPrimary,
       slantPainterHeadingHeight: 0,
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       children: _buildInfoAndSettings(accessWidget, showHistory),
       childrenPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       allowOverlap: false,
@@ -133,8 +134,8 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Styles().colors.fillColorPrimaryVariant,
-                Styles().colors.gradientColorPrimary,
+                AppColors.fillColorPrimaryVariant,
+                AppColors.gradientColorPrimary,
               ]
           )
       ),
@@ -269,15 +270,15 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     List<Widget> buttons = [
       Padding(padding: const EdgeInsets.symmetric(horizontal: 4), child: RoundedButton(
         label: Localization().getStringEx('dialog.no.title', 'No'),
-        borderColor: Styles().colors.fillColorPrimaryVariant,
-        backgroundColor: Styles().colors.surface,
+        borderColor: AppColors.fillColorPrimaryVariant,
+        backgroundColor: AppColors.surface,
         textStyle: Styles().textStyles.getTextStyle('widget.detail.large.fat'),
         onTap: _onTapDismissClearHistory,
       )),
       Padding(padding: const EdgeInsets.symmetric(horizontal: 4), child: RoundedButton(
         label: Localization().getStringEx('dialog.yes.title', 'Yes'),
-        borderColor: Styles().colors.fillColorSecondary,
-        backgroundColor: Styles().colors.surface,
+        borderColor: AppColors.fillColorSecondary,
+        backgroundColor: AppColors.surface,
         textStyle: Styles().textStyles.getTextStyle('widget.detail.large.fat'),
         onTap: _onTapClearHistory,
       )),
@@ -285,7 +286,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
 
     ActionsMessage.show(
       context: context,
-      titleBarColor: Styles().colors.surface,
+      titleBarColor: AppColors.surface,
       message: Localization().getStringEx('panel.wellness.sections.health_screener.history.clear.confirm', 'Are you sure you want to clear your history?'),
       messageTextStyle: Styles().textStyles.getTextStyle('widget.description.medium'),
       messagePadding: const EdgeInsets.only(left: 32, right: 32, top: 8, bottom: 32),
@@ -376,7 +377,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
       textAlign: TextAlign.center,
     );
     showDialog(context: context, builder: (_) => InfoPopup(
-      backColor: Styles().colors.surface,
+      backColor: AppColors.surface,
       padding: EdgeInsets.only(left: 32, right: 32, top: 40, bottom: 32),
       alignment: Alignment.center,
       infoTextWidget: textWidget,

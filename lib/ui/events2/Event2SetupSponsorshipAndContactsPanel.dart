@@ -12,6 +12,7 @@ import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class Event2SetupSponsorshipAndContactsPanel extends StatefulWidget {
   final Event2SponsorshipAndContactsDetails? details;
@@ -47,7 +48,7 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
   Widget _buildScaffoldContent() => Scaffold(
     appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.sponsorship_and_contacts.header.title", "Event Host Details"), onLeading: _onHeaderBack,),
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors.white,
+    backgroundColor: illinois.AppColors.white,
   );
 
   Widget _buildPanelContent() =>

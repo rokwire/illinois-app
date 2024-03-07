@@ -15,11 +15,11 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:rokwire_plugin/service/styles.dart';
 
 class AthleticsTeamsPanel extends StatefulWidget {
   @override
@@ -48,7 +48,7 @@ class _AthleticsTeamsPanelState extends State<AthleticsTeamsPanel> {
             ),
           ]),
         ),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         bottomNavigationBar: uiuc.TabBar(),
         );
   }

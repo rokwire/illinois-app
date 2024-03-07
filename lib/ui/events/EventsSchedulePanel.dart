@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/ext/Event.dart';
@@ -32,6 +33,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 enum _EventTab { All, Saved }
 
@@ -95,7 +97,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.events_schedule.header.title', 'Event Schedule'),),
       body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Container(color: Styles().colors.white, child :
+        Container(color: illinois.AppColors.white, child :
           Padding(padding: EdgeInsets.all(12), child:
             Row(children: _buildTabWidgets(),)
           ),
@@ -107,7 +109,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Container( color: Styles().colors.white,
+                      Container( color: illinois.AppColors.white,
                         width: double.infinity,
                         child :
                         SingleChildScrollView(
@@ -121,7 +123,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                       )),
                       Expanded(
                           child: Container(
-                            color: Styles().colors.background,
+                            color: AppColors.background,
                             child: Center(
                               child: _buildListView(),
                             ),
@@ -133,7 +135,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
               ),
             )
           ]),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -161,7 +163,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     }
 
     return Stack(children: [
-      Container(padding: EdgeInsets.symmetric(horizontal: 16), color: Styles().colors.background, child: exploresContent),
+      Container(padding: EdgeInsets.symmetric(horizontal: 16), color: AppColors.background, child: exploresContent),
       _buildDimmedContainer(),
     ]);
   }
@@ -245,7 +247,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
           padding: EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 40),
           child: Container(
             decoration: BoxDecoration(
-              color: Styles().colors.fillColorSecondary,
+              color: AppColors.fillColorSecondary,
               borderRadius: BorderRadius.circular(5.0),
             ),
             child: Padding(
@@ -256,7 +258,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                   shrinkWrap: true,
                   separatorBuilder: (context, index) => Divider(
                     height: 1,
-                    color: Styles().colors.fillColorPrimaryTransparent03,
+                    color: illinois.AppColors.fillColorPrimaryTransparent03,
                   ),
                   itemCount: filterValues.length + 1, // 1 ForSearchField
                   itemBuilder: (context, index) {
@@ -299,7 +301,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                   onChanged: (text) => _onTextChanged(text),
                   onSubmitted: (_) => _onTapSearchTags(),
                   autofocus: true,
-                  cursorColor: Styles().colors.fillColorSecondary,
+                  cursorColor: AppColors.fillColorSecondary,
                   keyboardType: TextInputType.text,
                   style: Styles().textStyles.getTextStyle('panel.event_schedule.search.edit'),
                   decoration: InputDecoration(
@@ -734,12 +736,12 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
               visible: widget.showHeader,
               child: Container(
                 height: headerHeight,
-                color: widget.headerColor ?? Styles().colors.fillColorSecondary,
+                color: widget.headerColor ?? AppColors.fillColorSecondary,
               ),
             ),
             Container(
               decoration: BoxDecoration(
-                  color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 0), borderRadius: BorderRadius.all(Radius.circular(5))),
+                  color: Colors.white, border: Border.all(color: AppColors.surfaceAccent, width: 0), borderRadius: BorderRadius.all(Radius.circular(5))),
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[

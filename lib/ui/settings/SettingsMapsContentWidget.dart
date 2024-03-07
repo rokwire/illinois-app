@@ -1,9 +1,11 @@
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/OnCampus.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -114,9 +116,9 @@ class _SettingsMapsContentWidgetState extends State<SettingsMapsContentWidget> i
           Container(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
-                  color: Styles().colors.white,
+                  color: illinois.AppColors.white,
                   border: Border.all(
-                      color: Styles().colors.blackTransparent018, width: 1),
+                      color:illinois.AppColors.blackTransparent018, width: 1),
                   borderRadius: BorderRadius.all(Radius.circular(4))),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -182,7 +184,7 @@ class _SettingsMapsContentWidgetState extends State<SettingsMapsContentWidget> i
         Container(height: 4),
         ToggleRibbonButton(
             label: Localization().getStringEx('panel.settings.home.calendar.ada.toggle.title', 'Display ADA accessible building entrances for My Courses'),
-            border: Border.all(color: Styles().colors.surfaceAccent),
+            border: Border.all(color: AppColors.surfaceAccent),
             borderRadius: BorderRadius.all(Radius.circular(4)),
             toggled: StudentCourses().requireAda,
             onTap: _onRequireAdaToggled)

@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
@@ -24,6 +25,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'dart:io' show Platform;
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPanel {
   final Map<String, dynamic>? onboardingContext;
@@ -48,7 +50,7 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
         'panel.onboarding.notifications.button.dont_allow.title',
         'Not right now');
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         body: SwipeDetector(
             onSwipeLeft: () => _goNext(context) ,
             onSwipeRight: () => _goBack(context),
@@ -85,9 +87,9 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                               titleText,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  fontFamily: Styles().fontFamilies.bold,
+                                  fontFamily: AppFontFamilies.bold,
                                   fontSize: 32,
-                                  color: Styles().colors.fillColorPrimary),
+                                  color: AppColors.fillColorPrimary),
                             ),
                           ))),
                       Container(height: 12,),
@@ -99,9 +101,9 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                           Localization().getStringEx('panel.onboarding.notifications.label.description', 'Get notified about your “starred” events.'),
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontFamily: Styles().fontFamilies.regular,
+                              fontFamily: AppFontFamilies.regular,
                               fontSize: 20,
-                              color: Styles().colors.fillColorPrimary),
+                              color: AppColors.fillColorPrimary),
                         )),
                       ),]),
               )),
@@ -115,8 +117,8 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                         hint: Localization().getStringEx('panel.onboarding.notifications.button.allow.hint', ''),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        borderColor: Styles().colors.fillColorSecondary,
-                        backgroundColor: Styles().colors.white,
+                        borderColor: AppColors.fillColorSecondary,
+                        backgroundColor: illinois.AppColors.white,
                         onTap: () => _onReceiveNotifications(context),
                       ),
                       GestureDetector(
@@ -134,11 +136,11 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                           child: Text(
                               notRightNow,
                               style: TextStyle(
-                                  fontFamily: Styles().fontFamilies.medium,
+                                  fontFamily: AppFontFamilies.medium,
                                   fontSize: 16,
-                                  color: Styles().colors.fillColorPrimary,
+                                  color: AppColors.fillColorPrimary,
                                   decoration: TextDecoration.underline,
-                                  decorationColor: Styles().colors.fillColorSecondary,
+                                  decorationColor: AppColors.fillColorSecondary,
                                   decorationThickness: 1,
                                   decorationStyle: TextDecorationStyle.solid),
                             ))),
@@ -198,7 +200,7 @@ void _requestAuthorization(BuildContext context) async {
                 message ?? '',
                 textAlign: TextAlign.left,
                 style: TextStyle(
-                    fontFamily: Styles().fontFamilies.medium,
+                    fontFamily: AppFontFamilies.medium,
                     fontSize: 16,
                     color: Colors.black),
               ),

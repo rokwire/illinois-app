@@ -19,9 +19,11 @@ import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -44,7 +46,7 @@ class AthleticsMyTeamsPanel extends StatefulWidget {
         isDismissible: true,
         useRootNavigator: true,
         clipBehavior: Clip.antiAlias,
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         constraints: BoxConstraints(maxHeight: height, minHeight: height),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
         builder: (context) {
@@ -75,7 +77,7 @@ class _AthleticsMyTeamsPanelState extends State<AthleticsMyTeamsPanel> implement
   Widget build(BuildContext context) {
     return Column(children: [
       Container(
-          color: Styles().colors.white,
+          color: illinois.AppColors.white,
           child: Row(children: [
             Expanded(
                 child: Padding(
@@ -93,7 +95,7 @@ class _AthleticsMyTeamsPanelState extends State<AthleticsMyTeamsPanel> implement
                         padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
                         child: Styles().images.getImage('close-circle', excludeFromSemantics: true))))
           ])),
-      Container(color: Styles().colors.surfaceAccent, height: 1),
+      Container(color: AppColors.surfaceAccent, height: 1),
       _buildGlobalSelectionContent(),
       Expanded(child: Padding(padding: EdgeInsets.all(16), child: _buildTeamsContent()))
     ]);
@@ -114,7 +116,7 @@ class _AthleticsMyTeamsPanelState extends State<AthleticsMyTeamsPanel> implement
         borderRadius: BorderRadius.circular(15),
         child: Container(
             foregroundDecoration: BoxDecoration(
-                border: Border.all(color: Styles().colors.surfaceAccent, width: 1.0), borderRadius: BorderRadius.circular(15)),
+                border: Border.all(color: AppColors.surfaceAccent, width: 1.0), borderRadius: BorderRadius.circular(15)),
             child: SingleChildScrollView(child: Column(children: _buildTeams()))));
   }
 
@@ -124,7 +126,7 @@ class _AthleticsMyTeamsPanelState extends State<AthleticsMyTeamsPanel> implement
     if (_sports != null && _preferredSports != null) {
       for (SportDefinition team in _sports!) {
         if (CollectionUtils.isNotEmpty(teamWidgets)) {
-          teamWidgets.add(Container(height: 1, color: Styles().colors.surfaceAccent));
+          teamWidgets.add(Container(height: 1, color: AppColors.surfaceAccent));
         }
 
         String? teamShortName = StringUtils.ensureNotEmpty(team.shortName);

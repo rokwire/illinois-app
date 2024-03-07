@@ -35,6 +35,7 @@ import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
@@ -48,6 +49,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:timezone/timezone.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class Event2SearchPanel extends StatefulWidget {
   final String? searchText;
@@ -190,7 +192,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
         onLeading: _onHeaderBarBack,
       ),
       body: _buildPanelContent(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
 
@@ -198,7 +200,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
     RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(scrollDirection: Axis.vertical, controller: _scrollController, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Container(color: Styles().colors.white, child:
+          Container(color: illinois.AppColors.white, child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               _buildSearchBar(),
               _buildCommandBar(),
@@ -228,8 +230,8 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
   );
 
   Decoration get _searchBarDecoration => BoxDecoration(
-    color: Styles().colors.white,
-    border: Border(bottom: BorderSide(color: Styles().colors.disabledTextColor, width: 1))
+    color: illinois.AppColors.white,
+    border: Border(bottom: BorderSide(color: illinois.AppColors.disabledTextColor, width: 1))
   );
 
   Widget _buildSearchTextField() => Semantics(
@@ -243,7 +245,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
       onChanged: (text) => _onTextChanged(text),
       onSubmitted: (_) => _onTapSearch(),
       autofocus: true,
-      cursorColor: Styles().colors.fillColorSecondary,
+      cursorColor: AppColors.fillColorSecondary,
       keyboardType: TextInputType.text,
       style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
       decoration: InputDecoration(
@@ -393,10 +395,10 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
   }
 
   Decoration get _contentDescriptionDecoration => BoxDecoration(
-    color: Styles().colors.white,
+    color: illinois.AppColors.white,
     border: Border(
-      top: BorderSide(color: Styles().colors.disabledTextColor, width: 1),
-      bottom: BorderSide(color: Styles().colors.disabledTextColor, width: 1),
+      top: BorderSide(color: illinois.AppColors.disabledTextColor, width: 1),
+      bottom: BorderSide(color: illinois.AppColors.disabledTextColor, width: 1),
     )
   );
 
@@ -502,11 +504,11 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
   Widget get _extendIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
     Align(alignment: Alignment.center, child:
       SizedBox(width: 24, height: 24, child:
-        CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),),),),);
+        CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorSecondary),),),),);
 
   Widget _buildLoadingContent() => Padding(padding: EdgeInsets.only(left: 32, right: 32, top: _screenHeight / 4, bottom: 3 * _screenHeight / 4), child:
     Center(child:
-      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+      CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 3,),
     ),
   );
 

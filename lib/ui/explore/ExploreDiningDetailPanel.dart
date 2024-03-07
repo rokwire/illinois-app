@@ -25,6 +25,7 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
@@ -47,6 +48,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_tab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class ExploreDiningDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Dining? dining;
@@ -131,7 +133,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
       body: Column(children: <Widget>[
         Expanded(child:
@@ -278,8 +280,8 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
       RoundedButton(
         label: Localization().getStringEx('panel.explore_detail.button.order_online', 'Order Online'),
         textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-        backgroundColor: Styles().colors.white,
-        borderColor: Styles().colors.fillColorSecondary,
+        backgroundColor: illinois.AppColors.white,
+        borderColor: AppColors.fillColorSecondary,
         onTap: () => _onTapOrderOnline(onlineOrderPlatformDetails),
       ),
     );
@@ -303,7 +305,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
 
   Widget _divider() {
     return Padding(padding: EdgeInsets.symmetric(vertical: 0), child:
-      Container(height: 1, color: Styles().colors.fillColorPrimaryTransparent015,),
+      Container(height: 1, color: illinois.AppColors.fillColorPrimaryTransparent015,),
     );
   }
 
@@ -439,8 +441,8 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
             Expanded(child:
               StringUtils.isNotEmpty(_diningFeedback?.feedbackUrl) ? RoundedButton(
                 label: Localization().getStringEx('panel.explore_detail.button.text_feedback', 'Text Feedback'),
-                backgroundColor: Styles().colors.white,
-                borderColor: Styles().colors.fillColorSecondary,
+                backgroundColor: illinois.AppColors.white,
+                borderColor: AppColors.fillColorSecondary,
                 textStyle: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 onTap: () => _onTapTextFeedback(),
@@ -450,8 +452,8 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
             Expanded(child:
               StringUtils.isNotEmpty(_diningFeedback?.dieticianUrl) ? RoundedButton(
                 label: Localization().getStringEx('panel.explore_detail.button.ask_dietician', 'Ask a Dietitian'),
-                backgroundColor: Styles().colors.white,
-                borderColor: Styles().colors.fillColorSecondary,
+                backgroundColor: illinois.AppColors.white,
+                borderColor: AppColors.fillColorSecondary,
                 textStyle: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 onTap: () => _onTapAskDietician(),
@@ -697,9 +699,9 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
       ? Localization().getStringEx("widget.food_detail.button.filters_applied.hint", "")
       : Localization().getStringEx("widget.food_detail.button.filters_empty.hint", "");
     
-    return hasMenuData ? Container(color: Styles().colors.background, child:
+    return hasMenuData ? Container(color: AppColors.background, child:
       Column(children: <Widget>[
-        Container(color: Styles().colors.background, height: 1,),
+        Container(color: AppColors.background, height: 1,),
         HorizontalDiningSpecials(locationId: widget.dining!.id, specials: _specials,),
         Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
           Row(children: <Widget>[
@@ -816,7 +818,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
           if (products.isNotEmpty) {
 
             if (list.isNotEmpty) {
-              list.add(Container(height: 1, color: Styles().colors.white,));
+              list.add(Container(height: 1, color: illinois.AppColors.white,));
             }
 
             list.add(
@@ -1036,7 +1038,7 @@ class _StationItemState extends State<_StationItem>{
         button: true,
         excludeSemantics: true,
         child: GestureDetector(onTap: onTap, child:
-          Container(color: Styles().colors.fillColorPrimary, child:
+          Container(color: AppColors.fillColorPrimary, child:
             Padding(padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16), child:
               Row(children: <Widget>[
                 Expanded(child:
@@ -1056,8 +1058,8 @@ class _StationItemState extends State<_StationItem>{
     return (widget.productItems.isNotEmpty && expanded) ?  Container(
         decoration: BoxDecoration(
           border: Border(
-            left: BorderSide(color: Styles().colors.surfaceAccent),
-            right: BorderSide(color: Styles().colors.surfaceAccent)
+            left: BorderSide(color: AppColors.surfaceAccent),
+            right: BorderSide(color: AppColors.surfaceAccent)
           )
         ),
         child: Column(
@@ -1068,10 +1070,10 @@ class _StationItemState extends State<_StationItem>{
 
   List<Widget> _createExpandedItems() {
     List<Widget> list = [];
-    list.add(Container(height: 1, color: Styles().colors.surfaceAccent,));
+    list.add(Container(height: 1, color: AppColors.surfaceAccent,));
     for(DiningProductItem productItem in widget.productItems) {
       list.add(_ProductItem(productItem: productItem, onTap: () => _onProductItemTapped(productItem),));
-      list.add(Container(height: 1, color: Styles().colors.surfaceAccent,));
+      list.add(Container(height: 1, color: AppColors.surfaceAccent,));
     }
     return list;
   }
@@ -1112,7 +1114,7 @@ class _CircularButton extends StatelessWidget{
     return GestureDetector(onTap: onTap, child:
       Container(width: 40, height: 40,
         decoration: BoxDecoration(
-          border: Border.all(color: Styles().colors.fillColorSecondary, width: 1),
+          border: Border.all(color: AppColors.fillColorSecondary, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
         child: image,
@@ -1160,7 +1162,7 @@ class _FeedbackBodyWidgetState extends State<_FeedbackBodyWidget> {
         Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Row(children: <Widget>[
             Expanded(child:
-              Container(decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.vertical(top: Radius.circular(8)),), child:
+              Container(decoration: BoxDecoration(color: AppColors.fillColorPrimary, borderRadius: BorderRadius.vertical(top: Radius.circular(8)),), child:
                   Row(children: [
                     Expanded(child:
                       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
@@ -1170,7 +1172,7 @@ class _FeedbackBodyWidgetState extends State<_FeedbackBodyWidget> {
                     Semantics(label: Localization().getStringEx("dialog.close.title", "Close"), button: true, child:
                       InkWell(onTap: _onClose, child:
                         Padding(padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), child:
-                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white, width: 2),), child:
+                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: illinois.AppColors.white, width: 2),), child:
                             Center(child:
                               Text('\u00D7', style: Styles().textStyles.getTextStyle("widget.dialog.message.large"),semanticsLabel: "", ),
                             ),
@@ -1205,7 +1207,7 @@ class _FeedbackBodyWidgetState extends State<_FeedbackBodyWidget> {
                     label: Localization().getStringEx("dialog.send.title", "Send"),
                     backgroundColor: Colors.transparent,
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                    borderColor: Styles().colors.fillColorSecondary,
+                    borderColor: AppColors.fillColorSecondary,
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     onTap: () => _onSend(),
                   ),

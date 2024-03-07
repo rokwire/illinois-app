@@ -17,12 +17,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/model/wellness/SuccessTeam.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class WellnessSuccessTeamContentWidget extends StatefulWidget {
   WellnessSuccessTeamContentWidget();
@@ -103,8 +105,8 @@ class _WellnessSuccessTeamContentWidgetState extends State<WellnessSuccessTeamCo
     }
     Widget noMembers = Padding(padding: EdgeInsets.only(bottom: 16), child: Container(
       decoration: BoxDecoration(
-      color: Styles().colors.white,
-      boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+      color: illinois.AppColors.white,
+      boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
       borderRadius: BorderRadius.circular(4)),
       child: Container(
         padding: EdgeInsets.all(16),
@@ -124,8 +126,8 @@ class _WellnessSuccessTeamContentWidgetState extends State<WellnessSuccessTeamCo
   Widget _buildSuccessTeamItem(String department, String type, String name, String externalLink, [String image = ""]) {
     return Padding(padding: EdgeInsets.only(bottom: 16), child: Container(
         decoration: BoxDecoration(
-            color: Styles().colors.white,
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            color: illinois.AppColors.white,
+            boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.circular(4)),
         child: Container(padding: EdgeInsets.all(16), child: Column(children: [
           Row(children: [
@@ -192,7 +194,7 @@ class _WellnessSuccessTeamContentWidgetState extends State<WellnessSuccessTeamCo
       textAlign: TextAlign.center,
     );
     showDialog(context: context, builder: (_) => InfoPopup(
-      backColor: Styles().colors.surface,
+      backColor: AppColors.surface,
       padding: EdgeInsets.only(left: 32, right: 32, top: 40, bottom: 32),
       alignment: Alignment.center,
       infoTextWidget: textWidget,

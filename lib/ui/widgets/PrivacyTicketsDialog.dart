@@ -17,12 +17,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class PrivacyTicketsDialog extends StatefulWidget {
   final Function? onContinueTap;
@@ -76,7 +78,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
               Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Styles().colors.fillColorPrimary,
+                    color: AppColors.fillColorPrimary,
                     borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
                   ),
                   child: Padding(
@@ -117,7 +119,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                           ])))),
               Container(
                   width: double.infinity,
-                  color: Styles().colors.white,
+                  color: illinois.AppColors.white,
                   child: Padding(
                       padding: EdgeInsets.all(12),
                       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -155,7 +157,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                           hint: Localization().getStringEx("widget.privacy_tickets_modal.button.continue.hint", ""),
                           textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
                           backgroundColor: Colors.white,
-                          borderColor: Styles().colors.fillColorSecondary,
+                          borderColor: AppColors.fillColorSecondary,
                           onTap: () {
                             Analytics().logAlert(text: "Buy Tickets Privacy Alert", selection: "Continue");
                             _closeModal();
@@ -177,7 +179,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                           hint: Localization().getStringEx("widget.privacy_tickets_modal.button.change_privacy.hint", ""),
                           textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
                           backgroundColor: Colors.white,
-                          borderColor: Styles().colors.fillColorSecondary,
+                          borderColor: AppColors.fillColorSecondary,
                           onTap: () {
                             _onTapChangePrivacySettings();
                           },
@@ -209,9 +211,9 @@ class ShapesPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Offset thumbCenter = size.center(Offset(0, 0));
-    canvas.drawCircle(thumbCenter, 20, Paint()..color = Styles().colors.fillColorSecondaryVariant);
-    canvas.drawCircle(thumbCenter, 18, Paint()..color = Styles().colors.white);
-    canvas.drawCircle(thumbCenter, 15, Paint()..color = Styles().colors.fillColorPrimary);
+    canvas.drawCircle(thumbCenter, 20, Paint()..color = AppColors.fillColorSecondaryVariant);
+    canvas.drawCircle(thumbCenter, 18, Paint()..color = illinois.AppColors.white);
+    canvas.drawCircle(thumbCenter, 15, Paint()..color = AppColors.fillColorPrimary);
   }
 
   @override

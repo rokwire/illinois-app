@@ -19,16 +19,18 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Guide.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         appBar: HeaderBar(title: Localization().getStringEx("panel.home.safer.wellness_answer_center.header.title", "Answer Center")),
         body: SingleChildScrollView(
             child: Padding(
@@ -52,8 +54,8 @@ class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget {
   Widget _buildEntryCard({required String title, required String description, GestureTapCallback? onTapEntry}) {
     return Container(
         decoration: BoxDecoration(
-            color: Styles().colors.white,
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            color: illinois.AppColors.white,
+            boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(4))),
         clipBehavior: Clip.none,
         child: Stack(children: [
@@ -73,7 +75,7 @@ class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget {
                             style: Styles().textStyles.getTextStyle("widget.card.detail.regular")
                         )
                       ])))),
-          Container(color: Styles().colors.accentColor3, height: 4)
+          Container(color: AppColors.accentColor3, height: 4)
         ]));
   }
 

@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class Event2FiltersPanel extends StatefulWidget {
   final Map<String, dynamic> selection;
@@ -42,7 +44,7 @@ class _Event2FiltersPanelState extends State<Event2FiltersPanel> {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx("panel.event2.filters.header.title", "Event Filters"),),
       body: _buildPanelContent(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
     );
   }
 
@@ -55,7 +57,7 @@ class _Event2FiltersPanelState extends State<Event2FiltersPanel> {
           ),
         ),
       ),
-      // Container(height: 1, color: Styles().colors.surfaceAccent),
+      // Container(height: 1, color: AppColors.surfaceAccent),
     ]) : Container();
   }
 
@@ -158,16 +160,16 @@ class _Event2AttributeButton extends StatelessWidget {
     ]);
   }
 
-  Color get borderColor => Styles().colors.disabledTextColor;
+  Color get borderColor => illinois.AppColors.disabledTextColor;
 
   Decoration get headingDecoration => expanded ?
     BoxDecoration(
-      color: Styles().colors.fillColorPrimary,
+      color: AppColors.fillColorPrimary,
       border: Border.all(color: borderColor, width: 1),
       borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
     ) :
     BoxDecoration(
-      color: Styles().colors.white,
+      color: illinois.AppColors.white,
       border: Border.all(color: borderColor, width: 1),
       borderRadius: BorderRadius.circular(8),
     );
@@ -177,8 +179,8 @@ class _Event2AttributeButton extends StatelessWidget {
     Styles().textStyles.getTextStyle('widget.button.title.medium.fat');
 
   Widget? get headingRightIcon => expanded ?
-    Styles().images.getImage('chevron-up', color: Styles().colors.white, excludeFromSemantics: true) :
-    Styles().images.getImage('chevron-down', color: Styles().colors.fillColorSecondary, excludeFromSemantics: true);
+    Styles().images.getImage('chevron-up', color: illinois.AppColors.white, excludeFromSemantics: true) :
+    Styles().images.getImage('chevron-down', color: AppColors.fillColorSecondary, excludeFromSemantics: true);
 
   List<Widget> buildValues() {
     List<Widget> widgets = <Widget>[];
@@ -199,7 +201,7 @@ class _Event2AttributeButton extends StatelessWidget {
     TextStyle? textStyle = Styles().textStyles.getTextStyle(isSelected ? "widget.button.title.medium.fat" : "widget.button.title.medium");
     Decoration decoration =
       ((index + 2) < count) ? BoxDecoration(
-        color: Styles().colors.white,
+        color: illinois.AppColors.white,
         border: Border(
           left: BorderSide(color: borderColor, width: 1),
           right: BorderSide(color: borderColor, width: 1),
@@ -207,13 +209,13 @@ class _Event2AttributeButton extends StatelessWidget {
         ),
       ) :
       ((index + 1) < count) ? BoxDecoration(
-        color: Styles().colors.white,
+        color: illinois.AppColors.white,
         border: Border(
           left: BorderSide(color: borderColor, width: 1),
           right: BorderSide(color: borderColor, width: 1),
         ),
       ) : BoxDecoration(
-        color: Styles().colors.white,
+        color: illinois.AppColors.white,
         border: Border.all(color: borderColor, width: 1),
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(8),),
       );

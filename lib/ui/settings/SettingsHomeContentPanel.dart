@@ -36,6 +36,7 @@ import 'package:illinois/ui/settings/SettingsPrivacyCenterContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsResearchContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsSectionsContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -44,6 +45,7 @@ import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 enum SettingsContent { sections, interests, food_filters, sports, favorites, assessments, calendar, appointments, i_card, language, contact, maps, research, privacy, notifications}
 
@@ -81,7 +83,7 @@ class SettingsHomeContentPanel extends StatefulWidget {
         useRootNavigator: true,
         routeSettings: RouteSettings(name: routeName),
         clipBehavior: Clip.antiAlias,
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         constraints: BoxConstraints(maxHeight: height, minHeight: height),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
         builder: (context) {
@@ -131,7 +133,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
         RootHeaderBar(title: Localization().getStringEx('panel.settings.home.header.settings.label', 'Settings'), onSettings: _onTapDebug,),
       ),
       body: _buildPage(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar()
     );
   }*/
@@ -139,7 +141,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   Widget _buildSheet(BuildContext context) {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
     return Column(children: [
-        Container(color: Styles().colors.white, child:
+        Container(color: illinois.AppColors.white, child:
           Row(children: [
             Expanded(child:
               _DebugContainer(child:
@@ -167,7 +169,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
 
           ],),
         ),
-        Container(color: Styles().colors.surfaceAccent, height: 1,),
+        Container(color: AppColors.surfaceAccent, height: 1,),
         Expanded(child:
           _buildPage(context),
         )
@@ -177,16 +179,16 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   Widget _buildPage(BuildContext context) {
     return Column(children: <Widget>[
       Expanded(child:
-        Container(color: Styles().colors.background, child:
+        Container(color: AppColors.background, child:
           SingleChildScrollView(physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null), child:
-            Container(color: Styles().colors.background, child:
+            Container(color: AppColors.background, child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
                   RibbonButton(
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-                    backgroundColor: Styles().colors.white,
+                    backgroundColor: illinois.AppColors.white,
                     borderRadius: BorderRadius.all(Radius.circular(5)),
-                    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                    border: Border.all(color: AppColors.surfaceAccent, width: 1),
                     rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
                     label: _getContentLabel(_selectedContent),
                     onTap: _onTapContentDropdown
@@ -230,7 +232,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
                   });
                 },
                 child: Container(
-                  color: Styles().colors.blackTransparent06,
+                  color: illinois.AppColors.blackTransparent06,
                   height: MediaQuery.of(context).size.height,
                   
                 ))));
@@ -238,7 +240,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
 
   Widget _buildContentValuesWidget() {
     List<Widget> sectionList = <Widget>[];
-    sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
+    sectionList.add(Container(color: AppColors.fillColorSecondary, height: 2));
     for (SettingsContent section in SettingsHomeContentPanel._dropdownSettings) {
       if ((_selectedContent != section)) {
         // Add i_card content only if icard mobile is available
@@ -252,8 +254,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
 
   Widget _buildContentItem(SettingsContent contentItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+        backgroundColor: illinois.AppColors.white,
+        border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentItem),
         onTap: () => _onTapContentItem(contentItem));

@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -106,7 +107,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
         children: <Widget>[
           Expanded(
             child: Container(
-              color: Styles().colors.fillColorPrimary,
+              color: AppColors.fillColorPrimary,
               constraints: new BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width - 106),
               child: Padding(
@@ -202,7 +203,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
   }
 
   Widget _topBorder() {
-    Color? borderColor = Styles().colors.fillColorPrimary;
+    Color? borderColor = AppColors.fillColorPrimary;
     return _showTopBorder()? Container(height: 7,color: borderColor) : Container();
   }
 

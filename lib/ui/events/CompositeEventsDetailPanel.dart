@@ -23,6 +23,7 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -50,6 +51,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class CompositeEventsDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
 
@@ -172,7 +174,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
           ),
         ],
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -291,7 +293,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
       padding: EdgeInsets.symmetric(vertical: 0),
       child: Container(
         height: 1,
-        color: Styles().colors.fillColorPrimaryTransparent015,
+        color: illinois.AppColors.fillColorPrimaryTransparent015,
       ),
     );
   }
@@ -419,7 +421,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Row(children: <Widget>[
-                Expanded(child: Container(height: 1, color: Styles().colors.surfaceAccent,),)
+                Expanded(child: Container(height: 1, color: AppColors.surfaceAccent,),)
               ],),
             ),
             Row(
@@ -447,7 +449,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     if (!showDescription) {
       return Container();
     }
-    return Container(padding: EdgeInsets.only(left: 24, right: 24, bottom: 40, top: 24), color: Styles().colors.background, child:
+    return Container(padding: EdgeInsets.only(left: 24, right: 24, bottom: 40, top: 24), color: AppColors.background, child:
     HtmlWidget(
       StringUtils.ensureNotEmpty(description),
         onTapUrl : (url) {_launchUrl(url, 'Description'); return true;},
@@ -456,7 +458,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
       // Html(
       //   data: longDescription,
       //   onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, 'Description'),
-      //   style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+      //   style: { "body": Style(color: illinois.AppColors.textBackground, fontFamily: AppFontFamilies.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
       // ),
     );
   }
@@ -480,14 +482,14 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     Visibility(visible: visitWebsiteVisible, child: SmallRoundedButton(
       label: websiteLabel,
       hint: websiteHint,
-      borderColor: Styles().colors.fillColorPrimary,
+      borderColor: AppColors.fillColorPrimary,
       onTap: () => _onTapVisitWebsite(titleUrl),),) :
     Visibility(visible: visitWebsiteVisible, child: RoundedButton(
       label: websiteLabel,
       hint: websiteHint,
       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
       backgroundColor: Colors.white,
-      borderColor: Styles().colors.fillColorSecondary,
+      borderColor: AppColors.fillColorSecondary,
       onTap: () => _onTapVisitWebsite(titleUrl),
     ),);
 
@@ -502,7 +504,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
           hint: Localization().getStringEx('panel.explore_detail.button.get_tickets.hint', ''),
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
           backgroundColor: Colors.white,
-          borderColor: Styles().colors.fillColorSecondary,
+          borderColor: AppColors.fillColorSecondary,
           onTap: () => _onTapGetTickets(ticketsUrl),
         ),),
         Visibility(visible: getTicketsVisible, child: buttonsDivider)
@@ -587,7 +589,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
               Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
             backgroundColor: Colors.white,
-            borderColor: Styles().colors.fillColorPrimary,
+            borderColor: AppColors.fillColorPrimary,
             progress: _addToGroupInProgress,
             onTap: _onTapAddToGroup,
           ),
@@ -667,7 +669,7 @@ class _EventsListState extends State<_EventsList>{
     return SectionSlantHeader(
         title: Localization().getStringEx(titleKey, "Event Schedule"),
         slantImageKey: "slant-dark",
-        slantColor: Styles().colors.backgroundVariant,
+        slantColor: AppColors.backgroundVariant,
         titleTextStyle: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),
         children: _buildListItems()
     );
@@ -702,7 +704,7 @@ class _EventsListState extends State<_EventsList>{
           child: GestureDetector(
             onTap: _onTapFullSchedule,
             child: Container(
-              color: Styles().colors.fillColorPrimary,
+              color: AppColors.fillColorPrimary,
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                 child: Row(
@@ -740,7 +742,7 @@ class _EventEntry extends StatelessWidget {
     String title = ((parentEvent?.isSuperEvent == true) ? event?.title : event?.displayDate) ?? '';
     String subTitle = ((parentEvent?.isSuperEvent == true) ? event?.displaySuperTime : event?.displayStartEndTime) ?? '';
     return GestureDetector(onTap: () => _onTapEvent(context), child: Container(
-      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1.0), borderRadius: BorderRadius.circular(4.0),
+      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: AppColors.surfaceAccent, width: 1.0), borderRadius: BorderRadius.circular(4.0),
       ),
       child: Padding(padding: EdgeInsets.all(16), child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

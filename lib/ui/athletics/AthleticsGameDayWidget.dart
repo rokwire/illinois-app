@@ -20,6 +20,7 @@ import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailHeading.dart';
@@ -59,7 +60,7 @@ class _AthleticsGameDayWidgetState extends State<AthleticsGameDayWidget> {
       )
     :
       Column(children: <Widget>[
-        Container(color: Styles().colors.fillColorPrimary, child:
+        Container(color: AppColors.fillColorPrimary, child:
           Semantics(label: Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'), excludeSemantics: true, header: true, child:
             Padding(padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16), child:
               Row(children: <Widget>[

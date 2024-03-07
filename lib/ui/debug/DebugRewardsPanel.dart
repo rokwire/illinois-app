@@ -17,9 +17,10 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Rewards.dart';
 import 'package:illinois/service/Rewards.dart';
-import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class DebugRewardsPanel extends StatefulWidget{
   _DebugRewardsPanelState createState() => _DebugRewardsPanelState();
@@ -46,7 +47,7 @@ class _DebugRewardsPanelState extends State<DebugRewardsPanel>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Styles().colors.surface,
+        backgroundColor: AppColors.surface,
         appBar: HeaderBar(title: 'Rewards'),
         body: SingleChildScrollView(
             child: Padding(
@@ -66,7 +67,7 @@ class _DebugRewardsPanelState extends State<DebugRewardsPanel>{
   }
 
   Widget _buildDelimiterWidget() {
-    return Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Container(height: 1, color: Styles().colors.lightGray));
+    return Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Container(height: 1, color: illinois.AppColors.lightGray));
   }
 
   Widget _buildHistoryHeaderWidget() {
@@ -103,11 +104,11 @@ class _DebugRewardsPanelState extends State<DebugRewardsPanel>{
   }
 
   TextStyle get _defaultBoldTextStyle {
-    return TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Colors.black);
+    return TextStyle(fontSize: 18, fontFamily: AppFontFamilies.bold, color: Colors.black);
   }
 
   TextStyle get _defaultRegularTextStyle {
-    return TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.regular, color: Colors.black);
+    return TextStyle(fontSize: 18, fontFamily: AppFontFamilies.regular, color: Colors.black);
   }
 
   void _loadBalance() {

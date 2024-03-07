@@ -23,6 +23,7 @@ import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -38,7 +39,6 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'dart:math' as math;
@@ -246,7 +246,7 @@ extension ExploreExt on Explore {
     //else if (this is WellnessBuilding) {}
     //else if (this is Appointment) {}
     else {
-      return Styles().colors.accentColor2;
+      return AppColors.accentColor2;
     }
   }
 
@@ -324,13 +324,13 @@ extension ExploreExt on Explore {
 extension ExploreMap on Explore {
 
   Color? get mapMarkerColor => uiColor ?? unknownMarkerColor;
-  static Color? get unknownMarkerColor => Styles().colors.accentColor2;
+  static Color? get unknownMarkerColor => AppColors.accentColor2;
 
   Color? get mapMarkerBorderColor => unknownMarkerBorderColor;
-  static Color? get unknownMarkerBorderColor => Styles().colors.fillColorPrimary;
+  static Color? get unknownMarkerBorderColor => AppColors.fillColorPrimary;
 
   Color? get mapMarkerTextColor => unknownMarkerTextColor;
-  static Color? get unknownMarkerTextColor => Styles().colors.background;
+  static Color? get unknownMarkerTextColor => AppColors.background;
 
   String? get mapMarkerTitle {
     return exploreTitle;
@@ -586,5 +586,5 @@ extension ExploreLocationMap on ExploreLocation {
 }
 
 extension ExplorePOIExt on ExplorePOI {
-  Color? get uiColor => Styles().colors.accentColor3;
+  Color? get uiColor => AppColors.accentColor3;
 }

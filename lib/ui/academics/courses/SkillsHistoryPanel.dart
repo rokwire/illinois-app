@@ -1,10 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dart';
 import 'package:illinois/ui/academics/courses/EssentialSkillsCoachWidgets.dart';
 import 'package:illinois/ui/academics/courses/SkillsScoreChart.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -45,7 +47,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Styles().colors.background,
+      color: AppColors.background,
       child: SingleChildScrollView(
           child: Column(
             children: [
@@ -63,7 +65,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> {
     return Padding(padding: const EdgeInsets.only(top: 20, left: 28, right: 28), child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Divider(color: Styles().colors.fillColorPrimary, thickness: 2),
+        Divider(color: AppColors.fillColorPrimary, thickness: 2),
         Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Flexible(flex: 4, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.results.skills.title', 'SKILLS'), style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.results.table.header'),)),
           Flexible(flex: 3, fit: FlexFit.tight, child: Text(DateTimeUtils.localDateTimeToString(_latestResponse?.dateTaken, format: 'MM/dd/yy\nh:mma') ?? 'NONE', textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.results.table.header'),)),
@@ -75,7 +77,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> {
               items: _buildResponseDateDropDownItems(),
               value: _comparisonResponseId,
               onChanged: _onResponseDateDropDownChanged,
-              dropdownColor: Styles().colors.surface,
+              dropdownColor: AppColors.surface,
             ),
           )),
         ],)),
@@ -114,7 +116,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> {
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
               child: Card(
-                color: Styles().colors.surface,
+                color: AppColors.surface,
                 child: InkWell(
                   onTap: (){
                     _showScoreDescription(section);
@@ -137,7 +139,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> {
                         ),),
                         Flexible(flex: 3, fit: FlexFit.tight, child: Text(
                             _determineSkillScore(stats?.scores[section], stats?.maximumScores[section]),
-                            style: TextStyle(color: Styles().colors.mediumGray, fontSize: 32),
+                            style: TextStyle(color: illinois.AppColors.mediumGray, fontSize: 32),
                             textAlign: TextAlign.center,
                         ),),
                         Flexible(flex: 1, fit: FlexFit.tight, child: SizedBox(height: 16.0 , child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true))),
@@ -153,7 +155,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> {
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
           child: Card(
-            color: Styles().colors.surface,
+            color: AppColors.surface,
             child: InkWell(
               onTap: (){
                 _showScoreDescription(_selectedSkillType!);
@@ -176,7 +178,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> {
                     ),),
                     Flexible(flex: 3, fit: FlexFit.tight, child: Text(
                         _determineSkillScore(stats?.scores[_selectedSkillType!], stats?.maximumScores[_selectedSkillType!]),
-                        style: TextStyle(color: Styles().colors.mediumGray, fontSize: 36),
+                        style: TextStyle(color: illinois.AppColors.mediumGray, fontSize: 36),
                         textAlign: TextAlign.center,
                     ),),
                     Flexible(flex: 1, fit: FlexFit.tight, child: SizedBox(height: 16.0 , child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true))),

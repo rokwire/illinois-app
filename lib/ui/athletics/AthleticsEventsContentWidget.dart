@@ -27,6 +27,7 @@ import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/athletics/AthleticsWidgets.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
@@ -121,7 +122,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   }
 
   Widget _buildLoadingContent() {
-    return _buildCenteredWidget(CircularProgressIndicator(color: Styles().colors.fillColorSecondary));
+    return _buildCenteredWidget(CircularProgressIndicator(color: AppColors.fillColorSecondary));
   }
 
   Widget _buildEmptyContent() {
@@ -150,7 +151,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
                 width: 24,
                 height: 24,
                 child: CircularProgressIndicator(
-                    strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)))));
+                    strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorSecondary)))));
   }
 
   void _onTapGame(Event2 event) {

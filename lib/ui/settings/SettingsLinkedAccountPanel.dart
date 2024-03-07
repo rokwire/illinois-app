@@ -6,6 +6,7 @@ import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class SettingsLinkedAccountPanel extends StatefulWidget{
   final Auth2Type? linkedAccount;
@@ -145,12 +146,12 @@ class LinkAccountContentWidget extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(border: Border.all(color: Styles().colors.lightGray),borderRadius: BorderRadius.all(Radius.circular(4))),
+      decoration: BoxDecoration(border: Border.all(color: illinois.AppColors.lightGray),borderRadius: BorderRadius.all(Radius.circular(4))),
       child: Column(
         children: [
           Container(
             padding: EdgeInsets.symmetric(horizontal: 13),
-            color: Styles().colors.white,
+            color: illinois.AppColors.white,
             child: Column(
               children: [
                 Container(height: 12,),
@@ -168,9 +169,9 @@ class LinkAccountContentWidget extends StatelessWidget{
               ],
             ),
           ),
-          Container(height: 1, color: Styles().colors.lightGray,),
+          Container(height: 1, color: illinois.AppColors.lightGray,),
           Container(
-            color: Styles().colors.white,
+            color: illinois.AppColors.white,
             child: RibbonButton(
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),

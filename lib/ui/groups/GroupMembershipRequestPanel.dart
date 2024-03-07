@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -26,6 +27,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class GroupMembershipRequestPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group? group;
@@ -97,7 +99,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
         ),
         _buildSubmit(),
       ],),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -138,12 +140,12 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
 
   Widget _buildSubmit() {
     if (widget.group?.researchProject != true) {
-      return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
+      return Container(decoration: BoxDecoration(color: illinois.AppColors.white, border: Border(top: BorderSide(color: AppColors.surfaceAccent, width: 1))), child:
         Padding(padding: EdgeInsets.all(16), child:
           RoundedButton(label: Localization().getStringEx("panel.membership_request.button.submit.title", 'Submit request'),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-            backgroundColor: Styles().colors.white,
-            borderColor: Styles().colors.fillColorSecondary,
+            backgroundColor: illinois.AppColors.white,
+            borderColor: AppColors.fillColorSecondary,
             borderWidth: 2,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             progress: (_submitting == true),
@@ -180,9 +182,9 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
           Padding(padding: EdgeInsets.only(left: 16, right: 16, top: showConsent ? 0 : 16, bottom: 16), child:
             RoundedButton(label: "Request to participate",
               textStyle: requestToJoinEnabled ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
-              backgroundColor: Styles().colors.white,
+              backgroundColor: illinois.AppColors.white,
               padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-              borderColor: requestToJoinEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+              borderColor: requestToJoinEnabled ? AppColors.fillColorSecondary : AppColors.surfaceAccent,
               borderWidth: 2,
               onTap:() { _onSubmit();  }
             ),

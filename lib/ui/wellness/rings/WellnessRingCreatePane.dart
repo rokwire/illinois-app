@@ -4,6 +4,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/WellnessRings.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -11,6 +12,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class WellnessRingCreatePanel extends StatefulWidget implements AnalyticsPageAttributes {
   final WellnessRingDefinition? data;
@@ -89,7 +91,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
             ],)
         )
       ],),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -115,7 +117,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
                   style: Styles().textStyles.getTextStyle('widget.description.small.fat'))),
           Container(
               padding: EdgeInsets.symmetric(horizontal: 8),
-              decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
+              decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: illinois.AppColors.mediumGray, width: 1)),
               child: TextField(
                   controller: _nameController,
                   decoration: InputDecoration(border: InputBorder.none),
@@ -183,7 +185,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
   Widget _buildColorPickerDialog() {
     return SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-          ColorPicker(pickerColor: Styles().colors.fillColorSecondary, onColorChanged: _onColorChanged),
+          ColorPicker(pickerColor: AppColors.fillColorSecondary, onColorChanged: _onColorChanged),
           Padding(
               padding: EdgeInsets.only(top: 20),
               child: Center(
@@ -218,7 +220,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
                           style: Styles().textStyles.getTextStyle('widget.description.small.fat'))),
                   Container(
                       padding: EdgeInsets.symmetric(horizontal: 8),
-                      decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
+                      decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: illinois.AppColors.mediumGray, width: 1)),
                       child: TextField(
                           controller: _quantityController,
                           decoration: InputDecoration(border: InputBorder.none),
@@ -234,7 +236,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
                             style: Styles().textStyles.getTextStyle('widget.description.small.fat'))),
                     Container(
                         padding: EdgeInsets.symmetric(horizontal: 8),
-                        decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
+                        decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: illinois.AppColors.mediumGray, width: 1)),
                         child: TextField(
                             controller: _unitController,
                             decoration: InputDecoration(border: InputBorder.none),

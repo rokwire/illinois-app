@@ -10,6 +10,7 @@ import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/Video.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
@@ -60,6 +61,7 @@ import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:in_app_review/in_app_review.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
@@ -149,7 +151,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
           ),
         ]),
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: null,
     );
   }
@@ -295,7 +297,7 @@ class _BrowseSection extends StatelessWidget {
     return Padding(padding: EdgeInsets.only(bottom: 4), child:
       InkWell(onTap: _onTapExpand, child:
         Container(
-          decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
+          decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: AppColors.surfaceAccent, width: 1),),
           padding: EdgeInsets.only(left: 16),
           child: Column(children: [
             Row(children: [
@@ -495,7 +497,7 @@ class _BrowseEntry extends StatelessWidget {
     return Padding(padding: EdgeInsets.only(bottom: 4), child:
       InkWell(onTap: () => _onTap(context), child:
         Container(
-          decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
+          decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: AppColors.surfaceAccent, width: 1),),
           padding: EdgeInsets.zero,
           child: 
             Row(children: [
@@ -1226,22 +1228,22 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
         double imageWidth = MediaQuery.of(context).size.width;
         double imageHeight = imageWidth * 810 / 1080;
         return (loadingProgress != null) ?
-          Container(color: Styles().colors.fillColorPrimary, width: imageWidth, height: imageHeight, child:
+          Container(color: AppColors.fillColorPrimary, width: imageWidth, height: imageHeight, child:
             Center(child:
-              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white), )
+              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(illinois.AppColors.white), )
             ),
           ) :
           AspectRatio(aspectRatio: (1080.0 / 810.0), child: 
-            Container(color: Styles().colors.fillColorPrimary, child: child)
+            Container(color: AppColors.fillColorPrimary, child: child)
           );
       })),
       Positioned.fill(child:
         Align(alignment: Alignment.bottomCenter, child:
           Column(mainAxisSize: MainAxisSize.min, children: [
-            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.rightToLeft, vertDir: TriangleVertDirection.topToBottom), child:
+            CustomPaint(painter: TrianglePainter(painterColor: illinois.AppColors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.rightToLeft, vertDir: TriangleVertDirection.topToBottom), child:
               Container(height: 40)
             ),
-            Container(height: 20, color: Styles().colors.fillColorSecondaryTransparent05),
+            Container(height: 20, color: illinois.AppColors.fillColorSecondaryTransparent05),
           ],),
         ),
       ),

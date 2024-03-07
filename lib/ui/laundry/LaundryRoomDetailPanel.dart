@@ -21,6 +21,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/ui/laundry/LaundryRequestIssuePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Laundries.dart';
@@ -76,7 +77,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
     return Scaffold(
       appBar: _buildHeaderBar(),
       body: _isLoading ? _buildLoadingWidget() : _buildRoomContentWidget(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: !_isLoading ? uiuc.TabBar() : null,
     );
   }
@@ -85,7 +86,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
     return Column(children: <Widget>[
       Expanded(child:
         SingleChildScrollView(scrollDirection: Axis.vertical, child:
-          Container(color: Styles().colors.background, child:
+          Container(color: AppColors.background, child:
             Column(children: <Widget>[
               _buildLaundryRoomCaptionSection(),
               _buildLaundryRoomInfoSection(),
@@ -145,7 +146,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
   }
 
   Widget _buildLaundryRoomCaptionSection() {
-    return Container(color: Styles().colors.accentColor2, height: 4,);
+    return Container(color: AppColors.accentColor2, height: 4,);
   }
 
   Widget _buildLaundryRoomInfoSection() {
@@ -246,7 +247,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
   }
 
   Widget _buildApplianceSeparator(BuildContext context, int index) {
-    return Container(height: 1, color: Styles().colors.background,);
+    return Container(height: 1, color: AppColors.background,);
   }
 
   void _load() {

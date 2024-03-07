@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -62,7 +63,7 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
         title: Localization().getStringEx("panel.search.header.title", "Search"),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -92,7 +93,7 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
                           onChanged: (text) => _onTextChanged(text),
                           onSubmitted: (_) => _onTapSearch(),
                           autofocus: true,
-                          cursorColor: Styles().colors.fillColorSecondary,
+                          cursorColor: AppColors.fillColorSecondary,
                           keyboardType: TextInputType.text,
                           style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                           decoration: InputDecoration(

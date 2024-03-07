@@ -3,12 +3,14 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class SettingsLoginEmailPanel extends StatefulWidget {
 
@@ -26,7 +28,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
 
   static final Color? _successColor = Colors.green.shade800;
   static final Color? _errorColor = Colors.red.shade700;
-  static final Color? _messageColor = Styles().colors.fillColorPrimary;
+  static final Color? _messageColor = AppColors.fillColorPrimary;
   
   TextEditingController _emailController = TextEditingController();
   FocusNode _emailFocusNode = FocusNode();
@@ -99,9 +101,9 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
       Localization().getStringEx('panel.onboarding2.email.button.sign_in.hint', '');
 
     InputDecoration textFeildDecoration = InputDecoration(
-      disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 1.0),),
-      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 1.0),),
-      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 1.0),),
+      disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: illinois.AppColors.mediumGray, width: 1.0),),
+      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: illinois.AppColors.mediumGray, width: 1.0),),
+      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: illinois.AppColors.mediumGray, width: 1.0),),
     );
 
     return Scaffold(
@@ -136,7 +138,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                     hint: Localization().getStringEx("panel.onboarding2.email.label.email.hint", ""),
                     value: _emailController.text,
                     child: Container(
-                      color: Styles().colors.background,
+                      color: AppColors.background,
                       child: TextField(
                         controller: _emailController,
                         focusNode: _emailFocusNode,
@@ -159,7 +161,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                   hint: Localization().getStringEx("panel.onboarding2.email.label.password.hint", ""),
                   value: _passwordController.text,
                   child: Container(
-                    color: Styles().colors.white,
+                    color: illinois.AppColors.white,
                     child: TextField(
                       controller: _passwordController,
                       focusNode: _passwordFocusNode,
@@ -167,7 +169,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                       autocorrect: false,
                       obscureText: !_isShowingPassword,
                       onSubmitted: (_) => _clearErrorMsg,
-                      cursorColor: Styles().colors.textBackground,
+                      cursorColor: illinois.AppColors.textBackground,
                       keyboardType: TextInputType.text,
                       style: Styles().textStyles.getTextStyle("widget.input_field.text.medium"),
                       decoration: textFeildDecoration,
@@ -187,7 +189,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                       hint: Localization().getStringEx("panel.onboarding2.email.label.confirm_password.hint", ""),
                       value: _confirmPasswordController.text,
                       child: Container(
-                        color: Styles().colors.white,
+                        color: illinois.AppColors.white,
                         child: TextField(
                           controller: _confirmPasswordController,
                           focusNode: _confirmPasswordFocusNode,
@@ -195,7 +197,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                           autocorrect: false,
                           obscureText: !_isShowingPassword,
                           onSubmitted: (_) => _clearErrorMsg,
-                          cursorColor: Styles().colors.textBackground,
+                          cursorColor: illinois.AppColors.textBackground,
                           keyboardType: TextInputType.text,
                           style: Styles().textStyles.getTextStyle("widget.input_field.text.medium"),
                           decoration: textFeildDecoration,
@@ -252,7 +254,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
 
                 Visibility(visible: StringUtils.isNotEmpty(_validationErrorText), child:
                   Padding(key:_validationErrorKey, padding: EdgeInsets.only(bottom: 12), child:
-                    Text(StringUtils.ensureNotEmpty(_validationErrorText ?? ''), style: Styles().textStyles.getTextStyle("panel.settings.login.validation.text")?.copyWith(color: _validationErrorColor ?? Styles().colors.fillColorSecondary),),
+                    Text(StringUtils.ensureNotEmpty(_validationErrorText ?? ''), style: Styles().textStyles.getTextStyle("panel.settings.login.validation.text")?.copyWith(color: _validationErrorColor ?? AppColors.fillColorSecondary),),
                   ),
                 ),
 
@@ -263,8 +265,8 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                   hint: buttonHint,
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                   onTap: _onTapLogin,
-                  backgroundColor: Styles().colors.white,
-                  borderColor: Styles().colors.fillColorSecondary,
+                  backgroundColor: illinois.AppColors.white,
+                  borderColor: AppColors.fillColorSecondary,
                   progress: _isSiging,
                 ),),
                 
@@ -274,8 +276,8 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                     hint: Localization().getStringEx("panel.onboarding2.email.button.link.cancel.hint", ""),
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                     onTap: _onTapCancel,
-                    backgroundColor: Styles().colors.white,
-                    borderColor: Styles().colors.fillColorSecondary,
+                    backgroundColor: illinois.AppColors.white,
+                    borderColor: AppColors.fillColorSecondary,
                     progress: _isCanceling,
                   ),),
                 ),
@@ -286,7 +288,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
         ),
         Container(height: 16,)
       ],),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

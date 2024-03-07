@@ -22,6 +22,7 @@ import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -32,6 +33,7 @@ import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 import 'GroupWidgets.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class GroupMemberNotificationsPanel extends StatefulWidget {
   final String? groupId;
@@ -73,7 +75,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
             title: Localization().getStringEx('panel.group_member_notifications.header.title', 'Group Notifications'),
             textAlign: TextAlign.center),
         body: Column(children: [
-          Expanded(child: SingleChildScrollView(child: Container(color: Styles().colors.background, child: _buildContent()))),
+          Expanded(child: SingleChildScrollView(child: Container(color: AppColors.background, child: _buildContent()))),
           Visibility(
               visible: (!_isLoading && (_member != null) && _toggleButtonEnabled),
               child: Padding(
@@ -81,7 +83,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
                   child: RoundedButton(
                       label: Localization().getStringEx('panel.group_member_notifications.save.button', 'Save'), onTap: _onTapSave)))
         ]),
-        backgroundColor: Styles().colors.white);
+        backgroundColor: illinois.AppColors.white);
   }
 
 
@@ -133,7 +135,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
     preferenceWidgets.add(Row(children: [
       Expanded(
           child: Container(
-              color: Styles().colors.white,
+              color: illinois.AppColors.white,
               child: Padding(
                   padding: EdgeInsets.only(left: 10),
                   child: Column(children: [
@@ -180,7 +182,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
                   ]))))
     ]));
 
-    preferenceWidgets.add(Container(color: Styles().colors.white, height: 10,));
+    preferenceWidgets.add(Container(color: illinois.AppColors.white, height: 10,));
     preferenceWidgets.add(_buildDescription());
 
     return Container(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: preferenceWidgets));
@@ -207,7 +209,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
         )
     ],));
 
-    widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
+    widgets.add(Row(children: [Expanded(child: Container(color: illinois.AppColors.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
       _DisabledToggleButton(
           toggled: groupPostNotificationsEnabled,
           label: Localization().getStringEx("panel.settings.notifications.group_updates.posts.label", "Posts"),
@@ -229,7 +231,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
           textStyle: groupPollsNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       )
     ]))))]));
-    widgets.add(Container(color:Styles().colors.surfaceAccent,height: 1,));
+    widgets.add(Container(color:AppColors.surfaceAccent,height: 1,));
 
       return Container(
         child: Padding(padding: EdgeInsets.all(0), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets)),

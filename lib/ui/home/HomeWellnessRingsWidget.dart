@@ -10,9 +10,11 @@ import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingSelectPredefinedPanel.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class HomeWellnessRingsWidget extends StatefulWidget {
   
@@ -65,7 +67,7 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors.white, child:
+                Container(color: illinois.AppColors.white, child:
                   Padding(padding: EdgeInsets.only(top: 20, right: 13, bottom: 0, left: 2), child:
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -138,8 +140,8 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
 
   Widget _buildCreateRingButton(){
     bool enabled = WellnessRings().canAddRing;
-    final Color disabledTextColor = Styles().colors.textColorDisabled;
-    final Color disabledBackgroundColor = Styles().colors.textBackgroundVariant2;
+    final Color disabledTextColor = illinois.AppColors.textColorDisabled;
+    final Color disabledBackgroundColor = illinois.AppColors.textBackgroundVariant2;
     String label = "Create New Ring";
     String description = "Maximum of 4 total";
     return Visibility(
@@ -150,7 +152,7 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
               // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                 child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Expanded(child:
-                  Container(decoration: BoxDecoration(color: enabled? Colors.white : disabledBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors.surfaceAccent, width: 1)), child:
+                  Container(decoration: BoxDecoration(color: enabled? Colors.white : disabledBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: AppColors.surfaceAccent, width: 1)), child:
                   Padding(padding: EdgeInsets.only(left: 8 /*+10 from icon*/, top: 10, bottom: 10, right: 3/*+10 form icon*/), child:
                   Row( crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,

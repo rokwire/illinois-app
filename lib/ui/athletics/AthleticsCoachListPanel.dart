@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsCoachDetailPanel.dart';
@@ -55,7 +56,7 @@ class _AthleticsCoachListPanelState extends State<AthleticsCoachListPanel> imple
             ),
           ],
         ),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -94,7 +95,7 @@ class _CoachListHeading extends StatelessWidget{
     return Row(children: <Widget>[
       Expanded(
         child: Container(
-          color: Styles().colors.fillColorPrimaryVariant,
+          color: AppColors.fillColorPrimaryVariant,
           padding: EdgeInsets.only(left: 16, right: 16, top:12, bottom: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,7 +148,7 @@ class _CoachItem extends StatelessWidget{
             child: Stack(
               children: <Widget>[
                 Container(
-                  color: Styles().colors.fillColorPrimary,
+                  color: AppColors.fillColorPrimary,
                   height: _blueHeight,
                   margin: EdgeInsets.only(top: _photoMargin*2, left: _horizontalMargin, right: _horizontalMargin,),
                   child: Container(
@@ -180,7 +181,7 @@ class _CoachItem extends StatelessWidget{
                         bottomEnd: Radius.circular(5),
                       ),
                       boxShadow: [
-                        BoxShadow(color: Styles().colors.fillColorPrimary,blurRadius: 4,),
+                        BoxShadow(color: AppColors.fillColorPrimary,blurRadius: 4,),
                       ]
 
                   ),
@@ -219,7 +220,7 @@ class _CoachItem extends StatelessWidget{
                   alignment: Alignment.centerRight,
                   child: Container(
                     margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
-                    decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
+                    decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
                     child: (StringUtils.isNotEmpty(coach.thumbPhotoUrl) ?
                     ModalImageHolder(url: coach.fullSizePhotoUrl, child: Image.network(coach.thumbPhotoUrl!, semanticLabel: "coach", width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,)):
                       Container(height: 96, width: 80, color: Colors.white,)),

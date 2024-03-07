@@ -18,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/service/Laundries.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -62,7 +63,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.laundry_home.heading.laundry', 'Laundry'),),
       body: _loading ? Center(child: CircularProgressIndicator(),) : _buildContentWidget(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -103,7 +104,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> {
         ]),
       ],
       title: Text(Localization().getStringEx('panel.laundry_home.heading.laundry', 'Laundry'),
-        style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16, color: Colors.white, letterSpacing: 1),
+        style: TextStyle(fontFamily: AppFontFamilies.extraBold, fontSize: 16, color: Colors.white, letterSpacing: 1),
       ),
       centerTitle: false,
     );
@@ -139,10 +140,10 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> {
   Widget _buildRoomsContentWidget() {
     return Column(children: <Widget>[
       Expanded(child:
-        Container(color: Styles().colors.background, child:
+        Container(color: AppColors.background, child:
           Padding(padding: EdgeInsets.only(top: 16), child:
             SingleChildScrollView(scrollDirection: Axis.vertical, child:
-              Container(color: Styles().colors.background, child:
+              Container(color: AppColors.background, child:
                 Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
                   Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 80), child:
                     ListView.separated(

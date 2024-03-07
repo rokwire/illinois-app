@@ -7,10 +7,12 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class Event2SetupGroups extends StatefulWidget {
   final List<Group> selection;
@@ -46,7 +48,7 @@ class _Event2SetupGroupsState extends State<Event2SetupGroups> {
   Widget build(BuildContext context) => Scaffold(
     appBar: HeaderBar(title: Localization().getStringEx('panel.event2.setup.groups.header.title', 'Select Groups'), actions: _barActions,),
     body: _scaffoldContent,
-    backgroundColor: Styles().colors.background,
+    backgroundColor: AppColors.background,
   );
 
   Widget get _scaffoldContent =>
@@ -96,7 +98,7 @@ class _Event2SetupGroupsState extends State<Event2SetupGroups> {
   Widget get _loadingContent => Center(child:
     Padding(padding: EdgeInsets.symmetric(vertical: _screenHeight / 4), child:
      SizedBox(width: 32, height: 32, child:
-        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+        CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 3,),
       ),
       )
     );
@@ -118,7 +120,7 @@ class _Event2SetupGroupsState extends State<Event2SetupGroups> {
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
             Column(mainAxisSize: MainAxisSize.min, children: [
               Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.white, width: 1.5, ))),
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: illinois.AppColors.white, width: 1.5, ))),
                 child: Text(title ?? '',
                   style: Styles().textStyles.getTextStyle("widget.heading.regular.fat"),
                   semanticsLabel: "",

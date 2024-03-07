@@ -17,9 +17,11 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Sports.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/ui/athletics/AthleticsGameDetailHeading.dart';
 import 'package:illinois/ui/athletics/AthleticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -55,7 +57,7 @@ class _AthleticsGameDayContentWidgetState extends State<AthleticsGameDayContentW
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: Styles().colors.white,
+        color: illinois.AppColors.white,
         child: Column(children: [
           AthleticsTeamsFilterWidget(),
           Expanded(child: _buildContent())
@@ -87,7 +89,7 @@ class _AthleticsGameDayContentWidgetState extends State<AthleticsGameDayContentW
   }
 
   Widget _buildLoadingContent() {
-    return _buildCenteredWidget(CircularProgressIndicator(color: Styles().colors.fillColorSecondary));
+    return _buildCenteredWidget(CircularProgressIndicator(color: AppColors.fillColorSecondary));
   }
 
   Widget _buildEmptyContent() {

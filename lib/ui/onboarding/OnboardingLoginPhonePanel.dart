@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -24,6 +25,7 @@ import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class OnboardingLoginPhonePanel extends StatefulWidget with OnboardingPanel {
 
@@ -53,7 +55,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
     String titleString = Localization().getStringEx('panel.onboarding.login.phone.label.title', 'Verify your phone number');
     String? skipTitle = Localization().getStringEx('panel.onboarding.login.phone.button.dont_continue.title', 'Not right now');
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         body: Stack(
           children: <Widget>[
             Column(children:[
@@ -89,7 +91,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                             padding: EdgeInsets.symmetric(horizontal: 18),
                             child: Center(
                               child: Text(titleString,
-                                  textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary)),
+                                  textAlign: TextAlign.center, style: TextStyle(fontFamily: AppFontFamilies.bold, fontSize: 36, color: AppColors.fillColorPrimary)),
                             )),
                       ),
                       Container(
@@ -98,7 +100,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                       Padding(
                           padding: EdgeInsets.symmetric(horizontal: 32),
                           child: Text(Localization().getStringEx('panel.onboarding.login.phone.label.description', 'This saves your preferences so you can have the same experience on more than one device.'),
-                              textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary))),
+                              textAlign: TextAlign.center, style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 20, color: AppColors.fillColorPrimary))),
                       Container(
                         height: 32,
                       ),
@@ -114,8 +116,8 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                       hint: Localization().getStringEx('panel.onboarding.login.phone.button.continue.hint', ''),
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      borderColor: Styles().colors.fillColorSecondary,
-                      backgroundColor: Styles().colors.white,
+                      borderColor: AppColors.fillColorSecondary,
+                      backgroundColor: illinois.AppColors.white,
                       onTap: _onLoginTapped,
                     ),
                     Onboarding2UnderlinedButton(

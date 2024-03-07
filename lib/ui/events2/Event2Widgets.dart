@@ -14,6 +14,7 @@ import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -25,6 +26,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 //
 // Event2FilterCommandButton
@@ -98,8 +100,8 @@ class Event2FilterCommandButton extends StatelessWidget {
   }
 
   static BoxDecoration get defaultContentDecoration => BoxDecoration(
-    color: Styles().colors.white,
-    border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
+    color: illinois.AppColors.white,
+    border: Border.all(color: illinois.AppColors.disabledTextColor, width: 1),
     borderRadius: BorderRadius.circular(16),
   );
 
@@ -346,18 +348,18 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   String get _semanticsHint => '';//'''TODO custom hint if needed';
 
   static Decoration get _listContentDecoration => BoxDecoration(
-    color: Styles().colors.surface,
+    color: AppColors.surface,
     borderRadius: _listContentBorderRadius,
-    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    border: Border.all(color: AppColors.surfaceAccent, width: 1),
     boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]
   );
 
   static BorderRadiusGeometry get _listContentBorderRadius => BorderRadius.all(Radius.circular(8));
 
   static Decoration get _pageContentDecoration => BoxDecoration(
-    color: Styles().colors.surface,
+    color: AppColors.surface,
     borderRadius: _pageContentBorderRadius,
-    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    border: Border.all(color: AppColors.surfaceAccent, width: 1),
     boxShadow: _pageContentShadow
   );
 
@@ -367,12 +369,12 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   );
 
   static Decoration get _pageBottomContentDecoration => BoxDecoration(
-    color: Styles().colors.surface,
+    color: AppColors.surface,
     borderRadius: _pageContentBottomBorderRadius,
     border: Border(
-      left: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
-      right: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
-      bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
+      left: BorderSide(color: AppColors.surfaceAccent, width: 1),
+      right: BorderSide(color: AppColors.surfaceAccent, width: 1),
+      bottom: BorderSide(color: AppColors.surfaceAccent, width: 1),
     ),
     boxShadow: _pageContentShadow
   );
@@ -387,19 +389,19 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   static BorderRadiusGeometry get _pageContentBottomBorderRadius => BorderRadius.vertical(bottom: _pageContentRadius);
 
   static Decoration get _linkContentDecoration => BoxDecoration(
-    color: Styles().colors.white,
+    color: illinois.AppColors.white,
     borderRadius: _linkContentBorderRadius,
-    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    border: Border.all(color: AppColors.surfaceAccent, width: 1),
     boxShadow: _linkContentShadow
   );
 
   static Decoration get _linkBottomContentDecoration => BoxDecoration(
-    color: Styles().colors.surface,
+    color: AppColors.surface,
     borderRadius: _linkContentBottomBorderRadius,
     border: Border(
-      left: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
-      right: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
-      bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
+      left: BorderSide(color: AppColors.surfaceAccent, width: 1),
+      right: BorderSide(color: AppColors.surfaceAccent, width: 1),
+      bottom: BorderSide(color: AppColors.surfaceAccent, width: 1),
     ),
     boxShadow: _linkContentShadow
   );
@@ -429,7 +431,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   );
 
   Decoration get _imageHeadingDecoration => BoxDecoration(
-    border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
+    border: Border(bottom: BorderSide(color: AppColors.surfaceAccent, width: 1)),
   );
 
   Widget get _eventHeadingWidget => Container(height: _eventHeadingHeight, color: _event.uiColor,);
@@ -458,7 +460,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
       badgeLabel = Localization().getStringEx('widget.event2.card.recurring.abbreviation.label', 'REC');
     }
     return (badgeLabel != null) ? 
-      Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+      Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: AppColors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
         Semantics(label: badgeLabel, excludeSemantics: true, child:
           Text(badgeLabel, style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
     )) : Container();
@@ -617,7 +619,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   List<Widget> get _linkedEventsPagerWidget {
     Event2Grouping? linkedGroupingQuery = _event.linkedEventsGroupingQuery;
     return (linkedGroupingQuery != null) ? <Widget>[
-      Container(color: Styles().colors.surfaceAccent, height: 1,),
+      Container(color: AppColors.surfaceAccent, height: 1,),
       Padding(padding: const EdgeInsets.symmetric(vertical: 16), child:
         LinkedEvents2Pager(linkedGroupingQuery, userLocation: widget.userLocation)
       )
@@ -821,7 +823,7 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
     Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
       Center(child:
         Container(width: 24, height: 24, child:
-          CircularProgressIndicator(strokeWidth: 3, color: Styles().colors.fillColorSecondary),
+          CircularProgressIndicator(strokeWidth: 3, color: AppColors.fillColorSecondary),
         )
       ),
     );
@@ -935,7 +937,7 @@ class Event2Popup {
   
   static Future<void> showMessage(BuildContext context, { String? title, String? message}) =>
     showDialog(context: context, builder: (BuildContext context) => AlertDialog(
-      surfaceTintColor: Styles().colors.surface,
+      surfaceTintColor: AppColors.surface,
       content: Column(mainAxisSize: MainAxisSize.min, children: [
         (title != null) ? Text(title, style: Styles().textStyles.getTextStyle("widget.card.title.regular.fat"),) : Container(),
         (message != null) ? Padding(padding: (title != null) ? EdgeInsets.only(top: 12) : EdgeInsets.zero, child:
@@ -966,7 +968,7 @@ class Event2Popup {
     String? negativeButtonTitle, String? negativeAnalyticsTitle,
   }) async {
     return showDialog<bool?>(context: context, builder: (BuildContext context) => AlertDialog(
-      surfaceTintColor: Styles().colors.surface,
+      surfaceTintColor: AppColors.surface,
       content: Column(mainAxisSize: MainAxisSize.min, children: [
         Text(title, style: Styles().textStyles.getTextStyle("widget.card.title.regular.fat"),),
         (message != null) ? Padding(padding: EdgeInsets.only(top: 12), child:

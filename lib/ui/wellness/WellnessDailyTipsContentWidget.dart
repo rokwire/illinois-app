@@ -24,12 +24,14 @@ import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Transportation.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class WellnessDailyTipsContentWidget extends StatefulWidget {
   WellnessDailyTipsContentWidget();
@@ -87,8 +89,8 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
   }
 
   Widget _buildTipDescription() {
-    Color? textColor = Styles().colors.white;
-    Color? backColor = _tipColor ?? Styles().colors.accentColor3;
+    Color? textColor = illinois.AppColors.white;
+    Color? backColor = _tipColor ?? AppColors.accentColor3;
     return Container(color: backColor, padding: EdgeInsets.all(42), child:
       HtmlWidget(
         StringUtils.ensureNotEmpty(Wellness().dailyTip),
@@ -149,7 +151,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
   Widget _buildEightDimensionsPopup(BuildContext context) {
     return Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
       ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
-        Container(color: Styles().colors.white, child:
+        Container(color: illinois.AppColors.white, child:
           Stack(children: [
             Padding(padding: EdgeInsets.symmetric(vertical: 32), child:
               Column(mainAxisSize: MainAxisSize.min, children: <Widget>[

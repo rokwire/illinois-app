@@ -46,6 +46,7 @@ import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:illinois/ui/widgets/InAppNotificationToast.dart';
 import 'package:illinois/ui/widgets/PopScopeFix.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/actions.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -542,7 +543,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
             children: panels,
           ),
           bottomNavigationBar: uiuc.TabBar(tabController: _tabBarController),
-          backgroundColor: Styles().colors.background,
+          backgroundColor: AppColors.background,
         ),
       ),
     );
@@ -624,7 +625,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               children: <Widget>[
                 Expanded(
                   child: Container(
-                    color: Styles().colors.fillColorPrimary,
+                    color: AppColors.fillColorPrimary,
                     child: Padding(
                       padding: EdgeInsets.all(8),
                       child: Center(
@@ -658,7 +659,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                         Navigator.of(context).pop(true);
                       },
                       backgroundColor: Colors.transparent,
-                      borderColor: Styles().colors.fillColorSecondary,
+                      borderColor: AppColors.fillColorSecondary,
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                       label: Localization().getStringEx("dialog.yes.title", 'Yes')),
                   Container(height: 10,),
@@ -669,7 +670,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                         Navigator.of(context).pop(false);
                       },
                       backgroundColor: Colors.transparent,
-                      borderColor: Styles().colors.fillColorSecondary,
+                      borderColor: AppColors.fillColorSecondary,
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                       label: Localization().getStringEx("dialog.no.title", 'No'))
                 ],

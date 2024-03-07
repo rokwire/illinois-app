@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/web_panel.dart';
@@ -34,7 +35,7 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.info.header.title', 'Skills Self-Evaluation'), leading: RootHeaderBarLeading.Back,),
       body: SingleChildScrollView(child: Padding(padding: const EdgeInsets.all(24.0), child: content == null ? _buildUnavailableMessage() : _buildContent(context))),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

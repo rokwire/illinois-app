@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -54,7 +55,7 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
     bool canSkip = (widget.requiredVersion == null);
 
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         body: SafeArea(
             child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -74,9 +75,9 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
                     title!,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontFamily: Styles().fontFamilies.bold,
+                        fontFamily: AppFontFamilies.bold,
                         fontSize: 32,
-                        color: Styles().colors.fillColorPrimary),
+                        color: AppColors.fillColorPrimary),
                   )),
             )),
             Expanded(
@@ -88,9 +89,9 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
                         message!,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontFamily: Styles().fontFamilies.regular,
+                            fontFamily: AppFontFamilies.regular,
                             fontSize: 20,
-                            color: Styles().colors.fillColorPrimary),
+                            color: AppColors.fillColorPrimary),
                       ),
                     ))),
             Padding(
@@ -102,8 +103,8 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
                     label: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.title', 'Upgrade'),
                     hint: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.hint', ''),
                     textStyle: Styles().textStyles.getTextStyle("widget.colourful_button.title.large.accent"),
-                    borderColor: Styles().colors.fillColorSecondary,
-                    backgroundColor: Styles().colors.fillColorSecondary,
+                    borderColor: AppColors.fillColorSecondary,
+                    backgroundColor: AppColors.fillColorSecondary,
                     onTap: () => _onUpgradeClicked(context),
                   ),
                   canSkip
@@ -122,13 +123,13 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
                                       child: Text(
                                         dontShow,
                                         style: TextStyle(
-                                            fontFamily: Styles().fontFamilies.medium,
+                                            fontFamily: AppFontFamilies.medium,
                                             fontSize: 16,
-                                            color: Styles().colors.fillColorPrimary,
+                                            color: AppColors.fillColorPrimary,
                                             decoration:
                                                 TextDecoration.underline,
                                             decorationColor:
-                                                Styles().colors.fillColorSecondary,
+                                                AppColors.fillColorSecondary,
                                             decorationThickness: 1,
                                             decorationStyle:
                                                 TextDecorationStyle.solid),
@@ -148,13 +149,13 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
                                       child: Text(
                                         notNow,
                                         style: TextStyle(
-                                            fontFamily: Styles().fontFamilies.medium,
+                                            fontFamily: AppFontFamilies.medium,
                                             fontSize: 16,
-                                            color: Styles().colors.fillColorPrimary,
+                                            color: AppColors.fillColorPrimary,
                                             decoration:
                                                 TextDecoration.underline,
                                             decorationColor:
-                                                Styles().colors.fillColorSecondary,
+                                                AppColors.fillColorSecondary,
                                             decorationThickness: 1,
                                             decorationStyle:
                                                 TextDecorationStyle.solid),

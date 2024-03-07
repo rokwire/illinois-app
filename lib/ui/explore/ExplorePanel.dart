@@ -20,6 +20,7 @@ import 'package:illinois/service/MTD.dart';
 import 'package:illinois/ui/explore/ExploreSearchPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -51,6 +52,7 @@ import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 enum ExploreType { Events, Dining }
 
@@ -170,7 +172,7 @@ class ExplorePanelState extends State<ExplorePanel>
           onRefresh: () => _loadExplores(progress: false, updateOnly: true),
           child: _buildContent(),
         ),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         bottomNavigationBar: uiuc.TabBar());
   }
 
@@ -700,7 +702,7 @@ class ExplorePanelState extends State<ExplorePanel>
                   Wrap(children: _buildFilterWidgets()),
                 ),
                 Expanded(child:
-                  Container(color: Styles().colors.background, child:
+                  Container(color: AppColors.background, child:
                     _buildListView(),
                   ),
                 ),
@@ -717,9 +719,9 @@ class ExplorePanelState extends State<ExplorePanel>
   Widget _buildEventsDisplayTypesDropDownButton() {
     return RibbonButton(
       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: illinois.AppColors.white,
       borderRadius: BorderRadius.all(Radius.circular(5)),
-      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+      border: Border.all(color: AppColors.surfaceAccent, width: 1),
       rightIconKey: (_eventsDisplayDropDownValuesVisible ? 'chevron-up' : 'chevron-down'),
       label: _eventsDisplayTypeLabel(_selectedEventsDisplayType),
       onTap: _changeEventsDisplayDropDownValuesVisibility
@@ -741,12 +743,12 @@ class ExplorePanelState extends State<ExplorePanel>
                     _eventsDisplayDropDownValuesVisible = false;
                   });
                 },
-                child: Container(color: Styles().colors.blackTransparent06))));
+                child: Container(color: illinois.AppColors.blackTransparent06))));
   }
 
   Widget _buildEventsDisplayTypesDropDownWidget() {
     List<Widget> displayTypesWidgetList = <Widget>[];
-    displayTypesWidgetList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
+    displayTypesWidgetList.add(Container(color: AppColors.fillColorSecondary, height: 2));
     for (EventsDisplayType displayType in EventsDisplayType.values) {
       if ((_selectedEventsDisplayType != displayType)) {
         displayTypesWidgetList.add(_buildEventsDisplayTypeDropDownItem(displayType));
@@ -757,8 +759,8 @@ class ExplorePanelState extends State<ExplorePanel>
 
   Widget _buildEventsDisplayTypeDropDownItem(EventsDisplayType displayType) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+        backgroundColor: illinois.AppColors.white,
+        border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _eventsDisplayTypeLabel(displayType),
         onTap: () => _onTapEventsDisplayType(displayType));
@@ -810,7 +812,7 @@ class ExplorePanelState extends State<ExplorePanel>
     }
 
     return  Stack(children: [
-      Container(color: Styles().colors.background, child: exploresContent),
+      Container(color: AppColors.background, child: exploresContent),
       _buildDimmedContainer(),
     ]);
   }
@@ -845,7 +847,7 @@ class ExplorePanelState extends State<ExplorePanel>
       hint: Localization().getStringEx('panel.explore.state.loading.hint', 'Please wait'),
       excludeSemantics: true,
       child:Container(
-      color: Styles().colors.background,
+      color: AppColors.background,
       child: Align(
         alignment: Alignment.center,
         child: CircularProgressIndicator(),
@@ -921,7 +923,7 @@ class ExplorePanelState extends State<ExplorePanel>
           padding: EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 40),
           child: Semantics(child:Container(
             decoration: BoxDecoration(
-              color: Styles().colors.fillColorSecondary,
+              color: AppColors.fillColorSecondary,
               borderRadius: BorderRadius.circular(5.0),
             ),
             child: Padding(
@@ -932,7 +934,7 @@ class ExplorePanelState extends State<ExplorePanel>
                   shrinkWrap: true,
                   separatorBuilder: (context, index) => Divider(
                         height: 1,
-                        color: Styles().colors.fillColorPrimaryTransparent03,
+                        color: illinois.AppColors.fillColorPrimaryTransparent03,
                       ),
                   itemCount: filterValues.length,
                   itemBuilder: (context, index) {
@@ -1155,7 +1157,7 @@ class _MTDInstructionsPopupState extends State<ExploreOptionalMessagePopup> {
     String dontShow = Localization().getStringEx("panel.explore.instructions.mtd.dont_show.msg", "Don't show me this again.");
 
     return AlertDialog(contentPadding: EdgeInsets.zero, content:
-      Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)), child:
+      Container(decoration: BoxDecoration(color: illinois.AppColors.white, borderRadius: BorderRadius.circular(10.0)), child:
         Stack(alignment: Alignment.center, children: [
           Padding(padding: EdgeInsets.only(top: 36, bottom: 9), child:
             Column(mainAxisSize: MainAxisSize.min, children: [

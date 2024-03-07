@@ -22,6 +22,7 @@ import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -53,7 +54,7 @@ class _CanvasFileSystemEntitiesListPanelState extends State<CanvasFileSystemEnti
         title: Localization().getStringEx('panel.canvas_files.header.title', 'Files'),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: illinois.AppColors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

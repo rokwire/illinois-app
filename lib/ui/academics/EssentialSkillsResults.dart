@@ -15,6 +15,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/CustomCourses.dart';
@@ -24,6 +25,7 @@ import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dar
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -80,9 +82,9 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
             SingleChildScrollView(
             child: SectionSlantHeader(
               headerWidget: _buildHeader(),
-              slantColor: Styles().colors.gradientColorPrimary,
+              slantColor: AppColors.gradientColorPrimary,
               slantPainterHeadingHeight: 0,
-              backgroundColor: Styles().colors.background,
+              backgroundColor: AppColors.background,
               children: Connectivity().isOffline ? _buildOfflineMessage() : _buildContent(),
               childrenPadding: EdgeInsets.symmetric(horizontal: 16.0),
               allowOverlap: false,
@@ -97,7 +99,7 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
                   child: RoundedButton(
                     label: Localization().getStringEx("panel.essential_skills_coach.evaluation_results.button.continue.label", 'Continue'),
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant"),
-                    backgroundColor: Styles().colors.surface,
+                    backgroundColor: AppColors.surface,
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => EssentialSkillsLearning(onStartCourse: widget.onStartCourse, selectedSkill: _selectedRadioValue,)));
                     },
@@ -108,7 +110,7 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
           ]
         ),
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -142,8 +144,8 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Styles().colors.fillColorPrimaryVariant,
-                Styles().colors.gradientColorPrimary,
+                AppColors.fillColorPrimaryVariant,
+                AppColors.gradientColorPrimary,
               ]
           )
       ),
@@ -184,7 +186,7 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
                         children: [
                           if (isSelectable)
                             Radio<String>(
-                              activeColor: Styles().colors.fillColorPrimary,
+                              activeColor: AppColors.fillColorPrimary,
                               value: section,
                               groupValue: _selectedRadioValue,
                               onChanged: (value) {
@@ -200,7 +202,7 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
                                 title,
                                 style: !isProficient ?
                                   Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')
-                                    : Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')?.apply(color: Styles().colors.mediumGray),// Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')
+                                    : Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')?.apply(color: illinois.AppColors.mediumGray),// Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')
                               )
                           ),
                           Flexible(
@@ -220,7 +222,7 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
                               child: SizedBox(
                                   height: 16.0,
                                   child: Styles().images.getImage('chevron-right-bold',
-                                      excludeFromSemantics: true, color: Styles().colors.mediumGray)
+                                      excludeFromSemantics: true, color: illinois.AppColors.mediumGray)
                               )
                           ),
                         ],
@@ -290,7 +292,7 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
       Visibility(
           visible: _loading,
           child: Container(
-            child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary)),
+            child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorPrimary)),
             alignment: Alignment.center,
             padding: const EdgeInsets.symmetric(vertical: 64),
           )

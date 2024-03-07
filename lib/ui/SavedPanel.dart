@@ -29,6 +29,7 @@ import 'package:illinois/service/MTD.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
@@ -135,7 +136,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
         ]),
         
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -159,7 +160,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   Widget _buildProgress() {
     return Align(alignment: Alignment.center, child:
-      CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
+      CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorSecondary), )
     );
   }
 
@@ -463,7 +464,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
             title: widget.headingTitle,
             titleIconKey: widget.headingIconKey,
             slantImageKey: widget.slantImageKey,
-            slantColor: widget.slantColor ?? Styles().colors.fillColorPrimary,
+            slantColor: widget.slantColor ?? AppColors.fillColorPrimary,
             children: (0 <  widget.items!.length) ? _buildListItems(context) : _buildEmptyContent(context),),
         Visibility(visible: showMoreButton, child: Padding(padding: EdgeInsets.only(top: 8, bottom: 40), child: SmallRoundedButton(
           label: _showAll ? Localization().getStringEx('panel.saved.button.less.title', "Show Less") : Localization().getStringEx('panel.saved.button.more.title', "Show All"),
@@ -528,7 +529,7 @@ class _SavedItem extends StatelessWidget {
       Semantics(label: title, child:
         Column(children: <Widget>[
           Container(height: 7, color: headerColor,),
-          Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
+          Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: AppColors.surfaceAccent, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Flex(direction: Axis.vertical, children: <Widget>[
@@ -578,7 +579,7 @@ class _SavedItem extends StatelessWidget {
   }
 
   Widget _buildCompositEventCard(BuildContext context) {
-      return ExploreCard(explore: favorite as Event, showTopBorder: true, horizontalPadding: 0, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+      return ExploreCard(explore: favorite as Event, showTopBorder: true, horizontalPadding: 0, border: Border.all(color: AppColors.surfaceAccent, width: 1),
         onTap:() => _onTapCompositeEvent(context));
   }
 

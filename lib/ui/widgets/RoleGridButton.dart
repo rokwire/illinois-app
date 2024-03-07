@@ -22,7 +22,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/ui/widgets/tile_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class RoleGridButton extends TileToggleButton {
   static final double  minimumTitleRowsCount = 2;
@@ -72,7 +72,7 @@ class RoleGridButton extends TileToggleButton {
         hint: Localization().getStringEx('panel.onboarding2.roles.button.student.hint', ''),
         iconKey: 'role-student',
         selectedIconKey: 'role-student',
-        selectedBackgroundColor: Styles().colors.white,
+        selectedBackgroundColor: illinois.AppColors.white,
         selected: (selected == true),
         data: role,
         sortOrder: sortOrder,
@@ -86,7 +86,7 @@ class RoleGridButton extends TileToggleButton {
         hint: Localization().getStringEx('panel.onboarding2.roles.button.visitor.hint', ''),
         iconKey: 'role-visitor',
         selectedIconKey:  'role-visitor',
-        selectedBackgroundColor: Styles().colors.white,
+        selectedBackgroundColor: illinois.AppColors.white,
         selected: (selected == true),
         data: role,
         sortOrder: sortOrder,
@@ -100,7 +100,7 @@ class RoleGridButton extends TileToggleButton {
         hint: Localization().getStringEx('panel.onboarding2.roles.button.fan.hint', ''),
         iconKey: 'role-athletics',
         selectedIconKey:  'role-athletics',
-        selectedBackgroundColor: Styles().colors.white,
+        selectedBackgroundColor: illinois.AppColors.white,
         selected: (selected == true),
         data: role,
         sortOrder: sortOrder,
@@ -114,7 +114,7 @@ class RoleGridButton extends TileToggleButton {
         hint: Localization().getStringEx('panel.onboarding2.roles.button.employee.hint', ''),
         iconKey: 'role-employee',
         selectedIconKey: 'role-employee',
-        selectedBackgroundColor: Styles().colors.white,
+        selectedBackgroundColor: illinois.AppColors.white,
         selected: (selected == true),
         data: role,
         sortOrder: sortOrder,
@@ -128,7 +128,7 @@ class RoleGridButton extends TileToggleButton {
         hint: Localization().getStringEx('panel.onboarding2.roles.button.alumni.hint', ''),
         iconKey: 'role-alumni',
         selectedIconKey: 'role-alumni',
-        selectedBackgroundColor: Styles().colors.white,
+        selectedBackgroundColor: illinois.AppColors.white,
         selected:(selected == true),
         data: role,
         sortOrder: sortOrder,
@@ -142,7 +142,7 @@ class RoleGridButton extends TileToggleButton {
         hint: Localization().getStringEx('panel.onboarding2.roles.button.parent.hint', ''),
         iconKey: 'role-parent',
         selectedIconKey:  'role-parent',
-        selectedBackgroundColor: Styles().colors.white,
+        selectedBackgroundColor: illinois.AppColors.white,
         selected: (selected == true),
         data: role,
         sortOrder: sortOrder,
@@ -157,7 +157,7 @@ class RoleGridButton extends TileToggleButton {
         hint: Localization().getStringEx('panel.onboarding2.roles.button.gies.hint', ''),
         iconKey: 'role-alumni',
         selectedIconKey: 'role-alumni',
-        selectedBackgroundColor: Styles().colors.white,
+        selectedBackgroundColor: illinois.AppColors.white,
         selected: (selected == true),
         data: role,
         sortOrder: sortOrder,

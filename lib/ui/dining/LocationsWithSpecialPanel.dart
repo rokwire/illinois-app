@@ -20,6 +20,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Dinings.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -84,7 +85,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
     return Scaffold(
       appBar: HeaderBar(
         title: Localization().getStringEx("panel.food_special_offers.title.text", "Dining News"),
-        //textStyle: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16 ),
+        //textStyle: TextStyle(fontFamily: AppFontFamilies.extraBold, fontSize: 16 ),
       ),
       body: Column(
         children: <Widget>[
@@ -95,7 +96,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
           ),
         ],
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -130,15 +131,15 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
                 // Html(
                 //   data: widget.special!.text ?? "",
                 //   style: {
-                //     "body": Style(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textBackground,)
+                //     "body": Style(fontFamily: AppFontFamilies.regular, color: illinois.AppColors.textBackground,)
                 //   },
                 // ),
                 /*Text(
                   widget.special.text ?? "",
                   style: TextStyle(
-                      fontFamily: Styles().fontFamilies.regular,
+                      fontFamily: AppFontFamilies.regular,
                       fontSize: 16,
-                      color: Styles().colors.textBackground
+                      color: illinois.AppColors.textBackground
                   ),
                 ),*/
                 Container(height: 20,),

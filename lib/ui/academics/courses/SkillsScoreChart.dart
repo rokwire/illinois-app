@@ -2,6 +2,8 @@
 import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -38,15 +40,15 @@ class SkillsScoreChart extends StatefulWidget {
   static Color? getSectionColor(String section) {
     switch(section){
       case "cooperation":
-        return Styles().colors.getColor('essentialSkillsCoachRed');
+        return illinois.AppColors.essentialSkillsCoachRed;
       case "emotional_resilience":
-        return Styles().colors.getColor('essentialSkillsCoachOrange');
+        return illinois.AppColors.essentialSkillsCoachOrange;
       case "innovation":
-        return Styles().colors.getColor('essentialSkillsCoachGreen');
+        return illinois.AppColors.essentialSkillsCoachGreen;
       case "self_management":
-        return Styles().colors.getColor('essentialSkillsCoachBlue');
+        return illinois.AppColors.essentialSkillsCoachBlue;
       case "social_engagement":
-        return Styles().colors.getColor('essentialSkillsCoachPurple');
+        return illinois.AppColors.essentialSkillsCoachPurple;
       default:
         return null;
     }
@@ -190,8 +192,8 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
                     },
                     touchTooltipData: BarTouchTooltipData(
                       tooltipPadding: EdgeInsets.all(4),
-                      tooltipBgColor: Styles().colors.background,
-                      tooltipBorder: BorderSide(color: Styles().colors.dividerLine, width: 1.0),
+                      tooltipBgColor: AppColors.background,
+                      tooltipBorder: BorderSide(color: AppColors.dividerLine, width: 1.0),
                       getTooltipItem: getTooltipItem,
                       // fitInsideVertically: true,
                     )
@@ -222,12 +224,12 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
                   getDrawingVerticalLine: (value) {
                     if (value == 0) {
                       return FlLine(
-                        color: Styles().colors.surface.withOpacity(0.1),
+                        color: AppColors.surface.withOpacity(0.1),
                         strokeWidth: 3,
                       );
                     }
                     return FlLine(
-                      color: Styles().colors.surface.withOpacity(0.05),
+                      color: AppColors.surface.withOpacity(0.05),
                       strokeWidth: 0.8,
                     );
                   },
@@ -285,7 +287,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
     String text = bottomTitleStrings(value.toInt());
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      child: Text(text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: _chartItems.length >= 8 ? 8 : 10)),
+      child: Text(text, style: TextStyle(color: AppColors.fillColorPrimary, fontSize: _chartItems.length >= 8 ? 8 : 10)),
     );
   }
 
@@ -300,7 +302,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
         axisSide: meta.axisSide,
         child: Text(
           text,
-          style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 10),
+          style: TextStyle(color: AppColors.fillColorPrimary, fontSize: 10),
           textAlign: TextAlign.left,
         ),
       );
@@ -318,10 +320,10 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
           BarChartRodData(
             fromY:fromY,
             toY: scoreBar.score.toDouble() + fromY,
-            color: scoreBar.color ?? Styles().colors.surface,
+            color: scoreBar.color ?? AppColors.surface,
             width: _barWidth,
             borderSide: BorderSide(
-              color: scoreBar.color ?? Styles().colors.surface,
+              color: scoreBar.color ?? AppColors.surface,
               width: isTouched ? 2 : 0,
             ),
             borderRadius: const BorderRadius.only(
@@ -347,7 +349,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
     List<TextSpan> barData = [];
     final textStyle = TextStyle(
       color: rod.color,
-      fontFamily: Styles().fontFamilies.bold,
+      fontFamily: AppFontFamilies.bold,
       fontSize: 14,
     );
 

@@ -15,6 +15,7 @@ import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -135,7 +136,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
       // Title Row
       Padding(padding: EdgeInsets.zero, child: 
         Semantics(container: true, header: true,
-          child: Container(color: Styles().colors.fillColorPrimary, child:
+          child: Container(color: AppColors.fillColorPrimary, child:
             Row(children: <Widget>[
 
               HomeTitleIcon(image: Styles().images.getImage('courses', excludeFromSemantics: true)),
@@ -161,9 +162,9 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
       
         // Slant
         Column(children: <Widget>[
-          Container(color: Styles().colors.fillColorPrimary, height: flatHeight,),
-          Container(color: Styles().colors.fillColorPrimary, child:
-            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
+          Container(color: AppColors.fillColorPrimary, height: flatHeight,),
+          Container(color: AppColors.fillColorPrimary, child:
+            CustomPaint(painter: TrianglePainter(painterColor: AppColors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
               Container(height: slantHeight,),
             ),
           ),

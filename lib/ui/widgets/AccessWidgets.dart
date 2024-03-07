@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -24,6 +25,7 @@ import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class AccessCard extends StatefulWidget {
   final String resource;
@@ -69,7 +71,7 @@ class _AccessCardState extends State<AccessCard> implements NotificationsListene
 
       return Padding(padding: widget.padding, child:
         Container(
-          decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+          decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
               Expanded(child:
@@ -147,7 +149,7 @@ class _AccessDialogState extends State<AccessDialog> implements NotificationsLis
       return ActionsMessage(
         title: sprintf(Localization().getStringEx('widget.access.$titleKey.title', defaultTitle), [resourceName]),
         titleTextStyle: Styles().textStyles.getTextStyle('widget.heading.regular.fat'),
-        titleBarColor: Styles().colors.fillColorPrimary,
+        titleBarColor: AppColors.fillColorPrimary,
         bodyWidget: _AccessContent(messageKeys: messageKeys, resourceName: resourceName,),
       );
     }
@@ -200,8 +202,8 @@ class _AccessContent extends StatelessWidget {
       if (ruleType != 'roles') {
         button ??= Padding(padding: const EdgeInsets.only(top: 16), child: RoundedButton(
           label: Localization().getStringEx('widget.access.$ruleType.unsatisfied.button.label', ruleType == 'privacy' ? 'Update privacy level' : 'Sign in'),
-          borderColor: Styles().colors.fillColorSecondary,
-          backgroundColor: Styles().colors.surface,
+          borderColor: AppColors.fillColorSecondary,
+          backgroundColor: AppColors.surface,
           textStyle: Styles().textStyles.getTextStyle('widget.detail.large.fat'),
           onTap: () => _onTapUpdateButton(context, ruleType),
         ));

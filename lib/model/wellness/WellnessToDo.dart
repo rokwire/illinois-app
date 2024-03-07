@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -113,7 +114,7 @@ class WellnessToDoItem {
   }
 
   Color get color {
-    return category?.color ?? Styles().colors.fillColorPrimary;
+    return category?.color ?? AppColors.fillColorPrimary;
   }
 
   static List<WellnessToDoItem>? listFromJson(List<dynamic>? jsonList) {
@@ -193,7 +194,7 @@ class WellnessToDoCategory {
   }
 
   Color get color {
-    return UiColors.fromHex(colorHex) ?? Styles().colors.fillColorPrimary;
+    return UiColors.fromHex(colorHex) ?? AppColors.fillColorPrimary;
   }
 
   static List<WellnessToDoCategory>? listFromJson(List<dynamic>? jsonList) {

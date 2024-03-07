@@ -18,6 +18,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -366,11 +367,11 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   Color? get _activeColor {
-    return _activeBusColor??Styles().colors.fillColorSecondary;
+    return _activeBusColor??AppColors.fillColorSecondary;
   }
 
   Color? get _backgroundColor {
-    return Styles().colors.fillColorPrimaryVariant;
+    return AppColors.fillColorPrimaryVariant;
   }
 
   String? get _busNumber {
@@ -433,7 +434,7 @@ class _RotatingBorderState extends State<RotatingBorder>
             decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
-                  colors: [widget.activeColor!, widget.baseGradientColor ?? Styles().colors.fillColorSecondary],
+                  colors: [widget.activeColor!, widget.baseGradientColor ?? AppColors.fillColorSecondary],
                   stops:  [0.0, 1.0],
                 )
             ),

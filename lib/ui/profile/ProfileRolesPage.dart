@@ -18,6 +18,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -55,7 +56,7 @@ class _ProfileRolesPageState extends State<ProfileRolesPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-          color: Styles().colors.background,
+          color: AppColors.background,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -92,11 +93,11 @@ class _ProfileRolesPageState extends State<ProfileRolesPage> {
               label: Localization().getStringEx("panel.profile_info.button.save.title", "Save Changes"),
               hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
               enabled: _canSave,
-              fontFamily: Styles().fontFamilies.bold,
-              backgroundColor: Styles().colors.white,
+              fontFamily: AppFontFamilies.bold,
+              backgroundColor: illinois.AppColors.white,
               fontSize: 16.0,
-              textColor: Styles().colors.fillColorPrimary,
-              borderColor: Styles().colors.fillColorSecondary,
+              textColor: AppColors.fillColorPrimary,
+              borderColor: AppColors.fillColorSecondary,
               onTap: _onSaveChangesClicked,
             ),
          );

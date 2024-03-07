@@ -19,11 +19,13 @@ import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/appointments/AppointmentSchedulePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 //import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -78,7 +80,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
         Localization().getStringEx('panel.appointment.reschedule.questions.header.title', 'Reschedule Appointment')
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       //bottomNavigationBar: uiuc.TabBar()
     );
   }
@@ -167,8 +169,8 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
     return Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
       Container(
         decoration: BoxDecoration(
-          border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),
-          color: Styles().colors.white),
+          border: Border.all(color: AppColors.fillColorPrimary, width: 1),
+          color: illinois.AppColors.white),
         child: Semantics(textField: true, excludeSemantics: true, value: textController?.text,
           label: Localization().getStringEx('panel.appointment.schedule.notes.field', 'NOTES FIELD'),
           hint: Localization().getStringEx('panel.appointment.schedule.notes.field.hint', ''),
@@ -283,8 +285,8 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
     return Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
       Container (
         decoration: BoxDecoration(
-          color: Styles().colors.white,
-          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+          color: illinois.AppColors.white,
+          border: Border.all(color: AppColors.surfaceAccent, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(4))
         ),
         //padding: const EdgeInsets.only(left: 12, right: 8),
@@ -368,9 +370,9 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
         RoundedButton(
           label: Localization().getStringEx("panel.appointment.schedule.time.button.continue.title", "Next"),
           hint: Localization().getStringEx("panel.appointment.schedule.time.button.continue.hint", ""),
-          backgroundColor: Styles().colors.surface,
+          backgroundColor: AppColors.surface,
           textStyle: canContinue ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
-          borderColor: canContinue ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+          borderColor: canContinue ? AppColors.fillColorSecondary : AppColors.surfaceAccent,
           enabled: canContinue,
           onTap: ()=> _onContinue(),
         ),

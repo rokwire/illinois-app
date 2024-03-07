@@ -6,10 +6,12 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/WPGUFMRadio.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class HomeWPGUFMRadioWidget extends StatelessWidget {
   final String? favoriteId;
@@ -52,7 +54,7 @@ class HomeWPGUFMRadioWidget extends StatelessWidget {
     return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
       Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
         Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Container(color: Styles().colors.fillColorPrimary, child:
+          Container(color: AppColors.fillColorPrimary, child:
             Row(children: <Widget>[
               Expanded(child:
                 Padding(padding: EdgeInsets.all(8), child:
@@ -143,16 +145,16 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors.white, child:
+                Container(color: illinois.AppColors.white, child:
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        Container(color: Styles().colors.white, child:
+                        Container(color: illinois.AppColors.white, child:
                           Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                             Row(children: <Widget>[
                               Expanded(child:
                                 Padding(padding: EdgeInsets.all(16), child:
-                                  Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors.fillColorSecondary , width: 3))), child:
+                                  Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: AppColors.fillColorSecondary , width: 3))), child:
                                     Padding(padding: EdgeInsets.only(left: 10), child:
                                     Row(children: [Expanded(child: Text(buttonTitle, style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat')))]))))),
                             ],),
@@ -163,7 +165,7 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
                           excludeSemantics: true,
                           label: buttonTitle,
                           hint: Localization().getStringEx('widget.home.radio.button.add_radio.hint', ''),
-                          child:  IconButton(color: Styles().colors.fillColorPrimary,
+                          child:  IconButton(color: AppColors.fillColorPrimary,
                             icon: Styles().images.getImage(iconKey, excludeFromSemantics: true) ?? Container(),
                             onPressed: _onTapPlayPause)
                       ) : Container(),

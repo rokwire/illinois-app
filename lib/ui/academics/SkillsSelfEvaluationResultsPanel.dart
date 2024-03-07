@@ -15,11 +15,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:illinois/ui/academics/SkillsSelfEvaluationOccupationListPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -68,15 +70,15 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child: SingleChildScrollView(
         child: SectionSlantHeader(
           headerWidget: _buildHeader(),
-          slantColor: Styles().colors.gradientColorPrimary,
+          slantColor: AppColors.gradientColorPrimary,
           slantPainterHeadingHeight: 0,
-          backgroundColor: Styles().colors.background,
+          backgroundColor: AppColors.background,
           children: Connectivity().isOffline ? _buildOfflineMessage() : _buildContent(),
           childrenPadding: EdgeInsets.zero,
           allowOverlap: !Connectivity().isOffline,
         ),
       )),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -106,8 +108,8 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
           padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 16),
           child: RoundedButton(
             label: Localization().getStringEx("panel.skills_self_evaluation.go_to_results.button.label", 'Career Explorer'),
-            textColor: Styles().colors.fillColorPrimaryVariant,
-            backgroundColor: Styles().colors.surface,
+            textColor: AppColors.fillColorPrimaryVariant,
+            backgroundColor: AppColors.surface,
             onTap: () {
               Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillSelfEvaluationOccupationListPanel(percentages: _latestResponse?.survey.stats?.percentages ?? {})));
             }
@@ -121,8 +123,8 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Styles().colors.fillColorPrimaryVariant,
-            Styles().colors.gradientColorPrimary,
+            AppColors.fillColorPrimaryVariant,
+            AppColors.gradientColorPrimary,
           ]
         )
       ),
@@ -133,7 +135,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     return Padding(padding: const EdgeInsets.only(top: 20, left: 28, right: 28), child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Divider(color: Styles().colors.surface, thickness: 2),
+        Divider(color: AppColors.surface, thickness: 2),
         Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Flexible(flex: 4, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.results.skills.title', 'SKILLS'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.table.header'),)),
           Flexible(flex: 3, fit: FlexFit.tight, child: Text(_latestResponse != null ? DateTimeUtils.localDateTimeToString(_latestResponse!.dateTaken, format: 'MM/dd/yy h:mma') ?? 'NONE' : 'NONE', textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.results.table.header'),)),
@@ -145,7 +147,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
               items: _buildResponseDateDropDownItems(),
               value: _comparisonResponseId,
               onChanged: _onResponseDateDropDownChanged,
-              dropdownColor: Styles().colors.textBackground,
+              dropdownColor: illinois.AppColors.textBackground,
             ),
           )),
         ],)),
@@ -212,7 +214,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
         Visibility(
           visible: _loading,
           child: Container(
-            child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary)),
+            child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorPrimary)),
             alignment: Alignment.center,
             padding: const EdgeInsets.symmetric(vertical: 64),
           )
@@ -371,15 +373,15 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     List<Widget> buttons = [
       Padding(padding: const EdgeInsets.symmetric(horizontal: 4), child: RoundedButton(
         label: Localization().getStringEx('dialog.no.title', 'No'),
-        borderColor: Styles().colors.fillColorPrimaryVariant,
-        backgroundColor: Styles().colors.surface,
+        borderColor: AppColors.fillColorPrimaryVariant,
+        backgroundColor: AppColors.surface,
         textStyle: Styles().textStyles.getTextStyle('widget.detail.large.fat'),
         onTap: _onTapDismissDeleteScores,
       )),
       Padding(padding: const EdgeInsets.symmetric(horizontal: 4), child: RoundedButton(
         label: Localization().getStringEx('dialog.yes.title', 'Yes'),
-        borderColor: Styles().colors.fillColorSecondary,
-        backgroundColor: Styles().colors.surface,
+        borderColor: AppColors.fillColorSecondary,
+        backgroundColor: AppColors.surface,
         textStyle: Styles().textStyles.getTextStyle('widget.detail.large.fat'),
         onTap: _onTapConfirmDeleteScores,
       )),
@@ -387,7 +389,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
 
     ActionsMessage.show(
       context: context,
-      titleBarColor: Styles().colors.surface,
+      titleBarColor: AppColors.surface,
       message: Localization().getStringEx('panel.skills_self_evaluation.results.delete_scores.message', 'Are you sure you want to delete all of your scores?'),
       messageTextStyle: Styles().textStyles.getTextStyle('widget.description.medium'),
       messagePadding: const EdgeInsets.only(left: 32, right: 32, top: 8, bottom: 32),

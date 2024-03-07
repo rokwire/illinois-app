@@ -3,13 +3,13 @@ import 'dart:ui';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 extension EventExt on Event {
@@ -46,7 +46,7 @@ extension EventExt on Event {
     Analytics.LogAttributeLocation : location?.analyticsValue,
   };
 
-  Color? get uiColor => Styles().colors.eventColor;
+  Color? get uiColor => illinois.AppColors.eventColor;
 
   String? get eventImageUrl => StringUtils.isNotEmpty(exploreImageURL) ? exploreImageURL : randomImageUrl;
 

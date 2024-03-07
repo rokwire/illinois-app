@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Dinings.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -67,7 +68,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
     return Scaffold(
       appBar: HeaderBar(
         title: widget.productItem.name,
-        //textStyle: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16),
+        //textStyle: TextStyle(fontFamily: AppFontFamilies.extraBold, fontSize: 16),
       ),
       body: Column(
         children: <Widget>[
@@ -78,7 +79,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
           ),
         ],
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -106,7 +107,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
             ):
             Container(
               decoration: BoxDecoration(
-                  color: Styles().colors.fillColorPrimary,
+                  color: AppColors.fillColorPrimary,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(4),
                       topRight: Radius.circular(4))),
@@ -142,7 +143,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
               child: RibbonButton(
                 label: Localization().getStringEx("panel.food_details.button.view_full_list_of_ingredients.title", "View full list of ingredients"),
                 borderRadius: BorderRadius.all(Radius.circular(4)),
-                border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                border: Border.all(color: AppColors.surfaceAccent, width: 1),
                 onTap: (){_onEatSmartTapped(context);},
               ),
             ),
@@ -177,7 +178,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
       list.add(Container(height: 20,));
       list.add(Container(
         decoration: BoxDecoration(
-            color: Styles().colors.fillColorPrimary,
+            color: AppColors.fillColorPrimary,
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(4),
                 topRight: Radius.circular(4))),
@@ -225,7 +226,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
       list.add(Container(height: 20,));
       list.add(Container(
         decoration: BoxDecoration(
-            color: Styles().colors.fillColorPrimary,
+            color: AppColors.fillColorPrimary,
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(4),
                 topRight: Radius.circular(4))),
@@ -290,9 +291,9 @@ class _FactItem extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           border: Border(
-            left: BorderSide(width: 1, color: Styles().colors.surfaceAccent),
-            right: BorderSide(width: 1, color: Styles().colors.surfaceAccent),
-            bottom: BorderSide(width: 1, color: Styles().colors.surfaceAccent),
+            left: BorderSide(width: 1, color: AppColors.surfaceAccent),
+            right: BorderSide(width: 1, color: AppColors.surfaceAccent),
+            bottom: BorderSide(width: 1, color: AppColors.surfaceAccent),
           ),
           color: Colors.white,
         ),
@@ -339,9 +340,9 @@ class _IngredientItem extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           border: Border(
-            left: BorderSide(width: 1, color: Styles().colors.surfaceAccent),
-            right: BorderSide(width: 1, color: Styles().colors.surfaceAccent),
-            bottom: BorderSide(width: 1, color: Styles().colors.surfaceAccent),
+            left: BorderSide(width: 1, color: AppColors.surfaceAccent),
+            right: BorderSide(width: 1, color: AppColors.surfaceAccent),
+            bottom: BorderSide(width: 1, color: AppColors.surfaceAccent),
           ),
           color: Colors.white,
         ),

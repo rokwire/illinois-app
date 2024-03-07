@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -102,7 +104,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
 
     return Scaffold(
       appBar: HeaderBar(title: title, actions: _headerBarActions,),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       body: Column(children: [
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
@@ -144,7 +146,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
             Column(mainAxisSize: MainAxisSize.min, children: [
               Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.white, width: 1.5, ))),
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: illinois.AppColors.white, width: 1.5, ))),
                 child: Text(title ?? '',
                   style: Styles().textStyles.getTextStyle("widget.heading.regular.fat"),
                   semanticsLabel: '',
@@ -170,12 +172,12 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     }
     else if (sourceData == _ContentItem.separator) {
       return Container(color: Colors.white, padding: EdgeInsets.symmetric(horizontal: 12), child:
-        Container(height: 1, color: Styles().colors.fillColorPrimaryTransparent03,)
+        Container(height: 1, color: illinois.AppColors.fillColorPrimaryTransparent03,)
       );
     }
     else if (sourceData == _ContentItem.groupSeparator) {
       return Container(color: Colors.white, padding: EdgeInsets.symmetric(horizontal: 0), child:
-        Container(height: 1, color: Styles().colors.fillColorPrimary,)
+        Container(height: 1, color: AppColors.fillColorPrimary,)
       );
     }
     else if (sourceData == _ContentItem.spacing) {
@@ -189,7 +191,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   Widget _buildCaptionWidget(String title) {
     return Container(
       decoration: BoxDecoration(
-        color: Styles().colors.fillColorPrimary,
+        color: AppColors.fillColorPrimary,
         borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4))
       ),
       child: Semantics(label: title, header: true, child:

@@ -25,8 +25,8 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class PollDetailPanel extends StatefulWidget {
   final String? pollId;
@@ -61,7 +61,7 @@ class _PollDetailPanelState extends State<PollDetailPanel> implements Notificati
     return Scaffold(
         appBar: HeaderBar(title: Localization().getStringEx('panel.poll.detail.header.title', 'Poll')),
         body: SingleChildScrollView(child: _buildContent()),
-        backgroundColor: Styles().colors.white,
+        backgroundColor: illinois.AppColors.white,
         bottomNavigationBar: uiuc.TabBar());
   }
 

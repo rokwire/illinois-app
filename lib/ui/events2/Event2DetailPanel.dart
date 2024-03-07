@@ -25,6 +25,7 @@ import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -43,6 +44,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Event2? event;
@@ -154,7 +156,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   Widget get _loadingContent {
       return Center(child:
           SizedBox(width: 32, height: 32, child:
-            CircularProgressIndicator(color: Styles().colors.fillColorSecondary,)
+            CircularProgressIndicator(color: AppColors.fillColorSecondary,)
           )
         );
   }
@@ -170,7 +172,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       ),
       SliverList(delegate:
       SliverChildListDelegate([
-        Container(color: Styles().colors.white, child:
+        Container(color: illinois.AppColors.white, child:
           Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
             _roleBadgeWidget,
             _contentHeadingWidget,
@@ -181,7 +183,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
                 _detailsWidget,
               ])
             ),
-            Divider(height: 1, color: Styles().colors.fillColorPrimaryTransparent03,),
+            Divider(height: 1, color: illinois.AppColors.fillColorPrimaryTransparent03,),
           ]),
         ),
         Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
@@ -197,7 +199,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   Widget get _roleBadgeWidget {
     String? label = _isAdmin ? Localization().getStringEx('panel.event2.detail.general.admin.title', 'ADMIN') : null;
     return (label != null) ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-      Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+      Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: AppColors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
         Semantics(label: event2UserRoleToString(_event?.userRole), excludeSemantics: true, child:
           Text(event2UserRoleToString(_event?.userRole)?.toUpperCase() ?? 'ADMIN', style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
     ))) : Container();
@@ -233,7 +235,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       badgeLabel = Localization().getStringEx('panel.event2.detail.general.recurrence.abbreviation.title', 'Repeats');
     }
     return (badgeLabel != null) ? Padding(padding: EdgeInsets.only(top: 16), child:
-      Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+      Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: AppColors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
         Semantics(label: badgeLabel, excludeSemantics: true, child:
           Text(badgeLabel, style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
     ))) : Container();
@@ -265,7 +267,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     Positioned.fill(child:
       Center(child:
         SizedBox(width: 18, height: 18, child:
-          CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,),
+          CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 2,),
         ),
       ),
     ),
@@ -679,7 +681,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   Widget get _linkedEventsWidget => (_event?.hasLinkedEvents == true) ? SectionSlantHeader(
       title: _linkedEventsSectionTitle,
       slantImageKey: "slant-dark",
-      slantColor: Styles().colors.backgroundVariant,
+      slantColor: AppColors.backgroundVariant,
       titleTextStyle: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),
       progressWidget: _linkedEventsProgress,
       children: !_linkedEventsLoading ? _linkedEventsContent : [Row(children: [Expanded(child: Container())],)],
@@ -699,7 +701,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }
 
   Widget? get _linkedEventsProgress => _linkedEventsLoading ? SizedBox(width: 24, height: 24, child:
-    CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+    CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 3,),
   ) : null;
 
   List<Widget> get _linkedEventsContent {
@@ -759,7 +761,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
               width: 24,
               height: 24,
               child: CircularProgressIndicator(
-                  strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)))));
+                  strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(AppColors.fillColorSecondary)))));
 
   List<Widget>? get _selectorWidget {
     Widget? selectorWidget = (_event != null) ? widget.eventSelector?.buildUI(this, event: _event!) : null;
@@ -819,7 +821,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
           Opacity(opacity: 0, child: iconWidget),
           Positioned.fill(child:
             Padding(padding: EdgeInsets.all(2), child:
-              CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
+              CircularProgressIndicator(strokeWidth: 2, color: AppColors.fillColorSecondary,)
             ),
           )
         ],) : Opacity(opacity: iconVisible ? 1 : 0, child: iconWidget),
@@ -847,8 +849,8 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
               label: StringUtils.ensureNotEmpty(title),
               hint: hint,
               textStyle: enabled ? Styles().textStyles.getTextStyle("widget.button.title.small.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.small.fat"),
-              backgroundColor: enabled ? Colors.white : Styles().colors.background,
-              borderColor: enabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+              backgroundColor: enabled ? Colors.white : AppColors.background,
+              borderColor: enabled ? AppColors.fillColorSecondary : AppColors.surfaceAccent,
               rightIcon:externalLink? Styles().images.getImage(enabled ? 'external-link' : 'external-link-dark' ) : null,
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               onTap: onTap ?? (){},

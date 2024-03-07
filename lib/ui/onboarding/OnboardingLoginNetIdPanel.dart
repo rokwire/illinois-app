@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Onboarding2.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
@@ -25,6 +26,7 @@ import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 class OnboardingLoginNetIdPanel extends StatefulWidget with OnboardingPanel {
   final Map<String, dynamic>? onboardingContext;
@@ -50,7 +52,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
     String titleString = Localization().getStringEx('panel.onboarding.login.netid.label.title', 'Connect your NetID');
     String? skipTitle = Localization().getStringEx('panel.onboarding.login.netid.button.dont_continue.title', 'Not Right Now');
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: AppColors.background,
         body: Stack(
           children: <Widget>[
         Column(children: [
@@ -86,7 +88,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
                         padding: EdgeInsets.symmetric(horizontal: 18),
                         child: Center(
                           child: Text(titleString,
-                              textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary)),
+                              textAlign: TextAlign.center, style: TextStyle(fontFamily: AppFontFamilies.bold, fontSize: 36, color: AppColors.fillColorPrimary)),
                         )),
                   ),
                   Container(
@@ -95,7 +97,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
                   Padding(
                       padding: EdgeInsets.symmetric(horizontal: 32),
                       child: Text(Localization().getStringEx('panel.onboarding.login.netid.label.description', 'Log in with your NetID to use academic and residence hall specific features.'),
-                          textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary))),
+                          textAlign: TextAlign.center, style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 20, color: AppColors.fillColorPrimary))),
                   Container(
                     height: 32,
                   ),
@@ -111,8 +113,8 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
                   hint: Localization().getStringEx('panel.onboarding.login.netid.button.continue.hint', ''),
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  borderColor: Styles().colors.fillColorSecondary,
-                  backgroundColor: Styles().colors.white,
+                  borderColor: AppColors.fillColorSecondary,
+                  backgroundColor: illinois.AppColors.white,
                   onTap: _onLoginTapped,
                 ),
                 Onboarding2UnderlinedButton(
@@ -133,9 +135,9 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
                         child: RoundedButton(
                             label: Localization().getStringEx('panel.onboarding.login.netid.button.continue.title', 'Log in with NetID'),
                             hint: Localization().getStringEx('panel.onboarding.login.netid.button.continue.hint', ''),
-                            borderColor: Styles().colors.fillColorSecondary,
-                            backgroundColor: Styles().colors.background,
-                            textColor: Styles().colors.fillColorPrimary,
+                            borderColor: AppColors.fillColorSecondary,
+                            backgroundColor: AppColors.background,
+                            textColor: AppColors.fillColorPrimary,
                             onTap: () => _onLoginTapped()),
                       ),
                     ),
@@ -155,10 +157,10 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
                                   skipTitle,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color: Styles().colors.fillColorPrimary,
+                                    color: AppColors.fillColorPrimary,
                                     decoration: TextDecoration.underline,
-                                    decorationColor: Styles().colors.fillColorSecondary,
-                                    fontFamily: Styles().fontFamilies.medium,
+                                    decorationColor: AppColors.fillColorSecondary,
+                                    fontFamily: AppFontFamilies.medium,
                                     fontSize: 16,
                                   ),
                                 ),
@@ -194,7 +196,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
               child: Text(
                 Localization().getStringEx('logic.general.login_failed', 'Unable to login. Please try again later.'),
                 textAlign: TextAlign.left,
-                style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Colors.black),
+                style: TextStyle(fontFamily: AppFontFamilies.medium, fontSize: 16, color: Colors.black),
               ),
             ),
             Row(

@@ -10,6 +10,7 @@ import 'package:illinois/service/MTD.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -87,7 +88,7 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
         title: Localization().getStringEx("panel.mtd_stops.search.header.title", "Search"),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: AppColors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -105,7 +106,7 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
                 onChanged: (text) => _onSearchTextChanged(text),
                 onSubmitted: (_) => _onTapSearch(),
                 autofocus: true,
-                cursorColor: Styles().colors.fillColorSecondary,
+                cursorColor: AppColors.fillColorSecondary,
                 keyboardType: TextInputType.text,
                 style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
                 decoration: InputDecoration(
@@ -128,7 +129,7 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
             hint: Localization().getStringEx('panel.mtd_stops.search.search.button.hint', ''),
             child: Padding(padding: EdgeInsets.all(12), child:
               GestureDetector(onTap: _onTapSearch, child:
-                Image.asset('images/icon-search.png', color: Styles().colors.fillColorSecondary),
+                Image.asset('images/icon-search.png', color: AppColors.fillColorSecondary),
               ),
             ),
           ),*/

@@ -15,12 +15,14 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/gen/styles.dart' as illinois;
 
 ////////////////////////////
 // HomeHandleWidget
@@ -73,7 +75,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
 
   Widget _buildContent(BuildContext context, {bool dropTarget = false }) {
     return Column(key: _contentKey, children: <Widget>[
-      Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors.fillColorSecondary : ((widget.position == 0) ? Styles().colors.surfaceAccent : Colors.transparent),),
+      Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.start)) ? AppColors.fillColorSecondary : ((widget.position == 0) ? AppColors.surfaceAccent : Colors.transparent),),
       Semantics(
         container: true,
         inMutuallyExclusiveGroup: true,
@@ -118,7 +120,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
         ],),
       )),
 
-      Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.end)) ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,),
+      Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.end)) ? AppColors.fillColorSecondary : AppColors.surfaceAccent,),
     ]);
   }
 
@@ -279,7 +281,7 @@ class HomeSlantWidget extends StatelessWidget {
       // Title Row
       Padding(padding: EdgeInsets.zero, child: 
         Semantics(container: true, header: true,
-          child: Container(color: Styles().colors.fillColorPrimary, child:
+          child: Container(color: AppColors.fillColorPrimary, child:
             Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
 
               if (titleIconKey != null)
@@ -306,9 +308,9 @@ class HomeSlantWidget extends StatelessWidget {
       
         // Slant
         Column(children: <Widget>[
-          Container(color: Styles().colors.fillColorPrimary, height: flatHeight,),
-          Container(color: Styles().colors.fillColorPrimary, child:
-            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
+          Container(color: AppColors.fillColorPrimary, height: flatHeight,),
+          Container(color: AppColors.fillColorPrimary, child:
+            CustomPaint(painter: TrianglePainter(painterColor: AppColors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
               Container(height: slantHeight,),
             ),
           ),
@@ -512,7 +514,7 @@ class HomeDragFeedback extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(width: MediaQuery.of(context).size.width, color: Styles().colors.accentColor3.withOpacity(0.25), child:
+      Container(width: MediaQuery.of(context).size.width, color: AppColors.accentColor3.withOpacity(0.25), child:
         Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
 
           Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
@@ -522,7 +524,7 @@ class HomeDragFeedback extends StatelessWidget {
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
               Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat")?.copyWith(decoration: TextDecoration.none, shadows: <Shadow>[
-                Shadow(color: Styles().colors.fillColorPrimary.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
+                Shadow(color: AppColors.fillColorPrimary.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
               ] ),),
             ),
           ),
@@ -552,7 +554,7 @@ class HomeCommandButton extends StatelessWidget {
     return Semantics(label: title, hint: description, button: true, child:
       InkWell(onTap: onTap, child: Container(
           padding: EdgeInsets.only(left: 16, bottom: 16),
-          decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+          decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Expanded(child:
@@ -564,7 +566,7 @@ class HomeCommandButton extends StatelessWidget {
               ((loading == true)
                 ? Padding(padding: EdgeInsets.all(16), child:
                     SizedBox(height: 16, width: 16, child:
-                      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2),
+                      CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 2),
                     )
                 )
                 : HomeFavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, prompt: kReleaseMode)
@@ -600,7 +602,7 @@ class HomeMessageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
       Semantics(child:Container(padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+        decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         child: Column(children: <Widget>[
           StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
             Expanded(child:
@@ -643,7 +645,7 @@ class HomeMessageHtmlCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
       Container(padding: padding,
-        decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+        decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         child: Column(children: <Widget>[
           StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
             Expanded(child:
@@ -652,7 +654,7 @@ class HomeMessageHtmlCard extends StatelessWidget {
                     StringUtils.ensureNotEmpty(title),
                     onTapUrl : (url) { _onTapLink(url); return true; },
                     textStyle:  Styles().textStyles.getTextStyle("widget.card.title.medium.fat"),
-                    customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(linkColor ?? Styles().colors.fillColorSecondary)} : null
+                    customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(linkColor ?? AppColors.fillColorSecondary)} : null
                 )
               ),
             )
@@ -663,7 +665,7 @@ class HomeMessageHtmlCard extends StatelessWidget {
                   StringUtils.ensureNotEmpty(message),
                   onTapUrl : (url) { _onTapLink(url); return true; },
                   textStyle:  Styles().textStyles.getTextStyle("widget.card.detail.regular"),
-                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(linkColor ?? Styles().colors.fillColorSecondary)} : null
+                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(linkColor ?? AppColors.fillColorSecondary)} : null
                )
             )
           ]) : Container(),
@@ -700,7 +702,7 @@ class HomeProgressWidget extends StatelessWidget {
     return Padding(padding: padding, child:
       Center(child:
         Container(width: progessSize.width, height: progessSize.height, child:
-          CircularProgressIndicator(strokeWidth: progessWidth, valueColor: AlwaysStoppedAnimation<Color?>(progressColor ?? Styles().colors.fillColorSecondary), )
+          CircularProgressIndicator(strokeWidth: progessWidth, valueColor: AlwaysStoppedAnimation<Color?>(progressColor ?? AppColors.fillColorSecondary), )
         ),
       ),
     );
