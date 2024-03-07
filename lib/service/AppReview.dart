@@ -8,7 +8,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:in_app_review/in_app_review.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/app_notification.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -31,7 +31,7 @@ class AppReview with Service implements NotificationsListener {
   void createService() {
     super.createService();
     NotificationService().subscribe(this,[
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       AppNotification.notify,
       Analytics.notifyEvent,
       Auth2.notifyAccountChanged,
@@ -52,15 +52,15 @@ class AppReview with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config(), Storage(), AppLivecycle()]);
+    return Set.from([Config(), Storage(), AppLifecycle()]);
   }
 
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
     else if (name == AppNotification.notify) {
       _onAppNotification(param);
@@ -73,7 +73,7 @@ class AppReview with Service implements NotificationsListener {
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
 
     if (state == AppLifecycleState.resumed) {
       _startSession();

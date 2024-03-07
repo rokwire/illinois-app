@@ -35,7 +35,7 @@ import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/analytics.dart' as rokwire;
 
@@ -128,14 +128,14 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     LogStdStudentFirstYear,
   ];
 
-  // Livecycle Event
-  // { "event" : { "name":"livecycle", "livecycle_event":"..." } }
-  static const String   LogLivecycleEventName              = "livecycle";
-  static const String   LogLivecycleName                   = "livecycle_event";
-  static const String   LogLivecycleEventCreate            = "create";
-  static const String   LogLivecycleEventDestroy           = "destroy";
-  static const String   LogLivecycleEventBackground        = "background";
-  static const String   LogLivecycleEventForeground        = "foreground";
+  // Lifecycle Event
+  // { "event" : { "name":"lifecycle", "livecycle_event":"..." } }
+  static const String   LogLifecycleEventName              = "lifecycle";
+  static const String   LogLifecycleName                   = "lifecycle_event";
+  static const String   LogLifecycleEventCreate            = "create";
+  static const String   LogLifecycleEventDestroy           = "destroy";
+  static const String   LogLifecycleEventBackground        = "background";
+  static const String   LogLifecycleEventForeground        = "foreground";
 
   // Page Event
   // { "event" : { "name":"page", "page":"...", "page_name":"...", "previous_page_name":"" } }
@@ -339,7 +339,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   void createService() {
     super.createService();
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       AppNavigation.notifyEvent,
       LocationServices.notifyStatusChanged,
       
@@ -403,8 +403,8 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   void onNotification(String name, dynamic param) {
     super.onNotification(name, param);
     
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
     else if (name == AppNavigation.notifyEvent) {
       _onAppNavigationEvent(param);
@@ -498,21 +498,21 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     return result?.toString().substring("ConnectivityStatus.".length);
   }
   
-  // App Livecycle Service
+  // App Lifecycle Service
   
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
 
     if (super.isInitialized) {
       if (state == AppLifecycleState.paused) {
-        logLivecycle(name: LogLivecycleEventBackground);
+        logLifecycle(name: LogLifecycleEventBackground);
       }
       else if (state == AppLifecycleState.resumed) {
         _updateSessionUuid();
         _updateNotificationServices();
-        logLivecycle(name: LogLivecycleEventForeground);
+        logLifecycle(name: LogLifecycleEventForeground);
       }
       else if (state == AppLifecycleState.detached) {
-        logLivecycle(name: Analytics.LogLivecycleEventDestroy);
+        logLifecycle(name: Analytics.LogLifecycleEventDestroy);
       }
     }
   }
@@ -757,10 +757,10 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     }
   }
 
-  void logLivecycle({String? name}) {
+  void logLifecycle({String? name}) {
     logEvent({
-      LogEventName          : LogLivecycleEventName,
-      LogLivecycleName      : name,
+      LogEventName          : LogLifecycleEventName,
+      LogLifecycleName      : name,
     });
   }
 

@@ -17,7 +17,7 @@
 import 'dart:ui';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:illinois/model/livestats/LiveGame.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/Config.dart';
@@ -47,7 +47,7 @@ class LiveStats with Service implements NotificationsListener {
   @override
   void createService() {
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       FirebaseMessaging.notifyScoreMessage
     ]);
   }
@@ -194,7 +194,7 @@ class LiveStats with Service implements NotificationsListener {
   @override
   void onNotification(String name, dynamic param) {
     if(_enabled) {
-      if (name == AppLivecycle.notifyStateChanged) {
+      if (name == AppLifecycle.notifyStateChanged) {
         if (param == AppLifecycleState.resumed) {
           _loadLiveGames();
         }
