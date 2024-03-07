@@ -178,7 +178,7 @@ class _HomeSaferWidgetState extends HomeCompoundWidgetState<HomeSaferWidget> {
   }
 
   void _buildingAccessOidcDidAuthenticate(Auth2OidcAuthenticateResult? result) {
-    if (result == Auth2OidcAuthenticateResult.succeeded) {
+    if (result?.succeeded == true) {
       _showBuildingAccessPanel();
     } else if (result != null) {
       AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));

@@ -1001,7 +1001,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       setState(() { _authLoading = true; });
       Auth2().authenticateWithOidc().then((pluginAuth.Auth2OidcAuthenticateResult? result) {
         setStateIfMounted(() { _authLoading = false; });
-          if (result != pluginAuth.Auth2OidcAuthenticateResult.succeeded) {
+          if (result?.succeeded != true) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
         }

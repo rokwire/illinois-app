@@ -222,7 +222,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           setState(() { _connectingNetId = false; });
-          if (result != Auth2OidcAuthenticateResult.succeeded) {
+          if (result?.succeeded != true) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
         }
@@ -676,9 +676,9 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
         _popToMe();
         if (result == true) {
           Auth2().authenticateWithOidc(link: true).then((Auth2OidcAuthenticateResult? result) {
-            if (result == Auth2OidcAuthenticateResult.failed) {
+            if (result?.failed == true) {
               AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.netid.link.failed", "Failed to add {{app_title}} NetID.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
-            } else if (result == Auth2OidcAuthenticateResult.failedAccountExist) {
+            } else if (result?.failedAccountExist == true) {
               _showNetIDAccountExistsDialog();
             }
           });
@@ -740,7 +740,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
   Future<bool?> _linkVerifySignIn() async {
     if (Auth2().isOidcLoggedIn) {
       Auth2OidcAuthenticateResult? result = await Auth2().authenticateWithOidc();
-      return (result != null) ? (result == Auth2OidcAuthenticateResult.succeeded) : null;
+      return result?.succeeded;
     }
     else if (Auth2().isEmailLoggedIn) {
       Completer<bool?> completer = Completer<bool?>();

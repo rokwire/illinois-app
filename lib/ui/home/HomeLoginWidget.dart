@@ -173,7 +173,7 @@ class _HomeLoginNetIdWidgetState extends State<_HomeLoginNetIdWidget> {
       Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           setState(() { _authLoading = false; });
-          if (result != Auth2OidcAuthenticateResult.succeeded) {
+          if (result?.succeeded != true) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
         }

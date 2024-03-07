@@ -955,7 +955,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
         Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
           if (mounted) {
             setState(() { _bussy = null; });
-            if (result == Auth2OidcAuthenticateResult.succeeded) {
+            if (result?.succeeded == true) {
               Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(group: widget.group)));
             }
           }

@@ -624,7 +624,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           if (mounted) {
             setState(() {
               _myGroupsBusy = false;
-              if (result == Auth2OidcAuthenticateResult.succeeded) {
+              if (result?.succeeded == true) {
                 _selectedContentType = rokwire.GroupsContentType.my;
               }
             });

@@ -119,13 +119,13 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
   void _onTapConnectNetId() {
     if (_loading != true) {
       _setLoading(true);
-      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? success) {
+      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           _setLoading(false);
-          if (success == Auth2OidcAuthenticateResult.succeeded) {
+          if (result?.succeeded == true) {
             _didLogin(context);
           }
-          else if (success == Auth2OidcAuthenticateResult.failed) {
+          else if (result?.failed == true) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
         }
