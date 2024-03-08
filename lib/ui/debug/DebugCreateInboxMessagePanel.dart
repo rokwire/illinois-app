@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
@@ -8,7 +7,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class DebugCreateInboxMessagePanel extends StatefulWidget {
   DebugCreateInboxMessagePanel();
@@ -87,12 +86,12 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
           child: Text("Recepients:", style: TextStyle(fontFamily: AppFontFamilies.bold, fontSize: 16, color: AppColors.fillColorPrimary),),
         ),
         Stack(children: <Widget>[
-          Semantics(textField: true, child:Container(color: illinois.AppColors.white,
+          Semantics(textField: true, child:Container(color: AppColors.white,
             child: TextField(
               maxLines: 2,
               controller: _recepientsController,
               decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-              style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: illinois.AppColors.textBackground,),
+              style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: AppColors.textBackground,),
             ),
           )),
           Align(alignment: Alignment.topRight,
@@ -115,12 +114,12 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
           child: Text("Subject:", style: TextStyle(fontFamily: AppFontFamilies.bold, fontSize: 16, color: AppColors.fillColorPrimary),),
         ),
         Stack(children: <Widget>[
-          Semantics(textField: true, child:Container(color: illinois.AppColors.white,
+          Semantics(textField: true, child:Container(color: AppColors.white,
             child: TextField(
               maxLines: 1,
               controller: _subjectController,
               decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-              style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: illinois.AppColors.textBackground,),
+              style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: AppColors.textBackground,),
             ),
           )),
           Align(alignment: Alignment.topRight,
@@ -143,12 +142,12 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
           child: Text("Body:", style: TextStyle(fontFamily: AppFontFamilies.bold, fontSize: 16, color: AppColors.fillColorPrimary),),
         ),
         Stack(children: <Widget>[
-          Semantics(textField: true, child:Container(color: illinois.AppColors.white,
+          Semantics(textField: true, child:Container(color: AppColors.white,
             child: TextField(
               maxLines: 6,
               controller: _bodyController,
               decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-              style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: illinois.AppColors.textBackground,),
+              style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: AppColors.textBackground,),
             ),
           )),
           Align(alignment: Alignment.topRight,
@@ -171,12 +170,12 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
           child: Text("Data:", style: TextStyle(fontFamily: AppFontFamilies.bold, fontSize: 16, color: AppColors.fillColorPrimary),),
         ),
         Stack(children: <Widget>[
-          Semantics(textField: true, child:Container(color: illinois.AppColors.white,
+          Semantics(textField: true, child:Container(color: AppColors.white,
             child: TextField(
               maxLines: 6,
               controller: _dataController,
               decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-              style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: illinois.AppColors.textBackground,),
+              style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: AppColors.textBackground,),
             ),
           )),
           Align(alignment: Alignment.topRight,
@@ -201,9 +200,9 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
       Row(children: <Widget>[
         Expanded(child: Container(),),
         RoundedButton(label: "Send Message",
-          textColor: AppColors.fillColorPrimary, // illinois.AppColors.disabledTextColor,
-          borderColor: AppColors.fillColorSecondary, // illinois.AppColors.disabledTextColor
-          backgroundColor: illinois.AppColors.white,
+          textColor: AppColors.fillColorPrimary, // AppColors.disabledTextColor,
+          borderColor: AppColors.fillColorSecondary, // AppColors.disabledTextColor
+          backgroundColor: AppColors.white,
           fontFamily: AppFontFamilies.bold,
           contentWeight: 0.0,
           fontSize: 16,

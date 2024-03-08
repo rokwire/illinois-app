@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/model/CustomCourses.dart';
@@ -126,7 +125,7 @@ class _StreakPanelState extends State<StreakPanel> {
                   padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 16.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: illinois.AppColors.dividerLineAccent),
+                      border: Border.all(color: AppColors.dividerLineAccent),
                       borderRadius: BorderRadius.all(
                           Radius.circular(5.0)
                       ),
@@ -185,7 +184,7 @@ class _StreakPanelState extends State<StreakPanel> {
                   padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 16.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: illinois.AppColors.dividerLineAccent),
+                      border: Border.all(color: AppColors.dividerLineAccent),
                       borderRadius: BorderRadius.all(
                           Radius.circular(5.0)
                       ),

@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 extension DiningExt on Dining {
   
@@ -12,6 +12,6 @@ extension DiningExt on Dining {
         Analytics.LogAttributeLocation : location?.analyticsValue,
   };
 
-  Color? get uiColor => illinois.AppColors.diningColor;
+  Color? get uiColor => AppColors.diningColor;
 
 }

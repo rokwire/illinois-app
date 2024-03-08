@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class PrivacyLevelSlider extends StatefulWidget {
   final double? initialValue;
@@ -18,7 +17,7 @@ class PrivacyLevelSlider extends StatefulWidget {
 
 class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
   double? _discreteValue;
-  Color? _mainColor = illinois.AppColors.white;
+  Color? _mainColor = AppColors.white;
   Color? _trackColor = AppColors.fillColorPrimaryVariant;
   Color? _inactiveTrackColor = AppColors.surfaceAccent;
 
@@ -34,7 +33,7 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
     final ThemeData theme = Theme.of(context);
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 18),
-        color: widget.color ?? illinois.AppColors.white,
+        color: widget.color ?? AppColors.white,
         child: Column(
             children: <Widget>[
               Stack(
@@ -202,8 +201,8 @@ class _CustomThumbShape extends SliderComponentShape {
     );
 
     final ColorTween colorTween2 = ColorTween(
-      begin: illinois.AppColors.white,
-      end: illinois.AppColors.white,
+      begin: AppColors.white,
+      end: AppColors.white,
     );
 
     final ColorTween colorTween3 = ColorTween(

@@ -15,13 +15,12 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/http_proxy.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class DebugHttpProxyPanel extends StatefulWidget{
   _DebugHttpProxyPanelState createState() => _DebugHttpProxyPanelState();
@@ -76,12 +75,12 @@ class _DebugHttpProxyPanelState extends State<DebugHttpProxyPanel>{
                     child: TextField(
                       controller: _hostController,
                       autofocus: false,
-                      cursorColor: illinois.AppColors.textBackground,
+                      cursorColor: AppColors.textBackground,
                       keyboardType: TextInputType.text,
                       style: TextStyle(
                           fontSize: 16,
                           fontFamily: AppFontFamilies.regular,
-                          color: illinois.AppColors.textBackground),
+                          color: AppColors.textBackground),
                       decoration: InputDecoration(
                         labelText: Localization().getStringEx("panel.debug_http_proxy.edit.host.title", "Http Proxy Host"),
                         enabledBorder: OutlineInputBorder(
@@ -106,12 +105,12 @@ class _DebugHttpProxyPanelState extends State<DebugHttpProxyPanel>{
                     child: TextField(
                       controller: _portController,
                       autofocus: false,
-                      cursorColor: illinois.AppColors.textBackground,
+                      cursorColor: AppColors.textBackground,
                       keyboardType: TextInputType.text,
                       style: TextStyle(
                           fontSize: 16,
                           fontFamily: AppFontFamilies.regular,
-                          color: illinois.AppColors.textBackground),
+                          color: AppColors.textBackground),
                       decoration: InputDecoration(
                         labelText: Localization().getStringEx("panel.debug_http_proxy.edit.host.title", "Http Proxy Port"),
                         enabledBorder: OutlineInputBorder(

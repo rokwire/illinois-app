@@ -32,7 +32,6 @@ import 'package:illinois/ui/wellness/rings/WellnessRingsHomeContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessDailyTipsContentWidget.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -42,7 +41,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 enum WellnessContent { dailyTips, rings, todo, appointments, healthScreener, podcast, resources, struggling, mentalHealth, successTeam }
 
@@ -134,7 +133,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
               container: true,
               child: RibbonButton(
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-                  backgroundColor: illinois.AppColors.white,
+                  backgroundColor: AppColors.white,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   border: Border.all(color: AppColors.surfaceAccent, width: 1),
                   rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
@@ -179,7 +178,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
                     _contentValuesVisible = false;
                   });
                 },
-                child: Container(color: illinois.AppColors.blackTransparent06))));
+                child: Container(color: AppColors.blackTransparent06))));
   }
 
   Widget _buildContentValuesWidget() {
@@ -198,7 +197,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
 
   Widget _buildContentItem(WellnessContent contentItem) {
     return RibbonButton(
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentItem),

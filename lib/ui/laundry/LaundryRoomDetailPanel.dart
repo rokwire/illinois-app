@@ -16,12 +16,12 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/gen/styles.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/ui/laundry/LaundryRequestIssuePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Laundries.dart';

@@ -19,7 +19,7 @@ import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
@@ -27,7 +27,6 @@ import 'package:illinois/ui/canvas/CanvasAnnouncementDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -62,7 +61,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
         title: Localization().getStringEx('panel.canvas_announcements.header.title', 'Announcements'),
       ),
       body: _buildContent(),
-      backgroundColor: illinois.AppColors.white,
+      backgroundColor: AppColors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -142,7 +141,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
         padding: EdgeInsets.only(bottom: 16),
         child: Container(
             decoration: BoxDecoration(
-                color: AppColors.backgroundVariant, border: Border.all(color: illinois.AppColors.blackTransparent06, width: 1)),
+                color: AppColors.backgroundVariant, border: Border.all(color: AppColors.blackTransparent06, width: 1)),
             padding: EdgeInsets.all(10),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -160,11 +159,11 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
             onTap: () => _onTapAnnouncement(announcement),
             child: Container(
                 decoration: BoxDecoration(
-                    color: illinois.AppColors.white,
+                    color: AppColors.white,
                     borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: illinois.AppColors.lightGray, width: 1),
+                    border: Border.all(color: AppColors.lightGray, width: 1),
                     boxShadow: [
-                      BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))
+                      BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))
                     ]),
                 padding: EdgeInsets.all(10),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -189,7 +188,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
                       visible: StringUtils.isNotEmpty(announcement.message),
                       child: Html(data: announcement.message, style: {
                         "body": Style(
-                            color: illinois.AppColors.textSurfaceAccent,
+                            color: AppColors.textSurfaceAccent,
                             fontFamily: AppFontFamilies.bold,
                             fontSize: FontSize(16),
                             textOverflow: TextOverflow.ellipsis,
@@ -211,7 +210,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
         height: height,
         decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: illinois.AppColors.lightGray, width: 1),
+            border: Border.all(color: AppColors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),

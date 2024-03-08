@@ -1,13 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class DebugGuidePanel extends StatefulWidget {
   DebugGuidePanel();
@@ -74,7 +73,7 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
             controller: _contentTextController,
             onChanged: _onTextContentChanged,
             decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-            style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: illinois.AppColors.textBackground,),
+            style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: AppColors.textBackground,),
           ),
           Visibility(visible: (_processingContent == true),
             child: Align(alignment: Alignment.center,
@@ -125,7 +124,7 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
           label: "Init From Assets",
           textColor: AppColors.surfaceAccent,
           borderColor: AppColors.surfaceAccent,
-          backgroundColor: illinois.AppColors.white,
+          backgroundColor: AppColors.white,
           fontFamily: AppFontFamilies.bold,
           fontSize: 16,
           borderWidth: 2,
@@ -136,7 +135,7 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
           label: "Init From Net",
           textColor: AppColors.fillColorPrimary, // AppColors.surfaceAccent,
           borderColor: AppColors.fillColorSecondary, // AppColors.surfaceAccent,
-          backgroundColor: illinois.AppColors.white,
+          backgroundColor: AppColors.white,
           fontFamily: AppFontFamilies.bold,
           fontSize: 16,
           borderWidth: 2,
@@ -151,7 +150,7 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
           label: "Apply",
           textColor: applyEnabled ? AppColors.fillColorPrimary : AppColors.surfaceAccent,
           borderColor: applyEnabled ? AppColors.fillColorSecondary : AppColors.surfaceAccent,
-          backgroundColor: illinois.AppColors.white,
+          backgroundColor: AppColors.white,
           fontFamily: AppFontFamilies.bold,
           fontSize: 16,
           borderWidth: 2,
@@ -162,7 +161,7 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
           label: "Preview",
           textColor: previewEnabled ? AppColors.fillColorPrimary : AppColors.surfaceAccent,
           borderColor: previewEnabled ? AppColors.fillColorSecondary : AppColors.surfaceAccent,
-          backgroundColor: illinois.AppColors.white,
+          backgroundColor: AppColors.white,
           fontFamily: AppFontFamilies.bold,
           fontSize: 16,
           borderWidth: 2,

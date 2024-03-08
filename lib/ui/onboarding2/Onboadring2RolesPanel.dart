@@ -16,7 +16,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Onboarding2.dart';
@@ -28,7 +27,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 import 'Onboarding2Widgets.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class Onboarding2RolesPanel extends StatefulWidget{
   final bool returningUser;
@@ -60,7 +59,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
         Container(
-          color: illinois.AppColors.white,
+          color: AppColors.white,
           padding: EdgeInsets.only(top: 19, bottom: 19),
           child: Row(children: <Widget>[
             Onboarding2BackButton(padding: const EdgeInsets.only(left: 17,),
@@ -115,10 +114,10 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 enabled: _allowNext,
                 progress: _updating,
-                backgroundColor: (illinois.AppColors.white),
+                backgroundColor: (AppColors.white),
                 borderColor: (_allowNext
                     ? AppColors.fillColorSecondary
-                    : illinois.AppColors.fillColorPrimaryTransparent03),
+                    : AppColors.fillColorPrimaryTransparent03),
                 onTap: () => _onGoNext()),
         )
 

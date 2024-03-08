@@ -7,13 +7,12 @@ import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class HomeCheckListWidget extends StatefulWidget{
 
@@ -94,7 +93,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
         Container(
           constraints: BoxConstraints(maxHeight: 100),
           padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(color: illinois.AppColors.white,
+            decoration: BoxDecoration(color: AppColors.white,
                 borderRadius: BorderRadius.circular(5)),
             child: Column(children: <Widget>[
               Expanded(
@@ -109,7 +108,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
   Widget _buildStartContent() {
     return 
         Container(padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(color: illinois.AppColors.white,
+            decoration: BoxDecoration(color: AppColors.white,
                 borderRadius: BorderRadius.circular(5)),
             child: Column(
               children: [
@@ -125,7 +124,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                 RoundedButton(
                   label: Localization().getStringEx('widget.gies.button.title.begin', "Begin Checklist"),
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                  backgroundColor: illinois.AppColors.white,
+                  backgroundColor: AppColors.white,
                   borderColor: AppColors.fillColorSecondary,
                   onTap: () => _onTapContinue(analyticsAction: 'Begin Checklist'),
                 ),
@@ -137,7 +136,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
   Widget _buildEndedContent() {
     return 
         Container(padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(color: illinois.AppColors.white,
+            decoration: BoxDecoration(color: AppColors.white,
                 borderRadius: BorderRadius.circular(5)),
             child: Column(
               children: [
@@ -153,7 +152,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                 RoundedButton(
                   label: Localization().getStringEx('widget.gies.button.title.review', "Review Checklist"),
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                  backgroundColor: illinois.AppColors.white,
+                  backgroundColor: AppColors.white,
                   borderColor: AppColors.fillColorSecondary,
                   onTap: () => _onTapContinue(analyticsAction: 'Review Checklist'),
                 ),
@@ -166,7 +165,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
   Widget _buildProgressContent() {
     return 
         Container(padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(color: illinois.AppColors.white,
+            decoration: BoxDecoration(color: AppColors.white,
                 borderRadius: BorderRadius.circular(5)),
             child: Column(
               children: [
@@ -181,7 +180,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                 RoundedButton(
                   label: Localization().getStringEx('widget.gies.button.title.continue', "Continue"),
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                  backgroundColor: illinois.AppColors.white,
+                  backgroundColor: AppColors.white,
                   borderColor: AppColors.fillColorSecondary,
                   onTap: () => _onTapContinue(analyticsAction: 'Continue'),
                 ),

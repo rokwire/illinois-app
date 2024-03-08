@@ -14,7 +14,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Occupations.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationInfoPanel.dart';
@@ -23,7 +23,6 @@ import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -210,7 +209,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
                   child: GestureDetector(onTap: () => Navigator.of(context).pop(),
                       child: Container(height: 8, width: 48,
                           decoration: BoxDecoration(borderRadius: BorderRadius.circular(8),
-                              color: illinois.AppColors.mediumGray)))),
+                              color: AppColors.mediumGray)))),
               SizedBox(height: 16),
               RibbonButton(
                 rightIconKey: "chevron-right-bold",

@@ -7,7 +7,6 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/utils/Utils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -26,7 +25,7 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class GuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final String? favoriteKey;
@@ -246,7 +245,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
     }
 
     return (0 < contentList.length) ? 
-      Container(color: widget.headingColor ?? illinois.AppColors.white, padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
+      Container(color: widget.headingColor ?? AppColors.white, padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
         Row(children: [
           Expanded(child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList),
@@ -264,7 +263,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
           label: "Image",
           button: true,
           child:Stack(alignment: Alignment.bottomCenter, children: [
-            Container(color: widget.headingColor ?? illinois.AppColors.white, padding: EdgeInsets.all(16), child:
+            Container(color: widget.headingColor ?? AppColors.white, padding: EdgeInsets.all(16), child:
               Row(children: [
                 Expanded(child:
                   Column(children: [
@@ -350,7 +349,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
 
                   Map<String, dynamic>? number = JsonUtils.mapValue(entry['number']);
                   String numberTextFormat = ((number != null) ? JsonUtils.stringValue(number['text']) : null) ?? '%d.';
-                  Color? numberColor = ((number != null) ? ColorUtils.fromHex(JsonUtils.stringValue(number['color'])) : null) ?? illinois.AppColors.textBackground;
+                  Color? numberColor = ((number != null) ? ColorUtils.fromHex(JsonUtils.stringValue(number['color'])) : null) ?? AppColors.textBackground;
                   
                   Map<String, dynamic>? numberFont = (number != null) ? JsonUtils.mapValue(number['font']) : null;
                   double numberFontSize = ((numberFont != null) ? JsonUtils.doubleValue(numberFont['size']) : null) ?? 20;
@@ -389,7 +388,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
                 if (bullets != null) {
                   Map<String, dynamic>? bullet = JsonUtils.mapValue(entry['bullet']);
                   String bulletText = ((bullet != null) ? JsonUtils.stringValue(bullet['text']) : null) ?? '\u2022';
-                  Color? bulletColor = ((bullet != null) ? ColorUtils.fromHex(JsonUtils.stringValue(bullet['color'])) : null) ?? illinois.AppColors.textBackground;
+                  Color? bulletColor = ((bullet != null) ? ColorUtils.fromHex(JsonUtils.stringValue(bullet['color'])) : null) ?? AppColors.textBackground;
                   
                   Map<String, dynamic>? bulletFont = (bullet != null) ? JsonUtils.mapValue(bullet['font']) : null;
                   double bulletFontSize = ((bulletFont != null) ? JsonUtils.doubleValue(bulletFont['size']) : null) ?? 20;
@@ -444,7 +443,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
               Padding(padding: EdgeInsets.only(top: 16), child:
                 RoundedButton(label: text ?? '',
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                  backgroundColor: illinois.AppColors.white,
+                  backgroundColor: AppColors.white,
                   borderColor: AppColors.fillColorSecondary,
                   borderWidth: 2,
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),

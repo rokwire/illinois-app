@@ -1,14 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class DebugInboxUserInfoPanel extends StatefulWidget{
   DebugInboxUserInfoPanel();
@@ -77,13 +76,13 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
         children: [
           Text("User ID"),
           Text(_info?.userId ?? ""),
-          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: illinois.AppColors.lightGray,),
+          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: AppColors.lightGray,),
           Text("Date Created"),
           Text(_info?.dateCreated?.toIso8601String() ?? ""),
-          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: illinois.AppColors.lightGray,),
+          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: AppColors.lightGray,),
           Text("Date Updated"),
           Text(_info?.dateUpdated?.toIso8601String() ?? ""),
-          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: illinois.AppColors.lightGray,),
+          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: AppColors.lightGray,),
           Text("Topics"),
           Wrap(
             children: _info!.topics!.map((e) => Container(
@@ -96,7 +95,7 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
               child: Text(e, style: TextStyle(color: Colors.white),),
             )).toList(),
           ),
-          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: illinois.AppColors.lightGray,),
+          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: AppColors.lightGray,),
           Text("Tokens"),
 
           Column(
@@ -109,7 +108,7 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
                   Text("Platform: ${e.appPlatform}", style: TextStyle(fontFamily: AppFontFamilies.regular),),
                   Text("Version: ${e.appVersion}", style: TextStyle(fontFamily: AppFontFamilies.regular),),
                   Text("Date created: ${e.dateCreated!.toIso8601String()}", style: TextStyle(fontFamily: AppFontFamilies.regular),),
-                  Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: illinois.AppColors.lightGray,),
+                  Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: AppColors.lightGray,),
                 ],
               ),
             )).toList(),

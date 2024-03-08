@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
@@ -26,7 +26,6 @@ import 'package:illinois/ui/appointments/AppointmentScheduleQuestionsPanel.dart'
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 //import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -190,7 +189,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
       textStyle = 'widget.colourful_button.title.accent';
     }
     else {
-      backColor = illinois.AppColors.white;
+      backColor = AppColors.white;
       textStyle = 'widget.button.title.enabled';
     }
 
@@ -201,7 +200,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
           decoration: BoxDecoration(
             color: backColor,
             borderRadius: BorderRadius.all(Radius.circular(4)),
-            boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            boxShadow: [BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
           ),
           child: InkWell(onTap: () => _onTimeSlot(timeSlot),
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),

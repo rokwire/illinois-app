@@ -14,7 +14,6 @@ import 'package:illinois/ui/mtd/MTDStopSearchPanel.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -22,7 +21,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 enum MTDStopsContentType { all, my }
 
@@ -138,7 +137,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
       RibbonButton(
         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         borderRadius: BorderRadius.all(Radius.circular(5)),
         border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: _contentTypesDropdownExpanded ? 'chevron-up' : 'chevron-down',
@@ -167,7 +166,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
       }
     }
     contentList.add(RibbonButton(
-      backgroundColor: illinois.AppColors.white,
+      backgroundColor: AppColors.white,
       border: Border.all(color: AppColors.surfaceAccent, width: 1),
       rightIconKey: null,
       label: Localization().getStringEx('panel.mtd_stops.home.dropdown.search.title', 'Search Bus Stops'),
@@ -183,7 +182,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
 
   Widget _buildContentTypeDropdownItem(MTDStopsContentType contentType) {
     return RibbonButton(
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentTypeName(contentType),

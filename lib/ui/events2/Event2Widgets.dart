@@ -14,7 +14,6 @@ import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -26,7 +25,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 //
 // Event2FilterCommandButton
@@ -100,8 +99,8 @@ class Event2FilterCommandButton extends StatelessWidget {
   }
 
   static BoxDecoration get defaultContentDecoration => BoxDecoration(
-    color: illinois.AppColors.white,
-    border: Border.all(color: illinois.AppColors.disabledTextColor, width: 1),
+    color: AppColors.white,
+    border: Border.all(color: AppColors.disabledTextColor, width: 1),
     borderRadius: BorderRadius.circular(16),
   );
 
@@ -389,7 +388,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   static BorderRadiusGeometry get _pageContentBottomBorderRadius => BorderRadius.vertical(bottom: _pageContentRadius);
 
   static Decoration get _linkContentDecoration => BoxDecoration(
-    color: illinois.AppColors.white,
+    color: AppColors.white,
     borderRadius: _linkContentBorderRadius,
     border: Border.all(color: AppColors.surfaceAccent, width: 1),
     boxShadow: _linkContentShadow

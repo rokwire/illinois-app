@@ -2,12 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatelessWidget {
 
@@ -20,8 +19,8 @@ class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatelessWidg
       backgroundColor: AppColors.background,
       body: Stack(children: [
         Column(children: [
-          Container(color: illinois.AppColors.white, height: 90,),
-          CustomPaint(painter: TrianglePainter(painterColor: illinois.AppColors.white, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
+          Container(color: AppColors.white, height: 90,),
+          CustomPaint(painter: TrianglePainter(painterColor: AppColors.white, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
             Container(height: 70,),
           ),
         ],),
@@ -62,7 +61,7 @@ class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatelessWidg
             label: Localization().getStringEx('dialog.OK.title', 'OK'),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            backgroundColor: illinois.AppColors.white,
+            backgroundColor: AppColors.white,
             borderColor: AppColors.fillColorSecondaryVariant,
             onTap: () => _onContinue(context),
           ),

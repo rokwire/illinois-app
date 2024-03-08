@@ -25,7 +25,6 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
@@ -48,7 +47,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_tab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class ExploreDiningDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Dining? dining;
@@ -280,7 +279,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
       RoundedButton(
         label: Localization().getStringEx('panel.explore_detail.button.order_online', 'Order Online'),
         textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         borderColor: AppColors.fillColorSecondary,
         onTap: () => _onTapOrderOnline(onlineOrderPlatformDetails),
       ),
@@ -305,7 +304,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
 
   Widget _divider() {
     return Padding(padding: EdgeInsets.symmetric(vertical: 0), child:
-      Container(height: 1, color: illinois.AppColors.fillColorPrimaryTransparent015,),
+      Container(height: 1, color: AppColors.fillColorPrimaryTransparent015,),
     );
   }
 
@@ -441,7 +440,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
             Expanded(child:
               StringUtils.isNotEmpty(_diningFeedback?.feedbackUrl) ? RoundedButton(
                 label: Localization().getStringEx('panel.explore_detail.button.text_feedback', 'Text Feedback'),
-                backgroundColor: illinois.AppColors.white,
+                backgroundColor: AppColors.white,
                 borderColor: AppColors.fillColorSecondary,
                 textStyle: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -452,7 +451,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
             Expanded(child:
               StringUtils.isNotEmpty(_diningFeedback?.dieticianUrl) ? RoundedButton(
                 label: Localization().getStringEx('panel.explore_detail.button.ask_dietician', 'Ask a Dietitian'),
-                backgroundColor: illinois.AppColors.white,
+                backgroundColor: AppColors.white,
                 borderColor: AppColors.fillColorSecondary,
                 textStyle: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -818,7 +817,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
           if (products.isNotEmpty) {
 
             if (list.isNotEmpty) {
-              list.add(Container(height: 1, color: illinois.AppColors.white,));
+              list.add(Container(height: 1, color: AppColors.white,));
             }
 
             list.add(
@@ -1172,7 +1171,7 @@ class _FeedbackBodyWidgetState extends State<_FeedbackBodyWidget> {
                     Semantics(label: Localization().getStringEx("dialog.close.title", "Close"), button: true, child:
                       InkWell(onTap: _onClose, child:
                         Padding(padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), child:
-                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: illinois.AppColors.white, width: 2),), child:
+                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: AppColors.white, width: 2),), child:
                             Center(child:
                               Text('\u00D7', style: Styles().textStyles.getTextStyle("widget.dialog.message.large"),semanticsLabel: "", ),
                             ),

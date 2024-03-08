@@ -23,13 +23,12 @@ import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class Event2AttendanceDetailPanel extends StatefulWidget {
   final Event2? event;
@@ -67,7 +66,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.event2.detail.attendance.header.title', 'Event Attendance'), onLeading: _onTapBack),
       body: _buildPanelContent(),
-      backgroundColor: illinois.AppColors.white,
+      backgroundColor: AppColors.white,
     );
   }
 
@@ -233,7 +232,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
               label: Localization().getStringEx('panel.event2.detail.attendance.scan.button', 'Scan Illini ID'),
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
               onTap: _onTapScanButton,
-              backgroundColor: illinois.AppColors.white,
+              backgroundColor: AppColors.white,
               borderColor: AppColors.fillColorSecondary,
               contentWeight: 0.5),
           Visibility(visible: _scanning, child: CircularProgressIndicator(color: AppColors.fillColorSecondary, strokeWidth: 1))
@@ -356,7 +355,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
     //TBD: DD - implement
   }
 
-  Widget get _dividerWidget => Divider(color: illinois.AppColors.dividerLineAccent, thickness: 1);
+  Widget get _dividerWidget => Divider(color: AppColors.dividerLineAccent, thickness: 1);
 
   bool get _isAdmin => (widget.event?.userRole == Event2UserRole.admin);
 

@@ -25,12 +25,11 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingSelectPredefinedPanel.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class WellnessRingsHomeContentWidget extends StatefulWidget {
   WellnessRingsHomeContentWidget();
@@ -285,7 +284,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
         contentPadding: EdgeInsets.all(0),
         contentWidget: Container(
             height: 300,
-            decoration: BoxDecoration(color: illinois.AppColors.white, borderRadius: BorderRadius.circular(10.0)),
+            decoration: BoxDecoration(color: AppColors.white, borderRadius: BorderRadius.circular(10.0)),
             child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
               Padding(
                   padding: EdgeInsets.all(19),
@@ -365,7 +364,7 @@ class _TabButton extends StatelessWidget {
             child: Container(
                 height: 24 + MediaQuery.of(context).textScaler.scale(16),
                 decoration: BoxDecoration(
-                    color: selected! ? Colors.white : illinois.AppColors.lightGray, border: _border, borderRadius: _borderRadius),
+                    color: selected! ? Colors.white : AppColors.lightGray, border: _border, borderRadius: _borderRadius),
                 child: Center(
                     child: Text(label!,
                         overflow: TextOverflow.ellipsis,

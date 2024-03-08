@@ -46,7 +46,6 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -63,7 +62,7 @@ import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:timezone/timezone.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 enum ExploreMapType { Events2, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MTDDestinations, MentalHealth, StateFarmWayfinding }
 
@@ -428,7 +427,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   Widget _buildMapView() {
-    return Container(decoration: BoxDecoration(border: Border.all(color: illinois.AppColors.disabledTextColor, width: 1)), child:
+    return Container(decoration: BoxDecoration(border: Border.all(color: AppColors.disabledTextColor, width: 1)), child:
       GoogleMap(
         key: _mapKey,
         initialCameraPosition: _lastCameraPosition ?? _defaultCameraPosition,
@@ -536,7 +535,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     if (_selectedMapExplore is Explore) {
       title = (_selectedMapExplore as Explore).mapMarkerTitle;
       description = (_selectedMapExplore as Explore).mapMarkerSnippet;
-      exploreColor = (_selectedMapExplore as Explore).uiColor ?? illinois.AppColors.white;
+      exploreColor = (_selectedMapExplore as Explore).uiColor ?? AppColors.white;
       if (_selectedMapExplore is MTDStop) {
         detailsLabel = Localization().getStringEx('panel.explore.button.bus_schedule.title', 'Bus Schedule');
         detailsHint = Localization().getStringEx('panel.explore.button.bus_schedule.hint', '');
@@ -557,7 +556,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       exploreColor = explore?.uiColor ?? AppColors.fillColorSecondary;
     }
     else {
-      exploreColor = illinois.AppColors.white;
+      exploreColor = AppColors.white;
       canDirections = canDetail = false;
     }
 
@@ -725,7 +724,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     if (_loadingMapStopIdRoutes != null) {
       return Padding(padding: EdgeInsets.only(left: 8, top: 3, bottom: 2), child:
         SizedBox(width: 16, height: 16, child:
-          CircularProgressIndicator(color: illinois.AppColors.mtdColor, strokeWidth: 2,),
+          CircularProgressIndicator(color: AppColors.mtdColor, strokeWidth: 2,),
         ),
       );
     }
@@ -785,7 +784,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   void _showMessagePopup(String? message) {
     if ((message != null) && message.isNotEmpty) {
       showDialog(context: context, builder: (context) => AlertDialog(contentPadding: EdgeInsets.zero, content: 
-        Container(decoration: BoxDecoration(color: illinois.AppColors.white, borderRadius: BorderRadius.circular(10.0)), child:
+        Container(decoration: BoxDecoration(color: AppColors.white, borderRadius: BorderRadius.circular(10.0)), child:
           Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
             Padding(padding: EdgeInsets.all(30), child:
               Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
@@ -1040,7 +1039,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   Widget _buildExploreTypesDropDownButton() {
     return RibbonButton(
       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-      backgroundColor: illinois.AppColors.white,
+      backgroundColor: AppColors.white,
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: AppColors.surfaceAccent, width: 1),
       rightIconKey: (_itemsDropDownValuesVisible ? 'chevron-up' : 'chevron-down'),
@@ -1073,7 +1072,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     return Positioned.fill(child:
       BlockSemantics(child:
         GestureDetector(onTap: _onDismissEventsDisplayTypesDropDown, child:
-          Container(color: illinois.AppColors.blackTransparent06)
+          Container(color: AppColors.blackTransparent06)
         )
       )
     );
@@ -1104,7 +1103,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   Widget _buildEventsDisplayTypeDropDownItem(EventsDisplayType displayType) {
     return RibbonButton(
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _eventsDisplayTypeName(displayType),
@@ -1140,7 +1139,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     return Positioned.fill(child:
       BlockSemantics(child:
         GestureDetector(onTap: _onDismissExploreDropDown, child:
-          Container(color: illinois.AppColors.blackTransparent06)
+          Container(color: AppColors.blackTransparent06)
         )
       )
     );
@@ -1171,7 +1170,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   Widget _buildExploreDropDownItem(ExploreMapType exploreItem) {
     return RibbonButton(
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _exploreItemName(exploreItem),
@@ -1240,7 +1239,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
                   Container(color: Colors.white, child:
                     ListView.separated(
                       shrinkWrap: true,
-                      separatorBuilder: (context, index) => Divider(height: 1, color: illinois.AppColors.fillColorPrimaryTransparent03,),
+                      separatorBuilder: (context, index) => Divider(height: 1, color: AppColors.fillColorPrimaryTransparent03,),
                       itemCount: filterValues.length,
                       itemBuilder: (context, index) => FilterListItem(
                         title: filterValues[index],

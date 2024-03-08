@@ -26,7 +26,6 @@ import 'package:flutter/services.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:path/path.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -34,7 +33,7 @@ import 'package:image_cropping/image_cropping.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:mime_type/mime_type.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class ImageEditPanel extends StatefulWidget {
   final String? storagePath;
@@ -247,7 +246,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
         squareCircleColor: AppColors.fillColorPrimary,
         defaultTextColor: AppColors.fillColorPrimary,
         selectedTextColor: AppColors.fillColorSecondary,
-        colorForWhiteSpace: illinois.AppColors.white,
+        colorForWhiteSpace: AppColors.white,
       );
     }
   }

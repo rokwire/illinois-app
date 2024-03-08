@@ -21,9 +21,8 @@ import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -54,7 +53,7 @@ class _CanvasSyllabusHtmlPanelState extends State<CanvasSyllabusHtmlPanel> {
         title: Localization().getStringEx('panel.syllabus_html.header.title', 'Syllabus'),
       ),
       body: _buildContent(),
-      backgroundColor: illinois.AppColors.white,
+      backgroundColor: AppColors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

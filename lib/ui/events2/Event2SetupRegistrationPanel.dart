@@ -13,14 +13,13 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class Event2SetupRegistrationPanel extends StatefulWidget {
   final Event2? event;
@@ -118,7 +117,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
     body: _buildPanelContent(),
-    backgroundColor: illinois.AppColors.white,
+    backgroundColor: AppColors.white,
   );
 
   Widget _buildPanelContent() =>
@@ -457,7 +456,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
         continue;
 
       if (contentList.isNotEmpty) {
-        contentList.add(Divider(color: illinois.AppColors.dividerLineAccent, thickness: 1, height: 1,));
+        contentList.add(Divider(color: AppColors.dividerLineAccent, thickness: 1, height: 1,));
       }
       contentList.add(_GuestListItemWidget(displayPerson, enabled: true, highlighted: false,));
     }

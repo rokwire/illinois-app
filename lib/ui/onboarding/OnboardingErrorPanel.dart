@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
+import 'package:illinois/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/service/styles.dart';

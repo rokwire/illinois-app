@@ -15,7 +15,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/CustomCourses.dart';
@@ -25,7 +25,6 @@ import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dar
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -202,7 +201,7 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
                                 title,
                                 style: !isProficient ?
                                   Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')
-                                    : Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')?.apply(color: illinois.AppColors.mediumGray),// Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')
+                                    : Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')?.apply(color: AppColors.mediumGray),// Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title')
                               )
                           ),
                           Flexible(
@@ -222,7 +221,7 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
                               child: SizedBox(
                                   height: 16.0,
                                   child: Styles().images.getImage('chevron-right-bold',
-                                      excludeFromSemantics: true, color: illinois.AppColors.mediumGray)
+                                      excludeFromSemantics: true, color: AppColors.mediumGray)
                               )
                           ),
                         ],

@@ -28,7 +28,6 @@ import 'package:illinois/ui/settings/SettingsLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:intl/intl.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -49,7 +48,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class SettingsSectionsContentWidget extends StatefulWidget {// TBD REMOVE
 
@@ -275,7 +274,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                    color: illinois.AppColors.white,
+                    color: AppColors.white,
                     borderRadius: BorderRadius.all(Radius.circular(4)),
                     border: Border.all(color: AppColors.fillColorPrimary, width: 1)),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList))));
@@ -620,7 +619,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       if (code == 'netid') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: illinois.AppColors.white,
+            backgroundColor: AppColors.white,
             border: _allBorder, 
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Add a NetID"),
@@ -631,7 +630,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       else if (code == 'phone') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: illinois.AppColors.white,
+            backgroundColor: AppColors.white,
             border: _allBorder, 
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
@@ -641,7 +640,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       else if (code == 'email') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: illinois.AppColors.white,
+            backgroundColor: AppColors.white,
             border: _allBorder, 
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),

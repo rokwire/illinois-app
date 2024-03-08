@@ -23,7 +23,6 @@ import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -39,7 +38,7 @@ import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/tile_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class AthleticsGameDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Game? game;
@@ -123,7 +122,7 @@ class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameD
           flexImageUrl: game?.imageUrl,
           flexBackColor: AppColors.fillColorPrimary,
           flexRightToLeftTriangleColor: AppColors.fillColorPrimary,
-          flexLeftToRightTriangleColor: illinois.AppColors.fillColorSecondaryTransparent05,
+          flexLeftToRightTriangleColor: AppColors.fillColorSecondaryTransparent05,
         ),
         SliverList(
           delegate: SliverChildListDelegate([

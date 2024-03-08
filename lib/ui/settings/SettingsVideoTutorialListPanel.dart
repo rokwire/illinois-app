@@ -20,11 +20,10 @@ import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class SettingsVideoTutorialListPanel extends StatefulWidget {
   final List<Video>? videoTutorials;
@@ -69,9 +68,9 @@ class _SettingsVideoTutorialListPanelState extends State<SettingsVideoTutorialLi
             padding: EdgeInsets.only(bottom: 10),
             child: Container(
                 decoration: BoxDecoration(
-                    color: illinois.AppColors.white,
+                    color: AppColors.white,
                     borderRadius: BorderRadius.all(Radius.circular(5)),
-                    border: Border.all(color: illinois.AppColors.lightGray, width: 1)),
+                    border: Border.all(color: AppColors.lightGray, width: 1)),
                 child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Expanded(
                       child: Padding(

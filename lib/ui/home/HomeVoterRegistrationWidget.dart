@@ -19,7 +19,6 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:illinois/model/Voter.dart';
@@ -37,7 +36,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class HomeVoterRegistrationWidget extends StatefulWidget {
   final String? favoriteId;
@@ -159,7 +158,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
                 label: vbmButtonTitle ?? '',
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                 borderColor: AppColors.fillColorSecondary,
-                backgroundColor: illinois.AppColors.white,
+                backgroundColor: AppColors.white,
                 contentWeight: 0.0,
                 onTap: () => _onTapVbmButton(vbmButtonTitle),
               )
@@ -284,7 +283,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
               label: Localization().getStringFromKeyMapping(ruleOption.label, _stringsContent) ?? '',
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
               borderColor: AppColors.fillColorSecondary,
-              backgroundColor: illinois.AppColors.white,
+              backgroundColor: AppColors.white,
               contentWeight: 0.0,
               onTap: () => _onTapButtonOption(ruleOption),
             ), Expanded(child: Padding(padding: EdgeInsets.only(left: 8),
@@ -297,7 +296,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
               label: Localization().getStringFromKeyMapping(ruleOption.label, _stringsContent) ?? '',
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
               borderColor: AppColors.fillColorSecondary,
-              backgroundColor: illinois.AppColors.white,
+              backgroundColor: AppColors.white,
               contentWeight: 0.0,
               onTap: () => _onTapButtonOption(ruleOption),
             ),

@@ -16,7 +16,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
@@ -27,7 +26,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 import 'Onboarding2Widgets.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class Onboarding2ImprovePanel extends StatefulWidget{
 
@@ -61,7 +60,7 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
               Expanded(child:
                 SingleChildScrollView(child:
                 Container(
-                    color: illinois.AppColors.white,
+                    color: AppColors.white,
                     child:Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
@@ -181,7 +180,7 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                       hint: Localization().getStringEx('panel.onboarding2.improve.button.continue.hint', ''),
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      backgroundColor: illinois.AppColors.white,
+                      backgroundColor: AppColors.white,
                       borderColor: AppColors.fillColorSecondaryVariant,
                       onTap: () => _goNext(context),
                     )

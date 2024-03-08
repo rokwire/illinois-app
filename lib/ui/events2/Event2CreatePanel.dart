@@ -28,7 +28,6 @@ import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
@@ -45,7 +44,7 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class Event2CreatePanel extends StatefulWidget {
 
@@ -85,12 +84,12 @@ class Event2CreatePanel extends StatefulWidget {
   static BoxDecoration get sectionDisabledDecoration => sectionDecorationEx(enabled: false);
 
   static BoxDecoration sectionDecorationEx({bool enabled = true}) => BoxDecoration(
-    border: Border.all(color: enabled ? illinois.AppColors.mediumGray2 : AppColors.surfaceAccent, width: 1),
+    border: Border.all(color: enabled ? AppColors.mediumGray2 : AppColors.surfaceAccent, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(8))
   );
 
   static BoxDecoration get sectionSplitterDecoration => BoxDecoration(
-    border: Border(top: BorderSide(color: illinois.AppColors.mediumGray2, width: 1))
+    border: Border(top: BorderSide(color: AppColors.mediumGray2, width: 1))
   );
 
   static InputDecoration textEditDecoration({EdgeInsetsGeometry? padding}) => InputDecoration(
@@ -430,7 +429,7 @@ class Event2CreatePanel extends StatefulWidget {
           Padding(padding: padding, child:
             Column(mainAxisSize: MainAxisSize.min, children: [
               Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: illinois.AppColors.white, width: 1.5, ))),
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.white, width: 1.5, ))),
                 child: Text(title ?? '',
                   style: Styles().textStyles.getTextStyle("widget.heading.regular.fat")
                 ),
@@ -448,7 +447,7 @@ class Event2CreatePanel extends StatefulWidget {
   static Widget buildHeaderBarActionProgress({ EdgeInsetsGeometry padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 20) }) =>
     Padding(padding: padding, child:
         SizedBox(width: 16, height: 16, child:
-          CircularProgressIndicator(color: illinois.AppColors.white, strokeWidth: 3,)
+          CircularProgressIndicator(color: AppColors.white, strokeWidth: 3,)
         )
     );
 
@@ -618,7 +617,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       Localization().getStringEx("panel.event2.update.header.title", "Update Event"),
       onLeading: _onHeaderBack,),
     body: _buildPanelContent(),
-    backgroundColor: illinois.AppColors.white,
+    backgroundColor: AppColors.white,
   );
 
   Widget _buildPanelContent() =>
@@ -662,8 +661,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
           Positioned.fill(child: (_imageUrl != null) ?
             Image.network(_imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders) : Container()
           ),
-          CustomPaint(painter: TrianglePainter(painterColor: illinois.AppColors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
-          CustomPaint(painter: TrianglePainter(painterColor: illinois.AppColors.white), child: Container(height: 30)),
+          CustomPaint(painter: TrianglePainter(painterColor: AppColors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
+          CustomPaint(painter: TrianglePainter(painterColor: AppColors.white), child: Container(height: 30)),
           Positioned.fill(child:
             Center(child:
               Semantics(label: buttonTitle, hint: buttonHint, button: true, excludeSemantics: true, child:
@@ -671,7 +670,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                   label: buttonTitle,
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                   onTap: _onTapAddImage,
-                  backgroundColor: illinois.AppColors.white,
+                  backgroundColor: AppColors.white,
                   borderColor: AppColors.fillColorSecondary,
                   contentWeight: 0.67,
                 )
@@ -1152,7 +1151,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
           label: buttonTitle,
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.regular"),
           onTap: _onTapSelectLocation,
-          backgroundColor: illinois.AppColors.white,
+          backgroundColor: AppColors.white,
           borderColor: AppColors.fillColorSecondary,
           contentWeight: 0.80,
         )
@@ -1723,7 +1722,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         label: buttonTitle,
         textStyle: buttonEnabled ? Styles().textStyles.getTextStyle('widget.button.title.large.fat') : Styles().textStyles.getTextStyle('widget.button.disabled.title.large.fat'),
         onTap: buttonEnabled ? _onTapCreateEvent : null,
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         borderColor: buttonEnabled ? AppColors.fillColorSecondary : AppColors.surfaceAccent,
         progress: _creatingEvent,
       )

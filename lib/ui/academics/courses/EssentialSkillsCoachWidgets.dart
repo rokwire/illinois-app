@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
+import 'package:illinois/gen/styles.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class EssentialSkillsCoachModuleHeader extends StatelessWidget {

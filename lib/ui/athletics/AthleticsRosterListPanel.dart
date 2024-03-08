@@ -16,9 +16,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/gen/styles.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterDetailPanel.dart';

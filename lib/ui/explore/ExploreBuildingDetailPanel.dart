@@ -7,7 +7,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class ExploreBuildingDetailPanel extends StatelessWidget {
   final Building building;
@@ -18,7 +18,7 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildContent(context),
-      backgroundColor: illinois.AppColors.white,
+      backgroundColor: AppColors.white,
       bottomNavigationBar: uiuc.TabBar()
     );
   }

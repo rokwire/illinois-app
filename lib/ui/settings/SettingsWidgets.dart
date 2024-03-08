@@ -16,11 +16,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 typedef OnContinueCallback(List<String> selectedOptions, OnContinueProgressController progressController);
 typedef OnContinueProgressController({bool? loading});
@@ -43,7 +42,7 @@ class SettingsDialog extends StatefulWidget{
            Material(
              type: MaterialType.transparency,
              child: Container(
-               color: illinois.AppColors.blackTransparent06,
+               color: AppColors.blackTransparent06,
                child: SingleChildScrollView(child:
                Column(children:[
                    Stack(
@@ -85,7 +84,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: illinois.AppColors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      decoration: BoxDecoration(color: AppColors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -195,7 +194,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
           alignment: Alignment.center,
 //          height: widget.longButtonTitle?56 : 42,
           decoration: BoxDecoration(
-            color: (illinois.AppColors.white),
+            color: (AppColors.white),
             border: Border.all(
                 color: AppColors.fillColorPrimary,
                 width: 1),
@@ -221,7 +220,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
                 alignment: Alignment.center,
 //                height: widget.longButtonTitle? 56: 42,
                 decoration: BoxDecoration(
-                  color: (_getIsContinueEnabled? AppColors.fillColorSecondaryVariant : illinois.AppColors.white),
+                  color: (_getIsContinueEnabled? AppColors.fillColorSecondaryVariant : AppColors.white),
                   border: Border.all(
                       color: _getIsContinueEnabled? AppColors.fillColorSecondaryVariant: AppColors.fillColorPrimary,
                       width: 1),
@@ -239,7 +238,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
               SizedBox(width: _confirmSize!.width, height: _confirmSize!.height,
               child: Align(alignment: Alignment.center,
                 child: SizedBox(height: 24, width: 24,
-                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(illinois.AppColors.white), strokeWidth: 2,),),),
+                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(AppColors.white), strokeWidth: 2,),),),
               ) : Container(),
           )
         ],));
@@ -318,7 +317,7 @@ class InfoButton extends StatelessWidget {
     InkWell(onTap: onTap, child:
     Container(
       padding: EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
       child: Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -21,8 +21,7 @@ import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/gen/styles.dart' as illinois;
-import 'package:rokwire_plugin/gen/styles.dart';
+import 'package:illinois/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -42,7 +41,7 @@ class _CanvasAccountNotificationDetailPanelState extends State<CanvasAccountNoti
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.canvas_notification.header.title', 'Notification')),
       body: _buildContent(),
-      backgroundColor: illinois.AppColors.white,
+      backgroundColor: AppColors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -76,7 +75,7 @@ class _CanvasAccountNotificationDetailPanelState extends State<CanvasAccountNoti
                   visible: StringUtils.isNotEmpty(widget.notification.message),
                   child: Html(data: widget.notification.message, onLinkTap: (url, context, element) => _onTapLink(url), style: {
                     "body": Style(
-                        color: illinois.AppColors.textSurfaceAccent,
+                        color: AppColors.textSurfaceAccent,
                         fontFamily: AppFontFamilies.bold,
                         fontSize: FontSize(16),
                         padding: HtmlPaddings.zero,

@@ -21,13 +21,12 @@ import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class WellnessManageToDoCategoriesPanel extends StatefulWidget {
   final WellnessToDoCategory? category;
@@ -104,7 +103,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
                   style: Styles().textStyles.getTextStyle("widget.description.small.fat"))),
           Container(
               padding: EdgeInsets.symmetric(horizontal: 8),
-              decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: illinois.AppColors.mediumGray, width: 1)),
+              decoration: BoxDecoration(color: AppColors.white, border: Border.all(color: AppColors.mediumGray, width: 1)),
               child: TextField(
                   controller: _nameController,
                   decoration: InputDecoration(border: InputBorder.none),
@@ -164,7 +163,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
     return Padding(
         padding: EdgeInsets.only(top: 30),
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Container(height: 1, color: illinois.AppColors.mediumGray2),
+          Container(height: 1, color: AppColors.mediumGray2),
           Padding(
               padding: EdgeInsets.only(top: 9),
               child: Row(children: [

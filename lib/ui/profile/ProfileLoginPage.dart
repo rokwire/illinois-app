@@ -17,7 +17,6 @@ import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
@@ -27,7 +26,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class ProfileLoginPage extends StatefulWidget {
   @override
@@ -231,7 +230,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: illinois.AppColors.white,
+            color: AppColors.white,
             borderRadius: BorderRadius.all(Radius.circular(4)),
             border: Border.all(color: AppColors.fillColorPrimary, width: 1)
           ),
@@ -570,7 +569,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       if (code == 'netid') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: illinois.AppColors.white,
+            backgroundColor: AppColors.white,
             border: _allBorder,
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Add a NetID"),
@@ -581,7 +580,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       else if (code == 'phone') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: illinois.AppColors.white,
+            backgroundColor: AppColors.white,
             border: _allBorder,
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
@@ -591,7 +590,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       else if (code == 'email') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: illinois.AppColors.white,
+            backgroundColor: AppColors.white,
             border: _allBorder,
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),

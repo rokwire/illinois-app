@@ -18,7 +18,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/IlliniCash.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -34,7 +33,7 @@ import 'package:rokwire_plugin/ui/widgets/section.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class SettingsMealPlanPanel extends StatefulWidget {
 
@@ -281,7 +280,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
               'panel.settings.meal_plan.button.login_to_view_meal_plan.hint',
               ''),
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-          backgroundColor: illinois.AppColors.white,
+          backgroundColor: AppColors.white,
           borderColor: AppColors.fillColorSecondary,
           onTap: _onTapLogIn,
         ),
@@ -518,7 +517,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   }
 
   Widget _buildAmountView(String balance){
-    return _buildBalanceTableItem(text: balance, backColor: illinois.AppColors.white,
+    return _buildBalanceTableItem(text: balance, backColor: AppColors.white,
         textAlign: TextAlign.right,
         textStyle: Styles().textStyles.getTextStyle("widget.item.small.fat"));
   }
@@ -543,8 +542,8 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
 
   Widget _buildPrivacyLevelIcon() {
     String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
-    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 2), color: illinois.AppColors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorSecondary, width: 2), color: illinois.AppColors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 2), color: AppColors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorSecondary, width: 2), color: AppColors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
         Text(privacyLevel, style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat"))
       ),
     );

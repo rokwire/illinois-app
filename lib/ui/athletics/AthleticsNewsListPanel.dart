@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -158,7 +157,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
 
           return StringUtils.isNotEmpty(news.imageUrl) ? ImageSlantHeader(
             imageUrl: news.imageUrl,
-            slantImageColor: illinois.AppColors.fillColorPrimaryTransparent03,
+            slantImageColor: AppColors.fillColorPrimaryTransparent03,
             slantImageKey:  'slant-dark',
             child: _buildAthleticsNewsCard(news)
           ) : _buildAthleticsNewsCard(news);
@@ -200,7 +199,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
             child: ListView.separated(shrinkWrap: true, separatorBuilder: (context, index) =>
                 Divider(
                   height: 1,
-                  color: illinois.AppColors.fillColorPrimaryTransparent03,
+                  color: AppColors.fillColorPrimaryTransparent03,
                 ),
               itemCount: filterValues.length,
               itemBuilder: (context, index) {

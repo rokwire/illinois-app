@@ -17,7 +17,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -32,7 +31,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 
 class CreateStadiumPollPanel extends StatefulWidget {
@@ -84,7 +83,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
           onLeading: _onTapCancel,
         ),
         body: Container(
-            color: illinois.AppColors.white,
+            color: AppColors.white,
             child: SingleChildScrollView(
                       child: Column(children: [
                         _buildGeofenceDetails(),
@@ -241,7 +240,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
           Container(
             padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
             decoration: BoxDecoration(
-              color: illinois.AppColors.white,
+              color: AppColors.white,
               border: Border.all(color: AppColors.fillColorSecondary, width: 2.0),
               borderRadius: BorderRadius.circular(24.0),
             ),

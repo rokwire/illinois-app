@@ -20,13 +20,12 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/wallet/ICardFaqsContentWidget.dart';
 import 'package:illinois/ui/wallet/IDCardContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 enum ICardContent { i_card, faqs }
 
@@ -109,7 +108,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         body: Column(children: [
           Row(children: [
             Expanded(
@@ -139,7 +138,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
           child: SingleChildScrollView(
               physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null),
               child: Container(
-                  color: illinois.AppColors.white,
+                  color: AppColors.white,
                   child: Stack(children: [
                     _contentWidget,
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -147,7 +146,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
                           padding: EdgeInsets.only(left: 16, top: 16, right: 16),
                           child: RibbonButton(
                               textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-                              backgroundColor: illinois.AppColors.white,
+                              backgroundColor: AppColors.white,
                               borderRadius: BorderRadius.all(Radius.circular(5)),
                               border: Border.all(color: AppColors.surfaceAccent, width: 1),
                               rightIconKey: (_contentValuesVisible ? 'icon-up-orange' : 'icon-down-orange'),
@@ -174,7 +173,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
                     _contentValuesVisible = false;
                   });
                 },
-                child: Container(color: illinois.AppColors.blackTransparent06, height: MediaQuery.of(context).size.height))));
+                child: Container(color: AppColors.blackTransparent06, height: MediaQuery.of(context).size.height))));
   }
 
   Widget _buildContentValuesWidget() {
@@ -190,7 +189,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
 
   Widget _buildContentItem(ICardContent contentItem) {
     return RibbonButton(
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentItem),

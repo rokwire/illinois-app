@@ -16,7 +16,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -30,7 +29,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 import 'Onboarding2Widgets.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class Onboarding2PrivacyPanel extends StatefulWidget{
 
@@ -78,7 +77,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 //                                padding: EdgeInsets.symmetric(vertical: 19),
                                 child: Row(children: [
                                 Onboarding2BackButton(padding: const EdgeInsets.only(top:19,left: 17, right: 20, bottom: 19),
-                                    color: illinois.AppColors.white,
+                                    color: AppColors.white,
                                     onTap: () {
                                       Analytics().logSelect(target: "Back");
                                       _goBack(context);
@@ -104,7 +103,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 //                                            style: TextStyle(
 //                                                fontFamily: AppFontFamilies.regular,
 //                                                fontSize: 16,
-//                                                color: illinois.AppColors.white,
+//                                                color: AppColors.white,
 //                                                decoration: TextDecoration.underline,
 //                                                decorationColor: AppColors.fillColorSecondary,
 //                                                decorationThickness: 1,
@@ -130,7 +129,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 //                                        child: Text(
 //                                            titleText,
 //                                            style: TextStyle(
-//                                                color: illinois.AppColors.white,
+//                                                color: AppColors.white,
 //                                                fontSize: 24,
 //                                                fontFamily: AppFontFamilies.bold
 //                                            ))
@@ -215,7 +214,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                         hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        backgroundColor: illinois.AppColors.white,
+                        backgroundColor: AppColors.white,
                         borderColor: AppColors.fillColorSecondaryVariant,
                         onTap: () => _goNext(context),
                       ),),
@@ -245,7 +244,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                   padding: EdgeInsets.symmetric(horizontal: 15),
                   child: Container(
                       height: 1,
-                      color: illinois.AppColors.white,
+                      color: AppColors.white,
                     )
               ))
             ]),
@@ -271,7 +270,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: _privacyLevel==1? selectedTextSize: deselectedTextSize,
-                          color: illinois.AppColors.white
+                          color: AppColors.white
                         ),
                       )
                     )
@@ -298,7 +297,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: _privacyLevel==2? selectedTextSize: deselectedTextSize,
-                              color: illinois.AppColors.white
+                              color: AppColors.white
                           ),
                         )
                     )
@@ -325,7 +324,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: _privacyLevel==3? selectedTextSize: deselectedTextSize,
-                              color: illinois.AppColors.white
+                              color: AppColors.white
                           ),
                         )
                     )
@@ -352,7 +351,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: _privacyLevel==4? selectedTextSize: deselectedTextSize,
-                              color: illinois.AppColors.white
+                              color: AppColors.white
                           ),
                         )
                     )
@@ -379,7 +378,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: _privacyLevel==5? selectedTextSize: deselectedTextSize,
-                              color: illinois.AppColors.white
+                              color: AppColors.white
                           ),
                         )
                     )

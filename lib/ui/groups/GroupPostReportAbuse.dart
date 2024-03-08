@@ -4,13 +4,12 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class GroupPostReportAbuseOptions {
   final bool reportToDeanOfStudents;
@@ -111,7 +110,7 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
       Padding(padding: EdgeInsets.only(left: 24, right: 24), child:
         Stack(children: [
           Container(
-            decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1), color: illinois.AppColors.white),
+            decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1), color: AppColors.white),
             child: Semantics(textField: true, excludeSemantics: true,
               label: Localization().getStringEx('panel.group.detail.post.report_abuse.comment.label', 'Comment Label'),
               hint: Localization().getStringEx('panel.group.detail.post.report_abuse.comment.hint', ''),
@@ -149,7 +148,7 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
               label: Localization().getStringEx("panel.group.detail.post.report_abuse.button.send.label", "Send"),
               hint: Localization().getStringEx("panel.group.detail.post.report_abuse.button.send.hint", "Tap to send report"),
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-              backgroundColor: illinois.AppColors.white,
+              backgroundColor: AppColors.white,
               borderColor: AppColors.fillColorSecondary,
               progress:  _sending,
               onTap: _onSend,
@@ -177,7 +176,7 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
     showDialog(context: context, builder: (_) =>  InfoPopup(
       backColor: Color(0xfffffcdf), //AppColors.surface ?? Colors.white,
       padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
-      border: Border.all(color: illinois.AppColors.textSurface, width: 1),
+      border: Border.all(color: AppColors.textSurface, width: 1),
       alignment: Alignment.topRight,
       infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
       infoTextStyle: Styles().textStyles.getTextStyle("widget.title.regular.medium_fat"),

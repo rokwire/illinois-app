@@ -17,13 +17,12 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsEventsContentWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDayContentWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsContentWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -115,7 +114,7 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
                   container: true,
                   child: RibbonButton(
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-                      backgroundColor: illinois.AppColors.white,
+                      backgroundColor: AppColors.white,
                       borderRadius: BorderRadius.all(Radius.circular(5)),
                       border: Border.all(color: AppColors.surfaceAccent, width: 1),
                       rightIconKey: (_contentValuesVisible ? 'icon-up-orange' : 'icon-down-orange'),
@@ -146,7 +145,7 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
                     _contentValuesVisible = false;
                   });
                 },
-                child: Container(color: illinois.AppColors.blackTransparent06))));
+                child: Container(color: AppColors.blackTransparent06))));
   }
 
   Widget _buildContentValuesWidget() {
@@ -165,7 +164,7 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
 
   Widget _buildContentItem(AthleticsContent contentItem) {
     return RibbonButton(
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentItem),

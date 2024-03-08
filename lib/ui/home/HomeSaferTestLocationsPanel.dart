@@ -6,7 +6,6 @@ import 'package:geolocator/geolocator.dart' as Core;
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -15,7 +14,7 @@ import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 /////////////////////////////////////////////
 // HomeSaferTestLocationsPanel
@@ -226,7 +225,7 @@ class _TestLocation extends StatelessWidget {
         decoration: BoxDecoration(
             color: AppColors.surface,
             borderRadius: BorderRadius.all(Radius.circular(4)),
-            boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+            boxShadow: [BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -257,7 +256,7 @@ class _TestLocation extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: AppFontFamilies.regular,
                       fontSize: 16,
-                      color: illinois.AppColors.textSurface,
+                      color: AppColors.textSurface,
                     ),
                   )
                 ],
@@ -330,7 +329,7 @@ class _TestLocation extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: AppFontFamilies.regular,
                     fontSize: 16,
-                    color: illinois.AppColors.textSurface,
+                    color: AppColors.textSurface,
                   ),
                 )
               ],
@@ -610,13 +609,13 @@ class HealthServiceLocation {
   static Color? waitTimeColorHex(HealthLocationWaitTimeColor? color) {
     switch (color) {
       case HealthLocationWaitTimeColor.red:
-        return illinois.AppColors.saferLocationWaitTimeColorRed;
+        return AppColors.saferLocationWaitTimeColorRed;
       case HealthLocationWaitTimeColor.yellow:
-        return illinois.AppColors.saferLocationWaitTimeColorYellow;
+        return AppColors.saferLocationWaitTimeColorYellow;
       case HealthLocationWaitTimeColor.green:
-        return illinois.AppColors.saferLocationWaitTimeColorGreen;
+        return AppColors.saferLocationWaitTimeColorGreen;
       default:
-        return illinois.AppColors.saferLocationWaitTimeColorGrey;
+        return AppColors.saferLocationWaitTimeColorGrey;
     }
   }
 }

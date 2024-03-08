@@ -8,7 +8,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -18,7 +17,7 @@ import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class HomeToutWidget extends StatefulWidget {
   final String? favoriteId;
@@ -115,7 +114,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
         return (loadingProgress != null) ?
           Container(color: AppColors.fillColorPrimary, width: imageWidth, height: imageHeight, child:
             Center(child:
-              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(illinois.AppColors.white))
+              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(AppColors.white))
             )
           ) :
           AspectRatio(aspectRatio: (1080.0 / 810.0), child: 
@@ -124,14 +123,14 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
       }))),
       Align(alignment: Alignment.topCenter, child:
         CustomPaint(painter: TrianglePainter(
-              painterColor: illinois.AppColors.fillColorSecondaryTransparent05,
+              painterColor: AppColors.fillColorSecondaryTransparent05,
               horzDir: TriangleHorzDirection.rightToLeft,
               vertDir: TriangleVertDirection.bottomToTop),
           child: Container(height: triangleHeight))),
       Positioned.fill(child:
         Align(alignment: Alignment.bottomCenter, child:
           CustomPaint(painter: TrianglePainter(
-                painterColor: illinois.AppColors.fillColorSecondaryTransparent05,
+                painterColor: AppColors.fillColorSecondaryTransparent05,
                 horzDir: TriangleHorzDirection.leftToRight,
                 vertDir: TriangleVertDirection.topToBottom),
             child: Container(height: triangleHeight)))),
@@ -242,10 +241,10 @@ class _InfoDialog extends StatelessWidget {
                       StringUtils.ensureNotEmpty(contentHtml),
                       onTapUrl : (url) {_onTapLink(context ,url); return true;},
                       textStyle:  Styles().textStyles.getTextStyle("widget.dialog.message.medium.fat"),
-                      customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(illinois.AppColors.white)} : null
+                      customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(AppColors.white)} : null
                   )
                     //Text('Illinois app uses your first name from Student Self-Service. You can change your preferred name under Personal Information and Preferred First Name',
-                    //  style: TextStyle(color: illinois.AppColors.white, fontSize: 16, fontFamily: AppFontFamilies.bold,),
+                    //  style: TextStyle(color: AppColors.white, fontSize: 16, fontFamily: AppFontFamilies.bold,),
                     //)
                   )
                 ),

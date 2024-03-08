@@ -9,7 +9,6 @@ import 'package:just_audio/just_audio.dart';
 import 'package:path/path.dart' as Path;
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/Log.dart';
@@ -19,7 +18,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'dart:io';
 
 import '../../service/Analytics.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class NamePronouncementWidget extends StatefulWidget {
 
@@ -254,8 +253,8 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
                                     label: Localization().getStringEx("", "Reset"),
                                     onTap: _onTapReset,
                                     enabled: _resetEnabled,
-                                    borderColor: _resetEnabled ? null : illinois.AppColors.disabledTextColor,
-                                    textColor: _resetEnabled ? null : illinois.AppColors.disabledTextColor,
+                                    borderColor: _resetEnabled ? null : AppColors.disabledTextColor,
+                                    textColor: _resetEnabled ? null : AppColors.disabledTextColor,
                                   ),
                                   Container(width: 16,),
                                   SmallRoundedButton( rightIcon: Container(),
@@ -264,8 +263,8 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
                                     progress: _loading,
                                     onTap: _onTapSave,
                                     enabled: _saveEnabled,
-                                    borderColor: _saveEnabled ? null : illinois.AppColors.disabledTextColor,
-                                    textColor: _saveEnabled ? null : illinois.AppColors.disabledTextColor,
+                                    borderColor: _saveEnabled ? null : AppColors.disabledTextColor,
+                                    textColor: _saveEnabled ? null : AppColors.disabledTextColor,
                                   ),
                               ],),
                             ),
@@ -342,7 +341,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
     if(_mode == RecorderMode.play){
       return Styles().images.getImage('icon-play', excludeFromSemantics: true,);
         // _controller.isPlaying ?
-        // Container(padding: EdgeInsets.all(20), child: Container(width: 20, height: 20, color: illinois.AppColors.white,)) : //TBD do we need another icon for stop?
+        // Container(padding: EdgeInsets.all(20), child: Container(width: 20, height: 20, color: AppColors.white,)) : //TBD do we need another icon for stop?
         //Styles().images.getImage('icon-play', excludeFromSemantics: true, size: iconSize);
     } else {
       return _controller.isRecording ?

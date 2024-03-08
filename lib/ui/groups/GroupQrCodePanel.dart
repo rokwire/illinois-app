@@ -16,7 +16,6 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -30,7 +29,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:share/share.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class GroupQrCodePanel extends StatefulWidget {
   final Group? group;
@@ -76,7 +75,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
         height: _imageSize.toDouble(),
         fontFamily: AppFontFamilies.bold,
         fontSize: 54,
-        textColor: illinois.AppColors.textSurface,
+        textColor: AppColors.textSurface,
       );
       bool result = (updatedImageBytes != null);
       if (result) {
@@ -122,7 +121,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
                       ? Semantics(
                           label: Localization().getStringEx('panel.group_qr_code.code.hint', "QR code image"),
                           child: Container(
-                            decoration: BoxDecoration(color: illinois.AppColors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
+                            decoration: BoxDecoration(color: AppColors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
                             padding: EdgeInsets.all(5),
                             child: Image.memory(
                               _qrCodeBytes!,

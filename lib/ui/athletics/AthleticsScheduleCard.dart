@@ -20,7 +20,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/ext/Game.dart';
@@ -35,7 +34,7 @@ import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class AthleticsScheduleCard extends StatefulWidget {
   final Game? _game;
@@ -98,7 +97,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
       child: Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4.0), bottomRight: Radius.circular(4.0)),
-              boxShadow: [BoxShadow(color: illinois.AppColors.fillColorPrimaryTransparent015, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(0, 2))]),
+              boxShadow: [BoxShadow(color: AppColors.fillColorPrimaryTransparent015, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(0, 2))]),
           child: Container(
             color: Colors.white,
             child: Column(
@@ -204,7 +203,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
           children: <Widget>[
             Container(
               height: 1,
-              color: illinois.AppColors.fillColorPrimaryTransparent015,
+              color: AppColors.fillColorPrimaryTransparent015,
             ),
             GestureDetector(
                 behavior: HitTestBehavior.opaque,
@@ -263,7 +262,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
         children: <Widget>[
           Container(
             height: 1,
-            color: illinois.AppColors.fillColorPrimaryTransparent015,
+            color: AppColors.fillColorPrimaryTransparent015,
           ),
           Container(
               height: 48,

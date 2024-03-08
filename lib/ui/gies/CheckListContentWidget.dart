@@ -23,7 +23,6 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
@@ -34,7 +33,7 @@ import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 
 class CheckListContentWidget extends StatefulWidget{
@@ -73,7 +72,7 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
     return Column(children: <Widget>[
       _buildTitle(),
       Expanded(child:
-        Container(color: illinois.AppColors.white, child:
+        Container(color: AppColors.white, child:
           Stack(children: [
             _buildSlant(slantHeight),
             SingleChildScrollView(child:
@@ -190,7 +189,7 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
   Widget _buildSlant(double height) {
     return Column(children: <Widget>[
       Container(color: AppColors.fillColorPrimary, child:
-        CustomPaint(painter: TrianglePainter(painterColor: illinois.AppColors.white, horzDir: TriangleHorzDirection.rightToLeft), child:
+        CustomPaint(painter: TrianglePainter(painterColor: AppColors.white, horzDir: TriangleHorzDirection.rightToLeft), child:
           Container(height: height,),
         ),
       ),
@@ -486,7 +485,7 @@ class _CheckListPageWidget extends StatelessWidget{
                 Semantics(container: true,
                   child: RoundedButton(label: title ?? '',
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                    backgroundColor: illinois.AppColors.white,
+                    backgroundColor: AppColors.white,
                     borderColor: AppColors.fillColorSecondary,
                     borderWidth: 2,
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -520,12 +519,12 @@ class _CheckListPageWidget extends StatelessWidget{
           buttonWidgets.add(
               Semantics(container: true,
                   child: RoundedButton(label: position == "right"? Localization().getStringEx("panel.checklist.button.next_page.label", "Next Page") : Localization().getStringEx("panel.checklist.button.previous_page.label",  "Previous Page"),
-                      backgroundColor: illinois.AppColors.white,
+                      backgroundColor: AppColors.white,
                       textWidget: Text(
                         title ?? "",
                         semanticsLabel: "",
                         style: Styles().textStyles.getTextStyle("widget.button.title.extra_large"),),
-                      borderColor: illinois.AppColors.white,
+                      borderColor: AppColors.white,
                       borderWidth: 2,
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       contentWeight: 0,
@@ -550,7 +549,7 @@ class _CheckListPageWidget extends StatelessWidget{
 
     return Padding(padding: EdgeInsets.only(), child:
       Container(
-      //color: illinois.AppColors.white,
+      //color: AppColors.white,
       clipBehavior: Clip.none,
       child: Padding(padding: EdgeInsets.only(top: 0, bottom: 16), child:
       Row(children: [ Expanded(child: Column(children: contentList))],)
@@ -661,7 +660,7 @@ class _CheckListNotesWidgetState extends State<CheckListNotesWidget> {
                 Analytics().logAlert(text: "Things to Remember", selection: "Close");
                 Navigator.of(context).pop();
               }, child:
-              Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: illinois.AppColors.white, width: 2),), child:
+              Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: AppColors.white, width: 2),), child:
               Center(child:
               Text('\u00D7', style: Styles().textStyles.getTextStyle("widget.dialog.message.large"),semanticsLabel: "", ),
               ),
@@ -884,8 +883,8 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
         child:Container(
           decoration: BoxDecoration(
-              color: illinois.AppColors.white,
-              boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+              color: AppColors.white,
+              boxShadow: [BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
               borderRadius: BorderRadius.all(Radius.circular(4))
           ),
             child:_CheckListPageWidget(contentKey: widget.contentKey, page: CheckList(widget.contentKey).getPage(id: tab!["page_id"]),
@@ -901,7 +900,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
     return Column(children: <Widget>[
       Container(color:  AppColors.fillColorPrimary, height: 40,),
       Container(color: AppColors.fillColorPrimary, child:
-      CustomPaint(painter: TrianglePainter(painterColor: illinois.AppColors.white, horzDir: TriangleHorzDirection.rightToLeft), child:
+      CustomPaint(painter: TrianglePainter(painterColor: AppColors.white, horzDir: TriangleHorzDirection.rightToLeft), child:
       Container(height: 55,),
       )),
     ],);

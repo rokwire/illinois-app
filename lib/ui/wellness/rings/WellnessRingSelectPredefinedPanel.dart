@@ -6,13 +6,12 @@ import 'package:illinois/service/WellnessRings.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingCreatePane.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 
 class WellnessRingSelectPredefinedPanel extends StatefulWidget{
@@ -84,7 +83,7 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
           Container(
             child: SmallRoundedButton(label: 'Next', onTap: _openDetailPanel, backgroundColor: Colors.white, rightIconPadding: EdgeInsets.only(right: 16, left: 16, ), padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
               enabled: _nextButtonEnabled,
-              borderColor: _nextButtonEnabled ? AppColors.fillColorSecondary : illinois.AppColors.disabledTextColorTwo,
+              borderColor: _nextButtonEnabled ? AppColors.fillColorSecondary : AppColors.disabledTextColorTwo,
               textStyle: _nextButtonEnabled ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.disabled.title.medium.fat.variant_two"),
               rightIcon: Styles().images.getImage(_nextButtonEnabled ? 'chevron-right-bold' : 'chevron-right-gray', excludeFromSemantics: true),
             ),

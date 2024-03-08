@@ -27,7 +27,6 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
@@ -39,7 +38,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class Event2HomePanel extends StatefulWidget {
 
@@ -124,7 +123,7 @@ class Event2HomePanel extends StatefulWidget {
   static Widget _buildOnboardingDescription(BuildContext context) {
     String decriptionHtml = Localization().getStringEx("panel.events2.home.attributes.launch.header.description", "Customize your events feed by setting the below filters or <a href='{{events2_url}}'>view all events now<a> and choose your event filters later.").
       replaceAll('{{events2_url}}', url);
-    TextStyle? descriptionTextStyle = Styles().textStyles.getTextStyle('widget.description.medium.fat.highlight'); // TextStyle(fontFamily: AppFontFamilies.bold, fontSize: 18, color: illinois.AppColors.white);
+    TextStyle? descriptionTextStyle = Styles().textStyles.getTextStyle('widget.description.medium.fat.highlight'); // TextStyle(fontFamily: AppFontFamilies.bold, fontSize: 18, color: AppColors.white);
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(mainAxisSize: MainAxisSize.min, children: [
         Padding(padding: EdgeInsets.only(top: 32), child:
@@ -198,7 +197,7 @@ class Event2HomePanel extends StatefulWidget {
     TextStyle? applyTextStyle = Styles().textStyles.getTextStyle(enabled ? 'widget.button.title.medium.fat' : 'widget.button.title.regular.variant3');
     Color? borderColor = enabled ? AppColors.fillColorSecondary : AppColors.fillColorPrimaryVariant;
     Decoration? applyDecoration = BoxDecoration(
-      color: illinois.AppColors.white,
+      color: AppColors.white,
       border: Border.all(color: borderColor, width: 1),
       borderRadius: BorderRadius.all(Radius.circular(16))
     );
@@ -515,8 +514,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   }
 
   Decoration get _commandBarDecoration => BoxDecoration(
-    color: illinois.AppColors.white,
-    border: Border.all(color: illinois.AppColors.disabledTextColor, width: 1)
+    color: AppColors.white,
+    border: Border.all(color: AppColors.disabledTextColor, width: 1)
   );
 
   Widget _buildCommandButtons() {
@@ -705,8 +704,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   }
 
   Decoration get _contentDescriptionDecoration => BoxDecoration(
-    color: illinois.AppColors.white,
-    border: Border(top: BorderSide(color: illinois.AppColors.disabledTextColor, width: 1))
+    color: AppColors.white,
+    border: Border(top: BorderSide(color: AppColors.disabledTextColor, width: 1))
   );
 
   Widget _buildEventsContent() {

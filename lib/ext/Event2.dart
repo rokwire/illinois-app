@@ -7,7 +7,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:intl/intl.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/events2.dart';
@@ -22,7 +22,7 @@ extension Event2Ext on Event2 {
   bool get hasSurvey => (attendanceDetails?.isNotEmpty ?? false) && (surveyDetails?.isNotEmpty ?? false);
   bool get hasLinkedEvents => (isSuperEvent || isRecurring);
 
-  Color? get uiColor => illinois.AppColors.eventColor;
+  Color? get uiColor => AppColors.eventColor;
 
   String? get displayImageUrl => StringUtils.isNotEmpty(imageUrl) ? imageUrl : randomImageUrl;
 

@@ -21,7 +21,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
@@ -32,7 +31,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
 
 import 'SettingsWidgets.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class SettingsNotificationPreferencesContentWidget extends StatefulWidget{
 
@@ -130,7 +129,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           onTap: _appointmentsNotificationsEnabled ? _onAppointmentRemindersToggled : (){},
           textStyle: _appointmentsNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
     ));
-    widgets.add(Row(children: [Expanded(child: Container(color: illinois.AppColors.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
+    widgets.add(Row(children: [Expanded(child: Container(color: AppColors.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
       _CustomToggleButton(
           enabled: _appointmentRemindersSubNotificationsEnabled,
           borderRadius: BorderRadius.zero,
@@ -151,7 +150,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
     widgets.add(Row(children: [
       Expanded(
           child: Container(
-              color: illinois.AppColors.white,
+              color: AppColors.white,
               child: Padding(
                   padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
                   child: Text(Localization().getStringEx("panel.settings.notifications.appointments.description.label", 'MyMcKinley appointment reminder settings only apply within the {{app_title}} app.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
@@ -179,14 +178,14 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
     widgets.add(Row(children: [
       Expanded(
           child: Container(
-              color: illinois.AppColors.white,
+              color: AppColors.white,
               child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Text(Localization().getStringEx("panel.settings.notifications.athletics_updates.description.label", 'Based on your favorite sports'),
                       style: _notificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.disabled")
                   ))))
     ]));
-    widgets.add(Row(children: [Expanded(child: Container(color: illinois.AppColors.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
+    widgets.add(Row(children: [Expanded(child: Container(color: AppColors.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
       _CustomToggleButton(
           enabled: _athleticsSubNotificationsEnabled,
           borderRadius: BorderRadius.zero,
@@ -221,7 +220,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
         onTap: _toggleButtonEnabled? _onGroupsUpdatesToggled : (){},
         textStyle: _toggleButtonEnabled? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
     ));
-    widgets.add(Row(children: [Expanded(child: Container(color: illinois.AppColors.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
+    widgets.add(Row(children: [Expanded(child: Container(color: AppColors.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
       _CustomToggleButton(
           enabled: _groupsSubNotificationsEnabled,
           borderRadius: BorderRadius.zero,
@@ -263,7 +262,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
 //          context: context,
 //          onTap: _notificationsEnabled? _onDiningSpecialsToggled: (){},
 //          style: _notificationsEnabled? TextStyle(color: AppColors.fillColorPrimary, fontSize: 16, fontFamily: AppFontFamilies.bold) :
-//              TextStyle(color: illinois.AppColors.fillColorPrimaryTransparent015, fontSize: 16, fontFamily: AppFontFamilies.bold)));
+//              TextStyle(color: AppColors.fillColorPrimaryTransparent015, fontSize: 16, fontFamily: AppFontFamilies.bold)));
 
     return Container(
       child: Padding(padding: EdgeInsets.all(0), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets)),

@@ -25,7 +25,6 @@ import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -44,7 +43,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Event2? event;
@@ -172,7 +171,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       ),
       SliverList(delegate:
       SliverChildListDelegate([
-        Container(color: illinois.AppColors.white, child:
+        Container(color: AppColors.white, child:
           Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
             _roleBadgeWidget,
             _contentHeadingWidget,
@@ -183,7 +182,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
                 _detailsWidget,
               ])
             ),
-            Divider(height: 1, color: illinois.AppColors.fillColorPrimaryTransparent03,),
+            Divider(height: 1, color: AppColors.fillColorPrimaryTransparent03,),
           ]),
         ),
         Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -9,7 +8,7 @@ import 'package:rokwire_plugin/ui/widgets/header_bar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class SettingsLoginPhoneConfirmPanel extends StatefulWidget {
 
@@ -67,19 +66,19 @@ class _SettingsLoginPhoneConfirmPanelState extends State<SettingsLoginPhoneConfi
                 Semantics(label: headingTitle, hint: headingHint, textField: true, excludeSemantics: true,
                   value: _codeController.text,
                   child: Container(
-                    color: illinois.AppColors.white,
+                    color: AppColors.white,
                     child: TextField(
                       controller: _codeController,
                       autofocus: false,
                       autocorrect: false,
                       onSubmitted: (_) => _clearErrorMsg,
-                      cursorColor: illinois.AppColors.textBackground,
+                      cursorColor: AppColors.textBackground,
                       keyboardType: TextInputType.phone,
                       style: Styles().textStyles.getTextStyle("widget.input_field.text.medium"),
                       decoration: InputDecoration(
-                        disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: illinois.AppColors.mediumGray, width: 1.0),),
-                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: illinois.AppColors.mediumGray, width: 1.0),),
-                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: illinois.AppColors.mediumGray, width: 1.0),),
+                        disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: AppColors.mediumGray, width: 1.0),),
+                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: AppColors.mediumGray, width: 1.0),),
+                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: AppColors.mediumGray, width: 1.0),),
                       ),
                     ),
                   ),
@@ -96,7 +95,7 @@ class _SettingsLoginPhoneConfirmPanelState extends State<SettingsLoginPhoneConfi
                   hint: Localization().getStringEx("panel.onboarding.confirm_phone.button.confirm.hint", ""),
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                   onTap: _onTapConfirm,
-                  backgroundColor: illinois.AppColors.white,
+                  backgroundColor: AppColors.white,
                   borderColor: AppColors.fillColorSecondary,
                   progress: _isConfirming,
                 ),
@@ -107,7 +106,7 @@ class _SettingsLoginPhoneConfirmPanelState extends State<SettingsLoginPhoneConfi
                       hint: Localization().getStringEx("panel.onboarding.confirm_phone.button.link.cancel.hint", ""),
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                       onTap: _onTapCancel,
-                      backgroundColor: illinois.AppColors.white,
+                      backgroundColor: AppColors.white,
                       borderColor: AppColors.fillColorSecondary,
                       progress: _isCanceling,
                     ),

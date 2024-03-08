@@ -18,7 +18,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
+import 'package:illinois/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -94,7 +94,7 @@ class _ProfileRolesPageState extends State<ProfileRolesPage> {
               hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
               enabled: _canSave,
               fontFamily: AppFontFamilies.bold,
-              backgroundColor: illinois.AppColors.white,
+              backgroundColor: AppColors.white,
               fontSize: 16.0,
               textColor: AppColors.fillColorPrimary,
               borderColor: AppColors.fillColorSecondary,

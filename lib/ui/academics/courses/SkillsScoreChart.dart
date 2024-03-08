@@ -2,8 +2,7 @@
 import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
-import 'package:rokwire_plugin/gen/styles.dart';
+import 'package:illinois/gen/styles.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -40,15 +39,15 @@ class SkillsScoreChart extends StatefulWidget {
   static Color? getSectionColor(String section) {
     switch(section){
       case "cooperation":
-        return illinois.AppColors.essentialSkillsCoachRed;
+        return AppColors.essentialSkillsCoachRed;
       case "emotional_resilience":
-        return illinois.AppColors.essentialSkillsCoachOrange;
+        return AppColors.essentialSkillsCoachOrange;
       case "innovation":
-        return illinois.AppColors.essentialSkillsCoachGreen;
+        return AppColors.essentialSkillsCoachGreen;
       case "self_management":
-        return illinois.AppColors.essentialSkillsCoachBlue;
+        return AppColors.essentialSkillsCoachBlue;
       case "social_engagement":
-        return illinois.AppColors.essentialSkillsCoachPurple;
+        return AppColors.essentialSkillsCoachPurple;
       default:
         return null;
     }

@@ -6,12 +6,11 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/WPGUFMRadio.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class HomeWPGUFMRadioWidget extends StatelessWidget {
   final String? favoriteId;
@@ -145,11 +144,11 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: illinois.AppColors.white, child:
+                Container(color: AppColors.white, child:
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        Container(color: illinois.AppColors.white, child:
+                        Container(color: AppColors.white, child:
                           Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                             Row(children: <Widget>[
                               Expanded(child:

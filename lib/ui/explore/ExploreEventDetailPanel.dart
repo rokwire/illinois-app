@@ -22,7 +22,6 @@ import 'package:illinois/ext/Event.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -44,7 +43,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class ExploreEventDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Event? event;
@@ -321,7 +320,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       padding: EdgeInsets.symmetric(vertical: 0),
       child: Container(
         height: 1,
-        color: illinois.AppColors.fillColorPrimaryTransparent015,
+        color: AppColors.fillColorPrimaryTransparent015,
       ),
     );
   }

@@ -28,9 +28,8 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/appointments/AppointmentSchedulePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentScheduleTimePanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
@@ -524,7 +523,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
         HtmlWidget(instructionsHtml,
           onTapUrl : (url) {_launchUrl(url); return true;},
           textStyle:  Styles().textStyles.getTextStyle("widget.info.regular"),
-          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(illinois.AppColors.textSurface)} : null
+          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(AppColors.textSurface)} : null
         )
       );
     }
@@ -551,7 +550,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
         HtmlWidget(descriptionHtml,
           onTapUrl : (url) {_launchUrl(url); return true;},
           textStyle:  Styles().textStyles.getTextStyle("widget.info.regular"),
-          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(illinois.AppColors.textSurface)} : null
+          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(AppColors.textSurface)} : null
         )
       );
     }

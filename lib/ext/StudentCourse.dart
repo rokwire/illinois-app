@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/StudentCourse.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 
 extension StudentCourseExt on StudentCourse {
@@ -26,7 +26,7 @@ extension StudentCourseExt on StudentCourse {
     return result;
   }
   
-  Color? get uiColor => illinois.AppColors.eventColor;
+  Color? get uiColor => AppColors.eventColor;
 }
 
 extension StudentCourseSectionExt on StudentCourseSection {

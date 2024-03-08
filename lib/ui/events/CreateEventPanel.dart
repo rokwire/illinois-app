@@ -19,7 +19,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/events.dart';
@@ -41,7 +40,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as timezone;
 import 'package:rokwire_plugin/service/config.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 
 class CreateEventPanel extends StatefulWidget {
@@ -177,8 +176,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               StringUtils.isNotEmpty(_imageUrl)
                                   ? Positioned.fill(child: Image.network(_imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders))
                                   : Container(),
-                              CustomPaint(painter: TrianglePainter(painterColor: illinois.AppColors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
-                              CustomPaint(painter: TrianglePainter(painterColor: illinois.AppColors.white), child: Container(height: 30)),
+                              CustomPaint(painter: TrianglePainter(painterColor: AppColors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
+                              CustomPaint(painter: TrianglePainter(painterColor: AppColors.white), child: Container(height: 30)),
                               Container(
                                 height: _imageHeight,
                                 child: Center(
@@ -189,7 +188,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
                                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                                       onTap: _onTapAddImage,
-                                      backgroundColor: illinois.AppColors.white,
+                                      backgroundColor: AppColors.white,
                                       borderColor: AppColors.fillColorSecondary,
                                       contentWeight: 0.67,
                                     )
@@ -898,7 +897,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               padding:
                               EdgeInsets.symmetric(horizontal: 12),
                               decoration: BoxDecoration(
-                                  color: illinois.AppColors.white,
+                                  color: AppColors.white,
                                   border: Border.all(
                                       color: AppColors.fillColorPrimary,
                                       width: 1)),
@@ -937,7 +936,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               padding:
                               EdgeInsets.symmetric(horizontal: 12),
                               decoration: BoxDecoration(
-                                  color: illinois.AppColors.white,
+                                  color: AppColors.white,
                                   border: Border.all(
                                       color: AppColors.fillColorPrimary,
                                       width: 1)),
@@ -976,7 +975,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               padding:
                               EdgeInsets.symmetric(horizontal: 12),
                               decoration: BoxDecoration(
-                                  color: illinois.AppColors.white,
+                                  color: AppColors.white,
                                   border: Border.all(
                                       color: AppColors.fillColorPrimary,
                                       width: 1)),
@@ -1000,7 +999,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   child: RoundedButton(
                                     label: Localization().getStringEx("panel.create_event.location.button.select_location.title","Select location on a map"),
                                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                                    backgroundColor: illinois.AppColors.white,
+                                    backgroundColor: AppColors.white,
                                     borderColor: AppColors.fillColorSecondary,
                                     onTap: _onTapSelectLocation,
                                   ))

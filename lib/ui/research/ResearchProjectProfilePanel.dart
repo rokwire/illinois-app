@@ -7,14 +7,13 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class ResearchProjectProfilePanel extends StatefulWidget  {
   final Map<String, dynamic>? profile;
@@ -150,7 +149,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
 
     return Column(children: <Widget>[
       Stack(children: [
-        Semantics(container: true, child:Container(color: illinois.AppColors.white, child:
+        Semantics(container: true, child:Container(color: AppColors.white, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children:<Widget>[
               Padding(padding: EdgeInsets.zero, child:
@@ -209,7 +208,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
       ),
       
       Container(height: 1, color: AppColors.surfaceAccent,),
-      Container(color: illinois.AppColors.white, child:
+      Container(color: AppColors.white, child:
         Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 24, bottom: 12,), child:
           SafeArea(child: 
           RoundedButton(
@@ -218,7 +217,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             borderColor: AppColors.fillColorSecondary,
-            backgroundColor: illinois.AppColors.white,
+            backgroundColor: AppColors.white,
             onTap: () => _onSubmit(),
           ),
           ),

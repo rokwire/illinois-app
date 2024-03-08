@@ -19,13 +19,12 @@ import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/appointments/AppointmentSchedulePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 //import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -170,7 +169,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
       Container(
         decoration: BoxDecoration(
           border: Border.all(color: AppColors.fillColorPrimary, width: 1),
-          color: illinois.AppColors.white),
+          color: AppColors.white),
         child: Semantics(textField: true, excludeSemantics: true, value: textController?.text,
           label: Localization().getStringEx('panel.appointment.schedule.notes.field', 'NOTES FIELD'),
           hint: Localization().getStringEx('panel.appointment.schedule.notes.field.hint', ''),
@@ -285,7 +284,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
     return Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
       Container (
         decoration: BoxDecoration(
-          color: illinois.AppColors.white,
+          color: AppColors.white,
           border: Border.all(color: AppColors.surfaceAccent, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(4))
         ),

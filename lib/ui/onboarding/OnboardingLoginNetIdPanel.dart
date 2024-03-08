@@ -16,7 +16,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Onboarding2.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
@@ -26,7 +25,7 @@ import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class OnboardingLoginNetIdPanel extends StatefulWidget with OnboardingPanel {
   final Map<String, dynamic>? onboardingContext;
@@ -114,7 +113,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   borderColor: AppColors.fillColorSecondary,
-                  backgroundColor: illinois.AppColors.white,
+                  backgroundColor: AppColors.white,
                   onTap: _onLoginTapped,
                 ),
                 Onboarding2UnderlinedButton(

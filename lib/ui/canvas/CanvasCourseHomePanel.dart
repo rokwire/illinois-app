@@ -21,7 +21,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:illinois/ui/canvas/CanvasAccountNotificationsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseAnnouncementsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseAssignmentsPanel.dart';
@@ -35,7 +35,6 @@ import 'package:illinois/ui/canvas/CanvasWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -66,7 +65,7 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
         title: Localization().getStringEx('panel.home_canvas_course.header.title', 'Course'),
       ),
       body: _buildContent(),
-      backgroundColor: illinois.AppColors.white,
+      backgroundColor: AppColors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

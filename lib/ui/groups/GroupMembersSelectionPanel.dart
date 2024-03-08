@@ -17,7 +17,6 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/PopScopeFix.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -28,7 +27,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ext/Group.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class GroupMembersSelectionPanel extends StatefulWidget {
   final String? groupId;
@@ -75,7 +74,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
           title: Localization().getStringEx('panel.group.members.header.title', 'Members'),
           onLeading: _onTapDone,
         ),
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         body: Stack(alignment: Alignment.center, children: <Widget>[
           Column(
             children:[
@@ -84,7 +83,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     // Padding(padding: EdgeInsets.only(top: 12), child: Row(children: [
                     //   Expanded(child: Container()),
-                    //   RoundedButton(label: Localization().getStringEx('panel.group.members.button.done.title', 'Done'), contentWeight: 0.0, textColor: AppColors.fillColorPrimary, borderColor: AppColors.fillColorSecondary, backgroundColor: illinois.AppColors.white, onTap: _onTapDone)
+                    //   RoundedButton(label: Localization().getStringEx('panel.group.members.button.done.title', 'Done'), contentWeight: 0.0, textColor: AppColors.fillColorPrimary, borderColor: AppColors.fillColorSecondary, backgroundColor: AppColors.white, onTap: _onTapDone)
                     // ])),
                     Container(
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -129,7 +128,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                   contentWeight: 0.5,
                   borderColor: AppColors.fillColorSecondary,
-                  backgroundColor: illinois.AppColors.white,
+                  backgroundColor: AppColors.white,
                   onTap: _onTapDone),
               ),
             ]),

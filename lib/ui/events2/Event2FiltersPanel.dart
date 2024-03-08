@@ -5,13 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class Event2FiltersPanel extends StatefulWidget {
   final Map<String, dynamic> selection;
@@ -160,7 +159,7 @@ class _Event2AttributeButton extends StatelessWidget {
     ]);
   }
 
-  Color get borderColor => illinois.AppColors.disabledTextColor;
+  Color get borderColor => AppColors.disabledTextColor;
 
   Decoration get headingDecoration => expanded ?
     BoxDecoration(
@@ -169,7 +168,7 @@ class _Event2AttributeButton extends StatelessWidget {
       borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
     ) :
     BoxDecoration(
-      color: illinois.AppColors.white,
+      color: AppColors.white,
       border: Border.all(color: borderColor, width: 1),
       borderRadius: BorderRadius.circular(8),
     );
@@ -179,7 +178,7 @@ class _Event2AttributeButton extends StatelessWidget {
     Styles().textStyles.getTextStyle('widget.button.title.medium.fat');
 
   Widget? get headingRightIcon => expanded ?
-    Styles().images.getImage('chevron-up', color: illinois.AppColors.white, excludeFromSemantics: true) :
+    Styles().images.getImage('chevron-up', color: AppColors.white, excludeFromSemantics: true) :
     Styles().images.getImage('chevron-down', color: AppColors.fillColorSecondary, excludeFromSemantics: true);
 
   List<Widget> buildValues() {
@@ -201,7 +200,7 @@ class _Event2AttributeButton extends StatelessWidget {
     TextStyle? textStyle = Styles().textStyles.getTextStyle(isSelected ? "widget.button.title.medium.fat" : "widget.button.title.medium");
     Decoration decoration =
       ((index + 2) < count) ? BoxDecoration(
-        color: illinois.AppColors.white,
+        color: AppColors.white,
         border: Border(
           left: BorderSide(color: borderColor, width: 1),
           right: BorderSide(color: borderColor, width: 1),
@@ -209,13 +208,13 @@ class _Event2AttributeButton extends StatelessWidget {
         ),
       ) :
       ((index + 1) < count) ? BoxDecoration(
-        color: illinois.AppColors.white,
+        color: AppColors.white,
         border: Border(
           left: BorderSide(color: borderColor, width: 1),
           right: BorderSide(color: borderColor, width: 1),
         ),
       ) : BoxDecoration(
-        color: illinois.AppColors.white,
+        color: AppColors.white,
         border: Border.all(color: borderColor, width: 1),
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(8),),
       );

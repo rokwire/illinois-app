@@ -16,7 +16,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class Event2SetupAttendancePanel extends StatefulWidget {
   final Event2? event;
@@ -77,7 +77,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
     body: _buildPanelContent(),
-    backgroundColor: illinois.AppColors.white,
+    backgroundColor: AppColors.white,
   );
 
   Widget _buildPanelContent() =>
@@ -190,11 +190,11 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildAttendanceTakerSection() {
     return Padding(padding: Event2CreatePanel.sectionPadding, child:
       Column(children: [
-        Divider(color: illinois.AppColors.dividerLineAccent, thickness: 1),
+        Divider(color: AppColors.dividerLineAccent, thickness: 1),
         Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
           Event2AttendanceTakerWidget(_event, updateController: _updateController,),
         ),
-        Divider(color: illinois.AppColors.dividerLineAccent, thickness: 1),
+        Divider(color: AppColors.dividerLineAccent, thickness: 1),
       ],),
     );
   }

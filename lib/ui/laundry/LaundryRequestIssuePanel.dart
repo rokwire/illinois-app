@@ -21,14 +21,13 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/ui/laundry/LaundryIssuesDetailPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class LaundryRequestIssuePanel extends StatefulWidget {
   static final String routeSettingsName = 'LaundryRequestIssuePanel';
@@ -38,7 +37,7 @@ class LaundryRequestIssuePanel extends StatefulWidget {
 }
 
 class _LaundryRequestIssuePanelState extends State<LaundryRequestIssuePanel> {
-  final Color _inputDecorationColor = illinois.AppColors.mediumGray2;
+  final Color _inputDecorationColor = AppColors.mediumGray2;
 
   final int _machineIdSymbolsCount = 6;
   List<TextEditingController> _symbolsControllers = [];
@@ -117,7 +116,7 @@ class _LaundryRequestIssuePanelState extends State<LaundryRequestIssuePanel> {
           Container(
               padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
-                  color: illinois.AppColors.white,
+                  color: AppColors.white,
                   borderRadius: BorderRadius.all(Radius.circular(4)),
                   boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]),
               child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: _buildMachineIdInputFields()))

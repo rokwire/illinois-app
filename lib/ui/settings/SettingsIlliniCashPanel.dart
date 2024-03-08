@@ -21,7 +21,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/IlliniCash.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -40,7 +39,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class SettingsIlliniCashPanel extends StatefulWidget {
 
@@ -216,7 +215,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                 label: Localization().getStringEx('panel.settings.illini_cash.button.log_in.title', 'Sign in to View'),
                 hint: Localization().getStringEx('panel.settings.illini_cash.button.log_in.hint', ''),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-                backgroundColor: illinois.AppColors.white,
+                backgroundColor: AppColors.white,
                 textAlign: TextAlign.center,
                 borderColor: AppColors.fillColorSecondary,
                 onTap: _onTapLogIn,
@@ -263,7 +262,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                       hint: Localization().getStringEx(
                           'panel.settings.illini_cash.button.add_cash.hint', ''),
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-                      backgroundColor: illinois.AppColors.white,
+                      backgroundColor: AppColors.white,
                       borderColor: AppColors.fillColorSecondary,
                       onTap: _onAddIlliniCashTapped,
                     ),
@@ -542,8 +541,8 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
 
   Widget _buildPrivacyLevelIcon() {
     String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
-    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 2), color: illinois.AppColors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorSecondary, width: 2), color: illinois.AppColors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 2), color: AppColors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorSecondary, width: 2), color: AppColors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
         Text(privacyLevel, style:  Styles().textStyles.getTextStyle("widget.title.medium.extra_fat"))
       ),
     );

@@ -47,7 +47,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
 import 'package:visibility_detector/visibility_detector.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 abstract class HomeEvent2Widget extends StatefulWidget {
 
@@ -109,7 +109,7 @@ class HomeMyEvents2Widget extends HomeEvent2Widget {
   Widget _emptyContentWidget(BuildContext context) => HomeMessageHtmlCard(
     message: Localization().getStringEx("widget.home.my_events2.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Events Feed</b></a> for quick access here.")
       .replaceAll(localUrlMacro, '$localScheme://$localEventFeedHost'),
-    linkColor: illinois.AppColors.eventColor,
+    linkColor: AppColors.eventColor,
     onTapLink : (url) {
       Uri? uri = (url != null) ? Uri.tryParse(url) : null;
       if ((uri?.scheme == localScheme) && (uri?.host == localEventFeedHost)) {

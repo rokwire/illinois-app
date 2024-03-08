@@ -23,7 +23,6 @@ import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:illinois/ui/settings/SettingsVoiceRecordigWidgets.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -35,7 +34,7 @@ import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class ProfileDetailsPage extends StatefulWidget {
   final String? parentRouteName;
@@ -161,7 +160,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
           textField: true, excludeSemantics: true,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: AppColors.fillColorPrimary, width: 1)),
+            decoration: BoxDecoration(color: AppColors.white, border: Border.all(color: AppColors.fillColorPrimary, width: 1)),
 //          height: 48,
             child: TextField(
               controller: _nameController,
@@ -188,7 +187,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
             textField: true, excludeSemantics: true,
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: AppColors.fillColorPrimary, width: 1)),
+                decoration: BoxDecoration(color: AppColors.white, border: Border.all(color: AppColors.fillColorPrimary, width: 1)),
 //                height: 48,
                 child: TextField(
                   controller: _emailController,
@@ -220,7 +219,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
           textField: true, excludeSemantics: true,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: AppColors.fillColorPrimary, width: 1)),
+            decoration: BoxDecoration(color: AppColors.white, border: Border.all(color: AppColors.fillColorPrimary, width: 1)),
 //          height: 48,
             child: TextField(
               controller: _nameController,
@@ -246,7 +245,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
             textField: true, excludeSemantics: true,
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: AppColors.fillColorPrimary, width: 1)),
+                decoration: BoxDecoration(color: AppColors.white, border: Border.all(color: AppColors.fillColorPrimary, width: 1)),
 //                height: 48,
                 child: TextField(
                   controller: _phoneController,
@@ -299,7 +298,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
       hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
        textStyle: _canSave ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
       enabled: _canSave,
-      backgroundColor: _canSave ? illinois.AppColors.white : AppColors.background,
+      backgroundColor: _canSave ? AppColors.white : AppColors.background,
       borderColor: _canSave? AppColors.fillColorSecondary : AppColors.surfaceAccent,
       progress: _isSaving,
       onTap: _onSaveChangesClicked,
@@ -602,8 +601,8 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
   Widget _buildDeleteMyAccount() {
     return Padding(padding: EdgeInsets.only(top: 24, bottom: 12), child:
     RoundedButton(
-        backgroundColor: illinois.AppColors.white,
-        borderColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
+        borderColor: AppColors.white,
         label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Delete My Account"),
         hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.thin.secondary"),

@@ -16,7 +16,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -39,7 +38,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:illinois/service/Polls.dart' as illinois;
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 
 class PollsHomePanel extends StatefulWidget {
@@ -380,11 +379,11 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   Widget _buildCreatePollButton() {
-    return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:illinois.AppColors.white,child:
+    return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:AppColors.white,child:
       RoundedButton(label:Localization().getStringEx("panel.polls_home.text.create_poll","Create a Poll"),
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
           borderColor: AppColors.fillColorSecondary,
-          backgroundColor: illinois.AppColors.white,
+          backgroundColor: AppColors.white,
         onTap:_onCreatePollTapped
     ));
   }
@@ -732,7 +731,7 @@ class _PollsHomePanelFilterTab extends StatelessWidget {
         child: Semantics(label: text, hint:hint, button:true, excludeSemantics: true, child:Container(
           height: 48,
           decoration: BoxDecoration(
-            color: selected ? Colors.white : illinois.AppColors.lightGray,
+            color: selected ? Colors.white : AppColors.lightGray,
             border: Border.all(color: AppColors.surfaceAccent, width: 1.5, style: BorderStyle.solid),
             borderRadius: _borderRadius,
           ),
@@ -888,7 +887,7 @@ class _PollCardState extends State<PollCard> {
 
     return Semantics(container: true, child:
       Column(children: <Widget>[
-        Container(decoration: BoxDecoration(color: illinois.AppColors.white, borderRadius: BorderRadius.circular(5)), child:
+        Container(decoration: BoxDecoration(color: AppColors.white, borderRadius: BorderRadius.circular(5)), child:
           contnetWidget
         ),
       ],),
@@ -946,7 +945,7 @@ class _PollCardState extends State<PollCard> {
               flex: 5,
               key: progressKey, child:
                 Stack(alignment: Alignment.centerLeft, children: <Widget>[
-              CustomPaint(painter: PollProgressPainter(backgroundColor: illinois.AppColors.white, progressColor: useCustomColor ?AppColors.fillColorPrimary:illinois.AppColors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+              CustomPaint(painter: PollProgressPainter(backgroundColor: AppColors.white, progressColor: useCustomColor ?AppColors.fillColorPrimary:AppColors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
               Container(/*height: 15+ 16*MediaQuery.of(context).textScaleFactor,*/ child:
                 Padding(padding: EdgeInsets.only(left: 5), child:
                     Row(children: <Widget>[
@@ -987,7 +986,7 @@ class _PollCardState extends State<PollCard> {
           Stack(children: <Widget>[
             Container(padding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
               decoration: BoxDecoration(
-                color: illinois.AppColors.white,
+                color: AppColors.white,
                 border: Border.all(color: enabled? AppColors.fillColorSecondary :AppColors.surfaceAccent, width: 2.0),
                 borderRadius: BorderRadius.circular(24.0),
               ),

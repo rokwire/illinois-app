@@ -17,7 +17,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -27,7 +26,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class GroupMembershipQuestionsPanel extends StatefulWidget {
   final Group? group;
@@ -148,7 +147,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
           child: Text(Localization().getStringEx("panel.membership_questions.label.question", 'QUESTION #')+(index+1).toString(), style: Styles().textStyles.getTextStyle("widget.title.tiny")),
         ),
         Stack(children: <Widget>[
-          Container(color: illinois.AppColors.white,
+          Container(color: AppColors.white,
             child: TextField(
               maxLines: 2,
               controller: _controllers![index],
@@ -183,7 +182,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
           Expanded(flex: 5,
           child: RoundedButton(label: Localization().getStringEx("panel.membership_questions.button.update_question.title", 'Update Questions'),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-            backgroundColor: illinois.AppColors.white,
+            backgroundColor: AppColors.white,
             padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
             borderColor: AppColors.fillColorSecondary,
             borderWidth: 2,

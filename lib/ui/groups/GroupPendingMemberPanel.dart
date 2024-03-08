@@ -16,7 +16,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -30,7 +29,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class GroupPendingMemberPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Member? member;
@@ -65,7 +64,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
       appBar: HeaderBar(),
       body:
       Container(
-        color:  illinois.AppColors.white,
+        color:  AppColors.white,
         child:Column(
         children: <Widget>[
           Expanded(
@@ -151,7 +150,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
   }
 
   Widget _buildApproval(){
-    return Container(color: illinois.AppColors.white, padding: EdgeInsets.symmetric(horizontal: 16), child:
+    return Container(color: AppColors.white, padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Container(height: 28,),
         Row(children: [
@@ -223,7 +222,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
 
   Widget _buildBottomButtons(BuildContext context){
     return SafeArea(child: Container(
-      color: illinois.AppColors.white,
+      color: AppColors.white,
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
         children: <Widget>[
@@ -232,7 +231,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                 label: _continueButtonText ?? '',
                 hint: Localization().getStringEx("panel.pending_member_detail.button.add.hint", ""),
                 textStyle: _canContinue ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
-                backgroundColor: illinois.AppColors.white,
+                backgroundColor: AppColors.white,
                 borderColor: _canContinue? AppColors.fillColorSecondary : AppColors.surfaceAccent,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 13),
                 progress: _updating,
@@ -311,7 +310,7 @@ class _MembershipAnswer extends StatelessWidget{
         Container(
           padding: EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: illinois.AppColors.white,
+            color: AppColors.white,
             border: Border.all(color: AppColors.fillColorPrimary)
           ),
           child: Column(

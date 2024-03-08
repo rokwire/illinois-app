@@ -18,7 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
@@ -26,7 +26,6 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -79,7 +78,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
         title: Localization().getStringEx('panel.canvas_calendar.header.title', 'Calendar'),
       ),
       body: _buildContent(),
-      backgroundColor: illinois.AppColors.white,
+      backgroundColor: AppColors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -260,7 +259,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
   }
 
   Widget _buildEventDelimiter() {
-    return Container(color: illinois.AppColors.lightGray, height: 1);
+    return Container(color: AppColors.lightGray, height: 1);
   }
 
   void _onTapEvent(CanvasCalendarEvent event) {
@@ -324,7 +323,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
         height: 48,
         decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: illinois.AppColors.lightGray, width: 1),
+            border: Border.all(color: AppColors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),
@@ -357,7 +356,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
         height: 48,
         decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: illinois.AppColors.lightGray, width: 1),
+            border: Border.all(color: AppColors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),
@@ -387,7 +386,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
         height: 48,
         decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: illinois.AppColors.lightGray, width: 1),
+            border: Border.all(color: AppColors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),
@@ -422,7 +421,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
         height: height,
         decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: illinois.AppColors.lightGray, width: 1),
+            border: Border.all(color: AppColors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),
@@ -523,7 +522,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
   }
 
   Color _weekDayTextColor(DateTime date) {
-    return _isToday(date) ? illinois.AppColors.white : AppColors.fillColorPrimary;
+    return _isToday(date) ? AppColors.white : AppColors.fillColorPrimary;
   }
 
   bool _isToday(DateTime currentDate) {

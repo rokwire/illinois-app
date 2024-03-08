@@ -1,12 +1,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class Onboarding2TitleWidget extends StatelessWidget{
   final String? title;
@@ -138,7 +137,7 @@ class Onboarding2ToggleButton extends StatelessWidget{
 
 class Onboarding2InfoDialog extends StatelessWidget{
   static final TextStyle titleStyle = Styles().textStyles.getTextStyle("widget.title.large.fat") ?? TextStyle(fontSize: 20.0, color: AppColors.fillColorPrimary,fontFamily: AppFontFamilies.bold);
-  static final TextStyle contentStyle = Styles().textStyles.getTextStyle("widget.info.regular.thin") ?? TextStyle(fontSize: 16.0, color: illinois.AppColors.textSurface, fontFamily: AppFontFamilies.regular);
+  static final TextStyle contentStyle = Styles().textStyles.getTextStyle("widget.info.regular.thin") ?? TextStyle(fontSize: 16.0, color: AppColors.textSurface, fontFamily: AppFontFamilies.regular);
 
   final Widget? content;
   final BuildContext? context;

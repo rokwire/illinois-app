@@ -17,13 +17,12 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class CanvasFeedbackPanel extends StatefulWidget {
@@ -41,7 +40,7 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
     return Scaffold(
         appBar: HeaderBar(title: Localization().getStringEx('panel.canvas_feedback.header.title', 'Feedback')),
         body: _buildContent(),
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         bottomNavigationBar: uiuc.TabBar());
   }
 
@@ -101,7 +100,7 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                       onTap: _onTapSubmit,
                       contentWeight: 0.0,
-                      backgroundColor: illinois.AppColors.white,
+                      backgroundColor: AppColors.white,
                       borderColor: AppColors.fillColorSecondary)
                 ]))
           ])),

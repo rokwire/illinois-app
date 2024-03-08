@@ -17,10 +17,9 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Rewards.dart';
 import 'package:illinois/service/Rewards.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class DebugRewardsPanel extends StatefulWidget{
   _DebugRewardsPanelState createState() => _DebugRewardsPanelState();
@@ -67,7 +66,7 @@ class _DebugRewardsPanelState extends State<DebugRewardsPanel>{
   }
 
   Widget _buildDelimiterWidget() {
-    return Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Container(height: 1, color: illinois.AppColors.lightGray));
+    return Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Container(height: 1, color: AppColors.lightGray));
   }
 
   Widget _buildHistoryHeaderWidget() {

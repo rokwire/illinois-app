@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/RecentItem.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 extension RecentItemExt on RecentItem {
 
   Color? get headerColor {
     switch (type) {
-      case RecentItemType.event:   return illinois.AppColors.eventColor;
-      case RecentItemType.event2:  return illinois.AppColors.eventColor;
-      case RecentItemType.dining:  return  illinois.AppColors.diningColor;
+      case RecentItemType.event:   return AppColors.eventColor;
+      case RecentItemType.event2:  return AppColors.eventColor;
+      case RecentItemType.dining:  return  AppColors.diningColor;
       case RecentItemType.game:    return  AppColors.fillColorPrimary;
       case RecentItemType.news:    return  AppColors.fillColorPrimary;
       case RecentItemType.laundry: return  AppColors.accentColor2;

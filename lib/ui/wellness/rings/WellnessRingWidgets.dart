@@ -6,13 +6,12 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/WellnessRings.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 // Widgets
 //////////////////
@@ -108,7 +107,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
           borderRadius: BorderRadius.circular(360),
           border: Border.all(width: 2, color: AppColors.surfaceAccent),
           // shape: BoxShape.circle,
-          boxShadow:  [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+          boxShadow:  [BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
         ),
       child: _buildRing(data: data)
     );
@@ -187,7 +186,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                         height: innerContentSize - widget.borderWidth,
                         decoration: BoxDecoration(
                             color: widget.backgroundColor ??
-                                illinois.AppColors.white,
+                                AppColors.white,
                             shape: BoxShape.circle
                         ),
                         child: childWidget ??
@@ -447,7 +446,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
               Center(
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: Styles().images.getImage('plus-circle-white', excludeFromSemantics: true, color:  illinois.AppColors.white),
+                  child: Styles().images.getImage('plus-circle-white', excludeFromSemantics: true, color:  AppColors.white),
                 ))
             ]
         ))
@@ -600,7 +599,7 @@ class _AccomplishmentCardState extends State<AccomplishmentCard>{
     Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
       decoration: BoxDecoration(color: Colors.white, border: Border.all(width: 0, color: AppColors.surfaceAccent), borderRadius: BorderRadius.circular(5),
-        boxShadow:  [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+        boxShadow:  [BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
       ),
       child: _buildAccomplishmentCard(widget.date??"", widget.accomplishments),
     );

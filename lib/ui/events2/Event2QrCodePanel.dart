@@ -6,7 +6,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -15,7 +14,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:share/share.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class Event2QrCodePanel extends StatefulWidget { //TBD localize
   final Event2? event;
@@ -61,7 +60,7 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
         height: _imageSize.toDouble(),
         fontFamily: AppFontFamilies.bold,
         fontSize: 54,
-        textColor: illinois.AppColors.textSurface,
+        textColor: AppColors.textSurface,
       );
       bool result = (updatedImageBytes != null);
       if (result) {
@@ -110,7 +109,7 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
                       ? Semantics(
                     label: Localization().getStringEx('panel.event_qr_code.code.hint', "QR code image"),
                     child: Container(
-                      decoration: BoxDecoration(color: illinois.AppColors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
+                      decoration: BoxDecoration(color: AppColors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
                       padding: EdgeInsets.all(5),
                       child: Image.memory(
                         _qrCodeBytes!,

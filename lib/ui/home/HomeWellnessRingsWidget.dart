@@ -10,11 +10,10 @@ import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingSelectPredefinedPanel.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class HomeWellnessRingsWidget extends StatefulWidget {
   
@@ -67,7 +66,7 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: illinois.AppColors.white, child:
+                Container(color: AppColors.white, child:
                   Padding(padding: EdgeInsets.only(top: 20, right: 13, bottom: 0, left: 2), child:
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,8 +139,8 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
 
   Widget _buildCreateRingButton(){
     bool enabled = WellnessRings().canAddRing;
-    final Color disabledTextColor = illinois.AppColors.textColorDisabled;
-    final Color disabledBackgroundColor = illinois.AppColors.textBackgroundVariant2;
+    final Color disabledTextColor = AppColors.textColorDisabled;
+    final Color disabledBackgroundColor = AppColors.textBackgroundVariant2;
     String label = "Create New Ring";
     String description = "Maximum of 4 total";
     return Visibility(

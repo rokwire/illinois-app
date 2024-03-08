@@ -19,11 +19,10 @@ import 'package:illinois/mainImpl.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class SettingsLanguageContentWidget extends StatefulWidget {
   @override
@@ -68,7 +67,7 @@ class _SettingsLanguageContentWidgetState extends State<SettingsLanguageContentW
   }
 
   static BoxDecoration get _contentDecoration => BoxDecoration(
-    color: illinois.AppColors.white,
+    color: AppColors.white,
     border: Border.all(color: AppColors.surfaceAccent, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(4))
   );
@@ -77,7 +76,7 @@ class _SettingsLanguageContentWidgetState extends State<SettingsLanguageContentW
     List<Widget> contentList = <Widget>[];
     contentList.add(_buildLanguageOption(Localization().getStringEx('panel.settings.home.language.system.title', 'Use System Language'), null));
     for (String code in Localization().supportedLanguages) {
-      contentList.add(Divider(thickness: 0.3, color: illinois.AppColors.mediumGray2,));
+      contentList.add(Divider(thickness: 0.3, color: AppColors.mediumGray2,));
       contentList.add(_buildLanguageOption(Localization().getString('panel.settings.home.language.$code.title') ?? code, code));
     }
     return contentList;

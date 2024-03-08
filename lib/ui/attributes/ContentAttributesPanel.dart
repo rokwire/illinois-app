@@ -7,9 +7,8 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/attributes/ContentAttributesCategoryPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -294,7 +293,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
         ),
         Container (
           decoration: BoxDecoration(
-            color: illinois.AppColors.white,
+            color: AppColors.white,
             border: Border.all(color: AppColors.surfaceAccent, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))
           ),
@@ -397,7 +396,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
             Column(mainAxisSize: MainAxisSize.min, children: [
               Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: illinois.AppColors.white, width: 1.5, ))),
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.white, width: 1.5, ))),
                 child: Text(title ?? '',
                   style: Styles().textStyles.getTextStyle("widget.heading.regular.fat"),
                   semanticsLabel: "",
@@ -442,7 +441,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
           label: Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
             textColor: canClearAttributes ? AppColors.fillColorPrimary : AppColors.surfaceAccent,
             borderColor: canClearAttributes ? AppColors.fillColorSecondary : AppColors.surfaceAccent,
-          backgroundColor: illinois.AppColors.white,
+          backgroundColor: AppColors.white,
           textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           enabled: canClearAttributes,
@@ -468,7 +467,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
           label: widget.applyTitle ?? _applyTitle,
           textColor: canApply ? AppColors.fillColorPrimary : AppColors.surfaceAccent,
           borderColor: canApply ? AppColors.fillColorSecondary : AppColors.surfaceAccent,
-          backgroundColor: illinois.AppColors.white,
+          backgroundColor: AppColors.white,
           enabled: canApply,
           onTap: _onTapApply
         )),
@@ -523,7 +522,7 @@ class _AttributeRibbonButton extends StatelessWidget {
     return InkWell(onTap: onTap, child:
       Container (
         decoration: BoxDecoration(
-          color: illinois.AppColors.white,
+          color: AppColors.white,
           border: Border.all(color: AppColors.surfaceAccent, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(4))
         ),

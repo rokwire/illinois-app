@@ -15,14 +15,13 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
   
@@ -96,7 +95,7 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
                                 backgroundColor: AppColors.fillColorPrimary,
                                 onTap: () => _goNext(context),
                                 borderColor: AppColors.fillColorPrimary,
-                                secondaryBorderColor: illinois.AppColors.white,
+                                secondaryBorderColor: AppColors.white,
                               ),
                             )
                           ],

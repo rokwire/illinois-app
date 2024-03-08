@@ -22,10 +22,9 @@ import 'package:illinois/ui/debug/mobile_access/DebugMobileAccessLockServicesCod
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 class DebugMobileAccessHomePanel extends StatefulWidget {
@@ -88,8 +87,8 @@ class _DebugMobileAccessHomePanelState extends State<DebugMobileAccessHomePanel>
             Expanded(
                 child: Container(
                     decoration: BoxDecoration(
-                        color: illinois.AppColors.white,
-                        border: Border.all(color:illinois.AppColors.blackTransparent018, width: 1),
+                        color: AppColors.white,
+                        border: Border.all(color:AppColors.blackTransparent018, width: 1),
                         borderRadius: BorderRadius.all(Radius.circular(4))),
                     child: Padding(
                         padding: EdgeInsets.all(16),

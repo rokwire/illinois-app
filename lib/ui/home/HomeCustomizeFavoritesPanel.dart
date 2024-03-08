@@ -13,7 +13,6 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -22,7 +21,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class HomeCustomizeFavoritesPanel extends StatefulWidget {
 
@@ -98,7 +97,7 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
   Widget build(BuildContext context) {
 
     return Column(children: [
-      Container(color: illinois.AppColors.white, child:
+      Container(color: AppColors.white, child:
         Row(children: [
           Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16), child:
@@ -394,7 +393,7 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
 
   void _showUnstarConfirmationDialog(List<String>? favorites) {
     AppAlert.showCustomDialog(context: context, contentPadding: EdgeInsets.zero, contentWidget:
-      Container(height: 250, decoration: BoxDecoration(color: illinois.AppColors.white, borderRadius: BorderRadius.circular(15.0)), child:
+      Container(height: 250, decoration: BoxDecoration(color: AppColors.white, borderRadius: BorderRadius.circular(15.0)), child:
         Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
           Padding(padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16), child:
             Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [

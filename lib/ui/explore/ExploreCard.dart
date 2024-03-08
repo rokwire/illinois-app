@@ -26,7 +26,6 @@ import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
@@ -49,7 +48,7 @@ import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class ExploreCard extends StatefulWidget {
   final GestureTapCallback? onTap;
@@ -505,7 +504,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       padding: EdgeInsets.symmetric(vertical: 0),
       child: Container(
         height: 1,
-        color: illinois.AppColors.fillColorPrimaryTransparent015,
+        color: AppColors.fillColorPrimaryTransparent015,
       ),
     );
   }

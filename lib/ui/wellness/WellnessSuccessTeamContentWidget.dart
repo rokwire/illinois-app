@@ -17,14 +17,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/model/wellness/SuccessTeam.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class WellnessSuccessTeamContentWidget extends StatefulWidget {
   WellnessSuccessTeamContentWidget();
@@ -105,8 +104,8 @@ class _WellnessSuccessTeamContentWidgetState extends State<WellnessSuccessTeamCo
     }
     Widget noMembers = Padding(padding: EdgeInsets.only(bottom: 16), child: Container(
       decoration: BoxDecoration(
-      color: illinois.AppColors.white,
-      boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+      color: AppColors.white,
+      boxShadow: [BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
       borderRadius: BorderRadius.circular(4)),
       child: Container(
         padding: EdgeInsets.all(16),
@@ -126,8 +125,8 @@ class _WellnessSuccessTeamContentWidgetState extends State<WellnessSuccessTeamCo
   Widget _buildSuccessTeamItem(String department, String type, String name, String externalLink, [String image = ""]) {
     return Padding(padding: EdgeInsets.only(bottom: 16), child: Container(
         decoration: BoxDecoration(
-            color: illinois.AppColors.white,
-            boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            color: AppColors.white,
+            boxShadow: [BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.circular(4)),
         child: Container(padding: EdgeInsets.all(16), child: Column(children: [
           Row(children: [

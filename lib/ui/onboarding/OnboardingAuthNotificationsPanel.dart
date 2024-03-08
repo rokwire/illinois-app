@@ -16,7 +16,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
@@ -25,7 +24,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'dart:io' show Platform;
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPanel {
   final Map<String, dynamic>? onboardingContext;
@@ -118,7 +117,7 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         borderColor: AppColors.fillColorSecondary,
-                        backgroundColor: illinois.AppColors.white,
+                        backgroundColor: AppColors.white,
                         onTap: () => _onReceiveNotifications(context),
                       ),
                       GestureDetector(

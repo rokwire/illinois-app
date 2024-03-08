@@ -20,14 +20,13 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/laundry/LaundryIssueContactInfoPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class LaundryIssuesDetailPanel extends StatefulWidget {
   final LaundryMachineServiceIssues issues;
@@ -58,7 +57,7 @@ class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
   Widget _buildMachineHeaderSection() {
     return Container(
         decoration: BoxDecoration(
-            color: illinois.AppColors.disabledTextColor,
+            color: AppColors.disabledTextColor,
             boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]),
         child: Padding(
             padding: EdgeInsets.all(20),
@@ -146,7 +145,7 @@ class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
           Container(
               padding: EdgeInsets.symmetric(horizontal: 8),
               decoration: BoxDecoration(
-                  color: illinois.AppColors.white,
+                  color: AppColors.white,
                   boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]),
               child: TextField(
                   maxLines: 8,

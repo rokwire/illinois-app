@@ -36,7 +36,6 @@ import 'package:illinois/ui/settings/SettingsPrivacyCenterContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsResearchContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsSectionsContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -45,7 +44,7 @@ import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 enum SettingsContent { sections, interests, food_filters, sports, favorites, assessments, calendar, appointments, i_card, language, contact, maps, research, privacy, notifications}
 
@@ -141,7 +140,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   Widget _buildSheet(BuildContext context) {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
     return Column(children: [
-        Container(color: illinois.AppColors.white, child:
+        Container(color: AppColors.white, child:
           Row(children: [
             Expanded(child:
               _DebugContainer(child:
@@ -186,7 +185,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
                 Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
                   RibbonButton(
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-                    backgroundColor: illinois.AppColors.white,
+                    backgroundColor: AppColors.white,
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                     border: Border.all(color: AppColors.surfaceAccent, width: 1),
                     rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
@@ -232,7 +231,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
                   });
                 },
                 child: Container(
-                  color: illinois.AppColors.blackTransparent06,
+                  color: AppColors.blackTransparent06,
                   height: MediaQuery.of(context).size.height,
                   
                 ))));
@@ -254,7 +253,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
 
   Widget _buildContentItem(SettingsContent contentItem) {
     return RibbonButton(
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentItem),

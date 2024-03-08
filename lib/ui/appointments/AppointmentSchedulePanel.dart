@@ -16,14 +16,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Appointment.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -179,7 +178,7 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
   ),],),);
 
   Widget _buildAppontmentTypeDropdown() => Padding(padding: EdgeInsets.only(bottom: 8), child:
-    Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: illinois.AppColors.mediumGray, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
+    Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: AppColors.mediumGray, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         DropdownButtonHideUnderline(child:
           DropdownButton<AppointmentType>(

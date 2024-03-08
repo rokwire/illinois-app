@@ -24,13 +24,12 @@ import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class SettingsICardContentWidget extends StatefulWidget {
   @override
@@ -109,7 +108,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
                       child: ToggleRibbonButton(
                           label: Localization().getStringEx('panel.settings.icard.play_sound.button', 'Play sound when unlocking'),
                           toggled: _soundEnabled,
-                          border: Border.all(color:illinois.AppColors.blackTransparent018, width: 1),
+                          border: Border.all(color:AppColors.blackTransparent018, width: 1),
                           borderRadius: BorderRadius.all(Radius.circular(4)),
                           onTap: _onTapPlaySound)),
                   Padding(
@@ -117,7 +116,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
                       child: ToggleRibbonButton(
                           label: Localization().getStringEx('panel.settings.icard.vibrate.button', 'Vibrate when unlocking'),
                           toggled: _vibrationEnabled,
-                          border: Border.all(color:illinois.AppColors.blackTransparent018, width: 1),
+                          border: Border.all(color:AppColors.blackTransparent018, width: 1),
                           borderRadius: BorderRadius.all(Radius.circular(4)),
                           onTap: _onTapVibrate)),
                 ])),
@@ -173,7 +172,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
   }
 
   Widget _buildDividerWidget() {
-    return Padding(padding: EdgeInsets.only(left: 16), child: Divider(color: illinois.AppColors.mediumGray, height: 1));
+    return Padding(padding: EdgeInsets.only(left: 16), child: Divider(color: AppColors.mediumGray, height: 1));
   }
 
   Widget _buildOpenIOSSystemSettingsWidget() {
@@ -183,8 +182,8 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
           Expanded(
               child: Container(
                   decoration: BoxDecoration(
-                      color: illinois.AppColors.white,
-                      border: Border.all(color:illinois.AppColors.blackTransparent018, width: 1),
+                      color: AppColors.white,
+                      border: Border.all(color:AppColors.blackTransparent018, width: 1),
                       borderRadius: BorderRadius.all(Radius.circular(4))),
                   child: Padding(
                       padding: EdgeInsets.all(16),

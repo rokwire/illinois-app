@@ -23,7 +23,6 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -51,7 +50,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class CompositeEventsDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
 
@@ -293,7 +292,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
       padding: EdgeInsets.symmetric(vertical: 0),
       child: Container(
         height: 1,
-        color: illinois.AppColors.fillColorPrimaryTransparent015,
+        color: AppColors.fillColorPrimaryTransparent015,
       ),
     );
   }
@@ -458,7 +457,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
       // Html(
       //   data: longDescription,
       //   onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, 'Description'),
-      //   style: { "body": Style(color: illinois.AppColors.textBackground, fontFamily: AppFontFamilies.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+      //   style: { "body": Style(color: AppColors.textBackground, fontFamily: AppFontFamilies.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
       // ),
     );
   }

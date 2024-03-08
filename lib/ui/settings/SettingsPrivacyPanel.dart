@@ -20,7 +20,6 @@ import "package:flutter/material.dart";
 import "package:illinois/model/PrivacyData.dart";
 import "package:illinois/service/Analytics.dart";
 import 'package:illinois/utils/AppUtils.dart';
-import "package:rokwire_plugin/gen/styles.dart";
 import 'package:rokwire_plugin/service/auth2.dart';
 import "package:illinois/service/Config.dart";
 import "package:illinois/service/FlexUI.dart";
@@ -36,7 +35,7 @@ import "package:rokwire_plugin/ui/widgets/rounded_button.dart";
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import "package:rokwire_plugin/utils/utils.dart";
 import "package:rokwire_plugin/service/styles.dart";
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 enum SettingsPrivacyPanelMode { regular, onboarding, update }
 
@@ -161,7 +160,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
     return
       Container(
         padding: EdgeInsets.symmetric(vertical:18),
-        color: illinois.AppColors.white,
+        color: AppColors.white,
         child: SafeArea(
           top: false,
           child: Column(children: <Widget>[
@@ -197,7 +196,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                           ? Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.disabled.hint", "")
                           : Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.hint", ""),
                       textStyle: _disabled ? Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat.variant_two") : Styles().textStyles.getTextStyle("widget.colourful_button.title.large.accent"),
-                      borderColor: _disabled ? illinois.AppColors.disabledTextColorTwo : AppColors.fillColorSecondary,
+                      borderColor: _disabled ? AppColors.disabledTextColorTwo : AppColors.fillColorSecondary,
                       backgroundColor: AppColors.fillColorPrimaryVariant,
                       progress: _updating,
                       onTap: () => _onSaveClicked()),
@@ -232,19 +231,19 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
         Stack(alignment: Alignment.center, children: <Widget>[
           Column(children: <Widget>[
             Container(height: 48, color: AppColors.fillColorPrimary,),
-            Container(height: 48, color: illinois.AppColors.white,),
+            Container(height: 48, color: AppColors.white,),
           ],),
           Center(child:
             Container(height: 86, width: 86, child:
               Padding(padding: EdgeInsets.all(6), child:
                 Container(padding: EdgeInsets.all(1),
                   decoration: BoxDecoration(
-                    color: illinois.AppColors.white,
+                    color: AppColors.white,
                     borderRadius: BorderRadius.circular(100),
                     border: Border.all(width:2, color: AppColors.fillColorPrimary,)),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: illinois.AppColors.white,
+                      color: AppColors.white,
                       borderRadius: BorderRadius.circular(100),
                       border: Border.all(width:2, color: AppColors.fillColorSecondary,)
                     ),
@@ -443,7 +442,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
   Widget _buildSliderInstructions(){
     return Container(
       padding: EdgeInsets.only(left: 22, right: 22,),
-      color: illinois.AppColors.white,
+      color: AppColors.white,
       child: Row(children: <Widget>[
         Expanded(child:
         Text(
@@ -474,7 +473,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
     return ConstrainedBox(
       constraints: BoxConstraints(minHeight: 180),
       child: Container(
-        color: illinois.AppColors.white,
+        color: AppColors.white,
         child: Padding(
             padding: EdgeInsets.only(top: 24, left: 22, right: 22, bottom: 8),
             child: Row(
@@ -486,7 +485,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                 alignment: Alignment.center,
                 decoration:  BoxDecoration(
                   border: Border.all(color: AppColors.fillColorPrimary,width: 2),
-                  color: illinois.AppColors.white,
+                  color: AppColors.white,
                   borderRadius: BorderRadius.all(Radius.circular(100)),
                 ),
                 child: Container(
@@ -495,7 +494,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                   alignment: Alignment.center,
                   decoration:  BoxDecoration(
                     border: Border.all(color: AppColors.fillColorSecondary, width: 2),
-                    color: illinois.AppColors.white,
+                    color: AppColors.white,
                     borderRadius: BorderRadius.all(Radius.circular(100)),
                   ),
                   child: Semantics( label:Localization().getStringEx("panel.settings.privacy.label.privacy_level.title", "Privacy Level: "),
@@ -631,8 +630,8 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
       child: Container(
         decoration: BoxDecoration(color: AppColors.fillColorPrimary, borderRadius: BorderRadius.circular(4), border: Border.all(color: AppColors.surfaceAccent, width: 1)),
         padding: EdgeInsets.symmetric(horizontal: 0),
-        child: Theme(data: ThemeData(/*accentColor: illinois.AppColors.white,*/
-            /*backgroundColor: illinois.AppColors.white,*/
+        child: Theme(data: ThemeData(/*accentColor: AppColors.white,*/
+            /*backgroundColor: AppColors.white,*/
             dividerColor: Colors.white,
             ),
             child: ExpansionTile(
@@ -647,7 +646,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
               children: _buildCategoryEntries(category),
               trailing: RotationTransition(
                   turns: _iconTurns,
-                  child: Icon(Icons.arrow_drop_down, color: illinois.AppColors.white,)),
+                  child: Icon(Icons.arrow_drop_down, color: AppColors.white,)),
               onExpansionChanged: (bool expand) {
                 if (expand) {
                   _controller.forward();
@@ -742,7 +741,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
       Semantics( container: true,
         child: Container(
         padding: EdgeInsets.only(top: 14, bottom: 19, left: 14, right: 24),
-        color: illinois.AppColors.white,
+        color: AppColors.white,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,

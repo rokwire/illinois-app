@@ -24,10 +24,9 @@ import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/ui/debug/mobile_access/DebugMobileAccessHomePanel.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:intl/intl.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:rokwire_plugin/model/survey.dart';
@@ -860,7 +859,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
               Expanded(child:
                 RoundedButton(
                   label: "Copy to clipboard",
-                  textColor: illinois.AppColors.white,
+                  textColor: AppColors.white,
                   borderColor: AppColors.fillColorSecondary,
                   backgroundColor: AppColors.fillColorPrimary,
                   onTap: (){ _copyToClipboard(textContent); },

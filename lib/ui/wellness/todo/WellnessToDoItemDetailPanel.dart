@@ -24,14 +24,13 @@ import 'package:illinois/ui/wellness/todo/WellnessManageToDoCategoriesPanel.dart
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:weekday_selector/weekday_selector.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class WellnessToDoItemDetailPanel extends StatefulWidget  implements AnalyticsPageAttributes {
   final String? itemId;
@@ -181,7 +180,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
             child: Padding(
                 padding: EdgeInsets.only(top: 22),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Container(height: 1, color: illinois.AppColors.mediumGray2),
+                  Container(height: 1, color: AppColors.mediumGray2),
                   Padding(
                       padding: EdgeInsets.only(top: 4),
                       child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -206,7 +205,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
               child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                   decoration:
-                      BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: illinois.AppColors.mediumGray, width: 1)),
+                      BoxDecoration(color: AppColors.white, border: Border.all(color: AppColors.mediumGray, width: 1)),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                     Text(
                         StringUtils.ensureNotEmpty(_category?.name,
@@ -270,7 +269,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
               child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                   decoration:
-                      BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: illinois.AppColors.mediumGray, width: 1)),
+                      BoxDecoration(color: AppColors.white, border: Border.all(color: AppColors.mediumGray, width: 1)),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                     Text(StringUtils.ensureNotEmpty(_formattedDueDate),
                         style: Styles().textStyles.getTextStyle("panel.wellness.todo.item_detail.title")),
@@ -294,7 +293,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                   child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                       decoration:
-                      BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: illinois.AppColors.mediumGray, width: 1)),
+                      BoxDecoration(color: AppColors.white, border: Border.all(color: AppColors.mediumGray, width: 1)),
                       child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                         Text(StringUtils.ensureNotEmpty(_formattedEndDate),
                             style: Styles().textStyles.getTextStyle("panel.wellness.todo.item_detail.title")),
@@ -312,7 +311,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
         child: Padding(
             padding: EdgeInsets.only(top: 17),
             child: WeekdaySelector(
-              color:  illinois.AppColors.mediumGray,
+              color:  AppColors.mediumGray,
               selectedFillColor: AppColors.fillColorPrimary,
               selectedColor: AppColors.fillColorSecondary,
               onChanged: (int day) {
@@ -338,14 +337,14 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
               child: _buildFieldLabel(label: Localization().getStringEx('', 'RECURRENCE TYPE'))),
           Container(
             decoration: BoxDecoration(
-              border: Border.all(color: illinois.AppColors.mediumGray, width: 1),
-              color: illinois.AppColors.white,
+              border: Border.all(color: AppColors.mediumGray, width: 1),
+              color: AppColors.white,
             ),
             child: Padding(
               padding: EdgeInsets.only(right: 5, left: 5),
               child: DropdownButton(
                   value: _selectedRecurringType,
-                  dropdownColor: illinois.AppColors.white,
+                  dropdownColor: AppColors.white,
                   isExpanded: true,
                   icon: Styles().images.getImage(_reminderTypeDropDownValuesVisible ? 'chevron-up' : 'chevron-down'),
                   style: Styles().textStyles.getTextStyle("panel.wellness.todo.item_detail.title"),
@@ -377,7 +376,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                   child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                       decoration:
-                          BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: illinois.AppColors.mediumGray, width: 1)),
+                          BoxDecoration(color: AppColors.white, border: Border.all(color: AppColors.mediumGray, width: 1)),
                       child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                         Text(StringUtils.ensureNotEmpty(_formattedDueTime),
                             style: Styles().textStyles.getTextStyle("panel.wellness.todo.item_detail.title")),
@@ -399,7 +398,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
               child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                   decoration:
-                      BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: illinois.AppColors.mediumGray, width: 1)),
+                      BoxDecoration(color: AppColors.white, border: Border.all(color: AppColors.mediumGray, width: 1)),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                     Text(StringUtils.ensureNotEmpty(selectedTypeLabel),
                         overflow: TextOverflow.ellipsis,
@@ -468,7 +467,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
               child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: (CollectionUtils.isEmpty(_workDays) ? 24 : 12)),
                   decoration:
-                      BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: illinois.AppColors.mediumGray, width: 1)),
+                      BoxDecoration(color: AppColors.white, border: Border.all(color: AppColors.mediumGray, width: 1)),
                   child: Row(children: [
                     Expanded(
                         child: SingleChildScrollView(
@@ -492,7 +491,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     return Padding(
         padding: EdgeInsets.only(left: 5),
         child: Container(
-            decoration: BoxDecoration(color: illinois.AppColors.lightGray),
+            decoration: BoxDecoration(color: AppColors.lightGray),
             child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
               Padding(
                   padding: EdgeInsets.only(left: 10),
@@ -501,7 +500,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
               GestureDetector(
                   onTap: () => _onTapRemoveWorkDay(date),
                   child: Container(
-                      color: illinois.AppColors.lightGray,
+                      color: AppColors.lightGray,
                       child: Padding(
                           padding: EdgeInsets.only(left: 25, top: 7, right: 10, bottom: 7),
                           child: Styles().images.getImage('close', excludeFromSemantics: true))))
@@ -538,7 +537,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   Widget _buildInputField({required TextEditingController controller}) {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 8),
-        decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: illinois.AppColors.mediumGray, width: 1)),
+        decoration: BoxDecoration(color: AppColors.white, border: Border.all(color: AppColors.mediumGray, width: 1)),
         child: TextField(
             controller: controller,
             decoration: InputDecoration(border: InputBorder.none),

@@ -18,10 +18,9 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class DebugMobileAccessLockServicesCodesPanel extends StatefulWidget {
   DebugMobileAccessLockServicesCodesPanel();
@@ -60,9 +59,9 @@ class _DebugMobileAccessLockServicesCodesPanelState extends State<DebugMobileAcc
                 RoundedButton(
                     label: "Change",
                     enabled: !_loading,
-                    textColor: (!_loading) ? AppColors.fillColorPrimary : illinois.AppColors.disabledTextColor,
-                    borderColor: (!_loading) ? AppColors.fillColorSecondary : illinois.AppColors.disabledTextColor,
-                    backgroundColor: illinois.AppColors.white,
+                    textColor: (!_loading) ? AppColors.fillColorPrimary : AppColors.disabledTextColor,
+                    borderColor: (!_loading) ? AppColors.fillColorSecondary : AppColors.disabledTextColor,
+                    backgroundColor: AppColors.white,
                     fontFamily: AppFontFamilies.bold,
                     contentWeight: 0.0,
                     fontSize: 16,
@@ -85,12 +84,12 @@ class _DebugMobileAccessLockServicesCodesPanelState extends State<DebugMobileAcc
           Semantics(
               textField: true,
               child: Container(
-                  color: illinois.AppColors.white,
+                  color: AppColors.white,
                   child: TextField(
                       maxLines: 2,
                       controller: _codesController,
                       decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-                      style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: illinois.AppColors.textBackground)))),
+                      style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: AppColors.textBackground)))),
           Align(
               alignment: Alignment.topRight,
               child: Semantics(

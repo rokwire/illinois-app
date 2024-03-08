@@ -28,7 +28,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class MTDStopDeparturesPanel extends StatefulWidget  {
   final MTDStop stop;
@@ -130,7 +130,7 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
         ],
       ),
       body: _buildBody(),
-      backgroundColor: illinois.AppColors.white,
+      backgroundColor: AppColors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -149,7 +149,7 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
     if (_loadingRoutes) {
       contentWidget = Center(child:
         SizedBox(width: 16, height: 16, child:
-          CircularProgressIndicator(color: illinois.AppColors.mtdColor, strokeWidth: 2,),
+          CircularProgressIndicator(color: AppColors.mtdColor, strokeWidth: 2,),
         ),
       );
     }
@@ -204,7 +204,7 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
   Widget _buildDeparturesList() {
     return ListView.separated(
       itemBuilder: (context, index) => _buildDeparture(ListUtils.entry(_departures, index)),
-      separatorBuilder: (context, index) => Divider(height: 1, color: illinois.AppColors.fillColorPrimaryTransparent03,),
+      separatorBuilder: (context, index) => Divider(height: 1, color: AppColors.fillColorPrimaryTransparent03,),
       itemCount: _departures?.length ?? 0,
       padding: EdgeInsets.zero,
     );
@@ -228,7 +228,7 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
         Column(children: [
           Expanded(child:
             Align(alignment: Alignment.center, child:
-              CircularProgressIndicator(color: illinois.AppColors.mtdColor, strokeWidth: 3, )
+              CircularProgressIndicator(color: AppColors.mtdColor, strokeWidth: 3, )
             ),
           ),
         ],),

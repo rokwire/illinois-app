@@ -27,7 +27,6 @@ import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -65,7 +64,7 @@ import 'package:sprintf/sprintf.dart';
 
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 enum _DetailTab { Events, Posts, Polls, About }
 
@@ -650,10 +649,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Container(height: 200, color: AppColors.background, child:
         Stack(alignment: Alignment.bottomCenter, children: <Widget>[
             Positioned.fill(child: ModalImageHolder(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders))),
-            CustomPaint(painter: TrianglePainter(painterColor: illinois.AppColors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child:
+            CustomPaint(painter: TrianglePainter(painterColor: AppColors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child:
               Container(height: 53,),
             ),
-            CustomPaint(painter: TrianglePainter(painterColor: illinois.AppColors.white), child:
+            CustomPaint(painter: TrianglePainter(painterColor: AppColors.white), child:
               Container(height: 30,),
             ),
           ],
@@ -919,7 +918,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         RoundedButton(
           label: Localization().getStringEx("panel.group_detail.button.all_events.title", 'See all events'),
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-          backgroundColor: illinois.AppColors.white,
+          backgroundColor: AppColors.white,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           borderColor: AppColors.fillColorSecondary,
           borderWidth: 2,
@@ -1023,7 +1022,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             child: RoundedButton(
                 label: Localization().getStringEx('panel.group_detail.button.all_polls.title', 'See all polls'),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                backgroundColor: illinois.AppColors.white,
+                backgroundColor: AppColors.white,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                 borderColor: AppColors.fillColorSecondary,
                 borderWidth: 2,
@@ -1249,11 +1248,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildMembershipRequest() {
     if (Auth2().isOidcLoggedIn && _group!.currentUserCanJoin && (_group?.researchProject != true)) {
-      return Container(decoration: BoxDecoration(color: illinois.AppColors.white, border: Border(top: BorderSide(color: AppColors.surfaceAccent, width: 1))), child:
+      return Container(decoration: BoxDecoration(color: AppColors.white, border: Border(top: BorderSide(color: AppColors.surfaceAccent, width: 1))), child:
         Padding(padding: EdgeInsets.all(16), child:
           RoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-            backgroundColor: illinois.AppColors.white,
+            backgroundColor: AppColors.white,
             padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
             borderColor: AppColors.fillColorSecondary,
             borderWidth: 2,
@@ -1291,7 +1290,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             Padding(padding: EdgeInsets.only(left: 16, right: 16, top: showConsent ? 0 : 16, bottom: 16), child:
               RoundedButton(label: CollectionUtils.isEmpty(_group?.questions) ? "Request to participate" : "Continue",
                 textStyle: requestToJoinEnabled ?  Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
-                backgroundColor: illinois.AppColors.white,
+                backgroundColor: AppColors.white,
                 padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 borderColor: requestToJoinEnabled ? AppColors.fillColorSecondary : AppColors.surfaceAccent,
                 borderWidth: 2,
@@ -1315,11 +1314,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildCancelMembershipRequest() {
     if (Auth2().isOidcLoggedIn && _group!.currentUserIsPendingMember) {
-      return Container(decoration: BoxDecoration(color: illinois.AppColors.white, border: Border(top: BorderSide(color: AppColors.surfaceAccent, width: 1))), child:
+      return Container(decoration: BoxDecoration(color: AppColors.white, border: Border(top: BorderSide(color: AppColors.surfaceAccent, width: 1))), child:
         Padding(padding: EdgeInsets.all(16), child:
           RoundedButton(label: Localization().getStringEx("panel.group_detail.button.cancel_request.title",  'Cancel Request'),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-            backgroundColor: illinois.AppColors.white,
+            backgroundColor: AppColors.white,
             padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
             borderColor: AppColors.fillColorSecondary,
             borderWidth: 2,
@@ -1361,8 +1360,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                   Expanded(flex: negativeButtonFlex, child: RoundedButton(
                       label: StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")),
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large"),
-                      borderColor: illinois.AppColors.white,
-                      backgroundColor: illinois.AppColors.white,
+                      borderColor: AppColors.white,
+                      backgroundColor: AppColors.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                       onTap: () {
                         Analytics().logAlert(text: confirmationTextMsg, selection: negativeButtonLabel);
@@ -1372,8 +1371,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                   Expanded(flex: positiveButtonFlex, child: RoundedButton(
                     label: positiveButtonLabel ?? '',
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                    borderColor: illinois.AppColors.white,
-                    backgroundColor: illinois.AppColors.white,
+                    borderColor: AppColors.white,
+                    backgroundColor: AppColors.white,
                     padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     progress: _confirmationLoading,
                     onTap: () {
@@ -1578,7 +1577,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     showDialog(context: context, builder: (_) =>  InfoPopup(
       backColor: Color(0xfffffcdf), //AppColors.surface ?? Colors.white,
       padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
-      border: Border.all(color: illinois.AppColors.textSurface, width: 1),
+      border: Border.all(color: AppColors.textSurface, width: 1),
       alignment: Alignment.center,
       infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
       infoTextStyle: Styles().textStyles.getTextStyle('widget.description.regular.thin"'),

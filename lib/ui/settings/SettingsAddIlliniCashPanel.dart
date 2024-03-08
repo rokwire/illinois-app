@@ -17,7 +17,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -36,7 +35,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class SettingsAddIlliniCashPanel extends StatefulWidget {
 
@@ -584,7 +583,7 @@ class _SettingsAddIlliniCashPanelState
                                               'panel.settings.add_illini_cash.button.cancel.hint',
                                               ''),
                                           textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-                                          backgroundColor: illinois.AppColors.white,
+                                          backgroundColor: AppColors.white,
                                           borderColor: AppColors.fillColorPrimary,
                                           onTap: () {
                                             Analytics().logSelect(target: "Cancel");
@@ -604,7 +603,7 @@ class _SettingsAddIlliniCashPanelState
                                               'panel.settings.add_illini_cash.button.submit.hint',
                                               ''),
                                           textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-                                          backgroundColor: illinois.AppColors.white,
+                                          backgroundColor: AppColors.white,
                                           borderColor: AppColors.fillColorSecondary,
                                           onTap: _onSubmitIlliniCash,
                                         ),

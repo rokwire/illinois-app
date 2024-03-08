@@ -22,14 +22,13 @@ import 'package:illinois/service/WPGUFMRadio.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/header_bar.dart' as rokwire;
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class HeaderBar extends rokwire.HeaderBar {
 
@@ -68,7 +67,7 @@ class HeaderBar extends rokwire.HeaderBar {
     titleWidget: titleWidget,
     title: title,
     textStyle: textStyle,
-    textColor: textColor ?? illinois.AppColors.white,
+    textColor: textColor ?? AppColors.white,
     fontFamily: fontFamily ?? AppFontFamilies.extraBold,
     fontSize: fontSize,
     letterSpacing: letterSpacing,
@@ -135,7 +134,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     flexBackColor: flexBackColor ?? AppColors.background,
     flexRightToLeftTriangleColor: flexRightToLeftTriangleColor ?? AppColors.background,
     flexRightToLeftTriangleHeight: flexRightToLeftTriangleHeight,
-    flexLeftToRightTriangleColor: flexLeftToRightTriangleColor ?? illinois.AppColors.fillColorSecondaryTransparent05,
+    flexLeftToRightTriangleColor: flexLeftToRightTriangleColor ?? AppColors.fillColorSecondaryTransparent05,
     flexLeftToRightTriangleHeight: flexLeftToRightTriangleHeight,
 
     leadingWidget: leadingWidget,
@@ -150,7 +149,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     titleWidget: titleWidget,
     title: title,
     textStyle: textStyle,
-    textColor: textColor ?? illinois.AppColors.white,
+    textColor: textColor ?? AppColors.white,
     fontFamily: fontFamily ?? AppFontFamilies.extraBold,
     fontSize: fontSize,
     letterSpacing: letterSpacing,
@@ -209,7 +208,7 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     titleWidget: titleWidget,
     title: title,
     textStyle: textStyle,
-    textColor: textColor ?? illinois.AppColors.white,
+    textColor: textColor ?? AppColors.white,
     fontFamily: fontFamily ?? AppFontFamilies.extraBold,
     fontSize: fontSize,
     letterSpacing: letterSpacing,

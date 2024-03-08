@@ -16,7 +16,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -30,7 +29,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class GroupMemberPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group group;
@@ -227,7 +226,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
             Localization().getStringEx("panel.member_detail.button.remove.title.project", "Remove from Project") :
             Localization().getStringEx("panel.member_detail.button.remove.title", 'Remove from Group'),
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-          backgroundColor: illinois.AppColors.white,
+          backgroundColor: AppColors.white,
           padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
           borderColor: AppColors.fillColorPrimary,
           borderWidth: 2,
@@ -265,8 +264,8 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                     RoundedButton(
                       label: Localization().getStringEx("panel.member_detail.button.back.title", "Back"),
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.thin"),
-                      borderColor: illinois.AppColors.white,
-                      backgroundColor: illinois.AppColors.white,
+                      borderColor: AppColors.white,
+                      backgroundColor: AppColors.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                       contentWeight: 0.0,
                       onTap: (){
@@ -278,8 +277,8 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                         RoundedButton(
                           label: Localization().getStringEx("panel.member_detail.dialog.button.remove.title", "Remove"),
                           textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                          borderColor: illinois.AppColors.white,
-                          backgroundColor: illinois.AppColors.white,
+                          borderColor: AppColors.white,
+                          backgroundColor: AppColors.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                           contentWeight: 0.0,
                           progress: _removing,

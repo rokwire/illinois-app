@@ -30,7 +30,6 @@ import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -43,7 +42,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class ExploreMapSelectLocationPanel extends StatefulWidget {
 
@@ -178,7 +177,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   }
 
   Widget _buildMapView() {
-    return Container(decoration: BoxDecoration(border: Border.all(color: illinois.AppColors.disabledTextColor, width: 1)), child:
+    return Container(decoration: BoxDecoration(border: Border.all(color: AppColors.disabledTextColor, width: 1)), child:
       GoogleMap(
         key: _mapKey,
         initialCameraPosition: _lastCameraPosition ?? _defaultCameraPosition,
@@ -285,7 +284,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     if (_selectedMapExplore is Explore) {
       title = (_selectedMapExplore as Explore).mapMarkerTitle;
       description = (_selectedMapExplore as Explore).mapMarkerSnippet;
-      exploreColor = (_selectedMapExplore as Explore).uiColor ?? illinois.AppColors.white;
+      exploreColor = (_selectedMapExplore as Explore).uiColor ?? AppColors.white;
       if (_selectedMapExplore is ExplorePOI) {
         title = title?.replaceAll('\n', ' ');
         detailsLabel = Localization().getStringEx('panel.explore.button.clear.title', 'Clear');
@@ -302,7 +301,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
       exploreColor = explore?.uiColor ?? AppColors.fillColorSecondary;
     }
     else {
-      exploreColor = illinois.AppColors.white;
+      exploreColor = AppColors.white;
       canSelect = canDetail = false;
     }
 

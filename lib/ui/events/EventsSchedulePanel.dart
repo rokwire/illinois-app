@@ -17,7 +17,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/ext/Event.dart';
@@ -33,7 +32,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 enum _EventTab { All, Saved }
 
@@ -97,7 +96,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.events_schedule.header.title', 'Event Schedule'),),
       body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Container(color: illinois.AppColors.white, child :
+        Container(color: AppColors.white, child :
           Padding(padding: EdgeInsets.all(12), child:
             Row(children: _buildTabWidgets(),)
           ),
@@ -109,7 +108,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Container( color: illinois.AppColors.white,
+                      Container( color: AppColors.white,
                         width: double.infinity,
                         child :
                         SingleChildScrollView(
@@ -258,7 +257,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                   shrinkWrap: true,
                   separatorBuilder: (context, index) => Divider(
                     height: 1,
-                    color: illinois.AppColors.fillColorPrimaryTransparent03,
+                    color: AppColors.fillColorPrimaryTransparent03,
                   ),
                   itemCount: filterValues.length + 1, // 1 ForSearchField
                   itemBuilder: (context, index) {

@@ -9,13 +9,12 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class HomeWelcomeWidget extends StatefulWidget {
   final String? favoriteId;
@@ -91,7 +90,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
     return Visibility(visible: _visible ?? true, child:
       Container(color: AppColors.fillColorPrimary, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Container(height: 1, color: illinois.AppColors.disabledTextColor),
+          Container(height: 1, color: AppColors.disabledTextColor),
           Row(children: [
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16), child:
@@ -112,7 +111,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
           Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16), child: 
             _buildVideoEntry()
           ),
-          Container(height: 1, color: illinois.AppColors.disabledTextColor),
+          Container(height: 1, color: AppColors.disabledTextColor),
         ],),
       )
     );
@@ -137,7 +136,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
               ClipRRect(borderRadius: BorderRadius.circular(4), child:
                 Image.network(_video!.thumbUrl!, loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                   return imagePlaceholder(child: (loadingProgress != null) ? Center(child:
-                    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(illinois.AppColors.white), )
+                    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(AppColors.white), )
                   ) : child);
                 })
               ) :

@@ -16,7 +16,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -25,7 +24,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/service/Polls.dart' as illinois;
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class PollBubblePinPanel extends StatefulWidget {
 
@@ -247,7 +246,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
           onChanged: (values)=> nextCallBack(),
           decoration: new InputDecoration(
             filled: true,
-            fillColor: illinois.AppColors.white,
+            fillColor: AppColors.white,
             border: new OutlineInputBorder(
               borderRadius: const BorderRadius.all(
                 const Radius.circular(4),
@@ -267,7 +266,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
             label: Localization().getStringEx('dialog.continue.title', 'Continue'),
             hint: Localization().getStringEx('dialog.continue.hint', ''),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-            backgroundColor: illinois.AppColors.white,
+            backgroundColor: AppColors.white,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             progress: _loading,
             borderColor: AppColors.fillColorSecondary,

@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 //TBD: DD - populate the faqs from a resource
 class ICardFaqsContentWidget extends StatefulWidget {
@@ -53,7 +53,7 @@ class _ICardFaqsContentWidgetState extends State<ICardFaqsContentWidget> {
         child: Padding(
             padding: EdgeInsets.only(bottom: 10),
             child: Container(
-                decoration: BoxDecoration(color: illinois.AppColors.lightGray, borderRadius: BorderRadius.circular(5)),
+                decoration: BoxDecoration(color: AppColors.lightGray, borderRadius: BorderRadius.circular(5)),
                 padding: EdgeInsets.all(16),
                 child: Column(children: [
                   Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [

@@ -17,7 +17,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Onboarding2.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
@@ -28,7 +27,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class Onboarding2LoginEmailPanel extends StatefulWidget with OnboardingPanel {
 
@@ -172,7 +171,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                         excludeSemantics: true,
                         value: _passwordController.text,
                         child: Container(
-                          color: illinois.AppColors.white,
+                          color: AppColors.white,
                           child: TextField(
                             controller: _passwordController,
                             focusNode: _passwordFocusNode,
@@ -180,7 +179,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                             autocorrect: false,
                             obscureText: !_showingPassword,
                             onSubmitted: (_) => _clearErrorMsg,
-                            cursorColor: illinois.AppColors.textBackground,
+                            cursorColor: AppColors.textBackground,
                             keyboardType: TextInputType.text,
                             style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                             decoration: InputDecoration(
@@ -206,7 +205,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                           excludeSemantics: true,
                           value: _confirmPasswordController.text,
                           child: Container(
-                            color: illinois.AppColors.white,
+                            color: AppColors.white,
                             child: TextField(
                               controller: _confirmPasswordController,
                               focusNode: _confirmPasswordFocusNode,
@@ -214,7 +213,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                               autocorrect: false,
                               obscureText: !_showingPassword,
                               onSubmitted: (_) => _clearErrorMsg,
-                              cursorColor: illinois.AppColors.textBackground,
+                              cursorColor: AppColors.textBackground,
                               keyboardType: TextInputType.text,
                               style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                               decoration: InputDecoration(

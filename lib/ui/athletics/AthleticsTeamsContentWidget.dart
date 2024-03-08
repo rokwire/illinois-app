@@ -20,7 +20,7 @@ import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -55,7 +55,7 @@ class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidge
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: illinois.AppColors.white,
+        color: AppColors.white,
         child: Column(children: [
           AthleticsTeamsFilterWidget(hideFilterDescription: true),
           Expanded(child: _buildContent())
@@ -84,7 +84,7 @@ class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidge
                 onTap: () => _onTapTeam(team),
                 child: Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: illinois.AppColors.disabledTextColor, width: 1), borderRadius: BorderRadius.circular(8)),
+                        border: Border.all(color: AppColors.disabledTextColor, width: 1), borderRadius: BorderRadius.circular(8)),
                     child: Padding(
                         padding: EdgeInsets.all(16),
                         child: Row(children: [

@@ -22,7 +22,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -41,7 +40,7 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class GroupsHomePanel extends StatefulWidget {
   final rokwire.GroupsContentType? contentType;
@@ -258,7 +257,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Widget _buildContentItem(rokwire.GroupsContentType contentType) {
     return RibbonButton(
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentType),
@@ -269,7 +268,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     return Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child: RibbonButton(
       progress: _myGroupsBusy,
       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-      backgroundColor: illinois.AppColors.white,
+      backgroundColor: AppColors.white,
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: AppColors.surfaceAccent, width: 1),
       rightIconKey: _contentTypesVisible ? 'chevron-up' : 'chevron-down',

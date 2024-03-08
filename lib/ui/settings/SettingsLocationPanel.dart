@@ -15,14 +15,13 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class SettingsLocationPanel extends StatefulWidget {
   @override
@@ -145,7 +144,7 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
           decoration: BoxDecoration(
               color: AppColors.surface,
               borderRadius: BorderRadius.all(Radius.circular(4)),
-              boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
+              boxShadow: [BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -207,7 +206,7 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
               ),
               Container(
                 height: 1,
-                color: widget.enabled? AppColors.surfaceAccent: illinois.AppColors.surfaceAccentTransparent15,
+                color: widget.enabled? AppColors.surfaceAccent: AppColors.surfaceAccentTransparent15,
               ),
               Container(height: 12),
               Text(

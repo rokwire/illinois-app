@@ -25,14 +25,13 @@ import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessManageToDoCategoriesPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/scroll_pager.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class WellnessToDoHomeContentWidget extends StatefulWidget {
   WellnessToDoHomeContentWidget();
@@ -229,8 +228,8 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
               padding: EdgeInsets.only(top: 5),
               child: Container(
                   height: 176,
-                  decoration: BoxDecoration(color: illinois.AppColors.white, borderRadius: BorderRadius.circular(5), boxShadow: [
-                    BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
+                  decoration: BoxDecoration(color: AppColors.white, borderRadius: BorderRadius.circular(5), boxShadow: [
+                    BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
                   ]),
                   child: Stack(children: [
                     _buildCalendarVerticalDelimiters(),
@@ -253,11 +252,11 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   Widget _buildCalendarHotizontalDelimiter() {
-    return Padding(padding: EdgeInsets.only(top: 32), child: Container(height: 1, color: illinois.AppColors.lightGray));
+    return Padding(padding: EdgeInsets.only(top: 32), child: Container(height: 1, color: AppColors.lightGray));
   }
 
   Widget _buildCalendarVerticalDelimiter() {
-    return Container(width: 1, color: illinois.AppColors.lightGray);
+    return Container(width: 1, color: AppColors.lightGray);
   }
 
   Widget _buildCalendarHeaderDatesWidget() {
@@ -377,7 +376,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         contentPadding: EdgeInsets.all(0),
         contentWidget: Container(
             height: 250,
-            decoration: BoxDecoration(color: illinois.AppColors.white, borderRadius: BorderRadius.circular(10.0)),
+            decoration: BoxDecoration(color: AppColors.white, borderRadius: BorderRadius.circular(10.0)),
             child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
               Padding(
                   padding: EdgeInsets.all(30),
@@ -927,7 +926,7 @@ class _TabButton extends StatelessWidget {
             child: Container(
                 height: 24 + MediaQuery.of(context).textScaler.scale(16),
                 decoration: BoxDecoration(
-                    color: selected! ? Colors.white : illinois.AppColors.lightGray, border: _border, borderRadius: _borderRadius),
+                    color: selected! ? Colors.white : AppColors.lightGray, border: _border, borderRadius: _borderRadius),
                 child: Center(
                     child: Text(label!,
                         overflow: TextOverflow.ellipsis,

@@ -17,7 +17,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -28,7 +27,7 @@ import 'package:illinois/ui/onboarding2/Onboarding2LoginEmailPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class Onboarding2LoginPhoneOrEmailPanel extends StatefulWidget with OnboardingPanel {
 
@@ -132,14 +131,14 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                         excludeSemantics: true,
                         value: _phoneOrEmailController!.text,
                         child: Container(
-                          color: _identifier == null ? illinois.AppColors.white: AppColors.background,
+                          color: _identifier == null ? AppColors.white: AppColors.background,
                           child: TextField(
                             controller: _phoneOrEmailController,
                             readOnly: _identifier != null,
                             autofocus: false,
                             autocorrect: false,
                             onSubmitted: (_) => _clearErrorMsg,
-                            cursorColor: illinois.AppColors.textBackground,
+                            cursorColor: AppColors.textBackground,
                             keyboardType: TextInputType.emailAddress,
                             style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
                             decoration: InputDecoration(

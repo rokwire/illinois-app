@@ -32,7 +32,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class HomeDailyIlliniWidget extends StatefulWidget {
   final String? favoriteId;
@@ -142,9 +142,9 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
           padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           child: Container(
             decoration: BoxDecoration(
-                color: illinois.AppColors.white,
+                color: AppColors.white,
                 boxShadow: [
-                  BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
+                  BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
                 ],
                 borderRadius: BorderRadius.all(Radius.circular(4))),
             child: Column(
@@ -161,7 +161,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
         contentWidget = Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: _DailyIlliniLoadingWidget(
-            progressColor: illinois.AppColors.white,
+            progressColor: AppColors.white,
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
           ),
         );
@@ -294,7 +294,7 @@ class _MinorStoryWidget extends _StoryWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Divider(color: illinois.AppColors.blackTransparent06),
+                Divider(color: AppColors.blackTransparent06),
                 Padding(
                   padding: EdgeInsets.only(top: 4, bottom: 8, left: 20, right: 20),
                   child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,

@@ -1,11 +1,10 @@
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/OnCampus.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -116,9 +115,9 @@ class _SettingsMapsContentWidgetState extends State<SettingsMapsContentWidget> i
           Container(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
-                  color: illinois.AppColors.white,
+                  color: AppColors.white,
                   border: Border.all(
-                      color:illinois.AppColors.blackTransparent018, width: 1),
+                      color:AppColors.blackTransparent018, width: 1),
                   borderRadius: BorderRadius.all(Radius.circular(4))),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [

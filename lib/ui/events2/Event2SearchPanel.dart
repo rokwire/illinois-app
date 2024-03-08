@@ -35,7 +35,6 @@ import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
@@ -49,7 +48,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:timezone/timezone.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class Event2SearchPanel extends StatefulWidget {
   final String? searchText;
@@ -200,7 +199,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
     RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(scrollDirection: Axis.vertical, controller: _scrollController, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Container(color: illinois.AppColors.white, child:
+          Container(color: AppColors.white, child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               _buildSearchBar(),
               _buildCommandBar(),
@@ -230,8 +229,8 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
   );
 
   Decoration get _searchBarDecoration => BoxDecoration(
-    color: illinois.AppColors.white,
-    border: Border(bottom: BorderSide(color: illinois.AppColors.disabledTextColor, width: 1))
+    color: AppColors.white,
+    border: Border(bottom: BorderSide(color: AppColors.disabledTextColor, width: 1))
   );
 
   Widget _buildSearchTextField() => Semantics(
@@ -395,10 +394,10 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
   }
 
   Decoration get _contentDescriptionDecoration => BoxDecoration(
-    color: illinois.AppColors.white,
+    color: AppColors.white,
     border: Border(
-      top: BorderSide(color: illinois.AppColors.disabledTextColor, width: 1),
-      bottom: BorderSide(color: illinois.AppColors.disabledTextColor, width: 1),
+      top: BorderSide(color: AppColors.disabledTextColor, width: 1),
+      bottom: BorderSide(color: AppColors.disabledTextColor, width: 1),
     )
   );
 

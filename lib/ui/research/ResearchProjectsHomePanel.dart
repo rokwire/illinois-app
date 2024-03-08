@@ -9,7 +9,6 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -18,7 +17,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class ResearchProjectsHomePanel extends StatefulWidget {
 
@@ -128,7 +127,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
       RibbonButton(
         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         borderRadius: BorderRadius.all(Radius.circular(5)),
         border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: _contentTypesDropdownExpanded ? 'chevron-up' : 'chevron-down',
@@ -161,7 +160,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     }
     if (_canCreateResearchProject) {
       contentList.add(RibbonButton(
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: Localization().getStringEx('panel.research_projects.home.dropdown.create.title', 'Create New Research Project'),
@@ -169,7 +168,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
       ),);
     }
     contentList.add(RibbonButton(
-      backgroundColor: illinois.AppColors.white,
+      backgroundColor: AppColors.white,
       border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
       label: Localization().getStringEx('panel.research_projects.home.dropdown.search.title', 'Search Research Projects'),
@@ -184,7 +183,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
 
   Widget _buildContentTypeDropdownItem(ResearchProjectsContentType contentType) {
     return RibbonButton(
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentTypeName(contentType),
@@ -333,7 +332,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     if (_activeFilterType == _FilterType.category) {
       for (String category in _categories) {
         if (filterWidgets.isNotEmpty) {
-          filterWidgets.add(Divider(height: 1, color: illinois.AppColors.fillColorPrimaryTransparent03,));
+          filterWidgets.add(Divider(height: 1, color: AppColors.fillColorPrimaryTransparent03,));
         }
         filterWidgets.add(FilterListItem(
           title: category,
@@ -345,7 +344,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     else if (_activeFilterType == _FilterType.tags) {
       for (_TagFilter tagFilter in _TagFilter.values) {
         if (filterWidgets.isNotEmpty) {
-          filterWidgets.add(Divider(height: 1, color: illinois.AppColors.fillColorPrimaryTransparent03,));
+          filterWidgets.add(Divider(height: 1, color: AppColors.fillColorPrimaryTransparent03,));
         }
         filterWidgets.add(FilterListItem(
           title: _filterTagToDisplayString(tagFilter),

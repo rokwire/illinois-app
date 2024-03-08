@@ -25,7 +25,6 @@ import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -45,7 +44,7 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class GroupCreatePanel extends StatefulWidget {
   final Group? group;
@@ -285,7 +284,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           StringUtils.isNotEmpty(_group?.imageURL)
               ? Positioned.fill(child: ModalImageHolder(child:Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders)))
               : Container(),
-          CustomPaint(painter: TrianglePainter(painterColor: illinois.AppColors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
+          CustomPaint(painter: TrianglePainter(painterColor: AppColors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
           CustomPaint(painter: TrianglePainter(painterColor: AppColors.background), child: Container(height: 30)),
           Container(
               height: _imageHeight,
@@ -330,7 +329,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         children: <Widget>[
          GroupSectionTitle(title: title, requiredMark: true),
           Container(
-            decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1),color: illinois.AppColors.white),
+            decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1),color: AppColors.white),
             child: Semantics(
                 label: fieldTitle,
                 hint: fieldHint,
@@ -375,7 +374,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           GroupSectionTitle(title: title, description: description),
           Container(height: 5,),
           Container(
-            decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1),color: illinois.AppColors.white),
+            decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1),color: AppColors.white),
             child:
             Row(children: [
               Expanded(child:
@@ -489,7 +488,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           GroupSectionTitle(title: title),
-          Container(decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1), color: illinois.AppColors.white), child:
+          Container(decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1), color: AppColors.white), child:
             Row(children: [
               Expanded(child:
                 Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, value: _researchConsentDetailsController.text, child:
@@ -526,7 +525,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         Visibility(visible: _researchRequiresConsentConfirmation, child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             GroupSectionTitle(title: title),
-            Container(decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1), color: illinois.AppColors.white), child:
+            Container(decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1), color: AppColors.white), child:
               Row(children: [
                 Expanded(child:
                   Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, child:
@@ -534,7 +533,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                         controller: _researchConsentStatementController,
                         maxLines: 5,
                         decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                        style: TextStyle(color: illinois.AppColors.textBackground, fontSize: 16, fontFamily: AppFontFamilies.regular),
+                        style: TextStyle(color: AppColors.textBackground, fontSize: 16, fontFamily: AppFontFamilies.regular),
                         onChanged: (text) => setState(() { _group?.researchConsentStatement = text; }),
                     )
                   ),
@@ -577,7 +576,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               label: Localization().getStringEx("panel.groups_create.button.attributes.title", "Edit"),
               hint: Localization().getStringEx("panel.groups_create.button.attributes.hint", ""),
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-              backgroundColor: illinois.AppColors.white,
+              backgroundColor: AppColors.white,
               borderColor: AppColors.fillColorSecondary,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               onTap: _onTapAttributes,
@@ -743,7 +742,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         onTap: onTap,
         child: Container(
             decoration: BoxDecoration(
-                color: illinois.AppColors.white,
+                color: AppColors.white,
                 border: Border.all(color: AppColors.surfaceAccent, width: 1),
                 borderRadius: BorderRadius.all(Radius.circular(4))),
             padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
@@ -877,7 +876,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   requiredMark: true
                 ),
                 Container(
-                    decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1), color: illinois.AppColors.white),
+                    decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1), color: AppColors.white),
                     child: TextField(
                       onChanged: _onAuthManGroupNameChanged,
                       controller: _authManGroupNameController,
@@ -969,7 +968,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   } */
   //Buttons
   Widget _buildButtonsLayout() {
-    return Semantics(container: true, child: Container( color: illinois.AppColors.white,
+    return Semantics(container: true, child: Container( color: AppColors.white,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Center(
             child: RoundedButton(
@@ -977,7 +976,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 Localization().getStringEx("panel.groups_create.button.create.project.title", "Create Project") :
                 Localization().getStringEx("panel.groups_create.button.create.title", "Create Group"),
               textStyle: _canSave ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
-              backgroundColor: illinois.AppColors.white,
+              backgroundColor: AppColors.white,
               borderColor: _canSave ? AppColors.fillColorSecondary : AppColors.surfaceAccent,
               enabled: _canSave,
               progress:  _creating,
@@ -1101,7 +1100,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return Semantics(label: title, value: semanticsValue, button: true, child:
       Container(
         decoration: BoxDecoration(
-            color: illinois.AppColors.white,
+            color: AppColors.white,
             border: Border.all(color: AppColors.surfaceAccent, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))
         ),

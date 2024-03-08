@@ -15,7 +15,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -26,7 +25,7 @@ import 'package:illinois/ui/widgets/RoleGridButton.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class OnboardingRolesPanel extends StatefulWidget with OnboardingPanel {
   final Map<String, dynamic>? onboardingContext;
@@ -52,7 +51,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: illinois.AppColors.white,
+      backgroundColor: AppColors.white,
       body: SafeArea(child: Column( children: <Widget>[
         Padding(padding: EdgeInsets.only(top: 10, bottom: 10),
           child: Row(children: <Widget>[
@@ -72,7 +71,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
               ),
               Padding(padding: EdgeInsets.only(top: 8),
                 child: Text(Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
-                  style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: illinois.AppColors.textBackground),
+                  style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: AppColors.textBackground),
                 ),
               )
             ],),),
@@ -93,7 +92,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
             backgroundColor: (AppColors.background),
             borderColor: (_allowNext
                 ? AppColors.fillColorSecondary
-                : illinois.AppColors.fillColorPrimaryTransparent03),
+                : AppColors.fillColorPrimaryTransparent03),
             progress: _updating,
             onTap: () => _onExploreClicked()),
         )

@@ -17,14 +17,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class PrivacyTicketsDialog extends StatefulWidget {
   final Function? onContinueTap;
@@ -119,7 +118,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                           ])))),
               Container(
                   width: double.infinity,
-                  color: illinois.AppColors.white,
+                  color: AppColors.white,
                   child: Padding(
                       padding: EdgeInsets.all(12),
                       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -212,7 +211,7 @@ class ShapesPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     Offset thumbCenter = size.center(Offset(0, 0));
     canvas.drawCircle(thumbCenter, 20, Paint()..color = AppColors.fillColorSecondaryVariant);
-    canvas.drawCircle(thumbCenter, 18, Paint()..color = illinois.AppColors.white);
+    canvas.drawCircle(thumbCenter, 18, Paint()..color = AppColors.white);
     canvas.drawCircle(thumbCenter, 15, Paint()..color = AppColors.fillColorPrimary);
   }
 

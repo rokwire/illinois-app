@@ -20,7 +20,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/livestats/LiveGame.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
@@ -44,7 +43,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class AthleticsGameDetailHeading extends StatefulWidget {
   final Game? game;
@@ -139,7 +138,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                             children: <Widget>[
                               Container(
                                 decoration: BoxDecoration(
-                                  color: illinois.AppColors.whiteTransparent01,
+                                  color: AppColors.whiteTransparent01,
                                   borderRadius: BorderRadius.all(Radius.circular(2)),
                                 ),
                                 
@@ -276,7 +275,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                 StringUtils.isEmpty(liveStatsUrl)
                     ? Container()
                     : Container(
-                        color: illinois.AppColors.fillColorPrimaryTransparent015,
+                        color: AppColors.fillColorPrimaryTransparent015,
                         height: 1,
                       ),
                 StringUtils.isEmpty(audioUrl)
@@ -291,7 +290,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                 StringUtils.isEmpty(audioUrl)
                     ? Container()
                     : Container(
-                        color: illinois.AppColors.fillColorPrimaryTransparent015,
+                        color: AppColors.fillColorPrimaryTransparent015,
                         height: 1,
                       ),
                 StringUtils.isEmpty(videoUrl)
@@ -306,7 +305,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                 StringUtils.isEmpty(videoUrl)
                     ? Container()
                     : Container(
-                        color: illinois.AppColors.fillColorPrimaryTransparent015,
+                        color: AppColors.fillColorPrimaryTransparent015,
                         height: 1,
                       ),
                 Padding(
@@ -701,10 +700,10 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 1, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              right: BorderSide(width: 0.5, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              top: BorderSide(width: 1.0, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              bottom: BorderSide(width: 1.0, color: illinois.AppColors.fillColorPrimaryTransparent015),
+              left: BorderSide(width: 1, color: AppColors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: AppColors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: AppColors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: AppColors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -752,10 +751,10 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 0.5, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              right: BorderSide(width: 0.5, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              top: BorderSide(width: 1.0, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              bottom: BorderSide(width: 1.0, color: illinois.AppColors.fillColorPrimaryTransparent015),
+              left: BorderSide(width: 0.5, color: AppColors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: AppColors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: AppColors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: AppColors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -1016,10 +1015,10 @@ class _LiteContent extends StatelessWidget {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 1, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              right: BorderSide(width: 0.5, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              top: BorderSide(width: 1.0, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              bottom: BorderSide(width: 1.0, color: illinois.AppColors.fillColorPrimaryTransparent015),
+              left: BorderSide(width: 1, color: AppColors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: AppColors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: AppColors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: AppColors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -1046,10 +1045,10 @@ class _LiteContent extends StatelessWidget {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 0.5, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              right: BorderSide(width: 0.5, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              top: BorderSide(width: 1.0, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              bottom: BorderSide(width: 1.0, color: illinois.AppColors.fillColorPrimaryTransparent015),
+              left: BorderSide(width: 0.5, color: AppColors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: AppColors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: AppColors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: AppColors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -1163,10 +1162,10 @@ class _RichContent extends StatelessWidget {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 1, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              right: BorderSide(width: 0.5, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              top: BorderSide(width: 1.0, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              bottom: BorderSide(width: 1.0, color: illinois.AppColors.fillColorPrimaryTransparent015),
+              left: BorderSide(width: 1, color: AppColors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: AppColors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: AppColors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: AppColors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -1222,10 +1221,10 @@ class _RichContent extends StatelessWidget {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 0.5, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              right: BorderSide(width: 0.5, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              top: BorderSide(width: 1.0, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              bottom: BorderSide(width: 1.0, color: illinois.AppColors.fillColorPrimaryTransparent015),
+              left: BorderSide(width: 0.5, color: AppColors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: AppColors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: AppColors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: AppColors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -1401,10 +1400,10 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 1, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              right: BorderSide(width: 0.5, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              top: BorderSide(width: 1.0, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              bottom: BorderSide(width: 1.0, color: illinois.AppColors.fillColorPrimaryTransparent015),
+              left: BorderSide(width: 1, color: AppColors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: AppColors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: AppColors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: AppColors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -1444,10 +1443,10 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 0.5, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              right: BorderSide(width: 0.5, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              top: BorderSide(width: 1.0, color: illinois.AppColors.fillColorPrimaryTransparent015),
-              bottom: BorderSide(width: 1.0, color: illinois.AppColors.fillColorPrimaryTransparent015),
+              left: BorderSide(width: 0.5, color: AppColors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: AppColors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: AppColors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: AppColors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -1489,7 +1488,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
         ? Container(
         decoration: new BoxDecoration(
             border: Border(
-              bottom: BorderSide(width: 1.0, color: illinois.AppColors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: AppColors.fillColorPrimaryTransparent015),
             )),
         child: Padding(
           padding: EdgeInsets.only(top: 6, bottom: 6, left: 20, right: 20),
@@ -1639,7 +1638,7 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
         ? Container(
         decoration: new BoxDecoration(
             border: Border(
-              bottom: BorderSide(width: 1.0, color: illinois.AppColors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: AppColors.fillColorPrimaryTransparent015),
             )),
         child: Padding(
           padding: EdgeInsets.only(top: 6, bottom: 6, left: 20, right: 20),

@@ -17,7 +17,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
@@ -29,7 +28,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class OnboardingLoginPhoneVerifyPanel extends StatefulWidget with OnboardingPanel {
 
@@ -124,12 +123,12 @@ class _OnboardingLoginPhoneVerifyPanelState
                         controller: _phoneNumberController,
                         autofocus: false,
                         onSubmitted: (_) => _clearErrorMsg,
-                        cursorColor: illinois.AppColors.textBackground,
+                        cursorColor: AppColors.textBackground,
                         keyboardType: TextInputType.phone,
                         style: TextStyle(
                             fontSize: 16,
                             fontFamily: AppFontFamilies.regular,
-                            color: illinois.AppColors.textBackground),
+                            color: AppColors.textBackground),
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(

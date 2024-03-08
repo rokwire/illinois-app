@@ -17,7 +17,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -31,7 +30,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ext/Event2.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class GroupMembershipStepsPanel extends StatefulWidget {
   final List<GroupMembershipStep>? steps;
@@ -169,7 +168,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
         child: Text(Localization().getStringEx("panel.membership_request.button.add_steps.step", 'STEP ') +(index+1).toString(), style: Styles().textStyles.getTextStyle("widget.title.tiny")),
       ),
       Stack(children: <Widget>[
-        Container(color: illinois.AppColors.white,
+        Container(color: AppColors.white,
           child: TextField(
             maxLines: 2,
             controller: _controllers![index],
@@ -223,7 +222,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
           Expanded(child: Container(),),
           RoundedButton(label:Localization().getStringEx("panel.membership_request.button.save.title", 'Save steps'),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-            backgroundColor: illinois.AppColors.white,
+            backgroundColor: AppColors.white,
             borderColor: AppColors.fillColorSecondary,
             borderWidth: 2,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -322,8 +321,8 @@ class _EventCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Container(
         decoration: BoxDecoration(
-          color: illinois.AppColors.white,
-          boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+          color: AppColors.white,
+          boxShadow: [BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
           borderRadius: BorderRadius.all(Radius.circular(8))
         ),
         child: Stack(children: <Widget>[

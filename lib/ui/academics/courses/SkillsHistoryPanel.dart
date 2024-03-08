@@ -1,12 +1,11 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dart';
 import 'package:illinois/ui/academics/courses/EssentialSkillsCoachWidgets.dart';
 import 'package:illinois/ui/academics/courses/SkillsScoreChart.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -139,7 +138,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> {
                         ),),
                         Flexible(flex: 3, fit: FlexFit.tight, child: Text(
                             _determineSkillScore(stats?.scores[section], stats?.maximumScores[section]),
-                            style: TextStyle(color: illinois.AppColors.mediumGray, fontSize: 32),
+                            style: TextStyle(color: AppColors.mediumGray, fontSize: 32),
                             textAlign: TextAlign.center,
                         ),),
                         Flexible(flex: 1, fit: FlexFit.tight, child: SizedBox(height: 16.0 , child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true))),
@@ -178,7 +177,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> {
                     ),),
                     Flexible(flex: 3, fit: FlexFit.tight, child: Text(
                         _determineSkillScore(stats?.scores[_selectedSkillType!], stats?.maximumScores[_selectedSkillType!]),
-                        style: TextStyle(color: illinois.AppColors.mediumGray, fontSize: 36),
+                        style: TextStyle(color: AppColors.mediumGray, fontSize: 36),
                         textAlign: TextAlign.center,
                     ),),
                     Flexible(flex: 1, fit: FlexFit.tight, child: SizedBox(height: 16.0 , child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true))),

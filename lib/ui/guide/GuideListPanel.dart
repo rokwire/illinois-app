@@ -8,7 +8,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/wallet/ICardHomeContentPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -29,7 +28,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class GuideListPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final String? guide;
@@ -438,8 +437,8 @@ class _GuideFeatureButtonState extends State<GuideFeatureButton> {
       GestureDetector(onTap: widget.onTap ?? _nop, child:
         Container(
           decoration: BoxDecoration(
-            color: illinois.AppColors.white,
-            boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            color: AppColors.white,
+            boxShadow: [BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.all(Radius.circular(4)),
           ), child:
           Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 6), child:

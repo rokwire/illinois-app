@@ -17,13 +17,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2VideoTutorialPanel.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class Onboarding2GetStartedPanel extends StatelessWidget {
   Onboarding2GetStartedPanel();
@@ -57,7 +56,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   borderColor: AppColors.fillColorSecondary,
-                  backgroundColor: illinois.AppColors.white,
+                  backgroundColor: AppColors.white,
                   onTap: () => _onGoNext(context),
                 ),
                 Onboarding2UnderlinedButton(

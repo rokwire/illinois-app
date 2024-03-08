@@ -8,12 +8,11 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class Onboarding2ResearchQuestionnairePanel extends StatefulWidget {
 
@@ -93,7 +92,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
 
     if (description.isNotEmpty) {
       contentList.add(
-        Container(color: illinois.AppColors.white, child:
+        Container(color: AppColors.white, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
             Semantics(label: description, hint: '', excludeSemantics: true, child:
               Row(children: [
@@ -128,7 +127,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium"),
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               borderColor: AppColors.fillColorPrimary,
-              backgroundColor: illinois.AppColors.white,
+              backgroundColor: AppColors.white,
               onTap: () => _onCancel(),
             ),
           ),
@@ -140,7 +139,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
               textStyle: submitEnabled ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               borderColor: submitEnabled ? AppColors.fillColorSecondary : AppColors.surfaceAccent,
-              backgroundColor: illinois.AppColors.white,
+              backgroundColor: AppColors.white,
               onTap: () => _onSubmit(),
             ),
           ),
@@ -245,7 +244,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
         value: selected ?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
         child: InkWell(onTap: () { _onAnswer(answer, question: question); AppSemantics.announceCheckBoxStateChange(context, !selected, title);}, child:
       Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
-        Container(decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: selected ? AppColors.fillColorPrimary : illinois.AppColors.white, width: 1)), child:
+        Container(decoration: BoxDecoration(color: AppColors.white, border: Border.all(color: selected ? AppColors.fillColorPrimary : AppColors.white, width: 1)), child:
           Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
             Row(children: [
               Padding(padding: EdgeInsets.only(right: 12), child:

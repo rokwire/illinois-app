@@ -4,10 +4,9 @@ import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class DebugStudentCoursesPanel extends StatefulWidget {
   _DebugStudentCoursesPanelState createState() => _DebugStudentCoursesPanelState();
@@ -63,7 +62,7 @@ class _DebugStudentCoursesPanelState extends State<DebugStudentCoursesPanel> {
                   maxLines: 1024,
                   controller: _rawContentController,
                   decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-                  style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: illinois.AppColors.textBackground,),
+                  style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: AppColors.textBackground,),
                   onChanged: _onRawContentChanged,
                   onEditingComplete: _onRawContentFinished,
                 ),

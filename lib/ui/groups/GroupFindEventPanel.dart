@@ -18,7 +18,6 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -33,7 +32,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class GroupEventsContext {
   StreamController<void> eventsController = StreamController<void>();
@@ -224,12 +223,12 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
           ),
           Container(
             padding: EdgeInsets.all(16),
-            color: illinois.AppColors.white,
+            color: AppColors.white,
             child: RoundedButton(
               label: Localization().getStringEx("panel.find_event.button.add_selected_events.title", "Add (#) event to group").replaceAll("#", _selectedEvents.length.toString()),
               hint: Localization().getStringEx("panel.find_event.button.add_selected_events.hint", ""),
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-              backgroundColor: illinois.AppColors.white,
+              backgroundColor: AppColors.white,
               borderColor: AppColors.fillColorSecondary,
               onTap: _onTapAddEvents,
             ),
@@ -303,7 +302,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   Widget _buildFilterButtons(){
     return Container(
       width: double.infinity,
-      color: illinois.AppColors.white,
+      color: AppColors.white,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Padding(
@@ -422,7 +421,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
                 shrinkWrap: true,
                 separatorBuilder: (context, index) => Divider(
                   height: 1,
-                  color: illinois.AppColors.fillColorPrimaryTransparent03,
+                  color: AppColors.fillColorPrimaryTransparent03,
                 ),
                 itemCount: itemCount,
                 itemBuilder: itemBuilder,
@@ -560,7 +559,7 @@ class _EventCardState extends State<_EventCard>{
               onTap: ()=>_onTapEvent(context),
               child: Container(
                 decoration: BoxDecoration(
-                  color: illinois.AppColors.white,
+                  color: AppColors.white,
                   borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4)),
                 ),
                 child: Column(

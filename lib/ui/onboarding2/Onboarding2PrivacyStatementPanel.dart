@@ -17,7 +17,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ExploreCampusPanel.dart';
@@ -25,7 +24,7 @@ import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 
 class Onboarding2PrivacyStatementPanel extends StatefulWidget{
@@ -151,7 +150,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                         hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        backgroundColor: illinois.AppColors.white,
+                        backgroundColor: AppColors.white,
                         borderColor: AppColors.fillColorSecondaryVariant,
                         onTap: () => _goNext(context),
                       ),),

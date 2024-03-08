@@ -16,7 +16,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Onboarding2.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -27,7 +26,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 import 'package:sprintf/sprintf.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class OnboardingLoginPhoneConfirmPanel extends StatefulWidget with OnboardingPanel {
 
@@ -136,12 +135,12 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                         controller: _codeController,
                         autofocus: false,
                         onSubmitted: (_) => _clearErrorMsg,
-                        cursorColor: illinois.AppColors.textBackground,
+                        cursorColor: AppColors.textBackground,
                         keyboardType: TextInputType.number,
                         style: TextStyle(
                             fontSize: 16,
                             fontFamily: AppFontFamilies.regular,
-                            color: illinois.AppColors.textBackground),
+                            color: AppColors.textBackground),
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(

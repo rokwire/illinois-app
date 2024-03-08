@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Appointment.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Storage.dart';
@@ -30,7 +30,6 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -129,7 +128,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
     return Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), container: true, child:
       RibbonButton(
         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         borderRadius: BorderRadius.all(Radius.circular(5)),
         border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: _isProvidersExpanded ? 'chevron-up' : 'chevron-down',
@@ -154,7 +153,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
     return Positioned.fill(child:
       BlockSemantics(child:
         GestureDetector(onTap: _onDismissProvidersDropdown, child:
-          Container(color: illinois.AppColors.blackTransparent06)
+          Container(color: AppColors.blackTransparent06)
         )
       )
     );
@@ -166,7 +165,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
 
     if (_providers != null) {
       items.add(RibbonButton(
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: Localization().getStringEx('panel.academics.appointments.home.label.providers.all', 'All Providers'),
@@ -175,7 +174,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
 
       for (AppointmentProvider provider in _providers!) {
         items.add(RibbonButton(
-          backgroundColor: illinois.AppColors.white,
+          backgroundColor: AppColors.white,
           border: Border.all(color: AppColors.surfaceAccent, width: 1),
           rightIconKey: null,
           label: provider.name,
@@ -440,7 +439,7 @@ class AppointmentsListPanel extends StatelessWidget {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.academics.appointments.home.header.title', 'Appointments')),
       body: Padding(padding: EdgeInsets.all(16), child: AcademicsAppointmentsContentWidget()),
-      backgroundColor: illinois.AppColors.white,
+      backgroundColor: AppColors.white,
       bottomNavigationBar: uiuc.TabBar()
     );
   }

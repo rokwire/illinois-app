@@ -36,7 +36,6 @@ import 'package:illinois/ui/mtd/MTDWidgets.dart';
 import 'package:illinois/ui/appointments/AppointmentCard.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -47,7 +46,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class HomeFavoritesWidget extends StatefulWidget {
 
@@ -107,9 +106,9 @@ class HomeFavoritesWidget extends StatefulWidget {
 
   static Color? linkColor(String key) {
     switch(key) {
-      case Event.favoriteKeyName: return illinois.AppColors.eventColor;
-      case Event2.favoriteKeyName: return illinois.AppColors.eventColor;
-      case Dining.favoriteKeyName: return illinois.AppColors.diningColor;
+      case Event.favoriteKeyName: return AppColors.eventColor;
+      case Event2.favoriteKeyName: return AppColors.eventColor;
+      case Dining.favoriteKeyName: return AppColors.diningColor;
       case Game.favoriteKeyName: return AppColors.fillColorPrimary;
       case News.favoriteKeyName: return AppColors.fillColorPrimary;
       case LaundryRoom.favoriteKeyName: return AppColors.accentColor2;
@@ -305,7 +304,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     Color? headerColor = item?.favoriteHeaderColor;
     String? title = item?.favoriteTitle;
     String? cardDetailText = item?.favoriteDetailText;
-    Color? cardDetailTextColor = item?.favoriteDetailTextColor ?? illinois.AppColors.textBackground;
+    Color? cardDetailTextColor = item?.favoriteDetailTextColor ?? AppColors.textBackground;
     Widget? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? item?.favoriteDetailIcon : null;
     bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
     return GestureDetector(onTap: () => _onTapItem(item), child:
@@ -539,7 +538,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   Widget _buildEmpty() {
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-      Container(decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      Container(decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         padding: EdgeInsets.all(16),
         child:  HtmlWidget(
             HomeFavoritesWidget.emptyMessageHtml(widget.favoriteKey) ?? '',

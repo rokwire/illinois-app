@@ -13,14 +13,13 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:intl/intl.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 ////////////////////////////
 /// MTDStopScheduleCard
@@ -84,7 +83,7 @@ class MTDStopCard extends StatelessWidget {
     return Padding(padding: EdgeInsets.only(bottom: 4), child:
       InkWell(onTap: () => _onTapDetail(stop), child:
         Container(
-          decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: AppColors.surfaceAccent, width: 1),),
+          decoration: BoxDecoration(color: AppColors.white, border: Border.all(color: AppColors.surfaceAccent, width: 1),),
           padding: EdgeInsets.only(left: 16,),
           child: Column(children: [
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -271,7 +270,7 @@ class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> implements No
     Color? headerColor = widget.stop.favoriteHeaderColor;
     String? title = widget.stop.favoriteTitle;
     String? cardDetailText = widget.stop.favoriteDetailText;
-    Color? cardDetailTextColor = widget.stop.favoriteDetailTextColor ?? illinois.AppColors.textBackground;
+    Color? cardDetailTextColor = widget.stop.favoriteDetailTextColor ?? AppColors.textBackground;
     Widget? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? widget.stop.favoriteDetailIcon : null;
     bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
     return GestureDetector(onTap: widget.onTap, child:
@@ -320,7 +319,7 @@ class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> implements No
                   ),
                 ]),
               ),
-              Divider(height: 1, color: illinois.AppColors.fillColorPrimaryTransparent03,),
+              Divider(height: 1, color: AppColors.fillColorPrimaryTransparent03,),
               Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0), child:
                 _buildDepartures(),
               ),
@@ -376,7 +375,7 @@ class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> implements No
     for (int index = 0; index < departuresCount; index++) {
       MTDDeparture departure = _departures![index];
       if (contentList.isNotEmpty) {
-        contentList.add(Divider(height: 1, color: illinois.AppColors.fillColorPrimaryTransparent03,));
+        contentList.add(Divider(height: 1, color: AppColors.fillColorPrimaryTransparent03,));
       }
       contentList.add(MTDDepartureCard(
         departure: departure,
@@ -486,7 +485,7 @@ class MTDDepartureCard extends StatelessWidget {
         Container(width: circleSize, height: circleSize,
           decoration: BoxDecoration(
             color: departure.route?.color,
-            border: Border.all(color: illinois.AppColors.surfaceAccentTransparent15, width: 1),
+            border: Border.all(color: AppColors.surfaceAccentTransparent15, width: 1),
             shape: BoxShape.circle),
           child: Center(child:
             Text(departure.route?.shortName ?? '', overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("widget.detail.large.thin")?.copyWith(color: departure.route?.textColor))

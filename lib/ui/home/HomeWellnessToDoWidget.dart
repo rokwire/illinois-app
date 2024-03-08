@@ -10,13 +10,12 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class HomeWellnessToDoWidget extends StatefulWidget {
   
@@ -75,7 +74,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: illinois.AppColors.white, child:
+                Container(color: AppColors.white, child:
                   Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Row(children: [Expanded(child: Text(Localization().getStringEx('widget.home.wellness.todo.items.today.label', 'TODAY\'S ITEMS'), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("widget.label.tiny.fat")))]),

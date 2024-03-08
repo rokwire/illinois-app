@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -14,7 +14,6 @@ import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TypingIndicator.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -287,7 +286,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                       _sendFeedback(message, true);
                     }: null,
                       icon: Icon(message.feedback == MessageFeedback.good ? Icons.thumb_up : Icons.thumb_up_outlined,
-                          size: 24, color: message.feedbackExplanation == null ? AppColors.fillColorPrimary : illinois.AppColors.disabledTextColor),
+                          size: 24, color: message.feedbackExplanation == null ? AppColors.fillColorPrimary : AppColors.disabledTextColor),
                       iconSize: 24,
                       splashRadius: 24),
                     IconButton(onPressed: message.feedbackExplanation == null ? () {
@@ -474,7 +473,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                 ),
                 IconButton(//TODO: Enable support for material icons in styles images
                   splashRadius: 24,
-                  icon: Icon(Icons.send, color: enabled ? AppColors.fillColorSecondary : illinois.AppColors.disabledTextColor),
+                  icon: Icon(Icons.send, color: enabled ? AppColors.fillColorSecondary : AppColors.disabledTextColor),
                   onPressed: enabled ? () {
                     _submitMessage(_inputController.text);
                   }: null,
@@ -501,8 +500,8 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
           height: 10,
           width: 10,
           decoration: BoxDecoration(
-            color: (_queryLimit ?? 0) > 0 ? illinois.AppColors.saferLocationWaitTimeColorGreen :
-            illinois.AppColors.saferLocationWaitTimeColorRed,
+            color: (_queryLimit ?? 0) > 0 ? AppColors.saferLocationWaitTimeColorGreen :
+            AppColors.saferLocationWaitTimeColorRed,
             shape: BoxShape.circle
           ),
         ),

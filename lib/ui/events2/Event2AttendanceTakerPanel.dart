@@ -13,14 +13,13 @@ import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class Event2AttendanceTakerPanel extends StatelessWidget {
   final Event2? event;
@@ -38,7 +37,7 @@ class Event2AttendanceTakerPanel extends StatelessWidget {
         ),
       ),
     ),
-    backgroundColor: illinois.AppColors.white,
+    backgroundColor: AppColors.white,
   );
 
   Future<void> _onRefresh() async {
@@ -243,7 +242,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     List<Widget> contentList = <Widget>[];
     for (Event2Person displayPerson in _displayList) {
       if (contentList.isNotEmpty) {
-        contentList.add(Divider(color: illinois.AppColors.dividerLineAccent, thickness: 1, height: 1,));
+        contentList.add(Divider(color: AppColors.dividerLineAccent, thickness: 1, height: 1,));
       }
       contentList.add(_AttendeeListItemWidget(displayPerson,
         enabled: widget.manualCheckEnabled,
@@ -545,7 +544,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       label: Localization().getStringEx('panel.event2.detail.attendance.scan.button', 'Scan Illini ID'),
       textStyle: Styles().textStyles.getTextStyle(widget.scanEnabled ? 'widget.button.title.large.fat' : 'widget.button.title.large.fat.variant3'),
       borderColor: widget.scanEnabled ? AppColors.fillColorSecondary : AppColors.surfaceAccent,
-      backgroundColor: illinois.AppColors.white,
+      backgroundColor: AppColors.white,
       onTap: _onTapScanButton,
       contentWeight: 0.5,
       progress: _scanning,

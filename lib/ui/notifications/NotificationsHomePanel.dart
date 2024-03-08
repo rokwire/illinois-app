@@ -22,14 +22,13 @@ import 'package:illinois/ui/notifications/NotificationsInboxPage.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 enum NotificationsContent { all, unread }
 
@@ -207,7 +206,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
   Widget _buildSheet(BuildContext context) {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
     return Column(children: [
-      Container(color: illinois.AppColors.white, child:
+      Container(color: AppColors.white, child:
         Row(key: _sheetHeaderKey, children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:
@@ -247,7 +246,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
         Padding(key: _contentDropDownKey, padding: EdgeInsets.only(left: _defaultPadding, top: _defaultPadding, right: _defaultPadding), child:
           RibbonButton(
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-            backgroundColor: illinois.AppColors.white,
+            backgroundColor: AppColors.white,
             borderRadius: BorderRadius.all(Radius.circular(5)),
             border: Border.all(color: AppColors.surfaceAccent, width: 1),
             rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
@@ -285,7 +284,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
                     _contentValuesVisible = false;
                   });
                 },
-                child: Container(color: illinois.AppColors.blackTransparent06))));
+                child: Container(color: AppColors.blackTransparent06))));
   }
 
   Widget _buildContentValuesWidget() {
@@ -301,7 +300,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
 
   Widget _buildContentItem(NotificationsContent contentItem) {
     return RibbonButton(
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentItemName(contentItem),

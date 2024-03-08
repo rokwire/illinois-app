@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -31,7 +30,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 
 class GroupEventDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -113,7 +112,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
               children: [
                 _eventImageHeader(),
                 Container(
-                  color: illinois.AppColors.white,
+                  color: AppColors.white,
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
                     children: [
@@ -162,13 +161,13 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         children: <Widget>[
           StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child: ModalImageHolder(child: Image.network(imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true))) : Container(),
           CustomPaint(
-            painter: TrianglePainter(painterColor: illinois.AppColors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
+            painter: TrianglePainter(painterColor: AppColors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
             child: Container(
               height: 53,
             ),
           ),
           CustomPaint(
-            painter: TrianglePainter(painterColor: illinois.AppColors.white),
+            painter: TrianglePainter(painterColor: AppColors.white),
             child: Container(
               height: 30,
             ),

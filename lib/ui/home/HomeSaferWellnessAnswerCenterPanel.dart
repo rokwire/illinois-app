@@ -19,12 +19,11 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget {
   @override
@@ -54,8 +53,8 @@ class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget {
   Widget _buildEntryCard({required String title, required String description, GestureTapCallback? onTapEntry}) {
     return Container(
         decoration: BoxDecoration(
-            color: illinois.AppColors.white,
-            boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            color: AppColors.white,
+            boxShadow: [BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(4))),
         clipBehavior: Clip.none,
         child: Stack(children: [

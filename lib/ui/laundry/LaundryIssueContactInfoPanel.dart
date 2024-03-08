@@ -21,14 +21,13 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/ui/laundry/LaundrySubmittedIssuePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class LaundryIssueContactInfoPanel extends StatefulWidget {
   final LaundryIssueRequest issueRequest;
@@ -92,10 +91,10 @@ class _LaundryIssueContactInfoPanelState extends State<LaundryIssueContactInfoPa
     return Padding(
         padding: EdgeInsets.only(top: 10),
         child: Container(
-            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: illinois.AppColors.disabledTextColor, width: 2))),
+            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.disabledTextColor, width: 2))),
             child: TextField(
                 controller: controller,
-                cursorColor: illinois.AppColors.mediumGray2,
+                cursorColor: AppColors.mediumGray2,
                 style: Styles().textStyles.getTextStyle("widget.input_field.dark.text.large"),
                 decoration: InputDecoration(
                     border: InputBorder.none,

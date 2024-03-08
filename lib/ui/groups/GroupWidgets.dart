@@ -24,7 +24,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -50,7 +49,7 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:illinois/service/Polls.dart' as illinois;
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 /////////////////////////////////////
 // GroupSectionTitle
@@ -148,7 +147,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton<T>>{
     String? buttonDescription = _getButtonDescriptionText();
     return Container (
       decoration: widget.decoration ?? BoxDecoration(
-        color: illinois.AppColors.white,
+        color: AppColors.white,
         border: Border.all(color: AppColors.surfaceAccent, width: 1),
         borderRadius: BorderRadius.all(Radius.circular(4))
       ),
@@ -157,18 +156,18 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton<T>>{
         Semantics(container: true, label: buttonTitle, hint: widget.buttonHint, excludeSemantics: true, child:
           Theme(data: ThemeData(
             /// This is as a workaround to make dropdown backcolor always white according to Miro & Zepplin wireframes
-            hoverColor: illinois.AppColors.white,
-            focusColor: illinois.AppColors.white,
-            canvasColor: illinois.AppColors.white,
-            primaryColor: illinois.AppColors.white,
-            /*accentColor: illinois.AppColors.white,*/
-            highlightColor: illinois.AppColors.white,
-            splashColor: illinois.AppColors.white,),
+            hoverColor: AppColors.white,
+            focusColor: AppColors.white,
+            canvasColor: AppColors.white,
+            primaryColor: AppColors.white,
+            /*accentColor: AppColors.white,*/
+            highlightColor: AppColors.white,
+            splashColor: AppColors.white,),
             child: DropdownButton(
               icon: Styles().images.getImage('chevron-down', excludeFromSemantics: true), //Image.asset('images/icon-down-orange.png', excludeFromSemantics: true),
               isExpanded: true,
               itemHeight: null,
-              focusColor: illinois.AppColors.white,
+              focusColor: AppColors.white,
               underline: Container(),
               hint: Text(buttonTitle ?? "", style: (widget.initialSelectedValue == null ? hintStyle : valueStyle)),
               items: _constructItems(),
@@ -218,7 +217,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton<T>>{
           ),
         ),
         Container(height: 11),
-        Container(height: 1, color: illinois.AppColors.fillColorPrimaryTransparent03,)
+        Container(height: 1, color: AppColors.fillColorPrimaryTransparent03,)
       ],)
     );
   }
@@ -372,8 +371,8 @@ class GroupsConfirmationDialog extends StatelessWidget{
                         RoundedButton(
                           label: Localization().getStringEx('headerbar.back.title', "Back"),
                           textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.thin"),
-                          borderColor: illinois.AppColors.white,
-                          backgroundColor: illinois.AppColors.white,
+                          borderColor: AppColors.white,
+                          backgroundColor: AppColors.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                           onTap: (){
                             Analytics().logAlert(text: message, selection: "Back");
@@ -386,7 +385,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
                           label: buttonTitle ?? '',
                           textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                           borderColor: AppColors.fillColorSecondary,
-                          backgroundColor: illinois.AppColors.white,
+                          backgroundColor: AppColors.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                           onTap: (){
                             Analytics().logAlert(text: message, selection: buttonTitle);
@@ -658,7 +657,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
   Widget build(BuildContext context) {
     return GestureDetector(onTap: () => _onTapCard(context), child:
       Padding(padding: widget.margin, child:
-        Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: illinois.AppColors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
+        Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: AppColors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
           Stack(children: [
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               _buildHeading(),
@@ -987,8 +986,8 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
 
   Widget _buildPrivacyLevelWidget() {
     String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
-    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 2), color: illinois.AppColors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorSecondary, width: 2), color: illinois.AppColors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 2), color: AppColors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorSecondary, width: 2), color: AppColors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
         Text(privacyLevel, style: Styles().textStyles.getTextStyle('widget.card.title.regular.extra_fat'))
       ),
     );
@@ -1042,8 +1041,8 @@ class _GroupPostCardState extends State<GroupPostCard> {
           onTap: _onTapCard,
           child: Container(
               decoration: BoxDecoration(
-                  color: illinois.AppColors.white,
-                  boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+                  color: AppColors.white,
+                  boxShadow: [BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
                   borderRadius: BorderRadius.all(Radius.circular(8))),
               child: Padding(
                   padding: EdgeInsets.all(12),
@@ -1203,10 +1202,10 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
     if (widget.reply?.isUpdated ?? false) {
       bodyText +=
           ' <span>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</span>';
-      // bodyText += ' <span style=color:${ColorUtils.toHex(illinois.AppColors.disabledTextColor  ?? Colors.blue)}>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</span>';
+      // bodyText += ' <span style=color:${ColorUtils.toHex(AppColors.disabledTextColor  ?? Colors.blue)}>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</span>';
       // bodyText += ' <a>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</a>';
 
-      // ' <span style=color:${ColorUtils.toHex(illinois.AppColors.textSurface ?? Colors.blue)}} >(${"VERY VERY VERY VERY VERY VERY VEry  long Span so we can check it's overflow styling"/*Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')*/})</span>';
+      // ' <span style=color:${ColorUtils.toHex(AppColors.textSurface ?? Colors.blue)}} >(${"VERY VERY VERY VERY VERY VERY VEry  long Span so we can check it's overflow styling"/*Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')*/})</span>';
           // ' <span>(${"VERY VERY VERY VERY VERY VEry long Span so we can check it's overflow styling"/*Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')*/})</span>';
     }
     return Semantics(container: true, button: true,
@@ -1214,8 +1213,8 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
         onTap: widget.onCardTap ?? _onTapCard,
          child:Container(
         decoration: BoxDecoration(
-            color: illinois.AppColors.white,
-            boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+            color: AppColors.white,
+            boxShadow: [BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
             borderRadius: BorderRadius.all(Radius.circular(8))),
         child: Padding(
             padding: EdgeInsets.all(12),
@@ -1261,7 +1260,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                                   StringUtils.ensureNotEmpty(bodyText),
                                   onTapUrl : (url) {_onLinkTap(url); return true;},
                                   textStyle:  Styles().textStyles.getTextStyle("widget.card.title.small"),
-                                  customStylesBuilder: (element) => (element.localName == "span") ? {"color": ColorUtils.toHex(illinois.AppColors.disabledTextColor)}: null //Not able to use Transparent colour, it's not parsed correctly
+                                  customStylesBuilder: (element) => (element.localName == "span") ? {"color": ColorUtils.toHex(AppColors.disabledTextColor)}: null //Not able to use Transparent colour, it's not parsed correctly
                                   // customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(AppColors.blackTransparent018 ?? Colors.blue)} : null
                               )
                               // Html(
@@ -1276,7 +1275,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                               //       margin: EdgeInsets.zero
                               //   ),
                               //   "span": Style(
-                              //       color:illinois.AppColors.blackTransparent018,
+                              //       color:AppColors.blackTransparent018,
                               //       fontFamily: AppFontFamilies.regular,
                               //       fontSize: FontSize(16),
                               //       maxLines: 1,
@@ -1412,7 +1411,7 @@ class GroupPostReaction extends StatelessWidget {
 
     showModalBottomSheet(
         context: context,
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         isScrollControlled: true,
         isDismissible: true,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),
@@ -1422,7 +1421,7 @@ class GroupPostReaction extends StatelessWidget {
             height: MediaQuery.of(context).size.height / 2,
             child: Column(
               children: [
-                Container(width: 60, height: 8, decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: illinois.AppColors.disabledTextColor)),
+                Container(width: 60, height: 8, decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: AppColors.disabledTextColor)),
                 Container(height: 16),
                 Expanded(
                   child: ListView(
@@ -1536,7 +1535,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                         hintText: _hint,
                         border: OutlineInputBorder(
                             borderSide: BorderSide(
-                                color: illinois.AppColors.mediumGray,
+                                color: AppColors.mediumGray,
                                 width: 0.0))),
                     style: Styles().textStyles.getTextStyle(''))),
           ],
@@ -1654,7 +1653,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: illinois.AppColors.mediumGray, width: 0.0))),
+                              color: AppColors.mediumGray, width: 0.0))),
                   style: Styles().textStyles.getTextStyle('widget.input_field.text.regular'))),
           Padding(
               padding: EdgeInsets.only(top: 16),
@@ -1671,7 +1670,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: illinois.AppColors.mediumGray, width: 0.0))),
+                              color: AppColors.mediumGray, width: 0.0))),
                   style: Styles().textStyles.getTextStyle('widget.input_field.text.regular')))
         ]);
   }
@@ -1748,7 +1747,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
         height: 48,
         decoration: BoxDecoration(
             color:  widget.enabled? Colors.white: AppColors.background,
-            border: Border.all(color: illinois.AppColors.lightGray, width: 1),
+            border: Border.all(color: AppColors.lightGray, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),
@@ -1986,7 +1985,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
               ? Positioned.fill(child: ModalImageHolder(child: Image.network(imageUrl!, semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover)))
               : Container(),
           Visibility( visible: showSlant,
-              child: CustomPaint(painter: TrianglePainter(painterColor: illinois.AppColors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53))),
+              child: CustomPaint(painter: TrianglePainter(painterColor: AppColors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53))),
           Visibility( visible: showSlant,
               child: CustomPaint(painter: TrianglePainter(painterColor: AppColors.background), child: Container(height: 30))),
           StringUtils.isEmpty(imageUrl) || explicitlyShowAddButton
@@ -2121,9 +2120,9 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
     return Column(children: <Widget>[
       Container(
         decoration: BoxDecoration(
-          color: illinois.AppColors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.all(Radius.circular(8)),
-          boxShadow: [BoxShadow(color:illinois.AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+          boxShadow: [BoxShadow(color:AppColors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
         ),
         child: Padding(padding: EdgeInsets.only(left: 16, bottom: 16), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -2222,7 +2221,7 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
                 flex: 5,
                 key: progressKey, child:
             Stack(alignment: Alignment.centerLeft, children: <Widget>[
-              CustomPaint(painter: PollProgressPainter(backgroundColor: illinois.AppColors.white, progressColor: useCustomColor ?AppColors.fillColorPrimary:illinois.AppColors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+              CustomPaint(painter: PollProgressPainter(backgroundColor: AppColors.white, progressColor: useCustomColor ?AppColors.fillColorPrimary:AppColors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
               Container(/*height: 15+ 16*MediaQuery.of(context).textScaleFactor,*/ child:
               Padding(padding: EdgeInsets.only(left: 5), child:
               Row(children: <Widget>[
@@ -2259,7 +2258,7 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 5,horizontal: 16),
                   decoration: BoxDecoration(
-                    color: illinois.AppColors.white,
+                    color: AppColors.white,
                     border: Border.all(
                         color: enabled? AppColors.fillColorSecondary :AppColors.surfaceAccent,
                         width: 2.0),
@@ -2696,7 +2695,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
                       label: Localization().getStringEx("widget.groups.selection.button.send.label", "Send"),//TBD localize
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                       borderColor: AppColors.fillColorSecondary,
-                      backgroundColor: illinois.AppColors.white,
+                      backgroundColor: AppColors.white,
                       onTap: _onTapSelect
                   )),
                   Container(width: 16,),
@@ -2704,7 +2703,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
                       label: Localization().getStringEx("widget.groups.selection.button.cancel.label", "Cancel"),//TBD localize
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                       borderColor: AppColors.fillColorPrimary,
-                      backgroundColor: illinois.AppColors.white,
+                      backgroundColor: AppColors.white,
                       onTap: _onTapClose
                   ))
                 ],
@@ -2852,7 +2851,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
     preferenceWidgets.add(
         Container(
           padding: EdgeInsets.all(1),
-          decoration:  BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: AppColors.surfaceAccent, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
+          decoration:  BoxDecoration(color: AppColors.white, border: Border.all(color: AppColors.surfaceAccent, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
           child: Column(
             children: [
               EnabledToggleButton(
@@ -2869,7 +2868,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
               Row(children: [
                 Expanded(
                     child: Container(
-                        color: illinois.AppColors.white,
+                        color: AppColors.white,
                         child: Padding(
                             padding: EdgeInsets.only(left: 10),
                             child: Column(children: [
@@ -2930,7 +2929,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
     //Post
     preferenceWidgets.add(Container(
         padding: EdgeInsets.all(1),
-        decoration:  BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: AppColors.surfaceAccent, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
+        decoration:  BoxDecoration(color: AppColors.white, border: Border.all(color: AppColors.surfaceAccent, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
         child: Column(
             children: [
               EnabledToggleButton(
@@ -2947,7 +2946,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
               Row(children: [
                 Expanded(
                     child: Container(
-                        color: illinois.AppColors.white,
+                        color: AppColors.white,
                         child: Padding(
                             padding: EdgeInsets.only(left: 10),
                             child: Column(children: [

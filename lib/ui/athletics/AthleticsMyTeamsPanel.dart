@@ -19,11 +19,10 @@ import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -77,7 +76,7 @@ class _AthleticsMyTeamsPanelState extends State<AthleticsMyTeamsPanel> implement
   Widget build(BuildContext context) {
     return Column(children: [
       Container(
-          color: illinois.AppColors.white,
+          color: AppColors.white,
           child: Row(children: [
             Expanded(
                 child: Padding(

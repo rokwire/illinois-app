@@ -18,7 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/model/sport/Team.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -27,7 +26,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class AthleticsSchedulePanel extends StatefulWidget {
   final SportDefinition? sport;
@@ -224,7 +223,7 @@ class _ScheduleTabButton extends StatelessWidget {
           child:Container(
             height: MediaQuery.of(context).textScaler.scale(32 + 16),
             decoration: BoxDecoration(
-              color: selected! ? Colors.white : illinois.AppColors.lightGray,
+              color: selected! ? Colors.white : AppColors.lightGray,
               border: Border.fromBorderSide(borderSide),
               borderRadius: left! ? BorderRadius.horizontal(left: Radius.circular(100.0)) : BorderRadius.horizontal(right: Radius.circular(100.0)),
             ),

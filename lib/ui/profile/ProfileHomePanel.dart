@@ -25,12 +25,11 @@ import 'package:illinois/ui/profile/ProfileDetailsPage.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
 import 'package:illinois/ui/profile/ProfileRolesPage.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 enum ProfileContent { login, profile, who_are_you, }
 
@@ -134,7 +133,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   Widget _buildSheet(BuildContext context) {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
     return Column(children: [
-      Container(color: illinois.AppColors.white, child:
+      Container(color: AppColors.white, child:
         Row(children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:
@@ -176,7 +175,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
               Padding(key: _pageHeadingKey, padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
                 RibbonButton(
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-                  backgroundColor: illinois.AppColors.white,
+                  backgroundColor: AppColors.white,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   border: Border.all(color: AppColors.surfaceAccent, width: 1),
                   rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
@@ -216,7 +215,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     return Positioned.fill(child:
       BlockSemantics(child:
         GestureDetector(onTap: _onTapDismissLayer, child:
-          Container(color: illinois.AppColors.blackTransparent06)
+          Container(color: AppColors.blackTransparent06)
         )
       )
     );
@@ -239,7 +238,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   Widget _buildContentItem(ProfileContent contentItem) {
     return RibbonButton(
-        backgroundColor: illinois.AppColors.white,
+        backgroundColor: AppColors.white,
         border: Border.all(color: AppColors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentItemName(contentItem),

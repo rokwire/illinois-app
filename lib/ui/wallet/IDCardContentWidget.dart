@@ -32,7 +32,6 @@ import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
@@ -46,7 +45,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
 class IDCardContentWidget extends StatefulWidget {
@@ -491,7 +490,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
               backgroundColor: Colors.white,
               enabled: _submitButtonEnabled,
               contentWeight: 0.0,
-              borderColor: _submitButtonEnabled ? AppColors.fillColorSecondary : illinois.AppColors.disabledTextColor,
+              borderColor: _submitButtonEnabled ? AppColors.fillColorSecondary : AppColors.disabledTextColor,
               progress: _submittingDeviceRegistration,
               onTap: _onTapSubmitMobileAccessButton)),
       Visibility(visible: MobileAccess().isMobileAccessWaiting, child: Padding(padding: EdgeInsets.only(bottom: 10), child: Text(

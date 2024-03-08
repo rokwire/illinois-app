@@ -21,10 +21,9 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/model/News.dart';
@@ -125,9 +124,9 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
     return CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
       SliverToutHeaderBar(
         flexImageUrl: _article?.imageUrl,
-        flexBackColor: illinois.AppColors.white,
-        flexRightToLeftTriangleColor: illinois.AppColors.white,
-        flexLeftToRightTriangleColor: illinois.AppColors.fillColorSecondaryTransparent05,
+        flexBackColor: AppColors.white,
+        flexRightToLeftTriangleColor: AppColors.white,
+        flexLeftToRightTriangleColor: AppColors.fillColorSecondaryTransparent05,
       ),
       SliverList(delegate: SliverChildListDelegate([
         Container(color: AppColors.background, child:

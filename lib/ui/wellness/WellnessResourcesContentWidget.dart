@@ -23,14 +23,13 @@ import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class WellnessResourcesContentWidget extends StatefulWidget {
   static const String wellnessCategoryKey = 'resources';
@@ -183,7 +182,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
       }
     }
 
-    return Container(decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: AppColors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
+    return Container(decoration: BoxDecoration(color: AppColors.white, border: Border.all(color: AppColors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
       Column(children: widgetList)
     );
 
@@ -240,7 +239,7 @@ class WellnessLargeResourceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: AppColors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
+    return Container(decoration: BoxDecoration(color: AppColors.white, border: Border.all(color: AppColors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
       InkWell(onTap: onTap, child:
         Padding(padding: EdgeInsets.only(left: 16), child:
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -271,7 +270,7 @@ class WellnessRegularResourceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return hasBorder ? Container(decoration: BoxDecoration(color: illinois.AppColors.white, border: Border.all(color: AppColors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
+    return hasBorder ? Container(decoration: BoxDecoration(color: AppColors.white, border: Border.all(color: AppColors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
       _buildInterior()
     ) : _buildInterior();
   }

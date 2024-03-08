@@ -18,8 +18,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
-import 'package:rokwire_plugin/gen/styles.dart';
+import 'package:illinois/gen/styles.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -122,7 +121,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
       SliverToutHeaderBar(
           flexImageUrl: randomImageURL,
           flexBackColor: AppColors.fillColorPrimary,
-          flexRightToLeftTriangleColor: illinois.AppColors.white,
+          flexRightToLeftTriangleColor: AppColors.white,
           flexLeftToRightTriangleColor: Colors.transparent),
       SliverList(
           delegate: SliverChildListDelegate([
@@ -421,7 +420,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                   ? ImageSlantHeader(
                       //Only the first item got image
                       imageUrl: news.imageUrl,
-                      slantImageColor: illinois.AppColors.fillColorPrimaryTransparent03,
+                      slantImageColor: AppColors.fillColorPrimaryTransparent03,
                       slantImageKey: 'slant-dark',
                       child: _buildAthleticsNewsCard(news))
                   : _buildAthleticsNewsCard(news);

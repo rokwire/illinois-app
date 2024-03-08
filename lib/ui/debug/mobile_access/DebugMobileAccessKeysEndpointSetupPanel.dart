@@ -18,11 +18,10 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class DebugMobileAccessKeysEndpointSetupPanel extends StatefulWidget {
   DebugMobileAccessKeysEndpointSetupPanel();
@@ -66,9 +65,9 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
             RoundedButton(
                 label: "Register",
                 enabled: (_isRegistered == false),
-                textColor: (_isRegistered == false) ? AppColors.fillColorPrimary : illinois.AppColors.disabledTextColor,
-                borderColor: (_isRegistered == false) ? AppColors.fillColorSecondary : illinois.AppColors.disabledTextColor,
-                backgroundColor: illinois.AppColors.white,
+                textColor: (_isRegistered == false) ? AppColors.fillColorPrimary : AppColors.disabledTextColor,
+                borderColor: (_isRegistered == false) ? AppColors.fillColorSecondary : AppColors.disabledTextColor,
+                backgroundColor: AppColors.white,
                 fontFamily: AppFontFamilies.bold,
                 contentWeight: 0.0,
                 fontSize: 16,
@@ -78,9 +77,9 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
             RoundedButton(
                 label: "Unregister",
                 enabled: (_isRegistered == true),
-                textColor: (_isRegistered == true) ? AppColors.fillColorPrimary : illinois.AppColors.disabledTextColor,
-                borderColor: (_isRegistered == true) ? AppColors.fillColorSecondary : illinois.AppColors.disabledTextColor,
-                backgroundColor: illinois.AppColors.white,
+                textColor: (_isRegistered == true) ? AppColors.fillColorPrimary : AppColors.disabledTextColor,
+                borderColor: (_isRegistered == true) ? AppColors.fillColorSecondary : AppColors.disabledTextColor,
+                backgroundColor: AppColors.white,
                 fontFamily: AppFontFamilies.bold,
                 contentWeight: 0.0,
                 fontSize: 16,
@@ -103,14 +102,14 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
           Semantics(
               textField: true,
               child: Container(
-                  color: illinois.AppColors.white,
+                  color: AppColors.white,
                   child: TextField(
                       maxLines: 2,
                       controller: _invitationCodeController,
                       decoration: InputDecoration(
                           hintText: 'XXXX-XXXX-XXXX-XXXX',
                           border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-                      style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: illinois.AppColors.textBackground)))),
+                      style: TextStyle(fontFamily: AppFontFamilies.regular, fontSize: 16, color: AppColors.textBackground)))),
           Align(
               alignment: Alignment.topRight,
               child: Semantics(

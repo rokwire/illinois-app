@@ -23,7 +23,6 @@ import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -43,7 +42,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class GroupSettingsPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group? group;
@@ -209,7 +208,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         children: <Widget>[
           StringUtils.isNotEmpty(_group?.imageURL) ? Positioned.fill(child:  Semantics(label: "Group Image", child: ModalImageHolder(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders)))) : Container(),
           CustomPaint(
-            painter: TrianglePainter(painterColor: illinois.AppColors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
+            painter: TrianglePainter(painterColor: AppColors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
             child: Container(
               height: 53,
             ),
@@ -270,7 +269,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           children: <Widget>[
             _buildInfoHeader(title,null),
             Container(
-              decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1),color: illinois.AppColors.white),
+              decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1),color: AppColors.white),
               child: Semantics(
                   label: fieldTitle,
                   hint: fieldHint,
@@ -343,7 +342,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         children: <Widget>[
           _buildInfoHeader(title,fieldTitle),
           Container(
-            decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1),color: illinois.AppColors.white),
+            decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1),color: AppColors.white),
             child: Semantics(
                 label: title,
                 hint: fieldHint,
@@ -470,7 +469,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               label: Localization().getStringEx("panel.groups_create.button.attributes.title", "Edit"),
               hint: Localization().getStringEx("panel.groups_create.button.attributes.hint", ""),
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-              backgroundColor: illinois.AppColors.white,
+              backgroundColor: AppColors.white,
               borderColor: AppColors.fillColorSecondary,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               onTap: _onTapAttributes,
@@ -661,7 +660,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       child:
         Container (
           decoration: BoxDecoration(
-              color: illinois.AppColors.white,
+              color: AppColors.white,
               border: Border.all(
                   color: AppColors.surfaceAccent,
                   width: 1),
@@ -757,7 +756,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           _buildInfoHeader(title, null, padding: EdgeInsets.only(bottom: 6, top: 12)),
-          Container(decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1), color: illinois.AppColors.white), child:
+          Container(decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1), color: AppColors.white), child:
             Row(children: [
               Expanded(child:
                   Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, value: _researchConsentDetailsController.text, child:
@@ -794,7 +793,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         Visibility(visible: _researchRequiresConsentConfirmation, child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             _buildInfoHeader(title, null, padding: EdgeInsets.only(bottom: 6, top: 12)),
-            Container(decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1), color: illinois.AppColors.white), child:
+            Container(decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1), color: AppColors.white), child:
               Row(children: [
                 Expanded(child:
                   Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, child:
@@ -802,7 +801,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                         controller: _researchConsentStatementController,
                         maxLines: 5,
                         decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                        style: TextStyle(color: illinois.AppColors.textBackground, fontSize: 16, fontFamily: AppFontFamilies.regular),
+                        style: TextStyle(color: AppColors.textBackground, fontSize: 16, fontFamily: AppFontFamilies.regular),
                     )
                   ),
                 )
@@ -880,7 +879,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Container(
                     decoration: BoxDecoration(
-                        color: illinois.AppColors.white,
+                        color: AppColors.white,
                         border: Border.all(color: AppColors.surfaceAccent, width: 1),
                         borderRadius: BorderRadius.all(Radius.circular(4))),
                     padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
@@ -903,7 +902,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                         Padding(padding: EdgeInsets.only(top: 14), child: Text('*', style: Styles().textStyles.getTextStyle("widget.label.medium.fat")))
                       ]),
                       Container(
-                          decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1), color: illinois.AppColors.white),
+                          decoration: BoxDecoration(border: Border.all(color: AppColors.fillColorPrimary, width: 1), color: AppColors.white),
                           child: TextField(
                             onChanged: _onAuthManGroupNameChanged,
                             enabled: _canUpdate,
@@ -945,7 +944,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   //Buttons
   Widget _buildButtonsLayout() {
-    return SafeArea(child: Container( color: illinois.AppColors.white,
+    return SafeArea(child: Container( color: AppColors.white,
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Center(
         child:
@@ -1215,7 +1214,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         button: true,
         child: Container(
           decoration: BoxDecoration(
-              color: illinois.AppColors.white,
+              color: AppColors.white,
               border: Border.all(color: AppColors.surfaceAccent, width: 1),
               borderRadius: BorderRadius.all(Radius.circular(4))),
           padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
@@ -1262,8 +1261,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   Expanded(flex: negativeButtonFlex, child: RoundedButton(
                       label: StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")),
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.thin"),
-                      borderColor: illinois.AppColors.white,
-                      backgroundColor: illinois.AppColors.white,
+                      borderColor: AppColors.white,
+                      backgroundColor: AppColors.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                       onTap: () {
                         Analytics().logAlert(text: confirmationTextMsg, selection: negativeButtonLabel);
@@ -1273,8 +1272,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   Expanded(flex: positiveButtonFlex, child: RoundedButton(
                     label: positiveButtonLabel ?? '',
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                    borderColor: illinois.AppColors.white,
-                    backgroundColor: illinois.AppColors.white,
+                    borderColor: AppColors.white,
+                    backgroundColor: AppColors.white,
                     padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     progress: _confirmationProgress,
                     onTap: () {

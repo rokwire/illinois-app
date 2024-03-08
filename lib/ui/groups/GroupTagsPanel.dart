@@ -15,7 +15,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/gen/styles.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -24,7 +23,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/gen/styles.dart' as illinois;
+import 'package:illinois/gen/styles.dart';
 
 class GroupTagsPanel extends StatefulWidget {
   final List<String>? selectedTags;
@@ -70,7 +69,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Padding(padding: EdgeInsets.only(top: 12), child: Row(children: [
                 Expanded(child: Container()),
-                RoundedButton(label: Localization().getStringEx('panel.group.tags.button.done.title', 'Done'), textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"), contentWeight: 0.0, borderColor: AppColors.fillColorSecondary, backgroundColor: illinois.AppColors.white, onTap: _onTapDone)
+                RoundedButton(label: Localization().getStringEx('panel.group.tags.button.done.title', 'Done'), textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"), contentWeight: 0.0, borderColor: AppColors.fillColorSecondary, backgroundColor: AppColors.white, onTap: _onTapDone)
               ])),
               Padding(padding: EdgeInsets.only(top: 12), child: _buildSearchWidget()),
               Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.search.label', "SEARCH")))),
