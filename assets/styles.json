@@ -102,7 +102,7 @@
     "thin_italic": "ProximaNovaThinIt"
   },
   "text_style": {
-    "tbd" : " Many buttons do not use Styles, they pass separate properties to the constructor",
+    "_tbd" : " Many buttons do not use Styles, they pass separate properties to the constructor",
 
     "test_base" : {"font_family": "regular", "size": 24.0, "color": "fillColorSecondary"},
     "test_extend" : {"extends": "test_base"},
@@ -115,7 +115,7 @@
     "test_overrides7" : {"extends": "test_overrides4",  "font_family": "bold",  "color": "fillColorSecondary", "inherit" :  false},
     "test_overrides8" : {"extends": "test_overrides3",  "size": 24.0, "color":  "fillColorPrimary", "override" :  false},
     "test_overrides9" : {"extends": "test_overrides3", "size": 24.0, "color": "fillColorPrimary"},
-    "usage" : "Styles().textStyles.getTextStyle()",
+    "_usage" : "Styles().textStyles.getTextStyle()",
 
     "header_bar": { "font_family": "extra_bold", "size": 16.0, "color": "textColorPrimary"},
 
@@ -866,11 +866,11 @@
     "play-circle-white": {"src": "images/icon-watch.png", "type": "flutter.asset", "color": "surface", "size": 32},
     "clock-white": {"src": "f017", "type": "fa.icon", "weight": "regular", "color": "surface", "size": 18},
 
-    "comment-vacuum-start": "Below is a sample for fa pro icons. Remove them when there is no need.",
+    "_comment-vacuum-start": "Below is a sample for fa pro icons. Remove them when there is no need.",
     "lightVacuum": {"src": "0xe04d", "type": "fa.icon", "weight": "light", "color": "fillColorSecondary", "size": 38},
     "thinVacuum": {"src": "0xe04d", "type": "fa.icon", "weight": "thin", "color": "fillColorSecondary", "size": 38},
     "solidVacuum": {"src": "0xe04d", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 38},
-    "comment-vacuum-end": "Above is a sample for fa pro icons. Remove them when there is no need.",
+    "_comment-vacuum-end": "Above is a sample for fa pro icons. Remove them when there is no need.",
 
     "retry-gray": {"src": "0xf2f9", "type": "fa.icon", "weight": "solid", "size": 18.0, "color": "mediumGray"},
     "circle-outline-gray": {"src": "images/oval-orange.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},
