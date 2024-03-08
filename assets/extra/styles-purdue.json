@@ -21,7 +21,7 @@
     "textSurface"                           : "#404040",
     "textSurfaceAccent"                     : "#404040",
     "textBackground"                        : "#404040",
-    "textbackgroundVariant"                 : "#404040",
+    "textBackgroundVariant"                 : "#404040",
 
     "accentColor1"                          : "#CFB991",
     "accentColor2"                          : "#CFB991",

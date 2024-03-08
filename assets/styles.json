@@ -26,8 +26,8 @@
     "textSurfaceAccent"                     :"#404040",
     "textVariant"                           :"#ff494949",
     "textBackground"                        :"#404040",
-    "textbackgroundVariant"                 :"#404040",
-    "textbackgroundVariant2"                 :"#e7e7e7",
+    "textBackgroundVariant"                 :"#404040",
+    "textBackgroundVariant2"                 :"#e7e7e7",
 
     "accentColor1"                          :"#E84A27",
     "accentColor2"                          :"#5FA7A3",
@@ -535,9 +535,9 @@
     "panel.wellness.ring.home.detail.message.fat": {"extends": "widget.info.regular.fat"},
     "panel.wellness.ring.home.popup.heading": {"font_family": "bold", "size": 20.0, "color": "fillColorSecondary"},
     "panel.wellness.ring.home.button.create_ring.title.enabled": {"font_family": "bold", "size": 14.0, "color": "black"},
-    "panel.wellness.ring.home.button.create_ring.title.disabled": {"font_family": "bold", "size": 14.0, "color": "#5c5c5c"},
+    "panel.wellness.ring.home.button.create_ring.title.disabled": {"font_family": "bold", "size": 14.0, "color": "textColorDisabled"},
     "panel.wellness.ring.home.button.create_ring.description.enabled": {"font_family": "bold", "size": 14.0, "color": "black"},
-    "panel.wellness.ring.home.button.create_ring.description.disabled": {"font_family": "regular", "size": 12.0, "color": "#5c5c5c"},
+    "panel.wellness.ring.home.button.create_ring.description.disabled": {"font_family": "regular", "size": 12.0, "color": "textColorDisabled"},
 
     "panel.wellness.todo.content.large_title": {"extends": "widget.title.extra_huge.fat"},
     "panel.wellness.todo.card.title": {"extends": "widget.title.light.medium.fat"},

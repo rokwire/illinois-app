@@ -20,7 +20,7 @@
     "textSurface"                           :"#404040",
     "textSurfaceAccent"                     :"#404040",
     "textBackground"                        :"#404040",
-    "textbackgroundVariant"                 :"#404040",
+    "textBackgroundVariant"                 :"#404040",
 
     "accentColor1"                          :"#E84A27",
     "accentColor2"                          :"#5FA7A3",
