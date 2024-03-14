@@ -6,9 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Acknoledged new application services initialization in parallel [#408](https://github.com/rokwire/app-flutter-plugin/issues/408).
+- Acknowledged new application services initialization in parallel [#408](https://github.com/rokwire/app-flutter-plugin/issues/408).
 ### Fixed
 - Fixed local application services dependencies [#408](https://github.com/rokwire/app-flutter-plugin/issues/408).
+### Added
+- Event cover image description [#4010](https://github.com/rokwire/illinois-app/issues/4010).
 
 ## [5.2.2] - 2024-02-28
 
