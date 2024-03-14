@@ -72,7 +72,7 @@ class GroupSectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(padding: margin, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Semantics(label: title, hint: description, header: true, excludeSemantics: true, child:
+        Semantics(label: _semanticsLabel, hint: description, header: true, excludeSemantics: true, child:
           RichText(text:
             TextSpan(text: title, style: titleTextStyle ?? Styles().textStyles.getTextStyle("widget.title.tiny"),
               children: [
@@ -87,6 +87,8 @@ class GroupSectionTitle extends StatelessWidget {
       ],)
     );
   }
+
+  String? get _semanticsLabel => "$title ${requiredMark == true ? ", required" : ""}";
 }
 
 /////////////////////////////////////
@@ -853,7 +855,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
       //     flex: 1,
       //     child:
       Semantics(
-          label: "post image",
+          label: "Group image",
           button: true,
           hint: "Double tap to zoom the image",
           child: GestureDetector(

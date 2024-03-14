@@ -106,7 +106,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
       if (game != null) {
         cardsList.add(Padding(
             padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0),
-            child: AthleticsEventCard(sportEvent: event, onTap: () => _onTapGame(game), showImage: true)));
+            child: AthleticsEventCard(sportEvent: event, onTap: () => _onTapGame(event), showImage: true)));
       }
     }
     if (_extendingEvents) {
@@ -153,9 +153,9 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
                     strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)))));
   }
 
-  void _onTapGame(Game game) {
+  void _onTapGame(Event2 event) {
     Analytics().logSelect(target: 'Athletics Event');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: game)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game, event: event)));
   }
 
   Events2Query _queryParam({int offset = 0, int limit = _eventsPageLength}) {
@@ -301,14 +301,25 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
     if (CollectionUtils.isNotEmpty(_teamsFilter)) {
       late dynamic sportAttribute;
       if (_teamsFilter!.length == 1) {
-        sportAttribute = _teamsFilter!.first.name;
+        sportAttribute = _getSportFilterKey(_teamsFilter!.first);
       } else {
         sportAttribute = <String>[];
-        sportAttribute = List.from(_teamsFilter!.map((sport) => sport.name));
+        sportAttribute = List.from(_teamsFilter!.map((sport) {
+          return _getSportFilterKey(sport);
+        }));
       }
       attributes.addAll({'sport': sportAttribute});
     }
     return attributes;
+  }
+
+  String? _getSportFilterKey(SportDefinition? sport) {
+    // "Manually" select different property name for these sports because they do not match with labels in Calendar and Sports BB
+    if ((sport?.shortName == 'wrestling') || (sport?.shortName == 'wswim')) {
+      return sport?.customName;
+    } else {
+      return sport?.name;
+    }
   }
 
   bool get _favoritesMode => (widget.showFavorites == true);

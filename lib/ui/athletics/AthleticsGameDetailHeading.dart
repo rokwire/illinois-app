@@ -23,6 +23,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/livestats/LiveGame.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Sports.dart';
@@ -45,9 +46,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 class AthleticsGameDetailHeading extends StatefulWidget {
   final Game? game;
+  final Event2? sportEvent;
   final bool showImageTout;
 
-  AthleticsGameDetailHeading({this.game, this.showImageTout = true});
+  AthleticsGameDetailHeading({this.game, this.sportEvent, this.showImageTout = true});
 
   _AthleticsGameDetailHeadingState createState() => _AthleticsGameDetailHeadingState();
 }
@@ -98,7 +100,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     bool hasScores = sportDefinition?.hasScores ?? false;
     bool hasLiveGame = (Storage().debugDisableLiveGameCheck == true) || LiveStats().hasLiveGame(widget.game?.id);
     bool showScore = hasScores && (widget.game?.isGameDay ?? false) && hasLiveGame;
-    bool isGameFavorite = Auth2().isFavorite(widget.game);
+    bool isSportEventFavorite = Auth2().isFavorite(widget.sportEvent);
     bool isUpcomingGame = widget.game?.isUpcoming ?? false;
     String? liveStatsUrl = widget.game?.links?.liveStats;
     String? audioUrl = widget.game?.links?.audio;
@@ -158,10 +160,10 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   label: Localization().getStringEx("widget.game_detail_heading.button.save_game.title", "Save Game"),
                                   hint: Localization().getStringEx("widget.game_detail_heading.button.save_game.hint", "Tap to save"),
                                   button: true,
-                                  checked: isGameFavorite,
+                                  checked: isSportEventFavorite,
                                   child: GestureDetector(
                                       child: Container(padding: EdgeInsets.only(right: 24, left: 10, bottom: 20, top: 20),
-                                        child: Styles().images.getImage(isGameFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true
+                                        child: Styles().images.getImage(isSportEventFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true
                                       )),
                                       onTap: _onTapSwitchFavorite),
                                 ),
@@ -439,7 +441,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
 
   void _onTapSwitchFavorite() {
     Analytics().logSelect(target: "Favorite: ${widget.game?.title}");
-    Auth2().prefs?.toggleFavorite(widget.game);
+    Auth2().prefs?.toggleFavorite(widget.sportEvent);
   }
 
   void _onTapGetTickets() {

@@ -202,7 +202,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
     Analytics().logSelect(target: "Event: '${event.name}'" , source: widget.runtimeType.toString());
     if (Connectivity().isNotOffline) {
       if (event.hasGame) {
-        Navigator.push(context, CupertinoPageRoute( builder: (context) => AthleticsGameDetailPanel(game: event.game)));
+        Navigator.push(context, CupertinoPageRoute( builder: (context) => AthleticsGameDetailPanel(game: event.game, event: event)));
       } else {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event)));
       }

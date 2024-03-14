@@ -6,8 +6,6 @@ import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/home/HomePanel.dart';
-import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -22,11 +20,6 @@ class HomeWelcomeWidget extends StatefulWidget {
   final StreamController<String>? updateController;
 
   HomeWelcomeWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
-
-  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx("widget.home_create_poll.heading.title", "Polls"),
-    );
 
   @override
   State<HomeWelcomeWidget> createState() => _HomeWelcomeWidgetState();

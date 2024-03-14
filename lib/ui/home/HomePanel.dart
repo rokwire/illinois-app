@@ -39,6 +39,7 @@ import 'package:illinois/ui/home/HomeCheckListWidget.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomeDailyIlliniWidget.dart';
 import 'package:illinois/ui/home/HomeDiningWidget.dart';
+import 'package:illinois/ui/home/HomeEmptyContentWidget.dart';
 import 'package:illinois/ui/home/HomeEvent2Widget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeInboxWidget.dart';
@@ -566,10 +567,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   Widget build(BuildContext context) {
     super.build(context);
 
-    String title = Localization().getStringEx('panel.home.header.title', 'Favorites');
-
     return Scaffold(
-      appBar: RootHeaderBar(title: title),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.home.header.title', 'Favorites')),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
         Column(key: _contentWrapperKey, children: <Widget>[
           Expanded(child:
@@ -587,7 +586,11 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   List<Widget> _buildRegularContentList() {
     List<Widget> widgets = [];
     widgets.addAll(_buildWidgetsFromCodes(_systemCodes));
-    widgets.addAll(_buildWidgetsFromCodes(_favoriteCodes?.reversed, availableCodes: _availableCodes));
+    List<Widget> favWidgets = _buildWidgetsFromCodes(_favoriteCodes?.reversed, availableCodes: _availableCodes);
+    if (favWidgets.isEmpty) {
+      favWidgets.add(HomeEmptyContentWidget());
+    }
+    widgets.addAll(favWidgets);
     return widgets;
   }
 
@@ -620,7 +623,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       return HomeLoginWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
     }
     else if (code == 'welcome') {
-      return HomeWelcomeWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,); //TBD
+      return HomeWelcomeWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
     }
     else {
       dynamic data = HomePanel.dataFromCode(code,

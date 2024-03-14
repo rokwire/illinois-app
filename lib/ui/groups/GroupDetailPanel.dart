@@ -644,18 +644,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildImageHeader(){
-    return StringUtils.isNotEmpty(_group?.imageURL) ? Container(height: 200, color: Styles().colors.background, child:
-      Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-          Positioned.fill(child: ModalImageHolder(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders))),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child:
-            Container(height: 53,),
-          ),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white), child:
-            Container(height: 30,),
-          ),
-        ],
-      ),
-    ) : Container();
+    return StringUtils.isNotEmpty(_group?.imageURL) ? Semantics(label: "group image", hint: "Double tap to zoom", child:
+      Container(height: 200, color: Styles().colors.background, child:
+        Stack(alignment: Alignment.bottomCenter, children: <Widget>[
+            Positioned.fill(child: ModalImageHolder(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders))),
+            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child:
+              Container(height: 53,),
+            ),
+            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white), child:
+              Container(height: 30,),
+            ),
+          ],
+        ),
+      )
+    ): Container();
   }
 
   Widget _buildGroupInfo() {
