@@ -11,21 +11,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed local application services dependencies [#408](https://github.com/rokwire/app-flutter-plugin/issues/408).
 
 ## [5.2.2] - 2024-02-28
-### Added
-- Created HomeEmptyContentWidget displayed when there is no favorites content [#3999](https://github.com/rokwire/illinois-app/issues/3999).
 
 ## [5.2.1] - 2024-02-27
 ### Changed
 - Upgrade to Flutter 3.19.0 [#3997](https://github.com/rokwire/illinois-app/issues/3997).
-- Acknowledged "Assistant Managed" group for enabling Assistant UI [#4002](https://github.com/rokwire/illinois-app/issues/4002).
-### Fixed
-- Trim URL links before launching them, report URL parse failure when confirming URLs [#4001](https://github.com/rokwire/illinois-app/issues/4001).
 
 ## [5.2.0] - 2024-02-20
-### Fixed
-- Correct filtering of sport events [#3986](https://github.com/rokwire/illinois-app/issues/3986).
 ### Changed
 - Replaced the depreciated widget WillPopScope with new PopScope widget [#3832](https://github.com/rokwire/illinois-app/issues/3832).
+
+## [5.1.33] - 2024-03-14
+### Added
+- Created HomeEmptyContentWidget displayed when there is no favorites content [#3999](https://github.com/rokwire/illinois-app/issues/3999).
+### Changed
+- Acknowledged "Assistant Managed" group for enabling Assistant UI [#4002](https://github.com/rokwire/illinois-app/issues/4002).
+### Fixed
+- Correct filtering of sport events [#3986](https://github.com/rokwire/illinois-app/issues/3986).
+- Trim URL links before launching them, report URL parse failure when confirming URLs [#4001](https://github.com/rokwire/illinois-app/issues/4001).
 
 ## [5.1.32] - 2024-02-19
 ### Removed
