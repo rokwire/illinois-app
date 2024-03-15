@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Event cover image description [#4010](https://github.com/rokwire/illinois-app/issues/4010).
 ### Fixed
 - Show event registration label if available [#4012](https://github.com/rokwire/illinois-app/issues/4012).
+- Fix Settings and Profile deep links [#4014](https://github.com/rokwire/illinois-app/issues/4014).
 
 ## [5.2.2] - 2024-02-28
 
