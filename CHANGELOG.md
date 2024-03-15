@@ -9,11 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Acknowledged new application services initialization in parallel [#408](https://github.com/rokwire/app-flutter-plugin/issues/408).
 ### Fixed
 - Fixed local application services dependencies [#408](https://github.com/rokwire/app-flutter-plugin/issues/408).
-### Added
-- Event cover image description [#4010](https://github.com/rokwire/illinois-app/issues/4010).
-### Fixed
-- Show event registration label if available [#4012](https://github.com/rokwire/illinois-app/issues/4012).
-- Fix Settings and Profile deep links [#4014](https://github.com/rokwire/illinois-app/issues/4014).
 
 ## [5.2.2] - 2024-02-28
 
@@ -24,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [5.2.0] - 2024-02-20
 ### Changed
 - Replaced the depreciated widget WillPopScope with new PopScope widget [#3832](https://github.com/rokwire/illinois-app/issues/3832).
+
+## [5.1.34] - 2024-03-15
+### Added
+- Event cover image description [#4010](https://github.com/rokwire/illinois-app/issues/4010).
+### Fixed
+- Show event registration label if available [#4012](https://github.com/rokwire/illinois-app/issues/4012).
+- Fix Settings and Profile deep links [#4014](https://github.com/rokwire/illinois-app/issues/4014).
 
 ## [5.1.33] - 2024-03-14
 ### Added
