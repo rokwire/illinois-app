@@ -1,0 +1,71 @@
+{
+	"1": {
+		"feedback_url":"sms:55744?body=TXTIKE%20{{body}}",
+		"feedback_url~ios":"sms:55744&body=TXTIKE%20{{body}}",
+		"dietician_url":"sms:55744?body=TXTRDN%20{{body}}",
+		"dietician_url~ios":"sms:55744&body=TXTRDN%20{{body}}"
+	},
+	"7": {
+		"feedback_url":"sms:55744?body=TXTIKE%20{{body}}",
+		"feedback_url~ios":"sms:55744&body=TXTIKE%20{{body}}",
+		"dietician_url":"sms:55744?body=TXTRDN%20{{body}}",
+		"dietician_url~ios":"sms:55744&body=TXTRDN%20{{body}}"
+	},
+	"9": {
+		"feedback_url":"sms:55744?body=TXTIKE%20{{body}}",
+		"feedback_url~ios":"sms:55744&body=TXTIKE%20{{body}}",
+		"dietician_url":"sms:55744?body=TXTRDN%20{{body}}",
+		"dietician_url~ios":"sms:55744&body=TXTRDN%20{{body}}"
+	},
+
+	"2": {
+		"feedback_url":"sms:55744?body=TXTPAR%20{{body}}",
+		"feedback_url~ios":"sms:55744&body=TXTPAR%20{{body}}",
+		"dietician_url":"sms:55744?body=TXTRDN%20{{body}}",
+		"dietician_url~ios":"sms:55744&body=TXTRDN%20{{body}}"
+	},
+	"14": {
+		"feedback_url":"sms:55744?body=TXTPAR%20{{body}}",
+		"feedback_url~ios":"sms:55744&body=TXTPAR%20{{body}}",
+		"dietician_url":"sms:55744?body=TXTRDN%20{{body}}",
+		"dietician_url~ios":"sms:55744&body=TXTRDN%20{{body}}"
+	},
+
+	"5": {
+		"feedback_url":"sms:55744?body=TXTLAR%20{{body}}",
+		"feedback_url~ios":"sms:55744&body=TXTLAR%20{{body}}",
+		"dietician_url":"sms:55744?body=TXTRDN%20{{body}}",
+		"dietician_url~ios":"sms:55744&body=TXTRDN%20{{body}}"
+	},
+	"12": {
+		"feedback_url":"sms:55744?body=TXTLAR%20{{body}}",
+		"feedback_url~ios":"sms:55744&body=TXTLAR%20{{body}}",
+		"dietician_url":"sms:55744?body=TXTRDN%20{{body}}",
+		"dietician_url~ios":"sms:55744&body=TXTRDN%20{{body}}"
+	},
+	"23": {
+		"feedback_url":"sms:55744?body=TXTLAR%20{{body}}",
+		"feedback_url~ios":"sms:55744&body=TXTLAR%20{{body}}",
+		"dietician_url":"sms:55744?body=TXTRDN%20{{body}}",
+		"dietician_url~ios":"sms:55744&body=TXTRDN%20{{body}}"
+	},
+	
+	"3": {
+		"feedback_url":"sms:55744?body=TXTISR%20{{body}}",
+		"feedback_url~ios":"sms:55744&body=TXTISR%20{{body}}",
+		"dietician_url":"sms:55744?body=TXTRDN%20{{body}}",
+		"dietician_url~ios":"sms:55744&body=TXTRDN%20{{body}}"
+	},
+	"18": {
+		"feedback_url":"sms:55744?body=TXTISR%20{{body}}",
+		"feedback_url~ios":"sms:55744&body=TXTISR%20{{body}}",
+		"dietician_url":"sms:55744?body=TXTRDN%20{{body}}",
+		"dietician_url~ios":"sms:55744&body=TXTRDN%20{{body}}"
+	},
+	"30": {
+		"feedback_url":"sms:55744?body=TXTISR%20{{body}}",
+		"feedback_url~ios":"sms:55744&body=TXTISR%20{{body}}",
+		"dietician_url":"sms:55744?body=TXTRDN%20{{body}}",
+		"dietician_url~ios":"sms:55744&body=TXTRDN%20{{body}}"
+	}
+}

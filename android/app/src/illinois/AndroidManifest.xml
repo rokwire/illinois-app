@@ -16,6 +16,8 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools">
+    <!-- For Mobile Access vibration feature -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <queries>
         <package android:name="edu.illinois.covid" />

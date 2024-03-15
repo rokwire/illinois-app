@@ -14,7 +14,7 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -27,17 +27,21 @@ import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentCard.dart';
+import 'package:illinois/ui/appointments/AppointmentCard.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -62,9 +66,10 @@ class HomeFavoritesWidget extends StatefulWidget {
   static String? titleFromKey({required String favoriteKey}) {
     switch(favoriteKey) {
       case Event.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.events', 'My Events');
+      case Event2.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.events2', 'My Events');
       case Dining.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.dining', 'My Dining Locations');
-      case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.athletics', 'My Athletics Events');
-      case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.news', 'My Athletics News');
+      case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.athletics', 'My Big 10 Events');
+      case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.news', 'My Big 10 News');
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.laundry', 'My Laundry');
       case MTDStop.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.mtd_stops', 'My Bus Stops');
       case ExplorePOI.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.mtd_destinations', 'My Destinations');
@@ -81,9 +86,10 @@ class HomeFavoritesWidget extends StatefulWidget {
     String? message;
     switch(key) {
       case Event.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.events", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Events</b></a> for quick access here."); break;
+      case Event2.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.events2", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Events Feed</b></a> for quick access here."); break;
       case Dining.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.dining", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Dining</b></a> for quick access here."); break;
-      case Game.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.athletics", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Athletics Events</b></a> for quick access here."); break;
-      case News.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.news", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Athletics News</b></a> for quick access here."); break;
+      case Game.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.athletics", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Big 10 Events</b></a> for quick access here."); break;
+      case News.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.news", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Big 10 News</b></a> for quick access here."); break;
       case LaundryRoom.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.laundry", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Laundry Locations</b></a> for quick access here."); break;
       case MTDStop.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.mtd_stops", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Bus Stops</b></a> for quick access here."); break;
       case ExplorePOI.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.mtd_destinations", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>My Destinations</b></a> for quick access here."); break;
@@ -99,15 +105,16 @@ class HomeFavoritesWidget extends StatefulWidget {
 
   static Color? linkColor(String key) {
     switch(key) {
-      case Event.favoriteKeyName: return Styles().colors?.eventColor;
-      case Dining.favoriteKeyName: return Styles().colors?.diningColor;
-      case Game.favoriteKeyName: return Styles().colors?.fillColorPrimary;
-      case News.favoriteKeyName: return Styles().colors?.fillColorPrimary;
-      case LaundryRoom.favoriteKeyName: return Styles().colors?.accentColor2;
-      case MTDStop.favoriteKeyName: return Styles().colors?.accentColor3;
-      case ExplorePOI.favoriteKeyName: return Styles().colors?.accentColor3;
-      case GuideFavorite.favoriteKeyName: return Styles().colors?.accentColor3;
-      case Appointment.favoriteKeyName: return Styles().colors?.accentColor3;
+      case Event.favoriteKeyName: return Styles().colors.eventColor;
+      case Event2.favoriteKeyName: return Styles().colors.eventColor;
+      case Dining.favoriteKeyName: return Styles().colors.diningColor;
+      case Game.favoriteKeyName: return Styles().colors.fillColorPrimary;
+      case News.favoriteKeyName: return Styles().colors.fillColorPrimary;
+      case LaundryRoom.favoriteKeyName: return Styles().colors.accentColor2;
+      case MTDStop.favoriteKeyName: return Styles().colors.accentColor3;
+      case ExplorePOI.favoriteKeyName: return Styles().colors.accentColor3;
+      case GuideFavorite.favoriteKeyName: return Styles().colors.accentColor3;
+      case Appointment.favoriteKeyName: return Styles().colors.accentColor3;
     }
     return null;
   }
@@ -258,12 +265,13 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       Padding(padding: EdgeInsets.only(top: 8), child:
         contentWidget,
       ),
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount),
-      LinkButton(
-        title: Localization().getStringEx('panel.saved.button.all.title', 'View All'),
-        hint: _viewAllHint,
-        onTap: _onTapViewAll,
-      )      
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
+        LinkButton(
+          title: Localization().getStringEx('panel.saved.button.all.title', 'View All'),
+          hint: _viewAllHint,
+          onTap: _onTapViewAll,
+        )      
+      ),
     ]);
   }
 
@@ -274,7 +282,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
         explore: item,
         showTopBorder: true,
         horizontalPadding: 0,
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         onTap:() => _onTapItem(item)
       );
     }
@@ -295,20 +303,20 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     Color? headerColor = item?.favoriteHeaderColor;
     String? title = item?.favoriteTitle;
     String? cardDetailText = item?.favoriteDetailText;
-    Color? cardDetailTextColor = item?.favoriteDetailTextColor ?? Styles().colors?.textBackground;
+    Color? cardDetailTextColor = item?.favoriteDetailTextColor ?? Styles().colors.textBackground;
     Widget? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? item?.favoriteDetailIcon : null;
     bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
     return GestureDetector(onTap: () => _onTapItem(item), child:
       Semantics(label: title, child:
         Column(children: <Widget>[
           Container(height: 7, color: headerColor,),
-          Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
+          Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Flex(direction: Axis.vertical, children: <Widget>[
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
                       Expanded(child:
-                        Text(title ?? '', semanticsLabel: "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20), ),
+                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.title.medium.extra_fat")),
                       ),
                       Visibility(visible: Auth2().canFavorite && (favoriteStarIcon != null), child:
                         GestureDetector(behavior: HitTestBehavior.opaque, onTap: () => _onTapFavoriteStar(item), child:
@@ -334,10 +342,10 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
                         Row(children: <Widget>[
                           Padding(padding: EdgeInsets.only(right: 10), child: cardDetailImage,),
                           Expanded(child:
-                            Text(cardDetailText ?? '', semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: cardDetailTextColor)),
+                            Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.detail.medium")?.copyWith(color: cardDetailTextColor)),
                           )
                         ],) :
-                        Text(cardDetailText ?? '', semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: cardDetailTextColor)),
+                        Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.detail.medium")?.copyWith(color: cardDetailTextColor)),
                   )),)
                 ]),
               ),
@@ -348,7 +356,9 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   void _refreshFavorites({bool showProgress = true}) {
     if (Connectivity().isOnline) {
-      LinkedHashSet<String> refFavoriteIds = Auth2().prefs?.getFavorites(widget.favoriteKey) ?? LinkedHashSet<String>();
+      // Games are loaded from Events2, so use events key.
+      String? favoritesKey = (widget.favoriteKey == Game.favoriteKeyName) ? Event2.favoriteKeyName : widget.favoriteKey;
+      LinkedHashSet<String> refFavoriteIds = Auth2().prefs?.getFavorites(favoritesKey) ?? LinkedHashSet<String>();
       if (!DeepCollectionEquality().equals(_favoriteIds, refFavoriteIds)) {
         _initFavorites(refFavoriteIds, showProgress: showProgress);
       }
@@ -428,6 +438,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     if (CollectionUtils.isNotEmpty(favoriteIds)) {
       switch(widget.favoriteKey) {
         case Event.favoriteKeyName: return _loadFavoriteEvents(favoriteIds);
+        case Event2.favoriteKeyName: return _loadFavoriteEvents2(favoriteIds);
         case Dining.favoriteKeyName: return _loadFavoriteDinings(favoriteIds);
         case Game.favoriteKeyName: return _loadFavoriteGames(favoriteIds);
         case News.favoriteKeyName: return _loadFavoriteNews(favoriteIds);
@@ -444,11 +455,14 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   Future<List<Favorite>?> _loadFavoriteEvents(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Events().loadEventsByIds(favoriteIds), favoriteIds) : null;
 
+  Future<List<Favorite>?> _loadFavoriteEvents2(LinkedHashSet<String>? favoriteIds) async =>
+    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Events2().loadEventsList(Events2Query(ids: favoriteIds)), favoriteIds) : null;
+
   Future<List<Favorite>?> _loadFavoriteDinings(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Dinings().loadBackendDinings(false, null, null), favoriteIds) : null;
 
   Future<List<Favorite>?> _loadFavoriteGames(LinkedHashSet<String>? favoriteIds) async =>
-    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Sports().loadGames(), favoriteIds) : null;
+    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Events2().loadEventsList(Events2Query(ids: favoriteIds, attributes: {'category': Events2.sportEventCategory})), favoriteIds) : null;
 
   Future<List<Favorite>?> _loadFavoriteNews(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Sports().loadNews(null, 0), favoriteIds) : null;
@@ -523,12 +537,12 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   Widget _buildEmpty() {
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-      Container(decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         padding: EdgeInsets.all(16),
         child:  HtmlWidget(
             HomeFavoritesWidget.emptyMessageHtml(widget.favoriteKey) ?? '',
             onTapUrl : (url) {HomeFavoritesWidget.handleLocalUrl(url, context: context, analyticsTarget: 'View Home', analyticsSource: 'HomeFavoritesWidget(${widget.favoriteKey})'); return true;},
-            textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+            textStyle:  Styles().textStyles.getTextStyle("widget.card.detail.regular"),
             customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(HomeFavoritesWidget.linkColor(widget.favoriteKey) ?? Colors.red)} : null
         )
       ),
@@ -542,6 +556,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   String? get headingIconKey {
     switch(widget.favoriteKey) {
       case Event.favoriteKeyName: return 'calendar';
+      case Event2.favoriteKeyName: return 'calendar';
       case Dining.favoriteKeyName: return 'dining';
       case Game.favoriteKeyName: return 'athletics';
       case News.favoriteKeyName: return 'news';
@@ -557,9 +572,10 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   String? get _offlineMessage {
     switch(widget.favoriteKey) {
       case Event.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.events', 'My Events are not available while offline.');
+      case Event2.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.events2', 'My Events are not available while offline.');
       case Dining.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.dining', 'My Dining Locations are not available while offline.');
-      case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.athletics', 'My Athletics Events are not available while offline.');
-      case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.news', 'My Athletics News are not available while offline.');
+      case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.athletics', 'My Big 10 Events is not available while offline');
+      case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.news', 'My Big 10 News is not available while offline.');
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.laundry', 'My Laundry are not available while offline.');
       case MTDStop.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.mtd_stops', 'My Bus Stops are not available while offline.');
       case ExplorePOI.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.mtd_destinations', 'My Destinations are not available while offline.');
@@ -572,6 +588,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   String? get _viewAllHint {
     switch(widget.favoriteKey) {
       case Event.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.events', 'Tap to view all favorite events');
+      case Event2.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.events', 'Tap to view all favorite events');
       case Dining.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.dining', 'Tap to view all favorite dinings');
       case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.athletics', 'Tap to view all favorite athletics events');
       case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.news', 'Tap to view all favorite athletics news');
@@ -596,10 +613,14 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   void _onTapViewAll() {
     Analytics().logSelect(target: 'View All', source: '${widget.runtimeType.toString()}(${widget.favoriteKey})');
-    if ((widget.favoriteKey == MTDStop.favoriteKeyName) || (widget.favoriteKey == ExplorePOI.favoriteKeyName)) {
-      FavoriteExt.launchHome(context, key: widget.favoriteKey);
-    }
-    else {
+    //FavoriteExt.launchHome(context, key: widget.favoriteKey);
+    if (widget.favoriteKey == MTDStop.favoriteKeyName) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.my)));
+    } else if(widget.favoriteKey == Game.favoriteKeyName) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.my_events)));
+    } else if(widget.favoriteKey == News.favoriteKeyName) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.my_news)));
+    } else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [widget.favoriteKey]); } ));
     }
   }

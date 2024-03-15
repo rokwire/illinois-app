@@ -1,0 +1,394 @@
+{
+	"description":[
+		{"level":1, "key": "privacy.category.description.1", "text": "You may not be able to use all features, but you are anonymous, and we don't ask you for any identifying information or store any data. Anonymous data will be collected and used to optimize app performance."},
+		{"level":2, "key": "privacy.category.description.2", "text": "See what's happening around you. We use Wi-Fi and Bluetooth location services to improve your experience, but we never store that data."},
+		{"level":3, "key": "privacy.category.description.3", "text": "You can personalize and customize the app. Wi-Fi and Bluetooth location data is stored over time to make recommendations and improve your overall app experience."},
+		{"level":4, "key": "privacy.category.description.4", "text": "Let the app work for you.\nYou can access your i-card, use Illini ID, and get notifications based on your specific interests."},
+		{"level":5, "key": "privacy.category.description.5", "text": "Access all features, get connected to campus, and let the app suggest tailored experiences that you and your friends can all enjoy."}
+	],
+	"categories":[
+		{
+			"title":"Events and Dining \nAround Campus",
+			"title_key": "privacy.category.event_and_dining.title",
+			"entries2": [
+				{
+					"min_level": 1,
+					"icon_resource": "view-dark",
+					"off_icon_resource": "view-dark",
+					"title" : "View Only",
+					"title_key" :"privacy.entry.event_and_dining.view.only.title",
+					"description" : "View events and dining locations around campus.",
+					"description_key" :"privacy.entry.event_and_dining.view.only.description",
+					"dataUsage" : "These features do not use or store your location.",
+					"dataUsage_key" :"privacy.entry.event_and_dining.view.only.data_usage"
+				},
+				{
+					"min_level": 2,
+					"icon_resource": "location-dark",
+					"off_icon_resource": "location-disabled-dark",
+					"title" : "Location Sharing",
+					"title_key" :"privacy.entry.event_and_dining.location.sharing.title",
+					"description" : "View events and dining locations near you.",
+					"description_key" :"privacy.entry.event_and_dining.location.sharing.description",
+					"dataUsage" : "This feature uses location services but does not store your location.",
+					"dataUsage_key" :"privacy.entry.event_and_dining.location.sharing.data_usage"
+				},
+				{
+					"min_level": 3,
+					"icon_resource": "sliders-dark",
+					"off_icon_resource": "sliders-disabled-dark",
+					"title" : "Personalizations",
+					"title_key" :"privacy.entry.event_and_dining.personalizations.title",
+					"description" : "View events and dining locations near you.",
+					"description_key" :"privacy.entry.event_and_dining.personalizations.description",
+					"dataUsage" : "This feature uses location services, personal information and items you have starred in the app.",
+					"dataUsage_key" :"privacy.entry.event_and_dining.personalizations.data_usage"
+				},
+				{
+					"min_level": 4,
+					"icon_resource": "notification-dark",
+					"off_icon_resource": "notification-disabled-dark",
+					"title" : "Notifications",
+					"title_key" :"privacy.entry.event_and_dining.notifications.title",
+					"description" : "Get notifications including reminders about events you have starred in the app.",
+					"description_key" :"privacy.entry.event_and_dining.notifications.description",
+					"dataUsage" : "This feature sends notifications utilizing location services, personal information and places you have starred in the app.",
+					"dataUsage_key" :"privacy.entry.event_and_dining.notifications.data_usage"
+				}
+			]
+		},
+		{
+			"title":"Athletics",
+			"title_key": "privacy.category.athletics.title",
+			"entries2": [
+				{
+					"min_level": 1,
+					"icon_resource": "view-dark",
+					"off_icon_resource": "view-dark",
+					"title" : "View Only",
+					"title_key" :"privacy.entry.athletics.view.only.title",
+					"description" : "See all upcoming schedules for athletic events, real-time scoring, rosters and athletic news.",
+					"description_key" :"privacy.entry.athletics.view.only.description",
+					"dataUsage" : "This feature does not use or store your location.",
+					"dataUsage_key" :"privacy.entry.athletics.view.only.data_usage"
+				},
+				{
+					"min_level": 2,
+					"icon_resource": "location-dark",
+					"off_icon_resource": "location-disabled-dark",
+					"title" : "Location Sharing",
+					"title_key" :"privacy.entry.athletics.location.sharing.title",
+					"description" : "Find seats, nearby restrooms & concession stands. See real-time parking availability and directions.",
+					"description_key" :"privacy.entry.athletics.location.sharing.description",
+					"dataUsage" : "This feature uses location services but does not store your location.",
+					"dataUsage_key" :"privacy.entry.athletics.location.sharing.data_usage"
+				},
+				{
+					"min_level": 3,
+					"icon_resource": "sliders-dark",
+					"off_icon_resource": "sliders-disabled-dark",
+					"title" : "Personalizations",
+					"title_key" :"privacy.entry.athletics.personalizations.title",
+					"description" : "Customize your experience to see schedules, rosters, scores and news for your favorite Illini teams.",
+					"description_key" :"privacy.entry.athletics.personalizations.description",
+					"dataUsage" : "This feature uses location services, personal preferences and events you have starred in the app.",
+					"dataUsage_key" :"privacy.entry.athletics.personalizations.data_usage"
+				},
+				{
+					"min_level": 4,
+					"icon_resource": "notification-dark",
+					"off_icon_resource": "notification-disabled-dark",
+					"title" : "Notifications",
+					"title_key" :"privacy.entry.athletics.notifications.title",
+					"description" : "Receive notifications of event start and final scores for your favorite teams.",
+					"description_key" :"privacy.entry.athletics.notifications.description",
+					"dataUsage" : "This feature uses location services, personal preferences and events you have starred in the app.",
+					"dataUsage_key" :"privacy.entry.athletics.notifications.data_usage"
+				}
+			]
+		},
+		{
+			"title":"Wallet",
+			"title_key": "privacy.category.wallet.title",
+			"entries2": [
+				{
+					"min_level": 4,
+					"icon_resource": "sliders-dark",
+					"off_icon_resource": "sliders-disabled-dark",
+					"title" : "Personalizations",
+					"title_key" :"privacy.entry.wallet.personalizations.title",
+					"description" : "Check your Illini ID, MTD bus pass, Illini Cash, Meal Plan balances and see past transactions.",
+					"description_key" :"privacy.entry.wallet.personalizations.description",
+					"dataUsage" : "These features use your personal university credentials.",
+					"dataUsage_key" :"privacy.entry.wallet.personalizations.data_usage"
+				},
+				{
+					"min_level": 4,
+					"icon_resource": "person-dark",
+					"off_icon_resource": "person-disabled-dark",
+					"title" : "Identity",
+					"title_key" :"privacy.entry.wallet.sharing.title",
+					"description" : "Check your Illini ID, MTD bus pass, Illini Cash, Meal Plan balances and see past transactions.",
+					"description_key" :"privacy.entry.wallet.sharing.description",
+					"dataUsage" : "These features use your personal university credentials.",
+					"dataUsage_key" :"privacy.entry.wallet.sharing.data_usage"
+				}
+			]
+		},
+		{
+			"title":"Health and Wellness",
+			"title_key": "privacy.category.health.title",
+			"entries2": [
+				{
+					"min_level": 1,
+					"icon_resource": "view-dark",
+					"off_icon_resource": "view-dark",
+					"title" : "View Only",
+					"title_key" :"privacy.entry.health.view.only.title",
+					"description" : "Locate and connect to resources to assist you with your EIGHT DIMENSIONS of health and wellness.",
+					"description_key" :"privacy.entry.health.view.only.description",
+					"dataUsage" : "This feature does not use or store your location.",
+					"dataUsage_key" :"privacy.entry.health.view.only.data_usage"
+				},
+				{
+					"min_level": 2,
+					"icon_resource": "location-dark",
+					"off_icon_resource": "location-disabled-dark",
+					"title" : "Location Sharing",
+					"title_key" :"privacy.entry.health.location.sharing.title",
+					"description" : "Get wayfinding assistance to health and wellness resources on campus.",
+					"description_key" :"privacy.entry.health.location.sharing.description",
+					"dataUsage" : "This feature uses location services but does not store your location.",
+					"dataUsage_key" :"privacy.entry.health.location.sharing.data_usage"
+				},
+				{
+					"min_level": 4,
+					"icon_resource": "notifications-blue.png",
+					"off_icon_resource": "notifications-blue-off.png",
+					"title" : "Notifications",
+					"title_key" :"privacy.entry.health.notifications.title",
+					"description" : "Get notifications of upcoming appointments and additional screening you should take.",
+					"description_key" :"privacy.entry.health.notifications.description",
+					"dataUsage" : "This feature sends notifications based on your upcoming appointments and screenings.",
+					"dataUsage_key" :"privacy.entry.health.notifications.data_usage"
+				}
+			]
+		},
+		{
+			"title":"Wayfinding",
+			"title_key": "privacy.category.wayfinding.title",
+			"entries2": [
+				{
+					"min_level": 1,
+					"icon_resource": "view-dark",
+					"off_icon_resource": "view-dark",
+					"title" : "View Only",
+					"title_key" :"privacy.entry.wayfinding.view.only.title",
+					"description" : "View a map of campus with places of interest, MTD bus stops and schedules.",
+					"description_key" :"privacy.entry.wayfinding.view.only.description",
+					"dataUsage" : "This feature does not use or store your location.",
+					"dataUsage_key" :"privacy.entry.wayfinding.view.only.data_usage"
+				},
+				{
+					"min_level": 2,
+					"icon_resource": "location-dark",
+					"off_icon_resource": "location-disabled-dark",
+					"title" : "Location Sharing",
+					"title_key" :"privacy.entry.wayfinding.location.sharing.title",
+					"description" : "View a map of campus with places of interest, MTD bus destinations and stops with bus directions.",
+					"description_key" :"privacy.entry.wayfinding.location.sharing.description",
+					"dataUsage" : "This feature uses location services but does not store your location.",
+					"dataUsage_key" :"privacy.entry.wayfinding.location.sharing.data_usage"
+				},
+				{
+					"min_level": 3,
+					"icon_resource": "sliders-dark",
+					"off_icon_resource": "sliders-disabled-dark",
+					"title" : "Personalizations",
+					"title_key" :"privacy.entry.wayfinding.personalizations.title",
+					"description" : "Navigate campus with places of interest to you.",
+					"description_key" :"privacy.entry.wayfinding.personalizations.description",
+					"dataUsage" : "This feature uses location services, personal information and places you have starred in the app.",
+					"dataUsage_key" :"privacy.entry.wayfinding.personalizations.data_usage"
+				},
+				{
+					"min_level": 4,
+					"icon_resource": "notification-dark",
+					"off_icon_resource": "notification-disabled-dark",
+					"title" : "Notifications",
+					"title_key" :"privacy.entry.wayfinding.notifications.title",
+					"description" : "Receive personalized notifications based on your location.",
+					"description_key" :"privacy.entry.wayfinding.notifications.description",
+					"dataUsage" : "This feature sends notifications utilizing location services, personal information and places you have starred in the app.",
+					"dataUsage_key" :"privacy.entry.wayfinding.notifications.data_usage"
+				},
+				{
+					"min_level": 5,
+					"icon_resource": "share-dark",
+					"off_icon_resource": "share-disabled-dark",
+					"title" : "Sharing",
+					"title_key" :"privacy.entry.wayfinding.sharing.title",
+					"description" : "Potentially share your location with others.",
+					"description_key" :"privacy.entry.wayfinding.sharing.description",
+					"dataUsage" : "This feature uses location services and may share your location with others.",
+					"dataUsage_key" :"privacy.entry.wayfinding.sharing.data_usage"
+				}
+			]
+		},
+		{
+			"title":"Groups",
+			"title_key": "privacy.category.groups.title",
+			"entries2": [
+				{
+					"min_level": 1,
+					"icon_resource": "view-dark",
+					"off_icon_resource": "view-dark",
+					"title" : "View Only",
+					"title_key" :"privacy.entry.groups.view.only.title",
+					"description" : "View a list of existing groups.",
+					"description_key" :"privacy.entry.groups.view.only.description",
+					"dataUsage" : "This feature does not use any of your data.",
+					"dataUsage_key" :"privacy.entry.groups.view.only.data_usage"
+				},
+				{
+					"min_level": 2,
+					"icon_resource": "location-dark",
+					"off_icon_resource": "location-disabled-dark",
+					"title" : "Location Sharing",
+					"title_key" :"privacy.entry.groups.location.sharing.title",
+					"description" : "View a list of existing groups.",
+					"description_key" :"privacy.entry.groups.location.sharing.description",
+					"dataUsage" : "This feature does not use any of your data.",
+					"dataUsage_key" :"privacy.entry.groups.location.sharing.data_usage"
+				},
+				{
+					"min_level": 3,
+					"icon_resource": "sliders-dark",
+					"off_icon_resource": "sliders-disabled-dark",
+					"title" : "Personalizations",
+					"title_key" :"privacy.entry.groups.personalizations.title",
+					"description" : "View a list of existing groups.",
+					"description_key" :"privacy.entry.groups.personalizations.description",
+					"dataUsage" : "This feature does not use any of your data.",
+					"dataUsage_key" :"privacy.entry.groups.personalizations.data_usage"
+				},
+				{
+					"min_level": 4,
+					"icon_resource": "notification-dark",
+					"off_icon_resource": "notification-disabled-dark",
+					"title" : "Notifications",
+					"title_key" :"privacy.entry.groups.notifications.title",
+					"description" : "Join, view and interact with groups when signed in. Get notifications on group events, posts and polls for groups you belong to.",
+					"description_key" :"privacy.entry.groups.notifications.description",
+					"dataUsage" : "These features use information that you and others contribute to a group.",
+					"dataUsage_key" :"privacy.entry.groups.notifications.data_usage"
+				},
+				{
+					"min_level": 5,
+					"icon_resource": "share-dark",
+					"off_icon_resource": "share-disabled-dark",
+					"title" : "Sharing",
+					"title_key" :"privacy.entry.groups.sharing.title",
+					"description" : "Create group events, posts and polls for groups you belong to.",
+					"description_key" :"privacy.entry.groups.sharing.description",
+					"dataUsage" : "These features share information that you contribute to a group.",
+					"dataUsage_key" :"privacy.entry.groups.sharing.data_usage"
+				}
+			]
+		},
+		{
+			"title":"General",
+			"title_key": "privacy.category.general.title",
+			"entries2": [
+				{
+					"min_level": 1,
+					"icon_resource": "view-dark",
+					"off_icon_resource": "view-dark",
+					"title" : "View Only",
+					"title_key" :"privacy.entry.general.view.only.title",
+					"description" : "View your building access, campus guides, crisis help, campus reminders, due date catalog, the Illinois Twitter feed, etc.",
+					"description_key" :"privacy.entry.general.view.only.description",
+					"dataUsage" : "Building access and due date catalog require a university sign in.",
+					"dataUsage_key" :"privacy.entry.general.view.only.data_usage"
+				},
+				{
+					"min_level": 2,
+					"icon_resource": "location-dark",
+					"off_icon_resource": "location-disabled-dark",
+					"title" : "Location Sharing",
+					"title_key" :"privacy.entry.general.location.sharing.title",
+					"description" : "View your building access, campus guides, crisis help, campus reminders, due date catalog and the Illinois Twitter feed.",
+					"description_key" :"privacy.entry.general.location.sharing.description",
+					"dataUsage" : "Building access and due date catalog require a university sign in.",
+					"dataUsage_key" :"privacy.entry.general.location.sharing.data_usage"
+				},
+				{
+					"min_level": 3,
+					"icon_resource": "sliders-dark",
+					"off_icon_resource": "sliders-disabled-dark",
+					"title" : "Personalizations",
+					"title_key" :"privacy.entry.general.personalizations.title",
+					"description" : "View your Research projects, building access, campus guides, crisis help, campus reminders, due date catalog, the Illinois Twitter feed, etc.",
+					"description_key" :"privacy.entry.general.personalizations.description",
+					"dataUsage" : "Research projects, building access and due date catalog require a university sign in. Your answers to a Research interest form are used to qualify you to participate in a research project.",
+					"dataUsage_key" :"privacy.entry.general.personalizations.data_usage"
+				},
+				{
+					"min_level": 4,
+					"icon_resource": "notification-dark",
+					"off_icon_resource": "notification-disabled-dark",
+					"title" : "Notifications",
+					"title_key" :"privacy.entry.general.notifications.title",
+					"description" : "You may receive notifications when content is updated, research project qualification, appointments, group membership and you can star various content.",
+					"description_key" :"privacy.entry.general.notifications.description",
+					"dataUsage" : "Research participation, Building access and due date catalog require a university sign in. Your answers to a Research interest form are used to qualify you to participate in research projects.",
+					"dataUsage_key" :"privacy.entry.general.notifications.data_usage"
+				},
+				{
+					"min_level": 5,
+					"icon_resource": "share-dark",
+					"off_icon_resource": "share-disabled-dark",
+					"title" : "Sharing",
+					"title_key" :"privacy.entry.general.sharing.title",
+					"description" : "You may receive notifications when content is updated, research project qualification, appointments, group membership and you can star various content.",
+					"description_key" :"privacy.entry.general.sharing.description",
+					"dataUsage" : "Research participation, Building access and due date catalog require a university sign in. Your answers to a Research interest form are used to qualify you to participate in research projects.",
+					"dataUsage_key" :"privacy.entry.general.sharing.data_usage"
+				}
+			]
+		}
+	],
+	"features2": [
+		{
+			"key":"privacy.features2.entry.disable_location_awareness",
+			"text":"Disable location awareness.",
+			"max_level":1
+		},
+		{
+			"key":"privacy.features2.entry.dont_store_location",
+			"text":"Not store your location.",
+			"max_level":2
+		},
+		{
+			"key":"privacy.features2.entry.remove_preferences",
+			"text":"Remove your preferences.",
+			"max_level":2
+		},
+		{
+			"key":"privacy.features2.entry.log_out",
+			"text":"Log you off system.",
+			"max_level":3
+		},
+		{
+			"key":"privacy.features2.entry.disable_notifications",
+			"text":"Turn off notifications.",
+			"max_level":3
+		},
+		{
+			"key":"privacy.features2.entry.dont_share_location",
+			"text":"Not share your data with others.",
+			"max_level":4
+		}
+	]
+}
+

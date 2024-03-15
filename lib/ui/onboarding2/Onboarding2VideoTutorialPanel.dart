@@ -22,12 +22,12 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
@@ -71,10 +71,11 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
 
   void _initVideoPlayer() {
     if (_video != null) {
-      String? tutorialUrl = _video!.videoUrl;
-      if (StringUtils.isNotEmpty(tutorialUrl)) {
+      String? tutorialUrl = _video?.videoUrl;
+      Uri? tutorialUri = (tutorialUrl != null) ? Uri.tryParse(tutorialUrl) : null;
+      if (tutorialUri != null) {
         String? ccUrl = _video!.ccUrl;
-        _controller = VideoPlayerController.network(tutorialUrl!, closedCaptionFile: _loadClosedCaptions(ccUrl));
+        _controller = VideoPlayerController.networkUrl(tutorialUri, closedCaptionFile: _loadClosedCaptions(ccUrl));
         _controller!.addListener(_checkVideoStateChanged);
         _initializeVideoPlayerFuture = _controller!.initialize().then((_) {
           _currentCaptionText = _controller!.value.caption.text;
@@ -105,8 +106,8 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   }
 
   void _loadOnboardingVideoTutorial() {
-    Map<String, dynamic>? videoTutorials = Assets()['video_tutorials'];
-    List<dynamic>? videos = videoTutorials?['videos'];
+    Map<String, dynamic>? videoTutorials = Content().videoTutorials;
+    List<dynamic>? videos = JsonUtils.listValue(videoTutorials?['videos']) ;
     if (CollectionUtils.isEmpty(videos)) {
       return null;
     }
@@ -162,9 +163,9 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
 
   @override
   Widget build(BuildContext context) {
-    double buttonWidth = MediaQuery.of(context).textScaleFactor * 120;
+    double buttonWidth = MediaQuery.of(context).textScaler.scale(120);
     return Scaffold(
-        backgroundColor: Styles().colors!.blackTransparent06,
+        backgroundColor: Styles().colors.blackTransparent06,
         body: SafeArea(
             child: Stack(alignment: Alignment.center, children: [
           _buildVideoContent(),
@@ -204,7 +205,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
                         Stack(children: [
                           Center(child: AspectRatio(aspectRatio: playerAspectRatio, child: Semantics(label: Localization().getStringEx('panel.onboarding2.video.semantics.label', 'Onboarding video'), child: VideoPlayer(_controller!)))),
                           ClosedCaption(
-                              text: _currentCaptionText, textStyle: Styles().textStyles?.getTextStyle("panel.onboarding2.video_tutorial.caption.text"))
+                              text: _currentCaptionText, textStyle: Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.caption.text"))
                         ]),
                         Visibility(visible: (_isPlayerInitialized && !_isPlaying), child: VideoPlayButton())
                       ]))));
@@ -215,7 +216,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     } else {
       return Center(
           child: Text(Localization().getStringEx('panel.onboarding2.video.missing.msg', 'Missing video'),
-              style: Styles().textStyles?.getTextStyle("panel.onboarding2.video_tutorial.message.empty")));
+              style: Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.message.empty")));
     }
   }
 
@@ -231,11 +232,11 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
                         height: 30,
                         decoration: BoxDecoration(
                             border: Border.all(
-                                color: (_ccEnabled ? Styles().colors!.white! : Styles().colors!.disabledTextColorTwo!), width: 2),
+                                color: (_ccEnabled ? Styles().colors.white : Styles().colors.disabledTextColorTwo), width: 2),
                             borderRadius: BorderRadius.all(Radius.circular(6))),
                         child: Center(
                             child: Text('CC',
-                                style: _ccEnabled? Styles().textStyles?.getTextStyle("panel.onboarding2.video_tutorial.cc.enabled") : Styles().textStyles?.getTextStyle("panel.onboarding2.video_tutorial.cc.disabled")))))));
+                                style: _ccEnabled? Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.cc.enabled") : Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.cc.disabled")))))));
   }
 
   void _onTapBack() {

@@ -20,10 +20,4 @@
              Flutter draws its first frame -->
         <item name="android:windowBackground">@drawable/splash_image</item>
     </style>
-    <style name="DefaultTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimary">@color/illinoisBlue</item>
-        <item name="colorPrimaryDark">@color/darkBlueGrey</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:homeAsUpIndicator">@drawable/chevron_left</item>
-    </style>
 </resources>

@@ -166,11 +166,11 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
 
       if (_loadingPollsPage) {
         pages.add(Padding(key: _contentKeys['last'] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
-          Container(decoration: BoxDecoration(color: Styles().colors?.white, borderRadius: BorderRadius.circular(5)), child:
+          Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(5)), child:
             HomeProgressWidget(
               padding: EdgeInsets.symmetric(horizontal: 32, vertical: (_pageHeight - 24) / 2),
               progessSize: Size(24, 24),
-              progressColor: Styles().colors?.fillColorPrimary,
+              progressColor: Styles().colors.fillColorPrimary,
             ),
           ),
         ));
@@ -201,11 +201,12 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
-      LinkButton(
-        title: Localization().getStringEx('widget.home.recent_polls.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.recent_polls.button.all.hint', 'Tap to view all polls'),
-        onTap: _onTapSeeAll,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length, centerWidget:
+        LinkButton(
+          title: Localization().getStringEx('widget.home.recent_polls.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.recent_polls.button.all.hint', 'Tap to view all polls'),
+          onTap: _onTapSeeAll,
+        ),
       ),
     ]);
   }

@@ -19,7 +19,6 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/model/sport/Team.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/News.dart';
@@ -41,7 +40,7 @@ import 'package:rokwire_plugin/service/network.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
-class Sports with Service implements NotificationsListener, ExploreJsonHandler {
+class Sports with Service implements NotificationsListener {
 
   static const String notifyChanged  = "edu.illinois.rokwire.sports.changed";
   static const String notifySocialMediasChanged  = "edu.illinois.rokwire.sports.social.medias.changed";
@@ -72,7 +71,6 @@ class Sports with Service implements NotificationsListener, ExploreJsonHandler {
   @override
   void createService() {
     super.createService();
-    Explore.addJsonHandler(this);
     NotificationService().subscribe(this,[
       DeepLink.notifyUri,
       AppLifecycle.notifyStateChanged,
@@ -82,7 +80,6 @@ class Sports with Service implements NotificationsListener, ExploreJsonHandler {
 
   @override
   void destroyService() {
-    Explore.removeJsonHandler(this);
     NotificationService().unsubscribe(this);
     super.destroyService();
   }
@@ -136,10 +133,6 @@ class Sports with Service implements NotificationsListener, ExploreJsonHandler {
       _updateSportSocialMediaFromNet();
     }
   }
-
-  // ExploreJsonHandler
-  @override bool exploreCanJson(Map<String, dynamic>? json) => Game.canJson(json);
-  @override Explore? exploreFromJson(Map<String, dynamic>? json) => Game.fromJson(json);
 
   // Accessories
 
@@ -494,6 +487,26 @@ class Sports with Service implements NotificationsListener, ExploreJsonHandler {
     }
   }
 
+  Future<List<Game>?> loadPreferredTodayGames() async {
+    Set<String>? preferredSports = Auth2().prefs?.sportsInterests;
+    if (CollectionUtils.isEmpty(preferredSports)) {
+      return <Game>[];
+    }
+    List<Game>? gamesList = await loadGames();
+    if (gamesList == null) {
+      return null;
+    }
+    List<Game> todayGames = <Game>[];
+    for (Game game in gamesList) {
+      String? sportKey = game.sport?.shortName;
+      if ((game.isGameDay) && (sportKey != null) && preferredSports!.contains(sportKey)) {
+        todayGames.add(game);
+      }
+    }
+    _sortTodayGames(todayGames);
+    return todayGames;
+  }
+
   Future<List<Game>?> loadTopScheduleGames() async {
     List<Game>? gamesList = await loadGames();
     return getTopScheduleGamesFromList(gamesList);
@@ -588,13 +601,11 @@ class Sports with Service implements NotificationsListener, ExploreJsonHandler {
     }
 
     if (startDate != null) {
-      startDate = startDate.toUtc();
       String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: 'MM/dd/yyyy', ignoreTimeZone: true);
       queryParams += '&start=$startDateFormatted';
     }
 
     if (endDate != null) {
-      endDate = endDate.toUtc();
       String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: 'MM/dd/yyyy', ignoreTimeZone: true);
       queryParams += '&end=$endDateFormatted';
     }
@@ -676,21 +687,12 @@ class Sports with Service implements NotificationsListener, ExploreJsonHandler {
 
       final response = await Network().get(newsUrl, auth: Auth2());
       String? responseBody = response?.body;
-      if ((response != null) && (response.statusCode == 200)) {
+      int? responseCode = response?.statusCode;
+      if (responseCode == 200) {
         List<dynamic>? jsonData = JsonUtils.decode(responseBody);
-        if (CollectionUtils.isNotEmpty(jsonData)) {
-          List<News> newsList = <News>[];
-          for (dynamic jsonEntry in jsonData!) {
-            News? news = News.fromJson(JsonUtils.mapValue(jsonEntry));
-            if (news != null) {
-              newsList.add(news);
-            }
-          }
-          return newsList;
-        }
+        return News.listFromJson(jsonData);
       } else {
-        Log.e('Failed to load news');
-        Log.e(responseBody);
+        Log.e('Failed to load news. Reason: $responseCode, $responseBody');
       }
     }
     return null;
@@ -707,6 +709,7 @@ class Sports with Service implements NotificationsListener, ExploreJsonHandler {
   }
 
   List<Game>? getTodayGames(List<Game>? games) {
+    //TMP: return (games != null) ? List.from(games) : null;
     if (CollectionUtils.isEmpty(games)) {
       return null;
     }

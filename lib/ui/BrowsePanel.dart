@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
@@ -8,32 +9,30 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
-import 'package:illinois/model/News.dart';
 import 'package:illinois/model/Video.dart';
-import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Content.dart' as uiuc;
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/academics/AcademicsAppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
-import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
-import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
+import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/home/HomeCampusResourcesWidget.dart';
-import 'package:illinois/ui/home/HomeDailyIlliniWidget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
 import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
@@ -51,10 +50,10 @@ import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
-import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
+import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialListPanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
-import 'package:illinois/ui/wallet/IDCardPanel.dart';
+import 'package:illinois/ui/wallet/ICardHomeContentPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
@@ -62,10 +61,10 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/event.dart';
-import 'package:rokwire_plugin/service/app_lifecycle.dart';
-import 'package:rokwire_plugin/service/assets.dart';
+import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -76,8 +75,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BrowsePanel extends StatefulWidget {
-
   static const String notifyRefresh      = "edu.illinois.rokwire.browse.refresh";
+  static const String notifySelect       = "edu.illinois.rokwire.browse.select";
 
   BrowsePanel();
 
@@ -150,7 +149,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
           ),
         ]),
       ),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: null,
     );
   }
@@ -163,15 +162,21 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
     List<Widget> sectionsList = <Widget>[];
     if (_contentCodes != null) {
       for (String code in _contentCodes!) {
-        sectionsList.add((code == _BrowseCampusResourcesSection.contentCode) ?
-          _BrowseCampusResourcesSection(
-            expanded: _isExpanded(code),
-            onExpand: () => _toggleExpanded(code),) :
-          _BrowseSection(
-            sectionId: code,
-            expanded: _isExpanded(code),
-            onExpand: () => _toggleExpanded(code),)
-        );
+        List<String>? entryCodes = _BrowseSection.buildBrowseEntryCodes(sectionId: code);
+        if ((entryCodes != null) && entryCodes.isNotEmpty) {
+          sectionsList.add((code == 'campus_resources') ?
+            _BrowseCampusResourcesSection(
+              sectionId: code,
+              entryCodes: entryCodes,
+              expanded: _isExpanded(code),
+              onExpand: () => _toggleExpanded(code),) :
+            _BrowseSection(
+              sectionId: code,
+              entryCodes: entryCodes,
+              expanded: _isExpanded(code),
+              onExpand: () => _toggleExpanded(code),)
+          );
+        }
       }
     }
 
@@ -179,7 +184,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
       contentList.add(
         HomeSlantWidget(
           title: Localization().getStringEx('panel.browse.label.sections.title', 'App Sections'),
-          titleIconKey: 'campus-tools',
+          titleIconKey: 'browse',
           childPadding: HomeSlantWidget.defaultChildPadding,
           child: Column(children: sectionsList,),
         )    
@@ -250,13 +255,13 @@ class _BrowseSection extends StatelessWidget {
   final Set<String>? _homeSectionEntriesCodes;
   final Set<String>? _homeRootEntriesCodes;
 
-  _BrowseSection({Key? key, required this.sectionId, this.expanded = false, this.onExpand}) :
-    _browseEntriesCodes = _buildBrowseEntryCodes(sectionId: sectionId),
+  _BrowseSection({Key? key, required this.sectionId, List<String>? entryCodes, this.expanded = false, this.onExpand}) :
+    _browseEntriesCodes = entryCodes ?? buildBrowseEntryCodes(sectionId: sectionId),
     _homeSectionEntriesCodes = JsonUtils.setStringsValue(FlexUI()['home.$sectionId']),
     _homeRootEntriesCodes = JsonUtils.setStringsValue(FlexUI()['home']),
     super(key: key);
 
-  static List<String>? _buildBrowseEntryCodes({required String sectionId}) {
+  static List<String>? buildBrowseEntryCodes({required String sectionId}) {
     List<String>? codes = JsonUtils.listStringsValue(FlexUI()['browse.$sectionId']);
     codes?.sort((String code1, String code2) {
       String title1 = _BrowseEntry.title(sectionId: sectionId, entryId: code1);
@@ -290,16 +295,16 @@ class _BrowseSection extends StatelessWidget {
     return Padding(padding: EdgeInsets.only(bottom: 4), child:
       InkWell(onTap: _onTapExpand, child:
         Container(
-          decoration: BoxDecoration(color: Styles().colors?.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),),
+          decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
           padding: EdgeInsets.only(left: 16),
           child: Column(children: [
             Row(children: [
               Expanded(child:
                 Padding(padding: EdgeInsets.only(top: 16), child:
-                  Text(_title, style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"))
+                  Text(_title, style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"))
                 )
               ),
-              Opacity(opacity: _hasBrowseContent ? 1 : 0, child:
+              Opacity(opacity: _hasFavoriteContent ? 1 : 0, child:
                 Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
                   InkWell(onTap: () => _onTapSectionFavorite(context), child:
                     FavoriteStarIcon(selected: _isSectionFavorite, style: FavoriteIconStyle.Button,)
@@ -310,7 +315,7 @@ class _BrowseSection extends StatelessWidget {
             Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
               Expanded(child:
                 Padding(padding: EdgeInsets.only(bottom: 16), child:
-                  Text(_description, style: Styles().textStyles?.getTextStyle("widget.info.regular.thin"))
+                  Text(_description, style: Styles().textStyles.getTextStyle("widget.info.regular.thin"))
                 )
               ),
               Semantics(
@@ -322,8 +327,8 @@ class _BrowseSection extends StatelessWidget {
                       Center(child:
                         _hasBrowseContent ? (
                           expanded ?
-                            Styles().images?.getImage('chevron-up', excludeFromSemantics: true) :
-                            Styles().images?.getImage('chevron-down', excludeFromSemantics: true)
+                            Styles().images.getImage('chevron-up', excludeFromSemantics: true) :
+                            Styles().images.getImage('chevron-down', excludeFromSemantics: true)
                         ) : Container()
                       ),
                     )
@@ -373,6 +378,18 @@ class _BrowseSection extends StatelessWidget {
 
   bool get _hasBrowseContent => _browseEntriesCodes?.isNotEmpty ?? false;
 
+  bool get _hasFavoriteContent {
+    if (_browseEntriesCodes?.isNotEmpty ?? false) {
+      for (String code in _browseEntriesCodes!) {
+        HomeFavorite? entryFavorite = _favorite(code);
+        if (entryFavorite != null) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   bool? get _isSectionFavorite {
     int favCount = 0, unfavCount = 0, totalCount = 0;
     if (_browseEntriesCodes?.isNotEmpty ?? false) {
@@ -388,11 +405,13 @@ class _BrowseSection extends StatelessWidget {
           }
         }
       }
-      if ((favCount == totalCount)) {
-        return true;
-      }
-      else if (unfavCount == totalCount) {
-        return false;
+      if (0 < totalCount) {
+        if (favCount == totalCount) {
+          return true;
+        }
+        else if (unfavCount == totalCount) {
+          return false;
+        }
       }
     }
     return null;
@@ -476,7 +495,7 @@ class _BrowseEntry extends StatelessWidget {
     return Padding(padding: EdgeInsets.only(bottom: 4), child:
       InkWell(onTap: () => _onTap(context), child:
         Container(
-          decoration: BoxDecoration(color: Styles().colors?.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),),
+          decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
           padding: EdgeInsets.zero,
           child: 
             Row(children: [
@@ -485,11 +504,11 @@ class _BrowseEntry extends StatelessWidget {
               ),
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 14), child:
-                  Text(_title, style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"),)
+                  Text(_title, style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),)
                 ),
               ),
               Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-                  child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true)),
+                  child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true)),
             ],),
         ),
       ),
@@ -507,21 +526,26 @@ class _BrowseEntry extends StatelessWidget {
       case "academics.gies_checklist":        _onTapGiesChecklist(context); break;
       case "academics.new_student_checklist": _onTapNewStudentChecklist(context); break;
       case "academics.skills_self_evaluation":_onTapSkillSelfEvaluation(context); break;
+      case "academics.essential_skills_coach":_onTapEssentialSkillCoach(context); break;
+      case "academics.wellness_todo":         _onTapAcademicsToDo(context); break;
       case "academics.student_courses":       _onTapStudentCourses(context); break;
       case "academics.canvas_courses":        _onTapCanvasCourses(context); break;
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
-      case "academics.wellness_todo":         _onTapAcademicsToDo(context); break;
       case "academics.due_date_catalog":      _onTapDueDateCatalog(context); break;
+      case "academics.appointments":          _onTapAcademicsAppointments(context); break;
 
       case "app_help.video_tutorials":       _onTapVideoTutorials(context); break;
       case "app_help.feedback":              _onTapFeedback(context); break;
       case "app_help.review":                _onTapReview(context); break;
       case "app_help.faqs":                  _onTapFAQs(context); break;
 
+      case "appointments.appointments":       _onTapAcademicsAppointments(context); break;
+
       case "athletics.my_game_day":          _onTapMyGameDay(context); break;
       case "athletics.sport_events":         _onTapSportEvents(context); break;
       case "athletics.my_athletics":         _onTapMyAthletics(context); break;
       case "athletics.sport_news":           _onTapSportNews(context); break;
+      case "athletics.sport_teams":          _onTapSportTeams(context); break;
       case "athletics.my_news":              _onTapMyNews(context); break;
 
       case "safer.building_access":          _onTapBuildingAccess(context); break;
@@ -558,7 +582,7 @@ class _BrowseEntry extends StatelessWidget {
       case "dinings.dinings_open":           _onTapDiningsOpen(context); break;
       case "dinings.my_dining":              _onTapMyDinings(context); break;
 
-      case "events.suggested_events":        _onTapSuggestedEvents(context); break;
+      case "events.event_feed":              _onTapEventFeed(context); break;
       case "events.my_events":               _onTapMyEvents(context); break;
 
       case "feeds.twitter":                  _onTapTwitter(context); break;
@@ -570,22 +594,6 @@ class _BrowseEntry extends StatelessWidget {
 
       case "research_projects.open_research_projects": _onTapOpenResearchProjects(context); break;
       case "research_projects.my_research_projects": _onTapMyResearchProjects(context); break;
-
-      case "my.my_athletics":                _onTapMyAthletics(context); break;
-      case "my.my_news":                     _onTapMyNews(context); break;
-      case "my.my_campus_guide":             _onTapMyCampusGuide(context); break;
-      case "my.student_courses":             _onTapStudentCourses(context); break;
-      case "my.my_dining":                   _onTapMyDinings(context); break;
-      case "my.my_events":                   _onTapMyEvents(context); break;
-      case "my.my_game_day":                 _onTapMyGameDay(context); break;
-      case "my.canvas_courses":              _onTapCanvasCourses(context); break;
-      case "my.my_groups":                   _onTapMyGroups(context); break;
-      case "my.my_laundry":                  _onTapMyLaundry(context); break;
-      case "my.my_research_projects":        _onTapMyResearchProjects(context); break;
-      case "my.my_mtd_stops":                _onTapMyMTDStops(context); break;
-      case "my.my_mtd_destinations":         _onTapMyMTDDestinations(context); break;
-      case "my.wellness_resources":          _onTapWellnessResources(context); break;
-      case "my.my_appointments":             _onTapMyAppointments(context); break;
 
       case "inbox.all_notifications":        _onTapNotifications(context); break;
       case "inbox.unread_notifications":     _onTapNotifications(context, unread: true); break;
@@ -607,11 +615,13 @@ class _BrowseEntry extends StatelessWidget {
       case "wallet.library_card":            _onTapLibraryCard(context); break;
 
       case "wellness.wellness_resources":       _onTapWellnessResources(context); break;
+      case "wellness.wellness_mental_health":   _onTapWellnessMentalHealth(context); break;
       case "wellness.wellness_rings":           _onTapWellnessRings(context); break;
       case "wellness.wellness_todo":            _onTapWellnessToDo(context); break;
-      case "wellness.my_appointments":          _onTapMyAppointments(context); break;
+      case "wellness.my_appointments":          _onTapWellnessAppointments(context); break;
       case "wellness.wellness_tips":            _onTapWellnessTips(context); break;
       case "wellness.wellness_health_screener": _onTapWellnessHealthScreener(context); break;
+      case "wellness.wellness_success_team":    _onTapWellnessSuccessTeam(context); break;
     }
   }
 
@@ -627,7 +637,17 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapSkillSelfEvaluation(BuildContext context) {
     Analytics().logSelect(target: "Skills Self-Evaluation");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.skills_self_evaluation,)));
+    AcademicsHomePanel.push(context, AcademicsContent.skills_self_evaluation);
+  }
+
+  void _onTapEssentialSkillCoach(BuildContext context) {
+    Analytics().logSelect(target: "Essential Skills Coach");
+    AcademicsHomePanel.push(context, AcademicsContent.essential_skills_coach);
+  }
+
+  void _onTapAcademicsToDo(BuildContext context) {
+    Analytics().logSelect(target: "Academics To Do");
+    AcademicsHomePanel.push(context, AcademicsContent.todo_list);
   }
 
   void _onTapCanvasCourses(BuildContext context) {
@@ -681,10 +701,7 @@ class _BrowseEntry extends StatelessWidget {
     )));
   }
 
-  int get _videoTutorialsCount {
-    List<dynamic>? videos = JsonUtils.listValue(Assets()['video_tutorials.videos']);
-    return videos?.length ?? 0;
-  }
+  int get _videoTutorialsCount => uiuc.Content().videos?.length ?? 0;
 
   bool get _canVideoTutorials => (_videoTutorialsCount > 0);
 
@@ -698,23 +715,17 @@ class _BrowseEntry extends StatelessWidget {
         Video? videoTutorial = videoTutorials?.first;
         if (videoTutorial != null) {
           Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString(), attributes: videoTutorial.analyticsAttributes);
-          Navigator.push(
-              context,
-              CupertinoPageRoute(
-                  settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel(videoTutorial: videoTutorial)));
+          Navigator.push(context, CupertinoPageRoute( settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel(videoTutorial: videoTutorial)));
         }
       } else {
         Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString());
-        Navigator.push(
-            context,
-            CupertinoPageRoute(
-                settings: RouteSettings(), builder: (context) => SettingsVideoTutorialListPanel(videoTutorials: videoTutorials)));
+        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialListPanel(videoTutorials: videoTutorials)));
       }
     }
   }
 
   List<Video>? _getVideoTutorials() {
-    Map<String, dynamic>? videoTutorials = JsonUtils.mapValue(Assets()['video_tutorials']);
+    Map<String, dynamic>? videoTutorials = uiuc.Content().videoTutorials;
     if (videoTutorials == null) {
       return null;
     }
@@ -783,18 +794,23 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   void _onTapSportEvents(BuildContext context) {
-    Analytics().logSelect(target: "Athletics Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events, initialFilter: ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3}))));
+    Analytics().logSelect(target: "Events");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.events)));
   }
 
   void _onTapSportNews(BuildContext context) {
-    Analytics().logSelect(target: "Athletics News");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsListPanel()));
+    Analytics().logSelect(target: "News");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.news)));
+  }
+
+  void _onTapSportTeams(BuildContext context) {
+    Analytics().logSelect(target: "Teams");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.teams)));
   }
 
   void _onTapBuildingAccess(BuildContext context) {
     Analytics().logSelect(target: 'Building Access');
-    IDCardPanel.present(context);
+    ICardHomeContentPanel.present(context, content: ICardContent.i_card);
   }
   
   void _onTapTestLocations(BuildContext context) {
@@ -860,27 +876,27 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapDiningsAll(BuildContext context) {
     Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Dining) ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Dining) ));
   }
 
   void _onTapDiningsOpen(BuildContext context) {
     Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining Open Now");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Dining, initialFilter: ExploreFilter(type: ExploreFilterType.work_time, selectedIndexes: {1}))));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Dining, initialFilter: ExploreFilter(type: ExploreFilterType.work_time, selectedIndexes: {1}))));
   }
 
   void _onTapEvents(BuildContext context) {
     Analytics().logSelect(target: "Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Events); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
   }
     
   void _onTapDining(BuildContext context) {
     Analytics().logSelect(target: "Dining");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Dining); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Dining); } ));
   }
 
   void _onTapAthletics(BuildContext context) {
     Analytics().logSelect(target: "Athletics");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.events)));
   }
 
   void _onTapLaundry(BuildContext context) {
@@ -939,13 +955,23 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapNotifications(BuildContext context, {bool? unread}) {
     bool isUnread = (unread == true);
     Analytics().logSelect(target: isUnread ? "Unread Notifications" : "All Notifications");
-    SettingsNotificationsContentPanel.present(context, content: isUnread ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
+    NotificationsHomePanel.present(context, content: isUnread ? NotificationsContent.unread : NotificationsContent.all);
   }
 
-  void _onTapSuggestedEvents(BuildContext context) {
-    Analytics().logSelect(target: "Suggested Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Events); } ));
+  void _onTapEventFeed(BuildContext context) {
+    Analytics().logSelect(target: "Events Feed");
+    Event2HomePanel.present(context);
   }
+
+  void _onTapMyEvents(BuildContext context) {
+    Analytics().logSelect(target: "My Events");
+    Event2HomePanel.present(context, types: LinkedHashSet<Event2TypeFilter>.from([Event2TypeFilter.favorite]));
+  }
+
+  /*void _onTapSuggestedEvents(BuildContext context) {
+    Analytics().logSelect(target: "Suggested Events");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
+  }*/
 
   void _onTapTwitter(BuildContext context) {
     Analytics().logSelect(target: "Twitter");
@@ -954,7 +980,15 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapDailyIllini(BuildContext context) {
     Analytics().logSelect(target: "Daily Illini");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DailyIlliniListPanel()));
+    String? url = Config().dailyIlliniHomepageUrl;
+    if (StringUtils.isNotEmpty(url)) {
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
+      }
+    } else {
+      debugPrint("Missing Config().dailyIlliniHomepageUrl");
+    }
   }
 
   void _onTapWPGUFMRadio(BuildContext context) {
@@ -983,13 +1017,8 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   void _onTapMyGameDay(BuildContext context) {
-    Analytics().logSelect(target: "My Game Day");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
-  }
-
-  void _onTapMyEvents(BuildContext context) {
-    Analytics().logSelect(target: "My Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [Event.favoriteKeyName]); } ));
+    Analytics().logSelect(target: "It's Game Day");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.game_day)));
   }
 
   void _onTapMyDinings(BuildContext context) {
@@ -998,13 +1027,13 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   void _onTapMyAthletics(BuildContext context) {
-    Analytics().logSelect(target: "My Athletics");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [Game.favoriteKeyName]); } ));
+    Analytics().logSelect(target: "My Big 10 Events");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.my_events)));
   }
 
   void _onTapMyNews(BuildContext context) {
     Analytics().logSelect(target: "My News");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [News.favoriteKeyName]); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.my_news)));
   }
 
   void _onTapMyLaundry(BuildContext context) {
@@ -1032,9 +1061,19 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.resources,); } ));
   }
 
-  void _onTapMyAppointments(BuildContext context) {
-    Analytics().logSelect(target: "My Appointments");
+  void _onTapWellnessMentalHealth(BuildContext context) {
+    Analytics().logSelect(target: "Wellness Resources");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.mentalHealth,); } ));
+  }
+
+  void _onTapWellnessAppointments(BuildContext context) {
+    Analytics().logSelect(target: "MyMcKinley Appointments");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.appointments); } ));
+  }
+
+  void _onTapAcademicsAppointments(BuildContext context) {
+    Analytics().logSelect(target: "Appointments");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentsListPanel()));
   }
 
   void _onTapCreatePoll(BuildContext context) {
@@ -1059,11 +1098,11 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapStateFarmWayfinding(BuildContext context) {
     Analytics().logSelect(target: "State Farm Wayfinding");
-    NativeCommunicator().launchMap(target: {
+    /* TBD Map2 NativeCommunicator().launchMap(target: {
       'latitude': Config().stateFarmWayfinding['latitude'],
       'longitude': Config().stateFarmWayfinding['longitude'],
       'zoom': Config().stateFarmWayfinding['zoom'],
-    });
+    }); */
   }
 
   void _onTapCreateStadiumPoll(BuildContext context) {
@@ -1083,7 +1122,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapIlliniId(BuildContext context) {
     Analytics().logSelect(target: "Illini ID");
-    IDCardPanel.present(context);
+    ICardHomeContentPanel.present(context, content: ICardContent.i_card);
   }
 
   void _onTapLibraryCard(BuildContext context) {
@@ -1101,11 +1140,6 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.todo,)));
   }
 
-  void _onTapAcademicsToDo(BuildContext context) {
-    Analytics().logSelect(target: "Academics To Do");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.todo_list,)));
-  }
-
   void _onTapWellnessTips(BuildContext context) {
     Analytics().logSelect(target: "Wellness Daily Tips");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.dailyTips,)));
@@ -1116,6 +1150,11 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.healthScreener,)));
   }
 
+  void _onTapWellnessSuccessTeam(BuildContext context) {
+    Analytics().logSelect(target: "My Success Team");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.successTeam,)));
+  }
+
   void _notImplemented(BuildContext context) {
     AppAlert.showDialogResult(context, "Not implemented yet.");
   }
@@ -1124,16 +1163,14 @@ class _BrowseEntry extends StatelessWidget {
 
 class _BrowseCampusResourcesSection extends _BrowseSection {
 
-  static const String contentCode = 'campus_resources';
-
-  _BrowseCampusResourcesSection({Key? key, bool expanded = false, void Function()? onExpand}) :
-    super(key: key, sectionId: contentCode, expanded: expanded, onExpand: onExpand);
+  _BrowseCampusResourcesSection({Key? key, required String sectionId, List<String>? entryCodes, bool expanded = false, void Function()? onExpand}) :
+    super(key: key, sectionId: sectionId, entryCodes: entryCodes, expanded: expanded, onExpand: onExpand);
 
   @override
   Widget _buildEntries(BuildContext context) {
     return (expanded && (_browseEntriesCodes?.isNotEmpty ?? false)) ?
       Padding(padding: EdgeInsets.only(left: 16, bottom: 4), child:
-        HomeCampusResourcesGridWidget(favoriteCategory: contentCode, contentCodes: _browseEntriesCodes!, promptFavorite: kReleaseMode,)
+        HomeCampusResourcesGridWidget(favoriteCategory: sectionId, contentCodes: _browseEntriesCodes!, promptFavorite: kReleaseMode,)
       ) :
       Container();
   }
@@ -1157,7 +1194,8 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      AppLifecycle.notifyStateChanged,
+      AppLivecycle.notifyStateChanged,
+      Content.notifyContentImagesChanged,
     ]);
 
     widget.updateController?.stream.listen((String command) {
@@ -1187,19 +1225,23 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
       ModalImageHolder(child: Image.network(_imageUrl!, semanticLabel: 'tout', loadingBuilder:(  BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         double imageWidth = MediaQuery.of(context).size.width;
         double imageHeight = imageWidth * 810 / 1080;
-        return (loadingProgress != null) ? Container(color: Styles().colors?.fillColorPrimary, width: imageWidth, height: imageHeight, child:
-          Center(child:
-            CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white), ) 
-          ),
-        ) : child;
+        return (loadingProgress != null) ?
+          Container(color: Styles().colors.fillColorPrimary, width: imageWidth, height: imageHeight, child:
+            Center(child:
+              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white), )
+            ),
+          ) :
+          AspectRatio(aspectRatio: (1080.0 / 810.0), child:
+            Container(color: Styles().colors.fillColorPrimary, child: child)
+          );
       })),
       Positioned.fill(child:
         Align(alignment: Alignment.bottomCenter, child:
           Column(mainAxisSize: MainAxisSize.min, children: [
-            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.rightToLeft, vertDir: TriangleVertDirection.topToBottom), child:
+            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.rightToLeft, vertDir: TriangleVertDirection.topToBottom), child:
               Container(height: 40)
             ),
-            Container(height: 20, color: Styles().colors?.fillColorSecondaryTransparent05),
+            Container(height: 20, color: Styles().colors.fillColorSecondaryTransparent05),
           ],),
         ),
       ),
@@ -1228,7 +1270,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
   }
 
   void _updateImage() {
-    Storage().browseToutImageUrl = _imageUrl = Assets().randomStringFromListWithKey('images.random.browse.tout');
+    Storage().browseToutImageUrl = _imageUrl = Content().randomImageUrl('browse.tout');
     Storage().browseToutImageTime = (_imageDateTime = DateTime.now()).millisecondsSinceEpoch;
   }
 
@@ -1236,7 +1278,10 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
 
   @override
   void onNotification(String name, dynamic param) {
-    if ((name == AppLifecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
+    if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
+      _update();
+    }
+    else if (name == Content.notifyContentImagesChanged) {
       _update();
     }
   }

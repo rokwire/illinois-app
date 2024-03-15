@@ -21,7 +21,7 @@ class _Onboarding2PermissionsPanelState extends State <Onboarding2PermissionsPan
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
     );
   }
 

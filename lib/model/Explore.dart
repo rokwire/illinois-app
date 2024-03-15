@@ -25,7 +25,6 @@ class ExplorePOI with Explore implements Favorite {
     ) : null;
   }
 
-  @override
   toJson() {
     return {
       "placeId": placeId,
@@ -123,31 +122,37 @@ class ExplorePOI with Explore implements Favorite {
 
   // Explore
   @override String?   get exploreId               => toString();
-  @override String?   get exploreTitle            => StringUtils.isNotEmpty(name) ? name : Localization().getStringEx("panel.explore.item.location.name", "Location");
-  @override String?   get exploreSubTitle         => null;
-  @override String?   get exploreShortDescription => null;
-  @override String?   get exploreLongDescription  => null;
-  @override DateTime? get exploreStartDateUtc     => null;
-  @override String?   get exploreImageURL         => null;
-  @override String?   get explorePlaceId          => null;
-  @override ExploreLocation? get exploreLocation  => location;
-  @override String?   get exploreLocationDescription => location?.displayCoordinates;
 
-  // ExploreJsonHandler
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) &&
-      json.containsKey('placeId') &&
-      json.containsKey('name') &&
-      ExploreLocation.canJson(JsonUtils.mapValue(json['location']));
+  @override String?   get exploreTitle {
+    if (StringUtils.isNotEmpty(name)) {
+      return name;
+    }
+    else if (StringUtils.isNotEmpty(location?.name)) {
+      return location?.name;
+    }
+    else {
+      return Localization().getStringEx("panel.explore.item.location.name", "Location");
+    }
   }
+
+  @override String?   get exploreDescription {
+    if (StringUtils.isNotEmpty(location?.description)) {
+      return location?.description;
+    }
+    else if (StringUtils.isNotEmpty(location?.fullAddress)) {
+      return location?.fullAddress;
+    }
+    else {
+      return Localization().getStringEx("panel.explore.item.location.name", "Location");
+    }
+  }
+
+  @override DateTime? get exploreDateTimeUtc      => null;
+  @override String?   get exploreImageURL         => null;
+  @override ExploreLocation? get exploreLocation  => location;
 
   // Favorite
   static const String favoriteKeyName = "poiLocations";
   @override String get favoriteKey => favoriteKeyName;
-  @override String? get favoriteId => exploreId;
-}
-
-class ExplorePOIJsonHandler implements ExploreJsonHandler {
-  @override bool exploreCanJson(Map<String, dynamic>? json) => ExplorePOI.canJson(json);
-  @override Explore? exploreFromJson(Map<String, dynamic>? json) => ExplorePOI.fromJson(json);
+  @override String? get favoriteId => toString();
 }

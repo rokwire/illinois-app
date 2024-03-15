@@ -14,28 +14,24 @@
  * limitations under the License.
  */
 
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/PrivacyData.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:rokwire_plugin/service/assets.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/settings/SettingsVerifyIdentityPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPrivacyCenterContentWidget extends StatefulWidget{
   @override
@@ -45,16 +41,24 @@ class SettingsPrivacyCenterContentWidget extends StatefulWidget{
 
 class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCenterContentWidget> implements NotificationsListener {
   PrivacyData? _privacyData;
+  bool _loadingPrivacyData = false;
 
   @override
   void initState() {
     NotificationService().subscribe(this, [
       FlexUI.notifyChanged,
       Auth2.notifyLoginChanged,
-      Assets.notifyChanged,
       Localization.notifyLocaleChanged
     ]);
-    _loadPrivacyData();
+
+    _loadingPrivacyData = true;
+    Content().loadContentItem('privacy').then((dynamic value) {
+      setStateIfMounted(() {
+        _privacyData = PrivacyData.fromJson(JsonUtils.mapValue(value));
+        _loadingPrivacyData = false;
+      });
+    });
+
     super.initState();
   }
 
@@ -64,14 +68,9 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
     super.dispose();
   }
 
-  void _loadPrivacyData() async {
-    dynamic privacyJson = Assets()["privacy"];
-    _privacyData = PrivacyData.fromJson(privacyJson);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return _buildContent();
+    return _loadingPrivacyData ? _buildLoading() : _buildContent();
   }
 
   Widget _buildContent(){
@@ -120,11 +119,11 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(Localization().getStringEx("panel.settings.privacy_center.label.finish_setup", "Finish setup"),
-              style: Styles().textStyles?.getTextStyle("panel.settings.privacy_center.title.medium.fat")
+              style: Styles().textStyles.getTextStyle("panel.settings.privacy_center.title.medium.fat")
             ),
             SizedBox(height: 8,),
             Text(Localization().getStringEx("panel.settings.privacy_center.label.finish_setup_description", "Sign in with your NetID or Telephone number to get the full  {{app_title}} experience.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-              style: Styles().textStyles?.getTextStyle("panel.settings.privacy_center.title.regular")
+              style: Styles().textStyles.getTextStyle("panel.settings.privacy_center.title.regular")
             ),
             SizedBox(height: 16,),
             Semantics(explicitChildNodes: true,
@@ -146,7 +145,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
       padding: EdgeInsets.only(bottom: 20),
       child: Text(Localization().getStringEx("panel.settings.privacy_center.label.description", "Personalize your privacy and data preferences."),
         textAlign: TextAlign.center,
-        style: Styles().textStyles?.getTextStyle("widget.title.large.fat")
+        style: Styles().textStyles.getTextStyle("widget.title.large.fat")
       ),
     );
   }
@@ -167,32 +166,32 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
     }
     return Container(
         padding: EdgeInsets.only(bottom: 20),
-        color: Styles().colors!.background,
+        color: Styles().colors.background,
         child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Container(
                   height: 60,
                   width: 60,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                      border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2),
-                      color: Styles().colors!.white,
+                      border: Border.all(color: Styles().colors.fillColorPrimary, width: 2),
+                      color: Styles().colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(100))),
                   child: Container(
                       height: 52,
                       width: 52,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                          border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2),
-                          color: Styles().colors!.white,
+                          border: Border.all(color: Styles().colors.fillColorSecondary, width: 2),
+                          color: Styles().colors.white,
                           borderRadius: BorderRadius.all(Radius.circular(100))),
                       child: Semantics(
                           label: Localization().getStringEx("panel.settings.privacy.label.privacy_level.title", "Privacy Level: "),
                           child: Text(level.toString(),
-                              style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat"))))),
+                              style: Styles().textStyles.getTextStyle("widget.title.extra_large.extra_fat"))))),
               Container(width: 20),
               Expanded(
                   child: Text(Localization().getString(description.key, defaults: description.text) ?? '',
-                      style: Styles().textStyles?.getTextStyle("panel.settings.privacy_center.title.regular"),
+                      style: Styles().textStyles.getTextStyle("panel.settings.privacy_center.title.regular"),
                       textAlign: TextAlign.left))
             ]));
   }
@@ -223,14 +222,14 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
-                          Styles().images?.getImage('privacy', excludeFromSemantics: true) ?? Container(),
+                          Styles().images.getImage('privacy', excludeFromSemantics: true) ?? Container(),
                           Container(width: 18,),
                           Expanded(child:
                             Semantics(  excludeSemantics: true,
                             child: Text(
                               Localization().getStringEx("panel.settings.privacy_center.button.manage_privacy.title", "Manage and Understand Your Privacy"),
                               textAlign: TextAlign.left,
-                              style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")
+                              style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
                             )),
                           )
                         ],
@@ -253,7 +252,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
           onTap: _onTapPrivacyPolicy,
           child: Text(
             Localization().getStringEx("panel.settings.privacy_center.button.privacy_policy.title", "Privacy Statement"),
-            style: Styles().textStyles?.getTextStyle("panel.settings.privacy_center.button.underline")
+            style: Styles().textStyles.getTextStyle("panel.settings.privacy_center.button.underline")
         ))));
   }
 
@@ -262,11 +261,11 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
       padding: EdgeInsets.only(top: 40),
       child: Column(children: [
         RoundedButton(
-          backgroundColor: Styles().colors?.surface,
-          borderColor: Styles().colors?.surface,
-          textStyle: Styles().textStyles?.getTextStyle('widget.error.regular'),
+          backgroundColor: Styles().colors.surface,
+          borderColor: Styles().colors.surface,
           label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Delete My Account"),
           hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
+          textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.thin.secondary"),
           elevation: 2,
           onTap: _onTapDeleteData,
         ),
@@ -274,7 +273,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
         ExcludeSemantics(
         child: Text(Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
           textAlign: TextAlign.center,
-          style: Styles().textStyles?.getTextStyle("panel.settings.privacy_center.message.tiny"))),
+          style: Styles().textStyles.getTextStyle("panel.settings.privacy_center.message.tiny"))),
       ],),);
   }
 
@@ -286,17 +285,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
 
   void _onTapPrivacyPolicy(){
     Analytics().logSelect(target: "Privacy Statement");
-    if (Config().privacyPolicyUrl != null) {
-      if (Platform.isIOS) {
-        Uri? privacyPolicyUri = Uri.tryParse(Config().privacyPolicyUrl!);
-        if (privacyPolicyUri != null) {
-          launchUrl(privacyPolicyUri, mode: LaunchMode.externalApplication);
-        }
-      }
-      else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, showTabBar: false, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
-      }
-    }
+    AppPrivacyPolicy.launch(context);
   }
 
   void _onTapManagePrivacy(){
@@ -313,7 +302,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
         title: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.title", "Delete your account?"),
         message: [
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description1", "This will ")),
-          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: Styles().textStyles?.getTextStyle("widget.message.regular.fat")),
+          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: Styles().textStyles.getTextStyle("widget.message.regular.fat")),
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description3", "delete all of your information. You will not be able to retrieve your data after you have deleted it. Are you sure you want to continue?")),
           TextSpan(text: contributeInGroups?
           Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description.groups", " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, reactions and events) or leave them for others to see.") :
@@ -354,10 +343,6 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
     else if (name == FlexUI.notifyChanged) {
       _updateState();
     }
-    else if (name == Assets.notifyChanged) {
-      _loadPrivacyData();
-      _updateState();
-    } 
     else if (name == Localization.notifyLocaleChanged) {
       _privacyData?.reload();
       _updateState();
@@ -369,4 +354,13 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
       setState(() {});
     }
   }
+
+  Widget _buildLoading() => Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 64), child:
+    Center(child:
+      SizedBox(width: 32, height: 32, child:
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+      ),
+    ),
+  );
+
 }

@@ -22,6 +22,9 @@ import 'package:illinois/ext/Game.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/RecentItems.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -42,7 +45,12 @@ class AthleticsGameDetailPanel extends StatefulWidget implements AnalyticsPageAt
   final String? gameId;
   final String? sportName;
 
-  AthleticsGameDetailPanel({this.game, this.gameId, this.sportName});
+  final Event2? event;
+  final Group? group;
+
+  final Event2Selector2? eventSelector;
+
+  AthleticsGameDetailPanel({this.game, this.gameId, this.sportName, this.event, this.group, this.eventSelector});
 
   @override
   _AthleticsGameDetailPanelState createState() => _AthleticsGameDetailPanelState(game);
@@ -51,7 +59,7 @@ class AthleticsGameDetailPanel extends StatefulWidget implements AnalyticsPageAt
   Map<String, dynamic>? get analyticsPageAttributes => game?.analyticsAttributes;
 }
 
-class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
+class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameDetailPanel> {
   Game? game;
   bool _newsExpanded = false;
   bool _loading = false;
@@ -64,8 +72,12 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
       RecentItems().addRecentItem(RecentItem.fromSource(game));
     else
       _loadGame();
-
     super.initState();
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
   }
 
   _loadGame() {
@@ -87,7 +99,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
         onRefresh: _onPullToRefresh,
         child: _buildContent(),
       ),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -107,19 +119,19 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
       slivers: <Widget>[
         SliverToutHeaderBar(
           flexImageUrl: game?.imageUrl,
-          flexBackColor: Styles().colors?.fillColorPrimary,
-          flexRightToLeftTriangleColor: Styles().colors!.fillColorPrimary,
-          flexLeftToRightTriangleColor: Styles().colors!.fillColorSecondaryTransparent05,
+          flexBackColor: Styles().colors.fillColorPrimary,
+          flexRightToLeftTriangleColor: Styles().colors.fillColorPrimary,
+          flexLeftToRightTriangleColor: Styles().colors.fillColorSecondaryTransparent05,
         ),
         SliverList(
           delegate: SliverChildListDelegate([
             Container(
-              color: Styles().colors!.background,
+              color: Styles().colors.background,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  AthleticsGameDetailHeading(game: game, showImageTout: false, ),
+                  AthleticsGameDetailHeading(game: game, sportEvent: widget.event, showImageTout: false, ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                     child: Column(
@@ -133,13 +145,13 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                       Column(
                         children: <Widget>[
                           Container(
-                            color: Styles().colors!.fillColorPrimary,
+                            color: Styles().colors.fillColorPrimary,
                             height: 40,
                           ),
                           Container(
                             height: 112,
                             width: double.infinity,
-                            child: Styles().images?.getImage('slant-dark',
+                            child: Styles().images.getImage('slant-dark',
                               fit: BoxFit.fill,
                               excludeFromSemantics: true,
                             ),
@@ -154,13 +166,12 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                               children: <Widget>[
                                 Padding(
                                   padding: EdgeInsets.only(right: 16),
-                                  child: Styles().images?.getImage('athletics', excludeFromSemantics: true),
+                                  child: Styles().images.getImage('athletics', excludeFromSemantics: true),
                                 ),
                                 Expanded(child:
                                   Text(
                                     Localization().getStringEx("panel.athletics_game_detail.label.more.title", "More") + " " + "$sportName",
-                                    style:
-                                    TextStyle(color: Colors.white, fontSize: 20),
+                                    style: Styles().textStyles.getTextStyle("widget.heading.large"),
                                   )
                                 ),
                               ],
@@ -215,8 +226,9 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                               )
                             ],),
                           ),
+                           _buildSelectorWidget()
                         ],
-                      )
+                      ),
                     ],
                   )
                 ],
@@ -248,7 +260,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
         child: Text(
           game!.newsTitle!,
           textAlign: TextAlign.left,
-          style: TextStyle(color: Styles().colors!.textBackground, fontSize: 20),
+          style: Styles().textStyles.getTextStyle("widget.item.large")
         ),
       ));
     }
@@ -262,16 +274,13 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
               child: Text(
                 game!.newsContent!,
                 textAlign: TextAlign.left,
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.regular,
-                    color: Styles().colors!.textBackground,
-                    fontSize: 16),
+                style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
               ),
             ),
             Visibility(
                 visible: !_newsExpanded,
                 child: Container(
-                  color: Styles().colors!.fillColorSecondary,
+                  color: Styles().colors.fillColorSecondary,
                   height: 1,
                 )),
             GestureDetector(
@@ -285,14 +294,11 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                       (_newsExpanded
                           ? Localization().getStringEx("panel.athletics_game_detail.label.see_less.title", "See less")
                           : Localization().getStringEx("panel.athletics_game_detail.label.see_more.title", "See more")),
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies!.bold,
-                          color: Styles().colors!.fillColorPrimary,
-                          fontSize: 16),
+                      style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 8),
-                      child: Styles().images?.getImage(_newsExpanded ? 'chevron-up' : 'chevron-down', excludeFromSemantics: true,),
+                      child: Styles().images.getImage(_newsExpanded ? 'chevron-up' : 'chevron-down', excludeFromSemantics: true,),
                     )
                   ],
                 ),
@@ -344,7 +350,11 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
   /*void _showTicketsPanel() {
     if (Connectivity().isNotOffline && (Config().ticketsUrl != null)) {
       Navigator.push(context, CupertinoPageRoute(
-        builder: (context) => WebPanel(url: Config().ticketsUrl)));
+        builder: (context) => WebPanel(
+          url: Config().ticketsUrl
+          analyticsName: "WebPanel(Tickets)",
+          analyticsSource: game?.analyticsAttributes,
+        )));
     }
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.tickets', 'Tickets are not available while offline.'));
@@ -361,5 +371,17 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
     if (mounted) {
       setState(() {});
     }
+  }
+
+  Widget _buildSelectorWidget(){
+    Widget? selectorWidget = (widget.event != null) ? widget.eventSelector?.buildUI(this, event: widget.event!) : null;
+    if(selectorWidget != null){
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: selectorWidget,
+      );
+    }
+
+    return Container();
   }
 }

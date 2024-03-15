@@ -48,7 +48,7 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
         title: Localization().getStringEx("panel.settings.verify_identity.label.title", "Verify your Identity"),
       ),
       body: SingleChildScrollView(child: _buildContent()),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -63,21 +63,21 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
           Container(padding: EdgeInsets.symmetric(horizontal: 24),
             child: Text(
               Localization().getStringEx("panel.settings.verify_identity.label.description", "Connect to {{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-              style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat"),
+              style: Styles().textStyles.getTextStyle("widget.title.extra_large.extra_fat"),
             ),
           ),
           Container(height: 8,),
           Container(padding: EdgeInsets.symmetric(horizontal: 24),
               child:RichText(
                 text: TextSpan(
-                  style:  Styles().textStyles?.getTextStyle("widget.info.regular.thin"),
+                  style:  Styles().textStyles.getTextStyle("widget.info.regular.thin"),
                   children: <TextSpan>[
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription1", "Are you a ")),
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription2", "university student"),
-                        style:  Styles().textStyles?.getTextStyle("widget.info.regular.fat")),
+                        style:  Styles().textStyles.getTextStyle("widget.info.regular.fat")),
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription3", " or ")),
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription4", "employee"),
-                        style:  Styles().textStyles?.getTextStyle("widget.info.regular.fat")),
+                        style:  Styles().textStyles.getTextStyle("widget.info.regular.fat")),
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription5", "? Log in with your NetID to see {{app_title}} information specific to you, like your Illini Cash and meal plan.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'))),
                   ],
                 ),
@@ -94,10 +94,10 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
           Container(padding: EdgeInsets.symmetric(horizontal: 24),
               child:RichText(
                 text: TextSpan(
-                  style:  Styles().textStyles?.getTextStyle("widget.info.regular.thin"),
+                  style:  Styles().textStyles.getTextStyle("widget.info.regular.thin"),
                   children: <TextSpan>[
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.phone_or_email.desription1", "Don’t have a NetID"),
-                        style:  Styles().textStyles?.getTextStyle("widget.info.regular.fat")),
+                        style:  Styles().textStyles.getTextStyle("widget.info.regular.fat")),
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.phone_or_email.desription2", "? Verify your phone number or sign in by email to save your preferences and have the same experience on more than one device.")),
                   ],
                 ),

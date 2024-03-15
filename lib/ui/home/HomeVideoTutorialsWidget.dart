@@ -21,6 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Content.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialListPanel.dart';
@@ -29,8 +30,7 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/app_lifecycle.dart';
-import 'package:rokwire_plugin/service/assets.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -66,8 +66,8 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
   void initState() {
 
     NotificationService().subscribe(this, [
-      Assets.notifyChanged,
-      AppLifecycle.notifyStateChanged,
+      Content.notifyVideoTutorialsChanged,
+      AppLivecycle.notifyStateChanged,
     ]);
 
     if (widget.updateController != null) {
@@ -93,15 +93,15 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Assets.notifyChanged) {
+    if (name == Content.notifyVideoTutorialsChanged) {
       _refresh();
     }
-    else if (name == AppLifecycle.notifyStateChanged) {
-      _onAppLifecycleStateChanged(param);
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
     }
   }
 
-  void _onAppLifecycleStateChanged(AppLifecycleState state) {
+  void _onAppLivecycleStateChanged(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }
@@ -116,7 +116,7 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
   }
 
   void _load() {
-    Map<String, dynamic>? videoTutorials = JsonUtils.mapValue(Assets()['video_tutorials']);
+    Map<String, dynamic>? videoTutorials = Content().videoTutorials;
     if (videoTutorials != null) {
       List<dynamic>? videoJsonList = JsonUtils.listValue(videoTutorials['videos']);
       if (CollectionUtils.isNotEmpty(videoJsonList)) {
@@ -192,11 +192,12 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
-      LinkButton(
-        title: Localization().getStringEx('widget.home.video_tutorials.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.video_tutorials.button.all.hint', 'Tap to view all video tutorials'),
-        onTap: _onTapViewAll,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length, centerWidget:
+        LinkButton(
+          title: Localization().getStringEx('widget.home.video_tutorials.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.video_tutorials.button.all.hint', 'Tap to view all video tutorials'),
+          onTap: _onTapViewAll,
+        ),
       ),
     ]);
   }
@@ -208,8 +209,8 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
     final Widget emptyImagePlaceholder = Container(height: 102);
     return Container(
         decoration: BoxDecoration(
-            color: Styles().colors?.white,
-            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            color: Styles().colors.white,
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(4))),
         child: Stack(children: [
           GestureDetector(
@@ -222,7 +223,7 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
                         Padding(
                             padding: EdgeInsets.only(bottom: 16),
                             child: Text(StringUtils.ensureNotEmpty(videoTitle),
-                                style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))),
+                                style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))),
                         Stack(alignment: Alignment.center, children: [
                           hasImage
                                   ? ClipRRect(
@@ -235,7 +236,7 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
                           VideoPlayButton(hasBackground: !hasImage)
                         ])
                       ])))),
-          Container(color: Styles().colors?.accentColor3, height: 4)
+          Container(color: Styles().colors.accentColor3, height: 4)
         ]));
   }
 

@@ -79,22 +79,14 @@ class _SettingsCalendarContentWidgetState extends State<SettingsCalendarContentW
     List<Widget> contentList = [];
     List<dynamic> codes = FlexUI()['calendar.settings'] ?? [];
     for (String code in codes) {
-      if (code == 'add') {
-        contentList.add(Container(height: 4));
-        contentList.add(ToggleRibbonButton(
-            label: Localization().getStringEx('panel.settings.home.calendar.settings.add_events.label', 'Add saved events to calendar'),
-            toggled: Storage().calendarEnabledToSave ?? false,
-            border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
-            borderRadius: BorderRadius.all(Radius.circular(4)),
-            onTap: _onAdd));
-      } else if (code == 'prompt') {
+      if (code == 'prompt') {
         contentList.add(Container(height: 4));
         contentList.add(ToggleRibbonButton(
             label: Localization().getStringEx('panel.settings.home.calendar.settings.prompt.label', 'Prompt when saving events to calendar'),
-            textStyle: (Storage().calendarEnabledToSave == true) ? Styles().textStyles?.getTextStyle("widget.message.regular.fat") :   Styles().textStyles?.getTextStyle("widget.message.regular.fat.accent"),
-            border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+            border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4)),
-            toggled: Storage().calendarCanPrompt ?? false,
+            textStyle: Styles().textStyles.getTextStyle("widget.message.regular.fat"),
+            toggled: Storage().calendarShouldPrompt,
             onTap: _onPrompt));
       }
     }
@@ -105,26 +97,17 @@ class _SettingsCalendarContentWidgetState extends State<SettingsCalendarContentW
         Row(children: [
           Expanded(
               child: Text('Calendar',
-                  style:  Styles().textStyles?.getTextStyle("widget.detail.regular.fat")))
+                  style:  Styles().textStyles.getTextStyle("widget.detail.regular.fat")))
         ])
       ]);
     }
     return contentList;
   }
 
-  void _onAdd() {
-    Analytics().logSelect(target: 'Add saved events to calendar');
-    setState(() {
-      Storage().calendarEnabledToSave = !Storage().calendarEnabledToSave!;
-    });
-  }
-
   void _onPrompt() {
     Analytics().logSelect(target: 'Prompt when saving events to calendar');
-    if (Storage().calendarEnabledToSave == true) {
-      setState(() {
-        Storage().calendarCanPrompt = (Storage().calendarCanPrompt != true);
-      });
-    }
+    setState(() {
+      Storage().calendarShouldPrompt = (Storage().calendarShouldPrompt != true);
+    });
   }
 }

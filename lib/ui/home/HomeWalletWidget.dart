@@ -11,7 +11,7 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
-import 'package:illinois/ui/wallet/IDCardPanel.dart';
+import 'package:illinois/ui/wallet/ICardHomeContentPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -133,16 +133,16 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
       
       contentWidget = VerticalTitleValueSection(
         title: title,
-        titleTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors?.fillColorPrimary),
+        titleTextStyle: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),
         value: status,
-        valueTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
+        valueTextStyle: Styles().textStyles.getTextStyle("widget.detail.medium"),
         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       );
     }
     else if (!Auth2().isOidcLoggedIn) {
       contentWidget = VerticalTitleValueSection(
        title: Localization().getStringEx('panel.browse.label.logged_out.illini_cash.short', 'You need to be logged in with your NetID to access Illini Cash.'),
-        titleTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
+        titleTextStyle: Styles().textStyles.getTextStyle("widget.message.regular.semi_fat"),
         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       );
     }    
@@ -156,17 +156,17 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors!.white, child:
+                Container(color: Styles().colors.white, child:
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(child:
                       Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
-                        Text(Localization().getStringEx('widget.home.wallet.illini_cash.title', 'Illini Cash'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))),
+                        Text(Localization().getStringEx('widget.home.wallet.illini_cash.title', 'Illini Cash'), style: Styles().textStyles.getTextStyle("widget.title.large.fat"))),
                       ),
                     HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true)
                   ])
                 ),
-                Container(color: Styles().colors!.backgroundVariant, height: 1,),
-                Container(color: Styles().colors!.white, child:
+                Container(color: Styles().colors.backgroundVariant, height: 1,),
+                Container(color: Styles().colors.white, child:
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
@@ -174,7 +174,7 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
                       ),
                       Visibility(visible: SettingsAddIlliniCashPanel.canPresent, child:
                         Semantics(button: true, excludeSemantics: true, label: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.title', 'Add Illini Cash'), hint: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.hint', ''), child:
-                          IconButton(color: Styles().colors!.fillColorPrimary, icon: Styles().images?.getImage('plus-circle-large', excludeFromSemantics: true) ?? Container(), onPressed: _onTapPlus)
+                          IconButton(color: Styles().colors.fillColorPrimary, icon: Styles().images.getImage('plus-circle-large', excludeFromSemantics: true) ?? Container(), onPressed: _onTapPlus)
                         ),
                       )
                     ]),
@@ -277,9 +277,9 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
         Expanded(child:
           VerticalTitleValueSection(
             title: title,
-            titleTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors?.fillColorPrimary),
+            titleTextStyle: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),
             value: status,
-            valueTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
+            valueTextStyle: Styles().textStyles.getTextStyle("widget.detail.medium"),
             margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),
         ),
@@ -290,7 +290,7 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
         Expanded(child:
           VerticalTitleValueSection(
           title: Localization().getStringEx('panel.browse.label.logged_out.meal_plan.short', 'You need to be logged in with your NetID to access University Housing Meal Plan.'),
-            titleTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
+            titleTextStyle: Styles().textStyles.getTextStyle("widget.message.regular.semi_fat"),
             margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),
         ),
@@ -310,18 +310,18 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors!.white, child:
+                Container(color: Styles().colors.white, child:
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(child:
                       Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
-                        Text(Localization().getStringEx('widget.home.wallet.meal_plan.title', 'Meal Plan'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))
+                        Text(Localization().getStringEx('widget.home.wallet.meal_plan.title', 'Meal Plan'), style: Styles().textStyles.getTextStyle("widget.title.large.fat"))
                       ),
                     ),
                     HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true)
                   ]),
               ),
-                Container(color: Styles().colors!.backgroundVariant, height: 1,),
-                Container(color: Styles().colors!.white, child:
+                Container(color: Styles().colors.backgroundVariant, height: 1,),
+                Container(color: Styles().colors.white, child:
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     contentWidget,
                   ),
@@ -393,26 +393,26 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors!.white, child:
+                Container(color: Styles().colors.white, child:
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(child:
                       Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
-                        Text(Localization().getStringEx('widget.home.wallet.bus_pass.title', 'MTD Bus Pass'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))
+                        Text(Localization().getStringEx('widget.home.wallet.bus_pass.title', 'MTD Bus Pass'), style: Styles().textStyles.getTextStyle("widget.title.large.fat"))
                       ),
                     ),
                     HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true)
                   ]),
                 ),
-                Container(color: Styles().colors!.backgroundVariant, height: 1,),
-                Container(color: Styles().colors!.white, child:
+                Container(color: Styles().colors.backgroundVariant, height: 1,),
+                Container(color: Styles().colors.white, child:
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
                         VerticalTitleValueSection(
                           title: (message != null) ? message : Auth2().authCard?.role ?? '',
-                          titleTextStyle: (message != null) ? TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary) : Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),
+                          titleTextStyle: (message != null) ? Styles().textStyles.getTextStyle("widget.message.regular.semi_fat") : Styles().textStyles.getTextStyle('widget.title.large.extra_fat'),
                           value: (message != null) ? null : StringUtils.isNotEmpty(Auth2().authCard?.expirationDate) ? sprintf(Localization().getStringEx('widget.home.wallet.bus_pass.label.card_expires.text', 'Expires: %s'), [Auth2().authCard?.expirationDate ?? '']) : '',
-                          valueTextStyle: (message != null) ? null : TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 14, color: Styles().colors?.fillColorPrimary),
+                          valueTextStyle: (message != null) ? null : Styles().textStyles.getTextStyle("widget.detail.small"),
                           margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                       ),
@@ -478,13 +478,13 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
       message = Localization().getStringEx('panel.browse.label.logged_out.illini_id.short', 'You need to be logged in with your NetID to access Illini ID.');
     }
     else if (StringUtils.isEmpty(Auth2().authCard?.cardNumber)) {
-      message = Localization().getStringEx('panel.browse.label.no_card.illini_id', 'No Illini ID information. You do not have an active i-card. Please visit the ID Center.');
+      message = Localization().getStringEx('panel.browse.label.no_card.illini_id', 'No Illini ID information. You do not have an active Illini ID. Please visit the ID Center.');
     }
     else {
       int? expirationDays = Auth2().authCard?.expirationIntervalInDays;
       if (expirationDays != null) {
         if (expirationDays <= 0) {
-          message = sprintf(Localization().getStringEx('panel.browse.label.expired_card.illini_id', 'No Illini ID information. Your i-card expired on %s. Please visit the ID Center.'), [Auth2().authCard?.expirationDate ?? '']);
+          message = sprintf(Localization().getStringEx('panel.browse.label.expired_card.illini_id', 'No Illini ID information. Your Illini ID expired on %s. Please visit the ID Center.'), [Auth2().authCard?.expirationDate ?? '']);
         }
         else if ((0 < expirationDays) && (expirationDays < 30)) {
           warning = sprintf(Localization().getStringEx('panel.browse.label.expiring_card.illini_id','Your ID will expire on %s. Please visit the ID Center.'), [Auth2().authCard?.expirationDate ?? '']);
@@ -498,28 +498,28 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors!.white, child:
+                Container(color: Styles().colors.white, child:
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(child:
                       Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
-                        Text(Localization().getStringEx('widget.home.wallet.illini_id.title', 'Illini ID'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))
+                        Text(Localization().getStringEx('widget.home.wallet.illini_id.title', 'Illini ID'), style: Styles().textStyles.getTextStyle("widget.title.large.fat"))
                       ),
                     ),
                     HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true),
                   ]),
                 ),
-                Container(color: Styles().colors!.backgroundVariant, height: 1,),
-                Container(color: Styles().colors!.white, child:
+                Container(color: Styles().colors.backgroundVariant, height: 1,),
+                Container(color: Styles().colors.white, child:
                   Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
                         VerticalTitleValueSection(
                           title: (message != null) ? message : StringUtils.isNotEmpty(Auth2().authCard?.fullName) ? Auth2().authCard?.fullName : Auth2().fullName,
-                          titleTextStyle: (message != null) ? TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary) : null,
+                          titleTextStyle: (message != null) ? Styles().textStyles.getTextStyle("widget.message.regular.semi_fat") : null,
                           value: (message != null) ? null : Auth2().authCard?.uin,
-                          valueTextStyle: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),
+                          valueTextStyle: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'),
                           hint: (warning != null) ? warning : null,
-                          hintTextStyle: Styles().textStyles?.getTextStyle('widget.card.detail.tiny'),
+                          hintTextStyle: Styles().textStyles.getTextStyle('widget.card.detail.tiny'),
                           margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                       ),
@@ -536,7 +536,7 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
 
   void _onTap() {
     Analytics().logSelect(target: 'Illini ID', source: widget.runtimeType.toString());
-     IDCardPanel.present(context);
+    ICardHomeContentPanel.present(context, content: ICardContent.i_card);
   }
 }
 
@@ -596,29 +596,29 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors!.white, child:
+                Container(color: Styles().colors.white, child:
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(child:
                       Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
-                        Text(Localization().getStringEx('widget.home.wallet.library_card.title', 'Library Card'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))
+                        Text(Localization().getStringEx('widget.home.wallet.library_card.title', 'Library Card'), style: Styles().textStyles.getTextStyle("widget.title.large.fat"))
                       ),
                     ),
                     HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true),
                   ]),
                 ),
-                Container(color: Styles().colors!.backgroundVariant, height: 1,),
-                Container(color: Styles().colors!.white, child:
+                Container(color: Styles().colors.backgroundVariant, height: 1,),
+                Container(color: Styles().colors.white, child:
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
                         (message != null) ?
                           VerticalTitleValueSection(
                             title: message,
-                            titleTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
+                            titleTextStyle: Styles().textStyles.getTextStyle("widget.message.regular.semi_fat"),
                             margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           ) :
                           Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 8), child:
-                            Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors?.fillColorSecondary ?? Colors.transparent, width: 3))), child:
+                            Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors.fillColorSecondary, width: 3))), child:
                               Padding(padding: EdgeInsets.only(left: 10), child:
                                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                                   Container(height: 50, decoration: BoxDecoration(
@@ -626,7 +626,7 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
                                     image: (_libraryBarcode != null) ? DecorationImage(fit: BoxFit.fill, image:_libraryBarcode! ,) : null,    
                                   )),
                                   Padding(padding: EdgeInsets.only(top: 8), child:
-                                    Row(children: [Expanded(child: Text(Auth2().authCard?.libraryNumber ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 14, color: Styles().colors?.fillColorPrimary), textAlign: TextAlign.center,))]),
+                                    Row(children: [Expanded(child: Text(Auth2().authCard?.libraryNumber ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small"), textAlign: TextAlign.center,))]),
                                   )
                                 ],),
                               ),
@@ -680,4 +680,3 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
     }
   }
 }
-

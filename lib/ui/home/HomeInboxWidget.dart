@@ -8,8 +8,8 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/settings/SettingsInboxHomeContentWidget.dart';
-import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
+import 'package:illinois/ui/notifications/NotificationsInboxPage.dart';
+import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -273,11 +273,12 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
-      LinkButton(
-        title: Localization().getStringEx('widget.home.inbox.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.inbox.button.all.hint', 'Tap to view all notifications'),
-        onTap: _onTapSeeAll,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length, centerWidget:
+        LinkButton(
+          title: Localization().getStringEx('widget.home.inbox.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.inbox.button.all.hint', 'Tap to view all notifications'),
+          onTap: _onTapSeeAll,
+        ),
       ),
     ]);
   }
@@ -305,18 +306,18 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
     Uri? uri = (url != null) ? Uri.tryParse(url) : null;
     if (uri?.scheme == localScheme) {
       if (uri?.host.toLowerCase() == allNotificationsHost.toLowerCase()) {
-        SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.all);
+        NotificationsHomePanel.present(context, content: NotificationsContent.all);
       }
     }
   }
 
   void _onTapMessage(InboxMessage message) {
     Analytics().logSelect(target: message.subject);
-    SettingsNotificationsContentPanel.launchMessageDetail(message);
+    NotificationsHomePanel.launchMessageDetail(message);
   }
 
   void _onTapSeeAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    SettingsNotificationsContentPanel.present(context, content: (_unread == true) ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
+    NotificationsHomePanel.present(context, content: (_unread == true) ? NotificationsContent.unread : NotificationsContent.all);
   }
 }

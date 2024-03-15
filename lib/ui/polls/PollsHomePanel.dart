@@ -112,7 +112,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
         title: Localization().getStringEx("panel.polls_home.text.header.title","Quick Polls"),
       ),
       body: _buildScaffoldBody(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -158,7 +158,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
 
     return Container(
       padding: EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-      color: Styles().colors!.fillColorPrimary,
+      color: Styles().colors.fillColorPrimary,
       child: Column(
         children: <Widget>[
           Row(children: <Widget>[
@@ -167,7 +167,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
               child: Text(description,
                 key: _keyBleDescriptionText,
                 textAlign: TextAlign.center,
-                style: Styles().textStyles?.getTextStyle("panel.polls.home.description")
+                style: Styles().textStyles.getTextStyle("panel.polls.home.description")
                 ),
             ),
             ),
@@ -177,10 +177,10 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
             padding: const EdgeInsets.symmetric(horizontal: 80),
             child: RoundedButton(
               label: Localization().getStringEx("panel.polls_home.button.find_poll.title","Find Poll"),
+              textStyle: Styles().textStyles.getTextStyle("widget.colourful_button.title.large.accent"),
               onTap: ()=>_onFindPollTapped(),
-              backgroundColor: Styles().colors!.fillColorPrimary,
-              textColor: Styles().colors!.white,
-              borderColor: Styles().colors!.fillColorSecondary,
+              backgroundColor: Styles().colors.fillColorPrimary,
+              borderColor: Styles().colors.fillColorSecondary,
             ),
           ),
         ],
@@ -190,7 +190,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
 
   Widget _buildPollsTabbar() {
     return Container(
-      color: Styles().colors?.background,
+      color: Styles().colors.background,
       padding: EdgeInsets.only(left: 16, top: 16, right: 16),
       child: Row(
         children: <Widget>[
@@ -342,12 +342,12 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           Container(height: 100,),
           Text(message,
             textAlign: TextAlign.center,
-            style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat")
+            style: Styles().textStyles.getTextStyle("widget.title.extra_large.extra_fat")
           ),
           Container(height: 16,),
           Text(description,
             textAlign: TextAlign.center,
-            style:Styles().textStyles?.getTextStyle("widget.item.regular.thin") ),
+            style:Styles().textStyles.getTextStyle("widget.item.regular.thin") ),
         ]
     ));
   }
@@ -360,22 +360,22 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           Container(height: 46,),
           Text(Localization().getStringEx("panel.polls_home.text.error","Error"),
             textAlign: TextAlign.center,
-            style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat")
+            style: Styles().textStyles.getTextStyle("widget.title.extra_large.extra_fat")
           ),
           Container(height: 16,),
           Text(error,
             textAlign: TextAlign.center,
-            style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),)
+            style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),)
         ]
     ));
   }
 
   Widget _buildCreatePollButton() {
-    return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors!.white,child:
+    return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors.white,child:
       RoundedButton(label:Localization().getStringEx("panel.polls_home.text.create_poll","Create a Poll"),
-          textColor: Styles().colors!.fillColorPrimary,
-          borderColor: Styles().colors!.fillColorSecondary,
-          backgroundColor: Styles().colors!.white,
+          textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+          borderColor: Styles().colors.fillColorSecondary,
+          backgroundColor: Styles().colors.white,
         onTap:_onCreatePollTapped
     ));
   }
@@ -723,11 +723,11 @@ class _PollsHomePanelFilterTab extends StatelessWidget {
         child: Semantics(label: text, hint:hint, button:true, excludeSemantics: true, child:Container(
           height: 48,
           decoration: BoxDecoration(
-            color: selected ? Colors.white : Styles().colors!.lightGray,
-            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1.5, style: BorderStyle.solid),
+            color: selected ? Colors.white : Styles().colors.lightGray,
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 1.5, style: BorderStyle.solid),
             borderRadius: _borderRadius,
           ),
-          child:Center(child: Text(text!,style: selected ? Styles().textStyles?.getTextStyle("widget.tab.selected") : Styles().textStyles?.getTextStyle("widget.tab.not_selected") )),
+          child:Center(child: Text(text!,style: selected ? Styles().textStyles.getTextStyle("widget.tab.selected") : Styles().textStyles.getTextStyle("widget.tab.not_selected") )),
         ),
         ));
   }
@@ -818,7 +818,7 @@ class _PollCardState extends State<PollCard> {
     ]);
 
     Widget optionsWidget = ((poll.status == PollStatus.opened) && (poll.settings?.hideResultsUntilClosed ?? false)) ?
-      Text(Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends."), style: Styles().textStyles?.getTextStyle("widget.card.detail.small")) :
+      Text(Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends."), style: Styles().textStyles.getTextStyle("widget.card.detail.small")) :
       Column(children: _buildCheckboxOptions(),);
 
     Widget bodyWidget = Padding(padding: EdgeInsets.all(16), child:
@@ -827,11 +827,11 @@ class _PollCardState extends State<PollCard> {
           Padding(padding: EdgeInsets.only(bottom: 10, right: canDeletePoll ? 24 : 0), child:
             Row(children: [
               Padding(padding: EdgeInsets.only(right: 3), child:
-                Text(Localization().getStringEx('panel.polls_home.card.group.label', 'Group:'), style:Styles().textStyles?.getTextStyle("widget.card.title.tiny")
+                Text(Localization().getStringEx('panel.polls_home.card.group.label', 'Group:'), style:Styles().textStyles.getTextStyle("widget.card.title.tiny")
                 ),
               ),
               Expanded(child:
-                Text(StringUtils.ensureNotEmpty(groupName), overflow: TextOverflow.ellipsis, style:Styles().textStyles?.getTextStyle("widget.card.title.tiny.fat")
+                Text(StringUtils.ensureNotEmpty(groupName), overflow: TextOverflow.ellipsis, style:Styles().textStyles.getTextStyle("widget.card.title.tiny.fat")
                 ),
               ),
             ]),
@@ -840,17 +840,17 @@ class _PollCardState extends State<PollCard> {
         Semantics(excludeSemantics: true, label: "$pollStatus,$pollVotesStatus", child:
           Padding(padding: EdgeInsets.only(bottom: 12, right: (canDeletePoll && (widget.group == null)) ? 24 : 0), child:
             Row(children: <Widget>[
-              Text(StringUtils.ensureNotEmpty(pollVotesStatus), style:Styles().textStyles?.getTextStyle("widget.card.detail.tiny.fat")
+              Text(StringUtils.ensureNotEmpty(pollVotesStatus), style:Styles().textStyles.getTextStyle("widget.card.detail.tiny.fat")
               ),
-              Text('  ', style:Styles().textStyles?.getTextStyle("widget.card.detail.tiny")
+              Text('  ', style:Styles().textStyles.getTextStyle("widget.card.detail.tiny")
               ),
               Expanded(child:
                 Text(pollStatus ?? '', style:
-                Styles().textStyles?.getTextStyle("widget.card.detail.tiny"),
+                Styles().textStyles.getTextStyle("widget.card.detail.tiny"),
                 ),
               ),
               Expanded(child: Container()),
-              Text(pin, style: Styles().textStyles?.getTextStyle("widget.card.detail.tiny.fat"),
+              Text(pin, style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.fat"),
               )
             ],),
           ),
@@ -859,7 +859,7 @@ class _PollCardState extends State<PollCard> {
           Expanded(child: Container(),)
         ],),
         Padding(padding: EdgeInsets.symmetric(vertical: 0),child:
-          Text(poll.title ?? '', style:Styles().textStyles?.getTextStyle("widget.card.title.medium.extra_fat"),
+          Text(poll.title ?? '', style:Styles().textStyles.getTextStyle("widget.card.title.medium.extra_fat"),
           ),
         ),
         Container(height:12),
@@ -879,7 +879,7 @@ class _PollCardState extends State<PollCard> {
 
     return Semantics(container: true, child:
       Column(children: <Widget>[
-        Container(decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(5)), child:
+        Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(5)), child:
           contnetWidget
         ),
       ],),
@@ -932,20 +932,20 @@ class _PollCardState extends State<PollCard> {
           child:
           Semantics(label: semanticsText, excludeSemantics: true, child:
           Row(children: <Widget>[
-            Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage(checkboxIconKey, excludeFromSemantics: true)),
+            Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage(checkboxIconKey, excludeFromSemantics: true)),
             Expanded(
               flex: 5,
               key: progressKey, child:
                 Stack(alignment: Alignment.centerLeft, children: <Widget>[
-              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors!.white, progressColor: useCustomColor ?Styles().colors!.fillColorPrimary:Styles().colors!.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.white, progressColor: useCustomColor ?Styles().colors.fillColorPrimary:Styles().colors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
               Container(/*height: 15+ 16*MediaQuery.of(context).textScaleFactor,*/ child:
                 Padding(padding: EdgeInsets.only(left: 5), child:
                     Row(children: <Widget>[
                       Expanded( child:
                       Padding( padding: EdgeInsets.symmetric(horizontal: 5),
-                        child: Text(option, style: useCustomColor? Styles().textStyles?.getTextStyle("panel.polls.home.check.accent") : Styles().textStyles?.getTextStyle("panel.polls.home.check")),)),
+                        child: Text(option, style: useCustomColor? Styles().textStyles.getTextStyle("panel.polls.home.check.accent") : Styles().textStyles.getTextStyle("panel.polls.home.check")),)),
                         Visibility( visible: didVote,
-                        child: Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('check-circle-outline-gray', excludeFromSemantics: true))
+                        child: Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage('check-circle-outline-gray', excludeFromSemantics: true))
                       ),
                     ],),)
               ),
@@ -953,7 +953,7 @@ class _PollCardState extends State<PollCard> {
             ),
             Expanded(
               flex: 5,
-              child: Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign: TextAlign.right,style: Styles().textStyles?.getTextStyle("panel.polls.home.card.percentage.title"),),),
+              child: Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign: TextAlign.right,style: Styles().textStyles.getTextStyle("panel.polls.home.card.percentage.title"),),),
             )
           ],)
       ))));
@@ -978,12 +978,12 @@ class _PollCardState extends State<PollCard> {
           Stack(children: <Widget>[
             Container(padding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
               decoration: BoxDecoration(
-                color: Styles().colors!.white,
-                border: Border.all(color: enabled? Styles().colors!.fillColorSecondary! :Styles().colors!.surfaceAccent!, width: 2.0),
+                color: Styles().colors.white,
+                border: Border.all(color: enabled? Styles().colors.fillColorSecondary :Styles().colors.surfaceAccent, width: 2.0),
                 borderRadius: BorderRadius.circular(24.0),
               ),
               child: Center(child:
-                Text(title, style: Styles().textStyles?.getTextStyle("panel.polls.home.card.button.create.title")
+                Text(title, style: Styles().textStyles.getTextStyle("panel.polls.home.card.button.create.title")
                 ),
               ),
             ),
@@ -991,7 +991,7 @@ class _PollCardState extends State<PollCard> {
               Container(padding: EdgeInsets.symmetric(vertical: 5), child:
                 Align(alignment: Alignment.center, child:
                   SizedBox(height: 24, width: 24, child:
-                    CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary),)
+                    CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary),)
                   ),
                 ),
               ),
@@ -1008,11 +1008,11 @@ class _PollCardState extends State<PollCard> {
       GestureDetector(onTap: _onDeletePollTapped, child:
         Stack(children: [
           Padding(padding: EdgeInsets.all(12), child:
-          Styles().images?.getImage('trash', excludeFromSemantics: true),
+          Styles().images.getImage('trash', excludeFromSemantics: true),
           ),
           _showDeletePollProgress ? Padding(padding: EdgeInsets.all(9), child:
             SizedBox(height: 24, width: 24, child:
-              CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary),)
+              CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),)
           )) : Container(),
         ]),
       ),

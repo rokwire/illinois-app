@@ -18,6 +18,7 @@ import 'dart:ui';
 
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -28,7 +29,9 @@ extension GroupExt on Group {
   Map<String, dynamic> get analyticsAttributes {
     return {
       Analytics.LogAttributeGroupId : id,
-      Analytics.LogAttributeGroupName : title
+      Analytics.LogAttributeGroupName : title,
+      Analytics.LogAttributeGroupHiddenForSearch: hiddenForSearch,
+      Analytics.LogAttributeGroupStats: Groups().cachedGroupStats(id)?.toJson(),
     };
   }
 
@@ -37,7 +40,7 @@ extension GroupExt on Group {
     if(member?.status != null){
       return groupMemberStatusToColor(member!.status);
     }
-    return Styles().colors!.white;
+    return Styles().colors.white;
   }
 
   String? get displayUpdateTime {
@@ -188,13 +191,13 @@ String? groupMemberStatusToDisplayString(GroupMemberStatus? value) {
 String? researchParticipantStatusToDisplayString(GroupMemberStatus? value) {
   if (value != null) {
     if (value == GroupMemberStatus.pending) {
-      return 'Pending';
+      return Localization().getStringEx('model.research_project.member.status.pending', 'Pending');
     } else if (value == GroupMemberStatus.member) {
-      return 'Participant';
+      return Localization().getStringEx('model.research_project.member.status.member', 'Participant');
     } else if (value == GroupMemberStatus.admin) {
-      return 'Principle Investigator';
+      return Localization().getStringEx('model.research_project.member.status.admin', 'Principal Investigator');
     } else if (value == GroupMemberStatus.rejected) {
-      return 'Denied';
+      return Localization().getStringEx('model.research_project.member.status.rejected', 'Denied');
     }
   }
   return null;
@@ -203,10 +206,10 @@ String? researchParticipantStatusToDisplayString(GroupMemberStatus? value) {
 Color? groupMemberStatusToColor(GroupMemberStatus? value) {
   if (value != null) {
     switch(value){
-      case GroupMemberStatus.admin    :  return Styles().colors!.fillColorSecondary;
-      case GroupMemberStatus.member   :  return Styles().colors!.fillColorPrimary;
-      case GroupMemberStatus.pending  :  return Styles().colors!.mediumGray1;
-      case GroupMemberStatus.rejected :  return Styles().colors!.mediumGray1;
+      case GroupMemberStatus.admin    :  return Styles().colors.fillColorSecondary;
+      case GroupMemberStatus.member   :  return Styles().colors.fillColorPrimary;
+      case GroupMemberStatus.pending  :  return Styles().colors.mediumGray1;
+      case GroupMemberStatus.rejected :  return Styles().colors.mediumGray1;
     }
   }
   return null;
@@ -246,10 +249,17 @@ extension GroupPostExt on GroupPost {
 }
 
 extension GroupSettingsExt on GroupSettings{
-  static GroupSettings initialDefaultSettings(){
-    return GroupSettings(
+  static GroupSettings initialDefaultSettings({Group? group}){
+      //Set Default values to true
+    return (group?.researchProject != true) ?
+      GroupSettings(
         memberInfoPreferences: MemberInfoPreferences(allowMemberInfo: true, viewMemberNetId: false, viewMemberName: true, viewMemberEmail: false),
-        memberPostPreferences: MemberPostPreferences(allowSendPost: true, sendPostToSpecificMembers: false, sendPostToAll: true, sendPostToAdmins: true, sendPostReplies: true, sendPostReactions: true)); //Set Default values to true
+        memberPostPreferences: MemberPostPreferences(allowSendPost: true, sendPostToSpecificMembers: false, sendPostToAll: true, sendPostToAdmins: true, sendPostReplies: true, sendPostReactions: true)
+      ) :
+      GroupSettings(
+        memberInfoPreferences: MemberInfoPreferences(allowMemberInfo: false, viewMemberNetId: false, viewMemberName: false, viewMemberEmail: false),
+        memberPostPreferences: MemberPostPreferences(allowSendPost: false, sendPostToSpecificMembers: false, sendPostToAll: false, sendPostToAdmins: false, sendPostReplies: false, sendPostReactions: false)
+      ); 
   }
 }
 

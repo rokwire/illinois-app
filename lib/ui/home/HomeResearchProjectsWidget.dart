@@ -170,7 +170,7 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
       }
     }
 
-    double pageHeight = 90 * 2 * MediaQuery.of(context).textScaleFactor;
+    double pageHeight = 90 * MediaQuery.of(context).textScaler.scale(2);
 
     if (_pageController == null) {
       double screenWidth = MediaQuery.of(context).size.width;
@@ -187,11 +187,12 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
           allowImplicitScrolling : true,
         )
       ),
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
-      LinkButton(
-        title: Localization().getStringEx('widget.home.research_projects.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.research_projects.button.all.hint', 'Tap to view all research projects'),
-        onTap: _onSeeAll,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length, centerWidget:
+        LinkButton(
+          title: Localization().getStringEx('widget.home.research_projects.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.research_projects.button.all.hint', 'Tap to view all research projects'),
+          onTap: _onSeeAll,
+        ),
       ),
     ],);
 

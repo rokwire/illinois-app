@@ -48,7 +48,7 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
           Stack(
             alignment: Alignment.bottomCenter,
             children: <Widget>[
-              Styles().images?.getImage('splash', excludeFromSemantics: true, fit: BoxFit.cover, semanticLabel: strWelcome,
+              Styles().images.getImage('splash', excludeFromSemantics: true, fit: BoxFit.cover, semanticLabel: strWelcome,
                 height: double.infinity,
                 width: double.infinity,) ?? Container(),
               Column(children: <Widget>[
@@ -66,7 +66,7 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
                                     strPersonalizedRecommendations,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontFamily: Styles().fontFamilies!.medium,
+                                      fontFamily: Styles().fontFamilies.medium,
                                       fontSize: 20,
                                       color: Colors.white,
                                     ),
@@ -90,11 +90,11 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
                                 hint: Localization().getStringEx(
                                     'panel.onboarding.get_started.button.get_started.hint',
                                     ''),
-                                backgroundColor: Styles().colors!.fillColorPrimary,
-                                textColor: Styles().colors!.white,
+                                textStyle: Styles().textStyles.getTextStyle("widget.colourful_button.title.large.accent"),
+                                backgroundColor: Styles().colors.fillColorPrimary,
                                 onTap: () => _goNext(context),
-                                borderColor: Styles().colors!.fillColorPrimary,
-                                secondaryBorderColor: Styles().colors!.white,
+                                borderColor: Styles().colors.fillColorPrimary,
+                                secondaryBorderColor: Styles().colors.white,
                               ),
                             )
                           ],

@@ -13,7 +13,6 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeWellnessRingsWidget extends StatefulWidget {
   
@@ -66,7 +65,7 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors!.white, child:
+                Container(color: Styles().colors.white, child:
                   Padding(padding: EdgeInsets.only(top: 20, right: 13, bottom: 0, left: 2), child:
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,7 +98,7 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
                         LinkButton(
                           title: Localization().getStringEx('widget.home.wellness.rings.view_all.label', 'View All'),
                           hint: Localization().getStringEx('widget.home.wellness.rings.view_all.hint', 'Tap to view all rings'),
-                          fontSize: 14,
+                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.semi_fat.underline"),
                           onTap: _onTapViewAll,
                         ),
                       ],
@@ -139,8 +138,8 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
 
   Widget _buildCreateRingButton(){
     bool enabled = WellnessRings().canAddRing;
-    final Color disabledTextColor = ColorUtils.fromHex("5c5c5c") ?? Colors.white; //TODO move to colors
-    final Color disabledBackgroundColor = ColorUtils.fromHex("e7e7e7") ?? Colors.white; //TODO move to colors
+    final Color disabledTextColor = Styles().colors.textColorDisabled;
+    final Color disabledBackgroundColor = Styles().colors.textBackgroundVariant2;
     String label = "Create New Ring";
     String description = "Maximum of 4 total";
     return Visibility(
@@ -151,27 +150,19 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
               // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                 child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Expanded(child:
-                  Container(decoration: BoxDecoration(color: enabled? Colors.white : disabledBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)), child:
+                  Container(decoration: BoxDecoration(color: enabled? Colors.white : disabledBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors.surfaceAccent, width: 1)), child:
                   Padding(padding: EdgeInsets.only(left: 8 /*+10 from icon*/, top: 10, bottom: 10, right: 3/*+10 form icon*/), child:
                   Row( crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Container(
                         padding: EdgeInsets.only(right: 8),
-                        child: Styles().images?.getImage('plus-circle', excludeFromSemantics: true, color: enabled? Colors.black : disabledTextColor,),
+                        child: Styles().images.getImage('plus-circle', excludeFromSemantics: true, color: enabled? Colors.black : disabledTextColor,),
                       ),
                       Expanded(
                           flex: 5,
                           child: Container(
-                            child: Text(label ,
-                              style: TextStyle(color: enabled? Colors.black : disabledTextColor,
-                                  fontFamily: Styles().fontFamilies!.bold, fontSize: 14), textAlign: TextAlign.start,),)),
-                      // Expanded(
-                          // flex: 5,
-                          // child: Container(
-                          //   child: Text(description ,
-                          //     style: TextStyle(color: enabled? Colors.black : disabledTextColor,
-                          //         fontFamily: Styles().fontFamilies!.regular, fontSize: 12), textAlign: TextAlign.end,),)),
+                            child: Text(label , style: enabled? Styles().textStyles.getTextStyle("panel.wellness.ring.home_widget.button.title.enabled") : Styles().textStyles.getTextStyle("panel.wellness.ring.home_widget.button.title.disabled"), textAlign: TextAlign.start,),)),
                     ],),
                   ),
                   )

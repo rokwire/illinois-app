@@ -33,20 +33,12 @@ class StudentCourse with Explore {
     'coursesection': section?.toJson(),
   };
 
-  // ExploreJsonHandler
+  bool get hasValidLocation => section?.building?.hasValidLocation ?? false;
 
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) &&
-      (json['coursetitle'] != null) &&
-      (json['courseshortname'] != null) &&
-      (json['coursenumber'] != null) &&
-      (json['coursesection'] != null);
-  }
-
-  bool get hasLocation => section?.building?.hasLocation ?? false;
+  String get detail => '$shortName ($number) $instructionMethod';
   
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is StudentCourse) &&
     (title == other.title) &&
     (shortName == other.shortName) &&
@@ -65,13 +57,10 @@ class StudentCourse with Explore {
   // Explore implementation
 
   @override String? get exploreId => number;
-  @override String get exploreTitle => title ?? '';
-  @override String? get exploreSubTitle => '$shortName ($number) $instructionMethod';
-  @override String? get exploreShortDescription => null;
-  @override String? get exploreLongDescription => null;
-  @override DateTime? get exploreStartDateUtc => null;
+  @override String? get exploreTitle => title ?? '';
+  @override String? get exploreDescription => null;
+  @override DateTime? get exploreDateTimeUtc => null;
   @override String? get exploreImageURL => null;
-  @override String? get explorePlaceId => null;
   @override ExploreLocation? get exploreLocation => section?.building?.exploreLocation;
 
   // List<StudentCourse>
@@ -97,11 +86,6 @@ class StudentCourse with Explore {
     }
     return jsonList;
   }
-}
-
-class StudentCourseExploreJsonHandler implements ExploreJsonHandler {
-  @override bool exploreCanJson(Map<String, dynamic>? json) => StudentCourse.canJson(json);
-  @override Explore? exploreFromJson(Map<String, dynamic>? json) => StudentCourse.fromJson(json);
 }
 
 // StudentCourseSection
@@ -163,7 +147,7 @@ class StudentCourseSection {
   };
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is StudentCourseSection) &&
     
     (buildingName == other.buildingName) &&
@@ -293,21 +277,10 @@ class Building with Explore {
     'entrances': BuildingEntrance.listToJson(entrances),
   };
 
-  // ExploreJsonHandler
-
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) &&
-      (json['id'] != null) &&
-      (json['name'] != null) &&
-      (json['latitude'] != null) &&
-      (json['longitude'] != null) &&
-      (json['entrances'] != null);
-  }
-
-  bool get hasLocation => (latitude != null) && (longitude != null);
+  bool get hasValidLocation => (latitude != null) && (latitude != 0) && (longitude != null) && (longitude != 0);
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is Building) &&
     
     (id == other.id) &&
@@ -359,13 +332,10 @@ class Building with Explore {
   // Explore implementation
 
   @override String? get exploreId => id;
-  @override String get exploreTitle => name ?? '';
-  @override String? get exploreSubTitle => address1;
-  @override String? get exploreShortDescription => null;
-  @override String? get exploreLongDescription => null;
-  @override DateTime? get exploreStartDateUtc => null;
+  @override String? get exploreTitle => name;
+  @override String? get exploreDescription => null;
+  @override DateTime? get exploreDateTimeUtc => null;
   @override String? get exploreImageURL => null; //TMP: imageURL;
-  @override String? get explorePlaceId => null;
   @override ExploreLocation? get exploreLocation => ExploreLocation(
     building : name,
     description: fullAddress,
@@ -400,11 +370,17 @@ class Building with Explore {
     }
     return jsonList;
   }
-}
 
-class BuildingExploreJsonHandler implements ExploreJsonHandler {
-  @override bool exploreCanJson(Map<String, dynamic>? json) => Building.canJson(json);
-  @override Explore? exploreFromJson(Map<String, dynamic>? json) => Building.fromJson(json);
+  static Building? findInList(List<Building>? values, {String? id}) {
+    if (values != null) {
+      for (Building value in values) {
+        if ((id != null) && (value.id == id)) {
+          return value;
+        }
+      }
+    }
+    return null;
+  }
 }
 
 // BuildingEntrance
@@ -445,7 +421,7 @@ class BuildingEntrance {
   bool get hasValidLocation => (latitude != null) && (latitude != 0) && (longitude != null) && (longitude != 0);
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is BuildingEntrance) &&
     (id == other.id) &&
     (name == other.name) &&
@@ -535,7 +511,7 @@ class StudentCourseTerm {
   };
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is StudentCourseTerm) &&
     (id == other.id) &&
     (name == other.name) &&

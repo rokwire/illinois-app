@@ -82,7 +82,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           padding: EdgeInsets.symmetric(horizontal: 6),
           child: Text(
             Localization().getStringEx("panel.settings.notifications.label.desctiption", "Don’t miss an event or campus update."),
-            style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"),
+            style: Styles().textStyles.getTextStyle("widget.message.regular.fat"),
           ),),
         Container(height: 24,),
         InfoButton(
@@ -103,14 +103,22 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
     BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5));
     List<Widget> widgets = [];
 
-    
+    widgets.add(_CustomToggleButton(
+        enabled: _notificationsEnabled,
+        borderRadius: _topRounding,
+        label: Localization().getStringEx("panel.settings.notifications.pause_notifications", "Pause all notifications"),
+        toggled: FirebaseMessaging().notificationsPaused,
+        onTap: _notificationsEnabled? _onPauseNotificationsToggled : (){},
+        textStyle: _notificationsEnabled? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
+    ));
+    widgets.add(Container(color:Styles().colors.surfaceAccent,height: 1,));
     widgets.add(_CustomToggleButton(
           enabled: _appointmentsNotificationsEnabled,
-          borderRadius: _topRounding,
+          borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.appointments.new", "New MyMcKinley Appointment"),
           toggled: (Appointments().account?.notificationsAppointmentNew == true),
           onTap: _appointmentsNotificationsEnabled ? _onNewAppointmentToggled : (){},
-          textStyle: _appointmentsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
+          textStyle: _appointmentsNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
     ));
     widgets.add(_CustomToggleButton(
           enabled: _appointmentsNotificationsEnabled,
@@ -118,16 +126,16 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           label: Localization().getStringEx("panel.settings.notifications.appointments.reminders", "Appointment Reminders"),
           toggled: Appointments().reminderNotificationsEnabled,
           onTap: _appointmentsNotificationsEnabled ? _onAppointmentRemindersToggled : (){},
-          textStyle: _appointmentsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
+          textStyle: _appointmentsNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
     ));
-    widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors!.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
+    widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
       _CustomToggleButton(
           enabled: _appointmentRemindersSubNotificationsEnabled,
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.appointments.reminders.morning_of.label", "Morning Of (8:00 AM)"),
           toggled: (Appointments().account?.notificationsAppointmentReminderMorning ?? false),
           onTap: Appointments().reminderNotificationsEnabled ? _onAppointmentRemindersMorningToggled : (){},
-          textStyle: _appointmentRemindersSubNotificationsEnabled ?  Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+          textStyle: _appointmentRemindersSubNotificationsEnabled ?  Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
     ),
       _CustomToggleButton(
           enabled: _appointmentRemindersSubNotificationsEnabled,
@@ -135,55 +143,55 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           label: Localization().getStringEx("panel.settings.notifications.appointments.reminders.night_before.label", "Night Before (9:00 PM)"),
           toggled: (Appointments().account?.notificationsAppointmentReminderNight ?? false),
           onTap: Appointments().reminderNotificationsEnabled ? _onAppointmentRemindersNightToggled : (){},
-          textStyle: _appointmentRemindersSubNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+          textStyle: _appointmentRemindersSubNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       )
     ]))))]));
     widgets.add(Row(children: [
       Expanded(
           child: Container(
-              color: Styles().colors!.white,
+              color: Styles().colors.white,
               child: Padding(
                   padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
                   child: Text(Localization().getStringEx("panel.settings.notifications.appointments.description.label", 'MyMcKinley appointment reminder settings only apply within the {{app_title}} app.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-                      style: _notificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.variant.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.variant.disabled")
+                      style: _notificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.disabled")
                   ))))
     ]));
-    widgets.add(Container(color:Styles().colors!.surfaceAccent,height: 1));
+    widgets.add(Container(color:Styles().colors.surfaceAccent,height: 1));
     widgets.add(_CustomToggleButton(
           enabled: _toggleButtonEnabled,
           borderRadius: _topRounding,
           label: Localization().getStringEx("panel.settings.notifications.reminders", "Event Reminders"),
           toggled: FirebaseMessaging().notifyEventReminders,
           onTap: _toggleButtonEnabled?_onEventRemindersToggled : (){},
-          textStyle: _toggleButtonEnabled? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
+          textStyle: _toggleButtonEnabled? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
     ));
-    widgets.add(Container(color:Styles().colors!.surfaceAccent,height: 1,));
+    widgets.add(Container(color:Styles().colors.surfaceAccent,height: 1,));
     widgets.add(_CustomToggleButton(
           enabled: _toggleButtonEnabled,
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.athletics_updates", "Athletics Updates"),
           toggled: FirebaseMessaging().notifyAthleticsUpdates,
           onTap: _toggleButtonEnabled? _onAthleticsUpdatesToggled : (){},
-          textStyle: _toggleButtonEnabled? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
+          textStyle: _toggleButtonEnabled? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
     ));
     widgets.add(Row(children: [
       Expanded(
           child: Container(
-              color: Styles().colors!.white,
+              color: Styles().colors.white,
               child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Text(Localization().getStringEx("panel.settings.notifications.athletics_updates.description.label", 'Based on your favorite sports'),
-                      style: _notificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.variant.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.variant.disabled")
+                      style: _notificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.disabled")
                   ))))
     ]));
-    widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors!.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
+    widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
       _CustomToggleButton(
           enabled: _athleticsSubNotificationsEnabled,
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.athletics_updates.start.label", "Start"),
           toggled: FirebaseMessaging().notifyStartAthleticsUpdates,
           onTap: _athleticsSubNotificationsEnabled ? _onAthleticsUpdatesStartToggled : (){},
-          textStyle: _athleticsSubNotificationsEnabled ?  Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+          textStyle: _athleticsSubNotificationsEnabled ?  Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
     ),
       _CustomToggleButton(
           enabled: _athleticsSubNotificationsEnabled,
@@ -191,7 +199,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           label: Localization().getStringEx("panel.settings.notifications.athletics_updates.end.label", "End"),
           toggled: FirebaseMessaging().notifyEndAthleticsUpdates,
           onTap: _athleticsSubNotificationsEnabled ? _onAthleticsUpdatesEndToggled : (){},
-          textStyle: _athleticsSubNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+          textStyle: _athleticsSubNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       ),
       _CustomToggleButton(
           enabled: _athleticsSubNotificationsEnabled,
@@ -199,26 +207,26 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           label: Localization().getStringEx("panel.settings.notifications.athletics_updates.news.label", "News"),
           toggled: FirebaseMessaging().notifyNewsAthleticsUpdates,
           onTap: _athleticsSubNotificationsEnabled ? _onAthleticsUpdatesNewsToggled : (){},
-          textStyle: _athleticsSubNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+          textStyle: _athleticsSubNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
     )
     ]))))]));
-    widgets.add(Container(color:Styles().colors!.surfaceAccent,height: 1,));
+    widgets.add(Container(color:Styles().colors.surfaceAccent,height: 1,));
     widgets.add(_CustomToggleButton(
         enabled: _toggleButtonEnabled,
         borderRadius: BorderRadius.zero,
         label: Localization().getStringEx("panel.settings.notifications.group_updates", "Group Updates"),
         toggled: FirebaseMessaging().notifyGroupUpdates,
         onTap: _toggleButtonEnabled? _onGroupsUpdatesToggled : (){},
-        textStyle: _toggleButtonEnabled? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
+        textStyle: _toggleButtonEnabled? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
     ));
-    widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors!.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
+    widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
       _CustomToggleButton(
           enabled: _groupsSubNotificationsEnabled,
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.group_updates.posts.label", "Posts"),
           toggled: FirebaseMessaging().notifyGroupPostUpdates,
           onTap: _groupsSubNotificationsEnabled ? _onGroupsUpdatesPostsToggled : (){},
-          textStyle: _groupsSubNotificationsEnabled ?Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+          textStyle: _groupsSubNotificationsEnabled ?Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
         ),
       _CustomToggleButton(
           enabled: _groupsSubNotificationsEnabled,
@@ -226,7 +234,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           label: Localization().getStringEx("panel.settings.notifications.group_updates.events.label", "Events"),
           toggled: FirebaseMessaging().notifyGroupEventsUpdates,
           onTap: _groupsSubNotificationsEnabled ? _onGroupsUpdatesEventsToggled : (){},
-          textStyle: _groupsSubNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+          textStyle: _groupsSubNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       ),
       _CustomToggleButton(
           enabled: _groupsSubNotificationsEnabled,
@@ -234,7 +242,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           label: Localization().getStringEx("panel.settings.notifications.group_updates.invitations.label", "Group membership"),
           toggled: FirebaseMessaging().notifyGroupInvitationsUpdates,
           onTap: _groupsSubNotificationsEnabled ? _onGroupsUpdatesInvitationsToggled: (){},
-          textStyle: _groupsSubNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+          textStyle: _groupsSubNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
         ),
       _CustomToggleButton(
           enabled: _groupsSubNotificationsEnabled,
@@ -242,18 +250,9 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           label: Localization().getStringEx("panel.settings.notifications.group_updates.polls.label", "Polls"),
           toggled: FirebaseMessaging().notifyGroupPollsUpdates,
           onTap: _groupsSubNotificationsEnabled ? _onGroupsUpdatesPollsToggled: (){},
-          textStyle: _groupsSubNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+          textStyle: _groupsSubNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       )
     ]))))]));
-    widgets.add(Container(color:Styles().colors!.surfaceAccent,height: 1,));
-    widgets.add(_CustomToggleButton(
-        enabled: _notificationsEnabled,
-        borderRadius: BorderRadius.zero,
-        label: Localization().getStringEx("panel.settings.notifications.pause_notifications", "Pause all notifications"),
-        toggled: FirebaseMessaging().notificationsPaused,
-        onTap: _notificationsEnabled? _onPauseNotificationsToggled : (){},
-        textStyle: _notificationsEnabled? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
-      ));
 //    widgets.add(_CustomToggleButton(
 //          enabled: _notificationsEnabled,
 //          borderRadius: _bottomRounding,

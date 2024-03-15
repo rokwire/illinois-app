@@ -15,18 +15,18 @@ class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatelessWidg
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
       body: Stack(children: [
         Column(children: [
-          Container(color: Styles().colors?.white, height: 90,),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.white, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
+          Container(color: Styles().colors.white, height: 90,),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
             Container(height: 70,),
           ),
         ],),
-        Styles().images?.getImage("header-questionnaire", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
+        Styles().images.getImage("header-questionnaire", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
         Padding(padding: EdgeInsets.only(top: 90), child:
           Align(alignment: Alignment.topCenter, child: 
-            Styles().images?.getImage('questionnaire', excludeFromSemantics: true),
+            Styles().images.getImage('questionnaire', excludeFromSemantics: true),
           ),
         ),
         Positioned.fill(child:
@@ -49,7 +49,7 @@ class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatelessWidg
             SingleChildScrollView(child:
               Padding(padding: EdgeInsets.symmetric(vertical: 32), child:
                 Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.acknowledgement.title', 'Thank you! We will notify you when you become eligible for any upcoming research projects.'), textAlign: TextAlign.center,
-                  style: Styles().textStyles?.getTextStyle("widget.message.large.fat"),
+                  style: Styles().textStyles.getTextStyle("widget.message.large.fat"),
                 ),
               ),
             ),
@@ -58,11 +58,10 @@ class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatelessWidg
         Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
           RoundedButton(
             label: Localization().getStringEx('dialog.OK.title', 'OK'),
-            fontSize: 16,
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            backgroundColor: Styles().colors!.white,
-            borderColor: Styles().colors!.fillColorSecondaryVariant,
-            textColor: Styles().colors!.fillColorPrimary,
+            backgroundColor: Styles().colors.white,
+            borderColor: Styles().colors.fillColorSecondaryVariant,
             onTap: () => _onContinue(context),
           ),
         )

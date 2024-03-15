@@ -57,7 +57,7 @@ class _OnboardingLoginPhoneVerifyPanelState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         body: GestureDetector(
           excludeFromSemantics: true,
           behavior: HitTestBehavior.translucent,
@@ -76,9 +76,9 @@ class _OnboardingLoginPhoneVerifyPanelState
                               'Connect to Illinois'),
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontFamily: Styles().fontFamilies!.bold,
+                              fontFamily: Styles().fontFamilies.bold,
                               fontSize: 36,
-                              color: Styles().colors!.fillColorPrimary))),
+                              color: Styles().colors.fillColorPrimary))),
                   Container(
                     height: 48,
                   ),
@@ -90,9 +90,9 @@ class _OnboardingLoginPhoneVerifyPanelState
                               "To verify your phone number, choose your preferred contact channel, and we'll send you a one-time authentication code."),
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontFamily: Styles().fontFamilies!.regular,
+                              fontFamily: Styles().fontFamilies.regular,
                               fontSize: 18,
-                              color: Styles().colors!.fillColorPrimary))),
+                              color: Styles().colors.fillColorPrimary))),
                   Padding(
                     padding: EdgeInsets.only(left: 12, top: 12, bottom: 6),
                     child: Text(
@@ -102,8 +102,8 @@ class _OnboardingLoginPhoneVerifyPanelState
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           fontSize: 16,
-                          color: Styles().colors!.fillColorPrimary,
-                          fontFamily: Styles().fontFamilies!.bold),
+                          color: Styles().colors.fillColorPrimary,
+                          fontFamily: Styles().fontFamilies.bold),
                     ),
                   ),
                   Padding(
@@ -122,12 +122,12 @@ class _OnboardingLoginPhoneVerifyPanelState
                         controller: _phoneNumberController,
                         autofocus: false,
                         onSubmitted: (_) => _clearErrorMsg,
-                        cursorColor: Styles().colors!.textBackground,
+                        cursorColor: Styles().colors.textBackground,
                         keyboardType: TextInputType.phone,
                         style: TextStyle(
                             fontSize: 16,
-                            fontFamily: Styles().fontFamilies!.regular,
-                            color: Styles().colors!.textBackground),
+                            fontFamily: Styles().fontFamilies.regular,
+                            color: Styles().colors.textBackground),
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
@@ -155,7 +155,7 @@ class _OnboardingLoginPhoneVerifyPanelState
                             selected: _verificationMethod == Auth2PhoneVerificationMethod.sms,
                             button: true,
                             child: Radio(
-                              activeColor: Styles().colors!.fillColorSecondary,
+                              activeColor: Styles().colors.fillColorSecondary,
                               value: Auth2PhoneVerificationMethod.sms,
                               groupValue: _verificationMethod,
                               onChanged: _onMethodChanged,
@@ -167,7 +167,7 @@ class _OnboardingLoginPhoneVerifyPanelState
                                   "panel.onboarding.verify_phone.text_me.label",
                                   "Text me"),
                               style: TextStyle(
-                                  fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                                  fontSize: 16, fontFamily: Styles().fontFamilies.regular),
                             ))
                         ],
                       ),
@@ -182,7 +182,7 @@ class _OnboardingLoginPhoneVerifyPanelState
                         style: TextStyle(
                             color: Colors.red,
                             fontSize: 14,
-                            fontFamily: Styles().fontFamilies!.medium),
+                            fontFamily: Styles().fontFamilies.medium),
                       ),
                     ),
                   ),
@@ -210,9 +210,9 @@ class _OnboardingLoginPhoneVerifyPanelState
                     "Next"),
                 hint: Localization().getStringEx(
                     "panel.onboarding.verify_phone.button.next.hint", ""),
-                borderColor: Styles().colors!.fillColorSecondary,
-                backgroundColor: Styles().colors!.background,
-                textColor: Styles().colors!.fillColorPrimary,
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                borderColor: Styles().colors.fillColorSecondary,
+                backgroundColor: Styles().colors.background,
                 onTap: () => _onTapNext()),),)
           ],),
         ));

@@ -76,11 +76,11 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
 
   Widget _buildContent() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Text(Localization().getStringEx("widget.home_create_poll.text.title","Quickly Create and Share Polls."), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, ),),
+        Text(Localization().getStringEx("widget.home_create_poll.text.title","Quickly Create and Share Polls."), style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat")),
         Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
         Text((_canCreatePoll?Localization().getStringEx("widget.home_create_poll.text.description","People in your Group can be notified to vote through the {{app_title}} app. Or you can give voters the four-digit poll number.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')) :
         Localization().getStringEx("widget.home_create_poll.text.description.login","You need to be logged in to create and share polls with people near you. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.")),
-          style: TextStyle(color: Color(0xff494949), fontFamily: Styles().fontFamilies!.medium, fontSize: 16,),),),
+          style: Styles().textStyles.getTextStyle("widget.description.variant.regular")),),
         _buildButtons()
       ],);
   }
@@ -89,8 +89,8 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
     return _canCreatePoll?
     RoundedButton(
       label: Localization().getStringEx("widget.home_create_poll.button.create_poll.label","Create a Poll"),
-      textColor: Styles().colors!.fillColorPrimary,
-      borderColor: Styles().colors!.fillColorSecondary,
+      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+      borderColor: Styles().colors.fillColorSecondary,
       backgroundColor: Colors.white,
       contentWeight: 0.6,
       conentAlignment: MainAxisAlignment.start,
@@ -99,9 +99,8 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
     Padding(padding: EdgeInsets.only(right: 120), child:
       RoundedButton(
         label: Localization().getStringEx("widget.home_create_poll.button.login.label","Login"),
-//        height: 48,
-        textColor: Styles().colors!.fillColorPrimary,
-        borderColor: Styles().colors!.fillColorSecondary,
+        textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+        borderColor: Styles().colors.fillColorSecondary,
         backgroundColor: Colors.white,
         progress: _authLoading,
         onTap: _onLogin,

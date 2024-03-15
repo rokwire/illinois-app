@@ -51,7 +51,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         body: SafeArea(child:SwipeDetector(
             onSwipeLeft: () => _goNext(context),
             onSwipeRight: () => _goBack(context),
@@ -59,7 +59,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
               Expanded(child:
                 SingleChildScrollView(child:
                   Container(
-                    color: Styles().colors!.white,
+                    color: Styles().colors.white,
                     child:Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
@@ -69,17 +69,17 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                           child:Row(children: [
                             Expanded(
                               flex:1,
-                              child: Container(color: Styles().colors!.fillColorPrimary,)
+                              child: Container(color: Styles().colors.fillColorPrimary,)
                             ),
                             Container(width: 2,),
                             Expanded(
                                 flex:1,
-                                child: Container(color: Styles().colors!.backgroundVariant,)
+                                child: Container(color: Styles().colors.backgroundVariant,)
                             ),
                             Container(width: 2,),
                             Expanded(
                                 flex:1,
-                                child: Container(color: Styles().colors!.backgroundVariant,)
+                                child: Container(color: Styles().colors.backgroundVariant,)
                             ),
                           ],)
                         ),
@@ -103,7 +103,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                                   child: Text(
                                     _title!,
                                     textAlign: TextAlign.center,
-                                    style: Styles().textStyles?.getTextStyle("panel.onboarding2.explore_campus.title"))
+                                    style: Styles().textStyles.getTextStyle("panel.onboarding2.explore_campus.title"))
                               ),
                             )),
                         Semantics(
@@ -116,13 +116,13 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                                   child: Text(
                                     _description!,
                                     textAlign: TextAlign.center,
-                                    style: Styles().textStyles?.getTextStyle("widget.detail.regular")
+                                    style: Styles().textStyles.getTextStyle("widget.detail.regular")
                                   )),
                             )),
                         Container(height: 10,),
                         Onboarding2UnderlinedButton(
                           title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn More'),
-                          fontSize: 14,
+                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.semi_fat.underline"),
                           onTap: _onTapLearnMore,
                         ),
                         Container(height: 24,),
@@ -137,19 +137,19 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                                       child:Column(
                                       children:[
                                         CustomPaint(
-                                          painter: TrianglePainter(painterColor: Styles().colors!.background,),
+                                          painter: TrianglePainter(painterColor: Styles().colors.background,),
                                           child: Container(
                                             height: 80,
                                           ),
                                         ),
-                                        Container(height: 20, color: Styles().colors!.background,)
+                                        Container(height: 20, color: Styles().colors.background,)
                                     ]),
                                   ),
                                 ),
                               Align(
                                 alignment: Alignment.center,
                                 child:Container(
-                                  child: Styles().images?.getImage('explore-illustration', excludeFromSemantics: true),
+                                  child: Styles().images.getImage('explore-illustration', excludeFromSemantics: true),
                                 )
                               )
                             ],
@@ -177,11 +177,10 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                     RoundedButton(
                       label: Localization().getStringEx('panel.onboarding2.explore_campus.button.continue.title', 'Continue'),
                       hint: Localization().getStringEx('panel.onboarding2.explore_campus.button.continue.hint', ''),
-                      fontSize: 16,
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      backgroundColor: Styles().colors!.white,
-                      borderColor: Styles().colors!.fillColorSecondaryVariant,
-                      textColor: Styles().colors!.fillColorPrimary,
+                      backgroundColor: Styles().colors.white,
+                      borderColor: Styles().colors.fillColorSecondaryVariant,
                       onTap: () => _goNext(context),
                     )
                   ],

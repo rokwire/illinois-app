@@ -21,14 +21,18 @@ import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/ext/Game.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Guide.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 enum RecentItemType {
   event,
+  event2,
   dining,
   game,
   news,
@@ -72,27 +76,36 @@ class RecentItem {
     if(item is Event) {
       return RecentItem(
           type: RecentItemType.event,
-          id: item.exploreId,
-          title: item.exploreTitle,
-          descripton: item.shortDescription,
+          id: item.id,
+          title: item.title,
+          descripton: item.description,
           time: item.isRecurring ? item.displayRecurringDates : item.displayDateTime,
+          sourceJson: item.toJson()
+      );
+    } else if(item is Event2) {
+      return RecentItem(
+          type: RecentItemType.event2,
+          id: item.id,
+          title: item.name,
+          descripton: item.description,
+          time: item.shortDisplayDateAndTime,
           sourceJson: item.toJson()
       );
     } else if(item is Dining) {
       return RecentItem(
           type: RecentItemType.dining,
-          id: item.exploreId,
-          title: item.exploreTitle,
-          descripton: item.shortDescription,
+          id: item.id,
+          title: item.title,
+          descripton: item.description,
           time: item.displayWorkTime,
           sourceJson: item.toJson()
       );
     } else if(item is Game) {
       return RecentItem(
           type: RecentItemType.game,
-          id: item.exploreId,
+          id: item.id,
           title: item.title,
-          descripton: item.shortDescription,
+          descripton: item.description,
           time: item.displayTime,
           sourceJson: item.jsonData
       );
@@ -129,9 +142,10 @@ class RecentItem {
   }
 
   static RecentItem? fromGuideItem(Map<String, dynamic>? guideItem) {
-    return (guideItem != null) ? RecentItem(
+    String? guideId = Guide().entryId(guideItem);
+    return (guideId != null) ? RecentItem(
       type: RecentItemType.guide,
-      id: Guide().entryId(guideItem),
+      id: guideId,
       title: Guide().entryListTitle(guideItem, stripHtmlTags: true) ?? '',
       descripton: Guide().entryListDescription(guideItem, stripHtmlTags: true) ?? '',
       sourceJson: guideItem
@@ -142,6 +156,7 @@ class RecentItem {
   dynamic get source {
     switch (type) {
       case RecentItemType.event: return Event.fromJson(sourceJson);
+      case RecentItemType.event2: return Event2.fromJson(sourceJson);
       case RecentItemType.dining: return Dining.fromJson(sourceJson);
       case RecentItemType.game: return Game.fromJson(sourceJson);
       case RecentItemType.news: return News.fromJson(sourceJson);
@@ -156,6 +171,7 @@ class RecentItem {
     if (id != null) {
       switch (type) {
         case RecentItemType.event:   return FavoriteItem(key: Event.favoriteKeyName, id: id);
+        case RecentItemType.event2:  return FavoriteItem(key: Event2.favoriteKeyName, id: id);
         case RecentItemType.dining:  return FavoriteItem(key: Dining.favoriteKeyName, id: id);
         case RecentItemType.game:    return FavoriteItem(key: Game.favoriteKeyName, id: id);
         case RecentItemType.news:    return FavoriteItem(key: News.favoriteKeyName, id: id);
@@ -231,6 +247,9 @@ RecentItemType? recentTypeFromString(String? value){
   if ("event" == value) {
     return RecentItemType.event;
   }
+  else if ("event2" == value) {
+    return RecentItemType.event2;
+  }
   else if ("dining" == value) {
     return RecentItemType.dining;
   }
@@ -255,6 +274,7 @@ RecentItemType? recentTypeFromString(String? value){
 String? recentTypeToString(RecentItemType? value){
   switch(value){
     case RecentItemType.event: return "event";
+    case RecentItemType.event2: return "event2";
     case RecentItemType.dining: return "dining";
     case RecentItemType.game: return "game";
     case RecentItemType.news: return "news";

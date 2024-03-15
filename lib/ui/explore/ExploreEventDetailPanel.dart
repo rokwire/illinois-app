@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
@@ -30,7 +29,6 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -46,17 +44,14 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
-import 'package:illinois/ui/WebPanel.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 class ExploreEventDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Event? event;
   final bool previewMode;
   final Core.Position? initialLocationData;
   final String? superEventTitle;
-  final String? browseGroupId;
+  final Group? browseGroup;
 
-  ExploreEventDetailPanel({this.event, this.previewMode = false, this.initialLocationData, this.superEventTitle, this.browseGroupId});
+  ExploreEventDetailPanel({this.event, this.previewMode = false, this.initialLocationData, this.superEventTitle, this.browseGroup});
 
   @override
   _EventDetailPanelState createState() => _EventDetailPanelState();
@@ -158,7 +153,6 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                                                           _exploreTitle(),
                                                           _eventSponsor(),
                                                           _exploreDetails(),
-                                                          _exploreSubTitle(),
                                                           _exploreContacts()
                                                         ])),
                                                       Container(
@@ -188,7 +182,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             ),
           ],
         ),
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         bottomNavigationBar: uiuc.TabBar(),
       );
   }
@@ -204,11 +198,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         Expanded(child:
           Text(
             (category != null) ? category.toUpperCase() : "",
-            style: TextStyle(
-                fontFamily: Styles().fontFamilies!.bold,
-                fontSize: 14,
-                color: Styles().colors!.fillColorPrimary,
-                letterSpacing: 1),
+            style: Styles().textStyles.getTextStyle("widget.title.small.fat.spaced")
           ),
         ),
         Visibility(visible: starVisible, child: Container(child: Padding(padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
@@ -226,7 +216,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                     hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                         'widget.card.button.favorite.on.hint', ''),
                     button: true,
-                    child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
+                    child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
                 )))
         )),)
       ],
@@ -243,9 +233,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             Expanded(
               child: Text(
                 widget.event!.exploreTitle!,
-                style: TextStyle(
-                    fontSize: 24,
-                    color: Styles().colors!.fillColorPrimary),
+                style: Styles().textStyles.getTextStyle("widget.title.extra_large")
               ),
             ),
           ],
@@ -264,10 +252,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             Expanded(
               child: Text(
                 eventSponsorText,
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Styles().colors!.textBackground,
-                    fontFamily: Styles().fontFamilies!.bold),
+                style: Styles().textStyles.getTextStyle("widget.item.regular.fat")
               ),
             ),
           ],
@@ -334,7 +319,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       padding: EdgeInsets.symmetric(vertical: 0),
       child: Container(
         height: 1,
-        color: Styles().colors!.fillColorPrimaryTransparent015,
+        color: Styles().colors.fillColorPrimaryTransparent015,
       ),
     );
   }
@@ -351,13 +336,10 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(right: 10),
-                  child: Styles().images?.getImage('calendar', excludeFromSemantics: true),
+                  child: Styles().images.getImage('calendar', excludeFromSemantics: true),
                 ),
                 Expanded(child: Text(displayTime,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.medium,
-                        fontSize: 16,
-                        color: Styles().colors!.textBackground))),
+                    style: Styles().textStyles.getTextStyle("widget.item.regular"))),
               ],
             ),
           )
@@ -372,56 +354,32 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       return null;
     }
     String eventType = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
-    BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
-    String iconRes = "location";
-    String? locationId = widget.event?.location?.locationId;
-    String locationText = widget.event?.getLongDisplayLocation(_locationData)??"";
-    String value = locationId ?? locationText;
-    bool isValueVisible = StringUtils.isNotEmpty(value);
-    return GestureDetector(
-        onTap: _onLocationDetailTapped,
-        child: Semantics(
-          label: "$eventType, $locationText",
-          hint: Localization().getStringEx('panel.explore_detail.button.directions.hint', ''),
-          button: true,
-          excludeSemantics: true,
-          child:Padding(
-            padding: EdgeInsets.only(bottom: 8),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(right: 10),
-                  child: Styles().images?.getImage(iconRes, excludeFromSemantics: true),
-                ),
-                Container(decoration: (null), padding: EdgeInsets.only(bottom: (0)), child: Text(eventType,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.medium,
-                        fontSize: 16,
-                        color: Styles().colors!.textBackground)),),
-              ]),
-              Container(height: 4,),
-              Visibility(visible: isValueVisible, child: Container(
-                  padding: EdgeInsets.only(left: 30),
-                  child: Container(
-                      decoration: underlineLocationDecoration,
-                      padding: EdgeInsets.only(bottom: 2),
-                      child: Text(
-                        value,
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies!.medium,
-                            fontSize: 14,
-                            color: Styles().colors!.fillColorPrimary),
-                      ))))
-            ],)
-          )
-        ),
-      );
+    String locationText = widget.event?.getLongDisplayLocation(_locationData) ?? "";
+    bool canHandleLocation = (widget.event?.location?.isLocationCoordinateValid == true);
+    TextStyle? locationTextStyle = canHandleLocation ? Styles().textStyles.getTextStyle("widget.button.title.small.semi_fat.underline") : Styles().textStyles.getTextStyle("widget.button.title.small.semi_fat");
+    String semanticsLabel = "$eventType, $locationText";
+    String semanticsHint = Localization().getStringEx('panel.explore_detail.button.directions.hint', '');
+    
+    return GestureDetector(onTap: canHandleLocation ? _onLocationDetailTapped : null, child:
+      Semantics(label: semanticsLabel, hint: semanticsHint, button: canHandleLocation, excludeSemantics: true, child:
+        Padding(padding: EdgeInsets.only(bottom: 8), child:
+          Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Padding(padding: EdgeInsets.only(right: 10), child:
+                Styles().images.getImage("location", excludeFromSemantics: true),
+              ),
+              Text(eventType, style: Styles().textStyles.getTextStyle("widget.item.regular")),
+            ]),
+            Container(height: 4,),
+            Visibility(visible: StringUtils.isNotEmpty(locationText), child:
+              Container(padding: EdgeInsets.only(left: 30), child:
+                Text(locationText, style: locationTextStyle)
+              )
+            )
+          ],)
+        )
+      ),
+    );
   }
 
   Widget? _exploreOnlineDetail() {
@@ -430,66 +388,38 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     }
 
     String eventType = Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event");
-    BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
-    String iconRes = "laptop";
     String? virtualUrl = widget.event?.virtualEventUrl;
-    String locationDescription = StringUtils.ensureNotEmpty(widget.event?.location?.description);
-    String? locationId = widget.event?.location?.locationId;
-    String? urlFromLocation = locationId ??  locationDescription;
-    bool isLocationIdUrl = Uri.tryParse(urlFromLocation)?.isAbsolute ?? false;
-    String value = virtualUrl ??
-        (isLocationIdUrl? urlFromLocation : "");
+    String? locationDescription = widget.event?.location?.description;
+    String? linkUrl = virtualUrl ?? (UrlUtils.isValidUrl(locationDescription) ? locationDescription : null);
+    bool canHandleLink = StringUtils.isNotEmpty(linkUrl);
+    String semanticsLabel = "$eventType, $virtualUrl";
+    String semanticsHint = Localization().getStringEx('panel.explore_detail.button.virtual.hint', 'Double tap to open link');
 
-    bool isValueVisible = StringUtils.isNotEmpty(value);
-    return GestureDetector(
-      onTap: _onLocationDetailTapped,
-      child: Semantics(
-          label: "$eventType, $virtualUrl",
-          hint: Localization().getStringEx('panel.explore_detail.button.virtual.hint', 'Double tap to open link'),
-          button: true,
-          excludeSemantics: true,
-          child:Padding(
-              padding: EdgeInsets.only(bottom: 8),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(right: 10),
-                          child: Styles().images?.getImage(iconRes, excludeFromSemantics: true),
-                        ),
-                        Container(decoration: (StringUtils.isNotEmpty(value) ? underlineLocationDecoration : null), padding: EdgeInsets.only(bottom: (StringUtils.isNotEmpty(value) ? 2 : 0)), child: Text(eventType,
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies!.medium,
-                                fontSize: 16,
-                                color: Styles().colors!.textBackground)),),
-                      ]),
-                  Container(height: 4,),
-                  Visibility(visible: isValueVisible, child: Container(
-                      padding: EdgeInsets.only(left: 30),
-                      child: Container(
-                          decoration: underlineLocationDecoration,
-                          padding: EdgeInsets.only(bottom: 2),
-                          child: Text(
-                            value,
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies!.medium,
-                                fontSize: 14,
-                                color: Styles().colors!.fillColorPrimary),
-                          ))))
-                ],)
-          )
+    return GestureDetector(onTap: canHandleLink ? (() => _onTapWebButton(linkUrl, "Event Link ")) : null, child:
+      Semantics(label: semanticsLabel, hint: semanticsHint, button: true, excludeSemantics: true, child:
+        Padding(padding: EdgeInsets.only(bottom: 8), child:
+          Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Padding(padding: EdgeInsets.only(right: 10), child:
+                Styles().images.getImage("laptop", excludeFromSemantics: true),
+              ),
+              Text(eventType, style: Styles().textStyles.getTextStyle("widget.item.regular")),
+            ]),
+            Container(height: 4,),
+            Visibility(visible: canHandleLink, child:
+              Container(padding: EdgeInsets.only(left: 30), child:
+                Text(linkUrl ?? '', style: Styles().textStyles.getTextStyle("widget.button.title.small.semi_fat.underline"))
+              ),
+            ),
+          ],),
+        ),
       ),
     );
   }
 
   Widget? _eventPrivacyDetail() {
     String privacyText = (widget.event?.isGroupPrivate ?? false)
-        ? Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event')
+        ? Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Uploaded Guest List Only')
         : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
     return Semantics(
         label: Localization().getStringEx('panel.explore_detail.label.privacy.title', 'Privacy'),
@@ -499,9 +429,9 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             padding: EdgeInsets.only(bottom: 16),
             child: Column(children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Padding(padding: EdgeInsets.only(left: 1, right: 11), child: Styles().images?.getImage('privacy', excludeFromSemantics: true)),
+                Padding(padding: EdgeInsets.only(left: 1, right: 11), child: Styles().images.getImage('privacy', excludeFromSemantics: true)),
                 Expanded(
-                    child: Text(privacyText, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
+                    child: Text(privacyText, style: Styles().textStyles.getTextStyle("widget.item.regular")))
               ])
             ])));
   }
@@ -525,13 +455,10 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(right: 10),
-                      child: Styles().images?.getImage('cost', excludeFromSemantics: true),
+                      child: Styles().images.getImage('cost', excludeFromSemantics: true),
                     ),
                       Expanded(child:Text(priceText,
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies!.medium,
-                            fontSize: 16,
-                            color: Styles().colors!.textBackground))),
+                        style: Styles().textStyles.getTextStyle("widget.item.regular"))),
 
                     ]),
                     !hasAdditionalDescription? Container():
@@ -539,10 +466,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                       padding: EdgeInsets.only(left: 28),
                       child: Row(children: [
                       Expanded(child:Text(additionalDescription!,
-                          style: TextStyle(
-                              fontFamily: Styles().fontFamilies!.medium,
-                              fontSize: 16,
-                              color: Styles().colors!.textBackground))),
+                          style: Styles().textStyles.getTextStyle("widget.item.regular"))),
 
                     ])),
                   ],
@@ -567,12 +491,8 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('chevron-left-bold', excludeFromSemantics: true)),
-              Expanded(child: Text(widget.superEventTitle ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.medium,
-                  fontSize: 16,
-                  color: Styles().colors!.fillColorPrimary,
-                  decoration: TextDecoration.underline,
-                  decorationColor: Styles().colors!.fillColorSecondary))),
+              Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage('chevron-left-bold', excludeFromSemantics: true)),
+              Expanded(child: Text(widget.superEventTitle ?? '', style: Styles().textStyles.getTextStyle("widget.button.title.medium.underline"))),
             ],
           ),
         )
@@ -589,7 +509,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Row(children: <Widget>[
-                Expanded(child: Container(height: 1, color: Styles().colors!.surfaceAccent,),)
+                Expanded(child: Container(height: 1, color: Styles().colors.surfaceAccent,),)
               ],),
             ),
             Row(
@@ -599,9 +519,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                 Container(width: 5,),
                 Expanded(
                   child: Text(capitalizedTags.join(', '),
-                    style: TextStyle(
-                      fontFamily: Styles().fontFamilies!.regular
-                    ),
+                    style: Styles().textStyles.getTextStyle("widget.text.regular")
                   ),
                 )
               ],
@@ -611,21 +529,6 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       );
     }
     return null;
-  }
-
-  Widget _exploreSubTitle() {
-    String? subTitle = widget.event?.exploreSubTitle;
-    if (StringUtils.isEmpty(subTitle)) {
-      return Container();
-    }
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 10),
-        child: Text(
-          subTitle!,
-          style: TextStyle(
-              fontSize: 20,
-              color: Styles().colors!.textBackground),
-        ));
   }
 
   Widget _exploreContacts() {
@@ -661,25 +564,25 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         }
         contactDetails += contact.phone!;
       }
-      contactList.add(Padding(padding: EdgeInsets.only(bottom: 5), child: Text(contactDetails, style: TextStyle(fontFamily: Styles().fontFamilies!.regular))));
+      contactList.add(Padding(padding: EdgeInsets.only(bottom: 5), child: Text(contactDetails, style: Styles().textStyles.getTextStyle("widget.text.regular"))));
     }
     return Padding(padding: EdgeInsets.only(left: 30), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: contactList));
   }
 
   Widget _exploreDescription() {
-    String? longDescription = widget.event!.exploreLongDescription;
-    bool showDescription = StringUtils.isNotEmpty(longDescription);
+    String? description = widget.event!.description;
+    bool showDescription = StringUtils.isNotEmpty(description);
     if (!showDescription) {
       return Container();
     }
     // Html widget does not handle line breaks symbols \r\n. Replace them with <br/> so that they are properly shown in event description. #692
-    String updatedDesc = longDescription!.replaceAll('\r\n', '<br/>');
+    String updatedDesc = description!.replaceAll('\r\n', '<br/>');
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: HtmlWidget(
             updatedDesc,
-            onTapUrl : (url) {_launchUrl(url, context: context); return true;},
-            textStyle:  TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 16),
+            onTapUrl : (url) { _onTapWebButton(url, 'Description'); return true; },
+            textStyle:  Styles().textStyles.getTextStyle("widget.info.regular"),
         )
     );
   }
@@ -687,7 +590,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   Widget _buildPreviewHeader(){
     return !widget.previewMode? Container():
     Container(
-      color: Styles().colors!.fillColorPrimaryVariant,
+      color: Styles().colors.fillColorPrimaryVariant,
       height: 56,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16),
@@ -695,15 +598,12 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Styles().images?.getImage('check-circle-filled') ?? Container(),
+            Styles().images.getImage('check-circle-filled') ?? Container(),
             Padding(
               padding: EdgeInsets.only(left: 12),
               child: Text(
                 Localization().getStringEx('panel.explore_detail.label.event_preview', 'Event Preview'),
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontFamily: Styles().fontFamilies!.extraBold),
+                style: Styles().textStyles.getTextStyle("widget.heading.large.extra_fat")
               ),
             )
           ],
@@ -729,10 +629,10 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               label: Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website'),
               hint: Localization().getStringEx('panel.explore_detail.button.visit_website.hint', ''),
-              backgroundColor: hasRegistrationUrl ? Styles().colors!.background : Colors.white,
-              borderColor: hasRegistrationUrl ? Styles().colors!.fillColorPrimary: Styles().colors!.fillColorSecondary,
-              rightIcon: Styles().images?.getImage(hasRegistrationUrl ? 'external-link-dark' : 'external-link'),
-              textColor: Styles().colors!.fillColorPrimary,
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+              backgroundColor: hasRegistrationUrl ? Styles().colors.background : Colors.white,
+              borderColor: hasRegistrationUrl ? Styles().colors.fillColorPrimary: Styles().colors.fillColorSecondary,
+              rightIcon: Styles().images.getImage(hasRegistrationUrl ? 'external-link-dark' : 'external-link'),
               onTap: () {
                 Analytics().logSelect(target: "Website");
                 _onTapWebButton(titleUrl, 'Website');
@@ -748,10 +648,10 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                 label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Register'),
                 hint: Localization().getStringEx('panel.explore_detail.button.get_tickets.hint', ''),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                 backgroundColor: Colors.white,
-                borderColor: Styles().colors!.fillColorSecondary,
-                rightIcon: Styles().images?.getImage('external-link'),
-                textColor: Styles().colors!.fillColorPrimary,
+                borderColor: Styles().colors.fillColorSecondary,
+                rightIcon: Styles().images.getImage('external-link'),
                 onTap: () {
                 Analytics().logSelect(target: "Website");
                   _onTapGetTickets(registrationUrl);
@@ -789,9 +689,9 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               child: RoundedButton(
                 label: Localization().getStringEx('panel.explore_detail.button.modify.title', 'Modify'),
                 hint: Localization().getStringEx('panel.explore_detail.button.modify.hint', '') ,
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                 backgroundColor: Colors.white,
-                borderColor: Styles().colors!.fillColorPrimary,
-                textColor: Styles().colors!.fillColorPrimary,
+                borderColor: Styles().colors.fillColorPrimary,
                 onTap: ()=>_onTapModify,
               )),
           Container(
@@ -801,9 +701,9 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               child: RoundedButton(
                 label: Localization().getStringEx('panel.explore_detail.button.publish.title', 'Publish'),
                 hint: Localization().getStringEx('panel.explore_detail.button.publish.hint', 'Publish'),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                 backgroundColor: Colors.white,
-                borderColor: Styles().colors!.fillColorSecondary,
-                textColor: Styles().colors!.fillColorPrimary,
+                borderColor: Styles().colors.fillColorSecondary,
                 onTap: ()=>_onTapPublish,
               ))
         ],
@@ -811,24 +711,28 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget _buildGroupButtons(){
-    return (StringUtils.isEmpty(widget.browseGroupId) || (widget.event?.isGroupPrivate ?? false))? Container():
+    return (StringUtils.isNotEmpty(widget.browseGroup?.id) && ((widget.browseGroup?.researchProject == true) || !(widget.event?.isGroupPrivate ?? false))) ?
         Container(
           padding: EdgeInsets.symmetric(vertical: 10),
           child: Column(
             children: [
               RoundedButton(
-                label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
-                hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
+                label: (widget.browseGroup?.researchProject == true) ?
+                  Localization().getStringEx('panel.explore_detail.button.add_to_project.title', 'Add Event To Project') :
+                  Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
+                hint: (widget.browseGroup?.researchProject == true) ?
+                  Localization().getStringEx('panel.explore_detail.button.add_to_project.hint', '') :
+                  Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                 backgroundColor: Colors.white,
-                borderColor: Styles().colors!.fillColorPrimary,
-                textColor: Styles().colors!.fillColorPrimary,
+                borderColor: Styles().colors.fillColorPrimary,
                 progress: _addToGroupInProgress,
                 onTap: _onTapAddToGroup,
               ),
               Container(height: 6,),
               GroupMembersSelectionWidget(
                 selectedMembers: _groupMembersSelection,
-                groupId: widget.browseGroupId,
+                groupId: widget.browseGroup?.id,
                 onSelectionChanged: (members){
                   setState(() {
                     _groupMembersSelection = members;
@@ -836,7 +740,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                 },),
             ],
           )
-        );
+        ) : Container();
   }
 
   void _addRecentItem(){
@@ -857,27 +761,13 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   void _onTapWebButton(String? url, String analyticsName){
-    if(StringUtils.isNotEmpty(url)){
-      Navigator.push(
-          context,
-          CupertinoPageRoute(
-              builder: (context) =>
-                  WebPanel(
-                      analyticsName: "WebPanel($analyticsName)",
-                      url: url)));
-    }
+    Analytics().logSelect(target: "$analyticsName ($url)");
+    UrlUtils.launchExternal(url);
   }
 
   void _onLocationDetailTapped() {
-    if((widget.event?.displayAsVirtual ?? false) == true){
-      String? url = widget.event?.location?.description;
-      if(StringUtils.isNotEmpty(url)) {
-        _onTapWebButton(url, "Event Link ");
-      }
-    } else if(widget.event?.location?.latitude != null && widget.event?.location?.longitude != null) {
-      Analytics().logSelect(target: "Location Detail");
-      NativeCommunicator().launchExploreMapDirections(target: widget.event);
-    }
+    Analytics().logSelect(target: "Location Directions");
+    widget.event?.launchDirections();
   }
 
   void _onTapModify() {
@@ -890,7 +780,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     setState(() {
       _addToGroupInProgress = true;
     });
-    Groups().linkEventToGroup(groupId: widget.browseGroupId, eventId: widget.event?.id, toMembers: _groupMembersSelection).then((value){
+    Groups().linkEventToGroup(groupId: widget.browseGroup?.id, eventId: widget.event?.id, toMembers: _groupMembersSelection).then((value){
       setState(() {
         _addToGroupInProgress = true;
       });
@@ -902,27 +792,14 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     Analytics().logSelect(target: "Publish");
     Events().postNewEvent(widget.event).then((String? eventId){
         if(eventId!=null){
-          AppToast.show("Event successfully created");
+          AppToast.showMessage("Event successfully created");
           Navigator.pop(context,true);
         }else {
-          AppToast.show("Unable to create Event");
+          AppToast.showMessage("Unable to create Event");
         }
     });
   }
   
-  void _launchUrl(String? url, {BuildContext? context}) {
-    if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      } else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri);
-        }
-      }
-    }
-  }
-
   // NotificationsListener
   
   @override

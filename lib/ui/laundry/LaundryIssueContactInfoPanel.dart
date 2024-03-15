@@ -53,19 +53,19 @@ class _LaundryIssueContactInfoPanelState extends State<LaundryIssueContactInfoPa
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [_buildLaundryColorSection(), _buildContactInfoHeader(), _buildInputFieldsSection(), _buildCompleteSection()])),
-        backgroundColor: Styles().colors?.background,
+        backgroundColor: Styles().colors.background,
         bottomNavigationBar: uiuc.TabBar());
   }
 
   Widget _buildLaundryColorSection() {
-    return Container(color: Styles().colors?.accentColor2, height: 4);
+    return Container(color: Styles().colors.accentColor2, height: 4);
   }
 
   Widget _buildContactInfoHeader() {
     return Padding(
         padding: EdgeInsets.only(top: 40, bottom: 30),
         child: Text(Localization().getStringEx('panel.laundry.issues_contact_info.contact_info.label', 'Contact Information'),
-            style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 30, fontFamily: Styles().fontFamilies!.medium)));
+            style: Styles().textStyles.getTextStyle("widget.title.semi_huge")));
   }
 
   Widget _buildInputFieldsSection() {
@@ -90,16 +90,15 @@ class _LaundryIssueContactInfoPanelState extends State<LaundryIssueContactInfoPa
     return Padding(
         padding: EdgeInsets.only(top: 10),
         child: Container(
-            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.disabledTextColor!, width: 2))),
+            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.disabledTextColor, width: 2))),
             child: TextField(
                 controller: controller,
-                cursorColor: Styles().colors!.mediumGray2!,
-                style: TextStyle(fontSize: 20, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.medium),
+                cursorColor: Styles().colors.mediumGray2,
+                style: Styles().textStyles.getTextStyle("widget.input_field.dark.text.large"),
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: hintText,
-                    hintStyle:
-                        TextStyle(fontSize: 20, color: Styles().colors!.disabledTextColor, fontFamily: Styles().fontFamilies!.medium)))));
+                    hintStyle: Styles().textStyles.getTextStyle("widget.input_field.disable.text.large")))));
   }
 
   Widget _buildCompleteSection() {
@@ -107,13 +106,13 @@ class _LaundryIssueContactInfoPanelState extends State<LaundryIssueContactInfoPa
         padding: EdgeInsets.only(top: 40),
         child: Stack(alignment: Alignment.center, children: [
           RoundedButton(
-            backgroundColor: Styles().colors!.fillColorPrimary,
-            textColor: Styles().colors!.white,
+            backgroundColor: Styles().colors.fillColorPrimary,
+            textStyle: Styles().textStyles.getTextStyle("widget.colourful_button.title.large.accent"),
             contentWeight: 0.73,
-            borderColor: Styles().colors!.fillColorPrimary,
+            borderColor: Styles().colors.fillColorPrimary,
             label: Localization().getStringEx('panel.laundry.issues_contact_info.complete.button', 'Complete Request'),
             onTap: _onTapComplete,
-            rightIcon: Styles().images?.getImage('chevron-right-white', excludeFromSemantics: true)),
+            rightIcon: Styles().images.getImage('chevron-right-white', excludeFromSemantics: true)),
             Visibility(visible: _isLoading, child: CircularProgressIndicator())
         ]));
   }

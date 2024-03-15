@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/service/Config.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ExploreCampusPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-import 'Onboarding2Widgets.dart';
 
 class Onboarding2PrivacyStatementPanel extends StatefulWidget{
 
@@ -59,7 +55,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
     String descriptionText3 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description3', '. Your continued use of the app assumes that you have read and agree with it.');
 
     return Scaffold(
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         body: SafeArea(child: SwipeDetector(
             onSwipeLeft: () => _goNext(context),
             onSwipeRight: () => _goBack(context),
@@ -76,7 +72,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                               _goBack(context);
                             }),
                       ],),
-                      Styles().images?.getImage("lock-illustration", excludeFromSemantics: true, width: 130, fit: BoxFit.fitWidth) ?? Container(),
+                      Styles().images.getImage("lock-illustration", excludeFromSemantics: true, width: 130, fit: BoxFit.fitWidth) ?? Container(),
                       Semantics(
                         label: titleText + titleText2,
                         hint: Localization().getStringEx("common.heading.one.hint","Header 1"),
@@ -91,8 +87,8 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                                 textAlign: TextAlign.center,
                                 text: TextSpan(
                                   children: <TextSpan>[
-                                    TextSpan(text:titleText , style: Styles().textStyles?.getTextStyle("panel.onboarding2.privacy_statement.title.fat")),
-                                    TextSpan(text:titleText2, style: Styles().textStyles?.getTextStyle("panel.onboarding2.privacy_statement.title.regular")),
+                                    TextSpan(text:titleText , style: Styles().textStyles.getTextStyle("panel.onboarding2.privacy_statement.title.fat")),
+                                    TextSpan(text:titleText2, style: Styles().textStyles.getTextStyle("panel.onboarding2.privacy_statement.title.regular")),
                                   ]
                                 )
                               ),
@@ -108,7 +104,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                                 child: Text(
                               descriptionText,
                               textAlign: TextAlign.center,
-                              style: Styles().textStyles?.getTextStyle("panel.onboarding2.privacy_statement.description.regular")
+                              style: Styles().textStyles.getTextStyle("panel.onboarding2.privacy_statement.description.regular")
                             )),
                           )),
                     ]),
@@ -133,12 +129,12 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                             child: RichText(
                                 textAlign: TextAlign.center,
                                 text: TextSpan(
-                                    style: Styles().textStyles?.getTextStyle("widget.info.small"),
+                                    style: Styles().textStyles.getTextStyle("widget.info.small"),
                                     children: <TextSpan>[
                                       TextSpan(text:descriptionText1, semanticsLabel: "",),
-                                      TextSpan(text:descriptionText2, semanticsLabel: "",style: Styles().textStyles?.getTextStyle("widget.button.title.small.underline"),
+                                      TextSpan(text:descriptionText2, semanticsLabel: "",style: Styles().textStyles.getTextStyle("widget.button.title.small.underline"),
                                           children: [
-                                            WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Styles().images?.getImage("external-link", excludeFromSemantics: true,)))
+                                            WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Styles().images.getImage("external-link", excludeFromSemantics: true,)))
                                           ]),
                                       TextSpan(text:descriptionText3, semanticsLabel: ""),
                                     ]
@@ -151,11 +147,10 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                       child: RoundedButton(
                         label: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.title', 'Begin'),
                         hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
-                        fontSize: 16,
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        backgroundColor: Styles().colors!.white,
-                        borderColor: Styles().colors!.fillColorSecondaryVariant,
-                        textColor: Styles().colors!.fillColorPrimary,
+                        backgroundColor: Styles().colors.white,
+                        borderColor: Styles().colors.fillColorSecondaryVariant,
                         onTap: () => _goNext(context),
                       ),),
                   ],
@@ -168,17 +163,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
 
   void _openPrivacyPolicy(){
     Analytics().logSelect(target: "Privacy Statement");
-    if (Config().privacyPolicyUrl != null) {
-      if (Platform.isIOS) {
-        Uri? privacyPolicyUri = Uri.tryParse(Config().privacyPolicyUrl!);
-        if (privacyPolicyUri != null) {
-          launchUrl(privacyPolicyUri, mode: LaunchMode.externalApplication);
-        }
-      }
-      else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, showTabBar: false, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
-      }
-    }
+    AppPrivacyPolicy.launch(context);
   }
 
   void _goNext(BuildContext context) {

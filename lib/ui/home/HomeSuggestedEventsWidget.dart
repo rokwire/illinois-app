@@ -297,9 +297,9 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
 
   Widget _buildSlant() {
     return Column(children: <Widget>[
-      Container(color:  Styles().colors!.fillColorPrimary, height: 45,),
-      Container(color: Styles().colors!.fillColorPrimary, child:
-        CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft), child:
+      Container(color:  Styles().colors.fillColorPrimary, height: 45,),
+      Container(color: Styles().colors.fillColorPrimary, child:
+        CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
           Container(height: 65,),
         )),
     ],);
@@ -347,11 +347,12 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
-      LinkButton(
-        title: Localization().getStringEx('widget.home.suggested_events.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.suggested_events.button.all.hint', 'Tap to view all events'),
-        onTap: _navigateToExploreEvents,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length, centerWidget:
+        LinkButton(
+          title: Localization().getStringEx('widget.home.suggested_events.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.suggested_events.button.all.hint', 'Tap to view all events'),
+          onTap: _navigateToExploreEvents,
+        ),
       ),
     ]);
   }
@@ -386,7 +387,7 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
 
   void _navigateToExploreEvents() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events)));
   }
 
   void _navigateToSettings() {
@@ -422,7 +423,7 @@ class _EventsRibbonHeader extends StatelessWidget {
     List<Widget> titleList = <Widget>[];
 
     titleList.add(
-      HomeTitleIcon(image: Styles().images?.getImage('calendar')),
+      HomeTitleIcon(image: Styles().images.getImage('calendar')),
     );
       
     titleList.add(
@@ -431,14 +432,14 @@ class _EventsRibbonHeader extends StatelessWidget {
           StringUtils.isNotEmpty(subTitle) ?
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Semantics(label: title, header: true, excludeSemantics: true, child:
-                Text(title ?? '', style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+                Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.heading.large.extra_fat"))
               ),
               Semantics(label: subTitle, header: true, excludeSemantics: true, child:
-                Text(subTitle ?? '', style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.regular, fontSize: 16 ),)
+                Text(subTitle ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular"))
               ),
             ],) :
             Semantics(label: title, header: true, excludeSemantics: true, child:
-              Text(title ?? '', style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+              Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.heading.large.extra_fat"))
             ),
         ),
       ),
@@ -448,7 +449,7 @@ class _EventsRibbonHeader extends StatelessWidget {
       Semantics(label: rightIconLabel, button: true, child:
         InkWell(onTap: rightIconAction, child:
           Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
-            Styles().images?.getImage(rightIconKey, excludeFromSemantics: true,),
+            Styles().images.getImage(rightIconKey, excludeFromSemantics: true,),
           )
         )
       ) : null;
@@ -459,7 +460,7 @@ class _EventsRibbonHeader extends StatelessWidget {
 
     titleList.add(HomeFavoriteButton(favorite: HomeFavorite(favoriteId), style: FavoriteIconStyle.SlantHeader, prompt: true));
 
-    Widget contentWidget = Container(color: Styles().colors?.fillColorPrimary, child: 
+    Widget contentWidget = Container(color: Styles().colors.fillColorPrimary, child:
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: titleList,),
     );
 

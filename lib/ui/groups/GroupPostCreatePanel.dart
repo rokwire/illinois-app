@@ -57,10 +57,10 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
           leading: HeaderBackButton(),
           title: Text(
             Localization().getStringEx('panel.group.detail.post.header.title', 'Post'),
-            style: Styles().textStyles?.getTextStyle("panel.group_post_create.heading.regular")
+            style: Styles().textStyles.getTextStyle("panel.group_post_create.heading.regular")
           ),
           centerTitle: false),
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         bottomNavigationBar: uiuc.TabBar(),
         body: Stack(alignment: Alignment.topCenter, children: [
           SingleChildScrollView(child:
@@ -84,7 +84,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                   _buildNudgesWidget(),
                   Container(height: 12,),
                   Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'),
-                    style: Styles().textStyles?.getTextStyle("widget.title.medium.fat"),),
+                    style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),),
                   Padding(
                     padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
                     child: TextField(
@@ -96,9 +96,9 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                         hintText: Localization().getStringEx('panel.group.detail.post.create.subject.field.hint', 'Write a Subject'),
                         border: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Styles().colors!.mediumGray!,
+                              color: Styles().colors.mediumGray,
                               width: 0.0))),
-                      style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"))),
+                      style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"))),
                   PostInputField(
                     text: _postData.body,
                     onBodyChanged: (text) => _postData.body = text,
@@ -109,12 +109,12 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                     child: EnabledToggleButton(
                         label: "Also send to additional groups...",
                         borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                         enabled: CollectionUtils.isEmpty(_selectedMembers),
                         toggled: _allowSenPostToOtherGroups,
                         textStyle: CollectionUtils.isEmpty(_selectedMembers) ?
-                          Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled") :
-                          Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled"),
+                          Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled") :
+                          Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled"),
                         onTap: () {
                           if(mounted){
                             setState(() {
@@ -130,18 +130,18 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                       flex: 1,
                       child: RoundedButton(
                         label: Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send'),
-                        borderColor: Styles().colors!.fillColorSecondary,
-                        textColor: Styles().colors!.fillColorPrimary,
-                        backgroundColor: Styles().colors!.white,
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                        borderColor: Styles().colors.fillColorSecondary,
+                        backgroundColor: Styles().colors.white,
                         onTap: _onTapSend)),
                     Container(width: 20),
                     Flexible(
                       flex: 1,
                       child: RoundedButton(
                         label: Localization().getStringEx('panel.group.detail.post.create.button.cancel.title', 'Cancel'),
-                        borderColor: Styles().colors!.textSurface,
-                        textColor: Styles().colors!.fillColorPrimary,
-                        backgroundColor: Styles().colors!.white,
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                        borderColor: Styles().colors.textSurface,
+                        backgroundColor: Styles().colors.white,
                         onTap: _onTapCancel))
                   ])
               ],),
@@ -167,21 +167,21 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
         padding: EdgeInsets.only(bottom: 12),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(Localization().getStringEx('panel.group.detail.post.create.nudges.label', 'Nudges'),
-              style: Styles().textStyles?.getTextStyle("widget.title.medium.fat")),
+              style: Styles().textStyles.getTextStyle("widget.title.medium.fat")),
           Padding(
               padding: EdgeInsets.only(top: 5),
               child: Container(
                   height: 48,
                   decoration: BoxDecoration(
-                      border: Border.all(color: Styles().colors!.mediumGray!, width: 1),
+                      border: Border.all(color: Styles().colors.mediumGray, width: 1),
                       borderRadius: BorderRadius.all(Radius.circular(4))),
                   child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       child: DropdownButtonHideUnderline(
                           child: DropdownButton<GroupPostNudge?>(
-                              icon: Icon(Icons.arrow_drop_down, color: Styles().colors!.fillColorSecondary),
+                              icon: Icon(Icons.arrow_drop_down, color: Styles().colors.fillColorSecondary),
                               isExpanded: true,
-                              style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
+                              style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                               items: _nudgesDropDownItems,
                               value: _selectedNudge,
                               onChanged: _onNudgeChanged)))))

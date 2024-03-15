@@ -1,12 +1,15 @@
 import 'package:confetti/confetti.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/WellnessRing.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/WellnessRings.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 // Widgets
@@ -45,6 +48,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
     NotificationService().subscribe(this, [
       WellnessRings.notifyUserRingsUpdated,
       WellnessRings.notifyUserRingsAccomplished,
+      Auth2.notifyPictureChanged,
     ]);
     _loadRingsData();
     _controllerCenter = ConfettiController(duration: const Duration(seconds: 5));
@@ -100,9 +104,9 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
         decoration: BoxDecoration(
             // color: Colors.red,
           borderRadius: BorderRadius.circular(360),
-          border: Border.all(width: 2, color: Styles().colors!.surfaceAccent!),
+          border: Border.all(width: 2, color: Styles().colors.surfaceAccent),
           // shape: BoxShape.circle,
-          boxShadow:  [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+          boxShadow:  [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
         ),
       child: _buildRing(data: data)
     );
@@ -171,7 +175,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                         width: innerContentSize,
                         height: innerContentSize,
                         decoration: BoxDecoration(
-                            color: Styles().colors!.surfaceAccent!,
+                            color: Styles().colors.surfaceAccent,
                             shape: BoxShape.circle
                         ),
                       )),
@@ -181,7 +185,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                         height: innerContentSize - widget.borderWidth,
                         decoration: BoxDecoration(
                             color: widget.backgroundColor ??
-                                Styles().colors!.white!,
+                                Styles().colors.white,
                             shape: BoxShape.circle
                         ),
                         child: childWidget ??
@@ -198,14 +202,27 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
     return Container();
   }
 
-  Widget _buildProfilePicture() { //TBD update image resource
+  Widget _buildProfilePicture() {
+    Uint8List? profileImageBytes = Auth2().authPicture;
+    bool hasProfilePicture = (profileImageBytes != null);
+    Image? profileImage = hasProfilePicture ? Image.memory(profileImageBytes) : null;
+    Widget profilePictureWidget = hasProfilePicture
+        ? ModalImageHolder(
+            image: profileImage?.image,
+            child: Container(
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                    image: DecorationImage(fit: hasProfilePicture ? BoxFit.cover : BoxFit.contain, image: profileImage!.image))),
+          )
+        : (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true) ?? Container());
     return
       Stack(
         children: [
           Container(
             padding: EdgeInsets.all(1),
             decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white,),
-            child: Styles().images?.getImage('profile-placeholder', excludeFromSemantics: true),
+            child: profilePictureWidget,
           ),
           Center(
               child: ConfettiWidget(
@@ -228,14 +245,15 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
   @override
   void onNotification(String name, param) {
     if(name == WellnessRings.notifyUserRingsUpdated){
-      WellnessRings().loadWellnessRings().then((value){
-        _ringsData = value;
+      // WellnessRings().loadWellnessRings().then((value){  //This approach was causing bad loop when no internet connection. Check if it was workaround for other issue and remove if no other issues are caused
+      //   _ringsData = value;
+      _ringsData = WellnessRings().wellnessRings;
         if(mounted) {
           try { //Unhandled Exception: 'package:flutter/src/widgets/framework.dart': Failed assertion: line 4234 pos 12: '_lifecycleState != _ElementLifecycle.defunct': is not true.
             setState(() {});
           } catch (e) {print(e);}
         }
-      });
+      // });
     } else if( name == WellnessRings.notifyUserRingsAccomplished){
       if (widget.accomplishmentDialogEnabled && param != null && param is String) {
         WellnessRingDefinition? data = WellnessRings().wellnessRings
@@ -266,7 +284,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                                         padding: EdgeInsets.only(left: 50, bottom: 10),
                                         child: GestureDetector(
                                           onTap: () => Navigator.of(this.context).pop(),
-                                          child: Text("x", style :TextStyle(color: Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.regular, fontSize: 22),),
+                                          child: Text("x", style : Styles().textStyles.getTextStyle("widget.info.large")),
                                         )),
                                   ],
                                 ),
@@ -275,7 +293,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                                   children: [
                                     Expanded(child:
                                     Text("Congratulations!", textAlign: TextAlign.center,
-                                      style : Styles().textStyles?.getTextStyle("widget.title.medium.fat")
+                                      style : Styles().textStyles.getTextStyle("widget.title.medium.fat")
                                     )
                                     )
                                   ],
@@ -289,13 +307,13 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                                         text: TextSpan(
                                             children:[
                                               TextSpan(text:"You've completed your ",
-                                                style : Styles().textStyles?.getTextStyle("panel.wellness.ring.home.detail.message")),
+                                                style : Styles().textStyles.getTextStyle("panel.wellness.ring.home.detail.message")),
                                               TextSpan(text:"${data.name} ", //TBD
-                                                style : Styles().textStyles?.getTextStyle("panel.wellness.ring.home.detail.message.fat")),
+                                                style : Styles().textStyles.getTextStyle("panel.wellness.ring.home.detail.message.fat")),
                                               TextSpan(text:"ring for ",
-                                                style : Styles().textStyles?.getTextStyle("panel.wellness.ring.home.detail.message")),
+                                                style : Styles().textStyles.getTextStyle("panel.wellness.ring.home.detail.message")),
                                               TextSpan(text:"${WellnessRings().getTotalCompletionCountString(param)} time!",
-                                                style : Styles().textStyles?.getTextStyle("panel.wellness.ring.home.detail.message.fat")),
+                                                style : Styles().textStyles.getTextStyle("panel.wellness.ring.home.detail.message.fat")),
                                             ]
                                         ))
                                     ),
@@ -309,6 +327,10 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
       }
       if(widget.accomplishmentConfettiEnabled) {
         _playConfetti();
+      }
+    } else if (name == Auth2.notifyPictureChanged) {
+      if (mounted) {
+        setState(() {});
       }
     }
   }
@@ -348,7 +370,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
       // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Expanded(child:
-        Container(decoration: BoxDecoration(color: widget.color ?? Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)), child:
+        Container(decoration: BoxDecoration(color: widget.color ?? Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors.surfaceAccent, width: 1)), child:
         Padding(padding: EdgeInsets.only(left: 8 /*+10 from icon*/, top: 8, bottom: 8, right: 8/*+10 form icon*/), child:
           Row( crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -362,10 +384,10 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                 Text(widget.label , semanticsLabel: "",
-                  style: Styles().textStyles?.getTextStyle('widget.colourful_button.title.regular.accent')),
+                  style: Styles().textStyles.getTextStyle('widget.colourful_button.title.regular.accent')),
                 widget.description==null ? Container():
                 Text(widget.description ?? "" , semanticsLabel: "",
-                  style: Styles().textStyles?.getTextStyle('widget.colourful_button.title.regular')),
+                  style: Styles().textStyles.getTextStyle('widget.colourful_button.title.regular')),
                 ],),)),
               Container(
                 child: Row(
@@ -395,7 +417,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
         },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          child: Styles().images?.getImage('edit-white', excludeFromSemantics: true),
+          child: Styles().images.getImage('edit-white', excludeFromSemantics: true),
         )));
   }
   Widget get _increaseValueButton{
@@ -423,7 +445,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
               Center(
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: Styles().images?.getImage('plus-circle-white', excludeFromSemantics: true, color:  Styles().colors!.white!),
+                  child: Styles().images.getImage('plus-circle-white', excludeFromSemantics: true, color:  Styles().colors.white),
                 ))
             ]
         ))
@@ -457,7 +479,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
               Center(
                 child:Container(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: Styles().images?.getImage('minus-circle-white', excludeFromSemantics: true),
+                  child: Styles().images.getImage('minus-circle-white', excludeFromSemantics: true),
               ))
             ]
           )
@@ -501,7 +523,7 @@ class _SmallWellnessRingButtonState extends State<SmallWellnessRingButton>{
       // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
         child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Expanded(child:
-          Container(decoration: BoxDecoration(color: widget.color ?? Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)), child:
+          Container(decoration: BoxDecoration(color: widget.color ?? Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors.surfaceAccent, width: 1)), child:
           Padding(padding: EdgeInsets.only(left: 8 /*+10 from icon*/, top: 5, bottom: 5, right: 3/*+10 form icon*/), child:
           Row( crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -514,8 +536,8 @@ class _SmallWellnessRingButtonState extends State<SmallWellnessRingButton>{
                         textAlign: TextAlign.left,
                         text: TextSpan(
                             children:[
-                              TextSpan(text: "${widget.label}  ", style : Styles().textStyles?.getTextStyle('widget.colourful_button.title.regular'), semanticsLabel: ""),
-                              TextSpan(text: widget.description, style : Styles().textStyles?.getTextStyle('widget.colourful_button.title.regular.accent'),),
+                              TextSpan(text: "${widget.label}  ", style : Styles().textStyles.getTextStyle('widget.colourful_button.title.regular'), semanticsLabel: ""),
+                              TextSpan(text: widget.description, style : Styles().textStyles.getTextStyle('widget.colourful_button.title.regular.accent'),),
                             ]
                         )),
                     )),
@@ -550,7 +572,7 @@ class _SmallWellnessRingButtonState extends State<SmallWellnessRingButton>{
                   Center(
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                        child: Styles().images?.getImage('plus-circle-white', excludeFromSemantics: true),
+                        child: Styles().images.getImage('plus-circle-white', excludeFromSemantics: true),
                       ))
                 ]
             )));
@@ -575,8 +597,8 @@ class _AccomplishmentCardState extends State<AccomplishmentCard>{
     return CollectionUtils.isEmpty(widget.accomplishments) ? Container() :
     Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-      decoration: BoxDecoration(color: Colors.white, border: Border.all(width: 0, color: Styles().colors!.surfaceAccent!), borderRadius: BorderRadius.circular(5),
-        boxShadow:  [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+      decoration: BoxDecoration(color: Colors.white, border: Border.all(width: 0, color: Styles().colors.surfaceAccent), borderRadius: BorderRadius.circular(5),
+        boxShadow:  [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
       ),
       child: _buildAccomplishmentCard(widget.date??"", widget.accomplishments),
     );
@@ -595,7 +617,7 @@ class _AccomplishmentCardState extends State<AccomplishmentCard>{
       accomplishmentsTextContent.add(
           Container( //Accomplished ring within Card
               child: Text("${accomplishedRingData.ringData.name?? "N/A"} Ring - ${_trimDecimal(accomplishedRingData.achievedValue)}/${_trimDecimal(accomplishedRingData.ringData.goal)} ${accomplishedRingData.ringData.unit}${accomplishedRingData.ringData.goal>1?"s":""}",
-                  style: Styles().textStyles?.getTextStyle('widget.detail.small')
+                  style: Styles().textStyles.getTextStyle('widget.detail.small')
               )
           ));
       accomplishmentsTextContent.add(Container(height: 4,));
@@ -625,20 +647,20 @@ class _AccomplishmentCardState extends State<AccomplishmentCard>{
             Container(
               constraints: BoxConstraints(minWidth: 60),
                padding: EdgeInsets.only(right: 20, top: 16, bottom: 16),
-                // decoration: BoxDecoration(color: Colors.white, border: Border(right: BorderSide(color: Styles().colors!.surfaceAccent!,)),  ),
+                // decoration: BoxDecoration(color: Colors.white, border: Border(right: BorderSide(color: Styles().colors.surfaceAccent,)),  ),
                 child:Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(weekday,
-                      style: Styles().textStyles?.getTextStyle('widget.wellness.ring.card.heading.large')
+                      style: Styles().textStyles.getTextStyle('widget.wellness.ring.card.heading.large')
                     ),
                     // Container(height: 4,),
                     Text(day,
-                      style: Styles().textStyles?.getTextStyle('widget.wellness.ring.card.title.large')
+                      style: Styles().textStyles.getTextStyle('widget.wellness.ring.card.title.large')
                     ),
                     // Container(height: 4,),
                     Text(month,
-                      style: Styles().textStyles?.getTextStyle('widget.card.title.regular.fat')
+                      style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat')
                     ),
                   ],
                 )
@@ -646,12 +668,12 @@ class _AccomplishmentCardState extends State<AccomplishmentCard>{
             Expanded(
               child: Container(
                   padding: EdgeInsets.only(left: 20, top: 16, bottom: 16),
-                  decoration: BoxDecoration(color: Colors.white, border: Border(left: BorderSide(color: Styles().colors!.surfaceAccent!, )),  ),
+                  decoration: BoxDecoration(color: Colors.white, border: Border(left: BorderSide(color: Styles().colors.surfaceAccent, )),  ),
                 child:Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("${widget.accomplishments?.length} Rings Completed!",
-                    style: Styles().textStyles?.getTextStyle('widget.description.small.fat')
+                    style: Styles().textStyles.getTextStyle('widget.description.small.fat')
                   ),
                   Container(height: 6,),
                   Column(
@@ -706,7 +728,7 @@ class WellnessWidgetHelper{
     return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       Text(Localization().getStringEx('panel.wellness.ring.create.header.label', 'My Daily Wellness Rings'),
           overflow: TextOverflow.ellipsis,
-          style: Styles().textStyles?.getTextStyle('widget.title.medium.fat')),
+          style: Styles().textStyles.getTextStyle('widget.title.medium.fat')),
       // FavoriteStarIcon(style: FavoriteIconStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16))
     ]);
   }

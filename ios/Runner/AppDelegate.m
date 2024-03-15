@@ -21,10 +21,8 @@
 #import "AppDelegate.h"
 #import "GeneratedPluginRegistrant.h"
 #import "AppKeys.h"
-#import "MapView.h"
-#import "MapController.h"
-#import "MapDirectionsController.h"
-#import "MapLocationPickerController.h"
+#import "MobileAccessPlugin.h"
+#import "FlutterCompletion.h"
 
 #import "NSArray+InaTypedValue.h"
 #import "NSDictionary+InaTypedValue.h"
@@ -94,11 +92,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	
 	// Initialize Flutter plugins
 	[GeneratedPluginRegistrant registerWithRegistry:self];
-
-	// Setup MapPlugin
-	NSObject<FlutterPluginRegistrar>*registrar = [self registrarForPlugin:@"MapPlugin"];
-	MapViewFactory *factory = [[MapViewFactory alloc] initWithMessenger:registrar.messenger];
-	[registrar registerViewFactory:factory withId:@"mapview"];
+    
+	// Setup MobileAccessPlugin
+	[MobileAccessPlugin registerWithRegistrar:[self registrarForPlugin:@"MobileAccessPlugin"]];
 	
 	// Setup supported & preffered orientation
 	_preferredInterfaceOrientation = UIInterfaceOrientationPortrait;
@@ -224,15 +220,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	if ([call.method isEqualToString:@"init"]) {
 		[self handleInitWithParameters:parameters result:result];
 	}
-	else if ([call.method isEqualToString:@"directions"]) {
-		[self handleDirectionsWithParameters:parameters result:result];
-	}
-	else if ([call.method isEqualToString:@"pickLocation"]) {
-		[self handlePickLocationWithParameters:parameters result:result];
-	}
-	else if ([call.method isEqualToString:@"map"]) {
-		[self handleMapWithParameters:parameters result:result];
-	}
 	else if ([call.method isEqualToString:@"dismissLaunchScreen"]) {
 		[self handleDismissLaunchScreenWithParameters:parameters result:result];
 	}
@@ -262,28 +249,13 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		[GMSServices provideAPIKey:googleMapsAPIKey];
 	}
 
+	// Initialize Орiго SDK
+	NSString *origoAppId = [self.secretKeys uiucConfigStringForPathKey:@"origo.app_id"];
+	if (0 < origoAppId.length) {
+		MobileAccessPlugin.sharedInstance.origoAppId = origoAppId;
+	}
+
 	result(@(YES));
-}
-
-- (void)handleDirectionsWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	MapDirectionsController *directionsController = [[MapDirectionsController alloc] initWithParameters:parameters completionHandler:^(id returnValue) {
-		result(returnValue);
-	}];
-	[self.navigationViewController pushViewController:directionsController animated:YES];
-}
-
-- (void)handlePickLocationWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	MapLocationPickerController *pickLocationController = [[MapLocationPickerController alloc] initWithParameters:parameters completionHandler:^(id returnValue) {
-		result(returnValue);
-	}];
-	[self.navigationViewController pushViewController:pickLocationController animated:YES];
-}
-
-- (void)handleMapWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	MapController *mapController = [[MapController alloc] initWithParameters:parameters completionHandler:^(id returnValue) {
-		result(returnValue);
-	}];
-	[self.navigationViewController pushViewController:mapController animated:YES];
 }
 
 - (void)handleDismissLaunchScreenWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
@@ -648,6 +620,8 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		_statusView.font = [UIFont systemFontOfSize:16];
 		_statusView.textAlignment = NSTextAlignmentCenter;
 		_statusView.textColor = UIColor.whiteColor;
+		_statusView.numberOfLines = 0;
+		_statusView.lineBreakMode = NSLineBreakByWordWrapping;
 		_statusView.shadowColor = [UIColor colorWithWhite:1.0 alpha:0.5];
 		_statusView.shadowOffset = CGSizeMake(1, 1);
 		[self addSubview:_statusView];

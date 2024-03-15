@@ -80,7 +80,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
         buttonProceedHint = Localization().getStringEx('panel.settings.link.both.button.proceed.hint', '');
         keyboardType = TextInputType.emailAddress;
       }
-      proceedRightIcon = Styles().images?.getImage('plus-circle', excludeFromSemantics: true);
+      proceedRightIcon = Styles().images.getImage('plus-circle', excludeFromSemantics: true);
     }
     else {
       if (widget.mode == SettingsLoginPhoneOrEmailMode.phone) {
@@ -121,30 +121,30 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
             Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               child: Column(children:[
                 Row(children: [ Expanded(child:
-                  Text(description, style:  Styles().textStyles?.getTextStyle("widget.description.medium"),)
+                  Text(description, style:  Styles().textStyles.getTextStyle("widget.description.medium"),)
                 )],),
                 Container(height: 48),
                 Row(children: [ Expanded(child:
-                  Text(headingTitle, style: Styles().textStyles?.getTextStyle("widget.title.medium.fat"),)
+                  Text(headingTitle, style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),)
                 )],),
                 Container(height: 6),
                 Semantics(label: headingTitle, hint: headingHint, textField: true, excludeSemantics: true,
                   value: _phoneOrEmailController?.text,
                   child: Container(
-                    color: (widget.identifier == null) ? Styles().colors?.white : Styles().colors?.background,
+                    color: (widget.identifier == null) ? Styles().colors.white : Styles().colors.background,
                     child: TextField(
                       controller: _phoneOrEmailController,
                       readOnly: widget.identifier != null,
                       autofocus: false,
                       autocorrect: false,
                       onSubmitted: (_) => _clearErrorMsg,
-                      cursorColor: Styles().colors?.textBackground,
+                      cursorColor: Styles().colors.textBackground,
                       keyboardType: keyboardType,
-                      style: Styles().textStyles?.getTextStyle("widget.input_field.text.medium"),
+                      style: Styles().textStyles.getTextStyle("widget.input_field.text.medium"),
                       decoration: InputDecoration(
-                        disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors!.mediumGray!, width: 1.0),),
-                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors!.mediumGray!, width: 1.0),),
-                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors!.mediumGray!, width: 1.0),),
+                        disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 1.0),),
+                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 1.0),),
+                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 1.0),),
                       ),
                     ),
                   ),
@@ -152,11 +152,11 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                 Visibility(visible: StringUtils.isNotEmpty(_validationErrorMsg), child:
                   Padding(key: _validationErrorKey, padding: EdgeInsets.symmetric(vertical: 12), child:
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: Styles().textStyles?.getTextStyle("panel.settings.error.text")),
+                      Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: Styles().textStyles.getTextStyle("panel.settings.error.text")),
                       Visibility(visible: StringUtils.isNotEmpty(_validationErrorDetails), child:
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: Styles().textStyles?.getTextStyle("widget.detail.small")),
+                          child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: Styles().textStyles.getTextStyle("widget.detail.small")),
                         ),
                       ),
                     ],),
@@ -166,10 +166,10 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                 RoundedButton(
                   label: buttonProceedTitle,
                   hint: buttonProceedHint,
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                   onTap: _onTapProceed,
-                  backgroundColor: Styles().colors?.white,
-                  textColor: Styles().colors?.fillColorPrimary,
-                  borderColor: Styles().colors?.fillColorSecondary,
+                  backgroundColor: Styles().colors.white,
+                  borderColor: Styles().colors.fillColorSecondary,
                   rightIcon: proceedRightIcon,
                   iconPadding: 16,
                   progress: _isLoading,
@@ -180,7 +180,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
         ),
         Container(height: 16,)
       ],),
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

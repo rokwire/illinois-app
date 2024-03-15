@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
+/* Reason: https://docs.flutter.dev/release/breaking-changes/flutter-gradle-plugin-apply
 buildscript {
     ext {
         gradle_version = '7.0.0'
-        kotlin_version = '1.6.10'
+        kotlin_version = '1.8.21'
     }
     repositories {
         google()
@@ -31,8 +32,9 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
+*/
 
-allprojects {
+ allprojects {
     repositories {
         google()
         mavenCentral()
@@ -51,6 +53,6 @@ subprojects {
     project.evaluationDependsOn(':app')
 }
 
-task clean(type: Delete) {
+tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }

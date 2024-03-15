@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import 'dart:async';
+
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/service/MTD.dart';
@@ -39,6 +42,9 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
 
   List<MTDDeparture>? _departures;
   bool _loadingDepartures = false;
+  bool _updatingDepartures = false;
+  bool _refreshingDepartures = false;
+  Timer? _refreshTimer;
 
   @override
   void initState() {
@@ -46,12 +52,14 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
       Auth2UserPrefs.notifyFavoritesChanged,
     ]);
 
+    _refreshTimer = Timer.periodic(Duration(minutes: 1), (time) => _updateDepartures());
+
     if (widget.stop.id != null) {
-      _loadingDepartures = true;
+      _loadingDepartures = _refreshingDepartures = _updatingDepartures = true;
       MTD().getDepartures(stopId: widget.stop.id!, previewTime: 1440).then((List<MTDDeparture>? departures) {
         if (mounted) {
           setState(() {
-            _loadingDepartures = false;
+            _loadingDepartures = _refreshingDepartures = _updatingDepartures = false;
             _departures = departures;
           });
         }
@@ -63,6 +71,8 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _refreshTimer?.cancel();
+    _refreshTimer = null;
     super.dispose();
   }
 
@@ -77,6 +87,38 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
     }
   }
 
+  void _updateDepartures() {
+    if ((widget.stop.id != null) && !_updatingDepartures && !_refreshingDepartures && mounted) {
+      _updatingDepartures = true;
+      MTD().getDepartures(stopId: widget.stop.id!, previewTime: 1440).then((List<MTDDeparture>? departures) {
+        if (_updatingDepartures && !_refreshingDepartures) {
+          _updatingDepartures = false;
+          if (mounted && (departures != null) && !DeepCollectionEquality().equals(_departures, departures)) {
+            setState(() {
+              _departures = departures;
+            });
+          }
+        }
+      });
+    }
+  }
+
+  Future<void> _refreshDepartures() async {
+    if ((widget.stop.id != null) && !_refreshingDepartures) {
+      _refreshingDepartures = true;
+      _updatingDepartures = false;
+      List<MTDDeparture>? departures = await MTD().getDepartures(stopId: widget.stop.id!, previewTime: 1440);
+      if (_refreshingDepartures) {
+        _refreshingDepartures = false;
+        if (mounted && (departures != null) && !DeepCollectionEquality().equals(_departures, departures)) {
+          setState(() {
+            _departures = departures;
+          });
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,7 +129,7 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
         ],
       ),
       body: _buildBody(),
-      backgroundColor: Styles().colors?.white,
+      backgroundColor: Styles().colors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -106,12 +148,12 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
     if (_loadingRoutes) {
       contentWidget = Center(child:
         SizedBox(width: 16, height: 16, child:
-          CircularProgressIndicator(color: Styles().colors?.mtdColor, strokeWidth: 2,),
+          CircularProgressIndicator(color: Styles().colors.mtdColor, strokeWidth: 2,),
         ),
       );
     }
     else if (CollectionUtils.isEmpty(_routes))  {
-      contentWidget = Text('NA', style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black,));
+      contentWidget = Text('NA', style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Colors.black,));
     }
     else {
       List<Widget> routeWidgets = <Widget>[];
@@ -131,12 +173,12 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
 
     return Container(
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),),
+        border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1),),
       ),
       padding: EdgeInsets.all(24),
       child: Row(children: [
         Padding(padding: EdgeInsets.only(right: 8), child:
-          Text('Routes:', style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black38,)),
+          Text('Routes:', style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Colors.black38,)),
         ),
         Expanded(child: contentWidget),
       ],),
@@ -148,19 +190,23 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
       return _buildDeparturesLoading();
     }
     else if (_departures == null) {
-      return _buildDeparturesError('Failed to load bus schedule.');
+      return RefreshIndicator(onRefresh: _refreshDepartures, child: _buildDeparturesError('Failed to load bus schedule.'));
     }
     else if (_departures!.isEmpty) {
-      return _buildDeparturesError('No bus schedule available.');
+      return RefreshIndicator(onRefresh: _refreshDepartures, child: _buildDeparturesError('No bus schedule available.'));
     }
     else {
-      return ListView.separated(
-        itemBuilder: (context, index) => _buildDeparture(ListUtils.entry(_departures, index)),
-        separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,),
-        itemCount: _departures?.length ?? 0,
-        padding: EdgeInsets.zero,
-      );
+      return RefreshIndicator(onRefresh: _refreshDepartures, child: _buildDeparturesList());
     }
+  }
+
+  Widget _buildDeparturesList() {
+    return ListView.separated(
+      itemBuilder: (context, index) => _buildDeparture(ListUtils.entry(_departures, index)),
+      separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors.fillColorPrimaryTransparent03,),
+      itemCount: _departures?.length ?? 0,
+      padding: EdgeInsets.zero,
+    );
   }
 
   Widget _buildDeparture(MTDDeparture? departure) {
@@ -170,7 +216,7 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
   /*Widget _buildRoute(MTDRoute route) {
     return Container(decoration: BoxDecoration(color: route.color, border: Border.all(color: route.textColor ?? Colors.transparent, width: 1), borderRadius: BorderRadius.circular(5)), child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2), child:
-        Text(route.shortName ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 12, color: route.textColor,)),
+        Text(route.shortName ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 12, color: route.textColor,)),
       )
     );
   }*/
@@ -181,7 +227,7 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
         Column(children: [
           Expanded(child:
             Align(alignment: Alignment.center, child:
-              CircularProgressIndicator(color: Styles().colors?.mtdColor, strokeWidth: 3, )
+              CircularProgressIndicator(color: Styles().colors.mtdColor, strokeWidth: 3, )
             ),
           ),
         ],),
@@ -190,22 +236,26 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
   }
 
   Widget _buildDeparturesError(String? error) {
-    return Row(children: [
+    return 
+    Row(children: [
       Expanded(child:
         Column(children: [
           Expanded(child:
-            Align(alignment: Alignment.center, child:
-              Padding(padding: EdgeInsets.only(left: 32, right: 32, top: 24, bottom: 24), child:
-                Row(children: [
-                  Expanded(child:
-                    Text(error ?? '', style:
-                      Styles().textStyles?.getTextStyle("widget.message.large"), textAlign: TextAlign.center,),
-                  ),
-                ],)
-              )
+            SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
+              Align(alignment: Alignment.center, child:
+                Padding(padding: EdgeInsets.only(left: 32, right: 32, top: 96, bottom: 24), child:
+                  Row(children: [
+                    Expanded(child:
+                      Text(error ?? '', style:
+                        Styles().textStyles.getTextStyle("widget.message.large"), textAlign: TextAlign.center,),
+                    ),
+                  ],)
+                )
+              ),
             ),
           ),
-        ],))
+        ],)
+      )
     ]);
   }
 

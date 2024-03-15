@@ -1,23 +1,27 @@
 import 'package:flutter/cupertino.dart';
 
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Game.dart';
+import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
-import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
-import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
+import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
@@ -25,10 +29,11 @@ import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
+import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -73,6 +78,9 @@ extension FavoriteExt on Favorite {
     if (this is Event) {
       return (this as Event).displayDateTime;
     }
+    else if (this is Event2) {
+      return (this as Event2).shortDisplayDateAndTime;
+    }
     else if (this is Dining) {
       return (this as Dining).displayWorkTime;
     }
@@ -89,10 +97,10 @@ extension FavoriteExt on Favorite {
       return (this as InboxMessage).body;
     }
     else if (this is ExplorePOI) {
-      return (this as ExplorePOI).exploreLocationDescription;
+      return (this as ExplorePOI).location?.displayCoordinates;
     }
     else if (this is Appointment) {
-      return (this as Appointment).displayDate;
+      return (this as Appointment).displayShortScheduleTime;
     }
     else {
       return null;
@@ -102,8 +110,8 @@ extension FavoriteExt on Favorite {
   Color? get favoriteDetailTextColor {
     if (this is LaundryRoom) {
       switch((this as LaundryRoom).status) {
-        case LaundryRoomStatus.online: return Styles().colors?.fillColorPrimary;
-        case LaundryRoomStatus.offline: return Styles().colors?.disabledTextColor;
+        case LaundryRoomStatus.online: return Styles().colors.fillColorPrimary;
+        case LaundryRoomStatus.offline: return Styles().colors.disabledTextColor;
         default: return null;
       }
     }
@@ -112,25 +120,28 @@ extension FavoriteExt on Favorite {
 
   Widget? get favoriteDetailIcon {
     if (this is Event) {
-      return Styles().images?.getImage('events', excludeFromSemantics: true);
+      return Styles().images.getImage('events', excludeFromSemantics: true);
+    }
+    else if (this is Event2) {
+      return Styles().images.getImage('events', excludeFromSemantics: true);
     }
     else if (this is Dining) {
-      return Styles().images?.getImage('dining', excludeFromSemantics: true);
+      return Styles().images.getImage('dining', excludeFromSemantics: true);
     }
     else if (this is Game) {
-      return Styles().images?.getImage('athletics', excludeFromSemantics: true);
+      return Styles().images.getImage('athletics', excludeFromSemantics: true);
     }
     else if (this is News) {
-      return Styles().images?.getImage('news', excludeFromSemantics: true);
+      return Styles().images.getImage('calendar', excludeFromSemantics: true);
     }
     else if (this is LaundryRoom) {
-      return Styles().images?.getImage('laundry', excludeFromSemantics: true);
+      return Styles().images.getImage('laundry', excludeFromSemantics: true);
     }
     else if (this is ExplorePOI) {
-      return Styles().images?.getImage('location', excludeFromSemantics: true);
+      return Styles().images.getImage('location', excludeFromSemantics: true);
     }
     else if (this is Appointment) {
-      return Styles().images?.getImage('appointments', excludeFromSemantics: true);
+      return Styles().images.getImage('appointments', excludeFromSemantics: true);
     }
     else {
       return null;
@@ -138,7 +149,7 @@ extension FavoriteExt on Favorite {
   }
 
   Widget? favoriteStarIcon({required bool selected}) {
-    return Styles().images?.getImage(selected ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true);
+    return Styles().images.getImage(selected ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true);
   }
 
   Color? get favoriteHeaderColor {
@@ -149,22 +160,22 @@ extension FavoriteExt on Favorite {
       return (this as Game).uiColor;
     }
     else if (this is News) {
-      return Styles().colors?.fillColorPrimary;
+      return Styles().colors.fillColorPrimary;
     }
     else if (this is LaundryRoom) {
-      return Styles().colors?.accentColor2;
+      return Styles().colors.accentColor2;
     }
     else if (this is MTDStop) {
-      return Styles().colors?.accentColor3;
+      return Styles().colors.accentColor3;
     }
     else if (this is GuideFavorite) {
-      return Styles().colors?.accentColor3;
+      return Styles().colors.accentColor3;
     }
     else if (this is InboxMessage) {
-      return Styles().colors?.fillColorSecondary;
+      return Styles().colors.fillColorSecondary;
     }
     else {
-      return Styles().colors?.fillColorSecondary;
+      return Styles().colors.fillColorSecondary;
     }
   }
 
@@ -176,6 +187,14 @@ extension FavoriteExt on Favorite {
       }
       else {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: this as Event,)));
+      }
+    }
+    else if (this is Event2) {
+      Event2 event2 = (this as Event2);
+      if (event2.hasGame) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event2.game, event: event2)));
+      } else {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event2)));
       }
     }
     else if (this is Dining) {
@@ -197,12 +216,10 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as GuideFavorite).id,)));
     }
     else if (this is ExplorePOI) {
-      NativeCommunicator().launchExploreMapDirections(target: (this as ExplorePOI), options: {
-        'travelMode': 'transit'
-      });
+      (this as ExplorePOI).launchDirections();
     }
     else if (this is InboxMessage) {
-      SettingsNotificationsContentPanel.launchMessageDetail(this as InboxMessage);
+      NotificationsHomePanel.launchMessageDetail(this as InboxMessage);
     }
   }
   
@@ -210,16 +227,19 @@ extension FavoriteExt on Favorite {
     // Work in lowercase as key can come from an URL
     String? lowerCaseKey = key?.toLowerCase();
     if (lowerCaseKey == Event.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Events); } ));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
+    }
+    else if (lowerCaseKey == Event2.favoriteKeyName.toLowerCase()) {
+      Event2HomePanel.present(context);
     }
     else if (lowerCaseKey == Dining.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Dining); } ));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Dining); } ));
     }
     else if (lowerCaseKey == Game.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.events)));
     }
     else if (lowerCaseKey == News.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsListPanel()));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.news)));
     }
     else if (lowerCaseKey == LaundryRoom.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
@@ -228,7 +248,7 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.all)));
     }
     else if (lowerCaseKey == ExplorePOI.favoriteKeyName.toLowerCase()) {
-      NotificationService().notify(ExplorePanel.notifySelectMap, ExploreItem.MTDDestinations);
+      NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapType.MTDDestinations);
     }
     else if (lowerCaseKey == GuideFavorite.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));

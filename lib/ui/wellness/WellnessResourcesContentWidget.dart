@@ -20,10 +20,10 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -86,7 +86,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
   void initState() {
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
-      Assets.notifyChanged,
+      Wellness.notifyResourcesContentChanged,
     ]);
     _initContent();
     super.initState();
@@ -102,7 +102,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Assets.notifyChanged) {
+    if (name == Wellness.notifyResourcesContentChanged) {
       if (mounted) {
         setState(() {
           _initContent();
@@ -166,7 +166,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
           String? type = JsonUtils.stringValue(command['type']);
           if (type == 'regular') {
             if (widgetList.isNotEmpty) {
-              widgetList.add(Divider(color: Styles().colors!.surfaceAccent, height: 1,));
+              widgetList.add(Divider(color: Styles().colors.surfaceAccent, height: 1,));
             }
             String? id = JsonUtils.stringValue(command['id']);
             Favorite favorite = WellnessFavorite(id, category: widget.wellnessCategory);
@@ -181,14 +181,14 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
       }
     }
 
-    return Container(decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.circular(5)), child:
+    return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
       Column(children: widgetList)
     );
 
   }
 
   void _initContent() {
-    Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.${widget.wellnessCategory}']) ;
+    Map<String, dynamic>? content = Wellness().resources;
     _commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
     _strings = (content != null) ? JsonUtils.mapValue(content['strings']) : null;
     WellnessResourcesContentWidget.ensureDefaultFavorites(_commands);
@@ -238,17 +238,17 @@ class WellnessLargeResourceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.circular(5)), child:
+    return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
       InkWell(onTap: onTap, child:
         Padding(padding: EdgeInsets.only(left: 16), child:
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Expanded(child:
               Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
-                Text(label ?? '', style: Styles().textStyles?.getTextStyle("panel.wellness.resource.button.title.large")),
+                Text(label ?? '', style: Styles().textStyles.getTextStyle("panel.wellness.resource.button.title.large")),
               ),
             ),
             hasExternalLink ? Padding(padding: EdgeInsets.only(left: 6, top: 18, bottom: 18), child:
-              Styles().images?.getImage('external-link', excludeFromSemantics: true)
+              Styles().images.getImage('external-link', excludeFromSemantics: true)
             ) : Container(),
             FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),)
           ]),
@@ -269,7 +269,7 @@ class WellnessRegularResourceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return hasBorder ? Container(decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.circular(5)), child:
+    return hasBorder ? Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
       _buildInterior()
     ) : _buildInterior();
   }
@@ -280,14 +280,14 @@ class WellnessRegularResourceButton extends StatelessWidget {
         FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16)),
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(vertical: 17), child:
-            Text(label ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))
+            Text(label ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))
           ),
         ),
         hasExternalLink ? Padding(padding: EdgeInsets.only(left: 8, top: 18, bottom: 18), child:
-          Styles().images?.getImage('external-link', excludeFromSemantics: true)
+          Styles().images.getImage('external-link', excludeFromSemantics: true)
         ) : Container(),
         Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 18, bottom: 18), child:
-          Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true)
+          Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true)
         ),
       ]),
     );

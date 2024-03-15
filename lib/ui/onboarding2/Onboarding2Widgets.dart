@@ -1,16 +1,10 @@
 
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class Onboarding2TitleWidget extends StatelessWidget{
   final String? title;
@@ -19,9 +13,9 @@ class Onboarding2TitleWidget extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    Color? backColor = Styles().colors!.fillColorSecondary;
-    Color? leftTriangleColor = Styles().colors!.background;
-    Color? rightTriangleColor = Styles().colors!.fillColorSecondary;
+    Color? backColor = Styles().colors.fillColorSecondary;
+    Color? leftTriangleColor = Styles().colors.background;
+    Color? rightTriangleColor = Styles().colors.fillColorSecondary;
 
     return Container(child:
       Container(color: backColor, child:
@@ -29,12 +23,12 @@ class Onboarding2TitleWidget extends StatelessWidget{
           SafeArea(child:
             Column(children: [
               Container(height: 31,),
-              Styles().images?.getImage("university-logo-dark", excludeFromSemantics: true) ?? Container(),
+              Styles().images.getImage("university-logo-dark", excludeFromSemantics: true) ?? Container(),
               Container(height: 17,),
               Row(children: <Widget>[
                 Container(width: 32,),
                 Expanded(child:
-                  Text(title!, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.onboarding2.heading.title"),),
+                  Text(title!, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.heading.title"),),
                 ),
                 Container(width: 32,),
               ]),
@@ -72,7 +66,7 @@ class Onboarding2BackButton extends StatelessWidget {
           behavior: HitTestBehavior.translucent,
           child: Padding(
             padding: padding!,
-            child: Container(child: Styles().images?.getImage(imageKey, color: this.color, excludeFromSemantics: true)
+            child: Container(child: Styles().images.getImage(imageKey, color: this.color, excludeFromSemantics: true)
             ),
           ),
         )
@@ -108,14 +102,14 @@ class Onboarding2ToggleButton extends StatelessWidget{
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[ Expanded(
                 child: Container(
                   padding: padding,
-                  decoration: BoxDecoration(color: Styles().colors!.background, border:Border(top: BorderSide(width: 2, color: Styles().colors!.surfaceAccent!)),),
+                  decoration: BoxDecoration(color: Styles().colors.background, border:Border(top: BorderSide(width: 2, color: Styles().colors.surfaceAccent)),),
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 20),
                     child:  Row(
                       children: <Widget>[
                         Expanded(child:
                         Text(_label!,
-                          style: Styles().textStyles?.getTextStyle("widget.button.description.small")
+                          style: Styles().textStyles.getTextStyle("widget.button.description.small")
                         )
                         ),
                         Padding(padding: EdgeInsets.only(left: 7), child: _image),
@@ -136,13 +130,13 @@ class Onboarding2ToggleButton extends StatelessWidget{
   }
 
   Widget? get _image{
-    return Styles().images?.getImage(toggled! ? 'toggle-on' : 'toggle-off', excludeFromSemantics: true);
+    return Styles().images.getImage(toggled! ? 'toggle-on' : 'toggle-off', excludeFromSemantics: true);
   }
 }
 
 class Onboarding2InfoDialog extends StatelessWidget{
-  static final TextStyle titleStyle = Styles().textStyles?.getTextStyle("widget.title.large.fat") ?? TextStyle(fontSize: 20.0, color: Styles().colors!.fillColorPrimary,fontFamily: Styles().fontFamilies!.bold);
-  static final TextStyle contentStyle = Styles().textStyles?.getTextStyle("widget.info.regular.thin") ?? TextStyle(fontSize: 16.0, color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.regular);
+  static final TextStyle titleStyle = Styles().textStyles.getTextStyle("widget.title.large.fat") ?? TextStyle(fontSize: 20.0, color: Styles().colors.fillColorPrimary,fontFamily: Styles().fontFamilies.bold);
+  static final TextStyle contentStyle = Styles().textStyles.getTextStyle("widget.info.regular.thin") ?? TextStyle(fontSize: 16.0, color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.regular);
 
   final Widget? content;
   final BuildContext? context;
@@ -167,7 +161,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
           return ClipRRect(
               borderRadius: BorderRadius.all(Radius.circular(8)),
               child: Dialog(
-                backgroundColor: Styles().colors!.surface,
+                backgroundColor: Styles().colors.surface,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -185,13 +179,13 @@ class Onboarding2InfoDialog extends StatelessWidget{
                             onTap: () {
                               Navigator.pop(context);
                             },
-                            child: Container(child: Styles().images?.getImage("close", excludeFromSemantics: true)),
+                            child: Container(child: Styles().images.getImage("close", excludeFromSemantics: true)),
                           ))),
                         Container(height: 12,),
                         content ?? Container(),
                         Container(height:10),
 //                        RichText(
-//                            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+//                            textScaler: MediaQuery.of(context).textScaler,
 //                            text: new TextSpan(
 //                                children: <TextSpan>[
 //                                  TextSpan(text: Localization().getStringEx("panel.onboarding2.dialog.learn_more.collected_information_disclosure", "All of this information is collected and used in accordance with our "), style: Onboarding2InfoDialog.contentStyle,),
@@ -204,19 +198,19 @@ class Onboarding2InfoDialog extends StatelessWidget{
 //                        ),
 
                         RichText(
-                            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+                            textScaler: MediaQuery.of(context).textScaler,
                             text: new TextSpan(
                                 children:[
                                   TextSpan(text: Localization().getStringEx("panel.onboarding2.dialog.learn_more.collected_information_disclosure", "All of this information is collected and used in accordance with our "), style: Onboarding2InfoDialog.contentStyle,),
-                                  WidgetSpan(child: Onboarding2UnderlinedButton(title: Localization().getStringEx("panel.onboarding2.dialog.learn_more.button.privacy_policy.title", "Privacy notice "), onTap: () => _openPrivacyPolicy(context), padding: EdgeInsets.all(0),fontFamily: Styles().fontFamilies!.regular,fontSize: 14,)),
+                                  WidgetSpan(child: Onboarding2UnderlinedButton(title: Localization().getStringEx("panel.onboarding2.dialog.learn_more.button.privacy_policy.title", "Privacy notice "), onTap: () => _openPrivacyPolicy(context), padding: EdgeInsets.all(0), textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.underline"))),
                                   WidgetSpan(child: Container(
                                       decoration: BoxDecoration(
-                                          border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1, ),)
+                                          border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)
                                       ),
                                       padding: EdgeInsets.only(bottom: 2),
                                       child: Container(
                                           padding: EdgeInsets.only(bottom: 4),
-                                          child: Styles().images?.getImage("external-link", excludeFromSemantics: true,)))),
+                                          child: Styles().images.getImage("external-link", excludeFromSemantics: true,)))),
                                 ]
                             )
                         ),
@@ -233,29 +227,18 @@ class Onboarding2InfoDialog extends StatelessWidget{
 
   void _openPrivacyPolicy(BuildContext context) {
     Analytics().logSelect(target: "Privacy Policy");
-    if (Config().privacyPolicyUrl != null) {
-      if (Platform.isIOS) {
-        Uri? privacyPolicyUri = Uri.tryParse(Config().privacyPolicyUrl!);
-        if (privacyPolicyUri != null) {
-          launchUrl(privacyPolicyUri, mode: LaunchMode.externalApplication);
-        }
-      }
-      else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, showTabBar: false, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
-      }
-    }
+    AppPrivacyPolicy.launch(context);
   }
 }
 
-class Onboarding2UnderlinedButton extends StatelessWidget{
+class Onboarding2UnderlinedButton extends StatelessWidget{ //TBD check if we can replace with UnderlineButton
   final Function? onTap;
   final String? title;
   final String? hint;
-  final double fontSize;
+  final TextStyle? textStyle;
   final EdgeInsets padding;
-  final String? fontFamily;
 
-  const Onboarding2UnderlinedButton({Key? key, this.onTap, this.title, this.hint, this.fontSize = 16, this.padding = const EdgeInsets.symmetric(vertical: 20), this.fontFamily}) : super(key: key);
+  const Onboarding2UnderlinedButton({Key? key, this.onTap, this.title, this.hint, this.padding = const EdgeInsets.symmetric(vertical: 20), this.textStyle}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -274,9 +257,11 @@ class Onboarding2UnderlinedButton extends StatelessWidget{
                   padding: EdgeInsets.only(bottom: 2),
                   child: Text(
                     title!,
-                    style: Styles().textStyles?.getTextStyle("widget.button.title.medium.underline")?.copyWith(fontSize: fontSize)
+                    style: textStyle ?? defaultTextStyle
                   )))),
     );
   }
+
+  TextStyle? get defaultTextStyle => Styles().textStyles.getTextStyle("widget.button.title.medium.underline");
 
 }

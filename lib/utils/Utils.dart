@@ -1,10 +1,12 @@
 // XmlUtils
 
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:xml/xml.dart';
-import 'dart:math' as math;
 
 class XmlUtils {
   
@@ -30,13 +32,13 @@ class XmlUtils {
   static String? childText(XmlNode? xmlNode, String name, {String? namespace}) {
     XmlElement? childElement = child(xmlNode, name, namespace: namespace);
     XmlNode? childElementNode = (childElement?.children.length == 1) ? childElement?.children.first : null;
-    return (childElementNode?.nodeType == XmlNodeType.TEXT) ? childElementNode?.text : null;
+    return (childElementNode?.nodeType == XmlNodeType.TEXT) ? childElementNode?.value /*childElementNode?.innerText*/ : null;
   }
 
   static String? childCdata(XmlNode? xmlNode, String name, {String? namespace}) {
     XmlElement? childElement = child(xmlNode, name, namespace: namespace);
     XmlNode? childElementNode = (childElement?.children.length == 1) ? childElement?.children.first : null;
-    return (childElementNode?.nodeType == XmlNodeType.CDATA) ? childElementNode?.text : null;
+    return (childElementNode?.nodeType == XmlNodeType.CDATA) ? childElementNode?.value /*childElementNode?.innerText*/ : null;
   }
 }
 
@@ -77,8 +79,10 @@ class GeoMapUtils {
   static const String traveModeDriving   = 'driving';
   static const String traveModeTransit   = 'transit';
 
-  static Future<bool> launchDirections({ LatLng? origin, LatLng? destination, String? travelMode }) async {
+  static Future<bool> launchDirections({ dynamic origin, dynamic destination, String? travelMode }) async {
+
     Uri? googleMapsUri = Uri.tryParse(_googleMapsUrl(origin: origin, destination: destination, travelMode: travelMode));
+
     if ((googleMapsUri != null) && await canLaunchUrl(googleMapsUri) && await launchUrl(googleMapsUri, mode: LaunchMode.externalApplication)) {
       debugPrint("Map directions: $googleMapsUri");
       return true;
@@ -93,27 +97,58 @@ class GeoMapUtils {
     return false;
   }
 
-  static String _googleMapsUrl({ LatLng? origin, LatLng? destination, String? travelMode }) {
+  static String _googleMapsUrl({ dynamic origin, dynamic destination, String? travelMode }) {
     // https://developers.google.com/maps/documentation/urls/get-started#directions-action
+
     String url = "https://www.google.com/maps/dir/?api=1"; //TBD: app config
-    if (origin != null) {
+    if (origin is LatLng) {
       url += "&origin=${origin.latitude.toStringAsFixed(6)},${origin.longitude.toStringAsFixed(6)}";
     }
-    if (destination != null) {
+    else if (origin != null) {
+      url += "&origin=${Uri.encodeComponent(origin.toString())}";
+    }
+
+    if (destination is LatLng) {
       url += "&destination=${destination.latitude.toStringAsFixed(6)},${destination.longitude.toStringAsFixed(6)}";
     }
+    else if (destination != null) {
+      url += "&destination=${Uri.encodeComponent(destination.toString())}";
+    }
+
     if (travelMode != null) {
       url += "&travelmode=$travelMode";
     }
     return url;
   }
 
-  static String _wazeMapsUrl({ LatLng? origin, LatLng? destination, String? travelMode }) {
+  static String _wazeMapsUrl({ dynamic origin, dynamic destination, String? travelMode }) {
     // https://developers.google.com/waze/deeplinks
     String url = "https://waze.com/ul?navigate=yes"; //TBD: app config
-    if (destination != null) {
+    if (destination is LatLng) {
       url += "&ll=${destination.latitude.toStringAsFixed(6)},${destination.longitude.toStringAsFixed(6)}";
     }
+    else if (destination != null) {
+      url += "&q=${Uri.encodeComponent(destination.toString())}";
+    }
     return url;
+  }
+}
+
+// TODO: Might be better in the plugin rather than the app
+class LinearProgressColorUtils {
+  static Color linearProgressIndicatorColor(double percentage) {
+    return Color.lerp(
+      Colors.red,
+      Colors.green,
+      percentage,
+    )!;
+  }
+
+  static Color linearProgressIndicatorBackgroundColor(double percentage) {
+    return Color.lerp(
+      Colors.red[100],
+      Colors.green[100],
+      percentage,
+    )!;
   }
 }

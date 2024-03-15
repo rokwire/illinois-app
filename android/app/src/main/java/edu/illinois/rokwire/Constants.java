@@ -16,15 +16,10 @@
 
 package edu.illinois.rokwire;
 
-import com.google.android.gms.maps.model.LatLng;
-
 public class Constants {
 
-    //Flutter communication methods
+    // Flutter communication methods
     static final String APP_INIT_KEY = "init";
-    static final String MAP_DIRECTIONS_KEY = "directions";
-    static final String MAP_PICK_LOCATION_KEY = "pickLocation";
-    static final String MAP_KEY = "map";
     static final String APP_DISMISS_LAUNCH_SCREEN_KEY = "dismissLaunchScreen";
     static final String APP_SET_LAUNCH_SCREEN_STATUS_KEY = "setLaunchScreenStatus";
     static final String APP_ENABLED_ORIENTATIONS_KEY = "enabledOrientations";
@@ -32,21 +27,29 @@ public class Constants {
     static final String BARCODE_KEY = "barcode";
     static final String TEST_KEY = "test";
 
-    //Maps
-    public static final LatLng DEFAULT_INITIAL_CAMERA_POSITION = new LatLng(40.102116, -88.227129); //Illinois University: Center of Campus //(40.096230, -88.235899); // State Farm Center
-    public static final float DEFAULT_CAMERA_ZOOM = 17.0f;
-    public static final float MAP_NO_POI_THRESHOLD_ZOOM = 17.0f;
-    public static final float MAP_THRESHOLD_ZOOM_UPDATE_STEP = 0.3f;
-    public static final float MAP_MAX_ZOOM_LEVEL_FOR_THRESHOLD = 16f;
-    public static final float FIRST_THRESHOLD_MARKER_ZOOM = 17.0f;
-    public static final float SECOND_THRESHOLD_MARKER_ZOOM = 18.00f;
-    public static final int SELECT_LOCATION_ACTIVITY_RESULT_CODE = 2;
-    public static final String LOCATION_PICKER_DATA_FORMAT = "{\"location\":{\"latitude\":%f,\"longitude\":%f}}";
-    public static final float INDOORS_BUILDING_ZOOM = 17.0f;
-    public static final String ANALYTICS_ROUTE_LOCATION_FORMAT = "{\"latitude\":%f,\"longitude\":%f}";
-    public static final String ANALYTICS_USER_LOCATION_FORMAT = "{\"latitude\":%f,\"longitude\":%f,\"timestamp\":%d}";
+    // Mobile Access
+    public static final String MOBILE_ACCESS_START_KEY = "start";
+    public static final String MOBILE_ACCESS_AVAILABLE_KEYS_KEY = "availableKeys";
+    public static final String MOBILE_ACCESS_REGISTER_ENDPOINT_KEY = "registerEndpoint";
+    public static final String MOBILE_ACCESS_UNREGISTER_ENDPOINT_KEY = "unregisterEndpoint";
+    public static final String MOBILE_ACCESS_IS_ENDPOINT_REGISTERED_KEY = "isEndpointRegistered";
+    public static final String MOBILE_ACCESS_SET_RSSI_SENSITIVITY_KEY = "setRssiSensitivity";
+    public static final String MOBILE_ACCESS_SET_LOCK_SERVICE_CODES_KEY = "setLockServiceCodes";
+    public static final String MOBILE_ACCESS_GET_LOCK_SERVICE_CODES_KEY = "getLockServiceCodes";
+    public static final String MOBILE_ACCESS_ENABLE_TWIST_AND_GO_KEY = "enableTwistAndGo";
+    public static final String MOBILE_ACCESS_IS_TWIST_AND_GO_ENABLED_KEY = "isTwistAndGoEnabled";
+    public static final String MOBILE_ACCESS_ENABLE_UNLOCK_VIBRATION_KEY = "enableUnlockVibration";
+    public static final String MOBILE_ACCESS_IS_UNLOCK_VIBRATION_ENABLED_KEY = "isUnlockVibrationEnabled";
+    public static final String MOBILE_ACCESS_ENABLE_UNLOCK_SOUND_KEY = "enableUnlockSound";
+    public static final String MOBILE_ACCESS_IS_UNLOCK_SOUND_ENABLED_KEY = "isUnlockSoundEnabled";
+    public static final String MOBILE_ACCESS_ALLOW_SCANNING_KEY = "allowScanning";
+    public static final String MOBILE_ACCESS_LOCK_SERVICE_CODES_DELIMITER = ",";
+    public static final String MOBILE_ACCESS_LOCK_SERVICE_CODES_PREFS_KEY = "mobile_access_lock_service_codes";
+    public static final String MOBILE_ACCESS_TWIST_AND_GO_ENABLED_PREFS_KEY = "mobile_access_twist_n_go_enabled";
+    public static final String MOBILE_ACCESS_UNLOCK_VIBRATION_ENABLED_PREFS_KEY = "mobile_access_unlock_vibration_enabled";
+    public static final String MOBILE_ACCESS_UNLOCK_SOUND_ENABLED_PREFS_KEY = "mobile_access_unlock_sound_enabled";
+    public static final String MOBILE_ACCESS_START_FINISHED_KEY = "start.finished";
+    public static final String MOBILE_ACCESS_ENDPOINT_REGISTER_FINISHED_KEY = "endpoint.register.finished";
+    public static final String MOBILE_ACCESS_DEVICE_SCANNING_KEY = "device.scanning";
 
-    // Shared Prefs
-    static final String DEFAULT_SHARED_PREFS_FILE_NAME = "default_shared_prefs";
-    static final String SECURE_SHARED_PREFS_FILE_NAME = "secure_shared_prefs";
 }

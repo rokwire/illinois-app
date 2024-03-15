@@ -14,17 +14,25 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Guide.dart';
+import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppAlert {
   
-  static Future<bool?> showDialogResult(BuildContext context, String? message, { String? buttonTitle }) async {
+  static Future<bool?> showDialogResult(BuildContext context, String? message, { String? buttonTitle, Function? onConfirm}) async {
     return await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -37,6 +45,7 @@ class AppAlert {
                 onPressed: () {
                   Analytics().logAlert(text: message, selection: displayButtonTitle);
                   Navigator.pop(context, true);
+                  onConfirm?.call();
                 }
             ) //return dismissed 'true'
           ],
@@ -60,7 +69,7 @@ class AppAlert {
     return showDialog(context: context, builder: (context) {
       return AlertDialog(
         content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: TextStyle(fontSize: 18),),
+          Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.medium")),
           Container(height:16),
           Text(message!, textAlign: TextAlign.center,),
         ],),
@@ -99,13 +108,13 @@ class AppAlert {
   static Future<void> showPopup(BuildContext context, String? message) async {
     return showDialog(context: context, builder: (context) {
       return AlertDialog(contentPadding: EdgeInsets.zero, content:
-        Container(decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)), child:
+        Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)), child:
           Stack(alignment: Alignment.center, children: [
             Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32), child:
               Column(mainAxisSize: MainAxisSize.min, children: [
-                Styles().images?.getImage('university-logo', excludeFromSemantics: true) ?? Container(),
+                Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container(),
                 Padding(padding: EdgeInsets.only(top: 18), child:
-                  Text(message ?? '', textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.small"))
+                  Text(message ?? '', textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle("widget.detail.small"))
                 ),
               ])
             ),
@@ -116,7 +125,7 @@ class AppAlert {
                   Navigator.of(context).pop();
                   }, child:
                   Padding(padding: EdgeInsets.all(16), child:
-                    Styles().images?.getImage('close', excludeFromSemantics: true)
+                    Styles().images.getImage('close', excludeFromSemantics: true)
                   )
                 )
               )
@@ -131,7 +140,7 @@ class AppAlert {
       {required BuildContext buildContext,
       required String message,
       String? positiveButtonLabel,
-      required VoidCallback positiveCallback,
+      VoidCallback? positiveCallback,
       VoidCallback? negativeCallback,
       String? negativeButtonLabel}) async {
     bool alertDismissed = await showDialog(
@@ -144,7 +153,9 @@ class AppAlert {
                 onPressed: () {
                   Analytics().logAlert(text: message, selection: 'Yes');
                   Navigator.pop(context, true);
-                  positiveCallback();
+                  if (positiveCallback != null) {
+                    positiveCallback();
+                  }
                 }),
             TextButton(
                 child: Text(
@@ -213,8 +224,8 @@ class AppSemantics {
     //                       "<",
     //                       semanticsLabel: "",
     //                       style: TextStyle(
-    //                         color : Styles().colors!.fillColorPrimary,
-    //                         fontFamily: Styles().fontFamilies!.bold,
+    //                         color : Styles().colors.fillColorPrimary,
+    //                         fontFamily: Styles().fontFamilies.bold,
     //                         fontSize: 26,
     //                       ),),)
     //               )
@@ -233,8 +244,8 @@ class AppSemantics {
     //                       ">",
     //                       semanticsLabel: "",
     //                       style: TextStyle(
-    //                         color : Styles().colors!.fillColorPrimary,
-    //                         fontFamily: Styles().fontFamilies!.bold,
+    //                         color : Styles().colors.fillColorPrimary,
+    //                         fontFamily: Styles().fontFamilies.bold,
     //                         fontSize: 26,
     //                       ),),)
     //               )
@@ -282,15 +293,15 @@ class AppDateTimeUtils {
         timeDaysDiff += 1;
       }
       if (timeDaysDiff == 0) {
-        displayDay = Localization().getStringEx('model.explore.time.today', 'Today');
+        displayDay = Localization().getStringEx('model.explore.date_time.today', 'Today');
         if (!allDay! && includeAtSuffix) {
-          displayDay = "$displayDay ${Localization().getStringEx('model.explore.time.at', 'at')}";
+          displayDay = "$displayDay ${Localization().getStringEx('model.explore.date_time.at', 'at')}";
         }
       }
       else if (timeDaysDiff == 1) {
-        displayDay = Localization().getStringEx('model.explore.time.tomorrow', 'Tomorrow');
+        displayDay = Localization().getStringEx('model.explore.date_time.tomorrow', 'Tomorrow');
         if (!allDay! && includeAtSuffix) {
-          displayDay = "$displayDay ${Localization().getStringEx('model.explore.time.at', 'at')}";
+          displayDay = "$displayDay ${Localization().getStringEx('model.explore.date_time.at', 'at')}";
         }
       }
       else {
@@ -305,7 +316,7 @@ class AppDateTimeUtils {
     if (dateTimeUtc != null && !allDay!) {
       DateTime dateTimeToCompare = _getDateTimeToCompare(dateTimeUtc: dateTimeUtc, considerSettingsDisplayTime: considerSettingsDisplayTime)!;
       String format = (dateTimeToCompare.minute == 0) ? 'ha' : 'h:mma';
-      timeToString = AppDateTime().formatDateTime(dateTimeToCompare, format: format, ignoreTimeZone: true, showTzSuffix: !AppDateTime().useDeviceLocalTimeZone);
+      timeToString = AppDateTime().formatDateTime(dateTimeToCompare, format: format, ignoreTimeZone: true, showTzSuffix: !AppDateTime().useDeviceLocalTimeZone)?.toLowerCase();
     }
     return timeToString;
   }
@@ -356,16 +367,56 @@ class AppDateTimeUtils {
       return 'Just now';
     }
   }
+}
 
+class AppPrivacyPolicy {
+
+  static Future<bool> launch(BuildContext context) async {
+    if ((Config().privacyPolicyUrl != null) && await UrlUtils.isHostAvailable(Config().privacyPolicyUrl)) {
+      if (Platform.isIOS) {
+        Uri? privacyPolicyUri = Uri.tryParse(Config().privacyPolicyUrl!);
+        if (privacyPolicyUri != null) {
+          return launchUrl(privacyPolicyUri, mode: LaunchMode.externalApplication);
+        }
+        else {
+          return false;
+        }
+      }
+      else {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, showTabBar: false, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
+        return true;
+      }
+    }
+    else {
+      Map<String, dynamic>? privacyPolicyGuideEntry = Guide().entryById(Config().privacyPolicyGuideId) ?? JsonUtils.decodeMap(await AppBundle.loadString('assets/privacy.notice.json'));
+      if (privacyPolicyGuideEntry != null) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntry: privacyPolicyGuideEntry, showTabBar: false,)));
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+  }
 }
 
 extension StateExt on State {
   @protected
-  void setStateIfMounted(VoidCallback fn) {
+  void setStateIfMounted([VoidCallback? fn]) {
     if (mounted) {
       // ignore: invalid_use_of_protected_member
-      setState(fn);
+      setState(fn ?? (){});
     }
+  }
+
+  @protected
+  void setStateDelayedIfMounted(VoidCallback? fn, { Duration duration = Duration.zero }) {
+    Future.delayed(duration, () {
+      if (mounted) {
+        // ignore: invalid_use_of_protected_member
+        setState(fn ?? (){});
+      }
+    });
   }
 
   @protected
@@ -377,5 +428,18 @@ extension StateExt on State {
     else {
       fn();
     }
+  }
+
+  @protected
+  void applyStateDelayedIfMounted(VoidCallback fn, { Duration duration = Duration.zero }) {
+    Future.delayed(duration, () {
+      if (mounted) {
+        // ignore: invalid_use_of_protected_member
+        setState(fn);
+      }
+      else {
+        fn();
+      }
+    });
   }
 }

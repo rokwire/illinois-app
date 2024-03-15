@@ -62,8 +62,8 @@ class TabBar extends rokwire.TabBar {
       return rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.browse.title', 'Browse'),
         hint: Localization().getStringEx('tabbar.browse.hint', ''),
-        iconKey: 'campus-tools-outline-gray',
-        selectedIconKey: 'campus-tools-filled',
+        iconKey: 'browse-outline-gray',
+        selectedIconKey: 'browse-filled',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
@@ -78,12 +78,12 @@ class TabBar extends rokwire.TabBar {
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
     }
-    else if (code == 'maps2') {
+    else if (code == 'assistant') {
       return rokwire.TabWidget(
-        label: 'Map',
-        hint: 'Map Page2',
-        iconKey: 'location-outline-gray',
-        selectedIconKey: 'location',
+        label: Localization().getStringEx('tabbar.assistant.title', 'Assistant'),
+        hint: Localization().getStringEx('tabbar.assistant.hint', 'Illinois Assistant Page'),
+        iconKey: 'search-outline-gray',
+        selectedIconKey: 'search',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );

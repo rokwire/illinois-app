@@ -227,12 +227,12 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
       headerTitle = _isResearchProject ? "Participants" : Localization().getStringEx("panel.manage_members.header.member.title", "Members");
     }
     return Scaffold(
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         appBar: HeaderBar(title: headerTitle),
         body: _isLoading
             ? Center(
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary)))
+                    strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)))
             : RefreshIndicator(
                 onRefresh: _onPullToRefresh,
                 child: SingleChildScrollView(
@@ -251,7 +251,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         Padding(
             padding: EdgeInsets.symmetric(horizontal: 32),
             child: Text(_getEmptyMembersMessage(), textAlign: TextAlign.center,
-                style: Styles().textStyles?.getTextStyle('widget.group.members.title'))),
+                style: Styles().textStyles.getTextStyle('widget.group.members.title'))),
         Container(height: MediaQuery.of(context).size.height / 4)
       ]));
     } else {
@@ -275,15 +275,16 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     }
 
     return Column(children: <Widget>[
-      SectionRibbonHeader(title: _getSectionHeading(), titleIconKey: 'person-circle'),
-      _buildMembersSearch(),
+        SectionRibbonHeader(title: _getSectionHeading(), titleIconKey: 'person-circle'),
+        _buildMembersSearch(),
+        _buildDateUpdatedFields(),
         Visibility(visible: 1 < CollectionUtils.length(_sortedMemberStatusList), child:
           Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
             RibbonButton(
-              textColor: Styles().colors!.fillColorSecondary,
-              backgroundColor: Styles().colors!.white,
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+              backgroundColor: Styles().colors.white,
               borderRadius: BorderRadius.all(Radius.circular(5)),
-              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                 rightIconKey: _statusValuesVisible ? 'chevron-up' : 'chevron-down',
                 label: _memberStatusToString(_selectedMemberStatus),
               onTap: _onTapRibbonButton))),
@@ -320,9 +321,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                     onSubmitted: (_) => _onTapSearch(),
                     autofocus: false,
                     focusNode: _searchFocus,
-                    cursorColor: Styles().colors!.fillColorSecondary,
+                    cursorColor: Styles().colors.fillColorSecondary,
                     keyboardType: TextInputType.text,
-                    style:  Styles().textStyles?.getTextStyle('widget.group.members.search'),
+                    style:  Styles().textStyles.getTextStyle('widget.group.members.search'),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                     ),
@@ -338,7 +339,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                   padding: EdgeInsets.all(12),
                   child: GestureDetector(
                     onTap: _onTapClearSearch,
-                    child: Styles().images?.getImage('clear', excludeFromSemantics: true),
+                    child: Styles().images.getImage('clear', excludeFromSemantics: true),
                   ),
                 )
             ),
@@ -351,7 +352,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                 padding: EdgeInsets.all(12),
                 child: GestureDetector(
                   onTap: _onTapSearch,
-                  child: Styles().images?.getImage('search', excludeFromSemantics: true),
+                  child: Styles().images.getImage('search', excludeFromSemantics: true),
                 ),
               ),
             ),
@@ -359,6 +360,30 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         ),
       ),
     );
+  }
+
+  Widget _buildDateUpdatedFields() {
+    if (!_isAdmin) {
+      return Container();
+    }
+    bool showSynced = _group?.authManEnabled == true && StringUtils.isNotEmpty(_group?.displayManagedMembershipUpdateTime);
+    bool showUpdated = StringUtils.isNotEmpty(_group?.displayMembershipUpdateTime);
+
+    return Visibility(visible: showSynced || showUpdated,
+      child: Container(child: Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
+        Visibility(visible: showSynced,
+          child: Semantics(container: true, child:
+            Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Last sync:'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))),
+              Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))
+        ]))),
+        Visibility(visible: showUpdated,
+          child: Semantics(container: true,
+            child: Padding(padding: EdgeInsets.only(top: 5), child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Last updated:'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))),
+              Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))
+        ]))))
+    ]))));
   }
 
   Future<void> _onPullToRefresh() async {
@@ -419,6 +444,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     Container(
         constraints: BoxConstraints(minHeight:  MediaQuery.of(context).size.height),
         child: BlockSemantics(child:
+          Semantics(label: "dismiss", child:
             GestureDetector(
               onTap: () {
                 Analytics().logSelect(target: 'Close Dropdown');
@@ -426,15 +452,16 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                   _statusValuesVisible = false;
                 });
               },
-              child: Container(color: Styles().colors!.blackTransparent06)
+              child: Container(color: Styles().colors.blackTransparent06)
             )
           )
-        );
+        )
+    );
   }
 
   Widget _buildStatusValuesWidget() {
     List<Widget> widgetList = <Widget>[];
-    widgetList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
+    widgetList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
     if ((_selectedMemberStatus != null) && (1 < CollectionUtils.length(_sortedMemberStatusList))) {
       widgetList.add(_buildStatusItem(null));
     }
@@ -450,8 +477,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   Widget _buildStatusItem(GroupMemberStatus? status) {
     return RibbonButton(
-        backgroundColor: Styles().colors!.white,
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        backgroundColor: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         rightIcon: null,
         label: _memberStatusToString(status),
@@ -496,45 +523,45 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   String _getSectionHeading() {
     switch (_selectedMemberStatus) {
       case GroupMemberStatus.admin:
-        return _isResearchProject ? "Principle Investigators" : Localization().getStringEx("panel.manage_members.label.admins", "Admins");
+        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.admins", "Principal Investigators") : Localization().getStringEx("panel.manage_members.label.admins", "Admins");
       case GroupMemberStatus.member:
-        return _isResearchProject ? "Participants" : Localization().getStringEx("panel.manage_members.label.members", "Members");
+        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.members", "Participants") : Localization().getStringEx("panel.manage_members.label.members", "Members");
       case GroupMemberStatus.pending:
-        return _isResearchProject ? "Requests" : Localization().getStringEx("panel.manage_members.label.requests", "Requests");
+        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.requests", "Requests") : Localization().getStringEx("panel.manage_members.label.requests", "Requests");
       case GroupMemberStatus.rejected:
-        return _isResearchProject ? "Participants" : Localization().getStringEx("panel.manage_members.label.members", "Members");
+        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.members", "Participants") : Localization().getStringEx("panel.manage_members.label.members", "Members");
       default: // All
-        return _isResearchProject ? "Participants" : Localization().getStringEx("panel.manage_members.label.members", "Members");
+        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.members", "Participants") : Localization().getStringEx("panel.manage_members.label.members", "Members");
     }
   }
 
   String _getEmptyMembersMessage() {
     switch (_selectedMemberStatus) {
       case GroupMemberStatus.admin:
-        return _isResearchProject ? 'There are no principle investigators.' : Localization().getStringEx('panel.manage_members.status.admin.empty.message', 'There are no admins.');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.admin.empty.project.message', 'There are no principal investigators.') : Localization().getStringEx('panel.manage_members.status.admin.empty.message', 'There are no admins.');
       case GroupMemberStatus.member:
-        return _isResearchProject ? 'There are no participants.' : Localization().getStringEx('panel.manage_members.status.member.empty.message', 'There are no members.');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.member.empty.project.message', 'There are no participants.') : Localization().getStringEx('panel.manage_members.status.member.empty.message', 'There are no members.');
       case GroupMemberStatus.pending:
-        return _isResearchProject ? 'There are no pending participants.' : Localization().getStringEx('panel.manage_members.status.pending.empty.message', 'There are no pending members.');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.pending.empty.project.message', 'There are no pending participants.') : Localization().getStringEx('panel.manage_members.status.pending.empty.message', 'There are no pending members.');
       case GroupMemberStatus.rejected:
-        return _isResearchProject ? 'There are no rejected participants.' : Localization().getStringEx('panel.manage_members.status.rejected.empty.message', 'There are no rejected members.');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.rejected.empty.project.message', 'There are no rejected participants.') : Localization().getStringEx('panel.manage_members.status.rejected.empty.message', 'There are no rejected members.');
       default: // All
-        return _isResearchProject ? 'There are no participants.' : Localization().getStringEx('panel.manage_members.status.all.empty.message', 'There are no members.');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.all.empty.project.message', 'There are no participants.') : Localization().getStringEx('panel.manage_members.status.all.empty.message', 'There are no members.');
     }
   }
 
   String? _memberStatusToString(GroupMemberStatus? status) {
     switch (status) {
       case GroupMemberStatus.admin:
-        return _isResearchProject ? 'Principle Investigators' : Localization().getStringEx('panel.manage_members.member.status.admin.label', 'Admin');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.admin.project.label', 'Principal Investigator') : Localization().getStringEx('panel.manage_members.member.status.admin.label', 'Admin');
       case GroupMemberStatus.member:
-        return _isResearchProject ? 'Participants' : Localization().getStringEx('panel.manage_members.member.status.member.label', 'Member');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.member.project.label', 'Participant') : Localization().getStringEx('panel.manage_members.member.status.member.label', 'Member');
       case GroupMemberStatus.pending:
-        return Localization().getStringEx('panel.manage_members.member.status.pending.label', 'Pending');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.pending.project.label', 'Pending') : Localization().getStringEx('panel.manage_members.member.status.pending.label', 'Pending');
       case GroupMemberStatus.rejected:
-        return Localization().getStringEx('panel.manage_members.member.status.rejected.label', 'Rejected');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.rejected.project.label', 'Rejected') : Localization().getStringEx('panel.manage_members.member.status.rejected.label', 'Rejected');
       default:
-        return Localization().getStringEx('panel.manage_members.member.status.all.label', 'All');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.all.project.label', 'All') : Localization().getStringEx('panel.manage_members.member.status.all.label', 'All');
     }
   }
 
@@ -560,9 +587,9 @@ class _PendingMemberCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Styles().colors!.white,
+          color: Styles().colors.white,
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid)
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid)
       ),
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
@@ -578,17 +605,16 @@ class _PendingMemberCard extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     member?.displayName ?? "",
-                    style: Styles().textStyles?.getTextStyle('widget.group.members.title'),
+                    style: Styles().textStyles.getTextStyle('widget.group.members.title'),
                   ),
                   Container(height: 4,),
                       RoundedButton(
                         label: Localization().getStringEx("panel.manage_members.button.review_request.title", "Review Request"),
                         hint: Localization().getStringEx("panel.manage_members.button.review_request.hint", ""),
-                        borderColor: Styles().colors!.fillColorSecondary,
-                        textColor: Styles().colors!.fillColorPrimary,
-                        backgroundColor: Styles().colors!.white,
-                        fontSize: 16,
-                        rightIcon: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+                        borderColor: Styles().colors.fillColorSecondary,
+                        backgroundColor: Styles().colors.white,
+                        rightIcon: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true),
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         onTap: (){
                           Analytics().logSelect(target:"Review request");
@@ -618,16 +644,17 @@ class _GroupMemberCard extends StatelessWidget {
       onTap: ()=>_onTapMemberCard(context),
       child: Container(
         decoration: BoxDecoration(
-            color: Styles().colors!.white,
+            color: Styles().colors.white,
             borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid)
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid)
         ),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
           children: <Widget>[
             ClipRRect(
                 borderRadius: BorderRadius.circular(65),
-                child: Container(width: 65, height: 65, child: GroupMemberProfileImage(userId: member?.userId))),
+                child: Semantics(label: "user image", hint: "Double tap to zoom", child:
+                  Container(width: 65, height: 65, child: GroupMemberProfileImage(userId: member?.userId)))),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(left: 11),
@@ -638,7 +665,7 @@ class _GroupMemberCard extends StatelessWidget {
                       children: <Widget>[
                         Expanded(child:
                           Text(StringUtils.ensureNotEmpty(_memberDisplayName),
-                            style: Styles().textStyles?.getTextStyle('widget.group.members.title')
+                            style: Styles().textStyles.getTextStyle('widget.group.members.title')
                           )
                         )
                       ],
@@ -654,7 +681,7 @@ class _GroupMemberCard extends StatelessWidget {
                           ),
                           child: Center(
                             child: Text(memberStatus?.toUpperCase() ?? '',
-                              style: Styles().textStyles?.getTextStyle('widget.heading.small')
+                              style: Styles().textStyles.getTextStyle('widget.heading.small')
                             ),
                           ),
                         ),
@@ -665,10 +692,10 @@ class _GroupMemberCard extends StatelessWidget {
                                 child: Container(
                                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                        color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.all(Radius.circular(2))),
+                                        color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.all(Radius.circular(2))),
                                     child: Center(
                                         child: Text(Localization().getStringEx('widget.group.member.card.attended.label', 'ATTENDED'),
-                                            style: Styles().textStyles?.getTextStyle('widget.heading.small')))))),
+                                            style: Styles().textStyles.getTextStyle('widget.heading.small')))))),
                         Expanded(child: Container()),
                       ],
                     )

@@ -24,20 +24,21 @@ import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/service/CheckList.dart';
-import 'package:illinois/service/Explore.dart';
 import 'package:illinois/service/MTD.dart';
+import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/service/Questionnaire.dart';
+import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/DeepLink.dart';
-import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/IlliniCash.dart';
-import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/OnCampus.dart';
@@ -48,7 +49,6 @@ import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Rewards.dart';
 import 'package:illinois/service/Services.dart' as illinois;
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/Voter.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/WPGUFMRadio.dart';
@@ -63,8 +63,9 @@ import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 
-import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
+import 'package:rokwire_plugin/service/device_calendar.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
@@ -73,10 +74,9 @@ import 'package:rokwire_plugin/service/firebase_crashlytics.dart';
 import 'package:rokwire_plugin/service/local_notifications.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/app_lifecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/app_notification.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/http_proxy.dart';
@@ -91,85 +91,82 @@ final AppExitListener appExitListener = AppExitListener();
 
 void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
 
-  // https://stackoverflow.com/questions/57689492/flutter-unhandled-exception-servicesbinding-defaultbinarymessenger-was-accesse
-  WidgetsFlutterBinding.ensureInitialized();
-
-  String? platformVersion = await RokwirePlugin.platformVersion;
-  Log.d("RokwirePlugin.platformVersion: $platformVersion");
-
-  NotificationService().subscribe(appExitListener, AppLifecycle.notifyStateChanged);
-
-  illinois.Services().create([
-    // Add highest priority services at top
-
-    FirebaseCore(),
-    FirebaseCrashlytics(),
-    AppLifecycle(),
-    Connectivity(),
-    LocationServices(),
-
-    Storage(),
-
-    Config(defaultEnvironment: configEnvironment),
-    AppDateTime(),
-    NativeCommunicator(),
-    DeepLink(),
-    HttpProxy(),
-
-    Auth2(),
-    Localization(),
-    Assets(),
-    Styles(),
-    Analytics(),
-    FirebaseMessaging(),
-    LocalNotifications(),
-    Sports(),
-    LiveStats(),
-    RecentItems(),
-    Dinings(),
-    IlliniCash(),
-    FlexUI(),
-    Onboarding(),
-    Polls(),
-    GeoFence(),
-    Voter(),
-    Guide(),
-    Inbox(),
-    DeviceCalendar(),
-    Events(),
-    Groups(),
-    CheckList(CheckList.giesOnboarding),
-    CheckList(CheckList.uiucOnboarding),
-    Canvas(),
-    Rewards(),
-    OnCampus(),
-    Wellness(),
-    WellnessRings(),
-    WPGUFMRadio(),
-    Laundries(),
-    AppReview(),
-    StudentCourses(),
-    Appointments(),
-    MTD(),
-    Explore(),
-
-    // These do not rely on Service initialization API so they are not registered as services.
-    // Content(),
-  ]);
-  
-  ServiceError? serviceError = await illinois.Services().init();
-
-  //_testSecretKeys();
-
-  // do not show the red error widget when release mode
-  if (kReleaseMode) {
-    ErrorWidget.builder = (FlutterErrorDetails details) => Container();
-  }
-
-  // Log app create analytics event
-  Analytics().logLifecycle(name: Analytics.LogLifecycleEventCreate);
-
   runZonedGuarded(() async {
+
+    // https://stackoverflow.com/questions/57689492/flutter-unhandled-exception-servicesbinding-defaultbinarymessenger-was-accesse
+    WidgetsFlutterBinding.ensureInitialized();
+
+    NotificationService().subscribe(appExitListener, AppLivecycle.notifyStateChanged);
+
+    illinois.Services().create([
+      // Add highest priority services at top
+
+      FirebaseCore(),
+      FirebaseCrashlytics(),
+      AppLivecycle(),
+      Connectivity(),
+      LocationServices(),
+
+      Storage(),
+
+      Config(defaultEnvironment: configEnvironment),
+      AppDateTime(),
+      NativeCommunicator(),
+      DeepLink(),
+      HttpProxy(),
+
+      Auth2(),
+      Localization(),
+      Styles(),
+      Content(),
+      Analytics(),
+      FirebaseMessaging(),
+      LocalNotifications(),
+      Sports(),
+      LiveStats(),
+      RecentItems(),
+      Dinings(),
+      IlliniCash(),
+      FlexUI(),
+      Onboarding(),
+      Polls(),
+      GeoFence(),
+      Guide(),
+      Inbox(),
+      DeviceCalendar(),
+      Events(),
+      Events2(),
+      Groups(),
+      CheckList(CheckList.giesOnboarding),
+      CheckList(CheckList.uiucOnboarding),
+      Canvas(),
+      CustomCourses(),
+      Rewards(),
+      OnCampus(),
+      Wellness(),
+      WellnessRings(),
+      WPGUFMRadio(),
+      AppReview(),
+      StudentCourses(),
+      Appointments(),
+      MTD(),
+      SpeechToText(),
+    //Assistant(),
+      MobileAccess(),
+    ]);
+
+    ServiceError? serviceError = await illinois.Services().init();
+
+    //_testSecretKeys();
+
+    // do not show the red error widget when release mode
+    if (kReleaseMode) {
+      ErrorWidget.builder = (FlutterErrorDetails details) => Container();
+    }
+
+    // Log app create analytics event
+    Analytics().logLivecycle(name: Analytics.LogLivecycleEventCreate);
+
     runApp(App(initializeError: serviceError));
   }, FirebaseCrashlytics().handleZoneError);
 }
@@ -179,7 +176,7 @@ class AppExitListener implements NotificationsListener {
   // NotificationsListener
   @override
   void onNotification(String name, param) {
-    if ((name == AppLifecycle.notifyStateChanged) && (param == AppLifecycleState.detached)) {
+    if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.detached)) {
       Future.delayed(Duration(), () {
         NotificationService().unsubscribe(appExitListener);
         illinois.Services().destroy();
@@ -226,6 +223,7 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
 
     NotificationService().subscribe(this, [
       Onboarding2.notifyFinished,
+      Localization.notifyLocaleChanged,
       Config.notifyUpgradeAvailable,
       Config.notifyUpgradeRequired,
       Config.notifyOnboardingRequired,
@@ -233,7 +231,7 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
       Storage.notifySettingChanged,
       Auth2.notifyUserDeleted,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
-      AppLifecycle.notifyStateChanged,
+      AppLivecycle.notifyStateChanged,
     ]);
 
     _initializeError = widget.initializeError;
@@ -281,9 +279,9 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
         //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
         title: Localization().getStringEx('app.title', 'Illinois'),
         theme: ThemeData(
-          appBarTheme: AppBarTheme(backgroundColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040)),
-          primaryColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040),
-          fontFamily: Styles().fontFamilies?.extraBold ?? 'ProximaNovaExtraBold'),
+          appBarTheme: AppBarTheme(backgroundColor: Styles().colors.fillColorPrimaryVariant),
+          primaryColor: Styles().colors.fillColorPrimaryVariant,
+          fontFamily: Styles().fontFamilies.extraBold),
         home: _homePanel,
       ),
     );
@@ -376,27 +374,23 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
   void _presentLaunchPopup() {
     BuildContext? launchContext = App.instance?.currentContext;
     if ((_launchPopup == null) && (launchContext != null)) {
-      dynamic launch = FlexUI()['launch'];
-      List<dynamic>? launchList = (launch is List) ? launch : null;
+      List<String>? launchList = JsonUtils.stringListValue(FlexUI()['launch']);
       if (launchList != null) {
         for (dynamic launchEntry in launchList) {
-          Widget? launchPopup = FlexContent.fromAssets(launchEntry, onClose: (BuildContext context) {
+          _launchPopup = FlexContent(contentKey: launchEntry, onClose: (BuildContext context) {
             _launchPopup = null;
             Navigator.of(context).pop();
           },);
-          if (launchPopup != null) {
-            _launchPopup = launchPopup;
-            showDialog(context: launchContext, builder: (BuildContext context) {
-              return Dialog(child:
-                Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                  launchPopup
-                ]),
-              );
-            }).then((_) {
-              _launchPopup = null;
-            });
-            break;
-          }
+          showDialog(context: launchContext, builder: (BuildContext context) {
+            return Dialog(child:
+              Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                _launchPopup ?? Container()
+              ]),
+            );
+          }).then((_) {
+            _launchPopup = null;
+          });
+          break;
         }
       }
     }
@@ -432,6 +426,9 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
     else if (name == Auth2.notifyUserDeleted) {
       _resetUI();
     }
+    else if (name == Localization.notifyLocaleChanged) {
+      _resetUI();
+    }
     else if (name == Storage.notifySettingChanged) {
       if (param == Storage.privacyUpdateVersionKey) {
         setState(() {});
@@ -440,12 +437,12 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       setState(() { });
     }
-    else if (name == AppLifecycle.notifyStateChanged) {
-      _onAppLifecycleStateChanged(param);
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
     }
   }
 
-  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

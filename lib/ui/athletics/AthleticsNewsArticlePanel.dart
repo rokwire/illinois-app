@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/RecentItem.dart';
@@ -27,7 +28,6 @@ import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -35,6 +35,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AthleticsNewsArticlePanel extends StatefulWidget {
   final String? articleId;
@@ -103,7 +104,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildContent(context),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
 }
@@ -122,12 +123,12 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
     return CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
       SliverToutHeaderBar(
         flexImageUrl: _article?.imageUrl,
-        flexBackColor: Styles().colors?.white,
-        flexRightToLeftTriangleColor: Styles().colors?.white,
-        flexLeftToRightTriangleColor: Styles().colors?.fillColorSecondaryTransparent05,
+        flexBackColor: Styles().colors.white,
+        flexRightToLeftTriangleColor: Styles().colors.white,
+        flexLeftToRightTriangleColor: Styles().colors.fillColorSecondaryTransparent05,
       ),
       SliverList(delegate: SliverChildListDelegate([
-        Container(color: Styles().colors!.background, child:
+        Container(color: Styles().colors.background, child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Column(children: <Widget>[
               Container(color: Colors.white, child:
@@ -136,10 +137,10 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
                     Row(children: <Widget>[
                       Container(
                         constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 86),
-                        color: Styles().colors!.fillColorPrimary,
+                        color: Styles().colors.fillColorPrimary,
                         child: Padding(padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                           child: Text(_article?.category?.toUpperCase() ?? '',
-                            style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, letterSpacing: 1.0, color: Colors.white),
+                            style: Styles().textStyles.getTextStyle("widget.title.light.small.fat.spaced"),
                           ),
                         ),
                       ),
@@ -150,7 +151,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
                           hint: Localization().getStringEx("panel.athletics_news_article.button.save_game.hint", "Tap to save"),
                           child: GestureDetector(onTap: _onTapSwitchFavorite, child:
                             Container(padding: EdgeInsets.all(24), child:
-                              Styles().images?.getImage(isNewsFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true),
+                              Styles().images.getImage(isNewsFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true),
                             ),
                           ),
                         ),
@@ -158,16 +159,14 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
                     ],),
                   ),
                   Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 12, bottom: 24), child:
-                    Text(_article?.title ?? '', style:
-                      TextStyle(fontSize: 24, color: Styles().colors!.fillColorPrimary),
+                    Text(_article?.title ?? '', style: Styles().textStyles.getTextStyle("widget.title.extra_large"),
                     ),
                   ),
                   Padding(padding: EdgeInsets.only(left: 24, right: 24, bottom: 24), child:
                     Row(children: <Widget>[
-                      Styles().images?.getImage('news', excludeFromSemantics: true) ?? Container(),
+                      Styles().images.getImage('news', excludeFromSemantics: true) ?? Container(),
                       Container(width: 5,),
-                      Text(_article?.displayTime ?? '', style:
-                        TextStyle(fontSize: 16, color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.medium),
+                      Text(_article?.displayTime ?? '', style: Styles().textStyles.getTextStyle("widget.item.regular"),
                       ),
                     ],),
                   ),
@@ -180,11 +179,10 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
               ),
               StringUtils.isNotEmpty(_article?.link) ? Padding(padding: EdgeInsets.only(left: 20, right: 20, bottom: 48), child:
                 RoundedButton(
-                  label: 'Share this article',
-                  backgroundColor: Styles().colors!.background,
-                  textColor: Styles().colors!.fillColorPrimary,
-                  borderColor: Styles().colors!.fillColorSecondary,
-                  fontSize: 16,
+                  label: 'Share this article', //TBD localize
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+                  backgroundColor: Styles().colors.background,
+                  borderColor: Styles().colors.fillColorSecondary,
                   onTap: _shareArticle,
                 ),
               ) : Container()
@@ -211,7 +209,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
         child:
         HtmlWidget(
             StringUtils.ensureNotEmpty(_article!.description),
-            textStyle:  TextStyle(color: Styles().colors!.textBackground),
+          textStyle:  Styles().textStyles.getTextStyle("widget.item.regular.thin"),
         )
       ));
     }
@@ -222,16 +220,24 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
         child:
         HtmlWidget(
             StringUtils.ensureNotEmpty(fullText),
+            textStyle:  Styles().textStyles.getTextStyle("widget.item.regular.thin"),
             onTapUrl : (url) {
-              Navigator.push(context, CupertinoPageRoute(
-                      builder: (context) => WebPanel(url: url,)
-              ));
+              _onTapUrl(url);
               return true;
             },
         )
       ));
     }
     return widgets;
+  }
+
+  void _onTapUrl(String? url) {
+    if (StringUtils.isNotEmpty(url)) {
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
+      }
+    }
   }
 
   void _setLoading(bool loading) {

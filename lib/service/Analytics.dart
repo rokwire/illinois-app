@@ -20,11 +20,12 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/mainImpl.dart';
-import 'package:illinois/model/wellness/ToDo.dart' as wellness;
+import 'package:illinois/model/wellness/WellnessToDo.dart' as wellness;
 import 'package:illinois/model/wellness/WellnessRing.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
@@ -34,16 +35,16 @@ import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:rokwire_plugin/service/app_lifecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/analytics.dart' as rokwire;
 
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
+import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/service/Auth2.dart';
 
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -65,6 +66,8 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogStdOSName                       = "os_name";
   static const String   LogStdOSVersionName                = "os_version";
   static const String   LogStdLocaleName                   = "locale";
+  static const String   LogStdSystemLocaleName             = "system_locale";
+  static const String   LogStdSelectedLocaleName           = "selected_locale";
   static const String   LogStdDeviceModelName              = "device_model";
   static const String   LogStdConnectionName               = "connection";
   static const String   LogStdLocationSvcName              = "location_services";
@@ -99,6 +102,8 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     LogStdOSName,
     LogStdOSVersionName,
     LogStdLocaleName,
+    LogStdSystemLocaleName,
+    LogStdSelectedLocaleName,
     LogStdDeviceModelName,
     LogStdConnectionName,
     LogStdLocationSvcName,
@@ -123,14 +128,14 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     LogStdStudentFirstYear,
   ];
 
-  // Lifecycle Event
-  // { "event" : { "name":"lifecycle", "lifecycle_event":"..." } }
-  static const String   LogLifecycleEventName              = "lifecycle";
-  static const String   LogLifecycleName                   = "lifecycle_event";
-  static const String   LogLifecycleEventCreate            = "create";
-  static const String   LogLifecycleEventDestroy           = "destroy";
-  static const String   LogLifecycleEventBackground        = "background";
-  static const String   LogLifecycleEventForeground        = "foreground";
+  // Livecycle Event
+  // { "event" : { "name":"livecycle", "livecycle_event":"..." } }
+  static const String   LogLivecycleEventName              = "livecycle";
+  static const String   LogLivecycleName                   = "livecycle_event";
+  static const String   LogLivecycleEventCreate            = "create";
+  static const String   LogLivecycleEventDestroy           = "destroy";
+  static const String   LogLivecycleEventBackground        = "background";
+  static const String   LogLivecycleEventForeground        = "foreground";
 
   // Page Event
   // { "event" : { "name":"page", "page":"...", "page_name":"...", "previous_page_name":"" } }
@@ -203,6 +208,9 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogMapDisplayShowActionName        = "show";
   static const String   LogMapDisplayHideActionName        = "hide";
 
+  static const String   LogMapSelectEventName             = "map_select";
+  static const String   LogMapSelectTarget                = "target";
+
   // GeoFence Regions
   static const String   LogGeoFenceRegionEventName         = "geofence_region";
   static const String   LogGeoFenceRegionAction            = "action";
@@ -224,6 +232,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAuthLoginNetIdActionName        = "login_netid";
   static const String   LogAuthLoginPhoneActionName        = "login_phone";
   static const String   LogAuthLoginEmailActionName        = "login_email";
+  static const String   LogAuthLoginUsernameActionName     = "username";
   static const String   LogAuthLogoutActionName            = "logout";
   static const String   LogAuthResult                      = "result";
 
@@ -277,9 +286,11 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
 
   // Event Attributes
   static const String   LogAttributeUrl                    = "url";
+  static const String   LogAttributeSource                 = "source";
   static const String   LogAttributeEventId                = "event_id";
   static const String   LogAttributeEventName              = "event_name";
   static const String   LogAttributeEventCategory          = "event_category";
+  static const String   LogAttributeEventAttributes        = "event_attributes";
   static const String   LogAttributeRecurrenceId           = "recurrence_id";
   static const String   LogAttributeDiningId               = "dining_id";
   static const String   LogAttributeDiningName             = "dining_name";
@@ -291,12 +302,18 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAttributeLaundryName            = "laundry_name";
   static const String   LogAttributeGroupId                = "group_id";
   static const String   LogAttributeGroupName              = "group_name";
+  static const String   LogAttributeGroupHiddenForSearch   = "group_hidden_for_search";
+  static const String   LogAttributeGroupStats             = "group_stats";
   static const String   LogAttributeGuide                  = "guide";
   static const String   LogAttributeGuideId                = "guide_id";
   static const String   LogAttributeGuideTitle             = "guide_title";
   static const String   LogAttributeGuideCategory          = "guide_category";
   static const String   LogAttributeGuideSection           = "guide_section";
   static const String   LogAttributeLocation               = "location";
+
+  static const String   LogAnonymousUin                    = 'UINxxxxxx';
+  static const String   LogAnonymousFirstName              = 'FirstNameXXXXXX';
+  static const String   LogAnonymousLastName               = 'LastNameXXXXXX';
 
   // Data
 
@@ -322,7 +339,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   void createService() {
     super.createService();
     NotificationService().subscribe(this, [
-      AppLifecycle.notifyStateChanged,
+      AppLivecycle.notifyStateChanged,
       AppNavigation.notifyEvent,
       LocationServices.notifyStatusChanged,
       
@@ -335,10 +352,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       Auth2.notifyUserDeleted,
       
       Network.notifyHttpResponse,
-      
-      NativeCommunicator.notifyMapRouteStart,
-      NativeCommunicator.notifyMapRouteFinish,
-      
+
       GeoFence.notifyRegionEnter,
       GeoFence.notifyRegionExit,
       
@@ -389,8 +403,8 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   void onNotification(String name, dynamic param) {
     super.onNotification(name, param);
     
-    if (name == AppLifecycle.notifyStateChanged) {
-      _onAppLifecycleStateChanged(param);
+    if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
     }
     else if (name == AppNavigation.notifyEvent) {
       _onAppNavigationEvent(param);
@@ -425,14 +439,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     else if (name == Network.notifyHttpResponse) {
       logHttpResponse(param);
     }
-    
-    else if (name == NativeCommunicator.notifyMapRouteStart) {
-      logMapRoute(action: LogMapRouteStartActionName, params: param);
-    }
-    else if (name == NativeCommunicator.notifyMapRouteFinish) {
-      logMapRoute(action: LogMapRouteFinishActionName, params: param);
-    }
-    
+
     else if (name == GeoFence.notifyRegionEnter) {
       logGeoFenceRegion(action: LogGeoFenceRegionEnterActionName, regionId: param);
     }
@@ -491,22 +498,23 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     return result?.toString().substring("ConnectivityStatus.".length);
   }
   
-  // App Lifecycle Service
+  // App Livecycle Service
   
-  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
 
-    if (state == AppLifecycleState.paused) {
-      logLifecycle(name: LogLifecycleEventBackground);
+    if (super.isInitialized) {
+      if (state == AppLifecycleState.paused) {
+        logLivecycle(name: LogLivecycleEventBackground);
+      }
+      else if (state == AppLifecycleState.resumed) {
+        _updateSessionUuid();
+        _updateNotificationServices();
+        logLivecycle(name: LogLivecycleEventForeground);
+      }
+      else if (state == AppLifecycleState.detached) {
+        logLivecycle(name: Analytics.LogLivecycleEventDestroy);
+      }
     }
-    else if (state == AppLifecycleState.resumed) {
-      _updateSessionUuid();
-      _updateNotificationServices();
-      logLifecycle(name: LogLifecycleEventForeground);
-    }
-    else if (state == AppLifecycleState.detached) {
-      logLifecycle(name: Analytics.LogLifecycleEventDestroy);
-    }
-
   }
 
   // App Naviagtion Service
@@ -599,7 +607,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     return (location != null) ? {
       'latitude': location.latitude,
       'longitude': location.longitude,
-      'timestamp': location.timestamp?.millisecondsSinceEpoch,
+      'timestamp': location.timestamp.millisecondsSinceEpoch,
     } : null;
   }
   
@@ -670,6 +678,12 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         }
         else if (attributeName == LogStdLocaleName) {
           analyticsEvent[LogStdLocaleName] = Platform.localeName;
+        }
+        else if (attributeName == LogStdSystemLocaleName) {
+          analyticsEvent[LogStdSystemLocaleName] = (Localization().selectedLocale == null);
+        }
+        else if (attributeName == LogStdSelectedLocaleName) {
+          analyticsEvent[LogStdSelectedLocaleName] = Localization().selectedLocale?.languageCode;
         }
         else if (attributeName == LogStdDeviceModelName) {
           analyticsEvent[LogStdDeviceModelName] = super.deviceModel;
@@ -743,10 +757,10 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     }
   }
 
-  void logLifecycle({String? name}) {
+  void logLivecycle({String? name}) {
     logEvent({
-      LogEventName          : LogLifecycleEventName,
-      LogLifecycleName      : name,
+      LogEventName          : LogLivecycleEventName,
+      LogLivecycleName      : name,
     });
   }
 
@@ -842,15 +856,12 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   }
 
   void logFavorite(Favorite? favorite, {bool? on, String? title}) {
-    if (on == null) {
-      on = Auth2().isFavorite(favorite);
-    }
     logEvent({
       LogEventName          : LogFavoriteEventName,
-      LogFavoriteActionName : on ? LogFavoriteOnActionName : LogFavoriteOffActionName,
+      LogFavoriteActionName : (on ?? Auth2().isFavorite(favorite)) ? LogFavoriteOnActionName : LogFavoriteOffActionName,
       LogFavoriteTypeName   : favorite?.favoriteKey,
       LogFavoriteIdName     : favorite?.favoriteId,
-      LogFavoriteTitleName  : title,
+      LogFavoriteTitleName  : title ?? favorite?.favoriteTitle,
     });
   }
 
@@ -917,6 +928,14 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     });
   }
 
+  void logMapSelect({String? target}) {
+
+    logEvent({
+      LogEventName             : LogMapSelectEventName,
+      LogMapSelectTarget       : target
+    });
+  }
+
   void logGeoFenceRegion({String? action, String? regionId}) {
 
     Map<String, GeoFenceRegion?>? regions = GeoFence().regions;
@@ -952,6 +971,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         case Auth2LoginType.phone:
         case Auth2LoginType.phoneTwilio:  action = LogAuthLoginPhoneActionName; break;
         case Auth2LoginType.email:        action = LogAuthLoginEmailActionName; break;
+        case Auth2LoginType.username:     action = LogAuthLoginUsernameActionName; break;
         case Auth2LoginType.apiKey:
         case Auth2LoginType.anonymous:    break;
       }
@@ -997,7 +1017,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     logEvent(event);
   }
 
-  void logWellnessToDo({String? action, wellness.ToDoItem? item, String? source}) {
+  void logWellnessToDo({String? action, wellness.WellnessToDoItem? item, String? source}) {
     logWellness(
       category: LogWellnessCategoryToDo,
       action: action,

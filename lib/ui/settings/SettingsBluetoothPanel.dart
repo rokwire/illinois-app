@@ -36,7 +36,7 @@ class _SettingsBluetoothPanelState extends State<SettingsBluetoothPanel> {
         title: Localization().getStringEx("panel.settings.bluetooth.label.title", "Bluetooth"),
       ),
       body: SingleChildScrollView(child: _buildContent()),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -50,7 +50,7 @@ class _SettingsBluetoothPanelState extends State<SettingsBluetoothPanel> {
             padding: EdgeInsets.symmetric(horizontal: 6),
             child: Text(
               Localization().getStringEx("panel.settings.bluetooth.label.desctiption", "Create and answer quizzes and polls with people near you."),
-              style:  Styles().textStyles?.getTextStyle("widget.description.regular.fat")
+              style:  Styles().textStyles.getTextStyle("widget.description.regular.fat")
           ),),
           Container(height: 24,),
           InfoButton(

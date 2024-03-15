@@ -18,14 +18,12 @@ import 'dart:async';
 import 'package:http/http.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:illinois/model/Laundry.dart';
-import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Laundries with Service implements ExploreJsonHandler {
+class Laundries /*with Service*/ {
 
   // Singletone Factory
 
@@ -35,13 +33,6 @@ class Laundries with Service implements ExploreJsonHandler {
 
   Laundries._internal();
 
-
-  // Service
-
-  @override
-  void createService() {
-    Explore.addJsonHandler(this);
-  }
 
   // Implementation
 
@@ -117,8 +108,4 @@ class Laundries with Service implements ExploreJsonHandler {
       return null;
     }
   }
-
-  // ExploreJsonHandler
-  @override bool exploreCanJson(Map<String, dynamic>? json) => LaundryRoom.canJson(json);
-  @override Explore? exploreFromJson(Map<String, dynamic>? json) => LaundryRoom.fromJson(json);
 }

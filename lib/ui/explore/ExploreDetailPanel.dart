@@ -20,14 +20,14 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/sport/Game.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
+import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
@@ -37,15 +37,16 @@ import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:rokwire_plugin/model/group.dart';
 
 class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttributes {
   final Explore? explore;
   final Position? initialLocationData;
-  final String? browseGroupId;
+  final Group? browseGroup;
 
-  ExploreDetailPanel({this.explore, this.initialLocationData, this.browseGroupId});
+  ExploreDetailPanel({this.explore, this.initialLocationData, this.browseGroup});
 
-  static Widget? contentPanel({Explore? explore, Position? initialLocationData, String? browseGroupId}) {
+  static Widget? contentPanel({Explore? explore, Position? initialLocationData, Group? browseGroup}) {
     if (explore is Event) {
       if (explore.isGameEvent) {
         return AthleticsGameDetailPanel(gameId: explore.speaker, sportName: explore.registrationLabel,);
@@ -54,7 +55,7 @@ class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttribu
         return CompositeEventsDetailPanel(parentEvent: explore);
       }
       else {
-        return ExploreEventDetailPanel(event: explore, initialLocationData: initialLocationData, browseGroupId: browseGroupId, );
+        return ExploreEventDetailPanel(event: explore, initialLocationData: initialLocationData, browseGroup: browseGroup);
       }
     }
     else if (explore is Dining) {
@@ -88,7 +89,7 @@ class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttribu
 
   @override
   Widget build(BuildContext context) {
-    return contentPanel(explore: explore, initialLocationData: initialLocationData, browseGroupId: browseGroupId) ?? Scaffold(
+    return contentPanel(explore: explore, initialLocationData: initialLocationData, browseGroup: browseGroup) ?? Scaffold(
       appBar: HeaderBar(),
     );
   }

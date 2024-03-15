@@ -112,7 +112,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widget.home.campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
-      titleIconKey: 'campus-tools',
+      titleIconKey: 'guide',
       child: _buildContent() 
     );
   }
@@ -160,11 +160,12 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount,),
-      LinkButton(
-            title: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.title', 'View All'),
-            hint: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.hint', 'Tap to view all highlights'),
-        onTap: _onViewAll,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
+        LinkButton(
+              title: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.title', 'View All'),
+              hint: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.hint', 'Tap to view all highlights'),
+          onTap: _onViewAll,
+        ),
       ),
     ]);
   }

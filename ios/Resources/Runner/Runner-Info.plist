@@ -64,6 +64,10 @@
 	<string>Your bluetooth will be used for the maps to scan for nearby beacons.</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Save favorite events</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Save favorite events</string>
+	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+	<string>Save favorite events</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Allow Illinois to access Camera.</string>
 	<key>NSContactsUsageDescription</key>

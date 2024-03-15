@@ -24,10 +24,8 @@
          additional functionality it is fine to subclass or reimplement
          FlutterApplication and put your custom class here. -->
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <!-- Android 10 (API level 29) or higher -->
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" tools:remove="android:maxSdkVersion"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:remove="android:maxSdkVersion"/>
     <!-- For using location derived from bluetooth beacons -->
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
@@ -37,6 +35,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+
+    <!-- speech to text for assistant -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
     <queries>
         <package android:name="com.touchnet.orderahead" />
@@ -56,10 +57,13 @@
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="mailto" />
         </intent>
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
     </queries>
 
     <application
-        android:name="App"
+        android:name="${applicationName}"
         android:allowBackup="false"
         android:restoreAnyVersion="true"
         android:icon="@mipmap/ic_launcher"
@@ -103,27 +107,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".maps.MapPickLocationActivity"
-            android:exported="false"
-            android:theme="@style/DefaultTheme"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden"
-
-        />
-        <activity
-            android:name=".maps.MapDirectionsActivity"
-            android:exported="false"
-            android:theme="@style/DefaultTheme"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden"/>
-
-        <activity
-            android:name=".maps.MapActivity"
-            android:exported="false"
-            android:theme="@style/DefaultTheme"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden"/>
 
         <receiver android:name=".rokwire_plugin.GeofenceBroadcastReceiver" android:exported="false"/>
 

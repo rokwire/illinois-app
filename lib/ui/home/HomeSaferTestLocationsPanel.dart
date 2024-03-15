@@ -10,7 +10,6 @@ import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -89,7 +88,7 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
     }
 
     return Scaffold(
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       appBar: HeaderBar(title: Localization().getStringEx("panel.home.safer.test_locations.header.title", "Test Locations"),),
       body: SafeArea(child:
         Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
@@ -114,7 +113,7 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
     return Padding(padding: const EdgeInsets.symmetric(horizontal: 32), child:
       Column(children: [
         Expanded(flex: 1, child: Container()),
-        Text(text, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 20, color: Styles().colors!.fillColorPrimary,)),
+        Text(text, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.message.large.thin")),
         Expanded(flex: 3, child: Container()),
       ],),);
   }
@@ -185,11 +184,11 @@ class _TestLocation extends StatelessWidget {
   Widget build(BuildContext context) {
     
     bool canLocation = (testLocation?.latitude != null) && (testLocation?.longitude != null);
-    TextStyle textStyle = TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface,);
-    TextStyle linkStyle = TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.accentColor3, decoration: TextDecoration.underline);
+    TextStyle? textStyle = Styles().textStyles.getTextStyle("widget.info.regular.thin");
+    TextStyle? linkStyle = Styles().textStyles.getTextStyle("widget.home.link_button.regular.accent.underline");
 
     List<Widget> locationContent = <Widget>[
-      Styles().images?.getImage('location', excludeFromSemantics: true) ?? Container(),
+      Styles().images.getImage('location', excludeFromSemantics: true) ?? Container(),
       Container(width: 8),
     ];
 
@@ -223,15 +222,14 @@ class _TestLocation extends StatelessWidget {
         margin: EdgeInsets.only(top: 8, bottom: 8),
         padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         decoration: BoxDecoration(
-            color: Styles().colors!.surface,
+            color: Styles().colors.surface,
             borderRadius: BorderRadius.all(Radius.circular(4)),
-            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(testLocation?.name ?? "", style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary, ),
-            ),
+            Text(testLocation?.name ?? "", style: Styles().textStyles.getTextStyle("widget.detail.large.extra_fat")),
             Semantics(button: true,
             child: GestureDetector(
               onTap: _onTapAddress,
@@ -269,7 +267,7 @@ class _TestLocation extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Styles().images?.getImage('time', excludeFromSemantics: true) ?? Container(),
+                  Styles().images.getImage('time', excludeFromSemantics: true) ?? Container(),
                   Container(width: 8,),
                   Expanded(child:
                     _buildWorkTime(),
@@ -328,9 +326,9 @@ class _TestLocation extends StatelessWidget {
                 Text(
                   waitTimeText!,
                   style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.regular,
+                    fontFamily: Styles().fontFamilies.regular,
                     fontSize: 16,
-                    color: Styles().colors!.textSurface,
+                    color: Styles().colors.textSurface,
                   ),
                 )
               ],
@@ -363,7 +361,7 @@ class _TestLocation extends StatelessWidget {
       underline: Container(),
       value: period,
       onChanged: (value){},
-      icon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true),
+      icon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),
       selectedItemBuilder:(context){
         return items.map<Widget>((entry){
           return Row(
@@ -373,11 +371,7 @@ class _TestLocation extends StatelessWidget {
                 _getPeriodText(entry, workingPeriods),
                 softWrap: true,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontFamily: Styles().fontFamilies!.bold,
-                  fontSize: 16,
-                  color: Styles().colors!.fillColorPrimary,
-                ),
+                style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat")
               ),)
             ],
           );
@@ -389,11 +383,7 @@ class _TestLocation extends StatelessWidget {
           child: Text(
 //            _getPeriodText(entry, activePeriod),
             entry.displayString,
-            style: TextStyle(
-              fontFamily: Styles().fontFamilies!.bold,
-              fontSize: 16,
-              color: Styles().colors!.fillColorPrimary,
-            ),
+            style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat")
           ),
         );
       }).toList(),
@@ -455,7 +445,7 @@ class _TestLocation extends StatelessWidget {
     double? lat = testLocation?.latitude;
     double? lng = testLocation?.longitude;
     if ((lat != null) && (lng != null)) {
-      NativeCommunicator().launchMap(
+      /* TBD Map2 NativeCommunicator().launchMap(
           target: {
             'latitude': testLocation?.latitude,
             'longitude': testLocation?.longitude,
@@ -466,7 +456,7 @@ class _TestLocation extends StatelessWidget {
             'description': testLocation?.fullAddress,
             'latitude': testLocation?.latitude,
             'longitude': testLocation?.longitude,
-          }]);
+          }]); */
     }
   }
 
@@ -618,13 +608,13 @@ class HealthServiceLocation {
   static Color? waitTimeColorHex(HealthLocationWaitTimeColor? color) {
     switch (color) {
       case HealthLocationWaitTimeColor.red:
-        return Styles().colors!.saferLocationWaitTimeColorRed;
+        return Styles().colors.saferLocationWaitTimeColorRed;
       case HealthLocationWaitTimeColor.yellow:
-        return Styles().colors!.saferLocationWaitTimeColorYellow;
+        return Styles().colors.saferLocationWaitTimeColorYellow;
       case HealthLocationWaitTimeColor.green:
-        return Styles().colors!.saferLocationWaitTimeColorGreen;
+        return Styles().colors.saferLocationWaitTimeColorGreen;
       default:
-        return Styles().colors!.saferLocationWaitTimeColorGrey;
+        return Styles().colors.saferLocationWaitTimeColorGrey;
     }
   }
 }

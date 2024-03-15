@@ -69,7 +69,7 @@ class ExploreConvergeDetailItem extends StatelessWidget{
         visible: hasConvergeUrl(),
         child:  Padding(
           padding: EdgeInsets.only(left: 3),
-          child: Styles().images?.getImage('info', excludeFromSemantics: true),
+          child: Styles().images.getImage('info', excludeFromSemantics: true),
         ),
       );
   }
@@ -78,10 +78,7 @@ class ExploreConvergeDetailItem extends StatelessWidget{
     return Text(
         eventConvergeScore.toString() + "% ",
 //           + Localization().getString("widget.card.label.converge"),
-        style: TextStyle(
-            fontFamily: Styles().fontFamilies!.medium,
-            fontSize: 14,
-            color: Styles().colors!.mediumGray)
+        style: Styles().textStyles.getTextStyle("widget.message.light.small.semi_fat")
     );
   }
 
@@ -123,7 +120,7 @@ class ExploreConvergeDetailButton extends ExploreConvergeDetailItem{
       ),
       Text( Localization().getString("widget.card.label.converge")!),
       Container(width: 5,),
-//      Styles().images?.getImage('images/chevron-right.png')
+//      Styles().images.getImage('images/chevron-right.png')
 
     ];
   }

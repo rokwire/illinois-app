@@ -18,26 +18,32 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2HomePanel.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
-import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/app_lifecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
-import 'package:illinois/ui/events/CreateEventPanel.dart';
-import 'package:illinois/ui/explore/ExplorePanel.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
 import 'package:illinois/ui/groups/GroupPollListPanel.dart';
@@ -55,7 +61,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
@@ -63,6 +68,7 @@ import 'GroupSettingsPanel.dart';
 enum _DetailTab { Events, Posts, Polls, About }
 
 class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+  static final String routeName = 'group_detail_content_panel';
 
   final Group? group;
   final String? groupIdentifier;
@@ -91,7 +97,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool               _confirmationLoading = false;
   bool               _updatingEvents = false;
   int                _allEventsCount = 0;
-  List<Event>?       _groupEvents;
+  List<Event2>?      _groupEvents;
   List<GroupPost>    _visibleGroupPosts = <GroupPost>[];
   List<Member>?      _groupAdmins;
 
@@ -193,33 +199,34 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   @override
   void initState() {
-    super.initState();
-
     NotificationService().subscribe(this, [
-      AppLifecycle.notifyStateChanged,
+      AppLivecycle.notifyStateChanged,
       Groups.notifyUserMembershipUpdated,
       Groups.notifyGroupCreated,
       Groups.notifyGroupUpdated,
       Groups.notifyGroupEventsUpdated,
+      Groups.notifyGroupStatsUpdated,
       Groups.notifyGroupPostsUpdated,
       Polls.notifyCreated,
       Polls.notifyDeleted,
       Polls.notifyStatusChanged,
       Polls.notifyVoteChanged,
       Polls.notifyResultsChanged,
+      Events2.notifyUpdated,
       FlexUI.notifyChanged,
       Connectivity.notifyStatusChanged,
     ]);
 
     _postId = widget.groupPostId;
     _loadGroup(loadEvents: true);
+
+    super.initState();
   }
 
   @override
   void dispose() {
-    super.dispose();
-
     NotificationService().unsubscribe(this);
+    super.dispose();
   }
 
   void _loadGroup({bool loadEvents = false}) {
@@ -239,6 +246,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (mounted) {
       if (group != null) {
         _group = group;
+        if (_isResearchProject && _isMember) {
+          _currentTab = _DetailTab.About;
+        }
         _redirectToPostIfExists();
         _loadGroupAdmins();
         _loadInitialPosts();
@@ -271,12 +281,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     setState(() {
       _updatingEvents = true;
     });
-    Groups().loadEvents(_group, limit: 3).then((Map<int, List<Event>>? eventsMap) {
+    Groups().loadEventsV3(_group?.id, limit: 3).then((Events2ListResult? eventsResult) {
       if (mounted) {
         setState(() {
-          bool hasEventsMap = CollectionUtils.isNotEmpty(eventsMap?.values);
-          _allEventsCount = hasEventsMap ? eventsMap!.keys.first : 0;
-          _groupEvents = hasEventsMap ? eventsMap!.values.first : null;
+          _allEventsCount = eventsResult?.totalCount ?? 0;
+          _groupEvents = eventsResult?.events;
           _updatingEvents = false;
         });
       }
@@ -284,12 +293,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _refreshEvents() {
-    Groups().loadEvents(_group, limit: 3).then((Map<int, List<Event>>? eventsMap) {
-      if (mounted) {
+    Groups().loadEventsV3(_group?.id, limit: 3).then((Events2ListResult? eventsResult) {
+      if (mounted && (eventsResult != null)) {
         setState(() {
-          bool hasEventsMap = CollectionUtils.isNotEmpty(eventsMap?.values);
-          _allEventsCount = hasEventsMap ? eventsMap!.keys.first : 0;
-          _groupEvents = hasEventsMap ? eventsMap!.values.first : null;
+          _allEventsCount = eventsResult.totalCount ?? 0;
+          _groupEvents = eventsResult.events;
         });
       }
     });
@@ -412,6 +420,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     });
   }
 
+  void _updateGroupStats() {
+    GroupStats? cachedGroupStats = Groups().cachedGroupStats(widget.groupId);
+    if ((cachedGroupStats != null) && (_groupStats != cachedGroupStats) && mounted) {
+      setState(() {
+        _groupStats = cachedGroupStats;
+      });
+    }
+  }
+
   void _loadGroupAdmins() {
     _increaseProgress();
     Groups().loadMembers(groupId: widget.groupId, statuses: [GroupMemberStatus.admin]).then((admins) {
@@ -474,26 +491,24 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       content = _buildErrorContent();
     }
 
-    bool optionsMenuVisible = _canLeaveGroup || _canDeleteGroup || _canCreatePost;
+    String? barTitle = (_isResearchProject && !_isMemberOrAdmin) ? 'Your Invitation To Participate' : null;
+    List<Widget>? barActions = (_canLeaveGroup || _canDeleteGroup || _canCreatePost) ? <Widget>[
+      Semantics(label: Localization().getStringEx("panel.group_detail.label.options", 'Options'), button: true, excludeSemantics: true, child:
+        IconButton(icon: Styles().images.getImage('more-white',) ?? Container(), onPressed: _onGroupOptionsTap,)
+      )
+    ] : null;
+    
     return Scaffold(
-        appBar: AppBar(leading: HeaderBackButton(), actions: [
-          Visibility(
-              visible: optionsMenuVisible,
-              child: Semantics(
-                  label: Localization().getStringEx("panel.group_detail.label.options", 'Options'),
-                  button: true,
-                  excludeSemantics: true,
-                  child: IconButton(
-                    icon: Styles().images?.getImage('more-white',) ?? Container(),
-                    onPressed: _onGroupOptionsTap,
-                  )))
-        ]),
-        backgroundColor: Styles().colors!.background,
-        bottomNavigationBar: uiuc.TabBar(),
-        body: RefreshIndicator(
-          onRefresh: _onPullToRefresh,
-          child: content,
-        ),);
+      appBar: HeaderBar(
+        title: barTitle,
+        actions: barActions
+      ),
+      backgroundColor: Styles().colors.background,
+      bottomNavigationBar: uiuc.TabBar(),
+      body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
+        content,
+      ),
+    );
   }
 
   // NotificationsListener
@@ -505,6 +520,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
     else if (name == Groups.notifyGroupEventsUpdated) {
       _loadEvents();
+    }
+    else if (name == Groups.notifyGroupStatsUpdated) {
+      _updateGroupStats();
     }
     else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)) {
       _loadGroup(loadEvents: true);
@@ -520,9 +538,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             || name == Polls.notifyStatusChanged) {
       _onPollUpdated(param); // Deep collection update single element (do not reload whole list)
     } 
-    else if (name == AppLifecycle.notifyStateChanged) {
-      _onAppLifecycleStateChanged(param);
-    } 
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+    else if (name == Events2.notifyUpdated) {
+      _updateEventIfNeeded(param);
+    }
     else if (name == FlexUI.notifyChanged) {
       setStateIfMounted(() {});
     } 
@@ -533,7 +554,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
   }
 
-  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }
@@ -556,7 +577,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Column(children: <Widget>[
         Expanded(
           child: Center(
-            child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), ),
+            child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), ),
           ),
         ),
       ]),
@@ -572,7 +593,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         Expanded(
           child: Center(
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 32),
-              child: Text(_isResearchProject ? 'Failed to load project data.' : Localization().getStringEx("panel.group_detail.label.error_message", 'Failed to load group data.'),  style:  Styles().textStyles?.getTextStyle('widget.message.large.fat'),)
+              child: Text(_isResearchProject ? 'Failed to load project data.' : Localization().getStringEx("panel.group_detail.label.error_message", 'Failed to load group data.'),  style:  Styles().textStyles.getTextStyle('widget.message.large.fat'),)
             ),
           ),
         ),
@@ -586,7 +607,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   Widget _buildGroupContent() {
     List<Widget> content = [
       _buildImageHeader(),
-      _buildDateUpdatedFields(),
       _buildGroupInfo()
     ];
     if (_isMemberOrAdmin) {
@@ -624,39 +644,23 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildImageHeader(){
-    return Container(height: 200, color: Styles().colors?.background, child:
-      Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-          StringUtils.isNotEmpty(_group?.imageURL) ?  Positioned.fill(child: ModalImageHolder(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders))) : Container(),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child:
-            Container(height: 53,),
-          ),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.white), child:
-            Container(height: 30,),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDateUpdatedFields() {
-    if (!_isAdmin) {
-      return Container();
-    }
-    return Container(color: Styles().colors!.white, child: Padding(padding: EdgeInsets.only(top: 10, left: 16, right: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
-      Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-        Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Managed Updated:'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))),
-        Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
-      ]),
-      Padding(padding: EdgeInsets.only(top: 5), child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-        Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Membership Updated:'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))),
-        Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
-      ]))
-    ])));
+    return StringUtils.isNotEmpty(_group?.imageURL) ? Semantics(label: "group image", hint: "Double tap to zoom", child:
+      Container(height: 200, color: Styles().colors.background, child:
+        Stack(alignment: Alignment.bottomCenter, children: <Widget>[
+            Positioned.fill(child: ModalImageHolder(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders))),
+            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child:
+              Container(height: 53,),
+            ),
+            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white), child:
+              Container(height: 30,),
+            ),
+          ],
+        ),
+      )
+    ): Container();
   }
 
   Widget _buildGroupInfo() {
-    List<Widget> commands = [];
-
     String members;
     int membersCount = _groupStats?.activeMembersCount ?? 0;
     if (!_isResearchProject) {
@@ -712,6 +716,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
     }
 
+    List<Widget> commands = [];
     if (_isMemberOrAdmin) {
       if (_isAdmin) {
         commands.add(RibbonButton(
@@ -721,7 +726,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
           onTap: _onTapMembers,
         ));
-        commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent,));
+        commands.add(Container(height: 1, color: Styles().colors.surfaceAccent,));
         commands.add(RibbonButton(
           label: _isResearchProject ? 'Research Project Settings' : Localization().getStringEx("panel.group_detail.button.group_settings.title", "Group Settings"),
           hint: _isResearchProject ? '' : Localization().getStringEx("panel.group_detail.button.group_settings.hint", ""),
@@ -729,19 +734,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
           onTap: _onTapSettings,
         ));
-        if (!_isResearchProject) {
-          commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
-          commands.add(RibbonButton(
-            label: _isResearchProject ? 'Promote this project' : Localization().getStringEx("panel.group_detail.button.group_promote.title", "Promote this group"),
-            hint: _isResearchProject ? '' : Localization().getStringEx("panel.group_detail.button.group_promote.hint", ""),
-            leftIconKey: 'qr',
-            padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
-            onTap: _onTapPromote,
-          ));
-        }
         //#2685 [USABILITY] Hide group setting "Enable attendance checking" for 4.2
         /*if (_isAttendanceGroup && !_isResearchProject) {
-          commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
+          commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
           commands.add(Stack(alignment: Alignment.center, children: [
             RibbonButton(
             label: Localization().getStringEx("panel.group_detail.button.take_attendance.title", "Take Attendance"),
@@ -750,34 +745,48 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
             onTap: _onTapTakeAttendance,
           ),
-          Visibility(visible: _memberAttendLoading, child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2))
+          Visibility(visible: _memberAttendLoading, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2))
           ]));
         }*/
       }
       if (CollectionUtils.isNotEmpty(commands)) {
-        commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
+        commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
       }
       commands.add(RibbonButton(
         label: Localization().getStringEx("panel.group_detail.button.notifications.title", "Notifications Preferences"),
         hint: Localization().getStringEx("panel.group_detail.button.notifications.hint", ""),
         leftIconKey: 'reminder',
-        leftIconPadding: EdgeInsets.only(right: 8, left: 2),
+        //leftIconPadding: EdgeInsets.only(right: 8, left: 2),
         padding: EdgeInsets.symmetric(vertical: 14),
         onTap: _onTapNotifications,
       ));
-      if (StringUtils.isNotEmpty(_group?.webURL)) {
-        commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
-        commands.add(_buildWebsiteLink());
+      if (!_isResearchProject) {
+        commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
+        commands.add(_buildPromoteCommand());
+      }
+      if (StringUtils.isNotEmpty(_group?.webURL) && !_isResearchProject) {
+        commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
+        commands.add(_buildWebsiteLinkCommand());
       }
     }
     else {
-      if (StringUtils.isNotEmpty(_group?.webURL)) {
-        commands.add(_buildWebsiteLink());
+      if (!_isResearchProject) {
+        if (CollectionUtils.isNotEmpty(commands)) {
+          commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
+        }
+        commands.add(_buildPromoteCommand());
+      }
+      if (StringUtils.isNotEmpty(_group?.webURL) && !_isResearchProject) {
+        if (CollectionUtils.isNotEmpty(commands)) {
+          commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
+        }
+        commands.add(_buildWebsiteLinkCommand());
       }
 
       List<Widget> attributesList = _buildAttributes();
       if (attributesList.isNotEmpty) {
         if (commands.isNotEmpty) {
+          commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
           commands.add(Container(height: 12,));
         }
         commands.addAll(attributesList);
@@ -785,45 +794,56 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
     }
 
-    return Container(color: Colors.white, child:
-      Stack(children: <Widget>[
-        Padding(padding: EdgeInsets.only(top: 12), child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Padding(padding: EdgeInsets.only(left: 16) /* the Policy button takes vertical and right space */, child:
-                _buildBadgeOrCategoryWidget(),
-              ),
+    List<Widget> contentList = <Widget>[];
+    if (_showMembershipBadge) {
+      contentList.addAll(<Widget>[
+        Padding(padding: EdgeInsets.only(left: 16, right: _showPolicyButton ? 0 : 16), child:
+          _buildBadgeWidget(),
+        ),
 
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-                Text(_group?.title ?? '',  style:  Styles().textStyles?.getTextStyle('panel.group.title.lage'),),
-              ),
-              
-              Visibility(visible: StringUtils.isNotEmpty(members), child:
-                GestureDetector(onTap: () => { if (_isMember  && _canViewMembers) {_onTapMembers()} }, child:
-                  Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-                    Container(decoration: (_isMember && _canViewMembers ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 2))) : null), child:
-                      Text(members, style:  Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
-                    ),
-                  ),
-                ),
-              ),
-              
-              Visibility(visible: StringUtils.isNotEmpty(pendingMembers), child:
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-                  Text(pendingMembers,  style: Styles().textStyles?.getTextStyle('panel.group.detail.fat') ,)
-                ),
-              ),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+          Text(_group?.title ?? '',  style:  Styles().textStyles.getTextStyle('panel.group.title.lage'),),
+        ),
+      ]);
+    }
+    else {
+      contentList.addAll(<Widget>[
+        Padding(padding: EdgeInsets.only(left: 16, right: _showPolicyButton ? 0 : 16), child:
+          _buildTitleWidget(),
+        ),
+      ]);
+    }
 
-              Visibility(visible: StringUtils.isNotEmpty(attendedMembers), child:
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-                  Text(StringUtils.ensureNotEmpty(attendedMembers), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'),)
-                ),
-              ),
-              
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-                Column(children: commands,),),
-            ],),
+    if (StringUtils.isNotEmpty(members)) {
+      contentList.add(GestureDetector(onTap: () => { if (_isMember  && _canViewMembers) {_onTapMembers()} }, child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+          Container(decoration: (_isMember && _canViewMembers ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 2))) : null), child:
+            Text(members, style:  Styles().textStyles.getTextStyle('panel.group.detail.fat'))
           ),
-        ],),
+        ),
+      ));
+    }
+
+    if (StringUtils.isNotEmpty(pendingMembers)) {
+      contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+        Text(pendingMembers,  style: Styles().textStyles.getTextStyle('panel.group.detail.fat') ,)
+      ));
+    }
+
+    if (StringUtils.isNotEmpty(attendedMembers)) {
+      contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+        Text(StringUtils.ensureNotEmpty(attendedMembers), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'),)
+      ));
+    }
+
+    contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+      Column(children: commands,),
+    ));
+
+    return Container(color: Colors.white, child:
+        Padding(padding: EdgeInsets.only(top: 12), child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList),
+        ),
       );
   }
 
@@ -856,12 +876,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
       Widget tabWidget = RoundedButton(
           label: title,
-          backgroundColor: isSelected ? Styles().colors!.fillColorPrimary : Styles().colors!.background,
-          textColor: (isSelected ? Colors.white : Styles().colors!.fillColorPrimary),
-          fontFamily: isSelected ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular,
-          fontSize: 16,
+          textStyle: isSelected ? Styles().textStyles.getTextStyle("widget.colourful_button.title.accent") : Styles().textStyles.getTextStyle("widget.button.title.medium.thin"),
+          backgroundColor: isSelected ? Styles().colors.fillColorPrimary : Styles().colors.background,
           contentWeight: 0.0,
-          borderColor: isSelected ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
+          borderColor: isSelected ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
           borderWidth: 1,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 11),
           onTap: () => _onTab(tab));
@@ -874,7 +892,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         child: Padding(
             padding: EdgeInsets.only(left: 24, top: 10, bottom: 10),
             child: Text(Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave'),
-                style: Styles().textStyles?.getTextStyle('panel.group.button.leave.title')
+                style: Styles().textStyles.getTextStyle('panel.group.button.leave.title')
             )));
 
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -891,19 +909,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 //    }
 
     if (CollectionUtils.isNotEmpty(_groupEvents)) {
-      for (Event? groupEvent in _groupEvents!) {
-        content.add(GroupEventCard(groupEvent: groupEvent, group: _group));
+      for (Event2 groupEvent in _groupEvents!) {
+        content.add(Padding(padding: EdgeInsets.only(bottom: 16), child: Event2Card(groupEvent, group: _group, onTap: () => _onTapEvent(groupEvent))));
       }
 
       content.add(Padding(padding: EdgeInsets.only(top: 16), child:
         RoundedButton(
           label: Localization().getStringEx("panel.group_detail.button.all_events.title", 'See all events'),
-          backgroundColor: Styles().colors!.white,
-          textColor: Styles().colors!.fillColorPrimary,
-          fontFamily: Styles().fontFamilies!.bold,
-          fontSize: 16,
+          textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+          backgroundColor: Styles().colors.white,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          borderColor: Styles().colors!.fillColorSecondary,
+          borderColor: Styles().colors.fillColorSecondary,
           borderWidth: 2,
           contentWeight: 0.5,
           onTap: () {
@@ -926,7 +942,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _updatingEvents
           ? Center(child:
               Container(padding: EdgeInsets.symmetric(vertical: 50), child:
-                CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary)),
+                CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)),
               ),
             )
           : Container()
@@ -968,8 +984,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               child: Container(height: 36,
                 child: Align(alignment: Alignment.topCenter,
                   child: (_loadingPostsPage == true) ?
-                  SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )) :
-                  Text(title, style: Styles().textStyles?.getTextStyle('panel.group.button.show_older.title'),),
+                  SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), )) :
+                  Text(title, style: Styles().textStyles.getTextStyle('panel.group.button.show_older.title'),),
                 ),
               )
           )
@@ -1004,12 +1020,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             padding: EdgeInsets.only(top: 16),
             child: RoundedButton(
                 label: Localization().getStringEx('panel.group_detail.button.all_polls.title', 'See all polls'),
-                backgroundColor: Styles().colors!.white,
-                textColor: Styles().colors!.fillColorPrimary,
-                fontFamily: Styles().fontFamilies!.bold,
-                fontSize: 16,
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+                backgroundColor: Styles().colors.white,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                borderColor: Styles().colors!.fillColorSecondary,
+                borderColor: Styles().colors.fillColorSecondary,
                 borderWidth: 2,
                 contentWeight: 0.5,
                 onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPollListPanel(group: _group!))))));
@@ -1030,31 +1044,42 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           ? Center(
               child: Container(
                   padding: EdgeInsets.symmetric(vertical: 50),
-                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary))))
+                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary))))
           : Container()
     ]);
   }
 
   Widget _buildAbout() {
-    String description = _group?.description ?? '';
-    String researchConsentDetails = _group?.researchConsentDetails ?? '';
-    return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Visibility(visible: !_isResearchProject, child:
-          Padding(padding: EdgeInsets.only(bottom: 4), child:
-            Text( Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'), ),),),
-        ExpandableText(description,
-          textStyle: Styles().textStyles?.getTextStyle('panel.group.detail.regular'),
-          trimLinesCount: 4,
-          readMoreIcon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true)),
-        researchConsentDetails.isNotEmpty ?
-          Padding(padding: EdgeInsets.only(top: 8), child:
-            ExpandableText(researchConsentDetails,
-              textStyle: Styles().textStyles?.getTextStyle('panel.group.detail.regular'),
-              trimLinesCount: 12,
-              readMoreIcon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true)),
-          ) : Container()
-      ],),);
+    List<Widget> contentList = <Widget>[];
+
+    if (!_isResearchProject) {
+      contentList.add(Padding(padding: EdgeInsets.only(bottom: 4), child:
+        Text(Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'), ),),
+      );
+    }
+
+    if (StringUtils.isNotEmpty(_group?.description)) {
+      contentList.add(ExpandableText(_group?.description ?? '',
+        textStyle: Styles().textStyles.getTextStyle('panel.group.detail.regular'),
+        trimLinesCount: 4,
+        readMoreIcon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),),
+      );
+    }
+
+    if (StringUtils.isNotEmpty(_group?.researchConsentDetails)) {
+      contentList.add(Padding(padding: EdgeInsets.only(top: 8), child:
+        ExpandableText(_group?.researchConsentDetails ?? '',
+          textStyle: Styles().textStyles.getTextStyle('panel.group.detail.regular'),
+          trimLinesCount: 12,
+          readMoreIcon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),
+          footerWidget: (_isResearchProject && StringUtils.isNotEmpty(_group?.webURL)) ? Padding(padding: EdgeInsets.only(top: _group?.researchConsentDetails?.endsWith('\n') ?? false ? 0 : 8), child: _buildWebsiteLinkButton())  : null,
+        ),
+      ),);
+    }
+
+    return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
+    );
   }
 
   Widget _buildPrivacyDescription() {
@@ -1072,13 +1097,23 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(padding: EdgeInsets.only(bottom: 4), child:
-            Text(title!, style:  Styles().textStyles?.getTextStyle('panel.group.detail.fat'), ),),
-          Text(description!, style: Styles().textStyles?.getTextStyle('panel.group.detail.regular'), ),
+            Text(title!, style:  Styles().textStyles.getTextStyle('panel.group.detail.fat'), ),),
+          Text(description!, style: Styles().textStyles.getTextStyle('panel.group.detail.regular'), ),
         ],),) :
       Container(width: 0, height: 0);
   }
 
-  Widget _buildWebsiteLink() {
+  Widget _buildPromoteCommand() {
+    return RibbonButton(
+      label: Localization().getStringEx("panel.group_detail.button.group_promote.title", "Share this group"),
+      hint: Localization().getStringEx("panel.group_detail.button.group_promote.hint", ""),
+      leftIconKey: 'qr',
+      padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+      onTap: _onTapPromote,
+    );
+  }
+
+  Widget _buildWebsiteLinkCommand() {
     return RibbonButton(
       label: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
       rightIconKey: 'external-link',
@@ -1092,18 +1127,18 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     List<Widget> attributesList = <Widget>[];
     Map<String, dynamic>? groupAttributes = widget.group?.attributes;
     ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttributesCategory>? categories = contentAttributes?.categories;
-    if ((groupAttributes != null) && (contentAttributes != null) && (categories != null)) {
-      for (ContentAttributesCategory category in categories) {
-        List<String>? displayAttributes = category.displayAttributesListFromSelection(groupAttributes, contentAttributes: contentAttributes, complete: true);
-        if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
+    List<ContentAttribute>? attributes = contentAttributes?.attributes;
+    if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
+      for (ContentAttribute attribute in attributes) {
+        List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
+        if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
           attributesList.add(Row(children: [
-            Text("${contentAttributes.stringValue(category.title)}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
-              Styles().textStyles?.getTextStyle("widget.card.detail.small.fat")
+            Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
+              Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
             ),
             Expanded(child:
-              Text(displayAttributes.join(', '), maxLines: 1, style:
-                Styles().textStyles?.getTextStyle("widget.card.detail.small.regular")
+              Text(displayAttributeValues.join(', '), maxLines: 1, style:
+                Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
               ),
             ),
           ],),);
@@ -1113,45 +1148,61 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return attributesList;
   }
 
-  Widget _buildBadgeOrCategoryWidget() {
-    List<Widget> contentList = <Widget>[];
-    if (_showMembershipBadge) {
-      contentList.addAll(<Widget>[
-        Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
-          Center(child:
-            Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
-              Text(_group!.currentUserStatusText!.toUpperCase(), style:  Styles().textStyles?.getTextStyle('widget.heading.small'),)
-            ),
-          ),
-        ),
-        Expanded(child: Container(),),
-      ],);
-    }
-    else {
-      List<String>? displayList = Groups().contentAttributes?.displayAttributesListFromSelection(widget.group?.attributes,
-        usage: ContentAttributesCategoryUsage.category);
-      contentList.add(
-        Expanded(child: (displayList?.isNotEmpty ?? false) ?
-          Text(displayList?.join(', ') ?? '', overflow: TextOverflow.ellipsis, style:
-            Styles().textStyles?.getTextStyle("widget.title.tiny'")
-          ) :
-          Container(),
-        ),
-      );
-    }
-    contentList.add(_buildPolicyButton());
-    return Row(children: contentList);
+  Widget _buildWebsiteLinkButton() {
+    return RibbonButton(
+      label: Localization().getStringEx("panel.group_detail.button.more_info.title", 'More Info'),
+      textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+      rightIconKey: 'external-link',
+      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+      onTap: _onWebsite
+    );
+    /*return RoundedButton(
+      label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
+      hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
+      backgroundColor: Colors.white,
+      borderColor: Styles().colors.fillColorSecondary,
+      rightIcon: Image.asset('images/external-link.png'),
+      textColor: Styles().colors.fillColorPrimary,
+      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+      fontFamily: Styles().fontFamilies.bold,
+      fontSize: 16,
+      onTap: _onWebsite
+    );*/
+  }
+
+  Widget _buildBadgeWidget() {
+    Widget badgeWidget = Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+      Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
+        Text(_group!.currentUserStatusText!.toUpperCase(), style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
+      ),
+    );
+    return _showPolicyButton ? Row(children: <Widget>[
+      badgeWidget,
+      Expanded(child: Container(),),
+      _buildPolicyButton()
+    ]) : badgeWidget;
+  }
+
+  Widget _buildTitleWidget() {
+    Widget titleWidget = Text(_group?.title ?? '',  style:  Styles().textStyles.getTextStyle('panel.group.title.lage'),);
+    return _showPolicyButton ? Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      Expanded(child:
+        Padding(padding: EdgeInsets.only(top: 8), child:
+          titleWidget
+        )
+      ),
+      _buildPolicyButton()
+    ]) : titleWidget;
   }
 
   Widget _buildPolicyButton() {
-    return Visibility(visible: (_isResearchProject != true), child:
-      Semantics(button: true, excludeSemantics: true,
-        label: Localization().getStringEx('panel.group_detail.button.policy.label', 'Policy'),
-        hint: Localization().getStringEx('panel.group_detail.button.policy.hint', 'Tap to ready policy statement'),
-        child: InkWell(onTap: _onPolicy, child:
-          Padding(padding: EdgeInsets.all(16), child:
-            Styles().images?.getImage('info', excludeFromSemantics: true)
-          ),
+    return Semantics(button: true, excludeSemantics: true,
+      label: Localization().getStringEx('panel.group_detail.button.policy.label', 'Policy'),
+      hint: Localization().getStringEx('panel.group_detail.button.policy.hint', 'Tap to ready policy statement'),
+      child: InkWell(onTap: _onPolicy, child:
+        Padding(padding: EdgeInsets.all(16), child:
+          Styles().images.getImage('info', excludeFromSemantics: true)
         ),
       ),
     );
@@ -1172,15 +1223,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
     content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()));
 
-    String headingText = _isResearchProject ? 'Principle Investigator(s)' : Localization().getStringEx("panel.group_detail.label.admins", 'Admins');
+    String headingText = _isResearchProject ? Localization().getStringEx('panel.group_detail.label.project.admins', 'Principal Investigator(s)') : Localization().getStringEx("panel.group_detail.label.admins", 'Admins');
 
     return Stack(children: [
       Container(
           height: 112,
-          color: Styles().colors!.backgroundVariant,
+          color: Styles().colors.backgroundVariant,
           child: Column(children: [
             Container(height: 80),
-            Container(height: 32, child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background), child: Container()))
+            Container(height: 32, child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container()))
           ])),
       Padding(
           padding: EdgeInsets.symmetric(vertical: 16),
@@ -1188,7 +1239,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             Padding(
                 padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
                 child: Text(headingText,
-                    style:   Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))),
+                    style:   Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))),
             SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: content))
           ]))
     ]);
@@ -1196,15 +1247,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildMembershipRequest() {
     if (Auth2().isOidcLoggedIn && _group!.currentUserCanJoin && (_group?.researchProject != true)) {
-      return Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1))), child:
+      return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
         Padding(padding: EdgeInsets.all(16), child:
           RoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
-            backgroundColor: Styles().colors!.white,
-            textColor: Styles().colors!.fillColorPrimary,
-            fontFamily: Styles().fontFamilies!.bold,
-            fontSize: 16,
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+            backgroundColor: Styles().colors.white,
             padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-            borderColor: Styles().colors!.fillColorSecondary,
+            borderColor: Styles().colors.fillColorSecondary,
             borderWidth: 2,
             onTap:() { _onMembershipRequest();  }
           ),
@@ -1221,30 +1270,28 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       bool showConsent = StringUtils.isNotEmpty(_group?.researchConsentStatement) && CollectionUtils.isEmpty(_group?.questions);
       bool requestToJoinEnabled = CollectionUtils.isNotEmpty(_group?.questions) || StringUtils.isEmpty(_group?.researchConsentStatement) || _researchProjectConsent;
       return Padding(padding: EdgeInsets.only(top: 16), child:
-        Container(decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: showConsent ? 1 : 0))), child:
+        Container(decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: showConsent ? 1 : 0))), child:
           Column(children: [
             Visibility(visible: showConsent, child:
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 InkWell(onTap: _onResearchProjectConsent, child:
                   Padding(padding: EdgeInsets.all(16), child:
-                    Styles().images?.getImage(_researchProjectConsent ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true)
+                    Styles().images.getImage(_researchProjectConsent ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true)
                   ),
                 ),
                 Expanded(child:
                   Padding(padding: EdgeInsets.only(right: 16, top: 12, bottom: 12), child:
-                    Text(_group?.researchConsentStatement ?? '', style: Styles().textStyles?.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
+                    Text(_group?.researchConsentStatement ?? '', style: Styles().textStyles.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
                   ),
                 ),
               ]),
             ),
             Padding(padding: EdgeInsets.only(left: 16, right: 16, top: showConsent ? 0 : 16, bottom: 16), child:
               RoundedButton(label: CollectionUtils.isEmpty(_group?.questions) ? "Request to participate" : "Continue",
-                backgroundColor: Styles().colors!.white,
-                textColor: requestToJoinEnabled ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
-                fontFamily: Styles().fontFamilies!.bold,
-                fontSize: 16,
+                textStyle: requestToJoinEnabled ?  Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
+                backgroundColor: Styles().colors.white,
                 padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                borderColor: requestToJoinEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+                borderColor: requestToJoinEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
                 borderWidth: 2,
                 onTap:() { _onMembershipRequest();  }
               ),
@@ -1266,15 +1313,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildCancelMembershipRequest() {
     if (Auth2().isOidcLoggedIn && _group!.currentUserIsPendingMember) {
-      return Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1))), child:
+      return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
         Padding(padding: EdgeInsets.all(16), child:
           RoundedButton(label: Localization().getStringEx("panel.group_detail.button.cancel_request.title",  'Cancel Request'),
-            backgroundColor: Styles().colors!.white,
-            textColor: Styles().colors!.fillColorPrimary,
-            fontFamily: Styles().fontFamilies!.bold,
-            fontSize: 16,
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+            backgroundColor: Styles().colors.white,
             padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-            borderColor: Styles().colors!.fillColorSecondary,
+            borderColor: Styles().colors.fillColorSecondary,
             borderWidth: 2,
             progress: _confirmationLoading,
             onTap:() { _onCancelMembershipRequest();  }
@@ -1300,7 +1345,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     int leftAreaFlex = 0,
   }) {
     return Dialog(
-        backgroundColor: Styles().colors!.fillColorPrimary,
+        backgroundColor: Styles().colors.fillColorPrimary,
         child: StatefulBuilder(builder: (context, setStateEx) {
           return Padding(
               padding: EdgeInsets.all(16),
@@ -1308,15 +1353,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Padding(
                     padding: EdgeInsets.symmetric(vertical: 26),
                     child: Text(confirmationTextMsg!,
-                        textAlign: TextAlign.left, style:  Styles().textStyles?.getTextStyle('widget.dialog.message.medium'))),
+                        textAlign: TextAlign.left, style:  Styles().textStyles.getTextStyle('widget.dialog.message.medium'))),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
                   Expanded(flex: leftAreaFlex, child: Container()),
                   Expanded(flex: negativeButtonFlex, child: RoundedButton(
                       label: StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")),
-                      fontFamily: "ProximaNovaRegular",
-                      textColor: Styles().colors!.fillColorPrimary,
-                      borderColor: Styles().colors!.white,
-                      backgroundColor: Styles().colors!.white,
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large"),
+                      borderColor: Styles().colors.white,
+                      backgroundColor: Styles().colors.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                       onTap: () {
                         Analytics().logAlert(text: confirmationTextMsg, selection: negativeButtonLabel);
@@ -1325,10 +1369,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                   Container(width: 16),
                   Expanded(flex: positiveButtonFlex, child: RoundedButton(
                     label: positiveButtonLabel ?? '',
-                    fontFamily: "ProximaNovaBold",
-                    textColor: Styles().colors!.fillColorPrimary,
-                    borderColor: Styles().colors!.white,
-                    backgroundColor: Styles().colors!.white,
+                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                    borderColor: Styles().colors.white,
+                    backgroundColor: Styles().colors.white,
                     padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     progress: _confirmationLoading,
                     onTap: () {
@@ -1432,6 +1475,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         });
   }
 
+  void _onTapEvent(Event2 event) {
+    Analytics().logSelect(target: 'Group Event: ${event.name}');
+    Navigator.push(context, CupertinoPageRoute( builder: (context) => (event.hasGame == true) ?
+      AthleticsGameDetailPanel(game: event.game, event: event, group: _group) :
+      Event2DetailPanel(event: event, group: _group)));
+  }
+
   void _onTapEventOptions() {
     Analytics().logSelect(target: "Event options", attributes: _group?.analyticsAttributes);
     showModalBottomSheet(
@@ -1518,25 +1568,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onWebsite() {
     Analytics().logSelect(target: 'Group url', attributes: _group?.analyticsAttributes);
-    String? url = _group?.webURL;
-    if (StringUtils.isNotEmpty(url)) {
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        launchUrl(uri);
-      }
-    }
+    UrlUtils.launchExternal(_group?.webURL);
   }
 
   void _onPolicy () {
     Analytics().logSelect(target: 'Policy');
     showDialog(context: context, builder: (_) =>  InfoPopup(
-      backColor: Color(0xfffffcdf), //Styles().colors?.surface ?? Colors.white,
+      backColor: Color(0xfffffcdf), //Styles().colors.surface ?? Colors.white,
       padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
-      border: Border.all(color: Styles().colors!.textSurface!, width: 1),
+      border: Border.all(color: Styles().colors.textSurface, width: 1),
       alignment: Alignment.center,
       infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
-      infoTextStyle: Styles().textStyles?.getTextStyle('widget.description.regular.thin"'),
-      closeIcon: Styles().images?.getImage('close', excludeFromSemantics: true),
+      infoTextStyle: Styles().textStyles.getTextStyle('widget.description.regular.thin"'),
+      closeIcon: Styles().images.getImage('close', excludeFromSemantics: true),
     ),);
   }
 
@@ -1570,7 +1614,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       return;
     }
     Analytics().logSelect(target: "Take Attendance", attributes: _group?.analyticsAttributes);
-    FlutterBarcodeScanner.scanBarcode(UiColors.toHex(Styles().colors!.fillColorSecondary!)!,
+    FlutterBarcodeScanner.scanBarcode(UiColors.toHex(Styles().colors.fillColorSecondary)!,
             Localization().getStringEx('panel.group_detail.attendance.scan.cancel.button.title', 'Cancel'), true, ScanMode.QR)
         .then((scanResult) {
       _onAttendanceScanFinished(scanResult);
@@ -1756,12 +1800,16 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapCreateEvent(){
     Analytics().logSelect(target: "Create Event", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: _group,)));
+    if (_group != null) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(targetGroups: [_group!],)));
+    }
   }
 
   void _onTapBrowseEvents(){
     Analytics().logSelect(target: "Browse Events", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(browseGroupId: _group?.id, initialFilter: ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {0/*Upcoming*/} ),)));
+    if (_group != null) {
+      Event2HomePanel.present(context, eventSelector: GroupEventSelector2(_group!));
+    }
   }
 
   void _onTapCreatePost() {
@@ -1790,6 +1838,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if (poll != null) {
         setState(() {
           _updatePollInList(poll);
+        });
+      }
+    }
+  }
+
+  void _updateEventIfNeeded(dynamic event) {
+    if ((event is Event2) && (event.id != null) && mounted) {
+      int? index = Event2.indexInList(_groupEvents, id: event.id);
+      if (index != null) {
+        setState(() {
+          _groupEvents?[index] = event;
         });
       }
     }
@@ -1868,6 +1927,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return _isMemberOrAdmin || _isPending;
   }
 
+  bool get _showPolicyButton {
+    return _isResearchProject != true;
+  }
+
   //Util
   void _updatePollInList(Poll? poll) {
     if ((poll != null) && (_groupPolls != null)) {
@@ -1892,9 +1955,69 @@ class _OfficerCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Container(height: 144, width: 128, child: GroupMemberProfileImage(userId: groupMember?.userId)),
         Padding(padding: EdgeInsets.only(top: 4),
-          child: Text(groupMember?.name ?? "", style: Styles().textStyles?.getTextStyle('widget.card.title.small.fat'),),),
-        Text(groupMember?.officerTitle ?? "", style:  Styles().textStyles?.getTextStyle('widget.card.detail.regular')),
+          child: Text(groupMember?.name ?? "", style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),),),
+        Text(groupMember?.officerTitle ?? "", style:  Styles().textStyles.getTextStyle('widget.card.detail.regular')),
       ],),
     );
+  }
+}
+
+extension GroupEvent2Selector2State on Event2Selector2State {
+  bool get bindingInProgress => selectorData['binding'] == true;
+  set bindingInProgress(bool value) => selectorData['binding'] = value;
+}
+
+class GroupEventSelector2 extends Event2Selector2 {
+  final Group group;
+
+  GroupEventSelector2(this.group);
+
+  @override
+  Widget? buildUI(Event2Selector2State state, { required Event2 event }) => Padding(padding: const EdgeInsets.symmetric(vertical: 16), child:
+    Column(children: [
+      RoundedButton(
+        label: (group.researchProject == true) ?
+        Localization().getStringEx('panel.explore_detail.button.add_to_project.title', 'Add Event To Project') :
+        Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
+        hint: (group.researchProject == true) ?
+        Localization().getStringEx('panel.explore_detail.button.add_to_project.hint', '') :
+        Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
+        textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+        backgroundColor: Colors.white,
+        borderColor: Styles().colors.fillColorPrimary,
+        progress: state.bindingInProgress,
+        onTap: () => _onAddEventToGroup(state, event),
+      ),
+    ],)
+  );
+
+  void _onAddEventToGroup(Event2Selector2State state, Event2 event) {
+    if (state.mounted) {
+      state.setSelectorState((){
+        state.bindingInProgress = true;
+      });
+      Groups().linkEventToGroup(groupId: group.id, eventId: event.id).then((bool result) {
+        if (state.mounted) {
+          state.setSelectorState((){
+            state.bindingInProgress = false;
+          });
+          if (result) {
+            _finish(state);
+          }
+          else {
+            String message = Localization().getStringEx('panel.create_event.groups.failed.msg', 'There was an error binding this event to the following groups: ') + (group.title ?? '');
+            AppAlert.showDialogResult(state.context, message).then((_) {
+              _finish(state);
+            });
+          }
+        }
+      });
+    }
+  }
+
+  void _finish(Event2Selector2State state) {
+    Navigator.of(state.context).popUntil((Route route) {
+      return route.settings.name == GroupDetailPanel.routeName;
+    });
   }
 }

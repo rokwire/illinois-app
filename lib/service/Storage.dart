@@ -135,9 +135,6 @@ class Storage extends rokwire.Storage {
     setStringWithName(offsetDateKey, AppDateTime().formatDateTime(value, ignoreTimeZone: true));
   }
 
-  // Language
-  @override String get currentLanguageKey => 'current_language';
-
   // Recent Items - backward compatability
   static const String recentItemsKey  = '_recent_items_json_string';
   List<dynamic>? get recentItems => JsonUtils.decode(getStringWithName(recentItemsKey));
@@ -178,6 +175,18 @@ class Storage extends rokwire.Storage {
   static const String debugUseCanvasLmsKey  = 'debug_use_canvas_lms';
   bool? get debugUseCanvasLms => getBoolWithName(debugUseCanvasLmsKey);
   set debugUseCanvasLms(bool? value) => setBoolWithName(debugUseCanvasLmsKey, value);
+
+  static const String debugUseSampleAppointmentsKey  = 'debug_use_sample_appontments';
+  bool? get debugUseSampleAppointments => getBoolWithName(debugUseSampleAppointmentsKey);
+  set debugUseSampleAppointments(bool? value) => setBoolWithName(debugUseSampleAppointmentsKey, value);
+
+  static const String debugUseIdentityBbKey  = 'debug_mobile_icard_use_identity_bb';
+  bool? get debugUseIdentityBb => getBoolWithName(debugUseIdentityBbKey, defaultValue: true);
+  set debugUseIdentityBb(bool? value) => setBoolWithName(debugUseIdentityBbKey, value);
+
+  static const String debugAutomaticCredentialsKey  = 'debug_mobile_icard_automatic_credentials';
+  bool? get debugAutomaticCredentials => getBoolWithName(debugAutomaticCredentialsKey);
+  set debugAutomaticCredentials(bool? value) => setBoolWithName(debugAutomaticCredentialsKey, value);
 
   // Firebase
 // static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_subscription_topis';
@@ -226,10 +235,9 @@ class Storage extends rokwire.Storage {
   set auth2CardTime(int? value) => setIntWithName(auth2CardTimeKey, value);
 
   // Calendar
-
-  @override String get calendarEventsTableKey => 'calendar_events_table';
-  @override String get calendarEnableSaveKey => 'calendar_enabled_to_save';
-  @override String get calendarEnablePromptKey => 'calendar_enabled_to_prompt';
+  String get calendarShouldPromptKey => 'calendar_enabled_to_prompt';
+  bool get calendarShouldPrompt => getBoolWithName(calendarShouldPromptKey, defaultValue: true) ?? true;
+  set calendarShouldPrompt(bool value) => setBoolWithName(calendarShouldPromptKey, value);
 
   // Checklist
   static const String _navPagesKey  = 'checklist_nav_pages';
@@ -326,10 +334,14 @@ class Storage extends rokwire.Storage {
   int? get homeToutImageTime => getIntWithName(homeToutImageTimeKey);
   set homeToutImageTime(int? value) => setIntWithName(homeToutImageTimeKey, value);
 
-  // Home Welcome 
-  String get homeWelcomeVisibleKey => 'edu.illinois.rokwire.home.welcome.image.time';
+  // Home
+  String get homeWelcomeVisibleKey => 'edu.illinois.rokwire.home.welcome.visible';
   bool? get homeWelcomeVisible => getBoolWithName(homeWelcomeVisibleKey);
   set homeWelcomeVisible(bool? value) => setBoolWithName(homeWelcomeVisibleKey, value);
+
+  String get homeLoginVisibleKey => 'edu.illinois.rokwire.home.login.visible';
+  bool? get homeLoginVisible => getBoolWithName(homeLoginVisibleKey);
+  set homeLoginVisible(bool? value) => setBoolWithName(homeLoginVisibleKey, value);
 
   // Browse Tout
   String get browseToutImageUrlKey => 'edu.illinois.rokwire.browse.tout.image.url';
@@ -371,18 +383,18 @@ class Storage extends rokwire.Storage {
   set selectedCourseTermId(String? value) => setStringWithName(selectedCourseTermIdKey, value);
 
   // Explore
-  String get selectedListExploreItemKey => 'edu.illinois.rokwire.explore.list.selected.item';
-  String? get selectedListExploreItem => getStringWithName(selectedListExploreItemKey);
-  set selectedListExploreItem(String? value) => setStringWithName(selectedListExploreItemKey, value);
-
-  String get selectedMapExploreItemKey => 'edu.illinois.rokwire.explore.map.selected.item';
-  String? get selectedMapExploreItem => getStringWithName(selectedMapExploreItemKey);
-  set selectedMapExploreItem(String? value) => setStringWithName(selectedMapExploreItemKey, value);
+  String get selectedMapExploreTypeKey => 'edu.illinois.rokwire.explore.map.selected.type';
+  String? get selectedMapExploreType => getStringWithName(selectedMapExploreTypeKey);
+  set selectedMapExploreType(String? value) => setStringWithName(selectedMapExploreTypeKey, value);
 
   // Appointments
   String get appointmentsDisplayEnabledKey => 'edu.illinois.rokwire.appointments.display_enabled';
   bool? get appointmentsCanDisplay => getBoolWithName(appointmentsDisplayEnabledKey, defaultValue: true);
   set appointmentsCanDisplay(bool? value) => setBoolWithName(appointmentsDisplayEnabledKey, value);
+
+  String get selectedAppointmentProviderIdKey => 'edu.illinois.rokwire.appointments.selected.provider_id';
+  String? get selectedAppointmentProviderId => getStringWithName(selectedAppointmentProviderIdKey);
+  set selectedAppointmentProviderId(String? value) => setStringWithName(selectedAppointmentProviderIdKey, value);
 
   // MTD Map instructions
   String get showMtdStopsMapInstructionsKey => 'edu.illinois.rokwire.explore.map.mtd_stops.show_instructions';
@@ -398,4 +410,46 @@ class Storage extends rokwire.Storage {
   bool? get participateInResearchPrompted => getBoolWithName(participateInResearchPromptedKey);
   set participateInResearchPrompted(bool? value) => setBoolWithName(participateInResearchPromptedKey, value);
 
+  // Mobile Access
+  static const String mobileAccessBleRssiSensitivityKey = 'mobile_access_ble_rssi_sensitivity';
+  String? get mobileAccessBleRssiSensitivity => getStringWithName(mobileAccessBleRssiSensitivityKey);
+  set mobileAccessBleRssiSensitivity(String? value) => setStringWithName(mobileAccessBleRssiSensitivityKey, value);
+
+  static const String mobileAccessOpenTypeKey = 'mobile_access_open_type';
+  String? get mobileAccessOpenType => getStringWithName(mobileAccessOpenTypeKey);
+  set mobileAccessOpenType(String? value) => setStringWithName(mobileAccessOpenTypeKey, value);
+
+  static const String mobileAccessDeleteTimeoutInMillisKey = 'mobile_access_delete_timeout_millis';
+  int? get mobileAccessDeleteTimeoutUtcInMillis => getIntWithName(mobileAccessDeleteTimeoutInMillisKey);
+  set mobileAccessDeleteTimeoutUtcInMillis(int? value) => setIntWithName(mobileAccessDeleteTimeoutInMillisKey, value);
+
+  // Events2
+  static const String events2AttributesKey = 'events2_attributes';
+  Map<String, dynamic>? get events2Attributes => JsonUtils.decodeMap(getStringWithName(events2AttributesKey));
+  set events2Attributes(Map<String, dynamic>? value) => setStringWithName(events2AttributesKey, JsonUtils.encode(value));
+
+  static const String events2TypesKey = 'events2_types';
+  List<String>? get events2Types => getStringListWithName(events2TypesKey);
+  set events2Types(List<String>? value) => setStringListWithName(events2TypesKey, value);
+
+  static const String events2TimeKey = 'events2_time';
+  String? get events2Time => getStringWithName(events2TimeKey);
+  set events2Time(String? value) => setStringWithName(events2TimeKey, value);
+
+  static const String events2CustomStartTimeKey = 'events2_custom_start_time';
+  String? get events2CustomStartTime => getStringWithName(events2CustomStartTimeKey);
+  set events2CustomStartTime(String? value) => setStringWithName(events2CustomStartTimeKey, value);
+
+  static const String events2CustomEndTimeKey = 'events2_custom_end_time';
+  String? get events2CustomEndTime => getStringWithName(events2CustomEndTimeKey);
+  set events2CustomEndTime(String? value) => setStringWithName(events2CustomEndTimeKey, value);
+
+  static const String events2SortTypeKey = 'events2_sort_type';
+  String? get events2SortType => getStringWithName(events2SortTypeKey);
+  set events2SortType(String? value) => setStringWithName(events2SortTypeKey, value);
+
+  // Essential Skills Coach
+  static const String essentialSkillsCoachModuleKey = 'essential_skills_coach_module';
+  String? get essentialSkillsCoachModule => getStringWithName(essentialSkillsCoachModuleKey);
+  set essentialSkillsCoachModule(String? value) => setStringWithName(essentialSkillsCoachModuleKey, value);
 }

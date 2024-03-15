@@ -65,15 +65,15 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
       onLeave: (_) {
         _onDragLeave();
       },
-      onAccept: (HomeFavorite favorite) {
-        widget.dragAndDropHost?.onDragAndDrop(dragFavoriteId: favorite.favoriteId, dropFavoriteId: widget.favoriteId, dropAnchor: _dropAnchorAlignment);
+      onAcceptWithDetails: (DragTargetDetails<HomeFavorite> details) {
+        widget.dragAndDropHost?.onDragAndDrop(dragFavoriteId: details.data.favoriteId, dropFavoriteId: widget.favoriteId, dropAnchor: _dropAnchorAlignment);
       },
     );
   }
 
   Widget _buildContent(BuildContext context, {bool dropTarget = false }) {
     return Column(key: _contentKey, children: <Widget>[
-      Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors?.fillColorSecondary : ((widget.position == 0) ? Styles().colors!.surfaceAccent : Colors.transparent),),
+      Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors.fillColorSecondary : ((widget.position == 0) ? Styles().colors.surfaceAccent : Colors.transparent),),
       Semantics(
         container: true,
         inMutuallyExclusiveGroup: true,
@@ -101,14 +101,14 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
 
           Semantics(label: 'Drag Handle' /* TBD: Localization */, onLongPress: (){},button: true, child:
             Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-              Styles().images?.getImage('drag-white', excludeFromSemantics: true),
+              Styles().images.getImage('drag-white', excludeFromSemantics: true),
             ),
           ),
 
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
               Semantics(label: widget.title, header: true, excludeSemantics: true, child:
-                Text(widget.title ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 18),)
+                Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),)
               )
             )
           ),
@@ -118,7 +118,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
         ],),
       )),
 
-      Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.end)) ? Styles().colors?.fillColorSecondary : Styles().colors!.surfaceAccent,),
+      Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.end)) ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,),
     ]);
   }
 
@@ -198,8 +198,8 @@ class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
       onLeave: (_) {
         _onDragLeave();
       },
-      onAccept: (HomeFavorite favorite) {
-        widget.dragAndDropHost?.onDragAndDrop(dragFavoriteId: favorite.favoriteId, dropFavoriteId: widget.favoriteId, dropAnchor: _dropAnchorAlignment);
+      onAcceptWithDetails: (DragTargetDetails<HomeFavorite> details) {
+        widget.dragAndDropHost?.onDragAndDrop(dragFavoriteId: details.data.favoriteId, dropFavoriteId: widget.favoriteId, dropAnchor: _dropAnchorAlignment);
       },
     );
   }
@@ -247,7 +247,8 @@ class HomeSlantWidget extends StatelessWidget {
   
   final Widget? child;
   final EdgeInsetsGeometry childPadding;
-  
+
+  final List<Widget>? actions;
   final String? favoriteId;
 
   const HomeSlantWidget({Key? key,
@@ -261,34 +262,42 @@ class HomeSlantWidget extends StatelessWidget {
     this.child,
     this.childPadding = EdgeInsets.zero,
     
+    this.actions,
     this.favoriteId,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
 
+    EdgeInsetsGeometry titleTextPadding = EdgeInsets.only(top: 12, bottom: 12,
+      left: (titleIconKey == null) ? 16 : 0,
+      right: ((actions == null) && (favoriteId == null)) ? 16 : 0,
+    );
+
     return Column(children: [
       
       // Title Row
       Padding(padding: EdgeInsets.zero, child: 
         Semantics(container: true, header: true,
-          child: Container(color: Styles().colors!.fillColorPrimary, child:
+          child: Container(color: Styles().colors.fillColorPrimary, child:
             Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
 
-              HomeTitleIcon(image: Styles().images?.getImage(titleIconKey, excludeFromSemantics: true)),
+              if (titleIconKey != null)
+                HomeTitleIcon(image: Styles().images.getImage(titleIconKey, excludeFromSemantics: true)),
 
               Expanded(child:
-                Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+                Padding(padding: titleTextPadding, child:
                   Semantics(label: title, header: true, excludeSemantics: true, child:
-                    Text(title ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+                    Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat"))
                   )
                 )
               ),
 
-              
-              Opacity(opacity: (favoriteId != null) ? 1 : 0, child:
+              if (actions != null)
+                ...actions!,
+
+              if (favoriteId != null)
                 HomeFavoriteButton(favorite: HomeFavorite(favoriteId), style: FavoriteIconStyle.SlantHeader, prompt: true),
-              ),
             ],),
         ),),
       ),
@@ -297,9 +306,9 @@ class HomeSlantWidget extends StatelessWidget {
       
         // Slant
         Column(children: <Widget>[
-          Container(color: Styles().colors?.fillColorPrimary, height: flatHeight,),
-          Container(color: Styles().colors?.fillColorPrimary, child:
-            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft), child:
+          Container(color: Styles().colors.fillColorPrimary, height: flatHeight,),
+          Container(color: Styles().colors.fillColorPrimary, child:
+            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
               Container(height: slantHeight,),
             ),
           ),
@@ -345,10 +354,10 @@ class HomeFavoriteButton extends FavoriteButton {
 
   @override
   bool? get isFavorite {
-    List<String>? avalableSectionFavorites = ((favorite != null) && (favorite?.id != null) && (favorite?.category == null)) ? JsonUtils.listStringsValue(FlexUI()['home.${favorite?.id}']) : null;
-    if (avalableSectionFavorites != null) {
+    List<String>? availableSectionFavorites = ((favorite != null) && (favorite?.id != null) && (favorite?.category == null)) ? JsonUtils.listStringsValue(FlexUI()['home.${favorite?.id}']) : null;
+    if (availableSectionFavorites != null) {
       int favCount = 0, unfavCount = 0;
-      for (String code in avalableSectionFavorites) {
+      for (String code in availableSectionFavorites) {
         if (Auth2().prefs?.isFavorite(HomeFavorite(code, category: favorite?.id)) ?? false) {
           favCount++;
         }
@@ -356,10 +365,10 @@ class HomeFavoriteButton extends FavoriteButton {
           unfavCount++;
         }
       }
-      if (favCount == avalableSectionFavorites.length) {
+      if (favCount == availableSectionFavorites.length) {
         return true;
       }
-      else if (unfavCount == avalableSectionFavorites.length) {
+      else if (unfavCount == availableSectionFavorites.length) {
         return false;
       }
       else {
@@ -399,10 +408,10 @@ class HomeFavoriteButton extends FavoriteButton {
     if (favorite?.id != null) {
       if (favorite?.category == null) {
         // process toggle home panel widget
-        List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.id}']);
-        if (avalableSectionFavorites != null) {
+        List<String>? availableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.id}']);
+        if (availableSectionFavorites != null) {
           List<Favorite> favorites = <Favorite>[favorite!];
-          for(String sectionEntry in avalableSectionFavorites) {
+          for(String sectionEntry in availableSectionFavorites) {
             favorites.add(HomeFavorite(sectionEntry, category: favorite?.id));
           }
           Auth2().prefs?.setListFavorite(favorites, value);
@@ -433,9 +442,9 @@ class HomeFavoriteButton extends FavoriteButton {
         else {
           // turn off home widget entry
           int sectionFavoritesCount = 0;
-          List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.category}']);
-          if (avalableSectionFavorites != null) {
-            for (String sectionEntry in avalableSectionFavorites) {
+          List<String>? availableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.category}']);
+          if (availableSectionFavorites != null) {
+            for (String sectionEntry in availableSectionFavorites) {
               if (Auth2().prefs?.isFavorite(HomeFavorite(sectionEntry, category: favorite?.category)) ?? false) {
                 sectionFavoritesCount++;
               }
@@ -503,17 +512,17 @@ class HomeDragFeedback extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(width: MediaQuery.of(context).size.width, color: Styles().colors!.accentColor3!.withOpacity(0.25), child:
+      Container(width: MediaQuery.of(context).size.width, color: Styles().colors.accentColor3.withOpacity(0.25), child:
         Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
 
           Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-            Styles().images?.getImage('drag-white', excludeFromSemantics: true),
+            Styles().images.getImage('drag-white', excludeFromSemantics: true),
           ),
-          
+
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-              Text(title ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, decoration: TextDecoration.none, shadows: <Shadow>[
-                Shadow(color: Styles().colors!.fillColorPrimary!.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
+              Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat")?.copyWith(decoration: TextDecoration.none, shadows: <Shadow>[
+                Shadow(color: Styles().colors.fillColorPrimary.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
               ] ),),
             ),
           ),
@@ -543,19 +552,19 @@ class HomeCommandButton extends StatelessWidget {
     return Semantics(label: title, hint: description, button: true, child:
       InkWell(onTap: onTap, child: Container(
           padding: EdgeInsets.only(left: 16, bottom: 16),
-          decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+          decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Expanded(child:
                 Padding(padding: EdgeInsets.only(top: 15, bottom: 7), child:
-                  Text(title ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), semanticsLabel: "",),
+                  Text(title ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'), semanticsLabel: "",),
                 )
               ),
-              // Styles().images?.getImage('images/chevron-right.png', excludeFromSemantics: true)
+              // Styles().images.getImage('images/chevron-right.png', excludeFromSemantics: true)
               ((loading == true)
                 ? Padding(padding: EdgeInsets.all(16), child:
                     SizedBox(height: 16, width: 16, child:
-                      CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2),
+                      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2),
                     )
                 )
                 : HomeFavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, prompt: kReleaseMode)
@@ -563,7 +572,7 @@ class HomeCommandButton extends StatelessWidget {
             ],),
             StringUtils.isNotEmpty(description)
               ? Padding(padding: EdgeInsets.only(top: 5, right: 16), child:
-                  Text(description ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface), semanticsLabel: "",),
+                  Text(description ?? '', style: Styles().textStyles.getTextStyle("widget.info.regular.thin"), semanticsLabel: "",),
                 )
               : Container(),
         ],),),),
@@ -591,18 +600,18 @@ class HomeMessageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
       Semantics(child:Container(padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
-        child: Column(children: [
-          StringUtils.isNotEmpty(title) ? Row(children: [
+        decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+        child: Column(children: <Widget>[
+          StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
             Expanded(child:
               Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
-                Text(title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary))
+                Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.card.title.medium.fat"))
               ),
             )
           ]) : Container(),
-          StringUtils.isNotEmpty(message) ? Row(children: [
+          StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
             Expanded(child:
-              Text(message ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground))
+              Text(message ?? '', style: Styles().textStyles.getTextStyle("widget.card.detail.regular"))
             )
           ]) : Container(),
         ]),
@@ -619,29 +628,31 @@ class HomeMessageHtmlCard extends StatelessWidget {
   final String? title;
   final String? message;
   final EdgeInsetsGeometry margin;
+  final EdgeInsetsGeometry padding;
+  final Color? linkColor;
   final void Function(String? url)? onTapLink;
 
   HomeMessageHtmlCard({Key? key,
-    this.title,
-    this.message,
+    this.title, this.message,
     this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-    this.onTapLink
+    this.padding = const EdgeInsets.all(16),
+    this.linkColor, this.onTapLink
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
-      Container(padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      Container(padding: padding,
+        decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         child: Column(children: <Widget>[
           StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
             Expanded(child:
               Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
                 HtmlWidget(
                     StringUtils.ensureNotEmpty(title),
-                    onTapUrl : (url) {_onTapLink(url); return true;},
-                    textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20),
-                    customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondary ?? Colors.blue)} : null
+                    onTapUrl : (url) { _onTapLink(url); return true; },
+                    textStyle:  Styles().textStyles.getTextStyle("widget.card.title.medium.fat"),
+                    customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(linkColor ?? Styles().colors.fillColorSecondary)} : null
                 )
               ),
             )
@@ -650,9 +661,9 @@ class HomeMessageHtmlCard extends StatelessWidget {
             Expanded(child:
                 HtmlWidget(
                   StringUtils.ensureNotEmpty(message),
-                  onTapUrl : (url) {_onTapLink(url); return true;},
-                  textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
-                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondary ?? Colors.blue)} : null
+                  onTapUrl : (url) { _onTapLink(url); return true; },
+                  textStyle:  Styles().textStyles.getTextStyle("widget.card.detail.regular"),
+                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(linkColor ?? Styles().colors.fillColorSecondary)} : null
                )
             )
           ]) : Container(),
@@ -689,7 +700,7 @@ class HomeProgressWidget extends StatelessWidget {
     return Padding(padding: padding, child:
       Center(child:
         Container(width: progessSize.width, height: progessSize.height, child:
-          CircularProgressIndicator(strokeWidth: progessWidth, valueColor: AlwaysStoppedAnimation<Color?>(progressColor ?? Styles().colors?.fillColorSecondary), )
+          CircularProgressIndicator(strokeWidth: progessWidth, valueColor: AlwaysStoppedAnimation<Color?>(progressColor ?? Styles().colors.fillColorSecondary), )
         ),
       ),
     );

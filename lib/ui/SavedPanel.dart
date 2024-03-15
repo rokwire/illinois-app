@@ -15,7 +15,6 @@
  */
 
 import 'dart:collection';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -24,23 +23,22 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/MTD.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
-import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/Sports.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/model/Dining.dart';
@@ -50,7 +48,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/events.dart';
-import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
@@ -58,12 +55,12 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
 
 class SavedPanel extends StatefulWidget {
 
   static const List<String> allFavoriteCategories = <String>[
     Event.favoriteKeyName,
+    Event2.favoriteKeyName,
     Dining.favoriteKeyName,
     Game.favoriteKeyName,
     News.favoriteKeyName,
@@ -75,7 +72,7 @@ class SavedPanel extends StatefulWidget {
 
   final List<String> favoriteCategories;
 
-  SavedPanel({this.favoriteCategories : allFavoriteCategories});
+  SavedPanel({this.favoriteCategories = allFavoriteCategories});
 
   @override
   _SavedPanelState createState() => _SavedPanelState();
@@ -85,7 +82,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   Map<String, List<Favorite>?> _favorites = <String, List<Favorite>>{};
   bool _loadingFavorites = false;
-  bool _showNotificationPermissionPrompt = false;
 
   @override
   void initState() {
@@ -93,13 +89,10 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       Connectivity.notifyStatusChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2.notifyLoginChanged,
-      FlexUI.notifyChanged,
-      Assets.notifyChanged,
       Guide.notifyChanged,
       Appointments.notifyUpcomingAppointmentsChanged,
     ]);
     _refreshFavorites();
-    _requestPermissionsStatus();
     super.initState();
   }
 
@@ -122,13 +115,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     else if (name == Auth2.notifyLoginChanged) {
       _refreshFavorites(showProgress: false);
     }
-    else if (name == FlexUI.notifyChanged) {
-      _requestPermissionsStatus();
-      setStateIfMounted(() { });
-    }
-    else if (name == Assets.notifyChanged) {
-      _refreshFavorites(favoriteCategories: {Dining.favoriteKeyName}, showProgress: false);
-    }
     else if (name == Guide.notifyChanged) {
       _refreshFavorites(favoriteCategories: {GuideFavorite.favoriteKeyName}, showProgress: false);
     }
@@ -143,14 +129,13 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       appBar: HeaderBar(title: _headerBarTitle,),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
         Column(children: <Widget>[
-          _buildNotificationPermision(),
           Expanded(child:
             _buildContent(),
           ),
         ]),
         
       ),
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -174,7 +159,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   Widget _buildProgress() {
     return Align(alignment: Alignment.center, child:
-      CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+      CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
     );
   }
 
@@ -182,9 +167,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     return Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:
       Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: Styles().textStyles?.getTextStyle("widget.message.large.fat"),),
+        Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: Styles().textStyles.getTextStyle("widget.message.large.fat"),),
         Container(height:8),
-        Text(Localization().getStringEx("panel.saved.message.offline", "Saved Items are not available while offline"), style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),),
+        Text(Localization().getStringEx("panel.saved.message.offline", "Saved Items are not available while offline"), style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),),
         Expanded(child: Container(), flex: 3),
     ],),);
   }
@@ -198,11 +183,11 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
             HtmlWidget(
                 "<div style=text-align:center> ${HomeFavoritesWidget.emptyMessageHtml(favoriteCategory)} </div>",
                 onTapUrl : (url) {HomeFavoritesWidget.handleLocalUrl(url, context: context, analyticsTarget: 'View Home', analyticsSource: 'SavedPanel($favoriteCategory)'); return true;},
-                textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.medium, fontSize: 18),
+                textStyle: Styles().textStyles.getTextStyle("widget.message.medium.semi_thin"),
                 customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(HomeFavoritesWidget.linkColor(favoriteCategory) ?? Colors.red)} : null,
                 // renderMode: RenderMode.sliverList,
             )
-            : Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
+            : Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),),
         Expanded(child: Container(), flex: 3),
     ],),);
   }
@@ -241,55 +226,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       Padding(padding: padding, child:
         Column(children: contentList,)
       ,)
-    );
-  }
-
-  Widget _buildNotificationPermision() {
-    return (_showNotificationPermissionPrompt) ? Padding(padding: const EdgeInsets.all(0), child:
-      Container(color: Styles().colors?.fillColorPrimary, child:
-        Column(children: <Widget>[
-          Row(children: <Widget>[
-            Expanded(child:
-              Padding(padding: EdgeInsets.all(16), child:
-                Text(Localization().getStringEx("panel.saved.notifications.label", "Don’t miss an event! Get reminders of upcoming events."), style: Styles().textStyles?.getTextStyle("widget.title.light.regular"),)
-              ),
-            ),
-            InkWell(onTap: _onAuthorizeSkip, child: 
-              Padding(padding: EdgeInsets.only(right: 16), child:
-                Styles().images?.getImage('close-circle-white', excludeFromSemantics: true))
-              )
-          ],),
-          Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-            ToggleRibbonButton(label: Localization().getStringEx("panel.saved.notifications.enable.label", "Enable notifications"), toggled: false, borderRadius: BorderRadius.all(Radius.circular(4)), onTap: _onAuthorize,),
-          ),
-        ]
-      )),
-    ) : Container();
-  }
-
-  Widget _buildNotificationPermissionPrompt(BuildContext context, firebase.AuthorizationStatus permissionStatus) {
-    String? message;
-    if (permissionStatus == firebase.AuthorizationStatus.authorized) {
-      message = Localization().getStringEx('panel.onboarding.notifications.label.access_granted', 'You already have granted access to this app.');
-    }
-    else if (permissionStatus == firebase.AuthorizationStatus.denied) {
-      message = Localization().getStringEx('panel.onboarding.notifications.label.access_denied', 'You already have denied access to this app.');
-    }
-    return Dialog(child:
-      Padding(padding: EdgeInsets.all(18), child:
-        Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Text(Localization().getStringEx('app.title', 'Illinois'), style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.large"), ),
-            Padding(padding: EdgeInsets.symmetric(vertical: 26), child:
-              Text(message ?? '', textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.regular"),),
-            ),
-            Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-                TextButton(onPressed: _onAuthorizeOK, child:
-                  Text(Localization().getStringEx('dialog.ok.title', 'OK')))
-              ],
-            )
-          ],
-        ),
-      ),
     );
   }
 
@@ -338,6 +274,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   Future<List<Favorite>?> Function(LinkedHashSet<String>?) _favoriteCategoryLoader(String favoriteCategory) {
     switch(favoriteCategory) {
       case Event.favoriteKeyName: return _loadFavoriteEvents;
+      case Event2.favoriteKeyName: return _loadFavoriteEvents2;
       case Dining.favoriteKeyName: return _loadFavoriteDinings;
       case Game.favoriteKeyName: return _loadFavoriteGames;
       case News.favoriteKeyName: return _loadFavoriteNews;
@@ -354,6 +291,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   Future<List<Favorite>?> _loadFavoriteEvents(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Events().loadEventsByIds(favoriteIds), favoriteIds) : null;
+
+  Future<List<Favorite>?> _loadFavoriteEvents2(LinkedHashSet<String>? favoriteIds) async =>
+    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Events2().loadEventsByIds(eventIds: favoriteIds?.toList()), favoriteIds) : null;
 
   Future<List<Favorite>?> _loadFavoriteDinings(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Dinings().loadBackendDinings(false, null, null), favoriteIds) : null;
@@ -437,9 +377,10 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   String? _favoriteCategoryTitle(String favoriteCategory) {
     switch(favoriteCategory) {
       case Event.favoriteKeyName:         return Localization().getStringEx('panel.saved.label.events', 'My Events');
+      case Event2.favoriteKeyName:        return Localization().getStringEx('panel.saved.label.events2', 'My Events');
       case Dining.favoriteKeyName:        return Localization().getStringEx('panel.saved.label.dining', "My Dining Locations");
-      case Game.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.athletics', 'My Athletics Events');
-      case News.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.news', 'My Athletics News');
+      case Game.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.athletics', 'My Big 10 Events');
+      case News.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.news', 'My Big 10 News');
       case LaundryRoom.favoriteKeyName:   return Localization().getStringEx('panel.saved.label.laundry', 'My Laundry');
       case MTDStop.favoriteKeyName:       return Localization().getStringEx('panel.saved.label.mtd_stops', 'My Bus Stops');
       case ExplorePOI.favoriteKeyName:    return Localization().getStringEx('panel.saved.label.mtd_destinations', 'My Destinations');
@@ -452,6 +393,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   String? _favoriteCategoryIconKey(String favoriteCategory) {
     switch(favoriteCategory) {
       case Event.favoriteKeyName:         return 'events';
+      case Event2.favoriteKeyName:        return 'events';
       case Dining.favoriteKeyName:        return 'dining';
       case Game.favoriteKeyName:          return 'athletics';
       case News.favoriteKeyName:          return 'news';
@@ -472,20 +414,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     return (favoritesCount == 0);
   }
 
-  void _requestPermissionsStatus() {
-    if (FlexUI().isNotificationsAvailable) {
-      firebase.FirebaseMessaging.instance.getNotificationSettings().then((settings) {
-        firebase.AuthorizationStatus status = settings.authorizationStatus;
-        // There is not "notDetermined" status for android. Threat "denied" in Android like "notDetermined" in iOS
-        if ((Platform.isAndroid && (status == firebase.AuthorizationStatus.denied)) ||
-            (Platform.isIOS && (status == firebase.AuthorizationStatus.notDetermined))) {
-          setStateIfMounted(() {
-            _showNotificationPermissionPrompt = true;
-          });
-        }
-      });
-    }
-  }
   // Handlers
 
   Future<void>_onPullToRefresh() async {
@@ -493,45 +421,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     if (mounted) {
       setState(() {
         _favorites = favorites;
-      });
-    }
-  }
-
-  void _onAuthorizeOK() {
-      Analytics().logAlert(text:"Already have access", selection: "Ok");
-      Navigator.pop(context);
-      setState(() {
-        _showNotificationPermissionPrompt = false;
-      });
-  }
-
-
-  void _onAuthorize() {
-    _requestAuthorization();
-  }
-
-  void _onAuthorizeSkip(){
-    setState(() {
-      _showNotificationPermissionPrompt = false;
-    });
-  }
-
-  void _requestAuthorization() async {
-    firebase.FirebaseMessaging messagingInstance = firebase.FirebaseMessaging.instance;
-    firebase.NotificationSettings settings = await messagingInstance.getNotificationSettings();
-    firebase.AuthorizationStatus authorizationStatus = settings.authorizationStatus;
-    // There is not "notDetermined" status for android. Threat "denied" in Android like "notDetermined" in iOS
-    if ((Platform.isAndroid && (authorizationStatus != firebase.AuthorizationStatus.denied)) ||
-        (Platform.isIOS && (authorizationStatus != firebase.AuthorizationStatus.notDetermined))) {
-      showDialog(context: context, builder: (context) => _buildNotificationPermissionPrompt(context, authorizationStatus));
-    } else {
-      firebase.NotificationSettings requestSettings = await messagingInstance.requestPermission(
-          alert: true, announcement: false, badge: true, carPlay: false, criticalAlert: false, provisional: false, sound: true);
-      if (requestSettings.authorizationStatus == firebase.AuthorizationStatus.authorized) {
-        Analytics().updateNotificationServices();
-      }
-      setStateIfMounted(() {
-        _showNotificationPermissionPrompt = false;
       });
     }
   }
@@ -574,7 +463,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
             title: widget.headingTitle,
             titleIconKey: widget.headingIconKey,
             slantImageKey: widget.slantImageKey,
-            slantColor: widget.slantColor ?? Styles().colors!.fillColorPrimary,
+            slantColor: widget.slantColor ?? Styles().colors.fillColorPrimary,
             children: (0 <  widget.items!.length) ? _buildListItems(context) : _buildEmptyContent(context),),
         Visibility(visible: showMoreButton, child: Padding(padding: EdgeInsets.only(top: 8, bottom: 40), child: SmallRoundedButton(
           label: _showAll ? Localization().getStringEx('panel.saved.button.less.title', "Show Less") : Localization().getStringEx('panel.saved.button.more.title', "Show All"),
@@ -603,7 +492,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     return <Widget>[Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:
       Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")),
+        Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: Styles().textStyles.getTextStyle("widget.item.regular.thin")),
         Expanded(child: Container(), flex: 3),
     ],),)];
   
@@ -639,13 +528,13 @@ class _SavedItem extends StatelessWidget {
       Semantics(label: title, child:
         Column(children: <Widget>[
           Container(height: 7, color: headerColor,),
-          Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
+          Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Flex(direction: Axis.vertical, children: <Widget>[
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
                       Expanded(child:
-                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.card.title.medium"), ),
+                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.title.medium"), ),
                       ),
                       Visibility(visible: Auth2().canFavorite, child:
                         GestureDetector(behavior: HitTestBehavior.opaque,
@@ -676,10 +565,10 @@ class _SavedItem extends StatelessWidget {
                         Row(children: <Widget>[
                           Padding(padding: EdgeInsets.only(right: 10), child: cardDetailImage,),
                           Expanded(child:
-                            Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.card.detail.medium")),
+                            Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.detail.medium")),
                           )
                         ],) :
-                        Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.card.detail.medium")),
+                        Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.detail.medium")),
                   )),)
                 ]),
               ),
@@ -689,7 +578,7 @@ class _SavedItem extends StatelessWidget {
   }
 
   Widget _buildCompositEventCard(BuildContext context) {
-      return ExploreCard(explore: favorite as Event, showTopBorder: true, horizontalPadding: 0, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+      return ExploreCard(explore: favorite as Event, showTopBorder: true, horizontalPadding: 0, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         onTap:() => _onTapCompositeEvent(context));
   }
 

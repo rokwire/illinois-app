@@ -158,11 +158,12 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
     }
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount,),
-      LinkButton(
-        title: Localization().getStringEx('widget.home.campus_reminders.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.campus_reminders.button.all.hint', 'Tap to view all reminders'),
-        onTap: _onViewAll,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
+        LinkButton(
+          title: Localization().getStringEx('widget.home.campus_reminders.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.campus_reminders.button.all.hint', 'Tap to view all reminders'),
+          onTap: _onViewAll,
+        ),
       ),
     ]);
   }

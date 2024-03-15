@@ -28,25 +28,25 @@ class FavoriteStarIcon extends StatelessWidget {
       switch (selected) {
         case true:  imageKey = 'star-filled'; break;
         case false: imageKey = 'star-outline-gray'; break;
-        default:    imageKey = 'star-gray'; break;
+        default:    imageKey = 'star-partially-filled'; break;
       }
     }
     else if (style == FavoriteIconStyle.Handle) {
       switch (selected) {
         case true:  imageKey = 'star-filled'; break;
         case false: imageKey = 'star-white'; break;
-        default:    imageKey = 'star-gray'; break;
+        default:    imageKey = 'star-partially-filled'; break;
       }
     }
     else if (style == FavoriteIconStyle.Button) {
       switch (selected) {
         case true:  imageKey = 'star-filled'; break;
         case false: imageKey = 'star-white'; break;
-        default:    imageKey = 'star-gray'; break;
+        default:    imageKey = 'star-partially-filled'; break;
       }
     }
     
-    return Styles().images?.getImage(imageKey ?? 'star-outline-gray', excludeFromSemantics: true);
+    return Styles().images.getImage(imageKey ?? 'star-outline-gray', excludeFromSemantics: true);
   }
 }
 

@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -17,7 +17,7 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildContent(context),
-      backgroundColor: Styles().colors!.white,
+      backgroundColor: Styles().colors.white,
       bottomNavigationBar: uiuc.TabBar()
     );
   }
@@ -44,7 +44,7 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
     return Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
       Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         Expanded(child:
-          Text(building.name ?? "", style: TextStyle(fontSize: 24, color: Styles().colors!.fillColorPrimary, letterSpacing: 1),),
+          Text(building.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.extra_large.spaced")),
         ),
       ],),
     );
@@ -57,13 +57,10 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
         Padding(padding: EdgeInsets.symmetric(vertical: 10, ), child:
           Row(children: [
             Padding(padding: EdgeInsets.only(right: 6), child:
-              Styles().images?.getImage('location', excludeFromSemantics: true),
+              Styles().images.getImage('location', excludeFromSemantics: true),
             ),
             Expanded(child:
-              Text(building.fullAddress ?? '', style:
-                TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16,
-                  decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, decorationStyle: TextDecorationStyle.solid, decorationThickness: 1
-                ),
+              Text(building.fullAddress ?? '', style: Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline")
               ),
             )
           ],),
@@ -81,7 +78,7 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
         InkWell(onTap: onTap, child:
           SizedBox(width: 48, height: 48, child:
             Center(child:
-              Styles().images?.getImage('chevron-left-bold', excludeFromSemantics: true
+              Styles().images.getImage('chevron-left-bold', excludeFromSemantics: true
             ),
           ),
         ),
@@ -90,8 +87,8 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
   }
 
   void _onLocation() {
-    Analytics().logSelect(target: "Location Detail");
-    NativeCommunicator().launchMapDirections(jsonData: building.toJson());
+    Analytics().logSelect(target: "Location Directions");
+    building.launchDirections();
   }
 
   void _onBack(BuildContext context) {

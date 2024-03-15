@@ -18,9 +18,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -38,7 +42,7 @@ class HomeAthleticsGameDayWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('panel.browse.entry.my.my_game_day.title', 'My Game Day');
+  static String get title => Localization().getStringEx('widget.game_day.label.my_game_day', 'My Game Day');
 
   State<HomeAthleticsGameDayWidget> createState() => _HomeAthleticsGameDayWidgetState();
 }
@@ -46,20 +50,25 @@ class HomeAthleticsGameDayWidget extends StatefulWidget {
 class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget> implements NotificationsListener {
 
   List<Game>? _todayGames;
+  DateTime? _pausedDateTime;
 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, Connectivity.notifyStatusChanged);
+    NotificationService().subscribe(this, [
+      Connectivity.notifyStatusChanged,
+      AppLivecycle.notifyStateChanged,
+      Auth2UserPrefs.notifyInterestsChanged,
+    ]);
 
     widget.updateController?.stream.listen((String command) {
       if (command == HomePanel.notifyRefresh) {
         LiveStats().refresh();
-        _loadTodayGames();
+        _loadPreferredGames();
       }
     });
 
-    _loadTodayGames();
+    _loadPreferredGames();
   }
 
   @override
@@ -68,39 +77,60 @@ class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget>
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if ((_todayGames != null) && (0 < _todayGames!.length)) {
-      List<Widget> gameDayWidgets = [];
-      for (Game todayGame in _todayGames!) {
-        gameDayWidgets.add(AthleticsGameDayWidget(game: todayGame));
-      }
-      return Column(children: gameDayWidgets);
-    }
-    else {
-      return Container();
-    }
-  }
-
-  void _loadTodayGames() {
-    if (Connectivity().isNotOffline) {
-      Sports().loadTopScheduleGames().then((List<Game>? games) {
-        if (mounted) {
-          setState(() {
-            _todayGames = Sports().getTodayGames(games);
-          });
-        }
-      });
-    }
-  }
-
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
     if (name == Connectivity.notifyStatusChanged) {
-      _loadTodayGames();
+      _loadPreferredGames();
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+    else if (name == Auth2UserPrefs.notifyInterestsChanged) {
+      _loadPreferredGames();
     }
   }
 
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _loadPreferredGames();
+        }
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if ((_todayGames != null) && (0 < _todayGames!.length)) {
+      List<Widget> gameDayWidgets = [];
+      for (Game todayGame in _todayGames!) {
+        gameDayWidgets.add(AthleticsGameDayWidget(game: todayGame, favoriteId: widget.favoriteId,));
+      }
+      return Column(children: gameDayWidgets);
+    }
+    else {
+      return HomeSlantWidget(favoriteId: widget.favoriteId,
+        title: Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'),
+        titleIconKey: 'athletics',
+        child: HomeMessageCard(message: Localization().getStringEx('widget.game_day.label.no_games', 'No Illini Big 10 events today.')),
+      );
+    }
+  }
+
+  void _loadPreferredGames() {
+    if (Connectivity().isNotOffline) {
+      Sports().loadPreferredTodayGames().then((List<Game>? games) {
+        setStateIfMounted(() {
+          _todayGames = games;
+        });
+      });
+    }
+  }
 }

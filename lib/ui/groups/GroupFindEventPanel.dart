@@ -22,6 +22,7 @@ import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -34,14 +35,14 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 class GroupEventsContext {
   StreamController<void> eventsController = StreamController<void>();
-  List<Event>? _events;
-  List<Event>? get events => _events;
+  List<Event2>? _events;
+  List<Event2>? get events => _events;
   set events(value){
     _events = value;
     eventsController.add(null);
   }
   
-  GroupEventsContext({List<Event>? events}) {
+  GroupEventsContext({List<Event2>? events}) {
     _events = events;
   }
 
@@ -203,7 +204,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
               alignment: AlignmentDirectional.topCenter,
               children: <Widget>[
                 Container(
-                  color: Styles().colors!.background,
+                  color: Styles().colors.background,
                   child: _buildCardsContent(),
                 ),
                 Visibility(
@@ -221,26 +222,26 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
           ),
           Container(
             padding: EdgeInsets.all(16),
-            color: Styles().colors!.white,
+            color: Styles().colors.white,
             child: RoundedButton(
               label: Localization().getStringEx("panel.find_event.button.add_selected_events.title", "Add (#) event to group").replaceAll("#", _selectedEvents.length.toString()),
               hint: Localization().getStringEx("panel.find_event.button.add_selected_events.hint", ""),
-              backgroundColor: Styles().colors!.white,
-              textColor: Styles().colors!.fillColorPrimary,
-              borderColor: Styles().colors!.fillColorSecondary,
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+              backgroundColor: Styles().colors.white,
+              borderColor: Styles().colors.fillColorSecondary,
               onTap: _onTapAddEvents,
             ),
           ),
         ],
       ),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
     );
   }
 
   Widget _buildSearchHeading(){
     return Container(
       padding: EdgeInsets.only(left: 16),
-      color: Styles().colors!.fillColorPrimary,
+      color: Styles().colors.fillColorPrimary,
       height: 48,
       child: Row(
         children: <Widget>[
@@ -255,12 +256,12 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
                   controller: _textEditingController,
                   focusNode: _textFocusNode,
                   onSubmitted: (_) => _onTapSearch(),
-                  cursorColor: Styles().colors!.fillColorSecondary,
+                  cursorColor: Styles().colors.fillColorSecondary,
                   keyboardType: TextInputType.text,
-                  style: Styles().textStyles?.getTextStyle('widget.heading.regular'),
+                  style: Styles().textStyles.getTextStyle('widget.heading.regular'),
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintStyle: Styles().textStyles?.getTextStyle('widget.heading.regular'),
+                    hintStyle: Styles().textStyles.getTextStyle('widget.heading.regular'),
                     hintText: Localization().getStringEx("panel.find_event.label.search_event_by_title", "Search event by title"),
                   ),
                 ),
@@ -275,7 +276,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
                 padding: EdgeInsets.all(12),
                 child: GestureDetector(
                   onTap: _onTapClear,
-                  child: Styles().images?.getImage('close'),
+                  child: Styles().images.getImage('close'),
                 ),
               )
           ),
@@ -288,7 +289,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
               padding: EdgeInsets.all(12),
               child: GestureDetector(
                 onTap: _onTapSearch,
-                child: Styles().images?.getImage('search', excludeFromSemantics: true),
+                child: Styles().images.getImage('search', excludeFromSemantics: true),
               ),
             ),
           ),
@@ -300,7 +301,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   Widget _buildFilterButtons(){
     return Container(
       width: double.infinity,
-      color: Styles().colors!.white,
+      color: Styles().colors.white,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Padding(
@@ -408,7 +409,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
         padding: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 40),
         child: Semantics(child:Container(
           decoration: BoxDecoration(
-            color: Styles().colors!.fillColorSecondary,
+            color: Styles().colors.fillColorSecondary,
             borderRadius: BorderRadius.circular(5.0),
           ),
           child: Padding(
@@ -419,7 +420,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
                 shrinkWrap: true,
                 separatorBuilder: (context, index) => Divider(
                   height: 1,
-                  color: Styles().colors!.fillColorPrimaryTransparent03,
+                  color: Styles().colors.fillColorPrimaryTransparent03,
                 ),
                 itemCount: itemCount,
                 itemBuilder: itemBuilder,
@@ -557,19 +558,19 @@ class _EventCardState extends State<_EventCard>{
               onTap: ()=>_onTapEvent(context),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Styles().colors!.white,
+                  color: Styles().colors.white,
                   borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4)),
                 ),
                 child: Column(
                   children: <Widget>[
-                    Container(height: 4, color: Styles().colors!.fillColorSecondary,),
+                    Container(height: 4, color: Styles().colors.fillColorSecondary,),
                     Padding(
                       padding: EdgeInsets.all(16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(StringUtils.isNotEmpty(widget.event.exploreTitle) ? widget.event.exploreTitle! : "",
-                            style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat')
+                            style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat')
                           ),
                           Container(height: 4,),
                           _exploreTimeDetail()
@@ -593,11 +594,11 @@ class _EventCardState extends State<_EventCard>{
     }
     return Semantics(label: displayTime, child: Row(
       children: <Widget>[
-        Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
+        Styles().images.getImage('calendar', excludeFromSemantics: true) ?? Container(),
         Container(width: 7,),
         Flexible(child: Text(displayTime!, overflow: TextOverflow.ellipsis,
             maxLines: 1,
-            style: Styles().textStyles?.getTextStyle('widget.card.detail.small.medium')
+            style: Styles().textStyles.getTextStyle('widget.card.detail.small.medium')
     ),)
       ],
     ));

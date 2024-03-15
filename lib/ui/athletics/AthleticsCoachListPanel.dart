@@ -55,7 +55,7 @@ class _AthleticsCoachListPanelState extends State<AthleticsCoachListPanel> imple
             ),
           ],
         ),
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -64,9 +64,8 @@ class _AthleticsCoachListPanelState extends State<AthleticsCoachListPanel> imple
     List<Widget> widgets = [];
     if(widget.allCoaches != null) {
       widget.allCoaches!.forEach((coach) =>
-      {
         widgets.add(_CoachItem(coach,listener: this,))
-      });
+      );
     }
 
     return widgets;
@@ -95,7 +94,7 @@ class _CoachListHeading extends StatelessWidget{
     return Row(children: <Widget>[
       Expanded(
         child: Container(
-          color: Styles().colors!.fillColorPrimaryVariant,
+          color: Styles().colors.fillColorPrimaryVariant,
           padding: EdgeInsets.only(left: 16, right: 16, top:12, bottom: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,26 +102,18 @@ class _CoachListHeading extends StatelessWidget{
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Styles().images?.getImage(sport!.iconPath!, excludeFromSemantics: true) ?? Container(),
+                  Styles().images.getImage(sport!.iconPath!, excludeFromSemantics: true) ?? Container(),
                   Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(sport!.name!,
-                      style: TextStyle(
-                          color: Styles().colors!.surfaceAccent,
-                          fontFamily: Styles().fontFamilies!.medium,
-                          fontSize: 16
-                      ),
+                      style: Styles().textStyles.getTextStyle("panel.athletics.coach_detail.title.regular.accent")
                     ),
                   ),
                 ],
               ),
               SizedBox(height: 10.0,),
-              Text(Localization().getStringEx("panel.athletics_coach_list.label.heading.title", "2019-2020 Coach"),
-                style: TextStyle(
-                    color: Colors.white,
-                    fontFamily: Styles().fontFamilies!.extraBold,
-                    fontSize: 20,
-                ),
+              Text(Localization().getStringEx("panel.athletics_coach_list.label.heading.title", "All Staff"),
+                style: Styles().textStyles.getTextStyle("widget.heading.large.extra_fat")
               ),
             ],
           ),
@@ -156,7 +147,7 @@ class _CoachItem extends StatelessWidget{
             child: Stack(
               children: <Widget>[
                 Container(
-                  color: Styles().colors!.fillColorPrimary,
+                  color: Styles().colors.fillColorPrimary,
                   height: _blueHeight,
                   margin: EdgeInsets.only(top: _photoMargin*2, left: _horizontalMargin, right: _horizontalMargin,),
                   child: Container(
@@ -170,11 +161,7 @@ class _CoachItem extends StatelessWidget{
                           children: <Widget>[
                             Expanded(
                               child: Text(coach.name!,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: Styles().fontFamilies!.bold,
-                                    fontSize: 20
-                                ),
+                                style: Styles().textStyles.getTextStyle("widget.title.light.large.fat")
                               ),
                             ),
                           ],
@@ -193,7 +180,7 @@ class _CoachItem extends StatelessWidget{
                         bottomEnd: Radius.circular(5),
                       ),
                       boxShadow: [
-                        BoxShadow(color: Styles().colors!.fillColorPrimary!,blurRadius: 4,),
+                        BoxShadow(color: Styles().colors.fillColorPrimary,blurRadius: 4,),
                       ]
 
                   ),
@@ -212,21 +199,13 @@ class _CoachItem extends StatelessWidget{
                             Container(
                               width: 80,
                               child: Text(Localization().getStringEx("panel.athletics_coach_list.label.position.title", "Position"),
-                                  style: TextStyle(
-                                      color: Styles().colors!.textBackground,
-                                      fontFamily: Styles().fontFamilies!.medium,
-                                      fontSize: 14
-                                  )
+                                  style: Styles().textStyles.getTextStyle("widget.item.small")
                               ),
                             ),
                             Expanded(
                               child: Text(coach.title!,
                                   softWrap: true,
-                                  style: TextStyle(
-                                      color: Styles().colors!.textBackground,
-                                      fontFamily: Styles().fontFamilies!.bold,
-                                      fontSize: 14
-                                  )
+                                  style: Styles().textStyles.getTextStyle("widget.item.small.fat")
                               ),
                             ),
                           ],
@@ -240,7 +219,7 @@ class _CoachItem extends StatelessWidget{
                   alignment: Alignment.centerRight,
                   child: Container(
                     margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
-                    decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid)),
+                    decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
                     child: (StringUtils.isNotEmpty(coach.thumbPhotoUrl) ?
                     ModalImageHolder(url: coach.fullSizePhotoUrl, child: Image.network(coach.thumbPhotoUrl!, semanticLabel: "coach", width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,)):
                       Container(height: 96, width: 80, color: Colors.white,)),

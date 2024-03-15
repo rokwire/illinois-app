@@ -67,7 +67,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
     return Scaffold(
       appBar: HeaderBar(
         title: widget.productItem.name,
-        //textStyle: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16),
+        //textStyle: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16),
       ),
       body: Column(
         children: <Widget>[
@@ -78,7 +78,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
           ),
         ],
       ),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -100,16 +100,13 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
             _nutritionItem == null ? Container(
               child: Center(
                 child: Text(Localization().getStringEx("panel.food_details.label.nutrition_fatcts_not_available.title", "Nutrition information not available"),
-                  style: TextStyle(
-                      color: Styles().colors!.fillColorPrimary,
-                      fontSize: 14,
-                      fontFamily: Styles().fontFamilies!.medium),
+                  style: Styles().textStyles.getTextStyle("widget.message.small.semi_fat"),
                 ),
               ),
             ):
             Container(
               decoration: BoxDecoration(
-                  color: Styles().colors!.fillColorPrimary,
+                  color: Styles().colors.fillColorPrimary,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(4),
                       topRight: Radius.circular(4))),
@@ -128,11 +125,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
                         Text(
                           Localization().getStringEx("panel.food_details.label.nutrition_fatcts.title", "NUTRITION FACTS"),
                           textAlign: TextAlign.left,
-                          style: TextStyle(
-                              fontFamily: Styles().fontFamilies!.bold,
-                              color: Colors.white,
-                              fontSize: 14,
-                              letterSpacing: 1.0),
+                          style: Styles().textStyles.getTextStyle("widget.title.light.small.fat.spaced"),
                         ),
                       )
                     ],
@@ -149,7 +142,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
               child: RibbonButton(
                 label: Localization().getStringEx("panel.food_details.button.view_full_list_of_ingredients.title", "View full list of ingredients"),
                 borderRadius: BorderRadius.all(Radius.circular(4)),
-                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                 onTap: (){_onEatSmartTapped(context);},
               ),
             ),
@@ -184,7 +177,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
       list.add(Container(height: 20,));
       list.add(Container(
         decoration: BoxDecoration(
-            color: Styles().colors!.fillColorPrimary,
+            color: Styles().colors.fillColorPrimary,
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(4),
                 topRight: Radius.circular(4))),
@@ -203,11 +196,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
                   child:Text(
                     Localization().getStringEx("panel.food_details.label.include_ingredients.title", "INCLUDES THESE INGREDIENTS"),
                     textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.bold,
-                        color: Colors.white,
-                        fontSize: 14,
-                        letterSpacing: 1.0),
+                    style: Styles().textStyles.getTextStyle("widget.title.light.small.fat.spaced")
                   ),
                 ),
               ],
@@ -236,7 +225,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
       list.add(Container(height: 20,));
       list.add(Container(
         decoration: BoxDecoration(
-            color: Styles().colors!.fillColorPrimary,
+            color: Styles().colors.fillColorPrimary,
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(4),
                 topRight: Radius.circular(4))),
@@ -254,11 +243,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
                 Text(
                   Localization().getStringEx("panel.food_details.label.dietary_preferences.title", "DIETARY PREFERENCES"),
                   textAlign: TextAlign.left,
-                  style: TextStyle(
-                      fontFamily: Styles().fontFamilies!.bold,
-                      color: Colors.white,
-                      fontSize: 14,
-                      letterSpacing: 1.0),
+                  style: Styles().textStyles.getTextStyle("widget.title.light.small.fat.spaced")
                 ),),
               ],
             ),
@@ -305,9 +290,9 @@ class _FactItem extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           border: Border(
-            left: BorderSide(width: 1, color: Styles().colors!.surfaceAccent!),
-            right: BorderSide(width: 1, color: Styles().colors!.surfaceAccent!),
-            bottom: BorderSide(width: 1, color: Styles().colors!.surfaceAccent!),
+            left: BorderSide(width: 1, color: Styles().colors.surfaceAccent),
+            right: BorderSide(width: 1, color: Styles().colors.surfaceAccent),
+            bottom: BorderSide(width: 1, color: Styles().colors.surfaceAccent),
           ),
           color: Colors.white,
         ),
@@ -322,10 +307,7 @@ class _FactItem extends StatelessWidget {
                 child: Text(
                   StringUtils.isNotEmpty(label) ? label! : "",
                   textAlign: TextAlign.left,
-                  style: TextStyle(
-                      color: Styles().colors!.fillColorPrimary,
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies!.bold),
+                  style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
                 ),
               ),
               Expanded(
@@ -333,10 +315,7 @@ class _FactItem extends StatelessWidget {
                 child: Text(
                 StringUtils.isNotEmpty(value) ? value! : "",
                 textAlign: TextAlign.right,
-                style: TextStyle(
-                    color: Styles().colors!.mediumGray,
-                    fontSize: 14,
-                    fontFamily: Styles().fontFamilies!.medium),
+                style: Styles().textStyles.getTextStyle("widget.detail.light.small"),
               )),
             ],
           ),
@@ -360,9 +339,9 @@ class _IngredientItem extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           border: Border(
-            left: BorderSide(width: 1, color: Styles().colors!.surfaceAccent!),
-            right: BorderSide(width: 1, color: Styles().colors!.surfaceAccent!),
-            bottom: BorderSide(width: 1, color: Styles().colors!.surfaceAccent!),
+            left: BorderSide(width: 1, color: Styles().colors.surfaceAccent),
+            right: BorderSide(width: 1, color: Styles().colors.surfaceAccent),
+            bottom: BorderSide(width: 1, color: Styles().colors.surfaceAccent),
           ),
           color: Colors.white,
         ),
@@ -374,10 +353,7 @@ class _IngredientItem extends StatelessWidget {
             children: <Widget>[
               Text(
                 StringUtils.isNotEmpty(label) ? label! : "",
-                style: TextStyle(
-                    color: Styles().colors!.fillColorPrimary,
-                    fontSize: 16,
-                    fontFamily: Styles().fontFamilies!.medium),
+                style: Styles().textStyles.getTextStyle("widget.detail.medium"),
               ),
             ],
           ),

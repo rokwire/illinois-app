@@ -75,7 +75,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
                         children: <Widget> [
                           _buildFilterLabel(),
                           Expanded(
-                            child: Padding(padding: EdgeInsets.only(top: 2),child:_wrapWithBottomBorder(Styles().colors!.fillColorSecondaryVariant!, FilterSelector(
+                            child: Padding(padding: EdgeInsets.only(top: 2),child:_wrapWithBottomBorder(Styles().colors.fillColorSecondaryVariant, FilterSelector(
                               title: _filters[_selectedFilterIndex],
                               active: _filterOptionsVisible,
                               expanded: true,
@@ -101,7 +101,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
               _buildFilterValuesContainer()
               ],),),
             ]),
-            backgroundColor: Styles().colors!.background,
+            backgroundColor: Styles().colors.background,
             bottomNavigationBar: uiuc.TabBar(),
           );
   }
@@ -156,7 +156,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
 
           return StringUtils.isNotEmpty(news.imageUrl) ? ImageSlantHeader(
             imageUrl: news.imageUrl,
-            slantImageColor: Styles().colors!.fillColorPrimaryTransparent03,
+            slantImageColor: Styles().colors.fillColorPrimaryTransparent03,
             slantImageKey:  'slant-dark',
             child: _buildAthleticsNewsCard(news)
           ) : _buildAthleticsNewsCard(news);
@@ -191,14 +191,14 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
     return Visibility(visible: _filterOptionsVisible, child: Padding(
         padding: EdgeInsets.only(left: 16, right: 16, top: 95, bottom: 40),
         child: Container(decoration: BoxDecoration(
-          color: Styles().colors!.fillColorSecondary,
+          color: Styles().colors.fillColorSecondary,
           borderRadius: BorderRadius.circular(5.0),), child: Padding(
           padding: EdgeInsets.only(top: 2),
           child: Container(color: Colors.white,
             child: ListView.separated(shrinkWrap: true, separatorBuilder: (context, index) =>
                 Divider(
                   height: 1,
-                  color: Styles().colors!.fillColorPrimaryTransparent03,
+                  color: Styles().colors.fillColorPrimaryTransparent03,
                 ),
               itemCount: filterValues.length,
               itemBuilder: (context, index) {
@@ -222,14 +222,10 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
   }
 
   Widget _buildFilterLabel(){
-    return _wrapWithBottomBorder(Styles().colors!.surfaceAccent!,
+    return _wrapWithBottomBorder(Styles().colors.surfaceAccent,
         Padding(padding: EdgeInsets.only(top: 14),
         child:Text(Localization().getStringEx("panel.athletics_news_list.label.filter_by", "Filter by"),
-          style: TextStyle(
-          fontSize: 16,
-          color: Styles().colors!.textBackground,
-        fontFamily: Styles().fontFamilies!.regular
-    )),));
+          style: Styles().textStyles.getTextStyle("widget.item.regular.thin")),));
   }
 
   Widget _wrapWithBottomBorder(Color color, Widget child){

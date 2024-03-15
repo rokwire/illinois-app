@@ -100,9 +100,9 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
       }
     }
 
-    return Scaffold(backgroundColor: Styles().colors!.background, body:
+    return Scaffold(backgroundColor: Styles().colors.background, body:
       Stack(children: <Widget>[
-        Styles().images?.getImage("header-login", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
+        Styles().images.getImage("header-login", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
         SafeArea(child:
           Column(children:[
             Expanded(child:
@@ -113,15 +113,15 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                       header: true,
                       child: Padding(padding: EdgeInsets.symmetric(horizontal: 36), child:
                         Text(title,
-                          textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.onboarding2.login_email.heading.title"))
+                          textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.login_email.heading.title"))
                     )),
                     Container(height: 24,),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 32), child:
                       Text(description,
-                        textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.description.medium")),
+                        textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.description.medium")),
                     ),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 3), child:
-                      Text(entryText, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
+                      Text(entryText, textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
                     ),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
                       Semantics(
@@ -131,16 +131,16 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                         excludeSemantics: true,
                         value: _phoneOrEmailController!.text,
                         child: Container(
-                          color: _identifier == null ? Styles().colors!.white: Styles().colors!.background,
+                          color: _identifier == null ? Styles().colors.white: Styles().colors.background,
                           child: TextField(
                             controller: _phoneOrEmailController,
                             readOnly: _identifier != null,
                             autofocus: false,
                             autocorrect: false,
                             onSubmitted: (_) => _clearErrorMsg,
-                            cursorColor: Styles().colors!.textBackground,
+                            cursorColor: Styles().colors.textBackground,
                             keyboardType: TextInputType.emailAddress,
-                            style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"),
+                            style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
                             decoration: InputDecoration(
                               enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0, style: BorderStyle.solid),),
                               focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0),),
@@ -153,11 +153,11 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                       Padding(key: _validationErrorKey, padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), child:
                         Column(
                           children: [
-                            Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style:  Styles().textStyles?.getTextStyle("panel.settings.error.text")),
+                            Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style:  Styles().textStyles.getTextStyle("panel.settings.error.text")),
                             Visibility(visible: StringUtils.isNotEmpty(_validationErrorDetails), child:
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
-                                child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style:  Styles().textStyles?.getTextStyle("widget.message.small")),
+                                child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style:  Styles().textStyles.getTextStyle("widget.message.small")),
                               ),
                             ),
                           ],
@@ -173,9 +173,9 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
               RoundedButton(
                 label: Localization().getStringEx("panel.onboarding2.phone_or_email.next.text", "Next"),
                 hint: Localization().getStringEx("panel.onboarding2.phone_or_email.next.hint", ""),
-                borderColor: Styles().colors!.fillColorSecondary,
-                backgroundColor: Styles().colors!.background,
-                textColor: Styles().colors!.fillColorPrimary,
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                borderColor: Styles().colors.fillColorSecondary,
+                backgroundColor: Styles().colors.background,
                 onTap: () => _onTapNext()
               ),
             ),

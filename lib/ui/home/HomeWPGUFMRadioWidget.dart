@@ -52,19 +52,19 @@ class HomeWPGUFMRadioWidget extends StatelessWidget {
     return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
       Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
         Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Container(color: Styles().colors!.fillColorPrimary, child:
+          Container(color: Styles().colors.fillColorPrimary, child:
             Row(children: <Widget>[
               Expanded(child:
                 Padding(padding: EdgeInsets.all(8), child:
                   Center(child:
-                    Text(HomeWPGUFMRadioWidget.title, style: TextStyle(fontSize: 20, color: Colors.white),),
+                    Text(HomeWPGUFMRadioWidget.title, style: Styles().textStyles.getTextStyle("widget.dialog.message.regular")),
                   ),
                 ),
               ),
               Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), button: true, child:
                 InkWell(onTap : () => _onClosePopup(context), child:
                   Padding(padding: EdgeInsets.all(16), child:
-                    Styles().images?.getImage('close-circle-white', excludeFromSemantics: true),
+                    Styles().images.getImage('close-circle-white', excludeFromSemantics: true),
                   ),
                 ),
               ),
@@ -143,18 +143,18 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors!.white, child:
+                Container(color: Styles().colors.white, child:
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        Container(color: Styles().colors!.white, child:
+                        Container(color: Styles().colors.white, child:
                           Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                             Row(children: <Widget>[
                               Expanded(child:
                                 Padding(padding: EdgeInsets.all(16), child:
-                                  Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors!.fillColorSecondary! , width: 3))), child:
+                                  Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors.fillColorSecondary , width: 3))), child:
                                     Padding(padding: EdgeInsets.only(left: 10), child:
-                                    Row(children: [Expanded(child: Text(buttonTitle, style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat')))]))))),
+                                    Row(children: [Expanded(child: Text(buttonTitle, style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat')))]))))),
                             ],),
                           ),
                         ),
@@ -163,8 +163,8 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
                           excludeSemantics: true,
                           label: buttonTitle,
                           hint: Localization().getStringEx('widget.home.radio.button.add_radio.hint', ''),
-                          child:  IconButton(color: Styles().colors!.fillColorPrimary,
-                            icon: Styles().images?.getImage(iconKey, excludeFromSemantics: true) ?? Container(),
+                          child:  IconButton(color: Styles().colors.fillColorPrimary,
+                            icon: Styles().images.getImage(iconKey, excludeFromSemantics: true) ?? Container(),
                             onPressed: _onTapPlayPause)
                       ) : Container(),
                     ]),

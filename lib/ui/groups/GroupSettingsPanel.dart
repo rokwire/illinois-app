@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -30,7 +32,6 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -40,6 +41,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class GroupSettingsPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group? group;
@@ -85,9 +87,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
     _researchRequiresConsentConfirmation = StringUtils.isNotEmpty(_group?.researchConsentStatement) ;
 
-    if(_group!=null) {
-      _group?.settings ??= GroupSettingsExt.initialDefaultSettings(); //Group back compatibility for older groups without settings -> initit with default settings.Not used. The BB return all false by default
-    }
+    _group?.settings ??= GroupSettingsExt.initialDefaultSettings(group: _group); //Group back compatibility for older groups without settings -> initit with default settings.Not used. The BB return all false by default
     super.initState();
   }
 
@@ -104,88 +104,86 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: HeaderBar(title: (_group?.researchProject == true) ?
-        Localization().getStringEx("panel.project_settings.label.heading", "Project Settings") :
-        Localization().getStringEx("panel.groups_settings.label.heading", "Group Settings"),
+    String barTitle = (_group?.researchProject == true) ?
+      Localization().getStringEx("panel.groups_settings.label.project.heading", "Project Settings") :
+      Localization().getStringEx("panel.groups_settings.label.heading", "Group Settings");
+
+    List<Widget> contentList = <Widget>[
+      _buildImageSection(),
+      Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+        _buildSectionTitle((_group?.researchProject == true) ? Localization().getStringEx("panel.project_settings.label.heading.general_info", "General project information") : Localization().getStringEx("panel.groups_settings.label.heading.general_info", "General group information"), "info"),
       ),
-      backgroundColor: Styles().colors!.background,
+      _buildNameField(),
+      _buildDescriptionField(),
+      _buildLinkField(),
+
+      // Container(height: 1, color: Styles().colors.surfaceAccent,),
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+        _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.discoverability", "Discoverability"), "search"),
+      ),
+      _buildAttributesLayout(),
+      // Padding(padding: EdgeInsets.only(top: 12), child:
+      //   Container(height: 1, color: Styles().colors.surfaceAccent,),
+      // ),
+    ];
+
+    if (!_isResearchProject) {
+      contentList.addAll(<Widget>[
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+          _buildSectionTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "privacy"),
+        ),
+        Container(height: 8),
+        _buildPrivacyDropDown(),
+        _buildHiddenForSearch(),
+      ]);
+
+      if (_canViewManagedSettings) {
+        contentList.add(_buildAuthManLayout());
+      }
+
+      if (!_isAuthManGroup) {
+        contentList.add(_buildMembershipLayout());
+      }
+
+      //#2685 [USABILITY] Hide group setting "Enable attendance checking" for 4.2
+      //contentList.add(Padding(padding: EdgeInsets.only(top: 8), child:
+      //  _buildAttendanceLayout(),
+      //));
+
+      contentList.add(Padding(padding: EdgeInsets.only(top: 8), child:
+        _buildSettingsLayout(),
+      ));
+    }
+    else {
+      contentList.addAll(<Widget>[
+        // Container(height: 1, color: Styles().colors.surfaceAccent,),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+          _buildSectionTitle("Research", "settings"),
+        ),
+        //_buildResearchOptionLayout(),
+        _buildResearchConsentDetailsField(),
+        // #2626: Hide consent checkbox and edit control.
+        // _buildResearchConfirmationLayout(),
+        _buildResearchOpenLayout(),
+        _buildResearchAudienceLayout(),
+        _buildMembershipLayout(),
+        // _buildProjectSettingsLayout(),
+        _buildSettingsLayout(),
+      ]);
+    }
+
+    contentList.add(Container(height: 24,  color: Styles().colors.background,));
+
+    return Scaffold(
+      backgroundColor: Styles().colors.background,
       body: Column(children: <Widget>[
-        Expanded(child:
-          Container(color: Styles().colors!.background, child:
-            CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
-              //SliverHeaderBar(title: (_group?.researchProject == true) ? Localization().getStringEx("panel.project_settings.label.heading", "Project Settings") : Localization().getStringEx("panel.groups_settings.label.heading", "Group Settings"),),
+        Expanded( child:
+          Container(color: Styles().colors.background, child:
+            CustomScrollView( scrollDirection: Axis.vertical, slivers: <Widget>[
+              SliverHeaderBar(title: barTitle),
               SliverList(delegate: SliverChildListDelegate([
-                Container(color: Styles().colors!.background, child:
-                  Column(children: <Widget>[
-                    _buildImageSection(),
-                    Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                      _buildSectionTitle((_group?.researchProject == true) ? Localization().getStringEx("panel.project_settings.label.heading.general_info", "General project information") : Localization().getStringEx("panel.groups_settings.label.heading.general_info", "General group information"), "info"),
-                    ),
-                    _buildNameField(),
-                    _buildDescriptionField(),
-                    _buildLinkField(),
-                          
-                    Column(children: [
-                      Container(height: 1, color: Styles().colors!.surfaceAccent,),
-                      Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                        _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.discoverability", "Discoverability"), "search"),
-                      ),
-                      _buildAttributesLayout(),
-                    ],),
-                    
-                    Visibility(visible: _isResearchProject, child:
-                      Column(children: [
-                        Container(height: 1, color: Styles().colors!.surfaceAccent,),
-                        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                          _buildSectionTitle("Research", "settings"),
-                        ),
-                        //_buildResearchOptionLayout(),
-                        _buildResearchConsentDetailsField(),
-                        // #2626: Hide consent checkbox and edit control.
-                        // _buildResearchConfirmationLayout(),
-                        _buildResearchOpenLayout(),
-                        _buildResearchAudienceLayout(),
-                      ])
-                    ),
-
-                    Visibility(visible: !_isResearchProject, child:
-                      Column(children: [
-                        Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
-                          Container(height: 1, color: Styles().colors!.surfaceAccent,),
-                        ),
-                        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                          _buildSectionTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "privacy"),
-                        ),
-                        Container(height: 8),
-                        _buildPrivacyDropDown(),
-                        _buildHiddenForSearch(),
-                      ])
-                    ),
-
-                    Visibility(visible: _canViewManagedSettings && !_isResearchProject, child:
-                      _buildAuthManLayout()
-                    ),
-                    
-                    Visibility(visible: !_isAuthManGroup, child:
-                      _buildMembershipLayout()
-                    ),
-
-                    //#2685 [USABILITY] Hide group setting "Enable attendance checking" for 4.2
-                    //Visibility(visible: !_isResearchProject, child:
-                    //  Padding(padding: EdgeInsets.only(top: 8), child:
-                    //    _buildAttendanceLayout(),
-                    //  )
-                    //),
-
-                    Visibility(visible: !_isResearchProject, child:
-                      Padding(padding: EdgeInsets.only(top: 8), child:
-                        _buildSettingsLayout(),
-                      )
-                    ),
-
-                    Container(height: 24,  color: Styles().colors!.background,),
-                  ],),
+                Container(color: Styles().colors.background, child:
+                  Column(children: contentList),
                 )
               ]),),
             ],),
@@ -203,19 +201,19 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
     return Container(
       height: _imageHeight,
-      color: Styles().colors!.background,
+      color: Styles().colors.background,
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          StringUtils.isNotEmpty(_group?.imageURL) ?  Positioned.fill(child: ModalImageHolder(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders))) : Container(),
+          StringUtils.isNotEmpty(_group?.imageURL) ? Positioned.fill(child:  Semantics(label: "Group Image", child: ModalImageHolder(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders)))) : Container(),
           CustomPaint(
-            painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
+            painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
             child: Container(
               height: 53,
             ),
           ),
           CustomPaint(
-            painter: TrianglePainter(painterColor: Styles().colors!.background),
+            painter: TrianglePainter(painterColor: Styles().colors.background),
             child: Container(
               height: 30,
             ),
@@ -229,8 +227,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   button: true, excludeSemantics: true, child:
                   RoundedButton(
                     label: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.groups_settings.add_image","Add Cover Image"),
-                    borderColor: _canUpdate ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-                    textColor: _canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
+                    textStyle: _canUpdate ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
+                    borderColor: _canUpdate ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
                     contentWeight: 0.8,
                     onTap: _onTapAddImage,)
               ),
@@ -246,13 +244,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       return;
     }
     Analytics().logSelect(target: "Add Image");
-    String? _imageUrl = await showDialog(
-        context: context,
-        builder: (_) => Material(
-          type: MaterialType.transparency,
-          child: GroupAddImageWidget(),
-        )
-    );
+    String? _imageUrl = await GroupAddImageWidget.show(context: context, updateUrl: _group!.imageURL);
     if(_imageUrl!=null){
       setState(() {
         _group!.imageURL = _imageUrl;
@@ -276,7 +268,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           children: <Widget>[
             _buildInfoHeader(title,null),
             Container(
-              decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1),color: Styles().colors!.white),
+              decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
               child: Semantics(
                   label: fieldTitle,
                   hint: fieldHint,
@@ -290,7 +282,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     onChanged: (name){_onNameChanged(name); setStateIfMounted(() { });},
                     maxLines: 1,
                     decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
-                    style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                    style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
                   )),
             ),
           ],
@@ -309,20 +301,20 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             child:Container(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               decoration: BoxDecoration(
-                  color: Styles().colors!.fillColorSecondaryVariant,
+                  color: Styles().colors.fillColorSecondaryVariant,
                   border: Border.all(
-                      color: Styles().colors!.fillColorSecondary!,
+                      color: Styles().colors.fillColorSecondary,
                       width: 1),
                   borderRadius:
                   BorderRadius.all(Radius.circular(4))),
               child: Row(
                 children: <Widget>[
-                  Styles().images?.getImage('warning', excludeFromSemantics: true) ?? Container(),
+                  Styles().images.getImage('warning', excludeFromSemantics: true) ?? Container(),
                   Expanded(child:
                   Container(
                       padding: EdgeInsets.only(left: 12, right: 4),
                       child:Text(errorMessage,
-                          style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular))
+                          style: Styles().textStyles.getTextStyle("widget.item.small.thin"))
                   ))
                 ],
               ),
@@ -333,14 +325,14 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //Description
   Widget _buildDescriptionField() {
     String title = (_group?.researchProject == true) ?
-      Localization().getStringEx("panel.project_settings.description.title", "PROJECT DESCRIPTION") :
-      Localization().getStringEx("panel.groups_settings.description.title", "GROUP DESCRIPTION");
+      Localization().getStringEx("panel.groups_settings.description.project.title", "SHORT PROJECT DESCRIPTION") :
+      Localization().getStringEx("panel.groups_settings.description.group.title", "GROUP DESCRIPTION");
     String? fieldTitle = (_group?.researchProject == true) ?
-      Localization().getStringEx("panel.project_settings.description.field", "What’s the purpose of your project? Who should join? What will you do at your events?") :
-      Localization().getStringEx("panel.groups_settings.description.field", "What’s the purpose of your group? Who should join? What will you do at your events?");
+      Localization().getStringEx("panel.groups_settings.description.project.field", "What’s the purpose of your project? Who should join? What will you do at your events?") :
+      Localization().getStringEx("panel.groups_settings.description.group.field", "What’s the purpose of your group? Who should join? What will you do at your events?");
     String? fieldHint = (_group?.researchProject == true) ?
-      Localization().getStringEx("panel.project_settings.description.field.hint", "") :
-      Localization().getStringEx("panel.groups_settings.description.field.hint", "");
+      Localization().getStringEx("panel.groups_settings.description.project.field.hint", "") :
+      Localization().getStringEx("panel.groups_settings.description.group.field.hint", "");
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
@@ -349,7 +341,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         children: <Widget>[
           _buildInfoHeader(title,fieldTitle),
           Container(
-            decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1),color: Styles().colors!.white),
+            decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
             child: Semantics(
                 label: title,
                 hint: fieldHint,
@@ -365,7 +357,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   decoration: InputDecoration(
                     hintText: fieldHint,
                     border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                  style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                  style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
                 )),
           ),
         ],
@@ -375,26 +367,29 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //
   //Link
   Widget _buildLinkField(){
+    String labelTitle = _isResearchProject ?
+      Localization().getStringEx("panel.groups_settings.project.link.title", "OPTIONAL WEBSITE LINK") :
+      Localization().getStringEx("panel.groups_settings.link.title", "WEBSITE LINK");
+    String labelHint = _isResearchProject ?
+      Localization().getStringEx("panel.groups_settings,project.link.title.hint", "") :
+      Localization().getStringEx("panel.groups_settings.link.title.hint","");
+
     return
       Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-          Semantics(label:Localization().getStringEx("panel.groups_settings.link.title", "WEBSITE LINK"),
-            hint: Localization().getStringEx("panel.groups_settings.link.title.hint",""), textField: true, excludeSemantics: true, value:  _group!.webURL,
+          Semantics(label:labelTitle,
+            hint: labelHint, textField: true, excludeSemantics: true, value:  _group!.webURL,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Padding(
-                    padding: EdgeInsets.only(bottom: 8, top:24),
+                    padding: EdgeInsets.only(bottom: 8, top:16),
                     child: Text(
-                      Localization().getStringEx("panel.groups_settings.link.title", "WEBSITE LINK"),
-                      style: TextStyle(
-                          color: Styles().colors!.fillColorPrimary,
-                          fontSize: 14,
-                          fontFamily: Styles().fontFamilies!.bold,
-                          letterSpacing: 1),
+                      labelTitle,
+                      style: Styles().textStyles.getTextStyle("widget.title.small.fat.spaced")
                     ),
                   ),
                   Padding(
@@ -403,7 +398,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                       decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(
-                              color: Styles().colors!.fillColorPrimary!,
+                              color: Styles().colors.fillColorPrimary,
                               width: 1)),
                       child: TextField(
                         controller: _linkController,
@@ -413,10 +408,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             hintText:  Localization().getStringEx("panel.groups_settings.link.hint", "Add URL"),
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
-                        style: TextStyle(
-                            color: Styles().colors!.textBackground,
-                            fontSize: 16,
-                            fontFamily: Styles().fontFamilies!.regular),
+                        style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                         onChanged: (link){ _group!.webURL = link; setStateIfMounted(() {});},
                         maxLines: 1,
                       ),
@@ -433,14 +425,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               onTap: _onTapConfirmLinkUrl,
               child: Text(
                 Localization().getStringEx("panel.groups_settings.link.button.confirm.link.title", 'Confirm URL'),
-                style: TextStyle(
-                    color: Styles().colors!.fillColorPrimary,
-                    fontSize: 16,
-                    fontFamily: Styles().fontFamilies!.medium,
-                    decoration: TextDecoration.underline,
-                    decorationThickness: 1,
-                    decorationColor:
-                    Styles().colors!.fillColorSecondary),
+                style: Styles().textStyles.getTextStyle("widget.button.title.medium.underline")
               ),
             )
         ),
@@ -450,10 +435,17 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   void _onTapConfirmLinkUrl() {
     Analytics().logSelect(target: "Confirm Website url");
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (context) => WebPanel(url: _linkController.text)));
+    if (_linkController.text.isNotEmpty) {
+      Uri? uri = Uri.tryParse(_linkController.text);
+      if (uri != null) {
+        Uri? fixedUri = UrlUtils.fixUri(uri);
+        if (fixedUri != null) {
+          _linkController.text = fixedUri.toString();
+          uri = fixedUri;
+        }
+        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
+      }
+    }
   }
 
   //
@@ -465,7 +457,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           Expanded(flex: 5, child:
             _buildInfoHeader(
               Localization().getStringEx("panel.groups_create.attributes.title", "ATTRIBUTES"),
-              Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
+              _isResearchProject?
+                Localization().getStringEx("panel.groups_create.attributes.project_description", "Attributes help you provide more information."):
+                Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
             )
           ),
           Container(width: 8),
@@ -473,9 +467,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             RoundedButton(
               label: Localization().getStringEx("panel.groups_create.button.attributes.title", "Edit"),
               hint: Localization().getStringEx("panel.groups_create.button.attributes.hint", ""),
-              backgroundColor: Styles().colors!.white,
-              textColor: Styles().colors!.fillColorPrimary,
-              borderColor: Styles().colors!.fillColorSecondary,
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+              backgroundColor: Styles().colors.white,
+              borderColor: Styles().colors.fillColorSecondary,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               onTap: _onTapAttributes,
             )
@@ -490,21 +484,23 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     List<Widget> attributesList = <Widget>[];
     Map<String, dynamic>? groupAttributes = _group?.attributes;
     ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttributesCategory>? categories = contentAttributes?.categories;
-    if ((groupAttributes != null) && (contentAttributes != null) && (categories != null)) {
-      for (ContentAttributesCategory category in categories) {
-        List<String>? displayAttributes = category.displayAttributesListFromSelection(groupAttributes, contentAttributes: contentAttributes, complete: true);
-        if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
-          attributesList.add(Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text("${contentAttributes.stringValue(category.title)}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
-              Styles().textStyles?.getTextStyle("widget.card.detail.small.fat")
-            ),
-            Expanded(child:
-              Text(displayAttributes.join(', '), /*overflow: TextOverflow.ellipsis, maxLines: 1,*/ style:
-                Styles().textStyles?.getTextStyle("widget.card.detail.small.regular")
+    List<ContentAttribute>? attributes = contentAttributes?.attributes;
+    if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
+      for (ContentAttribute attribute in attributes) {
+        List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
+        if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+          attributesList.add(
+            Semantics(container:true, child:
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
+                  Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
+                ),
+                Expanded(child:
+                  Text(displayAttributeValues.join(', '), /*overflow: TextOverflow.ellipsis, maxLines: 1,*/ style:
+                    Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
+                  ),
               ),
-            ),
-          ],),);
+          ],)),);
         }
       }
     }
@@ -522,6 +518,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         Localization().getStringEx('panel.group.attributes.attributes.header.description', 'Choose one or more attributes that help describe this group.'),
       contentAttributes: Groups().contentAttributes,
       selection: _group?.attributes,
+      sortType: ContentAttributesSortType.alphabetical,
     ))).then((selection) {
       if ((selection != null) && mounted) {
         setState(() {
@@ -544,10 +541,11 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
-        color: Styles().colors!.background,
+        color: Styles().colors.background,
         child:Column(children: <Widget>[
           Semantics(
           explicitChildNodes: true,
+          container: true,
           child: Container(
               child:  GroupDropDownButton(
                   emptySelectionText: Localization().getStringEx("panel.groups_settings.privacy.hint.default","Select privacy setting.."),
@@ -571,7 +569,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 8,vertical: 12),
               child:Text(longDescription ?? '',
-                style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular, letterSpacing: 1),
+                style: Styles().textStyles.getTextStyle("widget.item.small.thin.spaced"),
             ),)),
           Container(height: 8,)
       ],));
@@ -595,7 +593,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     return Visibility(
         visible: _isPrivateGroup,
         child: Container(
-            color: Styles().colors!.background,
+            color: Styles().colors.background,
             padding: EdgeInsets.only(left: 16, right: 16, bottom: 20),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Container(
@@ -610,11 +608,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                       padding: EdgeInsets.only(left: 8, right: 8, top: 12),
                       child: Text(
                           Localization().getStringEx("panel.groups.common.private.search.hidden.description", "A hidden group is unsearchable."),
-                          style: TextStyle(
-                              color: Styles().colors!.textBackground,
-                              fontSize: 14,
-                              fontFamily: Styles().fontFamilies!.regular,
-                              letterSpacing: 1))))
+                          style: Styles().textStyles.getTextStyle("widget.item.small.thin.spaced"))))
             ])));
   }
 
@@ -644,7 +638,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
     return
       Container(
-        color: Styles().colors!.background,
+        color: Styles().colors.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column( children: <Widget>[
           _buildSectionTitle(sectionTitle, "person-circle"),
@@ -665,9 +659,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       child:
         Container (
           decoration: BoxDecoration(
-              color: Styles().colors!.white,
+              color: Styles().colors.white,
               border: Border.all(
-                  color: Styles().colors!.surfaceAccent!,
+                  color: Styles().colors.surfaceAccent,
                   width: 1),
               borderRadius:
               BorderRadius.all(Radius.circular(4))),
@@ -682,21 +676,18 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     Expanded(child:
                       Text(
                         title,
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies!.bold,
-                            fontSize: 16,
-                            color: Styles().colors!.fillColorPrimary),
+                        style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 5),
-                      child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
+                      child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true),
                     ),
                 ]),
                 Container(
                   padding: EdgeInsets.only(right: 42,top: 4),
                   child: Text(description,
-                    style: TextStyle(color: Styles().colors!.mediumGray, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                    style: Styles().textStyles.getTextStyle("widget.detail.light.regular")
                   ),
                 )
               ]
@@ -764,7 +755,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           _buildInfoHeader(title, null, padding: EdgeInsets.only(bottom: 6, top: 12)),
-          Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1), color: Styles().colors!.white), child:
+          Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white), child:
             Row(children: [
               Expanded(child:
                   Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, value: _researchConsentDetailsController.text, child:
@@ -772,7 +763,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                         controller: _researchConsentDetailsController,
                         maxLines: 15,
                         decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                        style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                        style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                         onChanged: (text){ _group?.researchConsentDetails = text; setStateIfMounted(() { });},
                     )
                   ),
@@ -801,7 +792,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         Visibility(visible: _researchRequiresConsentConfirmation, child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             _buildInfoHeader(title, null, padding: EdgeInsets.only(bottom: 6, top: 12)),
-            Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1), color: Styles().colors!.white), child:
+            Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white), child:
               Row(children: [
                 Expanded(child:
                   Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, child:
@@ -809,7 +800,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                         controller: _researchConsentStatementController,
                         maxLines: 5,
                         decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                        style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                        style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
                     )
                   ),
                 )
@@ -833,16 +824,18 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     int questionsCount = _researchProfileQuestionsCount;
     String questionsDescription = (0 < questionsCount) ?
       sprintf(Localization().getStringEx("panel.groups_settings.tags.label.question.format","%s Question(s)"), [questionsCount.toString()]) :
-      Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question");
+      Localization().getStringEx("panel.groups_settings.audience.button.question.description.default","All Potential Participants");
 
     return Container(
-      color: Styles().colors!.background,
-      padding: EdgeInsets.only(left: 16, right: 16, top: 8),
+      color: Styles().colors.background,
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(children: <Widget>[
+        _buildSectionTitle(Localization().getStringEx("panel.groups_create.audience.section.title", 'Audience'), "person"),
+        Container(height: 12,),
         Semantics(
             explicitChildNodes: true,
             child: _buildMembershipButton(
-                title: "Target Audience",
+                title: Localization().getStringEx("panel.groups_create.target.audience.title", "Target Audience"),
                 description: questionsDescription,
                 onTap: _onTapResearchProfile)),
       ]),
@@ -875,7 +868,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     bool isAuthManGroup = _isAuthManGroup;
 
     return Container(
-        color: Styles().colors!.background,
+        color: Styles().colors.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column(children: <Widget>[
           _buildSectionTitle(Localization().getStringEx("panel.groups_settings.authman.section.title", "University managed membership"), "person-circle"),
@@ -885,19 +878,19 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Container(
                     decoration: BoxDecoration(
-                        color: Styles().colors!.white,
-                        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                        color: Styles().colors.white,
+                        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                         borderRadius: BorderRadius.all(Radius.circular(4))),
                     padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                         Expanded( child:
                         Text(Localization().getStringEx("panel.groups_settings.authman.enabled.label", "Is this a managed membership group?"),
-                            style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: (_canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent)))),
+                            style: Styles().textStyles.getTextStyle("widget.message.regular.fat.accent"))),
                         GestureDetector(
                             onTap: _onTapAuthMan,
                             child: Padding(
-                                padding: EdgeInsets.only(left: 10), child: Styles().images?.getImage(isAuthManGroup ? 'toggle-on' : 'toggle-off')))
+                                padding: EdgeInsets.only(left: 10), child: Styles().images.getImage(isAuthManGroup ? 'toggle-on' : 'toggle-off')))
                       ])
                     ])),
                 Visibility(
@@ -905,10 +898,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Row(children: [
                         _buildInfoHeader(Localization().getStringEx("panel.groups_settings.authman.group.name.label", "Membership name"), null),
-                        Padding(padding: EdgeInsets.only(top: 14), child: Text('*', style: TextStyle(color: Styles().colors!.fillColorSecondary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)))
+                        Padding(padding: EdgeInsets.only(top: 14), child: Text('*', style: Styles().textStyles.getTextStyle("widget.label.medium.fat")))
                       ]),
                       Container(
-                          decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1), color: Styles().colors!.white!),
+                          decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white),
                           child: TextField(
                             onChanged: _onAuthManGroupNameChanged,
                             enabled: _canUpdate,
@@ -916,7 +909,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             controller: _authManGroupNameController,
                             maxLines: 5,
                             decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                            style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                            style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
                           ))
                     ]))
               ])),
@@ -950,7 +943,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   //Buttons
   Widget _buildButtonsLayout() {
-    return SafeArea(child: Container( color: Styles().colors!.white,
+    return SafeArea(child: Container( color: Styles().colors.white,
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Center(
         child:
@@ -959,9 +952,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             Expanded(
               child: RoundedButton(
                 label: Localization().getStringEx("panel.groups_settings.button.update.title", "Update Settings"),
+                textStyle: _canUpdate ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
                 backgroundColor: Colors.white,
-                borderColor: _canUpdate ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-                textColor: _canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
+                borderColor: _canUpdate ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
                 progress: _updating,
                 enabled: _canUpdate,
                 onTap: _onUpdateTap,
@@ -973,9 +966,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 label: _isResearchProject ?
                   Localization().getStringEx("panel.project_settings.button.delete.title", "Delete this Project") : //TBD localize
                   Localization().getStringEx("panel.groups_settings.button.delete.title", "Delete this Group"),  //TBD localize
+                textStyle: _canUpdate ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
                 backgroundColor: Colors.white,
-                borderColor: _canUpdate ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-                textColor: _canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
+                borderColor: _canUpdate ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
                 progress: _deleting,
                 enabled: _canUpdate,
                 onTap: _onDeleteTap,
@@ -1010,11 +1003,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     if (_group?.researchProject == true) {
       _group?.privacy = GroupPrivacy.public;
       _group?.hiddenForSearch = false;
-      _group?.canJoinAutomatically = false;
-      _group?.onlyAdminsCanCreatePolls = true;
       _group?.authManEnabled = false;
       _group?.authManGroupName = null;
       _group!.attendanceGroup = false;
+      //Unlocked Advanced setting
+      // _group?.canJoinAutomatically = false;
+      // _group?.onlyAdminsCanCreatePolls = true;
     }
     else {
       _group?.researchOpen = null;
@@ -1105,7 +1099,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   // Attendance
   /*Widget _buildAttendanceLayout() {
     return Container(
-      color: Styles().colors!.background,
+      color: Styles().colors.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: _buildSwitch(
             title: Localization().getStringEx("panel.groups_settings.attendance_group.label", "Enable attendance checking"),
@@ -1133,7 +1127,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         child:  RibbonButton(
             label: Localization().getStringEx('panel.groups_settings..button.advanced_settings.title', 'Advanced Settings'), //Localize
             hint: Localization().getStringEx('panel.groups_settings..button.advanced_settings..hint', ''),
-            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             borderRadius: BorderRadius.circular(4),
             onTap: (){
               Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAdvancedSettingsPanel(group: _group,))).then((_){
@@ -1147,16 +1141,37 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     );
   }
 
+  //ProjectSettings
+/*  Widget _buildProjectSettingsLayout() {
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      EnabledToggleButton(
+        label: Localization().getStringEx('panel.groups_settings.auto_join.project.enabled.label', 'Does not require my screening of potential participants'),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+        enabled: true,
+        toggled: _group?.canJoinAutomatically == true,
+        onTap: _onTapJoinAutomatically
+      )
+    );
+  }
+
+  void _onTapJoinAutomatically() {
+    Analytics().logSelect(target: "Does not require my screening of potential participants");
+    setState(() {
+      _group?.canJoinAutomatically = (_group?.canJoinAutomatically != true);
+    });
+  }*/
+
   // Common
   Widget _buildInfoHeader(String title, String? description, { EdgeInsetsGeometry padding = const EdgeInsets.only(bottom: 8, top: 24)}){
     return Container(padding: padding, child:
       Semantics(container: true, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Semantics(label: title, header: true, excludeSemantics: true, child:
-            Text(title, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold),),
+            Text(title, style: Styles().textStyles.getTextStyle("widget.title.tiny")),
           ),
           ((description != null) && description.isNotEmpty) ? Container(padding: EdgeInsets.only(top: 2), child:
-              Text(description, style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),),
+              Text(description, style: Styles().textStyles.getTextStyle("widget.item.small.thin")),
             ) : Container(),
         ],),
       )
@@ -1172,7 +1187,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           children: <Widget>[
               Container(
                 padding: EdgeInsets.only(right: 10),
-                child: Styles().images?.getImage(iconKey, excludeFromSemantics: true)
+                child: Styles().images.getImage(iconKey, excludeFromSemantics: true)
               ),
             Expanded(child:
               Semantics(
@@ -1182,7 +1197,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 child:
                 Text(
                   title,
-                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
+                  style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
                 ),
               ),
             )
@@ -1198,22 +1213,22 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         button: true,
         child: Container(
           decoration: BoxDecoration(
-              color: Styles().colors!.white,
-              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+              color: Styles().colors.white,
+              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
               borderRadius: BorderRadius.all(Radius.circular(4))),
           padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Expanded(
                   child: Text(title ?? "",
-                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: enabled ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent), semanticsLabel: "",)),
+                      style:enabled ? Styles().textStyles.getTextStyle("widget.button.title.enabled") :  Styles().textStyles.getTextStyle("widget.button.title.disabled"), semanticsLabel: "",)),
               GestureDetector(
                   onTap: (enabled && (onTap != null)) ?
                     (){
                       onTap();
                       AppSemantics.announceCheckBoxStateChange(context,  /*reversed value*/!(value == true), title);
                   } : (){},
-                  child: Padding(padding: EdgeInsets.only(left: 10), child: Styles().images?.getImage(value ?? false ? 'toggle-on' : 'toggle-off')))
+                  child: Padding(padding: EdgeInsets.only(left: 10), child: Styles().images.getImage(value ?? false ? 'toggle-on' : 'toggle-off')))
             ])
           ])),
     ));
@@ -1231,7 +1246,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     int leftAreaFlex = 0,
   }) {
     return Dialog(
-        backgroundColor: Styles().colors!.fillColorPrimary,
+        backgroundColor: Styles().colors.fillColorPrimary,
         child: StatefulBuilder(builder: (context, setStateEx) {
           return Padding(
               padding: EdgeInsets.all(16),
@@ -1239,15 +1254,14 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 Padding(
                     padding: EdgeInsets.symmetric(vertical: 26),
                     child: Text(confirmationTextMsg!,
-                        textAlign: TextAlign.left, style:  Styles().textStyles?.getTextStyle('widget.dialog.message.medium'))),
+                        textAlign: TextAlign.left, style:  Styles().textStyles.getTextStyle('widget.dialog.message.medium'))),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
                   Expanded(flex: leftAreaFlex, child: Container()),
                   Expanded(flex: negativeButtonFlex, child: RoundedButton(
                       label: StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")),
-                      fontFamily: "ProximaNovaRegular",
-                      textColor: Styles().colors!.fillColorPrimary,
-                      borderColor: Styles().colors!.white,
-                      backgroundColor: Styles().colors!.white,
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.thin"),
+                      borderColor: Styles().colors.white,
+                      backgroundColor: Styles().colors.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                       onTap: () {
                         Analytics().logAlert(text: confirmationTextMsg, selection: negativeButtonLabel);
@@ -1256,10 +1270,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   Container(width: 16),
                   Expanded(flex: positiveButtonFlex, child: RoundedButton(
                     label: positiveButtonLabel ?? '',
-                    fontFamily: "ProximaNovaBold",
-                    textColor: Styles().colors!.fillColorPrimary,
-                    borderColor: Styles().colors!.white,
-                    backgroundColor: Styles().colors!.white,
+                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                    borderColor: Styles().colors.white,
+                    backgroundColor: Styles().colors.white,
                     padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     progress: _confirmationProgress,
                     onTap: () {

@@ -57,7 +57,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
       });
     }
 
-    _courses = Canvas().courses;
+    _courses = Canvas().giesCourses;
     super.initState();
   }
 
@@ -134,18 +134,19 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
           allowImplicitScrolling: true,
         )
       ),
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => coursePages.length,),
-      LinkButton(
-        title: Localization().getStringEx('widget.home.canvas_courses.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.canvas_courses.button.all.hint', 'Tap to view all courses'),
-        onTap: _onViewAll,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => coursePages.length, centerWidget:
+        LinkButton(
+          title: Localization().getStringEx('widget.home.canvas_courses.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.canvas_courses.button.all.hint', 'Tap to view all courses'),
+          onTap: _onViewAll,
+        ),
       ),
     ],);
   }
 
   void _updateCourses() {
     setStateIfMounted(() {
-      _courses = Canvas().courses;
+      _courses = Canvas().giesCourses;
       _pageViewKey = UniqueKey();
       // _pageController = null;
       _pageController?.jumpToPage(0);

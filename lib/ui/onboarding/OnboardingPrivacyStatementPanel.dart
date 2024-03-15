@@ -71,7 +71,7 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
     }
     
     return Scaffold(
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         body: SwipeDetector(
             onSwipeLeft: () => _goNext(context),
             onSwipeRight: () => _goBack(context),
@@ -83,9 +83,9 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Stack(children: <Widget>[
-                        Styles().images?.getImage("header-privacy", key: _headingKey, fit: BoxFit.fitWidth, width: headingWidth, excludeFromSemantics: true) ?? Container(),
+                        Styles().images.getImage("header-privacy", key: _headingKey, fit: BoxFit.fitWidth, width: headingWidth, excludeFromSemantics: true) ?? Container(),
                         Container(width: headingWidth, height: headingHeight, alignment: Alignment.bottomCenter, child:
-                          Styles().images?.getImage("images/lock.gif", fit: BoxFit.fitHeight, height: lockSize, excludeFromSemantics: true), //TODO - ICONS is this gif actually working?
+                          Styles().images.getImage("images/lock.gif", fit: BoxFit.fitHeight, height: lockSize, excludeFromSemantics: true), //TODO - ICONS is this gif actually working?
                         ),
                         OnboardingBackButton( padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
                         onTap:() {
@@ -106,9 +106,9 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
                                 titleText,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    fontFamily: Styles().fontFamilies!.bold,
+                                    fontFamily: Styles().fontFamilies.bold,
                                     fontSize: 32,
-                                    color: Styles().colors!.fillColorPrimary),
+                                    color: Styles().colors.fillColorPrimary),
                               ),
                             )),
                       ),
@@ -123,9 +123,9 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
                                   descriptionText,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      fontFamily: Styles().fontFamilies!.regular,
+                                      fontFamily: Styles().fontFamilies.regular,
                                       fontSize: 20,
-                                      color: Styles().colors!.fillColorPrimary),
+                                      color: Styles().colors.fillColorPrimary),
                                 )),
                           )),
                     ]),
@@ -141,9 +141,9 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
                       child: RoundedButton(
                         label: Localization().getStringEx('panel.onboarding.privacy.button.continue.title', 'Set your privacy level'),
                         hint: Localization().getStringEx('panel.onboarding.privacy.button.continue.hint', ''),
-                        backgroundColor: Styles().colors!.background,
-                        borderColor: Styles().colors!.fillColorSecondaryVariant,
-                        textColor: Styles().colors!.fillColorPrimary,
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                        backgroundColor: Styles().colors.background,
+                        borderColor: Styles().colors.fillColorSecondaryVariant,
                         onTap: () => _goNext(context),
                       ),),
                   ],

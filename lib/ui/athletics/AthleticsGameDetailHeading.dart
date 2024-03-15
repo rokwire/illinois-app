@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -21,30 +23,33 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/livestats/LiveGame.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:illinois/ext/Game.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AthleticsGameDetailHeading extends StatefulWidget {
   final Game? game;
+  final Event2? sportEvent;
   final bool showImageTout;
 
-  AthleticsGameDetailHeading({this.game, this.showImageTout = true});
+  AthleticsGameDetailHeading({this.game, this.sportEvent, this.showImageTout = true});
 
   _AthleticsGameDetailHeadingState createState() => _AthleticsGameDetailHeadingState();
 }
@@ -95,7 +100,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     bool hasScores = sportDefinition?.hasScores ?? false;
     bool hasLiveGame = (Storage().debugDisableLiveGameCheck == true) || LiveStats().hasLiveGame(widget.game?.id);
     bool showScore = hasScores && (widget.game?.isGameDay ?? false) && hasLiveGame;
-    bool isGameFavorite = Auth2().isFavorite(widget.game);
+    bool isSportEventFavorite = Auth2().isFavorite(widget.sportEvent);
     bool isUpcomingGame = widget.game?.isUpcoming ?? false;
     String? liveStatsUrl = widget.game?.links?.liveStats;
     String? audioUrl = widget.game?.links?.audio;
@@ -122,7 +127,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                     children: _buildHeaderWidgets(),
                   ),
                   Container(
-                    color: Styles().colors!.fillColorPrimary,
+                    color: Styles().colors.fillColorPrimary,
                     child: Padding(
                       padding: EdgeInsets.only(left: 24),
                       child: Column(
@@ -132,7 +137,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                             children: <Widget>[
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Styles().colors!.whiteTransparent01,
+                                  color: Styles().colors.whiteTransparent01,
                                   borderRadius: BorderRadius.all(Radius.circular(2)),
                                 ),
                                 
@@ -142,7 +147,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                     padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                                     child: Text(
                                       sportName?.toUpperCase() ?? '',
-                                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, letterSpacing: 1.0, color: Colors.white),
+                                      style: Styles().textStyles.getTextStyle("widget.title.light.small.fat.spaced")
                                     ),
                                   )),
                               ),
@@ -155,10 +160,10 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   label: Localization().getStringEx("widget.game_detail_heading.button.save_game.title", "Save Game"),
                                   hint: Localization().getStringEx("widget.game_detail_heading.button.save_game.hint", "Tap to save"),
                                   button: true,
-                                  checked: isGameFavorite,
+                                  checked: isSportEventFavorite,
                                   child: GestureDetector(
                                       child: Container(padding: EdgeInsets.only(right: 24, left: 10, bottom: 20, top: 20),
-                                        child: Styles().images?.getImage(isGameFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true
+                                        child: Styles().images.getImage(isSportEventFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true
                                       )),
                                       onTap: _onTapSwitchFavorite),
                                 ),
@@ -169,16 +174,16 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                             padding: EdgeInsets.only(top: 12),
                             child: Text(
                               widget.game?.title ?? '',
-                              style: TextStyle(fontSize: 32, color: Colors.white),
+                              style: Styles().textStyles.getTextStyle("widget.heading.huge.extra_fat"),
                             ),
                           ),
-                          (!StringUtils.isEmpty(widget.game?.longDescription)
+                          (!StringUtils.isEmpty(widget.game?.description)
                               ? Padding(
                                   padding: EdgeInsets.symmetric(vertical: 16),
                                   child: Text(
-                                    widget.game?.longDescription ?? '',
+                                    widget.game?.description ?? '',
                                     textAlign: TextAlign.left,
-                                    style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.whiteTransparent06, fontSize: 16),
+                                    style: Styles().textStyles.getTextStyle("widget.athletics.heading.regular.fat.variant")
                                   ),
                                 )
                               : Padding(
@@ -193,12 +198,12 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   padding: EdgeInsets.only(bottom: 10),
                                   child: Row(
                                     children: <Widget>[
-                                      Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
+                                      Styles().images.getImage('calendar', excludeFromSemantics: true) ?? Container(),
                                       Padding(
                                         padding: EdgeInsets.symmetric(horizontal: 10),
                                         child: Text(
                                           widget.game?.displayTime ?? '',
-                                          style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.whiteTransparent06, fontSize: 16),
+                                          style: Styles().textStyles.getTextStyle("widget.athletics.heading.regular.variant")
                                         ),
                                       )
                                     ],
@@ -217,14 +222,14 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   children: <Widget>[
                                     Padding(
                                       padding: EdgeInsets.only(right: 10),
-                                      child: Styles().images?.getImage('location', excludeFromSemantics: true),
+                                      child: Styles().images.getImage('location', excludeFromSemantics: true),
                                     ),
                                     Flexible(
                                         child: Text(
                                       widget.game?.location?.location ?? '',
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 2,
-                                      style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.whiteTransparent06, fontSize: 16),
+                                      style: Styles().textStyles.getTextStyle("widget.athletics.heading.regular.variant")
                                     ))
                                   ],
                                 ),
@@ -238,10 +243,10 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                 ],
               ),
               Container(
-                child: Semantics(excludeSemantics: true, child: Styles().images?.getImage('slant-dark', excludeFromSemantics: true)),
+                child: Semantics(excludeSemantics: true, child: Styles().images.getImage('slant-dark', excludeFromSemantics: true)),
               ),
               Container(
-                color: Styles().colors!.background,
+                color: Styles().colors.background,
                 height: wrapperHeight,
               )
             ],
@@ -262,13 +267,14 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                         title: Localization().getStringEx('widget.game_detail_heading.button.live_stats.title', 'Live Stats'),
                         hint: Localization().getStringEx('widget.game_detail_heading.button.live_stats.hint', ''),
                         onTap: () {
-                          Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: liveStatsUrl)));
+                          Analytics().logSelect(target: "Live Stats");
+                          _launchUrl(liveStatsUrl);
                         },
                       ),
                 StringUtils.isEmpty(liveStatsUrl)
                     ? Container()
                     : Container(
-                        color: Styles().colors!.fillColorPrimaryTransparent015,
+                        color: Styles().colors.fillColorPrimaryTransparent015,
                         height: 1,
                       ),
                 StringUtils.isEmpty(audioUrl)
@@ -283,7 +289,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                 StringUtils.isEmpty(audioUrl)
                     ? Container()
                     : Container(
-                        color: Styles().colors!.fillColorPrimaryTransparent015,
+                        color: Styles().colors.fillColorPrimaryTransparent015,
                         height: 1,
                       ),
                 StringUtils.isEmpty(videoUrl)
@@ -298,7 +304,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                 StringUtils.isEmpty(videoUrl)
                     ? Container()
                     : Container(
-                        color: Styles().colors!.fillColorPrimaryTransparent015,
+                        color: Styles().colors.fillColorPrimaryTransparent015,
                         height: 1,
                       ),
                 Padding(
@@ -316,10 +322,9 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                 child: RoundedButton(
                                   label: Localization().getStringEx('widget.game_detail_heading.button.get_tickets.title', 'Get Tickets'),
                                   hint: Localization().getStringEx('widget.game_detail_heading.button.get_tickets.hint', ''),
+                                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                                   backgroundColor: Colors.white,
-                                  fontSize: 16.0,
-                                  textColor: Styles().colors!.fillColorPrimary,
-                                  borderColor: Styles().colors!.fillColorSecondary,
+                                  borderColor: Styles().colors.fillColorSecondary,
                                   onTap: _onTapGetTickets,
                                 ),
                               ),
@@ -334,10 +339,9 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                 child: RoundedButton(
                                     label: Localization().getStringEx('widget.game_detail_heading.button.parking.title', 'Parking'),
                                     hint: Localization().getStringEx('widget.game_detail_heading.button.parking.hint', ''),
+                                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                                     backgroundColor: Colors.white,
-                                    fontSize: 16.0,
-                                    textColor: Styles().colors!.fillColorPrimary,
-                                    borderColor: Styles().colors!.fillColorSecondary,
+                                    borderColor: Styles().colors.fillColorSecondary,
                                     onTap: _onTapParking),
                               ),
                             ),
@@ -353,10 +357,9 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                         child: RoundedButton(
                           label: Localization().getStringEx('widget.game_detail_heading.button.game_day_guide.title', 'Game Day Guide'),
                           hint: Localization().getStringEx('widget.game_detail_heading.button.game_day_guide.hint', ''),
+                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                           backgroundColor: Colors.white,
-                          fontSize: 16.0,
-                          textColor: Styles().colors!.fillColorPrimary,
-                          borderColor: Styles().colors!.fillColorSecondary,
+                          borderColor: Styles().colors.fillColorSecondary,
                           onTap: () {
                             _onTapGameDayGuide();
                           },
@@ -366,10 +369,9 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                       RoundedButton(
                         label: Localization().getStringEx('widget.game_detail_heading.button.roster.title', 'Roster'),
                         hint: Localization().getStringEx('widget.game_detail_heading.button.roster.hint', ''),
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                         backgroundColor: Colors.white,
-                        fontSize: 16.0,
-                        textColor: Styles().colors!.fillColorPrimary,
-                        borderColor: Styles().colors!.fillColorSecondary,
+                        borderColor: Styles().colors.fillColorSecondary,
                         onTap: () {
                           Analytics().logSelect(target: "Roster");
                           Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsRosterListPanel(sportDefinition, null)));
@@ -425,7 +427,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
       widgets.add(Semantics(
           excludeSemantics: true,
           child: CustomPaint(
-            painter: TrianglePainter(painterColor: Styles().colors!.fillColorPrimary),
+            painter: TrianglePainter(painterColor: Styles().colors.fillColorPrimary),
             child: Container(
               height: 60,
             ),
@@ -439,7 +441,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
 
   void _onTapSwitchFavorite() {
     Analytics().logSelect(target: "Favorite: ${widget.game?.title}");
-    Auth2().prefs?.toggleFavorite(widget.game);
+    Auth2().prefs?.toggleFavorite(widget.sportEvent);
   }
 
   void _onTapGetTickets() {
@@ -455,34 +457,36 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   }
 
   void _showTicketsPanel() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: widget.game?.links!.tickets)));
+    Analytics().logSelect(target: "Tickets");
+    _launchUrl(widget.game?.links!.tickets);
   }
 
   void _onTapParking() {
     Analytics().logSelect(target: "Parking");
-
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: widget.game?.parkingUrl)));
+    _launchUrl(widget.game?.parkingUrl);
   }
 
   void _onTapGameDayGuide() {
     Analytics().logSelect(target: "Game Day");
-    String? url = _gameDayGuideUrl;
-    if (url != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-    }
+    _launchUrl(_gameDayGuideUrl);
   }
 
   void _onTapListen(String? audioUrl) {
     Analytics().logSelect(target: "Listen");
-    if (StringUtils.isNotEmpty(audioUrl)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: audioUrl)));
-    }
+    _launchUrl(audioUrl);
   }
 
   void _onTapWatch(String? videoUrl) {
     Analytics().logSelect(target: "Watch");
-    if (StringUtils.isNotEmpty(videoUrl)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: videoUrl)));
+    _launchUrl(videoUrl);
+  }
+
+  void _launchUrl(String? url) {
+    if (StringUtils.isNotEmpty(url)) {
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
+      }
     }
   }
 
@@ -518,23 +522,19 @@ class _DetailRibbonButton extends StatelessWidget {
         child: GestureDetector(
           onTap: onTap,
           child: Container(
-            height: 28+ 16* MediaQuery.of(context).textScaleFactor,
+            height: MediaQuery.of(context).textScaler.scale(28+ 16),
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 14, horizontal: 24),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  Styles().images?.getImage(iconKey, excludeFromSemantics: true) ?? Container(),
+                  Styles().images.getImage(iconKey, excludeFromSemantics: true) ?? Container(),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     child: Text(
                       title!,
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies!.bold,
-                          color: Styles().colors!.fillColorPrimary,
-                          fontSize: 16),
-                    ),
-                  ),
+                      style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat")
+                  )),
                   Expanded(
                     child: Container(
                       color: Colors.transparent,
@@ -543,10 +543,7 @@ class _DetailRibbonButton extends StatelessWidget {
                   Visibility(
                       child: Text(
                         (!StringUtils.isEmpty(subTitle) ? subTitle! : ''),
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies!.medium,
-                            color: Styles().colors!.textBackground,
-                            fontSize: 16),
+                        style: Styles().textStyles.getTextStyle("widget.button.light.title.medium")
                       ))
                 ],
               ),
@@ -622,7 +619,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 _currentLiveGame != null ? _formatPeriod(_currentLiveGame!.period!) : "-",
-                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),
+                style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
               ),
             ),
             Expanded(
@@ -632,7 +629,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
             ),
             Text(
               _currentLiveGame != null ? _formatClock(_currentLiveGame!.clockSeconds!) : "-",
-              style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.textBackground, fontSize: 16),
+              style: Styles().textStyles.getTextStyle("widget.item.regular")
             ),
           ],
         ),
@@ -690,7 +687,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
   Widget _buildBottomSection() {
     return Container(
         height: 68,
-        color: Styles().colors!.background,
+        color: Styles().colors.background,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[_buildHomeSection(), _buildAwaySection()],
@@ -702,10 +699,10 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 1, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              right: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              top: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              bottom: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              left: BorderSide(width: 1, color: Styles().colors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -723,7 +720,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
               ),
               Text(
                 _currentLiveGame != null ? _currentLiveGame!.homeScore.toString() : "-",
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32),
+                style: Styles().textStyles.getTextStyle("widget.title.huge"),
               ),
             ],
           ),
@@ -735,7 +732,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
   Widget _getHomeImage() {
     if (widget._game!.isHomeGame) {
       //return illinois image
-      return Styles().images?.getImage('university-logo', excludeFromSemantics: true) ?? Container();
+      return Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container();
     } else {
       //return opponent image
       Opponent? opponent = widget._game!.opponent;
@@ -753,10 +750,10 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              right: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              top: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              bottom: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              left: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -766,7 +763,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
             children: <Widget>[
               Text(
                 _currentLiveGame != null ? _currentLiveGame!.visitingScore.toString() : "-",
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32),
+                style: Styles().textStyles.getTextStyle("widget.title.huge")
               ),
               Expanded(
                 child: Container(
@@ -787,7 +784,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
   Widget _getAwayImage() {
     if (!widget._game!.isHomeGame) {
       //return illinois image
-      return Styles().images?.getImage('university-logo', excludeFromSemantics: true) ?? Container();
+      return Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container();
     } else {
       //return opponent image
       Opponent? opponent = widget._game!.opponent;
@@ -897,7 +894,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
   Widget? _getHomeImageFrom(double width, double height) {
     if (widget._game!.isHomeGame) {
       //return illinois image
-      return Styles().images?.getImage('university-logo', fit: BoxFit.fitHeight);
+      return Styles().images.getImage('university-logo', fit: BoxFit.fitHeight);
     } else {
       //return opponent image
       String? opponentUrl = widget._game!.opponent?.logoImage;
@@ -908,7 +905,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
   Widget? _getVisitingImage(double width, double height) {
     if (!widget._game!.isHomeGame) {
       //return illinois image
-      return Styles().images?.getImage('university-logo', fit: BoxFit.fitHeight);
+      return Styles().images.getImage('university-logo', fit: BoxFit.fitHeight);
     } else {
       //return opponent image
       String? opponentUrl = widget._game?.opponent?.logoImage;
@@ -988,7 +985,7 @@ class _LiteContent extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 _period,
-                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),
+                style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")
               ),
             ),
             Expanded(
@@ -1005,7 +1002,7 @@ class _LiteContent extends StatelessWidget {
   Widget _buildBottomSection() {
     return Container(
         height: 68,
-        color: Styles().colors!.background,
+        color: Styles().colors.background,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[_buildHomeSection(), _buildAwaySection()],
@@ -1017,10 +1014,10 @@ class _LiteContent extends StatelessWidget {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 1, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              right: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              top: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              bottom: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              left: BorderSide(width: 1, color: Styles().colors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -1034,7 +1031,7 @@ class _LiteContent extends StatelessWidget {
                   color: Colors.transparent,
                 ),
               ),
-              Text(_homeScore, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32)),
+              Text(_homeScore, style: Styles().textStyles.getTextStyle("widget.title.huge")),
             ],
           ),
         ),
@@ -1047,10 +1044,10 @@ class _LiteContent extends StatelessWidget {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              right: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              top: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              bottom: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              left: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -1058,7 +1055,7 @@ class _LiteContent extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Text(_visitingScore, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32)),
+              Text(_visitingScore, style: Styles().textStyles.getTextStyle("widget.title.huge")),
               Expanded(
                 child: Container(
                   color: Colors.transparent,
@@ -1133,7 +1130,7 @@ class _RichContent extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 _phaseLabel!,
-                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),
+                style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
               ),
             ),
             Expanded(
@@ -1150,7 +1147,7 @@ class _RichContent extends StatelessWidget {
   Widget _buildBottomSection(BuildContext context) {
     return Container(
         height: 68,
-        color: Styles().colors!.background,
+        color: Styles().colors.background,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[_buildHomeSection(context), _buildVisitingSection(context)],
@@ -1164,10 +1161,10 @@ class _RichContent extends StatelessWidget {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 1, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              right: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              top: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              bottom: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              left: BorderSide(width: 1, color: Styles().colors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -1196,7 +1193,7 @@ class _RichContent extends StatelessWidget {
         ? Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
-        Text(_hPoints!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32)),
+        Text(_hPoints!, style: Styles().textStyles.getTextStyle("widget.title.huge")),
         SizedBox(width: 15),
         Padding(
           padding: EdgeInsets.only(bottom: 10),
@@ -1207,13 +1204,13 @@ class _RichContent extends StatelessWidget {
                 visible: serving,
                 child: _ServingControl(home: true),
               ),
-              Text(_hScore!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 23))
+              Text(_hScore!, style: Styles().textStyles.getTextStyle("widget.title.extra_large"))
             ],
           ),
         ),
       ],
     )
-        : Text(_hScore!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32));
+        : Text(_hScore!, style: Styles().textStyles.getTextStyle("widget.title.huge"));
   }
 
   Widget _buildVisitingSection(BuildContext context) {
@@ -1223,10 +1220,10 @@ class _RichContent extends StatelessWidget {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              right: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              top: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              bottom: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              left: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -1267,15 +1264,15 @@ class _RichContent extends StatelessWidget {
                 visible: serving,
                 child: _ServingControl(home: false),
               ),
-              Text(_vScore!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 23))
+              Text(_vScore!, style: Styles().textStyles.getTextStyle("widget.title.extra_large"))
             ],
           ),
         ),
         SizedBox(width: 15),
-        Text(_vPoints!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32)),
+        Text(_vPoints!, style: Styles().textStyles.getTextStyle("widget.title.huge")),
       ],
     )
-        : Text(_vScore!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32));
+        : Text(_vScore!, style: Styles().textStyles.getTextStyle("widget.title.huge"));
   }
 }
 
@@ -1367,7 +1364,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 _currentLiveGame != null ? _getPhase() : "-",
-                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),
+                style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
               ),
             ),
             Expanded(
@@ -1377,7 +1374,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
             ),
             Text(
               _currentLiveGame != null ? _getClock() : "-",
-              style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.textBackground, fontSize: 16),
+              style: Styles().textStyles.getTextStyle("widget.item.regular"),
             ),
           ],
         ),
@@ -1389,7 +1386,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
     String? possession = _getPossession();
     return Container(
         height: 68,
-        color: Styles().colors!.background,
+        color: Styles().colors.background,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[_buildHomeSectionWithPossession(possession), _buildAwaySectionWithPossesion(possession)],
@@ -1402,10 +1399,10 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 1, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              right: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              top: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              bottom: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              left: BorderSide(width: 1, color: Styles().colors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -1425,12 +1422,12 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
                 visible: isHomePossession,
                 child: Padding(
                   padding: EdgeInsets.only(right: 5),
-                  child: Styles().images?.getImage('football', excludeFromSemantics: true),
+                  child: Styles().images.getImage('football', excludeFromSemantics: true),
                 ),
               ),
               Text(
                 _currentLiveGame != null ? _currentLiveGame!.homeScore.toString() : "-",
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32),
+                style: Styles().textStyles.getTextStyle("widget.title.huge"),
               ),
             ],
           ),
@@ -1445,10 +1442,10 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              right: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              top: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
-              bottom: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              left: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
+              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
             )),
         height: 68,
         child: Padding(
@@ -1458,13 +1455,13 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
             children: <Widget>[
               Text(
                 _currentLiveGame != null ? _currentLiveGame!.visitingScore.toString() : "-",
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32),
+                style: Styles().textStyles.getTextStyle("widget.title.huge"),
               ),
               Visibility(
                 visible: isVisitingPossession,
                 child: Padding(
                   padding: EdgeInsets.only(left: 5),
-                  child: Styles().images?.getImage('football', excludeFromSemantics: true),
+                  child: Styles().images.getImage('football', excludeFromSemantics: true),
                 ),
               ),
               Expanded(
@@ -1490,11 +1487,11 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
         ? Container(
         decoration: new BoxDecoration(
             border: Border(
-              bottom: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
             )),
         child: Padding(
           padding: EdgeInsets.only(top: 6, bottom: 6, left: 20, right: 20),
-          child: Text(sprintf(Localization().getStringEx('widget.score.last_play', 'Last Play: %s'), [lastPlay]), textAlign: TextAlign.left, style: TextStyle(fontSize: 16)),
+          child: Text(sprintf(Localization().getStringEx('widget.score.last_play', 'Last Play: %s'), [lastPlay]), textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle("widget.detail.regular")),
         ))
         : Container();
   }
@@ -1605,7 +1602,7 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 _currentLiveGame != null ? _getPhase() : "-",
-                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),
+                style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
               ),
             ),
             Expanded(
@@ -1615,7 +1612,7 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
             ),
             Text(
               _currentLiveGame != null ? _getClock() : "-",
-              style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.textBackground, fontSize: 16),
+              style: Styles().textStyles.getTextStyle("widget.item.regular"),
             ),
           ],
         ),
@@ -1626,7 +1623,7 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
   Widget _buildMiddleSection() {
     return Container(
         height: 68,
-        color: Styles().colors!.background,
+        color: Styles().colors.background,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[_buildHomeSection(), _buildAwaySection()],
@@ -1640,11 +1637,11 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
         ? Container(
         decoration: new BoxDecoration(
             border: Border(
-              bottom: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
             )),
         child: Padding(
           padding: EdgeInsets.only(top: 6, bottom: 6, left: 20, right: 20),
-          child: Text("Last Play: " + lastPlay!, textAlign: TextAlign.left, style: TextStyle(fontSize: 16)),
+          child: Text("Last Play: " + lastPlay!, textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle("widget.detail.regular")),
         ))
         : Container();
   }

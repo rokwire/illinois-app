@@ -35,29 +35,4 @@
     <string name="locations">Locations</string>
     <string name="location">Location</string>
     <string name="ok">OK</string>
-
-    <!-- MapDirectionsActivity -->
-    <string name="directionsTitle">Directions</string>
-    <string name="routeFailedMsg">Failed to find a route:\n%s</string>
-    <string name="locationFailedMsg">Failed to detect current location.</string>
-    <string name="start">START</string>
-    <string name="finish">FINISH</string>
-    <string name="routeLegStepFormat">Leg %1$d / Step %2$d</string>
-    <string name="mile">mile</string>
-    <string name="miles">miles</string>
-    <string name="minute">min</string>
-
-    <!-- MapActivity -->
-    <string name="mapTitle">Maps</string>
-    <string name="room_label">Room %1$s</string>
-
-    <!-- MapPickLocationActivity -->
-    <string name="pick_location">Pick Location</string>
-    <string name="custom">CUSTOM</string>
-    <string name="select_location_msg">Please, select a location</string>
-    <string name="location_label">Location: %1$s</string>
-    <string name="save">Save</string>
-
-    <!-- Navigation -->
-    <string name="invalid_server_response">Invalid Server Response</string>
 </resources>

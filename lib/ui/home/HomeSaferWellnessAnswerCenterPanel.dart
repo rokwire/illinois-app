@@ -28,7 +28,7 @@ class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         appBar: HeaderBar(title: Localization().getStringEx("panel.home.safer.wellness_answer_center.header.title", "Answer Center")),
         body: SingleChildScrollView(
             child: Padding(
@@ -52,8 +52,8 @@ class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget {
   Widget _buildEntryCard({required String title, required String description, GestureTapCallback? onTapEntry}) {
     return Container(
         decoration: BoxDecoration(
-            color: Styles().colors!.white,
-            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            color: Styles().colors.white,
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(4))),
         clipBehavior: Clip.none,
         child: Stack(children: [
@@ -67,14 +67,13 @@ class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget {
                         Padding(
                             padding: EdgeInsets.only(right: 17),
                             child: Text(StringUtils.ensureNotEmpty(title),
-                                style: TextStyle(
-                                    color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20))),
+                                style: Styles().textStyles.getTextStyle("widget.card.title.medium.extra_fat"))),
                         Container(height: 8),
                         Text(StringUtils.ensureNotEmpty(description),
-                            style:
-                                TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16))
+                            style: Styles().textStyles.getTextStyle("widget.card.detail.regular")
+                        )
                       ])))),
-          Container(color: Styles().colors!.accentColor3, height: 4)
+          Container(color: Styles().colors.accentColor3, height: 4)
         ]));
   }
 

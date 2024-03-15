@@ -23,11 +23,12 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
+import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -38,7 +39,6 @@ import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
@@ -322,17 +322,17 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
 
   void _onTapEvents(BuildContext context) {
     Analytics().logSelect(target: "Events", source: runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Events); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
   }
     
   void _onTapDining(BuildContext context) {
     Analytics().logSelect(target: "Dining", source: runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Dining); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Dining); } ));
   }
 
   void _onTapAthletics(BuildContext context) {
     Analytics().logSelect(target: "Athletics", source: runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.events)));
   }
 
   void _onTapIlliniCash(BuildContext context) {
@@ -414,8 +414,8 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
 
   void _onTapInbox(BuildContext context) {
     Analytics().logSelect(target: "Inbox", source: runtimeType.toString());
-    SettingsNotificationsContentPanel.present(context,
-        content: (Inbox().unreadMessagesCount > 0) ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
+    NotificationsHomePanel.present(context,
+        content: (Inbox().unreadMessagesCount > 0) ? NotificationsContent.unread : NotificationsContent.all);
   }
 }
 
@@ -436,13 +436,13 @@ class CampusResourceButton extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> contentList = <Widget>[];
     if (title != null) {
-      contentList.add(Text(title!, textAlign: TextAlign.center, style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 20)));
+      contentList.add(Text(title!, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.button.title.large.fat")));
     } 
     if ((title != null) && (iconKey != null)) {
       contentList.add(Container(height: 26));
     } 
     if (iconKey != null) {
-      Widget? icon = Styles().images?.getImage(iconKey, excludeFromSemantics: true);
+      Widget? icon = Styles().images.getImage(iconKey, excludeFromSemantics: true);
       if (icon != null) {
         contentList.add(icon);
       }
@@ -451,13 +451,13 @@ class CampusResourceButton extends StatelessWidget {
     return InkWell(onTap: onTap, child:
       Semantics(label: title, hint: hint, button: true, excludeSemantics: true, child:
         Padding(padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6), child:
-          Container(decoration: BoxDecoration(color: Styles().colors?.white ?? const Color(0x00FFFFFF), borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors?.white ?? const Color(0x00FFFFFF), width: 2), boxShadow: [const BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
+          Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors.white, width: 2), boxShadow: [const BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
             Padding(padding: EdgeInsets.only(left: 16, bottom: 16), child: 
               Column(children: [
                 Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Expanded(child:
                     Padding(padding: EdgeInsets.only(top: 16), child: 
-                      Text(title ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 20)),
+                      Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.button.title.large.fat")),
                     ),
                   ),
                   Opacity(opacity: _canFavorite ? 1 : 0, child:
@@ -470,7 +470,7 @@ class CampusResourceButton extends StatelessWidget {
                       Align(alignment: Alignment.centerRight, child:
                         SizedBox(width: 44, height: 44, child:
                           Align(alignment: Alignment.bottomRight, child:
-                            Styles().images?.getImage(iconKey)
+                            Styles().images.getImage(iconKey)
                           ),
                         )
                       )

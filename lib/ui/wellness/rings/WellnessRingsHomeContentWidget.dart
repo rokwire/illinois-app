@@ -115,7 +115,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
           Container(
             padding: EdgeInsets.symmetric(horizontal: 6),
             child: Text(Localization().getStringEx('panel.wellness.rings.description.label', "See your recent progress in one place by checking your log for the last 14 days."),
-              style : Styles().textStyles?.getTextStyle('panel.wellness.ring.home.detail.message'),
+              style : Styles().textStyles.getTextStyle('panel.wellness.ring.home.detail.message'),
           )),
           Container(height: 15,),
           _buildHistoryList(),
@@ -174,10 +174,9 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
               }
             });
           },
+          textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
           backgroundColor: Colors.white,
-          // padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
-          borderColor: Styles().colors!.fillColorSecondary,
-          textColor: Styles().colors!.fillColorPrimary,
+          borderColor: Styles().colors.fillColorSecondary,
           rightIcon: Container(),
         ),
       )
@@ -248,26 +247,26 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
           // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Expanded(child:
-              Container(decoration: BoxDecoration(color: enabled? Colors.white : disabledBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)), child:
+              Container(decoration: BoxDecoration(color: enabled? Colors.white : disabledBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors.surfaceAccent, width: 1)), child:
               Padding(padding: EdgeInsets.only(left: 18, top: 16, bottom: 16, right: 16), child:
               Row( crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Container(
                     padding: EdgeInsets.only(right: 14),
-                      child: Styles().images?.getImage(enabled ? 'plus-dark' : 'add-gray', excludeFromSemantics: true),
+                      child: Styles().images.getImage(enabled ? 'plus-dark' : 'add-gray', excludeFromSemantics: true),
                   ),
                   Expanded(
                       flex: 5,
                       child: Container(
                         child: Text(label ,
-                          style: enabled? Styles().textStyles?.getTextStyle('panel.wellness.ring.home.button.create_ring.title.enabled') : Styles().textStyles?.getTextStyle('panel.wellness.ring.home.button.create_ring.title.disabled'),
+                          style: enabled? Styles().textStyles.getTextStyle('panel.wellness.ring.home.button.create_ring.title.enabled') : Styles().textStyles.getTextStyle('panel.wellness.ring.home.button.create_ring.title.disabled'),
                           textAlign: TextAlign.start,),)),
                   Expanded(
                       flex: 5,
                       child: Container(
                         child: Text(description ,
-                          style: enabled? Styles().textStyles?.getTextStyle('panel.wellness.ring.home.button.create_ring.description.enabled') :  Styles().textStyles?.getTextStyle('panel.wellness.ring.home.button.create_ring.description.disabled'),
+                          style: enabled? Styles().textStyles.getTextStyle('panel.wellness.ring.home.button.create_ring.description.enabled') :  Styles().textStyles.getTextStyle('panel.wellness.ring.home.button.create_ring.description.disabled'),
                           textAlign: TextAlign.end,),)),
                 ],),
               ),
@@ -284,7 +283,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
         contentPadding: EdgeInsets.all(0),
         contentWidget: Container(
             height: 300,
-            decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)),
+            decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)),
             child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
               Padding(
                   padding: EdgeInsets.all(19),
@@ -293,20 +292,20 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
                         padding: EdgeInsets.symmetric(horizontal: 15),
                         child: Text(Localization().getStringEx('panel.wellness.rings.welcome.label', 'Welcome to Your Daily Wellness Rings!'),
                             textAlign: TextAlign.center,
-                            style: Styles().textStyles?.getTextStyle('panel.wellness.ring.home.popup.heading'))),
+                            style: Styles().textStyles.getTextStyle('panel.wellness.ring.home.popup.heading'))),
                     Padding(
                         padding: EdgeInsets.only(top: 8),
                         child: Text(
                             Localization().getStringEx('panel.wellness.rings.welcome.description.label',
                                 'Use this tool to motivate you to start healthy habits, even if they are small!\n\nProgress is more important than perfection. For example: your “best” one day could be a full workout at the gym or it could be a five-minute walk—both count as an accomplishment!'),
                             textAlign: TextAlign.center,
-                            style: Styles().textStyles?.getTextStyle('widget.message.small')))
+                            style: Styles().textStyles.getTextStyle('widget.message.small')))
                   ])),
               Align(
                   alignment: Alignment.topRight,
                   child: GestureDetector(
                       onTap: _onClose,
-                      child: Padding(padding: EdgeInsets.all(11), child: Styles().images?.getImage('close', excludeFromSemantics: true))))
+                      child: Padding(padding: EdgeInsets.all(11), child: Styles().images.getImage('close', excludeFromSemantics: true))))
             ])));
   }
 
@@ -362,14 +361,14 @@ class _TabButton extends StatelessWidget {
             button: true,
             excludeSemantics: true,
             child: Container(
-                height: 24 + 16 * MediaQuery.of(context).textScaleFactor,
+                height: 24 + MediaQuery.of(context).textScaler.scale(16),
                 decoration: BoxDecoration(
-                    color: selected! ? Colors.white : Styles().colors!.lightGray, border: _border, borderRadius: _borderRadius),
+                    color: selected! ? Colors.white : Styles().colors.lightGray, border: _border, borderRadius: _borderRadius),
                 child: Center(
                     child: Text(label!,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
-                        style: selected! ? Styles().textStyles?.getTextStyle('widget.tab.selected') : Styles().textStyles?.getTextStyle('widget.tab.not_selected') )))));
+                        style: selected! ? Styles().textStyles.getTextStyle('widget.tab.selected') : Styles().textStyles.getTextStyle('widget.tab.not_selected') )))));
   }
 
   BorderRadiusGeometry? get _borderRadius {
@@ -384,7 +383,7 @@ class _TabButton extends StatelessWidget {
   }
 
   BoxBorder? get _border {
-    BorderSide borderSide = BorderSide(color: Styles().colors!.surfaceAccent!, width: 2, style: BorderStyle.solid);
+    BorderSide borderSide = BorderSide(color: Styles().colors.surfaceAccent, width: 2, style: BorderStyle.solid);
     switch (position) {
       case _TabButtonPosition.first:
         return Border.fromBorderSide(borderSide);

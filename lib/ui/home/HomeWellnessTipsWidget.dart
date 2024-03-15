@@ -127,13 +127,13 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> impleme
   }
 
   Widget _buildLoading() {
-    return Container(color: Styles().colors?.white, child:
+    return Container(color: Styles().colors.white, child:
       Padding(padding: EdgeInsets.all(32), child:
         Row(children: <Widget>[
           Expanded(child:
             Center(child:
               SizedBox(height: 24, width: 24, child:
-                CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(_tipColor ?? Styles().colors?.fillColorSecondary), ),
+                CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(_tipColor ?? Styles().colors.fillColorSecondary), ),
               )
             ),
           ),
@@ -143,8 +143,7 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> impleme
   }
 
   Widget _buildTip() {
-    Color? textColor = Styles().colors?.fillColorPrimary;
-    Color? backColor = Styles().colors?.white; // _tipColor ?? Styles().colors?.accentColor3;
+    Color? backColor = Styles().colors.white; // _tipColor ?? Styles().colors.accentColor3;
     return Container(color: backColor, child:
       Padding(padding: EdgeInsets.all(16), child:
         Row(children: <Widget>[
@@ -152,7 +151,7 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> impleme
             HtmlWidget(
                 Wellness().dailyTip ?? '',
                 onTapUrl : (url) {_launchUrl(url); return true;},
-                textStyle:  TextStyle(color: textColor, fontFamily: Styles().fontFamilies!.bold, fontSize: 16),
+                textStyle:  Styles().textStyles.getTextStyle("widget.detail.regular.fat"),
             )
           ),
         ]),
