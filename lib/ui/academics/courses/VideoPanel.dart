@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -7,6 +8,7 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:video_player/video_player.dart';
@@ -22,7 +24,7 @@ class VideoPanel extends StatefulWidget {
 
 class _VideoPanelState extends State<VideoPanel> {
   late VideoPlayerController _controller;
-  late Future<void> _initializeVideoPlayerFuture;
+  Future<void>? _initializeVideoPlayerFuture;
   List<DeviceOrientation>? _allowedOrientations;
 
   @override
@@ -39,30 +41,42 @@ class _VideoPanelState extends State<VideoPanel> {
     super.dispose();
   }
 
-  void _initVideoPlayer() {
+  void _initVideoPlayer() async {
     if (StringUtils.isNotEmpty(widget.resourceKey)) {
       //first try to parse the resource key as a uri; if it doesn't work then try to use it as a file name and send request to the content BB
-      Uri? videoUri = Uri.tryParse(widget.resourceKey!);
-      if (videoUri == null && StringUtils.isNotEmpty(Config().essentialSkillsCoachKey) && StringUtils.isNotEmpty(Config().contentUrl)) {
+      Uri? videoUri = Uri.tryParse('testvideo.mp4');
+      if (StringUtils.isEmpty(videoUri?.host) && StringUtils.isNotEmpty(Config().essentialSkillsCoachKey) && StringUtils.isNotEmpty(Config().contentUrl)) {
         Map<String, String> queryParams = {
-          'fileName': widget.resourceKey!,
-          'category': Config().essentialSkillsCoachKey!,
+          'fileName': 'testvideo.mp4',
+          'category': 'test',
         };
         String url = "${Config().contentUrl}/files";
         if (queryParams.isNotEmpty) {
           url = UrlUtils.addQueryParameters(url, queryParams);
         }
-        videoUri = Uri.tryParse(url);
+        Response? response = await Network().get(url, auth: Auth2());
+        int? responseCode = response?.statusCode;
+        if (responseCode == 200) {
+          debugPrint('video url: ${response?.body}');
+          videoUri = Uri.tryParse(response!.body);
+        } else {
+          String? responseString = response?.body;
+          debugPrint("Failed to get file content item. Reason: $responseCode $responseString");
+        }
       }
 
       if (videoUri != null) {
-        _controller = VideoPlayerController.networkUrl(videoUri, httpHeaders: Auth2().networkAuthHeaders ?? {});
-        _initializeVideoPlayerFuture = _controller.initialize().then((_) {
-          _controller.setLooping(true);
-          if (mounted) {
-          _playVideo();
-          }
-        });
+        _controller = VideoPlayerController.networkUrl(videoUri);
+        if (mounted) {
+          setState(() {
+            _initializeVideoPlayerFuture = _controller.initialize().then((_) {
+              _controller.setLooping(true);
+              if (mounted) {
+                _playVideo();
+              }
+            });
+          });
+        }
       }
     }
   }
