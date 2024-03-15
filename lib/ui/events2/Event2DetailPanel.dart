@@ -655,7 +655,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     } else if (StringUtils.isNotEmpty(_event?.registrationDetails?.externalLink)) { // else external registration
       // if (_event?.userRole == null){ //TBD check if this is correct check or we don't know if the user is registered externally
         return <Widget>[_buildButtonWidget(
-            title: Localization().getStringEx('panel.event2.detail.button.register.title', 'Register'),
+            title: StringUtils.ensureNotEmpty(_event?.registrationDetails?.label, defaultValue: Localization().getStringEx('panel.event2.detail.button.register.title', 'Register')),
             onTap: _onExternalRegistration,
             progress: _registrationLaunching,
             externalLink: true
