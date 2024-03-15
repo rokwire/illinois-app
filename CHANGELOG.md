@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Event cover image description [#4010](https://github.com/rokwire/illinois-app/issues/4010).
+### Fixed
+- Show event registration label if available [#4012](https://github.com/rokwire/illinois-app/issues/4012).
 
 ## [5.1.33] - 2024-03-14
 ### Added
