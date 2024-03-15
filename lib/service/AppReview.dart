@@ -50,11 +50,6 @@ class AppReview with Service implements NotificationsListener {
     await super.initService();
   }
 
-  @override
-  Set<Service> get serviceDependsOn {
-    return Set.from([Config(), Storage(), AppLifecycle()]);
-  }
-
   // NotificationsListener
 
   @override
@@ -139,14 +134,14 @@ class AppReview with Service implements NotificationsListener {
   int? get appReviewRequestTime => Auth2().prefs?.getIntSetting(_appReviewRequestTimeKey);
   set appReviewRequestTime(int? value) => Auth2().prefs?.applySetting(_appReviewRequestTimeKey, value);
 
-  bool get _canAccountRequestReview => Auth2().account?.isAnalyticsProcessed ?? false;
-  bool get _canSessionsCountRequestReview => Config().appReviewSessionsCount <= Storage().appReviewSessionsCount;
+  bool get _canAccountRequestReview => Auth2().isInitialized && (Auth2().account?.isAnalyticsProcessed ?? false);
+  bool get _canSessionsCountRequestReview => Config().isInitialized && Storage().isInitialized && (Config().appReviewSessionsCount <= Storage().appReviewSessionsCount);
 
   int? get sessionDurationInSeconds => (_sessionStartDateTime != null) ? DateTime.now().difference(_sessionStartDateTime!).inSeconds : null;
 
   bool get _isValidSession {
     int? sessionDuration = this.sessionDurationInSeconds;
-    return (sessionDuration != null) && (Config().appReviewSessionDuration < sessionDuration);
+    return (sessionDuration != null) && Config().isInitialized && (Config().appReviewSessionDuration < sessionDuration);
   }
 
   bool get _canRequestReview {

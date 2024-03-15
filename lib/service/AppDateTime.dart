@@ -19,7 +19,6 @@ import 'package:flutter/foundation.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart' as rokwire;
 import 'package:illinois/service/Storage.dart';
-import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class AppDateTime extends rokwire.AppDateTime {
@@ -30,16 +29,6 @@ class AppDateTime extends rokwire.AppDateTime {
   AppDateTime.internal() : super.internal();
 
   factory AppDateTime() => ((rokwire.AppDateTime.instance is AppDateTime) ? (rokwire.AppDateTime.instance as AppDateTime) : (rokwire.AppDateTime.instance = AppDateTime.internal()));
-
-  // Service
-
-  @override
-
-  Set<Service>? get serviceDependsOn {
-    Set<Service> dependants = super.serviceDependsOn ?? <Service>{};
-    dependants.add(Config());
-    return dependants;
-  }
 
   // Overrides
 

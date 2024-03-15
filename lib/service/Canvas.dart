@@ -84,16 +84,6 @@ class Canvas with Service implements NotificationsListener {
   }
 
   @override
-  Set<Service> get serviceDependsOn {
-    return Set.from([Config(), Auth2()]);
-  }
-
-  @override
-  void initServiceUI() {
-    _processCachedDeepLinkDetails();
-  }
-
-  @override
   Future<void> initService() async {
     _cacheFile = await _getCacheFile();
     _courses = await _loadCoursesFromCache();
@@ -107,6 +97,16 @@ class Canvas with Service implements NotificationsListener {
       }
     }
     await super.initService();
+  }
+
+  @override
+  void initServiceUI() {
+    _processCachedDeepLinkDetails();
+  }
+
+  @override
+  Set<Service> get serviceDependsOn {
+    return Set.from([Config(), Auth2()]);
   }
 
   // Accessories

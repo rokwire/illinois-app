@@ -30,7 +30,6 @@ import 'package:rokwire_plugin/service/firebase_messaging.dart' as rokwire;
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -283,13 +282,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   void destroyService() {
     super.destroyService();
     NotificationService().unsubscribe(this);
-  }
-
-  @override
-  Set<Service> get serviceDependsOn {
-    Set<Service> services = super.serviceDependsOn;
-    services.add(Auth2());
-    return services;
   }
 
   // NotificationsListener

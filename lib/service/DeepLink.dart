@@ -39,7 +39,7 @@ class DeepLink extends rokwire.DeepLink {
   }
 
   @override
-  Set<Service> get serviceDependsOn {
+  Set<Service>? get serviceDependsOn {
     return Set.from([NativeCommunicator()]);
   }
 

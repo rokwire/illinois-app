@@ -52,13 +52,6 @@ class FlexUI extends rokwire.FlexUI {
     NotificationService().unsubscribe(this);
   }
 
-  @override
-  Set<Service> get serviceDependsOn {
-    Set<Service> services = super.serviceDependsOn;
-    services.add(IlliniCash());
-    return services;
-  }
-
   // NotificationsListener
 
   @override
@@ -69,6 +62,15 @@ class FlexUI extends rokwire.FlexUI {
         (name == IlliniCash.notifyStudentClassificationUpdated))
     {
       updateContent();
+    }
+  }
+
+  @protected
+  Future<void> onServiceInitialized(Service? service) async {
+    if (isInitialized) {
+      if (service == IlliniCash()) {
+        build();
+      }
     }
   }
 

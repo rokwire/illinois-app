@@ -77,7 +77,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   void initState() {
     
     NotificationService().subscribe(this, [
-      Config.notifyEnvironmentChanged,
       Styles.notifyChanged,
       GeoFence.notifyCurrentRegionsUpdated,
       GeoFence.notifyCurrentBeaconsUpdated,
@@ -579,9 +578,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     else if (name == GeoFence.notifyCurrentBeaconsUpdated) {
       setState(() {});
     }
-    else if(name == Config.notifyEnvironmentChanged){
-      setState(() {});
-    }
     else if(name == Styles.notifyChanged){
       setState(() {});
     }
@@ -897,28 +893,14 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   void _confirmConfigChange(rokwire.ConfigEnvironment env) {
       AppAlert.showCustomDialog(context: context,
-        contentWidget: Text('Switch to ${rokwire.configEnvToString(env)}?'),
+        contentWidget: Text('Switching environments is not available any more.'),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              _changeConfig(env);
             },
             child: Text(Localization().getStringEx('dialog.ok.title', 'OK'))),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text(Localization().getStringEx('dialog.cancel.title', 'Cancel')))
         ]);
-  }
-
-  void _changeConfig(rokwire.ConfigEnvironment env) {
-    if (mounted) {
-        setState(() {
-          _selectedEnv = Config().configEnvironment = env;
-        });
-    }
   }
 
   void _onTapRateApp() async {

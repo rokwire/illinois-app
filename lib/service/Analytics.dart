@@ -375,26 +375,17 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
 
   @override
   Future<void> initService() async {
-
-    await super.initService();
-
+    _updateSessionUuid();
     _updateLocationServices();
     _updateNotificationServices();
     _updateUserRoles();
-    _updateSessionUuid();
+    await super.initService();
   }
 
   @override
   void destroyService() {
     NotificationService().unsubscribe(this);
     super.destroyService();
-  }
-
-  @override
-  Set<Service> get serviceDependsOn {
-    Set<Service> services = super.serviceDependsOn;
-    services.addAll([Auth2(), LocationServices()]);
-    return services;
   }
 
   // NotificationsListener
@@ -483,6 +474,24 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     }
     else if (name == Groups.notifyGroupMembershipSwitchToMember) {
       logGroup(action: LogGroupMembershipSwitchToMember, attributes: (param as Group).analyticsAttributes);
+    }
+  }
+
+  // Services
+
+  @override
+  Future<void> onServiceInitialized(Service? service) async {
+    await super.onServiceInitialized(service);
+    if (isInitialized) {
+      if (service == Auth2()) {
+        _updateUserRoles();
+      }
+      else if (service == LocationServices()) {
+        _updateLocationServices();
+      }
+      //else if (service == Config()) {
+      //   No special action needed
+      //}
     }
   }
 

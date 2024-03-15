@@ -36,7 +36,6 @@ class Storage extends rokwire.Storage {
 
   // Overrides
 
-  @override String get configEnvKey => 'config_environment';
   @override String get reportedUpgradeVersionsKey  => 'reported_upgrade_versions';
 
   // User: readonly, backward compatability only.

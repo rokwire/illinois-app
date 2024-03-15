@@ -27,7 +27,6 @@ class Config extends rokwire.Config {
   static String get notifyUpgradeAvailable    => rokwire.Config.notifyUpgradeAvailable;
   static String get notifyOnboardingRequired  => rokwire.Config.notifyOnboardingRequired;
   static String get notifyConfigChanged       => rokwire.Config.notifyConfigChanged;
-  static String get notifyEnvironmentChanged  => rokwire.Config.notifyEnvironmentChanged;
 
   static const String twitterDefaultAccountKey = '';
 
