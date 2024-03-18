@@ -35,7 +35,7 @@ import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/analytics.dart' as rokwire;
 
@@ -339,7 +339,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   void createService() {
     super.createService();
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       AppNavigation.notifyEvent,
       LocationServices.notifyStatusChanged,
       
@@ -403,8 +403,8 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   void onNotification(String name, dynamic param) {
     super.onNotification(name, param);
     
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
     else if (name == AppNavigation.notifyEvent) {
       _onAppNavigationEvent(param);
@@ -500,7 +500,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   
   // App Livecycle Service
   
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
 
     if (super.isInitialized) {
       if (state == AppLifecycleState.paused) {

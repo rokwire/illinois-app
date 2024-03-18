@@ -24,7 +24,7 @@ import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:illinois/model/Voter.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
@@ -58,7 +58,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       Auth2UserPrefs.notifyVoterChanged,
       GeoFence.notifyCurrentRegionsUpdated
     ]);
@@ -411,7 +411,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
   void onNotification(String name, param) {
     if (name == Auth2UserPrefs.notifyVoterChanged) {
       _reloadVoterRule();
-    } else if (name == AppLivecycle.notifyStateChanged && AppLifecycleState.resumed == param) {
+    } else if (name == AppLifecycle.notifyStateChanged && AppLifecycleState.resumed == param) {
       _reloadVoterRule();
     } else if(name == GeoFence.notifyCurrentRegionsUpdated) {
       _showRegionAlertIfNeeded();

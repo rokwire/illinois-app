@@ -34,7 +34,7 @@ import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -90,7 +90,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
       Auth2.notifyCardChanged,
       MobileAccess.notifyMobileStudentIdChanged,
       MobileAccess.notifyStartFinished,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
     ]);
 
     MobileAccess().startIfNeeded();
@@ -220,7 +220,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     else if (name == MobileAccess.notifyStartFinished) {
       _checkIcarMobileAvailable();
       setStateIfMounted(() { });
-    } else if (name == AppLivecycle.notifyStateChanged) {
+    } else if (name == AppLifecycle.notifyStateChanged) {
       if ((param is AppLifecycleState) && (param == AppLifecycleState.resumed)) {
         setStateIfMounted(() {});
       }

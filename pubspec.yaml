@@ -30,7 +30,7 @@ dependencies:
   intl: ^0.18.0
   http: ^0.13.3
   flutter_widget_from_html: ^0.9.1
-  geolocator: ^8.0.0
+  geolocator: ^9.0.2
   url_launcher: ^6.0.10
   xml: ^6.3.0
   sprintf: ^7.0.0

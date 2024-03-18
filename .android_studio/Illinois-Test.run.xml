@@ -2,8 +2,6 @@
   <configuration default="false" name="Illinois-Test" type="FlutterRunConfigurationType" factoryName="Flutter">
     <option name="buildFlavor" value="IllinoisTst" />
     <option name="filePath" value="$PROJECT_DIR$/lib/mainTest.dart" />
-    <method v="2">
-      <option name="RunConfigurationTask" enabled="true" run_configuration_name="prebuild_illinois" run_configuration_type="ShConfigurationType" />
-    </method>
+    <method v="2" />
   </configuration>
 </component>

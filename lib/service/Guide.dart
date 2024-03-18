@@ -7,7 +7,7 @@ import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
@@ -60,7 +60,7 @@ class Guide with Service implements NotificationsListener {
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
       Storage.notifySettingChanged,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       DeepLink.notifyUri,
     ]);
     _guideUriCache = <Uri>[];
@@ -126,14 +126,14 @@ class Guide with Service implements NotificationsListener {
       if (param == Storage.onBoardingPassedKey) {
         _initDefaultFavorites();
       }
-    } else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    } else if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     } else if (name == DeepLink.notifyUri) {
       _processDeepLinkUri(param);
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

@@ -23,7 +23,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Identity.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -58,7 +58,7 @@ class MobileAccess with Service implements NotificationsListener {
     super.createService();
     _methodChannel.setMethodCallHandler(_handleMethodCall);
     NotificationService()
-        .subscribe(this, [AppLivecycle.notifyStateChanged, Auth2.notifyLoginChanged, Storage.notifySettingChanged]);
+        .subscribe(this, [AppLifecycle.notifyStateChanged, Auth2.notifyLoginChanged, Storage.notifySettingChanged]);
   }
 
   @override
@@ -81,7 +81,7 @@ class MobileAccess with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Auth2(), FlexUI(), Storage(), AppLivecycle()]);
+    return Set.from([Auth2(), FlexUI(), Storage(), AppLifecycle()]);
   }
 
   // Accessories
@@ -115,7 +115,7 @@ class MobileAccess with Service implements NotificationsListener {
   }
 
   bool get _isAllowedToOpenDoors {
-    if (AppLivecycle().state == AppLifecycleState.detached) {
+    if (AppLifecycle().state == AppLifecycleState.detached) {
       // Do not allow scanning / opening doors when app is in detached state
       return false;
     }
@@ -123,7 +123,7 @@ class MobileAccess with Service implements NotificationsListener {
       case MobileAccessOpenType.always:
         return true;
       case MobileAccessOpenType.opened_app:
-        return (AppLivecycle().state == AppLifecycleState.resumed);
+        return (AppLifecycle().state == AppLifecycleState.resumed);
     }
   }
 
@@ -494,7 +494,7 @@ class MobileAccess with Service implements NotificationsListener {
       loadStudentId().then((_) {
         _shouldScan();
       });
-    } else if (name == AppLivecycle.notifyStateChanged) {
+    } else if (name == AppLifecycle.notifyStateChanged) {
       _shouldScan();
     }
   }

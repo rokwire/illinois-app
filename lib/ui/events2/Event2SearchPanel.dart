@@ -37,7 +37,7 @@ import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -97,7 +97,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
   void initState() {
     NotificationService().subscribe(this, [
       Storage.notifySettingChanged,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
       Event2FilterParam.notifyChanged,
@@ -143,8 +143,8 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
 
   @override
   void onNotification(String name, param) {
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
     else if (name == Auth2.notifyLoginChanged) {
       _refresh();
@@ -166,7 +166,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _userLocation = null;
     }
