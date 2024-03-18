@@ -97,8 +97,8 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyWellnessToDoItemNotification               = "$notifyBase.wellness.to_do";
   static const String notifyProfileMyNotification                      = "$notifyBase.profile.my";
   static const String notifyProfileWhoAreYouNotification               = "$notifyBase.profile.who_are_you";
-  static const String notifyProfileLoginNotification                 = "$notifyBase.profile.privacy"; //TBD profile.login?
-  static const String notifySettingsSectionsNotification               = "$notifyBase.settings.sections";  //TBD deprecate. Use payloadTypeProfileLogin instead
+  static const String notifyProfileLoginNotification                        = "$notifyBase.profile.login";
+  static const String notifySettingsSectionsNotification               = "$notifyBase.settings.sections";  //TBD deprecate and delete. Use profile.login instead
   static const String notifySettingsInterestsNotification              = "$notifyBase.settings.interests";
   static const String notifySettingsFoodFiltersNotification            = "$notifyBase.settings.food_filters";
   static const String notifySettingsSportsNotification                 = "$notifyBase.settings.sports";
@@ -106,11 +106,11 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifySettingsAssessmentsNotification            = "$notifyBase.settings.assessments";
   static const String notifySettingsCalendarNotification               = "$notifyBase.settings.calendar";
   static const String notifySettingsAppointmentsNotification        = "$notifyBase.settings.appointments";
-  static const String notifySettingsMapsNotification                    = "$notifyBase.settings.maps"; //TBD do we need this? Are we declaring these somewhere in the documentation?
-  static const String notifySettingsContactsNotification               = "$notifyBase.settings.contacts"; //TBD do we need this?
-  static const String notifySettingsResearchNotification              = "$notifyBase.settings.research"; //TBD do we need this?
-  static const String notifySettingsPrivacyNotification                 = "$notifyBase.settings.privacy"; //TBD do we need this?
-  static const String notifySettingsNotificationsNotification         = "$notifyBase.settings.notifications"; //TBD do we need this?
+  static const String notifySettingsMapsNotification                    = "$notifyBase.settings.maps";
+  static const String notifySettingsContactsNotification               = "$notifyBase.settings.contacts";
+  static const String notifySettingsResearchNotification              = "$notifyBase.settings.research";
+  static const String notifySettingsPrivacyNotification                 = "$notifyBase.settings.privacy";
+  static const String notifySettingsNotificationsNotification         = "$notifyBase.settings.notifications";
   static const String notifyGuideArticleDetailNotification             = "$notifyBase.guide.article.detail";
 
   // Topic names
