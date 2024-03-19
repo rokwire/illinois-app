@@ -679,6 +679,8 @@
 
     "university-logo": {"src": "app/images/university-logo.png", "size": 36, "type": "flutter.asset"},
     "university-logo-dark": {"src": "app/images/university-logo.png", "size": 56, "type": "flutter.asset"},
+    "university-logo-dark-frame": {"src": "app/images/university-logo.png", "type": "flutter.asset"},
+    "university-logo-oval-white": {"src": "app/images/university-logo.png", "type": "flutter.asset"},
     "university-logo-circle-white": {"src": "'images/group-5-white.png'", "type": "flutter.asset"},
     "university-logo-circle-dark": {"src": "'images/group-5-blue.png'", "type": "flutter.asset"},
     "transit-logo": {"src": "images/mtd-logo.png", "type": "flutter.asset"},
