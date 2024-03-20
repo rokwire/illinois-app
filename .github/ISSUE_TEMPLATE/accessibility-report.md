@@ -2,8 +2,8 @@
 name: Accessibility report
 about: Report an issue with accessiblity
 title: "[ACCESSIBILITY]"
-labels: ''
-assignees: ahetrick, julianchin, pmarkhennessy
+labels: 'Type: User Request/Proposal'
+assignees: ahetrick, julianchin, knguyenjahiel, pmarkhennessy
 
 ---
 
