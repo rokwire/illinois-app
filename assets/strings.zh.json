@@ -136,6 +136,7 @@
 
 	"panel.home.header.title": "收藏夾",
 	"panel.home.header.editing.title": "定制",
+	"panel.home.connect.not_logged_in.title": "Connect to Illinois",
 	"panel.home.connect.not_logged_in.netid.description.part_1": "您是 ",
 	"panel.home.connect.not_logged_in.netid.description.part_2": "學生",
 	"panel.home.connect.not_logged_in.netid.description.part_3": " 或 ",
@@ -1212,6 +1213,7 @@
 
 	"panel.event2.create.header.title": "举办活动",
 	"panel.event2.update.header.title": "活动更新",
+	"panel.event2.create.section.image.description": "事件圖像顯示 16:9 或 1000px x 615px jpg、png 或 gif（非動畫）。 較大的圖像會自動定位在框架內，並且可以點擊以在伊利諾伊州應用程式中完整查看。",
 	"panel.event2.create.section.title.title": "活动名称",
 	"panel.event2.create.section.description.title": "活动细节",
 	"panel.event2.create.section.description.description": " (在此栏新增的超链接无法使用。请将网址输入至正确的字段，如在线活动的活动网址、活动网页链接、或是外部的活动注册链接。)",
@@ -3507,6 +3509,8 @@
 
 	"widget.home.welcome.text.title": "“歡迎來到{{app_title}} {{app_version}}",
 	"widget.home.welcome.button.close.label": "關",
+
+	"widget.home.empty.content.text": "Tap the \u2606s under <a href='$_browseLocalUrlMacro'>Browse</a> to add shortcuts to Favorites. Note that some features require specific <a href='$_privacySettingsLocalUrlMacro'>privacy settings</a> and <a href='$_signInLocalUrlMacro'>signing in</a> with your NetID, phone number, or email address.",
 
 	"widget.home.athletics_news.text.title": "十大新聞",
 	"widget.home.athletics_news.text.empty.description": "目前無法查看十大新聞。",

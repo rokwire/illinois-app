@@ -205,7 +205,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          StringUtils.isNotEmpty(_group?.imageURL) ?  Positioned.fill(child: ModalImageHolder(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders))) : Container(),
+          StringUtils.isNotEmpty(_group?.imageURL) ? Positioned.fill(child:  Semantics(label: "Group Image", child: ModalImageHolder(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders)))) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
             child: Container(
@@ -489,16 +489,18 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       for (ContentAttribute attribute in attributes) {
         List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
         if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
-          attributesList.add(Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
-              Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
-            ),
-            Expanded(child:
-              Text(displayAttributeValues.join(', '), /*overflow: TextOverflow.ellipsis, maxLines: 1,*/ style:
-                Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
+          attributesList.add(
+            Semantics(container:true, child:
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
+                  Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
+                ),
+                Expanded(child:
+                  Text(displayAttributeValues.join(', '), /*overflow: TextOverflow.ellipsis, maxLines: 1,*/ style:
+                    Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
+                  ),
               ),
-            ),
-          ],),);
+          ],)),);
         }
       }
     }
@@ -543,6 +545,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         child:Column(children: <Widget>[
           Semantics(
           explicitChildNodes: true,
+          container: true,
           child: Container(
               child:  GroupDropDownButton(
                   emptySelectionText: Localization().getStringEx("panel.groups_settings.privacy.hint.default","Select privacy setting.."),

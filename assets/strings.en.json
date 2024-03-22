@@ -136,6 +136,7 @@
 
     "panel.home.header.title": "Favorites",
     "panel.home.header.editing.title": "Customize",
+    "panel.home.connect.not_logged_in.title": "Connect to Illinois",
     "panel.home.connect.not_logged_in.netid.description.part_1": "Are you a ",
     "panel.home.connect.not_logged_in.netid.description.part_2": "university student",
     "panel.home.connect.not_logged_in.netid.description.part_3": " or ",
@@ -1213,6 +1214,7 @@
 
     "panel.event2.create.header.title": "Create an Event",
     "panel.event2.update.header.title": "Update Event",
+    "panel.event2.create.section.image.description": "The event image displays a 16:9 or 1000px x 615px jpg, png, or gif (not animated). Larger images are automatically positioned within the frame and can be tapped to view in their entirety within the Illinois app.",
     "panel.event2.create.section.title.title": "EVENT TITLE",
     "panel.event2.create.section.title.field.title": "TITLE FIELD",
     "panel.event2.create.section.description.title": "EVENT DESCRIPTION",
@@ -3529,6 +3531,8 @@
 
     "widget.home.welcome.text.title": "Welcome to {{app_title}} {{app_version}}",
     "widget.home.welcome.button.close.label": "Close",
+
+    "widget.home.empty.content.text": "Tap the \u2606s under <a href='{{browse_local_url}}'>Browse</a> to add shortcuts to Favorites. Note that some features require specific <a href='{{privacy_settings_local_url}}'>privacy settings</a> and <a href='{{sign_in_local_url}}'>signing in</a> with your NetID, phone number, or email address.",
 
     "widget.home.athletics_news.text.title": "Big 10 News",
     "widget.home.athletics_news.text.empty.description": "Big 10 News is not available right now.",

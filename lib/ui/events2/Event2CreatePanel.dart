@@ -631,6 +631,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     return SingleChildScrollView(child:
       Column(children: [
         _buildImageWidget(),
+        _buildImageDescriptionSection(),
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             _buildTitleSection(),
@@ -703,6 +704,20 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       }
     });
 
+  }
+
+  Widget _buildImageDescriptionSection() {
+    return Padding(
+        padding: EdgeInsets.only(left: 16, right: 16, top: 20),
+        child: Row(children: [
+          Expanded(
+              child: Text(
+                  Localization().getStringEx('panel.event2.create.section.image.description',
+                      "The event image displays a 16:9 or 1000px x 615px jpg, png, or gif (not animated). Larger images are automatically positioned within the frame and can be tapped to view in their entirety within the Illinois app."),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 8,
+                  style: Styles().textStyles.getTextStyle('widget.message.small')))
+        ]));
   }
 
   // Title and Description

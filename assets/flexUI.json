@@ -120,7 +120,7 @@
 				"canvas_courses"                          : ["${config.settings.groups.canvas}"],
 				"medicine_courses"                        : ["${config.settings.groups.canvas}"],
 				"mtd_bus_pass"                            : ["${config.settings.groups.mtd_bus_pass}"],
-				"assistant"                               : ["${config.settings.groups.assistant}"],
+				"assistant"                               : ["${config.settings.groups.assistant}", "OR", "${config.settings.groups.assistant_managed}"],
 				"essential_skills_coach"                  : ["${config.settings.groups.essential_skills_coach}"]
 			},
 			"locations": {

@@ -269,6 +269,11 @@ class HomeSlantWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    EdgeInsetsGeometry titleTextPadding = EdgeInsets.only(top: 12, bottom: 12,
+      left: (titleIconKey == null) ? 16 : 0,
+      right: ((actions == null) && (favoriteId == null)) ? 16 : 0,
+    );
+
     return Column(children: [
       
       // Title Row
@@ -277,10 +282,11 @@ class HomeSlantWidget extends StatelessWidget {
           child: Container(color: Styles().colors.fillColorPrimary, child:
             Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
 
-              HomeTitleIcon(image: Styles().images.getImage(titleIconKey, excludeFromSemantics: true)),
+              if (titleIconKey != null)
+                HomeTitleIcon(image: Styles().images.getImage(titleIconKey, excludeFromSemantics: true)),
 
               Expanded(child:
-                Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+                Padding(padding: titleTextPadding, child:
                   Semantics(label: title, header: true, excludeSemantics: true, child:
                     Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat"))
                   )

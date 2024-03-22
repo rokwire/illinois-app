@@ -131,7 +131,7 @@ class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameD
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  AthleticsGameDetailHeading(game: game, showImageTout: false, ),
+                  AthleticsGameDetailHeading(game: game, sportEvent: widget.event, showImageTout: false, ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                     child: Column(

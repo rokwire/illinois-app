@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [5.1.34] - 2024-03-15
+### Added
+- Event cover image description [#4010](https://github.com/rokwire/illinois-app/issues/4010).
+### Fixed
+- Show event registration label if available [#4012](https://github.com/rokwire/illinois-app/issues/4012).
+- Fix Settings and Profile deep links [#4014](https://github.com/rokwire/illinois-app/issues/4014).
+
+## [5.1.33] - 2024-03-14
+### Added
+- Created HomeEmptyContentWidget displayed when there is no favorites content [#3999](https://github.com/rokwire/illinois-app/issues/3999).
+### Changed
+- Acknowledged "Assistant Managed" group for enabling Assistant UI [#4002](https://github.com/rokwire/illinois-app/issues/4002).
+### Fixed
+- Correct filtering of sport events [#3986](https://github.com/rokwire/illinois-app/issues/3986).
+- Trim URL links before launching them, report URL parse failure when confirming URLs [#4001](https://github.com/rokwire/illinois-app/issues/4001).
+
 ## [5.1.32] - 2024-02-19
 ### Removed
 - Android: background location permission [#3989](https://github.com/rokwire/illinois-app/issues/3989).
