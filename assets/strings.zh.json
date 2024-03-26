@@ -3049,6 +3049,7 @@
 
 	"panel.skills_self_evaluation.get_started.section.title": "技能自我評估",
 	"panel.skills_self_evaluation.button.more.hint": "展示更多",
+	"panel.skills_self_evaluation.survey.title": "Skills Self-Evaluation",
 	"panel.skills_self_evaluation.get_started.time.description": "5分鐘",
 	"panel.skills_self_evaluation.get_started.button.label": "開始",
 	"panel.skills_self_evaluation.get_started.description.title": "確定您在以下方面的優勢：",
