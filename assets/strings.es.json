@@ -3064,6 +3064,7 @@
 
     "panel.skills_self_evaluation.get_started.section.title": "Autoevaluación de habilidades",
     "panel.skills_self_evaluation.button.more.hint": "Mostrar más",
+    "panel.skills_self_evaluation.survey.title": "Skills Self-Evaluation",
     "panel.skills_self_evaluation.get_started.time.description": "5 minutos",
     "panel.skills_self_evaluation.get_started.button.label": "Empezar",
     "panel.skills_self_evaluation.get_started.description.title": "Identifique sus fortalezas relacionadas con:",
