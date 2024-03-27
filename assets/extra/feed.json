@@ -1,0 +1,598 @@
+{
+  "result": [
+    {"type": "event", "data": {"all_day":false,"attendance_details":null,"attributes":{"category":"Speakers and Seminars"},"cancelled":false,"contacts":[],"cost":null,"data":null,"description":"","end":1711601940,"event_type":"in-person","event_url":null,"free":true,"grouping":null,"id":"6492232eeafb5a000acc8342","image_url":null,"instructions":null,"location":{"address":null,"building":null,"city":null,"description":"116 RAL","floor":null,"full_address":null,"latitude":40.110588,"longitude":-88.20727,"name":null,"room":null,"state":null,"zip":null},"name":"Evan Hebner (leckband/Brieher lab) -","online_details":null,"private":false,"published":true,"registration_details":{"external_link":null,"label":null,"max_event_capacity":null,"registrants_external_ids":null,"type":"none"},"source":"events_bb","speaker":null,"sponsor":"Department of Biochemistry","start":1711573200,"survey_details":null,"timezone":null}},
+    {"type": "event", "data": {"all_day":false,"attendance_details":null,"attributes":{"category":"Speakers and Seminars"},"cancelled":false,"contacts":[],"cost":null,"data":null,"description":"","end":1711601940,"event_type":"in-person","event_url":null,"free":true,"grouping":null,"id":"6492232eeafb5a00089ba313","image_url":null,"instructions":null,"location":{"address":null,"building":null,"city":null,"description":"116 RAL","floor":null,"full_address":null,"latitude":40.110588,"longitude":-88.20727,"name":null,"room":null,"state":null,"zip":null},"name":"Jessica Derham (Kalsotra lab) -","online_details":null,"private":false,"published":true,"registration_details":{"external_link":null,"label":null,"max_event_capacity":null,"registrants_external_ids":null,"type":"none"},"source":"events_bb","speaker":null,"sponsor":"Department of Biochemistry","start":1711573200,"survey_details":null,"timezone":null}},
+    {"type": "notification", "data": {"org_id":"0a2eff20-e2cd-11eb-af68-60f81db5ecc0","app_id":"9766","id":"685f34f8-ac07-4e30-b590-24b3f166a29c","priority":0,"subject":"Athletics news - Men's Basketball, Women's Basketball","sender":{"type":"system"},"body":"Fighting Illini Basketball Doubleheader Watch Party Set for State Farm Center","data":{"click_action":"FLUTTER_NOTIFICATION_CLICK","message_id":"685f34f8-ac07-4e30-b590-24b3f166a29c","news_id":"62851","sport":"mbball","type":"athletics_news_detail"},"recipients":null,"recipients_criteria_list":[],"recipient_account_criteria":null,"topic":"athletics.mbball.notification.news","calculated_recipients_count":107,"date_created":"2024-03-26T17:56:53.102Z","date_updated":null,"time":"2024-03-26T17:56:52.991Z","mute":false,"read":false}},
+    {"type": "appointment", "data": {"answers":null,"cancelled":false,"date":"2023-08-22T13:45:00Z","host":{"first_name":"Schedule 3","last_name":"Nurse"},"id":"02d1bed2-4441-4e18-8165-9aec1d3a66d8","instructions":"","location":{"id":"1_McKinley Health Center, Immunization and Travel Clinic, First Floor","latitude":40.10295291956433,"longitude":-88.21989804371852,"phone":"217-333-2700","title":"McKinley Health Center, Immunization and Travel Clinic, First Floor"},"provider":{"canceling":false,"id":"1","name":"McKinley","rescheduling":false,"scheduling":false},"type":"InPerson"}},
+    {"type": "campus_reminder", "data": "fd0d8c1e-99ce-42bb-a8f4-0ef5954849b7"},
+    {"type": "wellness_tip", "data": "Keep learning! Don’t get into a rut or slip into a comfort zone that keeps you from trying new experiences. Explore the activities, events, and programs offered around campus and in the community."},
+    {"type": "student_course", "data": {"coursetitle":"Arts at Illinois","courseshortname":"FAA 101","coursenumber":"58705","instructionmethod":"DIS","coursesection":{"days":"W","meeting_dates_or_range":"08/22/2022 - 10/14/2022","room":"243","buildingname":"Armory","buildingid":"0006","instructiontype":"DIS","instructor":"Edwards, Mary","start_time":"0900","endtime":"0900","building":{"ID":"6e120a5a-52a4-4c7e-8f2a-df17415d810c","Name":"Armory","Number":"","FullAddress":"505 E Armory Ave  Champaign, IL 61820","Address1":"505 E Armory Ave","Address2":"","City":"Champaign","State":"IL","ZipCode":"61820","ImageURL":"https://images.ccf.fs.illinois.edu/building-images/0006.jpg","MailCode":"","Entrances":[{"ID":"da224f28-5abe-4258-bf3d-e50f299fd8c1","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10475207,"Longitude":-88.23279029},{"ID":"ea575016-684b-4923-9c5f-110b4eece956","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10514402,"Longitude":-88.23268545},{"ID":"a6872add-835d-4297-8d17-df583673e350","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10436124,"Longitude":-88.23267782},{"ID":"676b3049-23e6-4845-8cd6-61f57df2e345","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10439506,"Longitude":-88.23202791},{"ID":"7f5cc850-9878-4eac-9738-cda8d6f7ec08","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10439534,"Longitude":-88.23197905},{"ID":"eea2729f-15b2-4f64-bf8a-3ecf1f92d88d","Name":"","ADACompliant":true,"Available":true,"ImageURL":"","Latitude":40.1043956,"Longitude":-88.23193279},{"ID":"2e3d2ea0-0b38-4ba8-b6ad-5ffcf0e9a4b7","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10439586,"Longitude":-88.23188717},{"ID":"22d7d1d2-9e9e-4bbc-94b3-910d985ad7d8","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.1043961,"Longitude":-88.23184529},{"ID":"776fe8a5-4327-4329-b59f-459bc7fbd4ce","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10436954,"Longitude":-88.23120031},{"ID":"0fd1bf6d-7c67-471c-ad6f-b8bb68065fea","Name":"","ADACompliant":true,"Available":true,"ImageURL":"","Latitude":40.10476129,"Longitude":-88.23109534},{"ID":"dc7d582a-f642-4dc1-8d82-e797adb6f13d","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10515056,"Longitude":-88.23121521},{"ID":"cbfba00a-fd5d-4119-a988-eae17be94afc","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10511776,"Longitude":-88.23190092},{"ID":"7909639d-6a25-457c-922f-8eac5df2e48d","Name":"","ADACompliant":true,"Available":true,"ImageURL":"","Latitude":40.10511745,"Longitude":-88.23194811},{"ID":"2bdf5231-1c66-4c7d-9329-40d3fe0489cc","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10511716,"Longitude":-88.23199321}],"Latitude":40.10475666,"Longitude":-88.23194281},"courseReferenceNumber":"58705"}}},
+    {"type": "sport_news", "data": {"id":"62746","title":"NCAA Tournament Ticket Information","link":"https://fightingillini.com/news/2024/3/14/mens-basketball-ncaa-tournament-ticket-information.aspx","category":"Men's Basketball","sport":"mbball","description":"Ticket Guidelines for the 2024 NCAA Men's Basketball Tournament.\r\n","fulltext":"","fulltext_raw":"","image_url":"https://fightingillini.com/images/2024/3/24/ORG01619-2_16x9.jpg","pub_date_utc":"Thu, 14 Mar 2024 13:04:00 GMT"}},
+    {"type": "event", "data": {"all_day":false,"attendance_details":null,"attributes":{"category":"Big 10 Athletics","sport":"Women's Basketball"},"cancelled":false,"contacts":[],"cost":null,"data":{"date":"3/28/2024","datetime_utc":"2024-03-28T23:30:00Z","description":"WBIT Quarterfinals","id":"25817","links":{"audio":"http://fightingillini.com/showcase?Live=6048","livestats":"https://stats.statbroadcast.com/broadcast/?id=524808","video":"https://es.pn/3vsScQa"},"location":{"HAN":"A","location":"Tulsa, Okla."},"name":"Illinois at Tulsa","opponent":{"logo_image":"https://fightingillini.com/images/logos/Tulsa_Flags_WhtBG_200x200.png?width=100","name":"Tulsa"},"results":null,"sport":{"shortname":"wbball","title":"Women's Basketball"},"status":"A","time":"6:30 PM CT"},"description":null,"end":null,"event_type":"in-person","event_url":null,"free":false,"grouping":null,"id":"c08a2743-1a76-41d6-8953-612c5fc5ae5b","image_url":null,"instructions":null,"location":null,"name":"Illinois at Tulsa","online_details":null,"private":false,"published":true,"registration_details":{"external_link":null,"label":null,"max_event_capacity":null,"registrants_external_ids":null,"type":""},"source":"sports_bb","speaker":null,"sponsor":null,"start":1711668600,"survey_details":null,"timezone":null}},
+    {"type": "event", "data": {"all_day":false,"attendance_details":null,"attributes":{"category":"Big 10 Athletics","sport":"Men's Basketball"},"cancelled":false,"contacts":[],"cost":null,"data":{"date":"3/28/2024","datetime_utc":"2024-03-29T02:09:00Z","id":"25816","links":{"audio":"https://thevarsitynetwork.com/audioapplink/source/oas-1032/content/uillinois:allaccess-Live-6049"},"location":{"HAN":"N","location":"Boston, Mass."},"name":"Illinois at Iowa State","opponent":{"logo_image":"https://fightingillini.com/images/logos/Iowa_State.png?width=100","name":"Iowa State"},"results":null,"sport":{"shortname":"mbball","title":"Men's Basketball"},"status":"A","time":"9:09 p.m. CT"},"description":null,"end":null,"event_type":"in-person","event_url":null,"free":false,"grouping":null,"id":"93cf9185-c85a-4e65-8079-53f48be6a610","image_url":null,"instructions":null,"location":null,"name":"Illinois at Iowa State","online_details":null,"private":false,"published":true,"registration_details":{"external_link":null,"label":null,"max_event_capacity":null,"registrants_external_ids":null,"type":""},"source":"sports_bb","speaker":null,"sponsor":null,"start":1711678140,"survey_details":null,"timezone":null}},
+    {"type": "tweet", "data": "1772705301898154235"},
+    {"type": "campus_reminder", "data": "29b5ecae-a5a6-44be-a385-136fc3031db6"},
+    {"type": "sport_news", "data": {"id":"62851","title":"Fighting Illini Basketball Doubleheader Watch Party Set for State Farm Center","link":"https://fightingillini.com/news/2024/3/26/mens-basketball-fighting-illini-basketball-doubleheader-watch-party-set-for-state-farm-center.aspx","category":"Men's Basketball, Women's Basketball","sport":"mbball","description":"Gates will open at 6 p.m. CT and admission is FREE. Fans of all ages are encouraged to attend. \r\n","fulltext":"<p><strong><a href=\"https://www.statefarmcenter.com/plan-your-visit/arena-policies\" title=\"https://www.statefarmcenter.com/plan-your-visit/arena-policies\">CLEAR BAG POLICY</a></strong></p>\r\n\r\n<p><strong>CHAMPAIGN, Ill. – </strong>Fighting Illini Athletics will host a doubleheader basketball watch party at State Farm Center on Thursday, March 28 with both women's and men's basketball playing postseason games being shown on the videoboard. Gates will open at 6 p.m. CT and admission is FREE. Fans of all ages are encouraged to attend. </p>\r\n\r\n<p>The first 350 fans will get a free hot dog, courtesy of Illinois Student Affairs. Coca-Cola will be on site with giveaways and products for taste testing. Photo booth and giveaways also available from Max (formerly HBO). </p>\r\n\r\n<p>The women's basketball team begins its WBIT quarterfinal game at Tulsa at 6:30 p.m. CT, followed by the conclusion of the UConn/San Diego State men's game, and then the men's basketball Sweet 16 contest vs. Iowa State. In between games, there will be in-venue crowd participation contests like knockout, 3-point shooting, trivia and more. </p>\r\n\r\n<p>Concessions will be open with dinner options as well as drink specials -- $5 Twisted Tea, $3 Icon beer, $6 margaritas, and pink lemonades and $8 25oz Bud Lights. </p>\r\n\r\n<p><strong>ENTRANCE AND PARKING</strong>: Fans should enter the West main gates of State Farm. Parking will be free in the northwest and southwest lots. The <a contenteditable=\"false\" href=\"https://www.statefarmcenter.com/plan-your-visit/arena-policies\" title=\"https://www.statefarmcenter.com/plan-your-visit/arena-policies\"><span style=\"color:#044A91\">clear bag policy</span></a> will be in effect.</p>\r\n","fulltext_raw":"<p><strong><a href=\"https://www.statefarmcenter.com/plan-your-visit/arena-policies\" title=\"https://www.statefarmcenter.com/plan-your-visit/arena-policies\">CLEAR BAG POLICY</a></strong></p>\r\n\r\n<p><strong>CHAMPAIGN, Ill. – </strong>Fighting Illini Athletics will host a doubleheader basketball watch party at State Farm Center on Thursday, March 28 with both women's and men's basketball playing postseason games being shown on the videoboard. Gates will open at 6 p.m. CT and admission is FREE. Fans of all ages are encouraged to attend. </p>\r\n\r\n<p>The first 350 fans will get a free hot dog, courtesy of Illinois Student Affairs. Coca-Cola will be on site with giveaways and products for taste testing. Photo booth and giveaways also available from Max (formerly HBO). </p>\r\n\r\n<p>The women's basketball team begins its WBIT quarterfinal game at Tulsa at 6:30 p.m. CT, followed by the conclusion of the UConn/San Diego State men's game, and then the men's basketball Sweet 16 contest vs. Iowa State. In between games, there will be in-venue crowd participation contests like knockout, 3-point shooting, trivia and more. </p>\r\n\r\n<p>Concessions will be open with dinner options as well as drink specials -- $5 Twisted Tea, $3 Icon beer, $6 margaritas, and pink lemonades and $8 25oz Bud Lights. </p>\r\n\r\n<p><strong>ENTRANCE AND PARKING</strong>: Fans should enter the West main gates of State Farm. Parking will be free in the northwest and southwest lots. The <a contenteditable=\"false\" href=\"https://www.statefarmcenter.com/plan-your-visit/arena-policies\" title=\"https://www.statefarmcenter.com/plan-your-visit/arena-policies\"><span style=\"color:#044A91\">clear bag policy</span></a> will be in effect.</p>\r\n","image_url":"https://fightingillini.com/images/2024/3/26/20231029_MBB_vs_Kansas_KS_0378_Fans.jpg","pub_date_utc":"Tue, 26 Mar 2024 17:47:00 GMT"}},
+    {"type": "notification", "data": {"org_id":"0a2eff20-e2cd-11eb-af68-60f81db5ecc0","app_id":"9766","id":"56162620-c7e6-422d-98c7-becce78af334","priority":0,"subject":"Athletics news - Women's Basketball","sender":{"type":"system"},"body":"Four Illini Named CSC Academic All-District","data":{"click_action":"FLUTTER_NOTIFICATION_CLICK","message_id":"56162620-c7e6-422d-98c7-becce78af334","news_id":"62850","sport":"wbball","type":"athletics_news_detail"},"recipients":null,"recipients_criteria_list":[],"recipient_account_criteria":null,"topic":"athletics.wbball.notification.news","calculated_recipients_count":106,"date_created":"2024-03-26T16:18:35.963Z","date_updated":null,"time":"2024-03-26T16:18:35.898Z","mute":false,"read":false}},
+    {"type": "appointment", "data": {"answers":null,"cancelled":false,"date":"2023-08-22T13:45:00Z","host":{"first_name":"Schedule 3","last_name":"Nurse"},"id":"02d1bed2-4441-4e18-8165-9aec1d3a66d8","instructions":"","location":{"id":"1_McKinley Health Center, Immunization and Travel Clinic, First Floor","latitude":40.10295291956433,"longitude":-88.21989804371852,"phone":"217-333-2700","title":"McKinley Health Center, Immunization and Travel Clinic, First Floor"},"provider":{"canceling":false,"id":"1","name":"McKinley","rescheduling":false,"scheduling":false},"type":"InPerson"}},
+    {"type": "tweet", "data": "1772624135375470707"},
+    {"type": "wellness_todo", "data": {"id":"f69ba775-50fa-47fe-b225-73ba81c577e0","org_id":"0a2eff20-e2cd-11eb-af68-60f81db5ecc0","app_id":"9766","user_id":"c20a9811-038a-11ee-9b71-0a58a9feac02","title":"ToDo: Wash My Socks","description":"","category":null,"work_days":null,"location":null,"completed":false,"has_due_time":true,"due_date_time":"2023-08-24T07:10:00Z","reminder_type":"specific_time","reminder_date_time":"2023-08-24T07:08:00Z","message_ids":{"reminder_date_message_id":"69159874-dcdd-452c-b513-e320bb10c9e8","due_date_message_id":"036a840d-2dc3-44d5-8942-8f5cf83f1ad3"},"task_time":null,"date_created":"2023-08-24T07:07:35.846Z","date_updated":null}},
+    {"type": "event", "data": {"all_day":false,"attendance_details":null,"attributes":{"category":"Big 10 Athletics","sport":"Softball"},"cancelled":false,"contacts":[],"cost":null,"data":{"date":"3/27/2024","datetime_utc":"2024-03-27T22:00:00Z","id":"25709","links":{"livestats":"https://www.statbroadcast.com/events/statmonitr.php?gid=ill","video":"https://www.bigtenplus.com/en-int/livestream/siue-at-illinois/1718811"},"location":{"HAN":"H","location":"Eichelberger Field"},"name":"SIUE at Illinois","opponent":{"logo_image":"https://fightingillini.com/images/logos/CougarUpdatedLogo2023.png?width=100","name":"SIUE"},"results":null,"sport":{"shortname":"softball","title":"Softball"},"status":"A","time":"5 PM"},"description":null,"end":null,"event_type":"in-person","event_url":null,"free":false,"grouping":null,"id":"afdfeb33-b52e-40e9-8500-cb224c890926","image_url":null,"instructions":null,"location":null,"name":"SIUE at Illinois","online_details":null,"private":false,"published":true,"registration_details":{"external_link":null,"label":null,"max_event_capacity":null,"registrants_external_ids":null,"type":""},"source":"sports_bb","speaker":null,"sponsor":null,"start":1711576800,"survey_details":null,"timezone":null}},
+    {"type": "event", "data": {"all_day":false,"attendance_details":{"attendance_takers_external_ids":null,"is_id_scanning_enabled":true,"is_manual_attendance_check_enabled":true},"attributes":{"category":"Career Development"},"cancelled":false,"contacts":[],"cost":"","data":null,"description":"","end":1711656000,"event_type":"in-person","event_url":null,"free":true,"grouping":null,"id":"fec432bd-e0be-43f5-85eb-2c7d6b1fd422","image_url":null,"instructions":null,"location":{"address":null,"building":"Location","city":null,"description":null,"floor":null,"full_address":null,"latitude":40.102825,"longitude":-88.22411,"name":"Location","room":null,"state":null,"zip":null},"name":"Test DD host event","online_details":null,"private":false,"published":true,"registration_details":{"external_link":null,"label":null,"max_event_capacity":12,"registrants_external_ids":null,"type":"internal"},"source":null,"speaker":null,"sponsor":"Host Guru","start":1711591200,"survey_details":null,"timezone":"US/Central"}},
+    {"type": "notification", "data": {"org_id":"0a2eff20-e2cd-11eb-af68-60f81db5ecc0","app_id":"9766","id":"f95c4791-bd45-461d-a585-0b7b5eb462fe","priority":0,"subject":"Athletics news - Women's Basketball","sender":{"type":"system"},"body":"[4] Illinois to Host Stony Brook at 2 p.m. on Sunday","data":{"click_action":"FLUTTER_NOTIFICATION_CLICK","message_id":"f95c4791-bd45-461d-a585-0b7b5eb462fe","news_id":"62816","sport":"wbball","type":"athletics_news_detail"},"recipients":null,"recipients_criteria_list":[],"recipient_account_criteria":null,"topic":"athletics.wbball.notification.news","calculated_recipients_count":106,"date_created":"2024-03-25T02:10:29.389Z","date_updated":null,"time":"2024-03-25T02:10:29.317Z","mute":false,"read":false}},
+    {"type": "wellness_tip", "data": "Stay active in at least one or more ways. If you are able to, walk to class and take the stairs. Try some water aerobics. Participate in sports or a group fitness class. Ride a bike or roll around campus. These activities and many more can help keep you physically fit, relieve stress, and feel great."},
+    {"type": "student_course", "data": {"coursetitle":"The Green Room","courseshortname":"DANC 150","coursenumber":"29774","instructionmethod":"LCD","coursesection":{"days":"F","meeting_dates_or_range":"08/22/2022 - 12/07/2022","room":"2500","buildingname":"Krannert Center for Perf Arts","buildingid":"0052","instructiontype":"LCD","instructor":"Sapozhnikov, Anna","start_time":"0900","endtime":"0900","building":{"ID":"fa68a2d0-2f2c-4c52-bfb2-73a774f836a8","Name":"Krannert Center for Performing Arts","Number":"","FullAddress":"500 S Goodwin Ave  Urbana, IL 61801","Address1":"500 S Goodwin Ave","Address2":"","City":"Urbana","State":"IL","ZipCode":"61801","ImageURL":"https://images.ccf.fs.illinois.edu/building-images/0052.jpg","MailCode":"","Entrances":[{"ID":"c8c24e4a-d03d-430c-b03e-76313f6283d8","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10817093,"Longitude":-88.22325715},{"ID":"78c16fc0-abec-477d-b7be-3d1b1da02e34","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10780333,"Longitude":-88.22326169},{"ID":"de6adcc0-e4fa-4483-86bc-3d2989d645a0","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10788811,"Longitude":-88.22275566},{"ID":"d790bd2e-fce5-41dd-8201-e7d6184faa73","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10788337,"Longitude":-88.22246637},{"ID":"562607fb-e322-44fe-b60b-e0ee794c7b7c","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10814555,"Longitude":-88.22275317},{"ID":"f0e8e05d-7232-49a2-9fee-485a8b6e1051","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10815299,"Longitude":-88.22247221},{"ID":"16ac5e05-1c00-4f66-992e-d8bba3c94844","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10861727,"Longitude":-88.22271313},{"ID":"56776fcc-ff9f-449c-8863-c6228a6e5bfb","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10817853,"Longitude":-88.22266864},{"ID":"5ce07ad2-b7e3-4b6a-8549-5f39023a66d7","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.1078448,"Longitude":-88.22266181},{"ID":"05371d62-f6ce-49cb-b6b2-b7069f8dbd0f","Name":"","ADACompliant":true,"Available":true,"ImageURL":"","Latitude":40.10750832,"Longitude":-88.22280134},{"ID":"845ca7a9-75e9-43ac-8970-170874eaa7fd","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10738038,"Longitude":-88.2225121},{"ID":"1278d27b-415c-4104-b185-d1fd061a7ebe","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10719486,"Longitude":-88.22264795},{"ID":"d04b0804-1da4-4484-83cc-5e476e6f6af5","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.1079092,"Longitude":-88.22206091},{"ID":"b2e44196-1977-4e31-b5bb-4e729e879593","Name":"","ADACompliant":false,"Available":true,"ImageURL":"","Latitude":40.10813889,"Longitude":-88.2220428}],"Latitude":40.10807013,"Longitude":-88.22285911},"courseReferenceNumber":"29774"}}},
+    {"type": "tweet", "data": "1772369507475955920"},
+    {"type": "notification", "data": {"org_id":"0a2eff20-e2cd-11eb-af68-60f81db5ecc0","app_id":"9766","id":"a5f1fdd7-4bdf-4166-b82c-fc829d634fdd","priority":0,"subject":"Athletics news - Women's Basketball","sender":{"type":"system"},"body":"Strong Start Sends [4] Illinois Past Stony Brook, Into WBIT Quarterfinals","data":{"click_action":"FLUTTER_NOTIFICATION_CLICK","message_id":"a5f1fdd7-4bdf-4166-b82c-fc829d634fdd","news_id":"62840","sport":"wbball","type":"athletics_news_detail"},"recipients":null,"recipients_criteria_list":[],"recipient_account_criteria":null,"topic":"athletics.wbball.notification.news","calculated_recipients_count":106,"date_created":"2024-03-24T21:51:23.663Z","date_updated":null,"time":"2024-03-24T21:51:23.586Z","mute":false,"read":false}},
+    {"type": "sport_news", "data": {"id":"62850","title":"Four Illini Named CSC Academic All-District","link":"https://fightingillini.com/news/2024/3/26/womens-basketball-four-illini-named-csc-academic-all-district.aspx","category":"Women's Basketball","sport":"wbball","description":"Kendall Bostic and Adalia McKenzie have earned their second honor of the sort in as many years while Genesis Bryant and Camille Hobby have been recognized for the first time.\r\n","fulltext":"<p><strong>CHAMPAIGN, Ill. –</strong> Four Illinois women's basketball student-athletes have been tabbed College Sports Communicators (CSC, formerly CoSIDA) Academic All-District honorees, the association announced on Tuesday.</p>\r\n\r\n<p></p>\r\n\r\n<p>Kendall Bostic and Adalia McKenzie have earned their second honor of the sort in as many years while Genesis Bryant and Camille Hobby have been recognized for the first time.</p>\r\n\r\n<p></p>\r\n\r\n<p>In her third season at Illinois, Bostic is in graduate school, working towards a master's degree in special education. Bostic earned her bachelor's degree from Illinois in speech and hearing sciences. McKenzie is also in her third season at Illinois, and is working towards an undergraduate degree in recreation, sport, and tourism. Bryant – a second-year Illini – is majoring in communication. A graduate transfer, Hobby earned her undergraduate degree from NC State in sport management and is working towards a master's degree in recreation, sport, and tourism at Illinois.</p>\r\n\r\n<p></p>\r\n\r\n<p>To be eligible for the award, nominees must have a 3.50 GPA and is at least a sophomore academically and athletically. Nominees must also be a starter or important reserve to the team and participated in at least 90 percent of the team's games or started 66 percent of contests.</p>\r\n\r\n<p></p>\r\n\r\n<p>On the court, Bostic is a double-double machine for the Illini, recording 14 on the season and 32 across her time at Illinois. The Kokomo, Indiana, native is averaging a double-double on the season with 12.3 points per game and 10.7 rebounds per game. Bostic has made 164 of her 268 field goal attempts on the season for a 61.2 field goal percentage. Bostic has tallied 50 assists, 35 steals, and 22 block on her senior campaign.</p>\r\n\r\n<p></p>\r\n\r\n<p>McKenzie has turned in an impressive junior campaign, averaging 11.2 points per game and 5.0 rebounds per game. The Brooklyn Park, Minnesota native is shooting at a 50.5 percent clip this season, making 140 of her 277 field goal attempts. She's tallied four double-doubles on the season to bring her career total to eight. McKenzie leads the team in offensive rebounds at 73 this year and has dished out 71 assists while swiping a team-beset 41 steals.</p>\r\n\r\n<p></p>\r\n\r\n<p>Bryant has settled in for the Orange and Blue and is averaging 13.8 points per game and 3.1 rebounds per game to go along with 101 assists (3.3/game). She delivered two 30-point games in the span of three contests to start her senior season. The Jonesboro, Georgia native has connected on 59 3-pointers this season and has racked up 39 steals.</p>\r\n\r\n<p></p>\r\n\r\n<p>Bostic, McKenzie, and Bryant have started all 31 games for Illinois this season.</p>\r\n\r\n<p></p>\r\n\r\n<p>Coming off the bench to start the season, Hobby worked her way into Illinois' starting lineup and has started 19 of the team's 31 games. The center is averaging 9.3 points per game to go along with 4.5 rebounds per game. Hobby recorded the first double-double of her career against Maryland on Feb. 11. The Jacksonville, Florida native scored a season-high 19 points on two occasions, both in Big Ten play.</p>\r\n\r\n<p></p>\r\n\r\n<p>Illinois is back in action in the WBIT quarterfinals on Thursday, March 28, when the team heads to [3] Tulsa.</p>\r\n","fulltext_raw":"<p><strong>CHAMPAIGN, Ill. –</strong> Four Illinois women's basketball student-athletes have been tabbed College Sports Communicators (CSC, formerly CoSIDA) Academic All-District honorees, the association announced on Tuesday.</p>\r\n\r\n<p></p>\r\n\r\n<p>Kendall Bostic and Adalia McKenzie have earned their second honor of the sort in as many years while Genesis Bryant and Camille Hobby have been recognized for the first time.</p>\r\n\r\n<p></p>\r\n\r\n<p>In her third season at Illinois, Bostic is in graduate school, working towards a master's degree in special education. Bostic earned her bachelor's degree from Illinois in speech and hearing sciences. McKenzie is also in her third season at Illinois, and is working towards an undergraduate degree in recreation, sport, and tourism. Bryant – a second-year Illini – is majoring in communication. A graduate transfer, Hobby earned her undergraduate degree from NC State in sport management and is working towards a master's degree in recreation, sport, and tourism at Illinois.</p>\r\n\r\n<p></p>\r\n\r\n<p>To be eligible for the award, nominees must have a 3.50 GPA and is at least a sophomore academically and athletically. Nominees must also be a starter or important reserve to the team and participated in at least 90 percent of the team's games or started 66 percent of contests.</p>\r\n\r\n<p></p>\r\n\r\n<p>On the court, Bostic is a double-double machine for the Illini, recording 14 on the season and 32 across her time at Illinois. The Kokomo, Indiana, native is averaging a double-double on the season with 12.3 points per game and 10.7 rebounds per game. Bostic has made 164 of her 268 field goal attempts on the season for a 61.2 field goal percentage. Bostic has tallied 50 assists, 35 steals, and 22 block on her senior campaign.</p>\r\n\r\n<p></p>\r\n\r\n<p>McKenzie has turned in an impressive junior campaign, averaging 11.2 points per game and 5.0 rebounds per game. The Brooklyn Park, Minnesota native is shooting at a 50.5 percent clip this season, making 140 of her 277 field goal attempts. She's tallied four double-doubles on the season to bring her career total to eight. McKenzie leads the team in offensive rebounds at 73 this year and has dished out 71 assists while swiping a team-beset 41 steals.</p>\r\n\r\n<p></p>\r\n\r\n<p>Bryant has settled in for the Orange and Blue and is averaging 13.8 points per game and 3.1 rebounds per game to go along with 101 assists (3.3/game). She delivered two 30-point games in the span of three contests to start her senior season. The Jonesboro, Georgia native has connected on 59 3-pointers this season and has racked up 39 steals.</p>\r\n\r\n<p></p>\r\n\r\n<p>Bostic, McKenzie, and Bryant have started all 31 games for Illinois this season.</p>\r\n\r\n<p></p>\r\n\r\n<p>Coming off the bench to start the season, Hobby worked her way into Illinois' starting lineup and has started 19 of the team's 31 games. The center is averaging 9.3 points per game to go along with 4.5 rebounds per game. Hobby recorded the first double-double of her career against Maryland on Feb. 11. The Jacksonville, Florida native scored a season-high 19 points on two occasions, both in Big Ten play.</p>\r\n\r\n<p></p>\r\n\r\n<p>Illinois is back in action in the WBIT quarterfinals on Thursday, March 28, when the team heads to [3] Tulsa.</p>\r\n","image_url":"https://fightingillini.com/images/2023/11/1/20231030_WBB_vs_TrumanState_KS_0609_Ball.jpg","pub_date_utc":"Tue, 26 Mar 2024 16:16:00 GMT"}},
+    {"type": "event", "data": {"all_day":false,"attendance_details":null,"attributes":{"category":"Big 10 Athletics","sport":"Baseball"},"cancelled":false,"contacts":[],"cost":null,"data":{"date":"3/29/2024","datetime_utc":"2024-03-29T23:00:00Z","id":"25574","links":{"audio":"http://fightingillini.com/showcase?Live=5941","livestats":"http://www.sidearmstats.com/illinois/baseball/","video":"https://www.bigtenplus.com/en-int/livestream/penn-state-at-illinois/1730204"},"location":{"HAN":"H","location":"Champaign, Ill."},"name":"Penn State at Illinois","opponent":{"logo_image":"https://fightingillini.com/images/logos/Penn-State.png?width=100","name":"Penn State"},"results":null,"sport":{"shortname":"baseball","title":"Baseball"},"status":"A","time":"6 PM CT"},"description":null,"end":null,"event_type":"in-person","event_url":null,"free":false,"grouping":null,"id":"e701b2b0-56b6-4ec0-a00f-ddaf3fae644e","image_url":null,"instructions":null,"location":null,"name":"Penn State at Illinois","online_details":null,"private":false,"published":true,"registration_details":{"external_link":null,"label":null,"max_event_capacity":null,"registrants_external_ids":null,"type":""},"source":"sports_bb","speaker":null,"sponsor":null,"start":1711753200,"survey_details":null,"timezone":null}},
+    {"type": "event", "data": {"all_day":false,"attendance_details":null,"attributes":{"category":"Big 10 Athletics","sport":"Baseball"},"cancelled":false,"contacts":[],"cost":null,"data":{"date":"3/30/2024","datetime_utc":"2024-03-30T20:00:00Z","id":"25575","links":{"audio":"http://fightingillini.com/showcase?Live=5942","livestats":"http://www.sidearmstats.com/illinois/baseball/","video":"https://www.bigtenplus.com/en-int/livestream/penn-state-at-illinois/1730207"},"location":{"HAN":"H","location":"Champaign, Ill."},"name":"Penn State at Illinois","opponent":{"logo_image":"https://fightingillini.com/images/logos/Penn-State.png?width=100","name":"Penn State"},"results":null,"sport":{"shortname":"baseball","title":"Baseball"},"status":"A","time":"3 PM CT"},"description":null,"end":null,"event_type":"in-person","event_url":null,"free":false,"grouping":null,"id":"511ecc39-4590-4ba0-b439-f9c8a809d24c","image_url":null,"instructions":null,"location":null,"name":"Penn State at Illinois","online_details":null,"private":false,"published":true,"registration_details":{"external_link":null,"label":null,"max_event_capacity":null,"registrants_external_ids":null,"type":""},"source":"sports_bb","speaker":null,"sponsor":null,"start":1711828800,"survey_details":null,"timezone":null}},
+    {"type": "notification", "data": {"org_id":"0a2eff20-e2cd-11eb-af68-60f81db5ecc0","app_id":"9766","id":"c6798aea-5b5a-49da-9a0c-0c82512b68d3","priority":0,"subject":"Athletics news - Men's Basketball","sender":{"type":"system"},"body":"NCAA Tournament Ticket Information","data":{"click_action":"FLUTTER_NOTIFICATION_CLICK","message_id":"c6798aea-5b5a-49da-9a0c-0c82512b68d3","news_id":"62746","sport":"mbball","type":"athletics_news_detail"},"recipients":null,"recipients_criteria_list":[],"recipient_account_criteria":null,"topic":"athletics.mbball.notification.news","calculated_recipients_count":107,"date_created":"2024-03-24T17:26:20.568Z","date_updated":null,"time":"2024-03-24T17:26:20.496Z","mute":false,"read":false}},
+    {"type": "wellness_todo", "data": {"id":"e8b421d3-6e60-42ff-98da-cf2618e7f78d","org_id":"0a2eff20-e2cd-11eb-af68-60f81db5ecc0","app_id":"9766","user_id":"c20a9811-038a-11ee-9b71-0a58a9feac02","title":"ToDo: Brush My Teeth","description":"","category":null,"work_days":null,"location":null,"completed":false,"has_due_time":true,"due_date_time":"2023-08-25T07:30:00Z","reminder_type":"morning_of","reminder_date_time":"2023-08-25T05:00:00Z","message_ids":{"reminder_date_message_id":"d46bee87-5e70-453c-81e3-d284a784c73f","due_date_message_id":"b8360572-2c08-4656-a9cc-965a271e93a1"},"task_time":null,"date_created":"2023-08-24T07:12:20.837Z","date_updated":null}},
+    {"type": "campus_reminder", "data": "69aa7d32-0960-4946-8890-2f37a062932a"},
+    {"type": "event", "data": {"all_day":false,"attendance_details":null,"attributes":{"category":"Speakers and Seminars"},"cancelled":false,"contacts":[],"cost":null,"data":null,"description":"<p id=\"isPasted\">Check back soon for more details.</p>","end":1711659600,"event_type":"in-person","event_url":null,"free":true,"grouping":null,"id":"64fc58cc525f31000890cc52","image_url":null,"instructions":null,"location":{"address":null,"building":null,"city":null,"description":"","floor":null,"full_address":null,"latitude":0,"longitude":0,"name":null,"room":null,"state":null,"zip":null},"name":"Alumni Lecture - Prof. Richard Lazarus (BS, ’76), Harvard Law - title TBD","online_details":null,"private":false,"published":true,"registration_details":{"external_link":null,"label":null,"max_event_capacity":null,"registrants_external_ids":null,"type":"none"},"source":"events_bb","speaker":null,"sponsor":"Department of Chemistry","start":1711656000,"survey_details":null,"timezone":null}},
+    {"type": "event", "data": {"all_day":false,"attendance_details":null,"attributes":{"category":"Big 10 Athletics","sport":"Women's Basketball"},"cancelled":false,"contacts":[],"cost":null,"data":{"date":"3/28/2024","datetime_utc":"2024-03-28T23:30:00Z","description":"WBIT Quarterfinals","id":"25817","links":{"audio":"http://fightingillini.com/showcase?Live=6048","livestats":"https://stats.statbroadcast.com/broadcast/?id=524808","video":"https://es.pn/3vsScQa"},"location":{"HAN":"A","location":"Tulsa, Okla."},"name":"Illinois at Tulsa","opponent":{"logo_image":"https://fightingillini.com/images/logos/Tulsa_Flags_WhtBG_200x200.png?width=100","name":"Tulsa"},"results":null,"sport":{"shortname":"wbball","title":"Women's Basketball"},"status":"A","time":"6:30 PM CT"},"description":null,"end":null,"event_type":"in-person","event_url":null,"free":false,"grouping":null,"id":"c08a2743-1a76-41d6-8953-612c5fc5ae5b","image_url":null,"instructions":null,"location":null,"name":"Illinois at Tulsa","online_details":null,"private":false,"published":true,"registration_details":{"external_link":null,"label":null,"max_event_capacity":null,"registrants_external_ids":null,"type":""},"source":"sports_bb","speaker":null,"sponsor":null,"start":1711668600,"survey_details":null,"timezone":null}},
+    {"type": "appointment", "data": {"answers":null,"cancelled":false,"date":"2023-08-22T13:45:00Z","host":{"first_name":"Schedule 3","last_name":"Nurse"},"id":"02d1bed2-4441-4e18-8165-9aec1d3a66d8","instructions":"","location":{"id":"1_McKinley Health Center, Immunization and Travel Clinic, First Floor","latitude":40.10295291956433,"longitude":-88.21989804371852,"phone":"217-333-2700","title":"McKinley Health Center, Immunization and Travel Clinic, First Floor"},"provider":{"canceling":false,"id":"1","name":"McKinley","rescheduling":false,"scheduling":false},"type":"InPerson"}},
+    {"type": "student_course", "data": {"coursetitle":"Introduction to Kinesiology","courseshortname":"KIN 160","coursenumber":"66705","instructionmethod":"OLC","coursesection":{"days":"","meeting_dates_or_range":"10/17/2022 - 12/07/2022","room":"","buildingname":"","buildingid":"","instructiontype":"OLC","instructor":"Richards, Alicia","start_time":"","endtime":"","building":{"ID":"","Name":"","Number":"","FullAddress":"","Address1":"","Address2":"","City":"","State":"","ZipCode":"","ImageURL":"","MailCode":"","Entrances":null,"Latitude":0,"Longitude":0},"courseReferenceNumber":"66705"}}},
+    {"type": "campus_reminder", "data": "065f04fa-c906-42bc-a67c-67f99f5a37b6"}
+  ],
+  "tweets": [{
+    "data":[
+      {
+        "attachments":{
+          "media_keys":[
+            "3_1772703255505612800"
+          ]
+        },
+        "author_id":"19615559",
+        "conversation_id":"1772705301898154235",
+        "created_at":"2024-03-26T19:20:53.000Z",
+        "edit_history_tweet_ids":[
+          "1772705301898154235"
+        ],
+        "entities":{
+          "annotations":[
+            {
+              "end":95,
+              "normalized_text":"Nicola Setterdahl",
+              "probability":0.8955,
+              "start":79,
+              "type":"Person"
+            },
+            {
+              "end":109,
+              "normalized_text":"Gies Finance",
+              "probability":0.5034,
+              "start":98,
+              "type":"Organization"
+            }
+          ],
+          "urls":[
+            {
+              "description":"The first job after college is critical. It takes unexpected connections, industries and tactics to land the right one.",
+              "display_url":"wsj.com/lifestyle/care…",
+              "end":277,
+              "expanded_url":"http://wsj.com/lifestyle/careers/these-college-seniors-locked-in-job-offers-heres-how-they-did-it-81e15017",
+              "images":[
+                {
+                  "height":640,
+                  "url":"https://pbs.twimg.com/news_img/1772705303106068480/z4mzgKvP?format=jpg\u0026name=orig",
+                  "width":1280
+                },
+                {
+                  "height":150,
+                  "url":"https://pbs.twimg.com/news_img/1772705303106068480/z4mzgKvP?format=jpg\u0026name=150x150",
+                  "width":150
+                }
+              ],
+              "start":254,
+              "status":200,
+              "title":"These College Seniors Locked In Job Offers. Here’s How They Did It.",
+              "unwound_url":"https://www.wsj.com/lifestyle/careers/these-college-seniors-locked-in-job-offers-heres-how-they-did-it-81e15017",
+              "url":"https://t.co/jEz3TIE4NN"
+            },
+            {
+              "display_url":"pic.twitter.com/4erywejYQE",
+              "end":301,
+              "expanded_url":"https://twitter.com/giesbusiness/status/1772705301898154235/photo/1",
+              "media_key":"3_1772703255505612800",
+              "start":278,
+              "url":"https://t.co/4erywejYQE"
+            }
+          ]
+        },
+        "id":"1772705301898154235",
+        "lang":"en",
+        "possibly_sensitive":false,
+        "public_metrics":{
+          "bookmark_count":0,
+          "impression_count":275,
+          "like_count":1,
+          "quote_count":0,
+          "reply_count":0,
+          "retweet_count":0
+        },
+        "reply_settings":"everyone",
+        "text":"College seniors are locking in job offers.\n\n“It’s so easy to get discouraged,” Nicola Setterdahl, Gies Finance major. “When you don’t have your own full-time offer, there’s that nagging voice in the back of your head. Why don’t you have one yet?”\n\nMore: https://t.co/jEz3TIE4NN https://t.co/4erywejYQE"
+      },
+      {
+        "attachments":{
+          "media_keys":[
+            "3_1772622647966248960"
+          ]
+        },
+        "author_id":"19615559",
+        "context_annotations":[
+          {
+            "domain":{
+              "description":"Categories within Brand Verticals that narrow down the scope of Brands",
+              "id":"46",
+              "name":"Business Taxonomy"
+            },
+            "entity":{
+              "description":"Brands, companies, advertisers and every non-person handle with the profit intent related to Banks, Credit cards, Insurance, Investments, Stocks ",
+              "id":"1557696848252391426",
+              "name":"Financial Services Business"
+            }
+          },
+          {
+            "domain":{
+              "description":"Top level interests and hobbies groupings, like Food or Travel",
+              "id":"65",
+              "name":"Interests and Hobbies Vertical"
+            },
+            "entity":{
+              "id":"781974596148793345",
+              "name":"Business \u0026 finance"
+            }
+          },
+          {
+            "domain":{
+              "description":"Top level interests and hobbies groupings, like Food or Travel",
+              "id":"65",
+              "name":"Interests and Hobbies Vertical"
+            },
+            "entity":{
+              "id":"781974596148793345",
+              "name":"Business \u0026 finance"
+            }
+          },
+          {
+            "domain":{
+              "description":"A grouping of interests and hobbies entities, like Novelty Food or Destinations",
+              "id":"66",
+              "name":"Interests and Hobbies Category"
+            },
+            "entity":{
+              "description":"Personal finance",
+              "id":"847888632711061504",
+              "name":"Personal finance"
+            }
+          },
+          {
+            "domain":{
+              "description":"Interests, opinions, and behaviors of individuals, groups, or cultures; like Speciality Cooking or Theme Parks",
+              "id":"67",
+              "name":"Interests and Hobbies"
+            },
+            "entity":{
+              "description":"Mortgage",
+              "id":"847894425464324096",
+              "name":"Mortgage"
+            }
+          },
+          {
+            "domain":{
+              "description":"Entity Service top level domain, every item that is in Entity Service should be in this domain",
+              "id":"30",
+              "name":"Entities [Entity Service]"
+            },
+            "entity":{
+              "description":"Retirement planning",
+              "id":"847894794080722944",
+              "name":"Retirement planning"
+            }
+          },
+          {
+            "domain":{
+              "description":"Interests, opinions, and behaviors of individuals, groups, or cultures; like Speciality Cooking or Theme Parks",
+              "id":"67",
+              "name":"Interests and Hobbies"
+            },
+            "entity":{
+              "description":"Saving and Finance",
+              "id":"1037075567227494400",
+              "name":"Saving and finance"
+            }
+          },
+          {
+            "domain":{
+              "description":"Interests, opinions, and behaviors of individuals, groups, or cultures; like Speciality Cooking or Theme Parks",
+              "id":"67",
+              "name":"Interests and Hobbies"
+            },
+            "entity":{
+              "id":"1486742750137491456",
+              "name":"Mortgage Rates"
+            }
+          },
+          {
+            "domain":{
+              "description":"A taxonomy of user interests. ",
+              "id":"131",
+              "name":"Unified Twitter Taxonomy"
+            },
+            "entity":{
+              "description":"Personal finance",
+              "id":"847888632711061504",
+              "name":"Personal finance"
+            }
+          },
+          {
+            "domain":{
+              "description":"A taxonomy of user interests. ",
+              "id":"131",
+              "name":"Unified Twitter Taxonomy"
+            },
+            "entity":{
+              "id":"1584479029557481473",
+              "name":"Loans"
+            }
+          }
+        ],
+        "conversation_id":"1772624135375470707",
+        "created_at":"2024-03-26T13:58:22.000Z",
+        "edit_history_tweet_ids":[
+          "1772624135375470707"
+        ],
+        "entities":{
+          "annotations":[
+            {
+              "end":214,
+              "normalized_text":"Gies Finance",
+              "probability":0.5246,
+              "start":203,
+              "type":"Organization"
+            }
+          ],
+          "mentions":[
+            {
+              "end":240,
+              "id":"116877912",
+              "start":226,
+              "username":"JuliaAFonseca"
+            }
+          ],
+          "urls":[
+            {
+              "description":"Stay up to date on Gies College of Business. You can find recent news including alumni news, awards, and updates. Browse through the news catalog here!",
+              "display_url":"giesbusiness.illinois.edu/news/2024/03/2…",
+              "end":272,
+              "expanded_url":"http://giesbusiness.illinois.edu/news/2024/03/26/fonseca-examines-mortgages-and-their-impact-on-worker-mobility",
+              "start":249,
+              "status":200,
+              "title":"Fonseca examines mortgages and their impact on worker mobility",
+              "unwound_url":"https://giesbusiness.illinois.edu/news/2024/03/26/fonseca-examines-mortgages-and-their-impact-on-worker-mobility",
+              "url":"https://t.co/LPmJ7ni8ur"
+            },
+            {
+              "display_url":"pic.twitter.com/lunLacijDc",
+              "end":297,
+              "expanded_url":"https://twitter.com/giesbusiness/status/1772624135375470707/photo/1",
+              "media_key":"3_1772622647966248960",
+              "start":274,
+              "url":"https://t.co/lunLacijDc"
+            }
+          ]
+        },
+        "id":"1772624135375470707",
+        "lang":"en",
+        "possibly_sensitive":false,
+        "public_metrics":{
+          "bookmark_count":0,
+          "impression_count":340,
+          "like_count":5,
+          "quote_count":0,
+          "reply_count":0,
+          "retweet_count":0
+        },
+        "reply_settings":"everyone",
+        "text":"The greater the difference between a mortgage rate a homeowner currently has and the rate they would need to get if they moved, the greater the financial impact on the workers, according to new study by Gies Finance professor @JuliaAFonseca.\n\nMore: https://t.co/LPmJ7ni8ur. https://t.co/lunLacijDc"
+      },
+      {
+        "attachments":{
+          "media_keys":[
+            "3_1772369225148936192"
+          ]
+        },
+        "author_id":"19615559",
+        "context_annotations":[
+          {
+            "domain":{
+              "description":"Types of sports, like soccer and basketball",
+              "id":"11",
+              "name":"Sport"
+            },
+            "entity":{
+              "description":"Gymnastics",
+              "id":"875831678505074688",
+              "name":"Gymnastics"
+            }
+          },
+          {
+            "domain":{
+              "description":"Types of sports, like soccer and basketball",
+              "id":"11",
+              "name":"Sport"
+            },
+            "entity":{
+              "id":"1283760846695313409",
+              "name":"Men's gymnastics"
+            }
+          },
+          {
+            "domain":{
+              "description":"Categories within Brand Verticals that narrow down the scope of Brands",
+              "id":"46",
+              "name":"Business Taxonomy"
+            },
+            "entity":{
+              "description":"Brands, companies, advertisers and every non-person handle with the profit intent related to sports nutrition, athletic apparel, sports apps, fitness venues",
+              "id":"1557697289971322880",
+              "name":"Sports \u0026 Fitness Business"
+            }
+          },
+          {
+            "domain":{
+              "description":"A taxonomy of user interests. ",
+              "id":"131",
+              "name":"Unified Twitter Taxonomy"
+            },
+            "entity":{
+              "description":"Sports",
+              "id":"847900493514891265",
+              "name":"Sports"
+            }
+          },
+          {
+            "domain":{
+              "description":"A taxonomy of user interests. ",
+              "id":"131",
+              "name":"Unified Twitter Taxonomy"
+            },
+            "entity":{
+              "description":"Gymnastics",
+              "id":"875831678505074688",
+              "name":"Gymnastics"
+            }
+          },
+          {
+            "domain":{
+              "description":"A taxonomy of user interests. ",
+              "id":"131",
+              "name":"Unified Twitter Taxonomy"
+            },
+            "entity":{
+              "id":"1283760846695313409",
+              "name":"Men's gymnastics"
+            }
+          },
+          {
+            "domain":{
+              "description":"States, provinces, or prefectures, like California or Fukushima Prefecture",
+              "id":"159",
+              "name":"States"
+            },
+            "entity":{
+              "description":"Illinois",
+              "id":"1004437399626080256",
+              "name":"Illinois"
+            }
+          },
+          {
+            "domain":{
+              "description":"Types of sports, like soccer and basketball",
+              "id":"11",
+              "name":"Sport"
+            },
+            "entity":{
+              "description":"Gymnastics",
+              "id":"875831678505074688",
+              "name":"Gymnastics"
+            }
+          }
+        ],
+        "conversation_id":"1772369507475955920",
+        "created_at":"2024-03-25T21:06:34.000Z",
+        "edit_history_tweet_ids":[
+          "1772369507475955920"
+        ],
+        "entities":{
+          "annotations":[
+            {
+              "end":16,
+              "normalized_text":"Gies",
+              "probability":0.4289,
+              "start":13,
+              "type":"Other"
+            },
+            {
+              "end":44,
+              "normalized_text":"Connor McCool",
+              "probability":0.7096,
+              "start":32,
+              "type":"Other"
+            },
+            {
+              "end":67,
+              "normalized_text":"Illinois",
+              "probability":0.6521,
+              "start":60,
+              "type":"Place"
+            },
+            {
+              "end":124,
+              "normalized_text":"Big Ten",
+              "probability":0.5723,
+              "start":118,
+              "type":"Organization"
+            },
+            {
+              "end":179,
+              "normalized_text":"Penn State",
+              "probability":0.946,
+              "start":170,
+              "type":"Organization"
+            },
+            {
+              "end":214,
+              "normalized_text":"Rec Hall",
+              "probability":0.4452,
+              "start":207,
+              "type":"Place"
+            }
+          ],
+          "urls":[
+            {
+              "display_url":"pic.twitter.com/0sbZ3BsgkS",
+              "end":241,
+              "expanded_url":"https://twitter.com/giesbusiness/status/1772369507475955920/photo/1",
+              "media_key":"3_1772369225148936192",
+              "start":218,
+              "url":"https://t.co/0sbZ3BsgkS"
+            }
+          ]
+        },
+        "id":"1772369507475955920",
+        "lang":"en",
+        "possibly_sensitive":false,
+        "public_metrics":{
+          "bookmark_count":1,
+          "impression_count":2013,
+          "like_count":31,
+          "quote_count":1,
+          "reply_count":1,
+          "retweet_count":3
+        },
+        "reply_settings":"everyone",
+        "text":"Shout out to Gies Business alum Connor McCool and the No. 4 Illinois men’s gymnastics who clinched the regular-season Big Ten title with a 406.500-405.950 win over No. 6 Penn State Saturday afternoon at the Rec Hall 🏆 https://t.co/0sbZ3BsgkS"
+      }
+    ],
+    "includes":{
+      "media":[
+        {
+          "alt_text":"Gies Business student Nicola Setterdahl holding a University of Illinois sweatshirt",
+          "height":1400,
+          "media_key":"3_1772703255505612800",
+          "type":"photo",
+          "url":"https://pbs.twimg.com/media/GJnoN_yXMAAv401.jpg",
+          "width":1082
+        },
+        {
+          "alt_text":"Gies Finance professor Julia Fonseca",
+          "height":505,
+          "media_key":"3_1772622647966248960",
+          "type":"photo",
+          "url":"https://pbs.twimg.com/media/GJme6BTXMAA45l_.jpg",
+          "width":799
+        },
+        {
+          "alt_text":"Illinois men's gymnast Connor McCool",
+          "height":1169,
+          "media_key":"3_1772369225148936192",
+          "type":"photo",
+          "url":"https://pbs.twimg.com/media/GJi4a3vWMAAXsMq.jpg",
+          "width":1169
+        }
+      ],
+      "users":[
+        {
+          "created_at":"2009-01-27T20:53:54.000Z",
+          "description":"Official account for Gies College of Business at the University of Illinois – Accountancy, Business Administration \u0026 Finance. #WeAreGIES",
+          "entities":{
+            "description":{
+              "hashtags":[
+                {
+                  "end":136,
+                  "start":126,
+                  "tag":"WeAreGIES"
+                }
+              ]
+            },
+            "url":{
+              "urls":[
+                {
+                  "display_url":"linktr.ee/GiesBusiness",
+                  "end":23,
+                  "expanded_url":"https://linktr.ee/GiesBusiness",
+                  "start":0,
+                  "url":"https://t.co/xHFUopykP5"
+                }
+              ]
+            }
+          },
+          "id":"19615559",
+          "location":"Champaign, IL",
+          "name":"Gies Business",
+          "profile_image_url":"https://pbs.twimg.com/profile_images/1771199910110515201/dWpPlqlV_normal.jpg",
+          "protected":false,
+          "public_metrics":{
+            "followers_count":14452,
+            "following_count":1876,
+            "like_count":73675,
+            "listed_count":339,
+            "tweet_count":40590
+          },
+          "url":"https://t.co/xHFUopykP5",
+          "username":"giesbusiness",
+          "verified":false
+        },
+        {
+          "created_at":"2010-02-23T21:25:09.000Z",
+          "description":"Assistant Prof of Finance at UIUC @giesbusiness",
+          "entities":{
+            "description":{
+              "mentions":[
+                {
+                  "end":47,
+                  "start":34,
+                  "username":"giesbusiness"
+                }
+              ]
+            },
+            "url":{
+              "urls":[
+                {
+                  "display_url":"juliafonseca.com",
+                  "end":23,
+                  "expanded_url":"http://juliafonseca.com",
+                  "start":0,
+                  "url":"https://t.co/RYRaFj73Bb"
+                }
+              ]
+            }
+          },
+          "id":"116877912",
+          "name":"Julia Fonseca",
+          "profile_image_url":"https://pbs.twimg.com/profile_images/827596493787893760/i7FE67Y8_normal.jpg",
+          "protected":false,
+          "public_metrics":{
+            "followers_count":647,
+            "following_count":269,
+            "like_count":720,
+            "listed_count":9,
+            "tweet_count":44
+          },
+          "url":"https://t.co/RYRaFj73Bb",
+          "username":"JuliaAFonseca",
+          "verified":false
+        }
+      ]
+    },
+    "meta":{
+      "newest_id":"1772705301898154235",
+      "oldest_id":"1772369507475955920",
+      "result_count":3
+    }
+  }]
+}

@@ -42,6 +42,34 @@ class TweetsPage {
     (DeepCollectionEquality().hash(tweets)) ^
     (includes?.hashCode ?? 0) ^
     (meta?.hashCode ?? 0);
+
+  Tweet? tweet({String? id}) {
+    try { return (id != null) ? tweets?.firstWhere((Tweet tweet) => tweet.id == id) : null; }
+    catch(_) { return null; }
+  }
+
+  static List<TweetsPage>? listFromJson(List<dynamic>? jsonList) {
+    List<TweetsPage>? result;
+    if (jsonList != null) {
+      result = <TweetsPage>[];
+      for (dynamic json in jsonList) {
+        ListUtils.add(result, TweetsPage.fromJson(json));
+      }
+    }
+    return result;
+  }
+
+  static Tweet? tweetFromList(List<TweetsPage>? tweetsPageList, { String? id }) {
+    if (tweetsPageList != null) {
+      for (TweetsPage page in tweetsPageList) {
+        Tweet? tweet = page.tweet(id: id);
+        if (tweet != null) {
+          return tweet;
+        }
+      }
+    }
+    return null;
+  }
 }
 
 ///////////////////////
