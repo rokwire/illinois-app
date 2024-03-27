@@ -33,6 +33,7 @@ import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
+import 'package:illinois/ui/feed/FeedPanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
@@ -80,7 +81,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/local_notifications.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum RootTab { Favorites, Browse, Maps, Assistant, Academics, Wellness }
+enum RootTab { Feed, Favorites, Browse, Maps, Assistant, Academics, Wellness }
 
 class RootPanel extends StatefulWidget {
   static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
@@ -198,7 +199,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     ]);
 
     _tabs = _getTabs();
-    _currentTabIndex = _defaultTabIndex ?? _getIndexByRootTab(RootTab.Favorites) ?? 0;
+    _currentTabIndex = _defaultTabIndex ?? _getIndexByRootTab(RootTab.Feed) ?? 0;
     _tabBarController = TabController(initialIndex: _currentTabIndex, length: _tabs.length, vsync: this);
     _updatePanels(_tabs);
 
@@ -934,7 +935,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   static Widget? _createPanelForTab(RootTab? rootTab) {
-    if (rootTab == RootTab.Favorites) {
+    if (rootTab == RootTab.Feed) {
+      return FeedPanel();
+    }
+    else if (rootTab == RootTab.Favorites) {
       return HomePanel();
     }
     else if (rootTab == RootTab.Browse) {
@@ -1116,7 +1120,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
 RootTab? rootTabFromString(String? value) {
   if (value != null) {
-    if (value == 'favorites') {
+    if (value == 'feed') {
+      return RootTab.Feed;
+    }
+    else if (value == 'favorites') {
       return RootTab.Favorites;
     }
     else if (value == 'browse') {
