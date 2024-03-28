@@ -86,18 +86,10 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
     ]));
   }
 
-  Widget _buildTipDescription() {
-    Color? textColor = Styles().colors.white;
-    Color? backColor = _tipColor ?? Styles().colors.accentColor3;
-    return Container(color: backColor, padding: EdgeInsets.all(42), child:
-      HtmlWidget(
-        StringUtils.ensureNotEmpty(Wellness().dailyTip),
-          onTapUrl : (url) {_launchUrl(url); return true;},
-          textStyle:  Styles().textStyles.getTextStyle("widget.title.light.medium_large.extra_fat"),
-          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(textColor)} : null
-      )
-    );
-  }
+  Widget _buildTipDescription() => WellnessTipWidget(
+    text: StringUtils.ensureNotEmpty(Wellness().dailyTip),
+    color: _tipColor,
+  );
 
   Widget _buildEightDimensionImage() {
     return Padding(padding: EdgeInsets.only(top: 16), child:
@@ -203,7 +195,43 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
     Navigator.of(context).pop();
   }
 
-  void _launchUrl(String? url) {
+  // Notifications Listener
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Auth2.notifyLoginChanged) {
+      _loadTipColor();
+    }
+    else if (name == Wellness.notifyDailyTipChanged) {
+      if (mounted) {
+        setState(() {
+        });
+      }
+    }
+  }
+}
+
+class WellnessTipWidget extends StatelessWidget {
+  final String text;
+  final Color? color;
+  final Decoration? decoration;
+  final EdgeInsetsGeometry padding;
+  WellnessTipWidget({super.key, required this.text, this.color, this.decoration, this.padding = const EdgeInsets.all(42)});
+
+  @override
+  Widget build(BuildContext context) => Container(color: (decoration != null) ? null : _backColor, decoration: decoration, padding: padding, child:
+    HtmlWidget(
+      StringUtils.ensureNotEmpty(text),
+        onTapUrl : (url) { _launchUrl(url, context: context); return true;},
+        textStyle:  Styles().textStyles.getTextStyle("widget.title.light.medium_large.extra_fat"),
+        customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(_textColor)} : null
+    )
+  );
+
+  Color get _textColor => Styles().colors.white;
+  Color get _backColor => color ?? Styles().colors.accentColor3;
+
+  void _launchUrl(String? url, {required BuildContext context}) {
     if (StringUtils.isNotEmpty(url)) {
       if (DeepLink().isAppUrl(url)) {
         DeepLink().launchUrl(url);
@@ -216,21 +244,6 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
         if (uri != null) {
           launchUrl(uri);
         }
-      }
-    }
-  }
-
-  // Notifications Listener
-
-  @override
-  void onNotification(String name, param) {
-    if (name == Auth2.notifyLoginChanged) {
-      _loadTipColor();
-    }
-    else if (name == Wellness.notifyDailyTipChanged) {
-      if (mounted) {
-        setState(() {
-        });
       }
     }
   }
