@@ -211,7 +211,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
           bool isFirst = pages.isEmpty;
           pages.add(Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
-            child: _TweetWidget(
+            child: TweetWidget(
               tweet: tweet,
               margin: EdgeInsets.only(right: _pageSpacing),
               onTapPrevious: isFirst? null : _onTapPrevious,
@@ -511,7 +511,7 @@ class _TwitterPanelState extends State<TwitterPanel> implements NotificationsLis
   Widget _buildListEntry(BuildContext context, int index) {
     Tweet? tweet = _tweet(index);
     return (tweet != null) ? 
-      _TweetWidget(
+      TweetWidget(
         tweet: tweet,
         margin: (0 < index) ? EdgeInsets.symmetric(horizontal: 16) : EdgeInsets.only(left: 16, right: 16, top: 16)
       ) :
@@ -634,14 +634,14 @@ class _TwitterPanelState extends State<TwitterPanel> implements NotificationsLis
   }
 }
 
-class _TweetWidget extends StatelessWidget {
+class TweetWidget extends StatelessWidget {
 
   final Tweet? tweet;
   final EdgeInsetsGeometry? margin;
   final void Function()? onTapNext;
   final void Function()? onTapPrevious;
 
-  _TweetWidget({this.tweet, this.margin, this.onTapNext, this.onTapPrevious});
+  TweetWidget({this.tweet, this.margin, this.onTapNext, this.onTapPrevious});
 
   @override
   Widget build(BuildContext context) {
