@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Feed.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -29,11 +31,30 @@ class Feed {
 
   // Service
 
-  Future<List<FeedItem>?> loadFeed({int? offset, int? limit}) async {
+  Future<List<FeedItem>?> load({int offset = 0, int? limit}) async {
+    await Future.delayed(Duration(milliseconds: 2500));
+
     List<FeedItem>? items;
     try { items = FeedItem.listFromResponseJson(JsonUtils.decodeMap(await rootBundle.loadString('assets/extra/feed.json'))); }
     catch(e) { debugPrint(e.toString()); }
-    return (offset != null) ? items?.sublist(offset, limit) : items;
+
+    if (items != null) {
+      int end = (limit != null) ? min(offset + limit, items.length) : items.length;
+      if (offset < items.length) {
+        if (0 < offset) {
+          return (end < items.length) ? items.sublist(offset, end) : items.sublist(offset);
+        }
+        else {
+          return (end < items.length) ? items.sublist(offset, end) : items;
+        }
+      }
+      else {
+        return <FeedItem>[];
+      }
+    }
+    else {
+      return null;
+    }
   }
 }
 

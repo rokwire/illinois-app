@@ -54,11 +54,11 @@ class FeedItem {
       case FeedItemType.notification:   return InboxMessage.fromJson(JsonUtils.mapValue(json));
       case FeedItemType.appointment:    return Appointment.fromJson(JsonUtils.mapValue(json));
       case FeedItemType.studentCourse:  return StudentCourse.fromJson(JsonUtils.mapValue(json));
-      case FeedItemType.campusReminder: return JsonUtils.stringValue(json); // Student Guide Aricle Id
+      case FeedItemType.campusReminder: return JsonUtils.mapValue(json); // Student Guide Aricle Json
       case FeedItemType.sportNews:      return News.fromJson(JsonUtils.mapValue(json));
       case FeedItemType.tweet:          return TweetsPage.tweetFromList(tweets, id: JsonUtils.stringValue(json));
       case FeedItemType.wellnessToDo:   return WellnessToDoItem.fromJson(JsonUtils.mapValue(json));
-      case FeedItemType.wellnessTip:    return JsonUtils.stringValue(json); // Wellness tip text
+      case FeedItemType.wellnessTip:    return JsonUtils.mapValue(json); // Wellness tip text
     }
   }
 
