@@ -319,7 +319,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         if (CollectionUtils.isNotEmpty(items)) {
           contentList.add(_buildSectionWidget(key));
           for (WellnessToDoItem item in items!) {
-            contentList.add(Padding(padding: EdgeInsets.only(top: 10), child: _ToDoItemCard(item: item)));
+            contentList.add(Padding(padding: EdgeInsets.only(top: 10), child: WellnessToDoItemCard(item: item)));
           }
         }
       }
@@ -816,15 +816,15 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
 }
 
-class _ToDoItemCard extends StatefulWidget {
+class WellnessToDoItemCard extends StatefulWidget {
   final WellnessToDoItem item;
-  _ToDoItemCard({required this.item});
+  WellnessToDoItemCard({required this.item});
 
   @override
-  State<_ToDoItemCard> createState() => _ToDoItemCardState();
+  State<WellnessToDoItemCard> createState() => _WellnessToDoItemCardState();
 }
 
-class _ToDoItemCardState extends State<_ToDoItemCard> {
+class _WellnessToDoItemCardState extends State<WellnessToDoItemCard> {
   bool _loading = false;
 
   @override
