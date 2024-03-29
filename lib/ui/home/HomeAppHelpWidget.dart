@@ -96,9 +96,9 @@ class _HomeAppHelpWidgetState extends HomeCompoundWidgetState<HomeAppHelpWidget>
       AppAlert.showOfflineMessage(context, Localization().getStringEx('widget.home.app_help.feedback.label.offline', 'Providing a Feedback is not available while offline.'));
     }
     else if (_canFeedback) {
-      String email = Uri.encodeComponent(Auth2().email ?? '');
+      String email = Uri.encodeComponent(Auth2().emails.isNotEmpty ? Auth2().emails.first : '');
       String name =  Uri.encodeComponent(Auth2().fullName ?? '');
-      String phone = Uri.encodeComponent(Auth2().phone ?? '');
+      String phone = Uri.encodeComponent(Auth2().phones.isNotEmpty ? Auth2().phones.first : '');
       String feedbackUrl = "${Config().feedbackUrl}?email=$email&phone=$phone&name=$name";
 
       if (Platform.isIOS) {

@@ -616,7 +616,7 @@ class Canvas with Service implements NotificationsListener {
     if (StringUtils.isNotEmpty(description)) {
       report.comments = description;
     }
-    report.email = Auth2().email;
+    report.email = Auth2().emails.isNotEmpty ? Auth2().emails.first : null;
     String? errorBody = JsonUtils.encode(report.toJson());
     String? url = _masquerade('${Config().canvasUrl}/api/v1/error_reports');
     if (StringUtils.isEmpty(url)) {

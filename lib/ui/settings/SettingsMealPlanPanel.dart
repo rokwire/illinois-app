@@ -625,11 +625,11 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
       Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           setState(() { _authLoading = false; });
-          if (result == Auth2OidcAuthenticateResult.succeeded) {
+          if (result?.status == Auth2OidcAuthenticateResultStatus.succeeded) {
             _loadCafeCreditTransactions();
             _loadMealPlanTransactions();
           }
-          else if (result == Auth2OidcAuthenticateResult.failed) {
+          else if (result?.status == Auth2OidcAuthenticateResultStatus.failed) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
         }

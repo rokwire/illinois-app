@@ -230,9 +230,9 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAuthEventName                   = "auth";
   static const String   LogAuthAction                      = "action";
   static const String   LogAuthLoginNetIdActionName        = "login_netid";
-  static const String   LogAuthLoginPhoneActionName        = "login_phone";
-  static const String   LogAuthLoginEmailActionName        = "login_email";
-  static const String   LogAuthLoginUsernameActionName     = "username";
+  static const String   LogAuthLoginCodeActionName         = "login_code";
+  static const String   LogAuthLoginPasswordActionName     = "login_password";
+  static const String   LogAuthLoginPasskeyActionName      = "login_password";
   static const String   LogAuthLogoutActionName            = "logout";
   static const String   LogAuthResult                      = "result";
 
@@ -962,18 +962,17 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     logEvent(event);
   }
 
-  void logAuth({String? action, Auth2LoginType? loginType, bool? result, Map<String, dynamic>? attributes}) {
+  void logAuth({String? action, String? loginType, bool? result, Map<String, dynamic>? attributes}) {
     
     if ((action == null) && (loginType != null)) {
       switch(loginType) {
-        case Auth2LoginType.oidc:
-        case Auth2LoginType.oidcIllinois: action = LogAuthLoginNetIdActionName; break;
-        case Auth2LoginType.phone:
-        case Auth2LoginType.phoneTwilio:  action = LogAuthLoginPhoneActionName; break;
-        case Auth2LoginType.email:        action = LogAuthLoginEmailActionName; break;
-        case Auth2LoginType.username:     action = LogAuthLoginUsernameActionName; break;
-        case Auth2LoginType.apiKey:
-        case Auth2LoginType.anonymous:    break;
+        case Auth2Type.typeOidc:
+        case Auth2Type.typeOidcIllinois: action = LogAuthLoginNetIdActionName; break;
+        case Auth2Type.typeCode:         action = LogAuthLoginCodeActionName; break;
+        case Auth2Type.typePassword:     action = LogAuthLoginPasswordActionName; break;
+        case Auth2Type.typePasskey:      action = LogAuthLoginPasskeyActionName; break;
+        case Auth2Type.typeApiKey:
+        case Auth2Type.typeAnonymous:    break;
       }
     }
 

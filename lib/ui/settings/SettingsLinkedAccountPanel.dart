@@ -8,10 +8,10 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class SettingsLinkedAccountPanel extends StatefulWidget{
-  final Auth2Type? linkedAccount;
+  final Auth2Identifier? linkedIdentifier;
   final LinkAccountMode mode;
 
-  const SettingsLinkedAccountPanel({Key? key, this.linkedAccount, required this.mode}) :super(key: key);
+  const SettingsLinkedAccountPanel({Key? key, this.linkedIdentifier, required this.mode}) :super(key: key);
 
 
   @override
@@ -37,21 +37,21 @@ class _SettingsLinkedAccountState extends State<SettingsLinkedAccountPanel>{
                       )
                     )],),
                     Container(height: 48),
-                    LinkAccountContentWidget(linkedAccount: _linkedAccount, onTapDisconnect: _onTapDisconnect, mode: widget.mode, isLoading: _isLoading,),
+                    LinkAccountContentWidget(linkedAccount: _linkedIdentifier, onTapDisconnect: _onTapDisconnect, mode: widget.mode, isLoading: _isLoading,),
                     Container(height: 36),
                     Text(StringUtils.ensureNotEmpty(_errorMsg), style: Styles().textStyles.getTextStyle("panel.settings.error.text")),
           ]))))]),);
   }
 
-  void _onTapDisconnect(Auth2Type? account){
+  void _onTapDisconnect(Auth2Identifier? identifier){
     if(_isLoading != true) {//Disable while loading
       _clearErrorMsg();
       setState(() {
         _isLoading = true;
       });
 
-      if (account?.identifier != null) {
-        Auth2().unlinkAccountAuthType(_loginType, account!.identifier!).then(_handleResult);
+      if (identifier?.identifier != null) {
+        Auth2().unlinkAccountIdentifier(identifier!.id).then(_handleResult);
       }
       else { //No Valid account identifier
         setErrorMsg(_defaultErrorMsg);
@@ -122,23 +122,16 @@ class _SettingsLinkedAccountState extends State<SettingsLinkedAccountPanel>{
     }
   }
 
-  Auth2Type? get _linkedAccount{
-    return widget.linkedAccount;
-  }
-
-  Auth2LoginType get _loginType{
-    switch (widget.mode){
-      case LinkAccountMode.phone: return Auth2LoginType.phoneTwilio;
-      case LinkAccountMode.email: return Auth2LoginType.email;
-    }
+  Auth2Identifier? get _linkedIdentifier{
+    return widget.linkedIdentifier;
   }
 }
 
 class LinkAccountContentWidget extends StatelessWidget{
   final LinkAccountMode mode;
-  final Auth2Type? linkedAccount;
+  final Auth2Identifier? linkedAccount;
   final bool isLoading;
-  final void Function(Auth2Type?)? onTapDisconnect;
+  final void Function(Auth2Identifier?)? onTapDisconnect;
 
   const LinkAccountContentWidget({Key? key, this.linkedAccount, this.onTapDisconnect, required this.mode, required this.isLoading}) : super(key: key);
 
@@ -150,7 +143,7 @@ class LinkAccountContentWidget extends StatelessWidget{
         children: [
           Container(
             padding: EdgeInsets.symmetric(horizontal: 13),
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
             child: Column(
               children: [
                 Container(height: 12,),
@@ -170,7 +163,7 @@ class LinkAccountContentWidget extends StatelessWidget{
           ),
           Container(height: 1, color: Styles().colors.lightGray,),
           Container(
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
             child: RibbonButton(
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),

@@ -746,9 +746,9 @@ class _BrowseEntry extends StatelessWidget {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('widget.home.app_help.feedback.label.offline', 'Providing a Feedback is not available while offline.'));
     }
     else if (_canFeedback) {
-      String email = Uri.encodeComponent(Auth2().email ?? '');
+      String email = Uri.encodeComponent(Auth2().emails.firstOrNull ?? '');
       String name =  Uri.encodeComponent(Auth2().fullName ?? '');
-      String phone = Uri.encodeComponent(Auth2().phone ?? '');
+      String phone = Uri.encodeComponent(Auth2().phones.firstOrNull ?? '');
       String feedbackUrl = "${Config().feedbackUrl}?email=$email&phone=$phone&name=$name";
 
       if (Platform.isIOS) {

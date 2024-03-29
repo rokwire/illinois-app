@@ -121,9 +121,9 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
   }
 
   void _onFeedback() {
-    String email = Uri.encodeComponent(Auth2().email ?? '');
+    String email = Uri.encodeComponent(Auth2().emails.isNotEmpty ? Auth2().emails.first : '');
     String name = Uri.encodeComponent(Auth2().fullName ?? '');
-    String phone = Uri.encodeComponent(Auth2().phone ?? '');
+    String phone = Uri.encodeComponent(Auth2().phones.isNotEmpty ? Auth2().phones.first :  '');
     String feedbackUrl = "${Config().feedbackUrl}?email=$email&phone=$phone&name=$name";
 
     _processUrl(feedbackUrl);

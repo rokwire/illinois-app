@@ -489,10 +489,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "Test Onboarding",
-                    backgroundColor: Styles().colors!.background,
+                    backgroundColor: Styles().colors.background,
                     fontSize: 16.0,
-                    textColor: Styles().colors!.fillColorPrimary,
-                    borderColor: Styles().colors!.fillColorPrimary,
+                    textColor: Styles().colors.fillColorPrimary,
+                    borderColor: Styles().colors.fillColorPrimary,
                     onTap: _onTapOnboarding
                   )
                 ),
@@ -790,7 +790,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   void _onTapRefreshToken() {
     Auth2Token? token = Auth2().token;
     if (token != null) {
-      Auth2().refreshToken(token).then((token) {
+      Auth2().refreshToken(token: token).then((token) {
         AppAlert.showDialogResult(context, (token != null) ? "Token refreshed successfully" : "Failed to refresh token");
       });
     }
@@ -868,7 +868,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
               Expanded(child:
                 RoundedButton(
                   label: "Copy to clipboard",
-                  textColor: Styles().colors.white,
+                  textColor: Styles().colors.surface,
                   borderColor: Styles().colors.fillColorSecondary,
                   backgroundColor: Styles().colors.fillColorPrimary,
                   onTap: (){ _copyToClipboard(textContent); },

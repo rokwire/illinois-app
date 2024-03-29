@@ -122,12 +122,12 @@ class _OnboardingLoginPhoneVerifyPanelState
                         controller: _phoneNumberController,
                         autofocus: false,
                         onSubmitted: (_) => _clearErrorMsg,
-                        cursorColor: Styles().colors.textBackground,
+                        cursorColor: Styles().colors.textDark,
                         keyboardType: TextInputType.phone,
                         style: TextStyle(
                             fontSize: 16,
                             fontFamily: Styles().fontFamilies.regular,
-                            color: Styles().colors.textBackground),
+                            color: Styles().colors.textDark),
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
@@ -247,7 +247,7 @@ class _OnboardingLoginPhoneVerifyPanelState
 
     setState(() { _isLoading = true; });
     
-    Auth2().authenticateWithPhone(phoneNumber).then((result) {
+    Auth2().authenticateWithCode(phoneNumber).then((result) {
       if (mounted) {
         setState(() { _isLoading = false; });
         _onPhoneInitiated(phoneNumber, result);
@@ -263,15 +263,15 @@ class _OnboardingLoginPhoneVerifyPanelState
     });
   }
 
-  void _onPhoneInitiated(String? phoneNumber, Auth2PhoneRequestCodeResult result) {
-    if (result == Auth2PhoneRequestCodeResult.failed) {
+  void _onPhoneInitiated(String? phoneNumber, Auth2RequestCodeResult result) {
+    if (result == Auth2RequestCodeResult.failed) {
       setState(() {
         _validationErrorMsg = Localization().getStringEx(
             "panel.onboarding.verify_phone.validation.failed.text",
             "Failed to send authentication code. An unexpected error occurred.");
       });
     }
-    else if (result == Auth2PhoneRequestCodeResult.failedAccountExist) {
+    else if (result == Auth2RequestCodeResult.failedAccountExist) {
       setState(() {
         _validationErrorMsg = Localization().getStringEx(
             "panel.onboarding.verify_phone.validation.exists.text",

@@ -180,7 +180,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           setState(() { _connectingNetId = false; });
-          if (result != Auth2OidcAuthenticateResult.succeeded) {
+          if (result?.status != Auth2OidcAuthenticateResultStatus.succeeded) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
         }
@@ -229,7 +229,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
             borderRadius: BorderRadius.all(Radius.circular(4)),
             border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)
           ),
@@ -289,7 +289,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
             )
           ),
           Padding(padding: EdgeInsets.only(top: 3), child:
-            Text(Auth2().account?.authType?.phone ?? "", style: Styles().textStyles.getTextStyle("widget.detail.large.fat"))
+            Text(Auth2().phones.isNotEmpty ? Auth2().phones.first : "", style: Styles().textStyles.getTextStyle("widget.detail.large.fat"))
           )
         ]));
       }
@@ -335,7 +335,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
             )
           ),
           Padding(padding: EdgeInsets.only(top: 3), child:
-            Text(Auth2().account?.authType?.email ?? "", style:  Styles().textStyles.getTextStyle("widget.detail.large.fat"))
+            Text(Auth2().emails.isNotEmpty ? Auth2().emails.first : "", style:  Styles().textStyles.getTextStyle("widget.detail.large.fat"))
           )
         ]));
       }
@@ -366,9 +366,9 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
   void _onDisconnectNetIdClicked() {
     if (Auth2().isOidcLoggedIn) {
       Analytics().logSelect(target: "Disconnect netId");
-    } else if (Auth2().isPhoneLoggedIn) {
+    } else if (Auth2().isCodeLoggedIn) {
       Analytics().logSelect(target: "Disconnect phone");
-    } else if (Auth2().isEmailLoggedIn) {
+    } else if (Auth2().isPasswordLoggedIn) {
       Analytics().logSelect(target: "Disconnect email");
     }
     showDialog(context: context, builder: (context) => _buildLogoutDialog(context));
@@ -455,11 +455,11 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
 
   List<Widget> _buildLinkedNetIdLayout() {
     List<Widget> contentList = [];
-    List<Auth2Type> linkedTypes = Auth2().linkedOidc;
+    List<Auth2Identifier> linkedIdentifiers = Auth2().linkedOidcIdentifiers;
 
     List<dynamic> codes = FlexUI()['authenticate.linked.netid'] ?? [];
-    for (Auth2Type linked in linkedTypes) {
-      if (StringUtils.isNotEmpty(linked.identifier) && linked.identifier != Auth2().account?.authType?.identifier) {
+    for (Auth2Identifier linked in linkedIdentifiers) {
+      if (StringUtils.isNotEmpty(linked.identifier) && linked.identifier != Auth2().account?.identifier?.identifier) {
         for (int index = 0; index < codes.length; index++) {
           String code = codes[index];
           BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
@@ -485,11 +485,11 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
 
   List<Widget> _buildLinkedPhoneLayout() {
     List<Widget> contentList = [];
-    List<Auth2Type> linkedTypes = Auth2().linkedPhone;
+    List<Auth2Identifier> linkedIdentifiers = Auth2().linkedPhone;
 
     List<dynamic> codes = FlexUI()['authenticate.linked.phone'] ?? [];
-    for (Auth2Type linked in linkedTypes) {
-      if (StringUtils.isNotEmpty(linked.identifier) && linked.identifier != Auth2().account?.authType?.identifier) {
+    for (Auth2Identifier linked in linkedIdentifiers) {
+      if (StringUtils.isNotEmpty(linked.identifier) && linked.identifier != Auth2().account?.identifier?.identifier) {
         for (int index = 0; index < codes.length; index++) {
           String code = codes[index];
           BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
@@ -522,11 +522,11 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
 
   List<Widget> _buildLinkedEmailLayout() {
     List<Widget> contentList = [];
-    List<Auth2Type> linkedTypes = Auth2().linkedEmail;
+    List<Auth2Identifier> linkedIdentifiers = Auth2().linkedEmail;
 
     List<dynamic> codes = FlexUI()['authenticate.linked.email'] ?? [];
-    for (Auth2Type linked in linkedTypes) {
-      if (StringUtils.isNotEmpty(linked.identifier) && linked.identifier != Auth2().account?.authType?.identifier) {
+    for (Auth2Identifier linked in linkedIdentifiers) {
+      if (StringUtils.isNotEmpty(linked.identifier) && linked.identifier != Auth2().account?.identifier?.identifier) {
         for (int index = 0; index < codes.length; index++) {
           String code = codes[index];
           BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
@@ -568,7 +568,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       if (code == 'netid') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: Styles().colors.white,
+            backgroundColor: Styles().colors.surface,
             border: _allBorder,
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Add a NetID"),
@@ -579,7 +579,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       else if (code == 'phone') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: Styles().colors.white,
+            backgroundColor: Styles().colors.surface,
             border: _allBorder,
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
@@ -589,7 +589,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       else if (code == 'email') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: Styles().colors.white,
+            backgroundColor: Styles().colors.surface,
             border: _allBorder,
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
@@ -626,9 +626,9 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
         _popToMe();
         if (result == true) {
           Auth2().authenticateWithOidc(link: true).then((Auth2OidcAuthenticateResult? result) {
-            if (result == Auth2OidcAuthenticateResult.failed) {
+            if (result?.status == Auth2OidcAuthenticateResultStatus.failed) {
               AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.netid.link.failed", "Failed to add {{app_title}} NetID.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
-            } else if (result == Auth2OidcAuthenticateResult.failedAccountExist) {
+            } else if (result?.status == Auth2OidcAuthenticateResultStatus.failedAccountExist) {
               _showNetIDAccountExistsDialog();
             }
           });
@@ -686,12 +686,12 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
   Future<bool?> _linkVerifySignIn() async {
     if (Auth2().isOidcLoggedIn) {
       Auth2OidcAuthenticateResult? result = await Auth2().authenticateWithOidc();
-      return (result != null) ? (result == Auth2OidcAuthenticateResult.succeeded) : null;
+      return (result != null) ? (result.status == Auth2OidcAuthenticateResultStatus.succeeded) : null;
     }
-    else if (Auth2().isEmailLoggedIn) {
+    else if (Auth2().isPasswordLoggedIn) {
       Completer<bool?> completer = Completer<bool?>();
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) =>
-        SettingsLoginEmailPanel(email: Auth2().account?.authType?.identifier, state: Auth2EmailAccountState.verified, onFinish: () {
+        SettingsLoginEmailPanel(email: Auth2().account?.identifier?.identifier, state: Auth2AccountState.verified, onFinish: () {
           completer.complete(true);
         },)
       ),).then((_) {
@@ -699,12 +699,12 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       });
       return completer.future;
     }
-    else if (Auth2().isPhoneLoggedIn) {
+    else if (Auth2().isCodeLoggedIn) {
       Completer<bool?> completer = Completer<bool?>();
-      Auth2().authenticateWithPhone(Auth2().account?.authType?.identifier).then((Auth2PhoneRequestCodeResult result) {
-        if (result == Auth2PhoneRequestCodeResult.succeeded) {
+      Auth2().authenticateWithCode(Auth2().account?.identifier?.identifier).then((Auth2RequestCodeResult result) {
+        if (result == Auth2RequestCodeResult.succeeded) {
           Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) =>
-            SettingsLoginPhoneConfirmPanel(phoneNumber: Auth2().account?.authType?.identifier, onFinish: () {
+            SettingsLoginPhoneConfirmPanel(phoneNumber: Auth2().account?.identifier?.identifier, onFinish: () {
               completer.complete(true);
             },)
           ),).then((_) {
@@ -724,14 +724,14 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
     }
   }
 
-  void _onTapAlternateEmail(Auth2Type linked) {
+  void _onTapAlternateEmail(Auth2Identifier linked) {
     Analytics().logSelect(target: "Alternate Email");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedAccountPanel(linkedAccount: linked, mode: LinkAccountMode.email,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedAccountPanel(linkedIdentifier: linked, mode: LinkAccountMode.email,)));
   }
 
-  void _onTapAlternatePhone(Auth2Type linked) {
+  void _onTapAlternatePhone(Auth2Identifier linked) {
     Analytics().logSelect(target: "Alternate Phone");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedAccountPanel(linkedAccount: linked, mode: LinkAccountMode.phone,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedAccountPanel(linkedIdentifier: linked, mode: LinkAccountMode.phone,)));
   }
 
   // Debug
