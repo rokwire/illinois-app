@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Acknowledged new application services initialization in parallel [#408](https://github.com/rokwire/app-flutter-plugin/issues/408).
 ### Fixed
 - Fixed local application services dependencies [#408](https://github.com/rokwire/app-flutter-plugin/issues/408).
+### Added
+- Added iOS privacy manifest [#4023](https://github.com/rokwire/illinois-app/issues/4023).
 
 ## [5.2.2] - 2024-02-28
 
