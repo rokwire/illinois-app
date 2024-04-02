@@ -122,10 +122,10 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
       Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? success) {
         if (mounted) {
           _setLoading(false);
-          if (success == Auth2OidcAuthenticateResult.succeeded) {
+          if (success?.status == Auth2OidcAuthenticateResultStatus.succeeded) {
             _didLogin(context);
           }
-          else if (success == Auth2OidcAuthenticateResult.failed) {
+          else if (success?.status == Auth2OidcAuthenticateResultStatus.failed) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
         }

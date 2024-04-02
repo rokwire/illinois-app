@@ -84,10 +84,22 @@
 @import flutter_native_timezone;
 #endif
 
+#if __has_include(<flutter_passkey/FlutterPasskeyPlugin.h>)
+#import <flutter_passkey/FlutterPasskeyPlugin.h>
+#else
+@import flutter_passkey;
+#endif
+
 #if __has_include(<flutter_pdfview/FLTPDFViewFlutterPlugin.h>)
 #import <flutter_pdfview/FLTPDFViewFlutterPlugin.h>
 #else
 @import flutter_pdfview;
+#endif
+
+#if __has_include(<flutter_secure_storage/FlutterSecureStoragePlugin.h>)
+#import <flutter_secure_storage/FlutterSecureStoragePlugin.h>
+#else
+@import flutter_secure_storage;
 #endif
 
 #if __has_include(<fluttertoast/FluttertoastPlugin.h>)
@@ -232,7 +244,9 @@
   [FlutterExifRotationPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterExifRotationPlugin"]];
   [FlutterLocalNotificationsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterLocalNotificationsPlugin"]];
   [FlutterNativeTimezonePlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterNativeTimezonePlugin"]];
+  [FlutterPasskeyPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterPasskeyPlugin"]];
   [FLTPDFViewFlutterPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPDFViewFlutterPlugin"]];
+  [FlutterSecureStoragePlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterSecureStoragePlugin"]];
   [FluttertoastPlugin registerWithRegistrar:[registry registrarForPlugin:@"FluttertoastPlugin"]];
   [GallerySaverPlugin registerWithRegistrar:[registry registrarForPlugin:@"GallerySaverPlugin"]];
   [GeolocatorPlugin registerWithRegistrar:[registry registrarForPlugin:@"GeolocatorPlugin"]];

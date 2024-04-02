@@ -135,12 +135,12 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                         controller: _codeController,
                         autofocus: false,
                         onSubmitted: (_) => _clearErrorMsg,
-                        cursorColor: Styles().colors.textBackground,
+                        cursorColor: Styles().colors.textDark,
                         keyboardType: TextInputType.number,
                         style: TextStyle(
                             fontSize: 16,
                             fontFamily: Styles().fontFamilies.regular,
-                            color: Styles().colors.textBackground),
+                            color: Styles().colors.textDark),
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
@@ -234,32 +234,30 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
     });
 
     if (!_link) {
-      Auth2().handlePhoneAuthentication(phoneNumber, _codeController.text).then((result) {
+      Auth2().handleCodeAuthentication(phoneNumber, _codeController.text).then((result) {
         _onPhoneVerified(result);
       });
     } else {
-      Map<String, dynamic> creds = {
-        "phone": phoneNumber,
-        "code": _codeController.text,
-      };
-      Map<String, dynamic> params = {};
-      Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((result) {
-        _onPhoneVerified(auth2PhoneSendCodeResultFromAuth2LinkResult(result));
-      });
+      Auth2Identifier? unverified = Auth2().account?.getIdentifier(phoneNumber, Auth2Identifier.typePhone);
+      if (unverified != null) {
+        Auth2().verifyAccountIdentifier(unverified.id, _codeController.text).then((result) {
+          _onPhoneVerified(result ? Auth2SendCodeResult.succeeded : Auth2SendCodeResult.failedInvalid);
+        });
+      }
     }
   }
 
-  void _onPhoneVerified(Auth2PhoneSendCodeResult result) {
+  void _onPhoneVerified(Auth2SendCodeResult result) {
     if (mounted) {
       setState(() {
         _isLoading = false;
       });
 
-      if (result == Auth2PhoneSendCodeResult.failed) {
+      if (result == Auth2SendCodeResult.failed) {
         setState(() {
           _verificationErrorMsg = Localization().getStringEx("panel.onboarding.confirm_phone.validation.server_error.text", "Failed to verify code. An unexpected error occurred.");
         });
-      } else if (result == Auth2PhoneSendCodeResult.failedInvalid) {
+      } else if (result == Auth2SendCodeResult.failedInvalid) {
         setState(() {
           _verificationErrorMsg = Localization().getStringEx("panel.onboarding.confirm_phone.validation.invalid.text", "Incorrect code.");
         });
@@ -294,21 +292,24 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
       _isLoading = true;
     });
 
-    Auth2().unlinkAccountAuthType(Auth2LoginType.phoneTwilio, phoneNumber).then((success) {
-      if(mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        if (!success) {
+    Auth2Identifier? accountIdentifier = Auth2().account?.getIdentifier(phoneNumber, Auth2Identifier.typePhone);
+    if (accountIdentifier != null) {
+      Auth2().unlinkAccountIdentifier(accountIdentifier.id).then((success) {
+        if(mounted) {
           setState(() {
-            _verificationErrorMsg = Localization().getStringEx("panel.onboarding.confirm_phone.link.cancel.text", "Failed to remove phone number from your account.");
+            _isLoading = false;
           });
+          if (!success) {
+            setState(() {
+              _verificationErrorMsg = Localization().getStringEx("panel.onboarding.confirm_phone.link.cancel.text", "Failed to remove phone number from your account.");
+            });
+          }
+          else {
+            _finishedPhoneVerification();
+          }
         }
-        else {
-          _finishedPhoneVerification();
-        }
-      }
-    });
+      });
+    }
   }
 
   void _validateCode() {

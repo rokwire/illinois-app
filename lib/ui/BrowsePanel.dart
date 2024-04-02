@@ -62,7 +62,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -746,9 +746,9 @@ class _BrowseEntry extends StatelessWidget {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('widget.home.app_help.feedback.label.offline', 'Providing a Feedback is not available while offline.'));
     }
     else if (_canFeedback) {
-      String email = Uri.encodeComponent(Auth2().email ?? '');
+      String email = Uri.encodeComponent(Auth2().emails.firstOrNull ?? '');
       String name =  Uri.encodeComponent(Auth2().fullName ?? '');
-      String phone = Uri.encodeComponent(Auth2().phone ?? '');
+      String phone = Uri.encodeComponent(Auth2().phones.firstOrNull ?? '');
       String feedbackUrl = "${Config().feedbackUrl}?email=$email&phone=$phone&name=$name";
 
       if (Platform.isIOS) {
@@ -1194,7 +1194,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       Content.notifyContentImagesChanged,
     ]);
 
@@ -1231,7 +1231,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
               CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white), )
             ),
           ) :
-          AspectRatio(aspectRatio: (1080.0 / 810.0), child: 
+          AspectRatio(aspectRatio: (1080.0 / 810.0), child:
             Container(color: Styles().colors.fillColorPrimary, child: child)
           );
       })),
@@ -1278,7 +1278,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
 
   @override
   void onNotification(String name, dynamic param) {
-    if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
+    if ((name == AppLifecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
       _update();
     }
     else if (name == Content.notifyContentImagesChanged) {

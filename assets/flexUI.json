@@ -7,63 +7,62 @@
 			"home": ["wallet", "my_dining", "dinings", "my_laundry", "laundry",
 				"wellness_resources", "wellness_mental_health", "wellness_todo", "wellness_rings", "wellness_tips",
 				"daily_illini", "wpgufm_radio", "twitter", "all_groups", "my_groups",
-				"open_research_projects", "my_research_projects", "create_poll", "recent_polls", 
+				"open_research_projects", "my_research_projects", "create_poll", "recent_polls",
 				"event_feed", "my_events", "sport_events", "sport_news", "my_athletics", "my_game_day",
 				"my_campus_guide", "campus_reminders", "all_notifications", "unread_notifications",
-				"state_farm_center", "app_help", "video_tutorials",
-				"gies_checklist", "new_student_checklist", "safer", "student_courses", "canvas_courses",
+				"app_help", "video_tutorials",
+				"new_student_checklist",
 				"campus_highlights", "campus_safety_resources", "campus_resources",
-				"recent_items", "my_news", "my_appointments", "my_mtd_stops", "my_mtd_destinations"
+				"recent_items", "my_news"
 			],
 			"home.system": ["tout", "welcome", "emergency", "voter_registration", "connect"],
-			"home.connect": ["netid", "phone_or_email"],
+			"home.connect": ["phone_or_email"],
 			"home.app_help": ["faqs", "feedback", "review"],
 			"home.dinings": ["dinings_all", "dinings_open"],
 			"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
-			"home.campus_resources": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help", "groups", "quick_polls", "campus_guide", "all_notifications"],
+			"home.campus_resources": ["wellness", "crisis_help", "groups", "quick_polls", "campus_guide", "all_notifications"],
 			"home.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
 			"home.wallet": ["illini_id_card", "illini_cash_card", "meal_plan_card", "bus_pass_card", "library_card"],
 
 			"home.twitter.account": ["gies", "rokwire", "", "canvas"],
-			
-			"browse": ["academics", "app_help", "appointments", "athletics", "safer", "campus_guide", "campus_resources", "dinings", "events", "feeds", "laundry", "groups", "mtd", "my", "inbox", "polls", "recent", "research_projects", "state_farm_center", "wallet", "wellness"],
-			"browse.academics": ["gies_checklist", "new_student_checklist", "skills_self_evaluation", "essential_skills_coach", "student_courses", "canvas_courses", "campus_reminders", "wellness_todo", "due_date_catalog", "appointments"],
-			"browse.appointments": ["appointments"],
+
+			"browse": ["academics", "app_help", "appointments", "campus_guide", "campus_resources", "feeds", "groups", "my", "inbox", "polls", "recent", "research_projects", "wellness"],
+			"browse.academics": ["gies_checklist", "new_student_checklist", "skills_self_evaluation", "student_courses", "canvas_courses", "campus_reminders", "wellness_todo", "due_date_catalog", "appointments"],
 			"browse.app_help": ["faqs", "feedback", "review", "video_tutorials"],
 			"browse.athletics": ["my_athletics", "my_game_day", "my_news", "sport_events", "sport_news", "sport_teams"],
 			"browse.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 			"browse.laundry": ["laundry", "my_laundry"],
 			"browse.campus_guide": ["campus_highlights", "campus_safety_resources", "campus_guide", "my_campus_guide"],
-			"browse.campus_resources": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help", "groups", "quick_polls", "campus_guide", "all_notifications"],
+			"browse.campus_resources": ["wellness", "crisis_help", "groups", "quick_polls", "campus_guide", "all_notifications"],
 			"browse.dinings": ["dinings_all", "dinings_open", "my_dining"],
 			"browse.events": ["event_feed", "my_events"],
-			"browse.feeds": ["twitter", "daily_illini", "wpgufm_radio"],
+			"browse.feeds": ["twitter"],
 			"browse.groups": ["all_groups", "my_groups"],
 			"browse.research_projects": ["open_research_projects", "my_research_projects"],
-			"browse.mtd": ["all_mtd_stops", "my_mtd_stops", "my_mtd_destinations"],
+			"browse.my": ["my_news", "my_campus_guide", "my_groups", "my_research_projects", "wellness_resources"],
 			"browse.inbox": ["all_notifications", "unread_notifications"],
 			"browse.polls": ["create_poll", "recent_polls"],
 			"browse.recent": ["recent_items"],
 			"browse.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
 			"browse.wallet": ["illini_cash_card", "add_illini_cash", "meal_plan_card", "bus_pass_card", "illini_id_card", "library_card"],
 			"browse.wellness": ["wellness_resources", "wellness_mental_health", "wellness_success_team","wellness_rings", "my_appointments", "wellness_tips", "wellness_health_screener"],
-	
+
 			"authenticate": ["connect", "connected", "link", "linked", "feedback"],
-			"authenticate.connect": ["netid", "phone_or_email"],
-			"authenticate.connected": ["netid", "phone", "email"],
-			"authenticate.link": ["netid", "phone", "email"],
-			"authenticate.linked": ["netid", "phone", "email"],
+			"authenticate.connect": ["phone_or_email"],
+			"authenticate.connected": ["phone", "email"],
+			"authenticate.link": ["phone", "email"],
+			"authenticate.linked": ["phone", "email"],
 			"authenticate.connected.netid": ["info", "disconnect"],
 			"authenticate.connected.phone": ["info", "disconnect", "verify"],
 			"authenticate.connected.email": ["info", "disconnect", "login"],
 			"authenticate.linked.netid": ["info", "remove"],
 			"authenticate.linked.phone": ["info", "remove", "verify"],
 			"authenticate.linked.email": ["info", "remove", "verify"],
-	
-			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "medicine_courses", "academics_events", "appointments", "todo_list", "skills_self_evaluation", "essential_skills_coach", "due_date_catalog", "my_illini", "skills_dashboard"],
-			"academics.appointments.features": ["authentication", "netid_login"],
-			"academics.skills_self_evaluation.features": ["authentication", "netid_login"],
-			"academics.essential_skills_coach.features": ["authentication", "netid_login"],
+
+			"academics": ["new_student_checklist", "student_courses", "canvas_courses", "medicine_courses", "academics_events", "appointments", "todo_list", "skills_self_evaluation", "essential_skills_coach", "due_date_catalog", "skills_dashboard"],
+			"academics.appointments.features": ["authentication"],
+			"academics.skills_self_evaluation.features": ["authentication"],
+			"academics.essential_skills_coach.features": ["authentication"],
 
 			"wellness": ["daily_tips", "rings", "appointments", "health_screener", "podcast", "resources", "mental_health", "success_team", "struggling"],
 			"wellness.appointments.features": ["authentication", "netid_login"],
@@ -75,10 +74,10 @@
 			"polls.features": ["authentication", "netid_login"],
 
 			"explore.list": ["events", "dining"],
-			"explore.map":  ["events2", "dining", "laundry", "student_courses", "buildings", "mental_health", "appointments", "mtd_stops", "mtd_destinations", "state_farm_wayfinding"],
+			"explore.map":  ["events2", "dining", "laundry", "student_courses", "buildings", "mental_health", "appointments"],
 	
 			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
-	
+
 			"assessments": ["settings"],
 			"assessments.settings": ["skills_self_evaluation", "health_screener"],
 			"assessments.settings.skills_self_evaluation": ["save"],
@@ -89,15 +88,15 @@
 			
 			"roles": ["student", "employee", "parent", "fan", "alumni", "visitor"],
 			
-			"onboarding":["get_started", "video_tutorials", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "sport_prefs", "research_questionnaire"],
+			"onboarding":["get_started", "video_tutorials", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_phone", "verify_phone", "confirm_phone", "research_questionnaire"],
 	
-			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
+			"campus_guide.features":["groups", "quick_polls", "saved"],
 			
-			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
-				"gies", "new_student", "canvas", "safer", "mtd_bus_pass", "student", "netid_login", "assistant", "assistant_personalization"],
+			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "sharing",
+				"new_student", "student", "assistant", "assistant_personalization"],
 			
 			"launch":["emergency"]
-			
+
 		},
 		"rules": {
 			"roles" : {
@@ -105,7 +104,7 @@
 				"onboarding.login_phone"                   : ["NOT", ["employee", "OR", "student"]],
 				"onboarding.verify_phone"                  : ["NOT", ["employee", "OR", "student"]],
 				"onboarding.confirm_phone"                 : ["NOT", ["employee", "OR", "student"]],
-	
+
 				"onboarding.sport_prefs"                   : ["fan"],
 
 				"features.student"                         : ["student"]
@@ -141,7 +140,7 @@
 				"onboarding.confirm_phone"        	      : 4,
 				"onboarding.sport_prefs"          	      : 3,
 				"onboarding.research_questionnaire"       : 4,
-	
+
 				"features.analytics"              	      : 2,
 				"features.location_services"         	    : 2,
 				"features.personalization"        	      : 3,
@@ -162,7 +161,7 @@
 				"canvas_courses"                          : { "shibbolethLoggedIn": true },
 				"medicine_courses"                        : { "shibbolethLoggedIn": true },
 				"student_courses"                         : { "shibbolethLoggedIn": true },
-	
+
 				"authenticate.connect"                    : { "loggedIn": false },
 				"authenticate.connected"                  : { "loggedIn": true },
 				"authenticate.connected.netid"            : { "shibbolethLoggedIn": true },

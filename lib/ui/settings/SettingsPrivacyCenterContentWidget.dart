@@ -50,7 +50,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
       Auth2.notifyLoginChanged,
       Localization.notifyLocaleChanged
     ]);
-    
+
     _loadingPrivacyData = true;
     Content().loadContentItem('privacy').then((dynamic value) {
       setStateIfMounted(() {
@@ -58,7 +58,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
         _loadingPrivacyData = false;
       });
     });
-    
+
     super.initState();
   }
 
@@ -259,14 +259,14 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
   Widget _buildDeleteButton(){
     return Padding(
       padding: EdgeInsets.only(top: 40),
-      child: Column(children: <Widget>[
+      child: Column(children: [
         RoundedButton(
-          backgroundColor: Styles().colors.white,
-          borderColor: Styles().colors.white,
+          backgroundColor: Styles().colors.surface,
+          borderColor: Styles().colors.surface,
           label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Delete My Account"),
           hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.thin.secondary"),
-          borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+          elevation: 2,
           onTap: _onTapDeleteData,
         ),
         Container(height: 16,),

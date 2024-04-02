@@ -40,7 +40,7 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
       }
     }
     if (recepients.isEmpty) {
-      recepients = Auth2().email ?? '';
+      recepients = Auth2().emails.isNotEmpty ? Auth2().emails.first : '';
     }
 
     _recepientsController = TextEditingController(text: recepients);
@@ -86,12 +86,12 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
           child: Text("Recepients:", style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
         ),
         Stack(children: <Widget>[
-          Semantics(textField: true, child:Container(color: Styles().colors.white,
+          Semantics(textField: true, child:Container(color: Styles().colors.surface,
             child: TextField(
               maxLines: 2,
               controller: _recepientsController,
               decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-              style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground,),
+              style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textDark,),
             ),
           )),
           Align(alignment: Alignment.topRight,
@@ -114,12 +114,12 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
           child: Text("Subject:", style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
         ),
         Stack(children: <Widget>[
-          Semantics(textField: true, child:Container(color: Styles().colors.white,
+          Semantics(textField: true, child:Container(color: Styles().colors.surface,
             child: TextField(
               maxLines: 1,
               controller: _subjectController,
               decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-              style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground,),
+              style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textDark,),
             ),
           )),
           Align(alignment: Alignment.topRight,
@@ -142,12 +142,12 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
           child: Text("Body:", style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
         ),
         Stack(children: <Widget>[
-          Semantics(textField: true, child:Container(color: Styles().colors.white,
+          Semantics(textField: true, child:Container(color: Styles().colors.surface,
             child: TextField(
               maxLines: 6,
               controller: _bodyController,
               decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-              style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground,),
+              style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textDark,),
             ),
           )),
           Align(alignment: Alignment.topRight,
@@ -170,12 +170,12 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
           child: Text("Data:", style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
         ),
         Stack(children: <Widget>[
-          Semantics(textField: true, child:Container(color: Styles().colors.white,
+          Semantics(textField: true, child:Container(color: Styles().colors.surface,
             child: TextField(
               maxLines: 6,
               controller: _dataController,
               decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-              style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground,),
+              style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textDark,),
             ),
           )),
           Align(alignment: Alignment.topRight,
@@ -202,7 +202,7 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
         RoundedButton(label: "Send Message",
           textColor: Styles().colors.fillColorPrimary, // Styles().colors.disabledTextColor,
           borderColor: Styles().colors.fillColorSecondary, // Styles().colors.disabledTextColor
-          backgroundColor: Styles().colors.white,
+          backgroundColor: Styles().colors.surface,
           fontFamily: Styles().fontFamilies.bold,
           contentWeight: 0.0,
           fontSize: 16,

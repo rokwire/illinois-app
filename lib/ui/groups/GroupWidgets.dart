@@ -946,21 +946,21 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
   void _onTapCard(BuildContext context) {
     Analytics().logSelect(target: "Group: ${widget.group?.title}");
     if (FlexUI().isAuthenticationAvailable) {
-      if (Auth2().isOidcLoggedIn) {
+      // if (Auth2().isOidcLoggedIn) {
         Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(group: widget.group)));
-      }
-      else {
-        setState(() { _bussy = true; });
-
-        Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
-          if (mounted) {
-            setState(() { _bussy = null; });
-            if (result == Auth2OidcAuthenticateResult.succeeded) {
-              Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(group: widget.group)));
-            }
-          }
-        });
-      }
+      // }
+      // else {
+      //   setState(() { _bussy = true; });
+      //
+      //   Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+      //     if (mounted) {
+      //       setState(() { _bussy = null; });
+      //       if (result == Auth2OidcAuthenticateResult.succeeded) {
+      //         Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(group: widget.group)));
+      //       }
+      //     }
+      //   });
+      // }
     }
     else {
       AppAlert.showCustomDialog(context: context, contentWidget: _buildPrivacyAlertWidget(), actions: [
@@ -1723,7 +1723,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
               )
             ],
           ),
-          Visibility(visible: selectedMembers.isNotEmpty, child: 
+          Visibility(visible: selectedMembers.isNotEmpty, child:
             GestureDetector(
               onTap: _onTapEdit,
               child: Container(

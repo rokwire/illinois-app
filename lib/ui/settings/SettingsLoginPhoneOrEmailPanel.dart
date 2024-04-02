@@ -131,14 +131,14 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                 Semantics(label: headingTitle, hint: headingHint, textField: true, excludeSemantics: true,
                   value: _phoneOrEmailController?.text,
                   child: Container(
-                    color: (widget.identifier == null) ? Styles().colors.white : Styles().colors.background,
+                    color: (widget.identifier == null) ? Styles().colors.surface : Styles().colors.background,
                     child: TextField(
                       controller: _phoneOrEmailController,
                       readOnly: widget.identifier != null,
                       autofocus: false,
                       autocorrect: false,
                       onSubmitted: (_) => _clearErrorMsg,
-                      cursorColor: Styles().colors.textBackground,
+                      cursorColor: Styles().colors.textDark,
                       keyboardType: keyboardType,
                       style: Styles().textStyles.getTextStyle("widget.input_field.text.medium"),
                       decoration: InputDecoration(
@@ -168,7 +168,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                   hint: buttonProceedHint,
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                   onTap: _onTapProceed,
-                  backgroundColor: Styles().colors.white,
+                  backgroundColor: Styles().colors.surface,
                   borderColor: Styles().colors.fillColorSecondary,
                   rightIcon: proceedRightIcon,
                   iconPadding: 16,
@@ -237,16 +237,12 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
     setState(() { _isLoading = true; });
 
     if (widget.link != true) {
-      Auth2().authenticateWithPhone(phoneNumber).then((Auth2PhoneRequestCodeResult result) {
+      Auth2().authenticateWithCode(phoneNumber).then((Auth2RequestCodeResult result) {
         _onPhoneInitiated(phoneNumber, result);
       });
     } else if (!Auth2().isPhoneLinked) { // at most one phone number may be linked at a time
-      Map<String, dynamic> creds = {
-        "phone": phoneNumber
-      };
-      Map<String, dynamic> params = {};
-      Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((Auth2LinkResult result) {
-        _onPhoneInitiated(phoneNumber, auth2PhoneRequestCodeResultFromAuth2LinkResult(result));
+      Auth2().linkAccountIdentifier(phoneNumber, Auth2Identifier.typePhone).then((Auth2LinkResult result) {
+        _onPhoneInitiated(phoneNumber, auth2RequestCodeResultFromAuth2LinkResult(result));
       });
     } else {
       setErrorMsg(Localization().getStringEx("panel.settings.link.phone.label.linked", "You have already added a phone number to your account."));
@@ -256,13 +252,13 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
     }
   }
 
-  void _onPhoneInitiated(String? phoneNumber, Auth2PhoneRequestCodeResult result) {
+  void _onPhoneInitiated(String? phoneNumber, Auth2RequestCodeResult result) {
     if (mounted) {
       setState(() { _isLoading = false; });
 
-      if (result == Auth2PhoneRequestCodeResult.succeeded) {
+      if (result == Auth2RequestCodeResult.succeeded) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginPhoneConfirmPanel(phoneNumber: phoneNumber, link: widget.link, onFinish: widget.onFinish)));
-      } else if (result == Auth2PhoneRequestCodeResult.failedAccountExist) {
+      } else if (result == Auth2RequestCodeResult.failedAccountExist) {
         setErrorMsg(Localization().getStringEx("panel.settings.link.phone.label.failed.exists", "An account is already using this phone number."),
             details: Localization().getStringEx("panel.settings.link.phone.label.failed.exists.detail", "1. You will need to sign in to the other account with this phone number.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login."));
       } else {
@@ -275,7 +271,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
     setState(() { _isLoading = true; });
 
     if (widget.link == true) {
-      Auth2().canLink(email, Auth2LoginType.email).then((bool? result) {
+      Auth2().canLink(email, Auth2Identifier.typeEmail).then((bool? result) {
         if (mounted) {
           setState(() { _isLoading = false; });
           if (result == null) {
@@ -289,18 +285,18 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
             setErrorMsg(Localization().getStringEx("panel.settings.link.email.label.linked", "You have already added an email address to your account."));
           }
           else {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginEmailPanel(email: email, state: Auth2EmailAccountState.nonExistent, link: widget.link, onFinish: widget.onFinish)));
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginEmailPanel(email: email, state: Auth2AccountState.nonExistent, link: widget.link, onFinish: widget.onFinish)));
           }
         }
       });
     }
     else {
-      Auth2().canSignIn(email, Auth2LoginType.email).then((bool? result) {
+      Auth2().canSignIn(email, Auth2Identifier.typeEmail).then((bool? result) {
         if (mounted) {
           setState(() { _isLoading = false; });
           if (result != null) {
             Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginEmailPanel(email: email,
-                state: result ? Auth2EmailAccountState.verified : Auth2EmailAccountState.nonExistent, link: widget.link, onFinish: widget.onFinish)));
+                state: result ? Auth2AccountState.verified : Auth2AccountState.nonExistent, link: widget.link, onFinish: widget.onFinish)));
           }
           else {
             setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.failed", "Failed to verify email address."));

@@ -351,8 +351,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         }
       }
 
-      return attributesList.isNotEmpty ? 
-        Padding(padding: EdgeInsets.only(top: 0, bottom: 4, right: 12), child: 
+      return attributesList.isNotEmpty ?
+        Padding(padding: EdgeInsets.only(top: 0, bottom: 4, right: 12), child:
           Row(children: [ Expanded(child:
             RichText(text: TextSpan(style: regularStyle, children: attributesList))
           ),],)
@@ -614,24 +614,24 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   void _onSelectMyGroups() {
     if(_selectedContentType != rokwire.GroupsContentType.my){
-      if (Auth2().isOidcLoggedIn) {
+      // if (Auth2().isOidcLoggedIn) {
         setState(() { _selectedContentType = rokwire.GroupsContentType.my; });
-      }
-      else {
-        setState(() { _myGroupsBusy = true; });
-        
-        Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
-          if (mounted) {
-            setState(() {
-              _myGroupsBusy = false;
-              if (result == Auth2OidcAuthenticateResult.succeeded) {
-                _selectedContentType = rokwire.GroupsContentType.my;
-              }
-            });
-          }
-        });
-
-      }
+      // }
+      // else {
+      //   setState(() { _myGroupsBusy = true; });
+      //
+      //   Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+      //     if (mounted) {
+      //       setState(() {
+      //         _myGroupsBusy = false;
+      //         if (result == Auth2OidcAuthenticateResult.succeeded) {
+      //           _selectedContentType = rokwire.GroupsContentType.my;
+      //         }
+      //       });
+      //     }
+      //   });
+      //
+      // }
     }
   }
 
@@ -653,7 +653,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
   
   bool get _canCreateGroup {
-    return Auth2().isOidcLoggedIn && FlexUI().isSharingAvailable;
+    return Auth2().isLoggedIn && FlexUI().isSharingAvailable;
   }
 
   bool get _canTapGroupsContentType {

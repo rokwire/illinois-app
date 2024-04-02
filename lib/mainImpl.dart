@@ -74,7 +74,7 @@ import 'package:rokwire_plugin/service/firebase_crashlytics.dart';
 import 'package:rokwire_plugin/service/local_notifications.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/app_notification.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -96,14 +96,14 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     // https://stackoverflow.com/questions/57689492/flutter-unhandled-exception-servicesbinding-defaultbinarymessenger-was-accesse
     WidgetsFlutterBinding.ensureInitialized();
 
-    NotificationService().subscribe(appExitListener, AppLivecycle.notifyStateChanged);
+    NotificationService().subscribe(appExitListener, AppLifecycle.notifyStateChanged);
 
     illinois.Services().create([
       // Add highest priority services at top
 
       FirebaseCore(),
       FirebaseCrashlytics(),
-      AppLivecycle(),
+      AppLifecycle(),
       Connectivity(),
       LocationServices(),
 
@@ -176,7 +176,7 @@ class AppExitListener implements NotificationsListener {
   // NotificationsListener
   @override
   void onNotification(String name, param) {
-    if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.detached)) {
+    if ((name == AppLifecycle.notifyStateChanged) && (param == AppLifecycleState.detached)) {
       Future.delayed(Duration(), () {
         NotificationService().unsubscribe(appExitListener);
         illinois.Services().destroy();
@@ -227,10 +227,11 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
       Config.notifyUpgradeAvailable,
       Config.notifyUpgradeRequired,
       Config.notifyOnboardingRequired,
+      Config.notifyResetUI,
       Storage.notifySettingChanged,
       Auth2.notifyUserDeleted,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
     ]);
 
     _initializeError = widget.initializeError;
@@ -419,6 +420,9 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
         _resetUI();
       }
     }
+    else if (name == Config.notifyResetUI) {
+      _resetUI();
+    }
     else if (name == Auth2.notifyUserDeleted) {
       _resetUI();
     }
@@ -433,12 +437,12 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       setState(() { });
     }
-    else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    else if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

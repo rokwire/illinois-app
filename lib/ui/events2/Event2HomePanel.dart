@@ -29,7 +29,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -400,7 +400,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     
     NotificationService().subscribe(this, [
       Storage.notifySettingChanged,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
       Event2FilterParam.notifyChanged,
@@ -442,8 +442,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   @override
   void onNotification(String name, param) {
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
     else if (name == Auth2.notifyLoginChanged) {
       _refresh();
@@ -465,7 +465,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _currentLocation = null;
     }

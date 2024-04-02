@@ -10,7 +10,7 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -59,7 +59,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2UserPrefs.notifyRolesChanged,
       Auth2.notifyCardChanged,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
     ]);
 
     if (widget.updateController != null) {
@@ -101,7 +101,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
     else if (name == Auth2.notifyCardChanged) {
       _updatePromotedItems();
     }
-    else if (name == AppLivecycle.notifyStateChanged) {
+    else if (name == AppLifecycle.notifyStateChanged) {
       if (param == AppLifecycleState.resumed) {
         _updatePromotedItems(); // update on each resume for time interval filtering
       }

@@ -35,7 +35,7 @@ import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/analytics.dart' as rokwire;
 
@@ -230,9 +230,9 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAuthEventName                   = "auth";
   static const String   LogAuthAction                      = "action";
   static const String   LogAuthLoginNetIdActionName        = "login_netid";
-  static const String   LogAuthLoginPhoneActionName        = "login_phone";
-  static const String   LogAuthLoginEmailActionName        = "login_email";
-  static const String   LogAuthLoginUsernameActionName     = "username";
+  static const String   LogAuthLoginCodeActionName         = "login_code";
+  static const String   LogAuthLoginPasswordActionName     = "login_password";
+  static const String   LogAuthLoginPasskeyActionName      = "login_password";
   static const String   LogAuthLogoutActionName            = "logout";
   static const String   LogAuthResult                      = "result";
 
@@ -339,7 +339,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   void createService() {
     super.createService();
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       AppNavigation.notifyEvent,
       LocationServices.notifyStatusChanged,
       
@@ -352,7 +352,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       Auth2.notifyUserDeleted,
       
       Network.notifyHttpResponse,
-      
+
       GeoFence.notifyRegionEnter,
       GeoFence.notifyRegionExit,
       
@@ -403,8 +403,8 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   void onNotification(String name, dynamic param) {
     super.onNotification(name, param);
     
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
     else if (name == AppNavigation.notifyEvent) {
       _onAppNavigationEvent(param);
@@ -439,7 +439,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     else if (name == Network.notifyHttpResponse) {
       logHttpResponse(param);
     }
-    
+
     else if (name == GeoFence.notifyRegionEnter) {
       logGeoFenceRegion(action: LogGeoFenceRegionEnterActionName, regionId: param);
     }
@@ -500,7 +500,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   
   // App Livecycle Service
   
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
 
     if (super.isInitialized) {
       if (state == AppLifecycleState.paused) {
@@ -929,7 +929,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   }
 
   void logMapSelect({String? target}) {
-    
+
     logEvent({
       LogEventName             : LogMapSelectEventName,
       LogMapSelectTarget       : target
@@ -962,18 +962,17 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     logEvent(event);
   }
 
-  void logAuth({String? action, Auth2LoginType? loginType, bool? result, Map<String, dynamic>? attributes}) {
+  void logAuth({String? action, String? loginType, bool? result, Map<String, dynamic>? attributes}) {
     
     if ((action == null) && (loginType != null)) {
       switch(loginType) {
-        case Auth2LoginType.oidc:
-        case Auth2LoginType.oidcIllinois: action = LogAuthLoginNetIdActionName; break;
-        case Auth2LoginType.phone:
-        case Auth2LoginType.phoneTwilio:  action = LogAuthLoginPhoneActionName; break;
-        case Auth2LoginType.email:        action = LogAuthLoginEmailActionName; break;
-        case Auth2LoginType.username:     action = LogAuthLoginUsernameActionName; break;
-        case Auth2LoginType.apiKey:
-        case Auth2LoginType.anonymous:    break;
+        case Auth2Type.typeOidc:
+        case Auth2Type.typeOidcIllinois: action = LogAuthLoginNetIdActionName; break;
+        case Auth2Type.typeCode:         action = LogAuthLoginCodeActionName; break;
+        case Auth2Type.typePassword:     action = LogAuthLoginPasswordActionName; break;
+        case Auth2Type.typePasskey:      action = LogAuthLoginPasskeyActionName; break;
+        case Auth2Type.typeApiKey:
+        case Auth2Type.typeAnonymous:    break;
       }
     }
 

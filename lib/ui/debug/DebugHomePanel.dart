@@ -237,7 +237,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                   visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
                   child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child: _buildSurveyCreation()),
                 ),
-                
+
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
                 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
@@ -485,6 +485,16 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                       onTap: _onTapHttpProxy
                     )
                   ),
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
+                    label: "Test Onboarding",
+                    backgroundColor: Styles().colors.background,
+                    fontSize: 16.0,
+                    textColor: Styles().colors.fillColorPrimary,
+                    borderColor: Styles().colors.fillColorPrimary,
+                    onTap: _onTapOnboarding
+                  )
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
@@ -780,7 +790,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   void _onTapRefreshToken() {
     Auth2Token? token = Auth2().token;
     if (token != null) {
-      Auth2().refreshToken(token).then((token) {
+      Auth2().refreshToken(token: token).then((token) {
         AppAlert.showDialogResult(context, (token != null) ? "Token refreshed successfully" : "Failed to refresh token");
       });
     }
@@ -858,7 +868,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
               Expanded(child:
                 RoundedButton(
                   label: "Copy to clipboard",
-                  textColor: Styles().colors.white,
+                  textColor: Styles().colors.surface,
                   borderColor: Styles().colors.fillColorSecondary,
                   backgroundColor: Styles().colors.fillColorPrimary,
                   onTap: (){ _copyToClipboard(textContent); },
@@ -963,6 +973,11 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
       CustomCourses().deleteUserCourse(Config().essentialSkillsCoachKey!);
     }
+  }
+
+  void _onTapOnboarding() {
+    Storage().onBoardingPassed = false;
+    NotificationService().notify(Config.notifyResetUI);
   }
 
   String get _refreshTokenTitle {

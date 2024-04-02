@@ -25,7 +25,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -74,7 +74,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
   void createService() {
     NotificationService().subscribe(this, [
       Content.notifyContentItemsChanged,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
     ]);
   }
 
@@ -113,8 +113,8 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     if (name == Content.notifyContentItemsChanged) {
       _onContentItemsChanged(param);
     }
-    else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    else if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
   }
 
@@ -130,7 +130,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.resumed) {
       _updateDailyTip();
     }

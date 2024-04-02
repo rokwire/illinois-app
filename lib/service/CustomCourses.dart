@@ -18,7 +18,7 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:http/http.dart' as http;
@@ -54,7 +54,7 @@ class CustomCourses with Service implements NotificationsListener {
   void createService() {
     super.createService();
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
     ]);
   }
 
@@ -331,12 +331,12 @@ class CustomCourses with Service implements NotificationsListener {
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

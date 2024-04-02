@@ -22,7 +22,7 @@ import 'package:http/http.dart';
 import 'package:illinois/model/sport/Team.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/News.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 
@@ -73,7 +73,7 @@ class Sports with Service implements NotificationsListener {
     super.createService();
     NotificationService().subscribe(this,[
       DeepLink.notifyUri,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
     ]);
     _gameDetailsCache = <Map<String, dynamic>>[];
   }
@@ -122,12 +122,12 @@ class Sports with Service implements NotificationsListener {
     if (name == DeepLink.notifyUri) {
       _onDeepLinkUri(param);
     }
-    else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    else if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.resumed) {
       _updateSportsFromNet();
       _updateSportSocialMediaFromNet();

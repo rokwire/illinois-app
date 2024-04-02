@@ -64,8 +64,8 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
       OnCampus.notifyChanged,
     ]);
     _nameController = TextEditingController(text: _initialName = Auth2().fullName ?? "");
-    _emailController = TextEditingController(text: _initialEmail = Auth2().email ?? "");
-    _phoneController = TextEditingController(text: _initialPhone = Auth2().phone ?? "");
+    _emailController = TextEditingController(text: _initialEmail = Auth2().emails.isNotEmpty ? Auth2().emails.first : "");
+    _phoneController = TextEditingController(text: _initialPhone = Auth2().phones.isNotEmpty ? Auth2().phones.first : "");
     _loadUserProfilePicture();
     super.initState();
   }
@@ -111,10 +111,10 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
     if (Auth2().isOidcLoggedIn) {
       contentWidget = _buildShibbolethInfoContent();
     }
-    else if (Auth2().isPhoneLoggedIn) {
+    else if (Auth2().isCodeLoggedIn) {
       contentWidget = _buildPhoneVerifiedInfoContent();
     }
-    else if (Auth2().isEmailLoggedIn) {
+    else if (Auth2().isPasswordLoggedIn) {
       contentWidget = _buildEmailLoginInfoContent();
     }
 
@@ -159,10 +159,11 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
           textField: true, excludeSemantics: true,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+            decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
 //          height: 48,
             child: TextField(
               controller: _nameController,
+              textCapitalization: TextCapitalization.words,
               onChanged: (text) { setState(() {});},
               decoration: InputDecoration(border: InputBorder.none),
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
@@ -186,7 +187,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
             textField: true, excludeSemantics: true,
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+                decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
 //                height: 48,
                 child: TextField(
                   controller: _emailController,
@@ -199,7 +200,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
           ),
           _PersonalInfoEntry(
               title: Localization().getStringEx("panel.profile_info.phone_number.title", "Phone Number"),
-              value: Auth2().account?.authType?.phone ?? ""),
+              value: Auth2().phones.isNotEmpty ? Auth2().phones.first : ""),
         ],
       );
   }
@@ -218,7 +219,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
           textField: true, excludeSemantics: true,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+            decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
 //          height: 48,
             child: TextField(
               controller: _nameController,
@@ -244,7 +245,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
             textField: true, excludeSemantics: true,
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+                decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
 //                height: 48,
                 child: TextField(
                   controller: _phoneController,
@@ -257,7 +258,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
           ),
           _PersonalInfoEntry(
               title: Localization().getStringEx("panel.profile_info.email.title", "Email Address"),
-              value: Auth2().account?.authType?.email ?? ""),
+              value: Auth2().emails.isNotEmpty ? Auth2().emails.first : ""),
         ],
       );
   }
@@ -269,10 +270,10 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
     if (Auth2().isOidcLoggedIn) {
       contentWidget = _buildShibbolethAccountManagementOptions();
     }
-    else if (Auth2().isPhoneLoggedIn) {
+    else if (Auth2().isCodeLoggedIn) {
       contentWidget = _buildPhoneOrEmailAccountManagementOptions();
     }
-    else if (Auth2().isEmailLoggedIn) {
+    else if (Auth2().isPasswordLoggedIn) {
       contentWidget = _buildPhoneOrEmailAccountManagementOptions();
     }
     
@@ -297,7 +298,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
       hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
        textStyle: _canSave ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
       enabled: _canSave,
-      backgroundColor: _canSave ? Styles().colors.white : Styles().colors.background,
+      backgroundColor: _canSave ? Styles().colors.surface : Styles().colors.background,
       borderColor: _canSave? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
       progress: _isSaving,
       onTap: _onSaveChangesClicked,
@@ -357,7 +358,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
       Widget? profilePicture = _hasProfilePicture ? ModalImageHolder(
           image: profileImage?.image,
           child: Container(decoration:
-            BoxDecoration(shape: BoxShape.circle, color: Colors.white, image: DecorationImage(fit: _hasProfilePicture ? BoxFit.cover : BoxFit.contain, image: profileImage!.image))
+            BoxDecoration(shape: BoxShape.circle, color: Styles().colors.surface, image: DecorationImage(fit: _hasProfilePicture ? BoxFit.cover : BoxFit.contain, image: profileImage!.image))
           ),
         ) : Styles().images.getImage('profile-placeholder', excludeFromSemantics: true);
       contentWidget = Column(children: [
@@ -600,12 +601,12 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
   Widget _buildDeleteMyAccount() {
     return Padding(padding: EdgeInsets.only(top: 24, bottom: 12), child:
     RoundedButton(
-        backgroundColor: Styles().colors.white,
-        borderColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
+        borderColor: Styles().colors.alert,
+        borderWidth: 1,
+        textStyle: Styles().textStyles.getTextStyle('widget.error.regular'),
         label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Delete My Account"),
         hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
-        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.thin.secondary"),
-        borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
         onTap: _onTapDeleteData
       )
     );

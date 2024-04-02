@@ -42,7 +42,7 @@ class NotificationsHomePanel extends StatefulWidget {
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.inbox', 'Notifications are not available while offline.'));
     }
-    else if (!Auth2().isOidcLoggedIn) {
+    else if (!Auth2().isLoggedIn) {
       AppAlert.showMessage(context,Localization().getStringEx('panel.browse.label.logged_out.inbox', 'You need to be logged in with your NetID to access Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
     }
     else if (ModalRoute.of(context)?.settings.name != routeName) {

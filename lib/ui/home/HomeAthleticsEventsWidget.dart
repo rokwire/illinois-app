@@ -17,7 +17,7 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -57,7 +57,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
 
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       Config.notifyConfigChanged,
     ]);
 
@@ -96,8 +96,8 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
     if (name == Connectivity.notifyStatusChanged) {
       _refreshGames();
     }
-    else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    else if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
     else if (name == Config.notifyConfigChanged) {
       if (mounted) {
@@ -106,7 +106,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

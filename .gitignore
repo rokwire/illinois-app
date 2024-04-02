@@ -44,8 +44,9 @@ app.*.map.json
 /.travis.yml
 /secrets.tar.enc
 
-/assets/configs.json.enc
-/assets/config.keys.json
+configs.json.enc
+config.keys.json
+configs.json
 
 GoogleService-Info-Dev.plist
 GoogleService-Info-Prod.plist

@@ -15,7 +15,7 @@ import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -53,7 +53,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
   void initState() {
 
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       Auth2.notifyLoginChanged,
       Connectivity.notifyStatusChanged,
       StudentCourses.notifyTermsChanged,
@@ -85,8 +85,8 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
     else if (name == Auth2.notifyLoginChanged) {
       _updateCourses();
@@ -107,7 +107,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

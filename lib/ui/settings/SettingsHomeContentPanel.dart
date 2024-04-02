@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/MobileAccess.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -36,6 +37,7 @@ import 'package:illinois/ui/settings/SettingsPrivacyCenterContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsResearchContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsSectionsContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -44,6 +46,7 @@ import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 enum SettingsContent { sections, interests, food_filters, sports, favorites, assessments, calendar, appointments, i_card, language, contact, maps, research, privacy, notifications}
 
@@ -102,6 +105,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   static SettingsContent? _lastSelectedContent;
   late SettingsContent _selectedContent;
   bool _contentValuesVisible = false;
+  List<SettingsContent>? _contentValues;
 
   @override
   void initState() {
@@ -110,6 +114,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
       MobileAccess.notifyMobileStudentIdChanged,
       Localization.notifyLocaleChanged,
     ]);
+    _buildContentValues();
     _selectedContent = widget.content ?? (_lastSelectedContent ?? SettingsContent.contact);
   }
 
@@ -117,6 +122,25 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   void dispose() {
     NotificationService().unsubscribe(this);
     super.dispose();
+  }
+
+  void _buildContentValues() {
+    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['settings']);
+    List<SettingsContent>? contentValues;
+    if (contentCodes != null) {
+      contentValues = [];
+      for (String code in contentCodes) {
+        SettingsContent? value = _getSettingsValueFromCode(code);
+        if (value != null) {
+          contentValues.add(value);
+        }
+      }
+    }
+
+    _contentValues = contentValues;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -237,9 +261,9 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   }
 
   Widget _buildContentValuesWidget() {
-    List<Widget> sectionList = <Widget>[];
-    sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (SettingsContent section in SettingsHomeContentPanel._dropdownSettings) {
+    List<Widget> sectionList = [];
+    sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
+    for (SettingsContent section in _contentValues ?? []) {
       if ((_selectedContent != section)) {
         // Add i_card content only if icard mobile is available
         if ((section != SettingsContent.i_card) || (MobileAccess().isMobileAccessAvailable)) {
@@ -281,6 +305,29 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
         _contentValuesVisible = !_contentValuesVisible;
       });
     }
+  }
+
+
+  SettingsContent? _getSettingsValueFromCode(String? code) {
+    switch (code) {
+      case "login":
+        return SettingsContent.sections;
+      case "interests":
+        return SettingsContent.interests;
+      case "food":
+        return SettingsContent.food_filters;
+      case "sports":
+        return SettingsContent.sports;
+      case "calendar":
+        return SettingsContent.calendar;
+      case "appointments":
+        return SettingsContent.appointments;
+      case "favorites":
+        return SettingsContent.favorites;
+      case "assessments":
+        return SettingsContent.assessments;
+    }
+    return null;
   }
 
   Widget get _contentWidget {
@@ -368,7 +415,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   }
 
   // NotificationsListener
-  
+
   @override
   void onNotification(String name, dynamic param) {
     if (name == MobileAccess.notifyMobileStudentIdChanged) {

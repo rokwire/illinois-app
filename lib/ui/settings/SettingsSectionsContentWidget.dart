@@ -222,7 +222,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           setState(() { _connectingNetId = false; });
-          if (result != Auth2OidcAuthenticateResult.succeeded) {
+          if (result?.status != Auth2OidcAuthenticateResultStatus.succeeded) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
         }
@@ -273,7 +273,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                    color: Styles().colors.white,
+                    color: Styles().colors.surface,
                     borderRadius: BorderRadius.all(Radius.circular(4)),
                     border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList))));
@@ -330,7 +330,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                       style: Styles().textStyles.getTextStyle("widget.detail.large.fat")))),
           Padding(
               padding: EdgeInsets.only(top: 3),
-              child: Text(Auth2().account?.authType?.phone ?? "",
+              child: Text(Auth2().phones.isNotEmpty ? Auth2().phones.first : "",
                   style: Styles().textStyles.getTextStyle("widget.detail.large.fat")))
         ]));
       }
@@ -377,7 +377,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                       style: Styles().textStyles.getTextStyle("widget.detail.large.fat")))),
           Padding(
               padding: EdgeInsets.only(top: 3),
-              child: Text(Auth2().account?.authType?.email ?? "",
+              child: Text(Auth2().emails.isNotEmpty ? Auth2().emails.first : "",
                   style:  Styles().textStyles.getTextStyle("widget.detail.large.fat")))
         ]));
       }
@@ -406,9 +406,9 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
   void _onDisconnectNetIdClicked() {
     if(Auth2().isOidcLoggedIn) {
       Analytics().logSelect(target: "Disconnect netId");
-    } if(Auth2().isPhoneLoggedIn) {
+    } if(Auth2().isCodeLoggedIn) {
       Analytics().logSelect(target: "Disconnect phone");
-    } if(Auth2().isEmailLoggedIn) {
+    } if(Auth2().isPasswordLoggedIn) {
       Analytics().logSelect(target: "Disconnect email");
     }
     showDialog(context: context, builder: (context) => _buildLogoutDialog(context));
@@ -498,11 +498,11 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   List<Widget> _buildLinkedNetIdLayout() {
     List<Widget> contentList = [];
-    List<Auth2Type> linkedTypes = Auth2().linkedOidc;
+    List<Auth2Identifier> linkedIdentifiers = Auth2().linkedOidcIdentifiers;
 
     List<dynamic> codes = FlexUI()['authenticate.linked.netid'] ?? [];
-    for (Auth2Type linked in linkedTypes) {
-      if (StringUtils.isNotEmpty(linked.identifier) && linked.identifier != Auth2().account?.authType?.identifier) {
+    for (Auth2Identifier linked in linkedIdentifiers) {
+      if (StringUtils.isNotEmpty(linked.identifier) && linked.identifier != Auth2().account?.identifier?.identifier) {
         for (int index = 0; index < codes.length; index++) {
           String code = codes[index];
           BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
@@ -531,11 +531,11 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   List<Widget> _buildLinkedPhoneLayout() {
     List<Widget> contentList = [];
-    List<Auth2Type> linkedTypes = Auth2().linkedPhone;
+    List<Auth2Identifier> linkedIdentifier = Auth2().linkedPhone;
 
     List<dynamic> codes = FlexUI()['authenticate.linked.phone'] ?? [];
-    for (Auth2Type linked in linkedTypes) {
-      if (StringUtils.isNotEmpty(linked.identifier) && linked.identifier != Auth2().account?.authType?.identifier) {
+    for (Auth2Identifier linked in linkedIdentifier) {
+      if (StringUtils.isNotEmpty(linked.identifier) && linked.identifier != Auth2().account?.identifier?.identifier) {
         for (int index = 0; index < codes.length; index++) {
           String code = codes[index];
           BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
@@ -570,11 +570,11 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   List<Widget> _buildLinkedEmailLayout() {
     List<Widget> contentList = [];
-    List<Auth2Type> linkedTypes = Auth2().linkedEmail;
+    List<Auth2Identifier> linkedIdentifiers = Auth2().linkedEmail;
 
     List<dynamic> codes = FlexUI()['authenticate.linked.email'] ?? [];
-    for (Auth2Type linked in linkedTypes) {
-      if (StringUtils.isNotEmpty(linked.identifier) && linked.identifier != Auth2().account?.authType?.identifier) {
+    for (Auth2Identifier linked in linkedIdentifiers) {
+      if (StringUtils.isNotEmpty(linked.identifier) && linked.identifier != Auth2().account?.identifier?.identifier) {
         for (int index = 0; index < codes.length; index++) {
           String code = codes[index];
           BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
@@ -618,7 +618,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       if (code == 'netid') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: Styles().colors.white,
+            backgroundColor: Styles().colors.surface,
             border: _allBorder, 
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Add a NetID"),
@@ -629,7 +629,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       else if (code == 'phone') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: Styles().colors.white,
+            backgroundColor: Styles().colors.surface,
             border: _allBorder, 
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
@@ -639,7 +639,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       else if (code == 'email') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: Styles().colors.white,
+            backgroundColor: Styles().colors.surface,
             border: _allBorder, 
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
@@ -676,9 +676,9 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
         _popToMe();
         if (result == true) {
           Auth2().authenticateWithOidc(link: true).then((Auth2OidcAuthenticateResult? result) {
-            if (result == Auth2OidcAuthenticateResult.failed) {
+            if (result?.status == Auth2OidcAuthenticateResultStatus.failed) {
               AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.netid.link.failed", "Failed to add {{app_title}} NetID.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
-            } else if (result == Auth2OidcAuthenticateResult.failedAccountExist) {
+            } else if (result?.status == Auth2OidcAuthenticateResultStatus.failedAccountExist) {
               _showNetIDAccountExistsDialog();
             }
           });
@@ -740,12 +740,12 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
   Future<bool?> _linkVerifySignIn() async {
     if (Auth2().isOidcLoggedIn) {
       Auth2OidcAuthenticateResult? result = await Auth2().authenticateWithOidc();
-      return (result != null) ? (result == Auth2OidcAuthenticateResult.succeeded) : null;
+      return (result != null) ? (result.status == Auth2OidcAuthenticateResultStatus.succeeded) : null;
     }
-    else if (Auth2().isEmailLoggedIn) {
+    else if (Auth2().isPasswordLoggedIn) {
       Completer<bool?> completer = Completer<bool?>();
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) =>
-        SettingsLoginEmailPanel(email: Auth2().account?.authType?.identifier, state: Auth2EmailAccountState.verified, onFinish: () {
+        SettingsLoginEmailPanel(email: Auth2().account?.identifier?.identifier, state: Auth2AccountState.verified, onFinish: () {
           completer.complete(true);
         },)
       ),).then((_) {
@@ -753,12 +753,12 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       });
       return completer.future;
     }
-    else if (Auth2().isPhoneLoggedIn) {
+    else if (Auth2().isCodeLoggedIn) {
       Completer<bool?> completer = Completer<bool?>();
-      Auth2().authenticateWithPhone(Auth2().account?.authType?.identifier).then((Auth2PhoneRequestCodeResult result) {
-        if (result == Auth2PhoneRequestCodeResult.succeeded) {
+      Auth2().authenticateWithCode(Auth2().account?.identifier?.identifier).then((Auth2RequestCodeResult result) {
+        if (result == Auth2RequestCodeResult.succeeded) {
           Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) =>
-            SettingsLoginPhoneConfirmPanel(phoneNumber: Auth2().account?.authType?.identifier, onFinish: () {
+            SettingsLoginPhoneConfirmPanel(phoneNumber: Auth2().account?.identifier?.identifier, onFinish: () {
               completer.complete(true);
             },)
           ),).then((_) {
@@ -778,14 +778,14 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     }
   }
 
-  void _onTapAlternateEmail(Auth2Type linked) {
+  void _onTapAlternateEmail(Auth2Identifier linked) {
     Analytics().logSelect(target: "Alternate Email");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedAccountPanel(linkedAccount: linked, mode: LinkAccountMode.email,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedAccountPanel(linkedIdentifier: linked, mode: LinkAccountMode.email,)));
   }
 
-  void _onTapAlternatePhone(Auth2Type linked) {
+  void _onTapAlternatePhone(Auth2Identifier linked) {
     Analytics().logSelect(target: "Alternate Phone");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedAccountPanel(linkedAccount: linked, mode: LinkAccountMode.phone,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedAccountPanel(linkedIdentifier: linked, mode: LinkAccountMode.phone,)));
   }
 
   // Feedback
@@ -840,9 +840,9 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     Analytics().logSelect(target: "Provide Feedback");
 
     if (Connectivity().isNotOffline && (Config().feedbackUrl != null)) {
-      String email = Uri.encodeComponent(Auth2().email ?? '');
+      String email = Uri.encodeComponent(Auth2().emails.isNotEmpty ? Auth2().emails.first : '');
       String name =  Uri.encodeComponent(Auth2().fullName ?? '');
-      String phone = Uri.encodeComponent(Auth2().phone ?? '');
+      String phone = Uri.encodeComponent(Auth2().phones.isNotEmpty ? Auth2().phones.first : '');
       String feedbackUrl = "${Config().feedbackUrl}?email=$email&phone=$phone&name=$name";
 
       if (Platform.isIOS) {

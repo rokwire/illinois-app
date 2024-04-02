@@ -16,7 +16,7 @@ import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -72,7 +72,7 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
       Auth2.notifyLoginChanged,
-      AppLivecycle.notifyStateChanged,]);
+      AppLifecycle.notifyStateChanged,]);
 
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
@@ -278,8 +278,8 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
 
   @override
   void onNotification(String name, param) {
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
     else if (name == Auth2.notifyLoginChanged) {
       _loadResearchProjects();
@@ -291,7 +291,7 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

@@ -339,6 +339,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   controller: _groupTitleController,
                   onChanged: (text) => setState((){_group?.title = text;}) ,
                   maxLines: 1,
+                  textCapitalization: TextCapitalization.words,
                   decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
                   style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                 )),
@@ -387,6 +388,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       onChanged: (text) {_group?.description = text; setStateIfMounted(() { });},
                       controller: _groupDescriptionController,
                       maxLines: 5,
+                      textCapitalization: TextCapitalization.sentences,
                       decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
                       style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
                     )),

@@ -38,7 +38,7 @@ import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -174,7 +174,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
 
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       FlexUI.notifyChanged,
       Storage.notifySettingChanged,
       Events2.notifyChanged,
@@ -208,8 +208,8 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
     else if (name == FlexUI.notifyChanged) {
       _currentLocation = null;
@@ -240,7 +240,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

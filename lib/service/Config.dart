@@ -28,6 +28,7 @@ class Config extends rokwire.Config {
   static String get notifyOnboardingRequired  => rokwire.Config.notifyOnboardingRequired;
   static String get notifyConfigChanged       => rokwire.Config.notifyConfigChanged;
   static String get notifyEnvironmentChanged  => rokwire.Config.notifyEnvironmentChanged;
+  static String get notifyResetUI             => 'edu.illinois.rokwire.config.reset.ui';
 
   static const String twitterDefaultAccountKey = '';
 
@@ -220,6 +221,10 @@ class Config extends rokwire.Config {
   int get mobileAccessDeleteTimeoutMins   => JsonUtils.intValue(settings['mobileAccessDeleteTimeout']) ?? 10;
 
   int get inAppNotificationToastTimeout   => JsonUtils.intValue(settings['inAppNotificationToastTimeout']) ?? 6;
+
+  double? get mapDefaultLatitude     => JsonUtils.doubleValue(settings['map_default_latitude']);
+  double? get mapDefaultLongitude    => JsonUtils.doubleValue(settings['map_default_longitude']);
+  double? get mapDefaultZoom         => JsonUtils.doubleValue(settings['map_default_zoom']);
 
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;

@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -37,7 +37,7 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [AppLivecycle.notifyStateChanged]);
+    NotificationService().subscribe(this, [AppLifecycle.notifyStateChanged]);
     super.initState();
   }
 
@@ -51,7 +51,7 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
 
   @override
   void onNotification(String name, dynamic param) {
-    if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
+    if ((name == AppLifecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
       if (mounted) {
         setState(() {});
       }

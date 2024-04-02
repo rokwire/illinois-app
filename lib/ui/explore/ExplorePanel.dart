@@ -23,7 +23,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:rokwire_plugin/model/group.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -100,7 +100,7 @@ class ExplorePanel extends StatefulWidget {
 class ExplorePanelState extends State<ExplorePanel>
   with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<ExplorePanel>
   implements NotificationsListener {
-  
+
   late EventsDisplayType _selectedEventsDisplayType;
 
   List<dynamic>? _eventCategories;
@@ -130,7 +130,7 @@ class ExplorePanelState extends State<ExplorePanel>
       Auth2UserPrefs.notifyFavoritesChanged,
       MTD.notifyStopsChanged,
       Appointments.notifyUpcomingAppointmentsChanged,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
     ]);
 
 
@@ -138,7 +138,7 @@ class ExplorePanelState extends State<ExplorePanel>
     _initFilters();
 
     _loadingProgress = true;
-    
+
     if (widget.exploreType == ExploreType.Events) {
       _loadEventCategories().then((List<dynamic>? result) {
         _eventCategories = result;

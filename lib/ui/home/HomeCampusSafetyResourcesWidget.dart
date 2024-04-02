@@ -27,7 +27,7 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
@@ -72,7 +72,7 @@ class _HomeCampusSafetyResourcesWidgetState extends State<HomeCampusSafetyResour
       Config.notifyConfigChanged,
       Guide.notifyChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
     ]);
 
     if (widget.updateController != null) {
@@ -108,7 +108,7 @@ class _HomeCampusSafetyResourcesWidgetState extends State<HomeCampusSafetyResour
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       _updateResourceItems();
     }
-    else if (name == AppLivecycle.notifyStateChanged) {
+    else if (name == AppLifecycle.notifyStateChanged) {
       if (param == AppLifecycleState.resumed) {
         _updateResourceItems(); // update on each resume for time interval filtering
       }

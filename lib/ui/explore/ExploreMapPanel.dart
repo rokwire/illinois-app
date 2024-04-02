@@ -50,7 +50,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -129,7 +129,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   final String _mapStylesExplorePoiKey = 'explore-poi';
   final String _mapStylesMtdStopKey = 'mtd-stop';
   final Map<String, BitmapDescriptor> _markerIconCache = <String, BitmapDescriptor>{};
-  static const CameraPosition _defaultCameraPosition = CameraPosition(target: LatLng(40.102116, -88.227129), zoom: 17);
+
+  CameraPosition _defaultCameraPosition = CameraPosition(target: LatLng(40.102116, -88.227129), zoom: 17);
+
   static const double _mapPadding = 50;
   static const double _mapGroupMarkerSize = 24;
   static const double _groupMarkersUpdateThresoldDelta = 0.3;
@@ -165,7 +167,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       Connectivity.notifyStatusChanged,
       LocationServices.notifyStatusChanged,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
@@ -205,6 +207,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         });
       });
 
+    double? lat = Config().mapDefaultLatitude;
+    double? long = Config().mapDefaultLongitude;
+    double? zoom = Config().mapDefaultZoom;
+
+    if (lat != null && long != null && zoom != null) {
+      _defaultCameraPosition = CameraPosition(target: LatLng(lat, long), zoom: zoom);
+    }
+
     super.initState();
   }
 
@@ -218,8 +228,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
     else if (name == Connectivity.notifyStatusChanged) {
       if (Connectivity().isNotOffline && mounted) {
@@ -310,7 +320,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
   }
   
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
       _currentLocation = null;

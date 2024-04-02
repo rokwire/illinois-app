@@ -112,7 +112,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   borderColor: Styles().colors.fillColorSecondary,
-                  backgroundColor: Styles().colors.white,
+                  backgroundColor: Styles().colors.surface,
                   onTap: _onLoginTapped,
                 ),
                 Onboarding2UnderlinedButton(
@@ -221,7 +221,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
       setState(() { _progress = true; });
       Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
-          if (result == Auth2OidcAuthenticateResult.succeeded) {
+          if (result?.status == Auth2OidcAuthenticateResultStatus.succeeded) {
             FlexUI().update().then((_) {
               if (mounted) {
                 setState(() { _progress = false; });
@@ -229,7 +229,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
               }
             });
           }
-          else if (result == Auth2OidcAuthenticateResult.failed) {
+          else if (result?.status == Auth2OidcAuthenticateResultStatus.failed) {
             setState(() { _progress = false; });
             showDialog(context: context, builder: (context) => _buildDialogWidget(context));
           }
