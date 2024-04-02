@@ -99,7 +99,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
             ),
           ),
           Padding(padding: EdgeInsets.only(top: 0), child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
               _contentTypesDropdown,
               if (_contentType == HomeContentType.favorites)
                 _customizeButton
@@ -162,6 +162,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
         items: _contentTypeDropdownItems,
         onChanged: _onContentTypeDropdownValueChanged,
         padding: EdgeInsets.only(top: 14, bottom: 6),
+        alignment: Alignment.centerRight,
       ),
     ),
   );
@@ -182,8 +183,10 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   }
 
   Widget get _customizeButton => GestureDetector(onTap: _onCustomize, child:
+    Padding(padding: EdgeInsets.only(right: 32), child:
     Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
       style: Styles().textStyles.getTextStyle("widget.home_tout.button.underline.title"))
+    ),
   );
 
   String? get _title1 {
