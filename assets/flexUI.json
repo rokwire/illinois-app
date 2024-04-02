@@ -1,8 +1,8 @@
 {
 	"": {
 		"content": {
-			"tabbar": ["feed", "favorites", "browse", "maps", "academics", "wellness", "assistant"],
-			"tabbar.default": "favorites",
+			"tabbar": ["home", "feed", "maps", "academics", "wellness", "assistant"],
+			"tabbar.default": "home",
 
 			"home": ["wallet", "my_dining", "dinings", "my_laundry", "laundry",
 				"wellness_resources", "wellness_mental_health", "wellness_todo", "wellness_rings", "wellness_tips",

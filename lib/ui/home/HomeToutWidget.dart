@@ -6,6 +6,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -19,11 +20,13 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeToutWidget extends StatefulWidget {
+  static const String notifyContentTypeChanged = "edu.illinois.rokwire.home.tour.content_type.changed";
+
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final void Function() onEdit;
-  
-  HomeToutWidget({Key? key, this.favoriteId, this.updateController, required this.onEdit});
+  final HomeContentType contentType;
+
+  HomeToutWidget({Key? key, this.favoriteId, this.updateController, this.contentType = HomeContentType.browse});
 
   @override
   _HomeToutWidgetState createState() => _HomeToutWidgetState();
@@ -34,7 +37,8 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   String? _imageUrl;
   DateTime? _imageDateTime;
   DayPart? _dayPart;
-  
+  late HomeContentType _contentType;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -47,6 +51,8 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
         _refresh();
       }
     });
+
+    _contentType = widget.contentType;
 
     _dayPart = DateTimeUtils.getDayPart();
 
@@ -71,10 +77,10 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
     String? title2 = _firstName;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       (imageUrl != null) ? _buildImageWidget(imageUrl) : Container(),
-      Container(padding: EdgeInsets.only(bottom: 16,), color: Styles().colors.fillColorPrimary, child:
+      Container(color: Styles().colors.fillColorPrimary, child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Expanded(child:
-            Padding(padding: EdgeInsets.only(left: 16, top: 16), child:
+            Padding(padding: EdgeInsets.only(left: 16, top: 16, bottom: 16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(_title1 ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.medium.fat")),
                 Visibility(visible: StringUtils.isNotEmpty(title2), child:
@@ -90,16 +96,18 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
                   ],)
                 ),
               ],),
-            )
+            ),
           ),
-          GestureDetector(onTap: _onCustomize, child:
-            Padding(padding: EdgeInsets.only(top: 16, right: 16), child:
-              Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
-                style: Styles().textStyles.getTextStyle("widget.home_tout.button.underline.title")))
+          Padding(padding: EdgeInsets.only(top: 0), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              _contentTypesDropdown,
+              if (_contentType == HomeContentType.favorites)
+                _customizeButton
+            ],),
           ),
         ],)
-      )
-
+      ),
+      Container(color: Styles().colors.dividerLine, height: 1),
     ],);
   }
 
@@ -143,6 +151,41 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
     ]);
   }
 
+  Widget get _contentTypesDropdown => Semantics(label: _contentTypeName, hint: "Double tap to select content", button: true, container: true, child:
+    DropdownButtonHideUnderline(child:
+      DropdownButton<HomeContentType>(
+        icon: Padding(padding: EdgeInsets.only(left: 4, right: 16), child: Styles().images.getImage('chevron-down-white', excludeFromSemantics: true)),
+        isExpanded: false,
+        isDense: true,
+        style: Styles().textStyles.getTextStyle("widget.colourful_button.title.medium.accent.underline"),
+        hint: Text(_contentTypeName, style: Styles().textStyles.getTextStyle("widget.colourful_button.title.medium.accent.underline")),
+        items: _contentTypeDropdownItems,
+        onChanged: _onContentTypeDropdownValueChanged,
+        padding: EdgeInsets.only(top: 14, bottom: 6),
+      ),
+    ),
+  );
+
+  List<DropdownMenuItem<HomeContentType>>? get _contentTypeDropdownItems {
+    List<DropdownMenuItem<HomeContentType>> dropDownItems = [];
+    for (HomeContentType contentType in HomeContentType.values) {
+      String? contentTypeName = _getContentTypeName(contentType);
+      dropDownItems.add(DropdownMenuItem<HomeContentType>(value: contentType, child:
+        // BlockSemantics(blocking: true, child:
+          Semantics(label: contentTypeName, hint: "Double tap to select content", button:false, excludeSemantics: true, child:
+            Text(contentTypeName, style: Styles().textStyles.getTextStyle("widget.button.title.regular")),
+          )
+        // )
+      ));
+    }
+    return dropDownItems;
+  }
+
+  Widget get _customizeButton => GestureDetector(onTap: _onCustomize, child:
+    Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
+      style: Styles().textStyles.getTextStyle("widget.home_tout.button.underline.title"))
+  );
+
   String? get _title1 {
     if (_dayPart != null) {
       String greeting = AppDateTimeUtils.getDayPartGreeting(dayPart: _dayPart);
@@ -160,6 +203,16 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
 
   String? get _firstName {
     return Auth2().account?.authType?.uiucUser?.firstName ?? Auth2().profile?.firstName;
+  }
+
+  String get _contentTypeName =>
+    _getContentTypeName(_contentType);
+
+  static String _getContentTypeName(HomeContentType contentType) {
+    switch (contentType) {
+      case HomeContentType.browse: return Localization().getStringEx('widget.home.tout.browse.label', 'Browse');
+      case HomeContentType.favorites: return Localization().getStringEx('widget.home.tout.favorites.label', 'My Favorites');
+    }
   }
 
   bool _shouldUpdateImage({DayPart? dayPart}) {
@@ -198,7 +251,17 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
 
   void _onCustomize() {
     Analytics().logSelect(target: 'Customize', source: widget.runtimeType.toString());
-    widget.onEdit();
+    HomeCustomizeFavoritesPanel.present(context);
+  }
+
+  void _onContentTypeDropdownValueChanged(HomeContentType? value) {
+    Analytics().logSelect(target: "Home content selected: $value", source: widget.runtimeType.toString());
+    if (value != null) {
+      setState(() {
+        _contentType = value;
+      });
+      NotificationService().notify(HomeToutWidget.notifyContentTypeChanged, value);
+    }
   }
 
   // NotificationsListener
