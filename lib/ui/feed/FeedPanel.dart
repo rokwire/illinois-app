@@ -130,7 +130,7 @@ class _FeedPanelState extends State<FeedPanel> with AutomaticKeepAliveClientMixi
     super.build(context);
 
     return Scaffold(
-      appBar: RootHeaderBar(title: Localization().getStringEx('panel.feeds.label.title', 'Browse')),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.feeds.label.title', 'Feed')),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
         Column(children: <Widget>[
           Expanded(child:
