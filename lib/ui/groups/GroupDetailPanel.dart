@@ -93,23 +93,25 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Group?             _group;
   GroupStats?        _groupStats;
-  int                _progress = 0;
-  bool               _confirmationLoading = false;
-  bool               _updatingEvents = false;
-  int                _allEventsCount = 0;
-  List<Event2>?      _groupEvents;
-  List<GroupPost>    _visibleGroupPosts = <GroupPost>[];
   List<Member>?      _groupAdmins;
 
   _DetailTab         _currentTab = _DetailTab.Events;
 
-  GlobalKey          _lastPostKey = GlobalKey();
-  bool?               _refreshingPosts;
-  bool?               _loadingPostsPage;
-  bool?               _hasMorePosts;
-  bool?               _shouldScrollToLastAfterRefresh;
+  int                _progress = 0;
+  bool               _confirmationLoading = false;
 
-  DateTime?           _pausedDateTime;
+  List<Event2>?      _groupEvents;
+  bool               _updatingEvents = false;
+  int                _allEventsCount = 0;
+
+  List<GroupPost>    _posts = <GroupPost>[];
+  GlobalKey          _lastPostKey = GlobalKey();
+  bool?              _refreshingPosts;
+  bool?              _loadingPostsPage;
+  bool?              _hasMorePosts;
+  bool?              _scrollToLastPostAfterRefresh;
+
+  DateTime?          _pausedDateTime;
 
   GlobalKey          _pollsKey = GlobalKey();
   List<Poll>?        _groupPolls;
@@ -341,22 +343,22 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _refreshCurrentPosts({int? delta}) {
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_refreshingPosts != true)) {
-      int limit = _visibleGroupPosts.length + (delta ?? 0);
+      int limit = _posts.length + (delta ?? 0);
       _refreshingPosts = true;
       Groups().loadGroupPosts(widget.groupId, offset: 0, limit: limit, order: GroupSortOrder.desc).then((List<GroupPost>? posts) {
         _refreshingPosts = false;
         if (mounted && (posts != null)) {
           setState(() {
-            _visibleGroupPosts = posts;
+            _posts = posts;
             if (posts.length < limit) {
               _hasMorePosts = false;
             }
           });
-          if (_shouldScrollToLastAfterRefresh == true) {
+          if (_scrollToLastPostAfterRefresh == true) {
             _scheduleLastPostScroll();
           }
         }
-        _shouldScrollToLastAfterRefresh = null;
+        _scrollToLastPostAfterRefresh = null;
       });
     }
   }
@@ -377,9 +379,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Future<void> _loadPostsPage() async {
-    List<GroupPost>? postsPage = await Groups().loadGroupPosts(widget.groupId, offset: _visibleGroupPosts.length, limit: _postsPageSize, order: GroupSortOrder.desc);
+    List<GroupPost>? postsPage = await Groups().loadGroupPosts(widget.groupId, offset: _posts.length, limit: _postsPageSize, order: GroupSortOrder.desc);
     if (postsPage != null) {
-      _visibleGroupPosts.addAll(postsPage);
+      _posts.addAll(postsPage);
       if (postsPage.length < _postsPageSize) {
         _hasMorePosts = false;
       }
@@ -960,7 +962,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   Widget _buildPosts() {
     List<Widget> postsContent = [];
 
-    if (CollectionUtils.isEmpty(_visibleGroupPosts)) {
+    if (CollectionUtils.isEmpty(_posts)) {
       if (_isMemberOrAdmin) {
         Column(children: <Widget>[
           SectionSlantHeader(
@@ -976,15 +978,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
     }
 
-    for (int i = 0; i <_visibleGroupPosts.length ; i++) {
-      GroupPost? post = _visibleGroupPosts[i];
+    for (int i = 0; i <_posts.length ; i++) {
+      GroupPost? post = _posts[i];
       if (i > 0) {
         postsContent.add(Container(height: 16));
       }
       postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group));
     }
 
-    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _visibleGroupPosts.length)) {
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _posts.length)) {
       String title = Localization().getStringEx('panel.group_detail.button.show_older.title', 'Show older');
       postsContent.add(Container(padding: EdgeInsets.only(top: 16),
         child: Semantics(label: title, button: true, excludeSemantics: true,
@@ -1536,7 +1538,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
       switch (_currentTab) {
         case _DetailTab.Posts:
-          if (CollectionUtils.isNotEmpty(_visibleGroupPosts)) {
+          if (CollectionUtils.isNotEmpty(_posts)) {
             _scheduleLastPostScroll();
           }
           break;
@@ -1828,7 +1830,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           _refreshCurrentPosts();
         }
         if (result is GroupPost) {
-          _shouldScrollToLastAfterRefresh = true;
+          _scrollToLastPostAfterRefresh = true;
         }
       });
     }
