@@ -206,7 +206,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Groups.notifyGroupUpdated,
       Groups.notifyGroupEventsUpdated,
       Groups.notifyGroupStatsUpdated,
-      Groups.notifyGroupPostsUpdated,
+      Groups.notifyGroupPostCreated,
+      Groups.notifyGroupPostUpdated,
+      Groups.notifyGroupPostDeleted,
       Polls.notifyCreated,
       Polls.notifyDeleted,
       Polls.notifyStatusChanged,
@@ -527,9 +529,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)) {
       _loadGroup(loadEvents: true);
     } 
-    else if (name == Groups.notifyGroupPostsUpdated) {
-      _refreshCurrentPosts(delta: param is int ? param : null);
-    } 
+    else if (name == Groups.notifyGroupPostCreated) {
+      _refreshCurrentPosts(delta: ((param is GroupPost) && (param.parentId == null)) ? 1 : null);
+    }
+    else if (name == Groups.notifyGroupPostUpdated) {
+      _refreshCurrentPosts();
+    }
+    else if (name == Groups.notifyGroupPostDeleted) {
+      _refreshCurrentPosts(delta: ((param is GroupPost) && (param.parentId == null)) ? -1 : null);
+    }
     else if ((name == Polls.notifyCreated) || (name == Polls.notifyDeleted)) {
       _refreshPolls();
     } 
