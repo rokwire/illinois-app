@@ -273,18 +273,18 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
       if(success){
           if(_canSentToOtherAdminCroups){
             _processPostToOtherAdminGroups(post).then((success){
-              _onCreateFinished(success); //Finished posting to other groups
+              _onCreateFinished(post); //Finished posting to other groups
             }).onError((error, stackTrace){
-              _onCreateFinished(false); //Failed posting to other groups
+              _onCreateFinished(null); //Failed posting to other groups
             });
           } else {// Don't want to post to other groups
-            _onCreateFinished(true); //Successfully posted single post
+            _onCreateFinished(post); //Successfully posted single post
           }
       } else { // Fail
-        _onCreateFinished(false); //Failed posting to original group
+        _onCreateFinished(null); //Failed posting to original group
       }
     }).onError((error, stackTrace) {
-      _onCreateFinished(false);//Failed posting to original group
+      _onCreateFinished(null);//Failed posting to original group
     });
   }
 
@@ -312,10 +312,10 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     return !results.contains(false);
   }
 
-  void _onCreateFinished(bool succeeded) {
+  void _onCreateFinished(GroupPost? post) {
     _decreaseProgress();
-    if (succeeded) {
-      Navigator.of(context).pop(true);
+    if (post != null) {
+      Navigator.of(context).pop(post);
     } else {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.post.failed.msg', 'Failed to create new post.'));
     }

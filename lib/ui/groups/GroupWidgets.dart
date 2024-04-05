@@ -1329,7 +1329,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
   @override
   void onNotification(String name, param) {
     if (name == Groups.notifyGroupPostsUpdated) {
-      setState(() {});
+      setStateIfMounted(() {});
     }
   }
 }
