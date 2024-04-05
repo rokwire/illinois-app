@@ -49,6 +49,9 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:illinois/service/Polls.dart' as illinois;
+import 'package:timezone/timezone.dart' as timezone;
+
+import '../../service/AppDateTime.dart';
 
 /////////////////////////////////////
 // GroupSectionTitle
@@ -3021,5 +3024,70 @@ class GroupMemberSettingsLayout extends StatelessWidget{
       }
     }
   }
+
+}
+
+class GroupScheduleTimeWidget extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _GroupScheduleTimeState();
+
+}
+
+class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
+  bool required = false;
+  bool expanded = false;
+  bool enabled = true;
+
+  String title =  Localization().getStringEx('', 'SCHEDULE FOR:');
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(padding: EdgeInsets.zero, child:
+    Column(children: <Widget>[
+      Container(
+        decoration: BoxDecoration(
+            border: Border.all(color: enabled ? Styles().colors.mediumGray2 : Styles().colors.surfaceAccent, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(8))
+        ),
+        child: Column(children: <Widget>[
+          Semantics(button: true, label: title,
+              child: InkWell(
+                onTap: (){
+
+                },
+                child: Padding(padding: EdgeInsets.zero, child:
+                  Row(children: [
+                    Expanded(child:
+                    Semantics ( label: title, child:
+                      RichText(text:
+                      TextSpan(text: title, style: Styles().textStyles.getTextStyle("widget.title.small.fat.spaced"), semanticsLabel: "", children: required ? <InlineSpan>[
+                        TextSpan(text: ' *', style: Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
+                      ] : null),
+                      ))
+                    ),
+                    Padding(padding: EdgeInsets.only(left: 8), child:
+                    Styles().images.getImage(expanded ? 'chevron-up' : 'chevron-down') ?? Container()
+                    ),
+                  ],),
+                  ),
+              )
+          ),
+          Visibility(visible: expanded, child:
+          Container(decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles().colors.mediumGray2, width: 1))),
+            child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+                Container()
+            //body,
+            ),
+          ),
+          ),
+        ],),
+      ),
+    ]),
+    );
+  }
+
+
+
+
 
 }

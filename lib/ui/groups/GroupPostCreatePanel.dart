@@ -188,6 +188,12 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
         ]));
   }
 
+  Widget _buildScheduleWidget(){
+    return Container(
+      child: GroupScheduleTimeWidget()
+    );
+  }
+
   void _onMembersSelectionChanged(List<Member>? selectedMembers){
     _selectedMembers = selectedMembers;
     _updateState();
