@@ -1819,7 +1819,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         if (_refreshingPosts != true) {
           _refreshCurrentPosts();
         }
-        if (result == true) {
+        if (result is GroupPost) {
           _shouldScrollToLastAfterRefresh = true;
         }
       });
