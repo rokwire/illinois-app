@@ -217,6 +217,11 @@ Color? groupMemberStatusToColor(GroupMemberStatus? value) {
 
 
 extension GroupPostExt on GroupPost {
+
+  GroupPostType get type => (members?.isNotEmpty == true) ? GroupPostType.message : GroupPostType.post;
+  bool get isPost => (type == GroupPostType.post);
+  bool get isMessage => (type == GroupPostType.message);
+
   String? get displayDateTime {
     DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
     if (deviceDateTime != null) {
