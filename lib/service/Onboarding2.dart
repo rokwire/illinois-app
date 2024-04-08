@@ -10,11 +10,10 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
+import 'package:illinois/ui/settings/SettingsLoginPasskeyPanel.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
-import 'package:illinois/ui/onboarding/OnboardingLoginNetIdPanel.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailStatementPanel.dart';
 
 
 class Onboarding2 with Service {
@@ -65,8 +64,8 @@ class Onboarding2 with Service {
 
   void _proceedToLogin(BuildContext context){
     Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
-    if (codes.contains('login_netid')) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginNetIdPanel(onboardingContext: {
+    if (codes.contains('login_passkey')) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginPasskeyPanel(onboardingContext: {
         "onContinueAction": () {
           _didProceedToLogin(context);
         },
@@ -75,16 +74,16 @@ class Onboarding2 with Service {
         }
       })));
     }
-    else if (codes.contains('login_phone')) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginPhoneOrEmailStatementPanel(onboardingContext: {
-        "onContinueAction": () {
-          _didProceedToLogin(context);
-        },
-        "onContinueActionEx": (dynamic state) {
-          _didProceedToLogin(context, loginPanelState: state);
-        }
-      })));
-    }
+    // else if (codes.contains('login_phone')) {
+    //   Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginPhoneOrEmailStatementPanel(onboardingContext: {
+    //     "onContinueAction": () {
+    //       _didProceedToLogin(context);
+    //     },
+    //     "onContinueActionEx": (dynamic state) {
+    //       _didProceedToLogin(context, loginPanelState: state);
+    //     }
+    //   })));
+    // }
     else {
       _didProceedToLogin(context);
     }

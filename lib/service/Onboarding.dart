@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/ui/settings/SettingsLoginPasskeyPanel.dart';
 import 'package:rokwire_plugin/service/onboarding.dart' as rokwire;
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingGetStartedPanel.dart';
@@ -61,8 +62,8 @@ class Onboarding extends rokwire.Onboarding  {
     else if (code == 'roles') {
       return OnboardingRolesPanel(onboardingContext: context);
     }
-    else if (code == 'login_netid') {
-      return OnboardingLoginNetIdPanel(onboardingContext: context);
+    else if (code == 'login_passkey') {
+      return SettingsLoginPasskeyPanel(onboardingContext: context);
     }
     else if (code == 'login_phone') {
       return OnboardingLoginPhonePanel(onboardingContext: context);
@@ -101,8 +102,8 @@ class Onboarding extends rokwire.Onboarding  {
     else if (panel is OnboardingRolesPanel) {
       return 'roles';
     }
-    else if (panel is OnboardingLoginNetIdPanel) {
-      return 'login_netid';
+    else if (panel is SettingsLoginPasskeyPanel) {
+      return 'login_passkey';
     }
     else if (panel is OnboardingLoginPhonePanel) {
       return 'login_phone';

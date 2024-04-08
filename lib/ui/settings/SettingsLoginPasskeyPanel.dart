@@ -79,7 +79,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.background,
+          backgroundColor: Styles().colors.surface,
           body: Column(children: [
             Expanded(child:
               _buildMainContent(context),
@@ -136,7 +136,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       child: Column(children: [
         Align(alignment: Alignment.centerLeft, child: _buildBackButton(context)),
         const SizedBox(height: 16),
-        Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container(),
+        Styles().images.getImage('university-logo', excludeFromSemantics: true, size: 128) ?? Container(),
       ]),
     );
   }

@@ -22,6 +22,7 @@ import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 class Onboarding2GetStartedPanel extends StatelessWidget {
   Onboarding2GetStartedPanel();
@@ -36,7 +37,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
             SingleChildScrollView(child:
               Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
                 Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child: 
-                  Onboarding2TitleWidget(title: Localization().getStringEx("panel.onboarding2.get_started.title", "A Smart Campus\nIn Your Pocket",)),
+                  Onboarding2TitleWidget(title: Localization().getStringEx("panel.onboarding2.get_started.title", "A Smart Campus\nIn Your Pocket",),),
                 ),
                 Container(height: 14,),
                 Container(padding: EdgeInsets.symmetric(horizontal: 16), child:

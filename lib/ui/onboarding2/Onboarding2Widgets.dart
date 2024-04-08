@@ -8,8 +8,9 @@ import 'package:illinois/utils/AppUtils.dart';
 
 class Onboarding2TitleWidget extends StatelessWidget{
   final String? title;
+  final TriangleHorzDirection horizontalDirection;
 
-  const Onboarding2TitleWidget({Key? key, this.title}) : super(key: key);
+  const Onboarding2TitleWidget({Key? key, this.title, this.horizontalDirection = TriangleHorzDirection.leftToRight}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +36,10 @@ class Onboarding2TitleWidget extends StatelessWidget{
               Container(height: 90,),
             ],),
           ),
-          CustomPaint(painter: TrianglePainter(painterColor: rightTriangleColor, horzDir: TriangleHorzDirection.leftToRight), child:
+          CustomPaint(painter: TrianglePainter(painterColor: rightTriangleColor, horzDir: horizontalDirection), child:
             Container(height: 48,),
           ),
-          CustomPaint(painter: TrianglePainter(painterColor: leftTriangleColor), child:
+          CustomPaint(painter: TrianglePainter(painterColor: leftTriangleColor, horzDir: horizontalDirection), child:
             Container(height: 64,),
           ),
         ],),

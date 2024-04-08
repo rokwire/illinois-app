@@ -14,10 +14,10 @@
     "textColorSecondaryVariant"             :"#FFFFFF",
     "gradientColorPrimary"                  :"#343537",
 
-    "surface"                               :"#FFFFFF",
+    "surface"                               :"#161719",
     "surfaceAccent"                         :"#DADDE1",
     "surfaceAccentTransparent15"            :"#26DADDE1",
-    "background"                            :"#F5F5F5",
+    "background"                            :"#161719",
     "backgroundVariant"                     :"#E8E9EA",
 
     "textSurface"                           :"#404040",

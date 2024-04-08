@@ -28,10 +28,10 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>edu.illinois.rokwire.auth</string>
+			<string>com.rokmetro.university.neom.auth</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>edu.illinois.rokwire</string>
+				<string>com.rokmetro.university.neom</string>
 			</array>
 		</dict>
 	</array>
