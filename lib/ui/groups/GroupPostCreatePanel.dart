@@ -83,6 +83,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                   ),
                   _buildNudgesWidget(),
                   Container(height: 12,),
+                  _buildScheduleWidget(),
+                  Container(height: 12,),
                   Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'),
                     style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),),
                   Padding(

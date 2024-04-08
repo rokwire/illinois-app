@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
+import 'package:device_calendar/device_calendar.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/mainImpl.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
+import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -3028,6 +3032,12 @@ class GroupMemberSettingsLayout extends StatelessWidget{
 }
 
 class GroupScheduleTimeWidget extends StatefulWidget {
+  final Location? timeZone;
+  final DateTime? date;
+  final TimeOfDay? time;
+
+  const GroupScheduleTimeWidget({super.key,  this.timeZone, this.date, this.time});
+
   @override
   State<StatefulWidget> createState() => _GroupScheduleTimeState();
 
@@ -3038,10 +3048,23 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
   bool expanded = false;
   bool enabled = true;
 
-  String title =  Localization().getStringEx('', 'SCHEDULE FOR:');
+  late Location _timeZone;
+  DateTime? _date;
+  TimeOfDay? _time;
+
+  @override
+  void initState() {
+    _timeZone = timeZoneDatabase.locations[widget.timeZone] ?? DateTimeLocal.timezoneLocal;
+    _date = widget.date;
+    _time = widget.time;
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    String title =  Localization().getStringEx('', 'SCHEDULE FOR:');
+
     return Padding(padding: EdgeInsets.zero, child:
     Column(children: <Widget>[
       Container(
@@ -3053,9 +3076,9 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
           Semantics(button: true, label: title,
               child: InkWell(
                 onTap: (){
-
+                  setStateIfMounted((){expanded = !expanded;});
                 },
-                child: Padding(padding: EdgeInsets.zero, child:
+                child: Padding(padding: sectionHeadingContentPadding, child:
                   Row(children: [
                     Expanded(child:
                     Semantics ( label: title, child:
@@ -3075,8 +3098,8 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
           Visibility(visible: expanded, child:
           Container(decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles().colors.mediumGray2, width: 1))),
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-                Container()
-            //body,
+                Container(child: buildBody() ??
+                    Container())
             ),
           ),
           ),
@@ -3086,8 +3109,196 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
     );
   }
 
+  Widget? buildBody() => Column(children: [
+      _buildTimeZoneDropdown(),
+      Padding(padding: EdgeInsets.only(bottom: 12)),
+      _buildDateTimeWidget(
+        date: _date,
+        time: _time,
+        onDate: _onStartDate,
+        onTime: _onStartTime,
+        semanticsDateLabel: Localization().getStringEx("", "DATE"),
+        semanticsTimeLabel: Localization().getStringEx("",'TIME'),
+        dateLabel: Localization().getStringEx("", "DATE"),
+        timeLabel: Localization().getStringEx("","TIME"),
+      ),
+    ]);
 
+  Widget _buildDateTimeWidget({
+    DateTime? date,
+    TimeOfDay? time,
+    void Function()? onDate,
+    void Function()? onTime,
+    String? dateLabel,
+    bool dateRequired = false,
+    String? timeLabel,
+    bool timeRequired = false,
+    String? semanticsDateLabel,
+    String? semanticsTimeLabel,
+  }) {
+    List<Widget> contentList = <Widget>[
+      Expanded(flex: 65, child:
+        Semantics(label: semanticsDateLabel, button: true, excludeSemantics: true, child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Padding(padding: EdgeInsets.only(bottom: 4), child:
+              Row(children: <Widget>[
+                buildSectionTitleWidget(dateLabel ?? '', required: dateRequired),
+              ],),
+            ),
+            _buildDropdownButton(label: (date != null) ? DateFormat("EEE, MMM dd, yyyy").format(date) : "-", onTap: onDate,)
+          ],)
+        ),
+      ),
+    ];
 
+    contentList.add(Expanded(flex: 35, child:
+      Padding(padding: EdgeInsets.only(left: 4), child:
+        Semantics(label: semanticsTimeLabel, button: true, excludeSemantics: true, child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Padding(padding: EdgeInsets.only(bottom: 4), child:
+              Row(children: <Widget>[
+                buildSectionTitleWidget(timeLabel ?? '', required: timeRequired),
+              ],),
+            ),
+            _buildDropdownButton(label: (time != null) ? DateFormat("h:mma").format(_dateWithTimeOfDay(time)) : "-", onTap: onTime,),
+          ],)
+        ),
+      ),
+    ),);
 
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: contentList,);
+  }
 
+  Widget _buildDropdownButton({String? label, GestureTapCallback? onTap}) {
+    return InkWell(onTap: onTap, child:
+      Container(decoration: dropdownButtonDecoration, padding: dropdownButtonContentPadding, child:
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+          Text(label ??  '-', style: Styles().textStyles.getTextStyle("widget.title.regular"),),
+          Styles().images.getImage('chevron-down') ?? Container()
+        ],),
+      ),
+    );
+  }
+
+  DateTime _dateWithTimeOfDay(TimeOfDay time) =>
+      _dateTimeWithDateAndTimeOfDay(DateTime.now(), time);
+
+  TZDateTime _dateTimeWithDateAndTimeOfDay(DateTime date, TimeOfDay? time, { bool inclusive = false}) =>
+      TZDateTime(_timeZone, date.year, date.month, date.day, time?.hour ?? (inclusive ? 23 : 0), time?.minute ?? (inclusive ? 59 : 0));
+
+  void _onStartDate() {
+    Analytics().logSelect(target: "Date");
+    hideKeyboard(context);
+    DateTime now = DateUtils.dateOnly(DateTime.now());
+    DateTime minDate = now;
+    DateTime maxDate = now.add(Duration(days: 366));
+    DateTime selectedDate = (_date != null) ? DateTimeUtils.min(DateTimeUtils.max(_date!, minDate), maxDate) : minDate;
+    showDatePicker(context: context,
+      initialDate: selectedDate,
+      firstDate: minDate,
+      lastDate: maxDate,
+      currentDate: now,
+    ).then((DateTime? result) {
+      if ((result != null) && mounted) {
+        setState(() {
+          _date = DateUtils.dateOnly(result);
+          // _errorMap = _buildErrorMap(); //TBD handle error
+        });
+      }
+    });
+  }
+
+  void _onStartTime() {
+    Analytics().logSelect(target: "Start Time");
+    hideKeyboard(context);
+    showTimePicker(context: context, initialTime: _time ?? TimeOfDay(hour: 0, minute: 0)).then((TimeOfDay? result) {
+      if ((result != null) && mounted) {
+        setState(() {
+          _time = result;
+          // _errorMap = _buildErrorMap(); //TBD handle error
+        });
+      }
+    });
+  }
+
+  //TIMEZONE
+  Widget _buildTimeZoneDropdown(){
+    return Semantics(container: true, child:
+      Row(children: <Widget>[
+        Expanded(flex: 4, child:
+          buildSectionTitleWidget(Localization().getStringEx("", "TIME ZONE")),
+        ),
+        Container(width: 16,),
+        Expanded(flex: 6, child:
+          Container(decoration: dropdownButtonDecoration, child:
+            Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
+              DropdownButtonHideUnderline(child:
+                DropdownButton<Location>(
+                    icon: Styles().images.getImage('chevron-down'),
+                    isExpanded: true,
+                    style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                    hint: Text(_timeZone.name,),
+                    items: _buildTimeZoneDropDownItems(),
+                    onChanged: _onTimeZoneChanged
+                ),
+              ),
+            ),
+          ),
+        ),
+      ])
+    );
+  }
+
+  List<DropdownMenuItem<Location>>? _buildTimeZoneDropDownItems() {
+    List<DropdownMenuItem<Location>> menuItems = <DropdownMenuItem<Location>>[];
+    timeZoneDatabase.locations.forEach((String name, Location location) {
+      if (name.startsWith('US/')) {
+        menuItems.add(DropdownMenuItem<Location>(
+          value: location,
+          child: Semantics(label: name, excludeSemantics: true, container:true, child: Text(name,)),
+        ));
+      }
+    });
+
+    return menuItems;
+  }
+
+  void _onTimeZoneChanged(Location? value) {
+    Analytics().logSelect(target: "Time Zone selected: $value");
+    hideKeyboard(context);
+    if ((value != null) && mounted) {
+      setState(() {
+        _timeZone = value;
+      });
+    }
+  }
+
+  //Common
+  static Widget buildSectionTitleWidget(String title, { bool required = false, TextStyle? textStyle, TextStyle? requiredTextStyle,  }) =>
+      Semantics ( label: title, child:
+        RichText(textScaler: textScaler, text:
+          TextSpan(text: title, style: textStyle ?? headingTextStype, semanticsLabel: "", children: required ? <InlineSpan>[
+            TextSpan(text: ' *', style: requiredTextStyle ?? Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
+          ] : null),
+      ));
+
+  static TextStyle? get headingTextStype => Styles().textStyles.getTextStyle("widget.title.small.fat.spaced");
+
+  static const EdgeInsetsGeometry dropdownButtonContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
+  static const EdgeInsetsGeometry sectionHeadingContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 20);
+
+  static BoxDecoration get dropdownButtonDecoration => BoxDecoration(
+      color: Styles().colors.surface,
+      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+      borderRadius: BorderRadius.all(Radius.circular(4))
+  );
+
+  static TextScaler get textScaler {
+    BuildContext? context = App.instance?.currentContext;
+    return (context != null) ? MediaQuery.of(context).textScaler : TextScaler.noScaling;
+  }
+
+  static void hideKeyboard(BuildContext context) {
+    FocusScope.of(context).unfocus();
+  }
 }
