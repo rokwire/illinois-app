@@ -285,7 +285,16 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                           setStateIfMounted(() {
                             _mainPostUpdateData?.members = members;
                           });
-                        },)
+                        },),
+                      Container(height: 6,),
+
+                      Visibility(visible: widget.post?.scheduleDateUtc != null, child:
+                        GroupScheduleTimeWidget(
+                          timeZone: null,//TBD pass timezone
+                          scheduleTime: widget.post?.scheduleDateUtc,
+                          enabled: _isEditMainPost,
+                        )
+                      )
                     ],
                   )),
 

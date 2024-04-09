@@ -3030,10 +3030,12 @@ class GroupMemberSettingsLayout extends StatelessWidget{
 
 class GroupScheduleTimeWidget extends StatefulWidget {
   final Location? timeZone;
-  final DateTime? date;
-  final TimeOfDay? time;
 
-  const GroupScheduleTimeWidget({super.key,  this.timeZone, this.date, this.time});
+  final DateTime? scheduleTime;
+  final bool? enabled;
+  // final TimeOfDay? time;
+
+  const GroupScheduleTimeWidget({super.key,  this.timeZone, this.scheduleTime, this.enabled = true});
 
   @override
   State<StatefulWidget> createState() => _GroupScheduleTimeState();
@@ -3042,8 +3044,8 @@ class GroupScheduleTimeWidget extends StatefulWidget {
 
 class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
   bool required = false;
-  bool expanded = false;
-  bool enabled = true;
+  bool _expanded = false;
+  // onTimeChanged() TBD implement and pass mechanism for updating
 
   late Location _timeZone;
   DateTime? _date;
@@ -3052,51 +3054,69 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
   @override
   void initState() {
     _timeZone = timeZoneDatabase.locations[widget.timeZone] ?? DateTimeLocal.timezoneLocal;
-    _date = widget.date;
-    _time = widget.time;
+    DateTime? dateTimeUtc = widget.scheduleTime;
+    if (dateTimeUtc != null) {
+      TZDateTime scheduleTime = TZDateTime.from(dateTimeUtc, _timeZone);
+      _date = TZDateTimeUtils.dateOnly(scheduleTime);
+      _time = TimeOfDay.fromDateTime(scheduleTime);
+    }
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    String title =  Localization().getStringEx('', 'SCHEDULE FOR');
+    return Row(crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(padding: EdgeInsets.only(top: 16), child:
+          Text("For: ", style: Styles().textStyles.getTextStyle('widget.group.members.title'),)),
+        Expanded(child: _buildDropdown())
+    ]);
+  }
+
+  Widget _buildDropdown(){
+    String title = (_time != null? DateFormat("EEE, MMM dd, h:mma").format(_dateWithTimeOfDay(_time!)) : "");
 
     return Padding(padding: EdgeInsets.zero, child:
     Column(children: <Widget>[
       Container(
         decoration: BoxDecoration(
-            border: Border.all(color: enabled ? Styles().colors.mediumGray2 : Styles().colors.surfaceAccent, width: 1),
-            borderRadius: BorderRadius.all(Radius.circular(8))
+            color: widget.enabled == true ? Styles().colors.white : null,
+            border: Border.all(color: /*widget.enabled == true ? Styles().colors.mediumGray2 :*/ Styles().colors.surfaceAccent, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(4))
         ),
         child: Column(children: <Widget>[
           Semantics(button: true, label: title,
               child: InkWell(
                 onTap: (){
-                  setStateIfMounted((){expanded = !expanded;});
+                  if(widget.enabled == true) {
+                    setStateIfMounted(() {
+                      _expanded = !_expanded;
+                    });
+                  }
                 },
                 child: Padding(padding: sectionHeadingContentPadding, child:
-                  Row(children: [
-                    Expanded(child:
+                Row(children: [
+                  Expanded(child:
                     Semantics ( label: title, child:
                       RichText(text:
-                      TextSpan(text: title, style: Styles().textStyles.getTextStyle("widget.title.small.fat.spaced"), semanticsLabel: "", children: required ? <InlineSpan>[
-                        TextSpan(text: ' *', style: Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
-                      ] : null),
-                      ))
-                    ),
-                    Padding(padding: EdgeInsets.only(left: 8), child:
-                    Styles().images.getImage(expanded ? 'chevron-up' : 'chevron-down') ?? Container()
-                    ),
-                  ],),
+                        TextSpan(text: title, style: Styles().textStyles.getTextStyle("widget.title.medium.fat"), semanticsLabel: "", children: required ? <InlineSpan>[
+                          TextSpan(text: ' *', style: Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
+                  ] : null),
+                  ))
                   ),
+                  Visibility(visible: widget.enabled == true, child:
+                    Padding(padding: EdgeInsets.only(left: 8), child:
+                      Styles().images.getImage(_expanded ? 'chevron-up' : 'chevron-down') ?? Container()),)
+                ],),
+                ),
               )
           ),
-          Visibility(visible: expanded, child:
+          Visibility(visible: _expanded, child:
           Container(decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles().colors.mediumGray2, width: 1))),
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-                Container(child: buildBody() ??
-                    Container())
+            Container(child: buildBody() ??
+                Container())
             ),
           ),
           ),
@@ -3238,7 +3258,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
   static TextStyle? get headingTextStype => Styles().textStyles.getTextStyle("widget.title.small.fat.spaced");
 
   static const EdgeInsetsGeometry dropdownButtonContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
-  static const EdgeInsetsGeometry sectionHeadingContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 20);
+  static const EdgeInsetsGeometry sectionHeadingContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 14);
 
   static BoxDecoration get dropdownButtonDecoration => BoxDecoration(
       color: Styles().colors.surface,
