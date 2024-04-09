@@ -1750,7 +1750,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
         height: 48,
         decoration: BoxDecoration(
             color:  widget.enabled? Colors.white: Styles().colors.background,
-            border: Border.all(color: Styles().colors.lightGray, width: 1),
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),
@@ -1770,7 +1770,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
                     // style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies.bold),
                     // value: _currentSelection,
                     items: _buildDropDownItems,
-                    hint: Text(_selectionText,  style: Styles().textStyles.getTextStyle('widget.group.members.title') ,),
+                    hint: Text(_selectionText,  style: Styles().textStyles.getTextStyle('widget.title.medium.fat') ,),
                     onChanged: widget.enabled? (GroupMemberSelectionData? data) {
                       _onDropDownItemChanged(data);
                     } : null,
