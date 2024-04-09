@@ -82,8 +82,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                     child: GroupMembersSelectionWidget(allMembers: _allMembersAllowedToPost, selectedMembers: _selectedMembers, groupId: widget.group.id, groupPrivacy: widget.group.privacy, onSelectionChanged: _onMembersSelectionChanged),
                   ),
                   _buildNudgesWidget(),
-                  Container(height: 12,),
-                  _buildScheduleWidget(),
+
                   Container(height: 12,),
                   Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'),
                     style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),),
@@ -106,6 +105,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                     onBodyChanged: (text) => _postData.body = text,
                     hint:  Localization().getStringEx( "panel.group.detail.post.create.body.field.hint",  "Write a Post ..."),
                   ),
+                  Container(height: 12,),
+                  _buildScheduleWidget(),
                   Container(
                     padding: EdgeInsets.symmetric(vertical: 12),
                     child: EnabledToggleButton(
@@ -126,7 +127,6 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                         }
                     ),
                   ),
-
                   Row(children: [
                     Flexible(
                       flex: 1,

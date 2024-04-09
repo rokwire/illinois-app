@@ -53,9 +53,6 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:illinois/service/Polls.dart' as illinois;
-import 'package:timezone/timezone.dart' as timezone;
-
-import '../../service/AppDateTime.dart';
 
 /////////////////////////////////////
 // GroupSectionTitle
@@ -3063,7 +3060,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
 
   @override
   Widget build(BuildContext context) {
-    String title =  Localization().getStringEx('', 'SCHEDULE FOR:');
+    String title =  Localization().getStringEx('', 'SCHEDULE FOR');
 
     return Padding(padding: EdgeInsets.zero, child:
     Column(children: <Widget>[
@@ -3112,62 +3109,18 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
   Widget? buildBody() => Column(children: [
       _buildTimeZoneDropdown(),
       Padding(padding: EdgeInsets.only(bottom: 12)),
-      _buildDateTimeWidget(
-        date: _date,
-        time: _time,
-        onDate: _onStartDate,
-        onTime: _onStartTime,
-        semanticsDateLabel: Localization().getStringEx("", "DATE"),
-        semanticsTimeLabel: Localization().getStringEx("",'TIME'),
-        dateLabel: Localization().getStringEx("", "DATE"),
-        timeLabel: Localization().getStringEx("","TIME"),
-      ),
+      Row(
+        children: [
+          Expanded(flex: 3, child:buildSectionTitleWidget(Localization().getStringEx("", "DATE"),)),
+          Expanded(flex: 7, child: _buildDropdownButton(label: (_date != null) ? DateFormat("EEE, MMM dd, yyyy").format(_date!) : "-", onTap: _onDate))
+        ],),
+      Padding(padding: EdgeInsets.only(bottom: 12)),
+      Row(
+        children: [
+          Expanded(flex: 3, child:buildSectionTitleWidget(Localization().getStringEx("", "TIME"),)),
+          Expanded(flex: 7, child: _buildDropdownButton(label: (_time != null) ? DateFormat("h:mma").format(_dateWithTimeOfDay(_time!)) : "-", onTap: _onTime))
+      ],)
     ]);
-
-  Widget _buildDateTimeWidget({
-    DateTime? date,
-    TimeOfDay? time,
-    void Function()? onDate,
-    void Function()? onTime,
-    String? dateLabel,
-    bool dateRequired = false,
-    String? timeLabel,
-    bool timeRequired = false,
-    String? semanticsDateLabel,
-    String? semanticsTimeLabel,
-  }) {
-    List<Widget> contentList = <Widget>[
-      Expanded(flex: 65, child:
-        Semantics(label: semanticsDateLabel, button: true, excludeSemantics: true, child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Padding(padding: EdgeInsets.only(bottom: 4), child:
-              Row(children: <Widget>[
-                buildSectionTitleWidget(dateLabel ?? '', required: dateRequired),
-              ],),
-            ),
-            _buildDropdownButton(label: (date != null) ? DateFormat("EEE, MMM dd, yyyy").format(date) : "-", onTap: onDate,)
-          ],)
-        ),
-      ),
-    ];
-
-    contentList.add(Expanded(flex: 35, child:
-      Padding(padding: EdgeInsets.only(left: 4), child:
-        Semantics(label: semanticsTimeLabel, button: true, excludeSemantics: true, child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Padding(padding: EdgeInsets.only(bottom: 4), child:
-              Row(children: <Widget>[
-                buildSectionTitleWidget(timeLabel ?? '', required: timeRequired),
-              ],),
-            ),
-            _buildDropdownButton(label: (time != null) ? DateFormat("h:mma").format(_dateWithTimeOfDay(time)) : "-", onTap: onTime,),
-          ],)
-        ),
-      ),
-    ),);
-
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: contentList,);
-  }
 
   Widget _buildDropdownButton({String? label, GestureTapCallback? onTap}) {
     return InkWell(onTap: onTap, child:
@@ -3180,13 +3133,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
     );
   }
 
-  DateTime _dateWithTimeOfDay(TimeOfDay time) =>
-      _dateTimeWithDateAndTimeOfDay(DateTime.now(), time);
-
-  TZDateTime _dateTimeWithDateAndTimeOfDay(DateTime date, TimeOfDay? time, { bool inclusive = false}) =>
-      TZDateTime(_timeZone, date.year, date.month, date.day, time?.hour ?? (inclusive ? 23 : 0), time?.minute ?? (inclusive ? 59 : 0));
-
-  void _onStartDate() {
+  void _onDate() {
     Analytics().logSelect(target: "Date");
     hideKeyboard(context);
     DateTime now = DateUtils.dateOnly(DateTime.now());
@@ -3208,8 +3155,8 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
     });
   }
 
-  void _onStartTime() {
-    Analytics().logSelect(target: "Start Time");
+  void _onTime() {
+    Analytics().logSelect(target: "Time");
     hideKeyboard(context);
     showTimePicker(context: context, initialTime: _time ?? TimeOfDay(hour: 0, minute: 0)).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
@@ -3220,6 +3167,12 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
       }
     });
   }
+
+  DateTime _dateWithTimeOfDay(TimeOfDay time) =>
+      _dateTimeWithDateAndTimeOfDay(DateTime.now(), time);
+
+  TZDateTime _dateTimeWithDateAndTimeOfDay(DateTime date, TimeOfDay? time, { bool inclusive = false}) =>
+      TZDateTime(_timeZone, date.year, date.month, date.day, time?.hour ?? (inclusive ? 23 : 0), time?.minute ?? (inclusive ? 59 : 0));
 
   //TIMEZONE
   Widget _buildTimeZoneDropdown(){
