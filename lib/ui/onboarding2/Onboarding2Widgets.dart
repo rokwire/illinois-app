@@ -14,22 +14,22 @@ class Onboarding2TitleWidget extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    Color? backColor = Styles().colors.fillColorSecondary;
+    Color? backColor = Styles().colors.backgroundVariant;
     Color? leftTriangleColor = Styles().colors.background;
-    Color? rightTriangleColor = Styles().colors.fillColorSecondary;
+    Color? rightTriangleColor = Styles().colors.backgroundVariant;
 
     return Container(child:
       Container(color: backColor, child:
         Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           SafeArea(child:
             Column(children: [
-              Container(height: 31,),
-              Styles().images.getImage("university-logo-dark", excludeFromSemantics: true) ?? Container(),
+              Container(height: 64,),
+              Styles().images.getImage("university-logo-dark", excludeFromSemantics: true, size: title == null ? 128 : null) ?? Container(),
               Container(height: 17,),
               Row(children: <Widget>[
                 Container(width: 32,),
                 Expanded(child:
-                  Text(title!, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.heading.title"),),
+                  Text(title ?? '', textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.heading.title"),),
                 ),
                 Container(width: 32,),
               ]),

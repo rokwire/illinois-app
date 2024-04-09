@@ -59,6 +59,12 @@ repositories{
     mavenCentral()
 }
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     compileSdkVersion 34
 
@@ -95,10 +101,10 @@ android {
         println 'travis-ci release build'
         signingConfigs {
             release {
-                storeFile file("../../android-releasekey.keystore")
-                storePassword System.getenv("androidkeystore_password") ?: "androidstore_passwd"
-                keyAlias System.getenv("androidkeystore_alias") ?: "androidkeystore_alias"
-                keyPassword System.getenv("androidkeystore_alias_password") ?: "androidkeystore_alias_password"
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+                storePassword keystoreProperties['storePassword']
             }
         }
         buildTypes {
@@ -114,6 +120,14 @@ android {
             }
         }
     } else {
+        signingConfigs {
+            debug {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+                storePassword keystoreProperties['storePassword']
+            }
+        }
         buildTypes {
             release {
                 // Add your own signing config for the release build.

@@ -82,7 +82,7 @@
 
 			"roles": ["student", "employee", "parent", "fan", "alumni", "visitor"],
 
-			"onboarding":["privacy_statement", "privacy", "notifications_auth", "location_auth", "login_passkey"],
+			"onboarding":["login_passkey"],
 
 			"campus_guide.features":["groups", "quick_polls", "saved"],
 

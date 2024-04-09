@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2VideoTutorialPanel.dart';
+import 'package:illinois/ui/settings/SettingsLoginPasskeyPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
@@ -73,7 +74,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
   }
 
   void _onReturningUser(BuildContext context){
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2RolesPanel(returningUser: true,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginPasskeyPanel()));
   }
 
   void _onGoNext(BuildContext context) {

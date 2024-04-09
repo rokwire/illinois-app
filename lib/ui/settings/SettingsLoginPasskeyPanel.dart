@@ -16,11 +16,11 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsSignInOptionsPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -81,63 +81,30 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       child: Scaffold(
           backgroundColor: Styles().colors.surface,
           body: Column(children: [
-            Expanded(child:
-              _buildMainContent(context),
-            ),
-            _buildButtonContent(context, _buildPrimaryActionButton()),
+              Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
+                Onboarding2TitleWidget(),
+              ),
+            _buildContent(context, _buildPrimaryActionButton()),
           ])
       ),
     );
   }
 
-  Widget _buildMainContent(BuildContext context) {
-    return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          _buildHeader(context),
-          _buildText(),
-          const SizedBox(height: 16),
-          _buildContentWidget(context),
-        ]
-    );
-  }
-
-  Widget _buildButtonContent(BuildContext context, Widget primaryActionButton) {
+  Widget _buildContent(BuildContext context, Widget primaryActionButton) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          _buildText(),
+          if (_state != Auth2PasskeyAccountState.exists || StringUtils.isNotEmpty(_responseMessage))
+            _buildContentWidget(context),
           primaryActionButton,
           _resettingAccessibility || _link ? Container() :  _buildSwitchModeButton(),
-          _buildSkipButton(context),
+          // _buildSkipButton(context),
         ],
       ),
-    );
-  }
-
-  Widget _buildBackButton(BuildContext context) {
-    return Visibility(
-      visible: !_resettingAccessibility,
-      child: Semantics(button: true, label: Localization().getStringEx('headerbar.back.title', 'Back'), excludeSemantics: true, /*sortKey: const OrdinalSortKey(1.0),*/
-          child: IconButton(icon: Styles().images.getImage('chevron-left') ?? Container(),
-              tooltip: Localization().getStringEx('headerbar.back.title', 'Back'),
-              onPressed: () {
-                Analytics().logSelect(target: "Back");
-                Navigator.of(context).pop();
-              })
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 48),
-      child: Column(children: [
-        Align(alignment: Alignment.centerLeft, child: _buildBackButton(context)),
-        const SizedBox(height: 16),
-        Styles().images.getImage('university-logo', excludeFromSemantics: true, size: 128) ?? Container(),
-      ]),
     );
   }
 
@@ -146,22 +113,22 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
     String description = '';
     if (_link) {
       title = Localization().getStringEx('panel.settings.passkey.add.title', 'Add a Passkey');
-      description = Localization().getStringEx('panel.settings.passkey.add.description', 'Add a new passkey on this device to sign in faster next time.');
+      // description = Localization().getStringEx('panel.settings.passkey.add.description', 'Add a new passkey on this device to sign in faster next time.');
     } else {
       switch (_state) {
         case Auth2PasskeyAccountState.nonExistent:
-          title = Localization().getStringEx('panel.settings.passkey.sign_up.title.text', 'Sign Up to get started.');
-          description = Localization().getStringEx('panel.settings.passkey.sign_up.description.text',
-              'Choose a username. This is how you will be known in the Vogue community. The username must not already be in use by someone else.\n\nYou may use an email address or phone number instead and choose a username later.');
+          title = Localization().getStringEx('panel.settings.passkey.sign_up.title.text', 'Sign up to continue');
+          // description = Localization().getStringEx('panel.settings.passkey.sign_up.description.text',
+          //     'Choose a username. This is how you will be known in the Vogue community. The username must not already be in use by someone else.\n\nYou may use an email address or email address instead and choose a username later.');
           break;
         case Auth2PasskeyAccountState.alternatives:
           title = Localization().getStringEx('panel.settings.passkey.sign_in.alternative.title.text', 'Try another way');
-          description = Localization().getStringEx('panel.settings.passkey.sign_in.alternative.description.text',
-              'Please enter the username of the account you are trying to sign in with. You will then be able to choose an alternative sign-in option.');
+          // description = Localization().getStringEx('panel.settings.passkey.sign_in.alternative.description.text',
+          //     'Please enter the username of the account you are trying to sign in with. You will then be able to choose an alternative sign-in option.');
           break;
         default:
-          title = Localization().getStringEx('panel.settings.passkey.sign_in.title.text', 'Sign In to get started.');
-          description = Localization().getStringEx('panel.settings.passkey.sign_in.description.text', 'Sign in with your passkey.');
+          title = Localization().getStringEx('panel.settings.passkey.sign_in.title.text', 'Sign in to continue');
+          // description = Localization().getStringEx('panel.settings.passkey.sign_in.description.text', 'Sign in with your passkey.');
           break;
       }
     }
@@ -171,32 +138,33 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
         Semantics(header: true, label: title, excludeSemantics: true, focused: true,
             child: Text(title, textAlign: TextAlign.center,
-              style: Styles().textStyles.getTextStyle('widget.title.small.semi_fat'),
+              style: Styles().textStyles.getTextStyle('widget.info.regular'),
             )),
-        const SizedBox(height: 16),
+        if (description.isNotEmpty)
+          const SizedBox(height: 16),
         Text(description, textAlign: TextAlign.center,
-          style: Styles().textStyles.getTextStyle('widget.title.small.semi_fat'),
+          style: Styles().textStyles.getTextStyle('widget.info.regular'),
         )
       ]),
     );
   }
 
-  Widget _buildSkipButton(BuildContext context) {
-    return Semantics(button: true,
-        child: TextButton(
-            onPressed: () => _onSkip(context),
-            child: Text(Localization().getStringEx('panel.onboarding.button.not_now.title', 'Not right now'),
-                style: Styles().textStyles.getTextStyle('widget.item.small.semi_fat'))
-        )
-    );
-  }
-
-  void _onSkip(BuildContext context) {
-    Analytics().logSelect(target: 'Not right now') ;
-    if (_link) {
-      _skip(context);
-    }
-  }
+  // Widget _buildSkipButton(BuildContext context) {
+  //   return Semantics(button: true,
+  //       child: TextButton(
+  //           onPressed: () => _onSkip(context),
+  //           child: Text(Localization().getStringEx('panel.onboarding.button.not_now.title', 'Not right now'),
+  //               style: Styles().textStyles.getTextStyle('widget.item.small.semi_fat'))
+  //       )
+  //   );
+  // }
+  //
+  // void _onSkip(BuildContext context) {
+  //   Analytics().logSelect(target: 'Not right now') ;
+  //   if (_link) {
+  //     _skip(context);
+  //   }
+  // }
 
   Widget _buildPrimaryActionButton() {
     String primaryButtonText = '';
@@ -216,50 +184,30 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       }
     }
 
-    return RibbonButton(
-      label: primaryButtonText.toUpperCase(),
+    return AngledRibbonButton(
+      label: primaryButtonText,
       textAlign: TextAlign.center,
       backgroundColor: Styles().colors.fillColorSecondary,
-      textStyle: Styles().textStyles.getTextStyle('widget.item.small.semi_fat'),
-      onTap: _performAction,
+      textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.light'),
+      onTap: () => _primaryButtonAction(context),
       progress: _loading,
       progressColor: Styles().colors.fillColorPrimary,
     );
-  }
-
-  void _performAction() {
-    if (!_loading) {
-      setState(() {
-        _loading = true;
-      });
-      _primaryButtonAction(context).then((value) =>
-      {
-        setStateIfMounted(() {
-          _loading = false;
-          // _error = value;
-        })
-      }).onError((error, stackTrace) => {
-        setStateIfMounted(() {
-          _loading = false;
-        })
-      });
-    }
   }
 
   Widget _buildContentWidget(BuildContext context) {
     TextStyle? responseTextStyle;
     switch(_responseType) {
       case ResponseType.error:
-        responseTextStyle = Styles().textStyles.getTextStyle('widgetErrorRegularBold');
+        responseTextStyle = Styles().textStyles.getTextStyle('widget.error.regular.fat');
         break;
       case ResponseType.success:
-        responseTextStyle = Styles().textStyles.getTextStyle('widgetSuccessRegularBold');
+        responseTextStyle = Styles().textStyles.getTextStyle('widget.success.regular.fat');
         break;
       default:
-        responseTextStyle = Styles().textStyles.getTextStyle('widgetMessageRegularBold');
+        responseTextStyle = Styles().textStyles.getTextStyle('widget.message.regular.fat.light');
     }
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const SizedBox(height: 16.0),
       Visibility(
         visible: StringUtils.isNotEmpty(_responseMessage),
         child: Align(alignment: Alignment.center, child: Padding(
@@ -275,8 +223,8 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
         child: Padding(
           padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
           child: Semantics(
-            label: Localization().getStringEx("panel.settings.passkey.label.username.text", "Username"),
-            hint: Localization().getStringEx("panel.settings.passkey.label.username.hint", ""),
+            label: Localization().getStringEx("panel.settings.passkey.label.email.text", "Email address"),
+            hint: Localization().getStringEx("panel.settings.passkey.label.email.hint", ""),
             textField: true,
             excludeSemantics: true,
             value: _identifierController.text,
@@ -286,7 +234,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
               enabled: _passkeyCreationOptions == null,
               autofocus: false,
               autocorrect: false,
-              style: Styles().textStyles.getTextStyle('widgetDescriptionRegularThin'),
+              style: Styles().textStyles.getTextStyle('widget.description.regular.light'),
               decoration: InputDecoration(
                   suffixIcon: _identifierController.text.isEmpty
                       ? null
@@ -297,8 +245,8 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
                         }
                     ),
                   ),
-                  labelStyle: Styles().textStyles.getTextStyle('widgetDescriptionRegularThin'),
-                  labelText: Localization().getStringEx("panel.settings.passkey.label.username.text", "Username"),
+                  labelStyle: Styles().textStyles.getTextStyle('widget.description.regular.light'),
+                  labelText: Localization().getStringEx("panel.settings.passkey.label.email.text", "Email address"),
                   filled: true,
                   fillColor: Styles().colors.fillColorPrimaryVariant,
                   enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.surface, width: 2.0, style: BorderStyle.solid)),
@@ -346,15 +294,30 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
   }
 
   Widget _buildSwitchModeButton() {
-    return TextButton(
-      style: ButtonStyle(overlayColor: MaterialStatePropertyAll(Styles().colors.surfaceAccent)),
-      onPressed: _onTapSwitchMode,
-      child: Text(
-          (_state != Auth2PasskeyAccountState.nonExistent) ? Localization().getStringEx("panel.settings.passkey.label.switch_mode.sign_up.text", "Don't have an account? Sign up instead.") :
-          Localization().getStringEx("panel.settings.passkey.label.switch_mode.login.text", "Already have an account? Sign in instead"),
-          textAlign: TextAlign.center,
-          style: Styles().textStyles.getTextStyle('bodyLink'),
-    ));
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: (_state != Auth2PasskeyAccountState.nonExistent) ? Localization().getStringEx("panel.settings.passkey.label.switch_mode.sign_up.text", "Don't have an account?") :
+            Localization().getStringEx("panel.settings.passkey.label.switch_mode.login.text", "Already have an account?"),
+            style: Styles().textStyles.getTextStyle('widget.info.regular'),
+          ),
+          WidgetSpan(
+            child: TextButton(
+              style: ButtonStyle(overlayColor: MaterialStatePropertyAll(Styles().colors.surfaceAccent), splashFactory: NoSplash.splashFactory),
+              onPressed: _onTapSwitchMode,
+              child: Text(
+                (_state != Auth2PasskeyAccountState.nonExistent) ? Localization().getStringEx("panel.settings.passkey.label.switch_mode.sign_up.button.text", "Sign up") :
+                Localization().getStringEx("panel.settings.passkey.label.switch_mode.login.button.text", "Sign in"),
+                textAlign: TextAlign.center,
+                style: Styles().textStyles.getTextStyle('widget.button.title.medium.underline')?.apply(color: Styles().colors.fillColorSecondary),
+              )
+            ),
+            alignment: PlaceholderAlignment.middle
+          ),
+        ],
+      )
+    );
   }
 
   Widget _buildTryAnotherWayButton() {
@@ -404,13 +367,13 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       String identifier = _identifierController.text.trim();
       if (!_link) {
         if (identifier.isEmpty) {
-          _setResponseMessage(Localization().getStringEx("panel.settings.passkey.validation.identifier_empty.text", "Please enter a username."));
+          _setResponseMessage(Localization().getStringEx("panel.settings.passkey.validation.identifier_empty.text", "Please enter an email address."));
           return;
         }
 
         String? identifierType = _getIdentifierType(identifier);
         if (identifierType == null) {
-          _setResponseMessage(Localization().getStringEx('panel.settings.passkey.validation.identifier.invalid.text', 'Invalid username. Usernames must only contain letters, numbers, and underscores.'));
+          _setResponseMessage(Localization().getStringEx('panel.settings.passkey.validation.identifier.invalid.text', 'Invalid email address.'));
           return;
         }
 
@@ -437,7 +400,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
           _trySignUpCallback(context, result);
         }
       } else {
-        Map<String, dynamic> creds = {'username': Auth2().username};
+        Map<String, dynamic> creds = {'username': Auth2().username};  //TODO: change to use different identifier type?
         Map<String, dynamic> params = {'display_name': StringUtils.isNotEmpty(Auth2().fullName) ? Auth2().fullName : Auth2().username};
         _loading = true;
         Auth2LinkResult auth2linkResult = await Auth2().linkAccountAuthType(Auth2Type.typePasskey, creds, params);
@@ -475,11 +438,11 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
     }
     else if (result.status == Auth2PasskeySignUpResultStatus.failedAccountExist) {
       _state = Auth2PasskeyAccountState.exists;
-      _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_up.failed.account_exists.text", "An account with this username already exists. Please select a different username."));
+      _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_up.failed.account_exists.text", "An account with this email address already exists. Please select a different email address."));
     }
     else if (result.status == Auth2PasskeySignUpResultStatus.failedNoCredentials) {
       _state = Auth2PasskeyAccountState.failed;
-      _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_up.failed.no_credentials.text", "An account with this username already exists, so sign in was attempted, but no credentials were found."));
+      _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_up.failed.no_credentials.text", "An account with this email address already exists, so sign in was attempted, but no credentials were found."));
     }
     else if (result.status == Auth2PasskeySignUpResultStatus.failedCancelled) {
       _state = Auth2PasskeyAccountState.failed;
@@ -553,13 +516,13 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
 
       String identifierText = _identifierController.text.trim();
       if (identifierText.isEmpty) {
-        _setResponseMessage(Localization().getStringEx("panel.settings.passkey.validation.identifier_empty.text", "Please enter a username."));
+        _setResponseMessage(Localization().getStringEx("panel.settings.passkey.validation.identifier_empty.text", "Please enter an email address."));
         return;
       }
 
       String? identifierType = _getIdentifierType(identifierText);
       if (identifierType == null) {
-        _setResponseMessage(Localization().getStringEx('panel.settings.passkey.validation.identifier.invalid.text', 'Invalid username. Usernames must only contain letters, numbers, and underscores.'));
+        _setResponseMessage(Localization().getStringEx('panel.settings.passkey.validation.identifier.invalid.text', 'Invalid email address.'));
         return;
       }
 
@@ -658,9 +621,9 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
     }
   }
 
-  void _skip(BuildContext context) {
-    _next(context);
-  }
+  // void _skip(BuildContext context) {
+  //   _next(context);
+  // }
 
   void _next(BuildContext context) {
     if (widget.onboardingContext == null) {

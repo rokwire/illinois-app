@@ -35,4 +35,9 @@
     <string name="locations">Locations</string>
     <string name="location">Location</string>
     <string name="ok">OK</string>
+    <string name="asset_statements" translatable="false">
+    [{
+        \"include\": \"https://university.app.services.rokmetro.com/.well-known/assetlinks.json\"
+    }]
+    </string>
 </resources>
