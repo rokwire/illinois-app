@@ -3069,7 +3069,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
     return Row(crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(padding: EdgeInsets.only(top: 16), child:
-          Text("For: ", style: Styles().textStyles.getTextStyle('widget.group.members.title'),)),
+          Text("Schedule: ", style: Styles().textStyles.getTextStyle('widget.group.members.title'),)),
         Expanded(child: _buildDropdown())
     ]);
   }
