@@ -24,7 +24,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsLinkedAccountPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
-import 'package:illinois/ui/settings/SettingsLoginPhoneConfirmPanel.dart';
+import 'package:illinois/ui/settings/SettingsLoginCodePanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:intl/intl.dart';
@@ -758,7 +758,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       Auth2().authenticateWithCode(Auth2().account?.identifier?.identifier).then((Auth2RequestCodeResult result) {
         if (result == Auth2RequestCodeResult.succeeded) {
           Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) =>
-            SettingsLoginPhoneConfirmPanel(phoneNumber: Auth2().account?.identifier?.identifier, onFinish: () {
+            SettingsLoginCodePanel(identifier: Auth2().account?.identifier?.identifier, onFinish: () {
               completer.complete(true);
             },)
           ),).then((_) {

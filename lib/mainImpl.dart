@@ -20,53 +20,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/AppReview.dart';
-import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Canvas.dart';
-import 'package:illinois/service/CustomCourses.dart';
-import 'package:illinois/service/CheckList.dart';
-import 'package:illinois/service/MTD.dart';
-import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/service/Questionnaire.dart';
-import 'package:illinois/service/SpeechToText.dart';
-import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/DeepLink.dart';
-import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/IlliniCash.dart';
-import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/OnCampus.dart';
 import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Onboarding2.dart';
-import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/RecentItems.dart';
-import 'package:illinois/service/Rewards.dart';
 import 'package:illinois/service/Services.dart' as illinois;
-import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/WPGUFMRadio.dart';
-import 'package:illinois/service/Wellness.dart';
-import 'package:illinois/service/WellnessRings.dart';
 
 import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 
 import 'package:illinois/ui/RootPanel.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPasskeyPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/device_calendar.dart';
-import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
@@ -85,7 +66,6 @@ import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
-import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 final AppExitListener appExitListener = AppExitListener();
@@ -299,7 +279,7 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
       return OnboardingUpgradePanel(availableVersion:_upgradeAvailableVersion);
     }
     else if (!Storage().onBoardingPassed!) {
-      return SettingsLoginPasskeyPanel();
+      return SettingsLoginPasskeyPanel(onboardingContext: {},);
     }
     else if ((Storage().privacyUpdateVersion == null) || (AppVersion.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0)) {
       return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,);

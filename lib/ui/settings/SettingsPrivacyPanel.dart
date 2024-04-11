@@ -67,7 +67,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
 
     _controller = ScrollController();
     _controller!.addListener(_scrollListener);
-    _disabled = (widget.mode != SettingsPrivacyPanelMode.regular);
+    // _disabled = (widget.mode != SettingsPrivacyPanelMode.regular);
     _sliderValue = this._privacyLevel;
 
     _loading = true;

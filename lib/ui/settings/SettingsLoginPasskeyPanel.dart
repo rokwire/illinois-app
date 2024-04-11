@@ -80,12 +80,14 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
     return SafeArea(
       child: Scaffold(
           backgroundColor: Styles().colors.surface,
-          body: Column(children: [
-              Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
-                Onboarding2TitleWidget(),
-              ),
-            _buildContent(context, _buildPrimaryActionButton()),
-          ])
+          body: SingleChildScrollView(
+            child: Column(children: [
+                Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
+                  Onboarding2TitleWidget()
+                ),
+              _buildContent(context, _buildPrimaryActionButton()),
+            ]),
+          )
       ),
     );
   }
@@ -98,10 +100,10 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           _buildText(),
-          if (_state != Auth2PasskeyAccountState.exists || StringUtils.isNotEmpty(_responseMessage))
-            _buildContentWidget(context),
+          // if (_state != Auth2PasskeyAccountState.exists || StringUtils.isNotEmpty(_responseMessage))
+          _buildContentWidget(context),
           primaryActionButton,
-          _resettingAccessibility || _link ? Container() :  _buildSwitchModeButton(),
+          _resettingAccessibility || _link ? Container() :  _buildSignUpButton(),
           // _buildSkipButton(context),
         ],
       ),
@@ -219,7 +221,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
         ),),
       ),
       Visibility(
-        visible: (_state == Auth2PasskeyAccountState.nonExistent || _state == Auth2PasskeyAccountState.alternatives) && !_link,
+        visible: _state != Auth2PasskeyAccountState.unverified && !_link,
         child: Padding(
           padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
           child: Semantics(
@@ -273,7 +275,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
                     Text(
                         Localization().getStringEx("panel.settings.passkey.label.resend_email.text", "Resend Verification"),
                         textAlign: TextAlign.right,
-                        style: Styles().textStyles.getTextStyle('bodyLink')
+                        style: Styles().textStyles.getTextStyle('widget.info.regular')
                     )
                   ],
                 )),
@@ -293,22 +295,20 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
     }
   }
 
-  Widget _buildSwitchModeButton() {
+  Widget _buildSignUpButton() {
     return Text.rich(
       TextSpan(
         children: [
           TextSpan(
-            text: (_state != Auth2PasskeyAccountState.nonExistent) ? Localization().getStringEx("panel.settings.passkey.label.switch_mode.sign_up.text", "Don't have an account?") :
-            Localization().getStringEx("panel.settings.passkey.label.switch_mode.login.text", "Already have an account?"),
+            text: Localization().getStringEx("panel.settings.passkey.label.switch_mode.sign_up.text", "Don't have an account?"),
             style: Styles().textStyles.getTextStyle('widget.info.regular'),
           ),
           WidgetSpan(
             child: TextButton(
               style: ButtonStyle(overlayColor: MaterialStatePropertyAll(Styles().colors.surfaceAccent), splashFactory: NoSplash.splashFactory),
-              onPressed: _onTapSwitchMode,
+              onPressed: _onTapSignUp,
               child: Text(
-                (_state != Auth2PasskeyAccountState.nonExistent) ? Localization().getStringEx("panel.settings.passkey.label.switch_mode.sign_up.button.text", "Sign up") :
-                Localization().getStringEx("panel.settings.passkey.label.switch_mode.login.button.text", "Sign in"),
+                Localization().getStringEx("panel.settings.passkey.label.switch_mode.sign_up.button.text", "Sign up"),
                 textAlign: TextAlign.center,
                 style: Styles().textStyles.getTextStyle('widget.button.title.medium.underline')?.apply(color: Styles().colors.fillColorSecondary),
               )
@@ -326,18 +326,17 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       child: Text(
           Localization().getStringEx("panel.settings.passkey.label.another_way.text", "Try another way"),
           textAlign: TextAlign.center,
-          style: Styles().textStyles.getTextStyle('bodyLink'),
+          style: Styles().textStyles.getTextStyle('widget.info.regular'),
     ));
   }
 
-  void _onTapSwitchMode() {
-    if (_state == Auth2PasskeyAccountState.nonExistent) {
-      _state = Auth2PasskeyAccountState.exists;
-    } else {
-      _state = Auth2PasskeyAccountState.nonExistent;
-    }
-    _clearResponseMessage();
-    _resetAccessibilityFocus();
+  void _onTapSignUp() {
+    setState(() {
+      _link = true;
+    });
+    Navigator.push<String?>(context, CupertinoPageRoute(builder: (BuildContext context) {
+      return SettingsLoginPhoneOrEmailPanel(link: false);
+    }));
   }
 
   void _onTapAnotherWay() {
@@ -378,7 +377,9 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
         }
 
         Auth2PasskeySignUpResult result = Auth2PasskeySignUpResult(Auth2PasskeySignUpResultStatus.failed);
-        _loading = true;
+        setState(() {
+          _loading = true;
+        });
         if (_passkeyCreationOptions == null) {
           result = await Auth2().signUpWithPasskey(identifier, displayName: identifier, identifierType: identifierType,
               public: true, verifyIdentifier: identifierType == Auth2Identifier.typeEmail);
@@ -395,14 +396,29 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
           return;
         }
 
-        _loading = false;
+        setState(() {
+          _loading = false;
+        });
         if (mounted) {
           _trySignUpCallback(context, result);
         }
       } else {
-        Map<String, dynamic> creds = {'username': Auth2().username};  //TODO: change to use different identifier type?
-        Map<String, dynamic> params = {'display_name': StringUtils.isNotEmpty(Auth2().fullName) ? Auth2().fullName : Auth2().username};
-        _loading = true;
+        Map<String, dynamic> creds = {};  //TODO: change to use different identifier type?
+        String? identifier = '';
+        if (StringUtils.isNotEmpty(Auth2().username)) {
+          creds['username'] = identifier = Auth2().username;
+        } else if (Auth2().phones.isNotEmpty) {
+          creds['phone'] = identifier = Auth2().phones.first;
+        } else if (Auth2().emails.isNotEmpty) {
+          creds['email'] = identifier = Auth2().emails.first;
+        } else {
+          _setResponseMessage(Localization().getStringEx("", "Your account could not be identified. Please try again later.")); //TODO: better error message for this case
+          return;
+        }
+        Map<String, dynamic> params = {'display_name': StringUtils.isNotEmpty(Auth2().fullName) ? Auth2().fullName : identifier};
+        setState(() {
+          _loading = true;
+        });
         Auth2LinkResult auth2linkResult = await Auth2().linkAccountAuthType(Auth2Type.typePasskey, creds, params);
         if (auth2linkResult.status == Auth2LinkResultStatus.succeeded) {
           try {
@@ -415,7 +431,9 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
             debugPrint(e.toString());
           }
         }
-        _loading = false;
+        setState(() {
+          _loading = false;
+        });
       }
     }
   }
@@ -476,7 +494,8 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       _clearResponseMessage();
 
       _loading = true;
-      Auth2PasskeySignInResult result = await Auth2().authenticateWithPasskey();
+      String identifier = _identifierController.text.trim();
+      Auth2PasskeySignInResult result = await Auth2().authenticateWithPasskey(identifier: identifier, identifierType: _getIdentifierType(identifier) ?? Auth2Identifier.typeUsername);
       _loading = false;
       if (mounted) {
         _trySignInCallback(context, result);
