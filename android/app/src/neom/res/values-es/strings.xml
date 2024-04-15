@@ -16,28 +16,23 @@
   -->
 
 <resources>
-    <string name="app_name">NEOM U</string>
+    <string name="app_name">Illinois</string>
 
-    <string name="today">Today</string>
-    <string name="tomorrow">Tomorrow</string>
-    <string name="at">at</string>
+    <string name="today">Hoy</string>
+    <string name="tomorrow">Mañana</string>
+    <string name="at">a</string>
 
-    <string name="explores">Explores</string>
-    <string name="events">Events</string>
-    <string name="dinings">Dining Options</string>
-    <string name="places">Places</string>
-    <string name="laundries">Laundries</string>
-    <string name="parkings">Parking lots</string>
-    <string name="buildings">Buildings</string>
-    <string name="student_courses">Courses</string>
-    <string name="appointments">Appointments</string>
+    <string name="explores">Explora</string>
+    <string name="events">Eventos</string>
+    <string name="dinings">Opciones para comer</string>
+    <string name="places">Lugares</string>
+    <string name="laundries">Lavanderías</string>
+    <string name="parkings">Estacionamientos</string>
+    <string name="buildings">Edificios</string>
+    <string name="student_courses">Cursos</string>
+    <string name="appointments">Equipo</string>
     <string name="mtd_stops">Bus Stops</string>
     <string name="locations">Locations</string>
     <string name="location">Location</string>
     <string name="ok">OK</string>
-    <string name="asset_statements" translatable="false">
-    [{
-        \"include\": \"https://university.app.services.rokmetro.com/.well-known/assetlinks.json\"
-    }]
-    </string>
 </resources>

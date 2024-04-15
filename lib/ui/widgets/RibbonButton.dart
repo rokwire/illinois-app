@@ -345,7 +345,7 @@ class AngledRibbonButton extends StatefulWidget {
   EdgeInsetsGeometry get simplePadding => const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
   EdgeInsetsGeometry get complexPadding => const EdgeInsets.symmetric(horizontal: 16, vertical: 8);
 
-  Color? get defaultTextColor => Styles().colors.fillColorPrimary;
+  Color? get defaultTextColor => Styles().colors.textPrimary;
   Color? get displayTextColor => textColor ?? defaultTextColor;
   String? get defaultFontFamily => Styles().fontFamilies.bold;
   String? get displayFontFamily => fontFamily ?? defaultFontFamily;

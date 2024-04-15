@@ -98,6 +98,13 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       }
     }
 
+    contentList.add(RoundedButton(
+        label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Sign Out"),
+        textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+        onTap: _onDisconnectNetIdClicked
+    ));
+
     if (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
       contentList.add(_buildDebug());
     }

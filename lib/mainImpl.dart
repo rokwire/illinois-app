@@ -210,6 +210,7 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
       Config.notifyOnboardingRequired,
       Config.notifyResetUI,
       Storage.notifySettingChanged,
+      Auth2.notifyLogout,
       Auth2.notifyUserDeleted,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
       AppLifecycle.notifyStateChanged,
@@ -278,15 +279,15 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
     else if (_upgradeAvailableVersion != null) {
       return OnboardingUpgradePanel(availableVersion:_upgradeAvailableVersion);
     }
-    else if (!Storage().onBoardingPassed!) {
+    else if (!Storage().onBoardingPassed! || !Auth2().isLoggedIn) {
       return SettingsLoginPasskeyPanel(onboardingContext: {},);
     }
-    else if ((Storage().privacyUpdateVersion == null) || (AppVersion.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0)) {
-      return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,);
-    }
-    else if (Auth2().prefs?.privacyLevel == null) {
-      return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,); // regular?
-    }
+    // else if ((Storage().privacyUpdateVersion == null) || (AppVersion.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0)) {
+    //   return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,);
+    // }
+    // else if (Auth2().prefs?.privacyLevel == null) {
+    //   return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,); // regular?
+    // }
     else if ((Storage().participateInResearchPrompted != true) && (Questionnaires().participateInResearch == null) && Auth2().isOidcLoggedIn) {
       return Onboarding2().researhQuestionnairePromptPanel(invocationContext: {
         "onFinishResearhQuestionnaireActionEx": (BuildContext context) {
@@ -408,6 +409,9 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
       _resetUI();
     }
     else if (name == Localization.notifyLocaleChanged) {
+      _resetUI();
+    }
+    else if (name == Auth2.notifyLogout) {
       _resetUI();
     }
     else if (name == Storage.notifySettingChanged) {
