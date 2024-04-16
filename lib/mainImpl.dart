@@ -43,7 +43,6 @@ import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPasskeyPanel.dart';
-import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
@@ -198,6 +197,8 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
   Future<ServiceError?>? _retryInitialzeFuture;
   DateTime? _pausedDateTime;
 
+  final Map<String, dynamic> _onboardingContext = {};
+
   @override
   void initState() {
     Log.d("App UI initialized");
@@ -280,7 +281,7 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
       return OnboardingUpgradePanel(availableVersion:_upgradeAvailableVersion);
     }
     else if (!Storage().onBoardingPassed! || !Auth2().isLoggedIn) {
-      return SettingsLoginPasskeyPanel(onboardingContext: {},);
+      return SettingsLoginPasskeyPanel(onboardingContext: _onboardingContext,);
     }
     // else if ((Storage().privacyUpdateVersion == null) || (AppVersion.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0)) {
     //   return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,);
@@ -412,6 +413,8 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
       _resetUI();
     }
     else if (name == Auth2.notifyLogout) {
+      _onboardingContext.clear();
+      _onboardingContext['afterLogout'] = true;
       _resetUI();
     }
     else if (name == Storage.notifySettingChanged) {

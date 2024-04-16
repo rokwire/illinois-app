@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
@@ -73,6 +74,17 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
     if (_state == Auth2PasskeyAccountState.unverified) {
       _responseMessage = Localization().getStringEx("panel.settings.passkey.sign_up.succeeded.text", "A verification email has been sent to your email address. To activate your account you need to confirm it. Then you will be able to login with your new credential.");
     }
+
+    if ((Storage().auth2PasskeySaved ?? false) && (widget.onboardingContext?["afterLogout"] != true)) {
+      _loading = true;
+      Auth2().authenticateWithPasskey().then((result) {
+        _loading = false;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _trySignInCallback(context, result);
+        });
+      });
+    }
+
     super.initState();
   }
 
@@ -221,43 +233,6 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
           ),
         ),),
       ),
-      Visibility(
-        visible: _state != Auth2PasskeyAccountState.unverified && !_link,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-          child: Semantics(
-            label: Localization().getStringEx("panel.settings.passkey.label.email.text", "Email address"),
-            hint: Localization().getStringEx("panel.settings.passkey.label.email.hint", ""),
-            textField: true,
-            excludeSemantics: true,
-            value: _identifierController.text,
-            child: TextField(
-              controller: _identifierController,
-              focusNode: _identifierFocusNode,
-              enabled: _passkeyCreationOptions == null,
-              autofocus: false,
-              autocorrect: false,
-              style: Styles().textStyles.getTextStyle('widget.description.regular.light'),
-              decoration: InputDecoration(
-                  suffixIcon: _identifierController.text.isEmpty
-                      ? null
-                      : IconButton(
-                        icon: Icon(Icons.close),
-                        onPressed: () => setState(() {
-                          _identifierController.clear();
-                        }
-                    ),
-                  ),
-                  labelStyle: Styles().textStyles.getTextStyle('widget.description.regular.light'),
-                  labelText: Localization().getStringEx("panel.settings.passkey.label.email.text", "Email address"),
-                  filled: true,
-                  fillColor: Styles().colors.fillColorPrimaryVariant,
-                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.surface, width: 2.0, style: BorderStyle.solid)),
-                  focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.fillColorSecondary, width: 2.0))),
-            ),
-          ),
-        ),
-      ),
       Align(alignment: Alignment.center, child: Visibility(
         visible: _state == Auth2PasskeyAccountState.failed && !_link,
         child: _buildTryAnotherWayButton(),
@@ -288,9 +263,9 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
 
   Future<void> _primaryButtonAction(BuildContext context) async {
     if (_state == Auth2PasskeyAccountState.nonExistent || _link) {
-      return _trySignUp(context);
-    } else if (_state == Auth2PasskeyAccountState.exists) {
-      return _trySignIn(context);
+      _trySignUp(context);
+    } else if (_state == Auth2PasskeyAccountState.exists || _state == Auth2PasskeyAccountState.unverified || _state == Auth2PasskeyAccountState.failed) {
+      _trySignIn(context);
     } else if (_state == Auth2PasskeyAccountState.alternatives && !_link) {
       _handleSignInOptions(context);
     }
@@ -509,6 +484,10 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
   }
 
   Future<void> _trySignInCallback(BuildContext context, Auth2PasskeySignInResult result) async {
+    if (result.status == Auth2PasskeySignInResultStatus.succeeded) {
+      Storage().auth2PasskeySaved = true;
+    }
+
     if (result.status == Auth2PasskeySignInResultStatus.failed) {
       _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.text", "Sign in failed. An unexpected error occurred."));
     }
@@ -710,25 +689,25 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
     }
   }
 
-  void _resetAccessibilityFocus() {
-    if(!MediaQuery.of(context).accessibleNavigation){
-      return;
-    }
-
-    if (mounted) {
-      setState(() {
-        _resettingAccessibility = true;
-      });
-    }
-
-    Future.delayed(const Duration(milliseconds: 400)).then((val) {
-      if (mounted) {
-        setState(() {
-          _resettingAccessibility = false;
-        });
-      }
-    });
-  }
+  // void _resetAccessibilityFocus() {
+  //   if(!MediaQuery.of(context).accessibleNavigation){
+  //     return;
+  //   }
+  //
+  //   if (mounted) {
+  //     setState(() {
+  //       _resettingAccessibility = true;
+  //     });
+  //   }
+  //
+  //   Future.delayed(const Duration(milliseconds: 400)).then((val) {
+  //     if (mounted) {
+  //       setState(() {
+  //         _resettingAccessibility = false;
+  //       });
+  //     }
+  //   });
+  // }
 }
 
 enum Auth2PasskeyAccountState {
