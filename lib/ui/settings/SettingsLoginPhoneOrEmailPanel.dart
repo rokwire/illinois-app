@@ -164,7 +164,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                     ],),
                   ),
                 ),
-                Container(height: 12),
+                Container(height: 24),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: AngledRibbonButton(

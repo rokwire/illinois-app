@@ -21,6 +21,7 @@ import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsSignInOptionsPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -331,12 +332,16 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
   }
 
   void _onTapSignUp() {
-    setState(() {
-      _link = true;
-    });
     Navigator.push<String?>(context, CupertinoPageRoute(builder: (BuildContext context) {
-      return SettingsLoginPhoneOrEmailPanel(link: false);
-    }));
+      return SettingsLoginPhoneOrEmailPanel(link: false, /*identifier: _identifierController.text*/);
+    })).then((value) {
+      if (Auth2().isLoggedIn) {
+        setStateIfMounted(() {
+          _link = true;
+        });
+      }
+    }
+    );
   }
 
   void _onTapAnotherWay() {
@@ -512,7 +517,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.not_supported.text", "Sign in failed. Passkeys are not supported on this device."));
     }
     else if (result.status == Auth2PasskeySignInResultStatus.failedNotFound) {
-      _state = Auth2PasskeyAccountState.nonExistent;
+      _state = Auth2PasskeyAccountState.failed;
       _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.not_found.text", "An account with this passkey does not exist. Try signing up instead."));
     }
     else if (result.status == Auth2PasskeySignInResultStatus.failedNoCredentials) {

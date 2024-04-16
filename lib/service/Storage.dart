@@ -234,6 +234,10 @@ class Storage extends rokwire.Storage {
   int? get auth2CardTime => getIntWithName(auth2CardTimeKey);
   set auth2CardTime(int? value) => setIntWithName(auth2CardTimeKey, value);
 
+  String get auth2PasskeySavedKey => 'auth2PasskeySaved';
+  bool? get auth2PasskeySaved => getBoolWithName(auth2PasskeySavedKey);
+  set auth2PasskeySaved(bool? value) => setBoolWithName(auth2PasskeySavedKey, value);
+
   // Calendar
   String get calendarShouldPromptKey => 'calendar_enabled_to_prompt';
   bool get calendarShouldPrompt => getBoolWithName(calendarShouldPromptKey, defaultValue: true) ?? true;
