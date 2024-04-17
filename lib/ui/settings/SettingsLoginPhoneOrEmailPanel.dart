@@ -131,7 +131,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                 Semantics(label: headingTitle, hint: headingHint, textField: true, excludeSemantics: true,
                   value: _phoneOrEmailController?.text,
                   child: Container(
-                    color: (widget.identifier == null) ? Styles().colors.surface : Styles().colors.background,
+                    color: Styles().colors.background,
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: TextField(
                       controller: _phoneOrEmailController,
@@ -183,7 +183,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
           ),
           Container(height: 16,)
         ],),
-        backgroundColor: Styles().colors.surface,
+        backgroundColor: Styles().colors.background,
       ),
     );
   }

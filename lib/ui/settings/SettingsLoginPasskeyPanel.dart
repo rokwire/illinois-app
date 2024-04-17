@@ -91,9 +91,9 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-          backgroundColor: Styles().colors.surface,
+          backgroundColor: Styles().colors.background,
           body: SingleChildScrollView(
-            child: Column(children: [
+            child: _link ? _buildPasskeyInfo() : Column(children: [
                 Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
                   Onboarding2TitleWidget()
                 ),
@@ -115,7 +115,8 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
           // if (_state != Auth2PasskeyAccountState.exists || StringUtils.isNotEmpty(_responseMessage))
           _buildContentWidget(context),
           primaryActionButton,
-          _resettingAccessibility || _link ? Container() :  _buildSignUpButton(),
+          if (_resettingAccessibility || _link)
+            _buildSignUpButton(),
           // _buildSkipButton(context),
         ],
       ),
@@ -182,20 +183,16 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
 
   Widget _buildPrimaryActionButton() {
     String primaryButtonText = '';
-    if (_link) {
-      primaryButtonText = Localization().getStringEx('panel.settings.passkey.add.button.label', 'Add Passkey');
-    } else {
-      switch (_state) {
-        case Auth2PasskeyAccountState.nonExistent:
-          primaryButtonText = Localization().getStringEx('panel.settings.passkey.button.sign_up.text', 'Sign Up');
-          break;
-        case Auth2PasskeyAccountState.alternatives:
-          primaryButtonText = Localization().getStringEx('panel.settings.passkey.button.sign_in.alternative.text', 'Continue');
-          break;
-        default:
-          primaryButtonText = Localization().getStringEx('panel.settings.passkey.button.sign_in.text', 'Sign In');
-          break;
-      }
+    switch (_state) {
+      case Auth2PasskeyAccountState.nonExistent:
+        primaryButtonText = Localization().getStringEx('panel.settings.passkey.button.sign_up.text', 'Sign Up');
+        break;
+      case Auth2PasskeyAccountState.alternatives:
+        primaryButtonText = Localization().getStringEx('panel.settings.passkey.button.sign_in.alternative.text', 'Continue');
+        break;
+      default:
+        primaryButtonText = Localization().getStringEx('panel.settings.passkey.button.sign_in.text', 'Sign In');
+        break;
     }
 
     return AngledRibbonButton(
@@ -206,6 +203,153 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       onTap: () => _primaryButtonAction(context),
       progress: _loading,
       progressColor: Styles().colors.fillColorPrimary,
+    );
+  }
+
+  Widget _buildPasskeyInfo() {
+    String primaryButtonText = Localization().getStringEx('panel.settings.passkey.add.button.label', 'Add Passkey');
+    return Container(
+      decoration: BoxDecoration(
+        color: Styles().colors.surface,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      margin: const EdgeInsets.symmetric(vertical: 64.0, horizontal: 32.0),
+      padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Styles().images.getImage('university-logo-dark-script') ?? Container(),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Text(
+              Localization().getStringEx('', 'Passkeys are a better way to sign in'),
+              style: Styles().textStyles.getTextStyle('widget.heading.extra_large.dark'),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                    child: Styles().images.getImage('fingerprint') ?? Container(),
+                  ),
+                ),
+                Flexible(
+                  flex: 5,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          Localization().getStringEx('', 'No need to remember a password'),
+                          style: Styles().textStyles.getTextStyle('widget.heading.large.dark'),
+                        ),
+                        SizedBox(height: 8.0),
+                        Text(
+                          Localization().getStringEx('', 'With passkeys, you can use things like your fingerprint or face to login'),
+                          style: Styles().textStyles.getTextStyle('widget.item.tiny.medium'),
+                        ),
+                      ]
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                    child: Styles().images.getImage('mobile') ?? Container(),
+                  ),
+                ),
+                Flexible(
+                  flex: 5,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            Localization().getStringEx('', 'Works on all of your devices'),
+                            style: Styles().textStyles.getTextStyle('widget.heading.large.dark'),
+                          ),
+                          SizedBox(height: 8.0),
+                          Text(
+                            Localization().getStringEx('', 'Passkeys will automatically be available across your synced devices'),
+                            style: Styles().textStyles.getTextStyle('widget.item.tiny.medium'),
+                          ),
+                        ]
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                    child: Styles().images.getImage('shield-halved') ?? Container(),
+                  ),
+                ),
+                Flexible(
+                  flex: 5,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            Localization().getStringEx('', 'Keeps your account safer'),
+                            style: Styles().textStyles.getTextStyle('widget.heading.large.dark'),
+                          ),
+                          SizedBox(height: 8.0),
+                          Text(
+                            Localization().getStringEx('', 'Passkeys offer state-of-the-art phishing resistance'),
+                            style: Styles().textStyles.getTextStyle('widget.item.tiny.medium'),
+                          ),
+                        ]
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          SizedBox(height: 16.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: AngledRibbonButton(
+              label: primaryButtonText,
+              textAlign: TextAlign.center,
+              backgroundColor: Styles().colors.fillColorSecondary,
+              textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.light'),
+              onTap: () => _primaryButtonAction(context),
+              progress: _loading,
+              progressColor: Styles().colors.fillColorPrimary,
+            ),
+          )
+        ]
+      )
     );
   }
 
@@ -280,7 +424,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
           ),
           WidgetSpan(
             child: TextButton(
-              style: ButtonStyle(overlayColor: MaterialStatePropertyAll(Styles().colors.surfaceAccent), splashFactory: NoSplash.splashFactory),
+              style: ButtonStyle(overlayColor: MaterialStatePropertyAll(Styles().colors.fillColorSecondary), splashFactory: NoSplash.splashFactory),
               onPressed: _onTapSignUp,
               child: Text(
                 Localization().getStringEx("panel.settings.passkey.label.switch_mode.sign_up.button.text", "Sign up"),

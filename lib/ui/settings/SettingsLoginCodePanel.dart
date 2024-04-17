@@ -67,7 +67,7 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-          backgroundColor: Styles().colors.surface,
+          backgroundColor: Styles().colors.background,
           body: SingleChildScrollView(
             child: Column(children: [
               Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
@@ -166,7 +166,7 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
                   labelText: Localization().getStringEx("panel.settings.confirm_identifier.code.label", "One-Time Code"),
                   filled: true,
                   fillColor: Styles().colors.fillColorPrimaryVariant,
-                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.surface, width: 2.0, style: BorderStyle.solid)),
+                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.background, width: 2.0, style: BorderStyle.solid)),
                   focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.fillColorSecondary, width: 2.0),)),
             ),
           )
