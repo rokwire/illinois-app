@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
-import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginCodePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -302,7 +301,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
 
   void _onEmailInitiated(BuildContext context, String? email, Auth2RequestCodeResult result) {
     if (result == Auth2RequestCodeResult.succeeded) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginCodePanel(identifier: email, defaultIdentifierType: Auth2Identifier.typeEmail,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginCodePanel(identifier: email, defaultIdentifierType: Auth2Identifier.typeEmail, onFinish: widget.onFinish)));
     } else if (result == Auth2RequestCodeResult.succeededMustVerify) {
       setErrorMsg(Localization().getStringEx("panel.settings.email.sign_up.succeeded.text", "A verification email has been sent to your email address. To activate your account you need to confirm it. Then you will be able to login with a one-time code."));
     } else if (result == Auth2RequestCodeResult.failedAccountExist) {

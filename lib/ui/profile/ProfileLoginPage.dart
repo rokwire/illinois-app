@@ -587,6 +587,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
             backgroundColor: Styles().colors.surface,
+            textColor: Styles().colors.textLight,
             border: _allBorder,
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
@@ -747,6 +748,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
     RibbonButton(
       border: _allBorder,
       borderRadius: _allRounding,
+      textColor: Styles().colors.textLight,
       label: Localization().getStringEx("panel.profile_info.button.debug.title", "Debug"),
       onTap: _onDebugClicked)
     );

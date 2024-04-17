@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
+import 'package:illinois/ui/settings/SettingsLoginPasskeyPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -236,9 +238,10 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
       widget.onFinish?.call();
     }
     else {
-      Navigator.of(context).popUntil((Route route){
-        return route.isFirst;
-      });
+      //TODO: check if account has existing webauthn auth type in account first?
+      Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) {
+        return SettingsLoginPasskeyPanel(link: true, onboardingContext: widget.onboardingContext,);
+      }));
     }
   }
 

@@ -22,7 +22,6 @@ import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsSignInOptionsPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -75,7 +74,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       _responseMessage = Localization().getStringEx("panel.settings.passkey.sign_up.succeeded.text", "A verification email has been sent to your email address. To activate your account you need to confirm it. Then you will be able to login with your new credential.");
     }
 
-    if ((Storage().auth2PasskeySaved ?? false) && (widget.onboardingContext?["afterLogout"] != true)) {
+    if ((Storage().auth2PasskeySaved ?? false) && (widget.onboardingContext?["afterLogout"] != true) && !_link) {
       _loading = true;
       Auth2().authenticateWithPasskey().then((result) {
         _loading = false;
@@ -307,21 +306,18 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
   }
 
   void _onTapSignUp() {
-    Navigator.push<String?>(context, CupertinoPageRoute(builder: (BuildContext context) {
+    Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) {
       return SettingsLoginPhoneOrEmailPanel(link: false, /*identifier: _identifierController.text*/);
-    })).then((value) {
-      if (Auth2().isLoggedIn) {
-        setStateIfMounted(() {
-          _link = true;
-        });
-      }
-    }
-    );
+    }));
   }
 
   void _onTapAnotherWay() {
-    _state = Auth2PasskeyAccountState.alternatives;
-    _clearResponseMessage();
+    // _state = Auth2PasskeyAccountState.alternatives;
+    // _clearResponseMessage();
+
+    Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) {
+      return SettingsLoginPhoneOrEmailPanel(link: false, /*onFinish: () => _next(context), identifier: _identifierController.text*/);
+    }));
   }
 
   void _onTapResendEmail(BuildContext context) {
@@ -457,6 +453,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       _identifierFocusNode.unfocus();
       _state = Auth2PasskeyAccountState.exists;
 
+      Storage().auth2PasskeySaved = true;
       _next(context);
     }
     else if (result.status == Auth2LinkResultStatus.failedAccountExist) {
@@ -473,11 +470,15 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       Analytics().logSelect(target: "Sign In");
       _clearResponseMessage();
 
-      _loading = true;
+      setState(() {
+        _loading = true;
+      });
       String identifier = _identifierController.text.trim();
       Auth2PasskeySignInResult result = await Auth2().authenticateWithPasskey(identifier: identifier, identifierType: _getIdentifierType(identifier) ?? Auth2Identifier.typeUsername);
-      _loading = false;
       if (mounted) {
+        setState(() {
+          _loading = false;
+        });
         _trySignInCallback(context, result);
       }
     }
@@ -492,6 +493,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.text", "Sign in failed. An unexpected error occurred."));
     }
     else if (result.status == Auth2PasskeySignInResultStatus.failedNotSupported) {
+      //TODO: go to sign up?
       _state = Auth2PasskeyAccountState.exists;
       _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.not_supported.text", "Sign in failed. Passkeys are not supported on this device."));
     }
@@ -500,12 +502,19 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.not_found.text", "An account with this passkey does not exist. Try signing up instead."));
     }
     else if (result.status == Auth2PasskeySignInResultStatus.failedNoCredentials) {
+      //TODO: go to sign up (or sign in) with email/phone and code or passkey on another device
       _state = Auth2PasskeyAccountState.failed;
-      _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.no_credentials.text", "No credentials found."));
+      // _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.no_credentials.text", "No credentials found."));
+      _onTapAnotherWay();
     }
     else if (result.status == Auth2PasskeySignInResultStatus.failedCancelled) {
       _state = Auth2PasskeyAccountState.failed;
-      _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.user_cancelled.text", "Sign in cancelled."));
+      _clearResponseMessage();
+    }
+    else if (result.status == Auth2PasskeySignInResultStatus.failedBlocked) {
+      _state = Auth2PasskeyAccountState.failed;
+      //TODO: parse error message to make it more user-friendly? (e.g., During begin sign in, failure response from one tap: 16: Caller has been temporarily blocked due to too many canceled sign-in prompts.)
+      _setResponseMessage(result.error ?? Localization().getStringEx("panel.settings.passkey.sign_in.failed.blocked.text", "Sign in blocked by device."));
     }
     else {
       _next(context);
@@ -629,16 +638,6 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
   // }
 
   void _next(BuildContext context) {
-    if (widget.onboardingContext == null) {
-      if (_link) {
-        // return _onTapCancel(context);
-        Navigator.popUntil(context, (route) => route.isFirst);
-      } else {
-        Navigator.pop(context);
-      }
-      return;
-    }
-
     // Hook this panels to Onboarding2
     Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
     Function? onContinueEx = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueActionEx"] : null;
