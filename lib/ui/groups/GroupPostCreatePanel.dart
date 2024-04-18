@@ -191,7 +191,11 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
 
   Widget _buildScheduleWidget(){
     return Container(
-      child: GroupScheduleTimeWidget()
+      child: GroupScheduleTimeWidget(
+        onDateChanged: (DateTime? dateTimeUtc){
+          _postData.dateScheduled = dateTimeUtc;
+        },
+      )
     );
   }
 
@@ -261,6 +265,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     String? body = _postData.body;
     String? imageUrl = _postData.imageUrl;
     String? subject = _postData.subject;
+    DateTime? scheduleDate = _postData.dateScheduled;
     if (StringUtils.isEmpty(subject)) {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.validation.subject.msg', "Post subject required"));
       return;
@@ -274,7 +279,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
     _increaseProgress();
 
-    GroupPost post = GroupPost(subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl, members: _selectedMembers); // if no parentId then this is a new post for the group.
+    GroupPost post = GroupPost(subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl, members: _selectedMembers, dateScheduledUtc: scheduleDate); // if no parentId then this is a new post for the group.
 
     Groups().createPost(widget.group.id, post).then((success) {
       if(success){

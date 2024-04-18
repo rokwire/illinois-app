@@ -3033,9 +3033,10 @@ class GroupScheduleTimeWidget extends StatefulWidget {
 
   final DateTime? scheduleTime;
   final bool? enabled;
-  // final TimeOfDay? time;
+  final bool enableTimeZone;
+  final Function(DateTime?)? onDateChanged;
 
-  const GroupScheduleTimeWidget({super.key,  this.timeZone, this.scheduleTime, this.enabled = true});
+  const GroupScheduleTimeWidget({super.key,  this.timeZone, this.scheduleTime, this.onDateChanged, this.enabled = true, this.enableTimeZone = false,});
 
   @override
   State<StatefulWidget> createState() => _GroupScheduleTimeState();
@@ -3045,12 +3046,16 @@ class GroupScheduleTimeWidget extends StatefulWidget {
 class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
   bool required = false;
   bool _expanded = false;
-  // onTimeChanged() TBD implement and pass mechanism for updating
 
   late Location _timeZone;
   DateTime? _date;
   TimeOfDay? _time;
 
+  TZDateTime? get _dateTime => _dateTimeWithDateAndTimeOfDay(_date!, _time);
+
+  // DateTime? get _dateTimeUtc => _date!=null && _time!=null ?
+  //     DateTime.fromMillisecondsSinceEpoch(_dateTimeWithDateAndTimeOfDay(_date!, _time).toUtc().millisecondsSinceEpoch, isUtc: true) : null;
+  DateTime? get _dateTimeUtc => _dateTime?.toUtc();
   @override
   void initState() {
     _timeZone = timeZoneDatabase.locations[widget.timeZone] ?? DateTimeLocal.timezoneLocal;
@@ -3075,7 +3080,9 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
   }
 
   Widget _buildDropdown(){
-    String title = (_time != null? DateFormat("EEE, MMM dd, h:mma").format(_dateWithTimeOfDay(_time!)) : "");
+    // String title = (_time != null? DateFormat("EEE, MMM dd, h:mma").format(_dateWithTimeOfDay(_time!)) : "");
+    DateTime? selectedTime = _dateTime?.toLocal();
+    String title = (selectedTime != null? DateFormat("EEE, MMM dd, h:mma").format(selectedTime) : "");
 
     return Padding(padding: EdgeInsets.zero, child:
     Column(children: <Widget>[
@@ -3168,7 +3175,9 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
     ).then((DateTime? result) {
       if ((result != null) && mounted) {
         setState(() {
-          _date = DateUtils.dateOnly(result);
+          TZDateTime zoneTime = TZDateTime.from(result, _timeZone);
+          _date = DateUtils.dateOnly(zoneTime);
+          widget.onDateChanged?.call(_dateTimeUtc);
           // _errorMap = _buildErrorMap(); //TBD handle error
         });
       }
@@ -3182,43 +3191,40 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
       if ((result != null) && mounted) {
         setState(() {
           _time = result;
+          widget.onDateChanged?.call(_dateTimeUtc);
           // _errorMap = _buildErrorMap(); //TBD handle error
         });
       }
     });
   }
 
-  DateTime _dateWithTimeOfDay(TimeOfDay time) =>
-      _dateTimeWithDateAndTimeOfDay(DateTime.now(), time);
-
-  TZDateTime _dateTimeWithDateAndTimeOfDay(DateTime date, TimeOfDay? time, { bool inclusive = false}) =>
-      TZDateTime(_timeZone, date.year, date.month, date.day, time?.hour ?? (inclusive ? 23 : 0), time?.minute ?? (inclusive ? 59 : 0));
-
   //TIMEZONE
   Widget _buildTimeZoneDropdown(){
-    return Semantics(container: true, child:
-      Row(children: <Widget>[
-        Expanded(flex: 4, child:
-          buildSectionTitleWidget(Localization().getStringEx("", "TIME ZONE")),
-        ),
-        Container(width: 16,),
-        Expanded(flex: 6, child:
-          Container(decoration: dropdownButtonDecoration, child:
-            Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
-              DropdownButtonHideUnderline(child:
-                DropdownButton<Location>(
-                    icon: Styles().images.getImage('chevron-down'),
-                    isExpanded: true,
-                    style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
-                    hint: Text(_timeZone.name,),
-                    items: _buildTimeZoneDropDownItems(),
-                    onChanged: _onTimeZoneChanged
+    return Visibility(visible: widget.enableTimeZone, child:
+      Semantics(container: true, child:
+        Row(children: <Widget>[
+          Expanded(flex: 4, child:
+            buildSectionTitleWidget(Localization().getStringEx("", "TIME ZONE")),
+          ),
+          Container(width: 16,),
+          Expanded(flex: 6, child:
+            Container(decoration: dropdownButtonDecoration, child:
+              Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
+                DropdownButtonHideUnderline(child:
+                  DropdownButton<Location>(
+                      icon: Styles().images.getImage('chevron-down'),
+                      isExpanded: true,
+                      style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                      hint: Text(_timeZone.name,),
+                      items: _buildTimeZoneDropDownItems(),
+                      onChanged: _onTimeZoneChanged
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ])
+        ])
+      )
     );
   }
 
@@ -3242,9 +3248,16 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
     if ((value != null) && mounted) {
       setState(() {
         _timeZone = value;
+        widget.onDateChanged?.call(_dateTimeUtc);
       });
     }
   }
+
+  DateTime _dateWithTimeOfDay(TimeOfDay time) =>
+      _dateTimeWithDateAndTimeOfDay(DateTime.now(), time);
+
+  TZDateTime _dateTimeWithDateAndTimeOfDay(DateTime date, TimeOfDay? time, { bool inclusive = false}) =>
+      TZDateTime(_timeZone, date.year, date.month, date.day, time?.hour ?? (inclusive ? 23 : 0), time?.minute ?? (inclusive ? 59 : 0));
 
   //Common
   static Widget buildSectionTitleWidget(String title, { bool required = false, TextStyle? textStyle, TextStyle? requiredTextStyle,  }) =>
