@@ -294,10 +294,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                           timeZone: null,//TBD pass timezone
                           scheduleTime: widget.post?.dateScheduledUtc,
                           enabled: _isEditMainPost,
-                          onDateChanged: (DateTime? dateTime){
+                          onDateChanged: (DateTime? dateTimeUtc){
                             setStateIfMounted(() {
-                              Log.d(groupUtcDateTimeToString(dateTime)??"");
-                              _mainPostUpdateData?.dateScheduled = dateTime;
+                              Log.d(groupUtcDateTimeToString(dateTimeUtc)??"");
+                              _mainPostUpdateData?.dateScheduled = dateTimeUtc;
                             });
                           },
                         )

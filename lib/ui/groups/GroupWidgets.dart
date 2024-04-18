@@ -3051,7 +3051,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
   DateTime? _date;
   TimeOfDay? _time;
 
-  TZDateTime? get _dateTime => _dateTimeWithDateAndTimeOfDay(_date!, _time);
+  TZDateTime? get _dateTime => _date!= null ? _dateTimeWithDateAndTimeOfDay(_date!, _time) : null;
 
   // DateTime? get _dateTimeUtc => _date!=null && _time!=null ?
   //     DateTime.fromMillisecondsSinceEpoch(_dateTimeWithDateAndTimeOfDay(_date!, _time).toUtc().millisecondsSinceEpoch, isUtc: true) : null;
