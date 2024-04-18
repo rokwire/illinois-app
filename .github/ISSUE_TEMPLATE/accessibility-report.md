@@ -2,31 +2,33 @@
 name: Accessibility report
 about: Report an issue with accessiblity
 title: "[ACCESSIBILITY]"
-labels: 'Type: User Request/Proposal'
-assignees: ahetrick, julianchin, knguyenjahiel, pmarkhennessy
+labels: 'Type: Accessibility'
+assignees: pmarkhennessy
 
 ---
 
-Describe the accessibility issue
+**Describe the issue**
 A clear and concise description of the accessibility issue
 
-To Reproduce
-Steps to reproduce the behavior:
+**To Reproduce**
+**Steps to reproduce the behavior:**
 
-Go to '...'
+1. Go to '...'
 Click on '....'
 Scroll down to '....'
 See error
-Expected behavior
+
+**Expected behavior**
 A clear and concise description of what you expected to happen.
 
-Screenshots
-If applicable, add screenshots to help explain your problem.
+**Actual behavior**
+A clear and concise description of what you expected to happen.
 
-Smartphone (please complete the following information):
+**Screenshots**
 
+**Testing Environment & Devices (please complete the following information):**
 Device: [e.g. iPhone6]
 OS: [e.g. iOS8.1]
 
-Additional context
+**Additional context**
 Add any other context about the problem here.
