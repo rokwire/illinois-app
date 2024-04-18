@@ -1,7 +1,7 @@
 {
 	"": {
 		"content": {
-			"tabbar": ["favorites", "browse", "maps2", "academics", "wellness"],
+			"tabbar": ["favorites", "assistant", "browse"],
 
 			"home": [
 				"wellness_resources", "wellness_todo", "wellness_rings", "wellness_tips",
@@ -68,6 +68,8 @@
 			"wellness.health_screener": ["history"],
 			"wellness.health_screener.features": ["student", "authentication"],
 
+			"assistant.features": [],
+
 			"explore.list": ["events"],
 			"explore.map":  ["buildings"],
 
@@ -87,7 +89,7 @@
 			"campus_guide.features":["groups", "quick_polls", "saved"],
 
 			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
-				"new_student", "student"],
+				"new_student", "student", "assistant", "assistant_personalization"],
 
 			"launch":["emergency"]
 
@@ -141,7 +143,9 @@
 				"features.notifications"          : 4,
 				"features.payment_information"    : 4,
 				"features.authentication"         : 4,
-				"features.sharing"                : 5
+				"features.sharing"                : 5,
+				"features.assistant"  				      : 4,
+				"features.assistant_personalization"      : 5
 			},
 			"auth": {
 				"connect"                             : { "loggedIn": false },

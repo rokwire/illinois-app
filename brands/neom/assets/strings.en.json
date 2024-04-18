@@ -416,6 +416,11 @@
     "panel.browse.entry.wellness.wellness_health_screener.title": "NEOM U Health Screener",
     "panel.browse.entry.wellness.wellness_resources.title": "Resources",
 
+    "panel.assistant.label.disclaimer.title": "The NEOM U Assistant is an experimental feature. Some results may be inaccurate; verify the answer information with other official university sources. Your questions and feedback will be stored and analyzed to improve quality.",
+    "panel.assistant.label.welcome_message.title": "You can ask anything about NEOM University. Type a question below to get started.",
+    "panel.assistant.label.example.question.title": "How many students attend NEOM U?",
+    "panel.assistant.label.feedback.info.description": "Provide feedback on this response to help us improve the NEOM U Assistant!\n\nIf you found the response helpful and accurate, give it a 'thumbs up' to let us know. \n\nIf you noticed an issue with the response, give it a 'thumbs down', and you will be prompted to provide a brief explanation of the problem.",
+
     "panel.search.header.title":"Search",
     "panel.search.label.search_for":"Search by Event Title",
     "panel.search.label.results_for":"Results for ",

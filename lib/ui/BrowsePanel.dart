@@ -295,7 +295,7 @@ class _BrowseSection extends StatelessWidget {
     return Padding(padding: EdgeInsets.only(bottom: 4), child:
       InkWell(onTap: _onTapExpand, child:
         Container(
-          decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
+          decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
           padding: EdgeInsets.only(left: 16),
           child: Column(children: [
             Row(children: [
@@ -495,7 +495,7 @@ class _BrowseEntry extends StatelessWidget {
     return Padding(padding: EdgeInsets.only(bottom: 4), child:
       InkWell(onTap: () => _onTap(context), child:
         Container(
-          decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
+          decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
           padding: EdgeInsets.zero,
           child: 
             Row(children: [
@@ -1228,7 +1228,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
         return (loadingProgress != null) ?
           Container(color: Styles().colors.fillColorPrimary, width: imageWidth, height: imageHeight, child:
             Center(child:
-              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white), )
+              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.surface), )
             ),
           ) :
           AspectRatio(aspectRatio: (1080.0 / 810.0), child:
@@ -1238,10 +1238,10 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
       Positioned.fill(child:
         Align(alignment: Alignment.bottomCenter, child:
           Column(mainAxisSize: MainAxisSize.min, children: [
-            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.rightToLeft, vertDir: TriangleVertDirection.topToBottom), child:
+            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondary, horzDir: TriangleHorzDirection.rightToLeft, vertDir: TriangleVertDirection.topToBottom), child:
               Container(height: 40)
             ),
-            Container(height: 20, color: Styles().colors.fillColorSecondaryTransparent05),
+            Container(height: 20, color: Styles().colors.fillColorSecondary),
           ],),
         ),
       ),

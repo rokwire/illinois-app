@@ -613,10 +613,12 @@ class GroupCard extends StatefulWidget {
   final Function? onImageTap;
   final EdgeInsets margin;
 
+  final double triangleWidthFraction;
+
   GroupCard({required this.group,
     this.displayType = GroupCardDisplayType.allGroups,
     this.margin = const EdgeInsets.symmetric(horizontal: 16),
-    this.onImageTap,
+    this.onImageTap, this.triangleWidthFraction = 1/20,
     Key? key,
   }) : super(key: key);
 
@@ -627,6 +629,8 @@ class GroupCard extends StatefulWidget {
 class _GroupCardState extends State<GroupCard> implements NotificationsListener {
   static const double _smallImageSize = 64;
 
+  final GlobalKey _contentKey = GlobalKey();
+  Size? _contentSize;
   GroupStats? _groupStats;
   bool? _bussy;
 
@@ -636,6 +640,10 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
       Groups.notifyGroupStatsUpdated,
     ]);
     _loadGroupStats();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _evalContentSize();
+    });
     super.initState();
   }
 
@@ -655,45 +663,58 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(onTap: () => _onTapCard(context), child:
-      Padding(padding: widget.margin, child:
-        Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
-          Stack(children: [
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              _buildHeading(),
-              Container(height: 6),
-              Row(children:[
-                Expanded(child:
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
-                    _buildCategories(),
-                    _buildTitle(),
-                    _buildProperties(),
+      Padding(
+        padding: widget.margin,
+        child: Row(
+          children: [
+            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.surface, horzDir: TriangleHorzDirection.leftToRight, vertDir: TriangleVertDirection.topToBottom), child:
+              Container(height: _contentSize?.height, width: (_contentSize?.width ?? MediaQuery.sizeOf(context).width) * widget.triangleWidthFraction),
+            ),
+            Expanded(
+              child: Container(key: _contentKey, padding: EdgeInsets.all(16), color: Styles().colors.surface, child:
+                Stack(children: [
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                    _buildHeading(),
+                    Container(height: 6),
+                    Row(children:[
+                      Expanded(child:
+                        Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
+                          _buildCategories(),
+                          _buildTitle(),
+                          _buildProperties(),
+                        ]),
+                      ),
+                      _buildImage()
+                    ]),
+                    (widget.displayType == GroupCardDisplayType.homeGroups) ?
+                      Expanded(child: Container()) : Container(),
+                    Container(height: 4),
+                    // (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups) ?
+                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                      Expanded(child:
+                        _buildUpdateTime(),
+                      ),
+                      _buildMembersCount()
+                    ])
+                    // : Container()
                   ]),
-                ),
-                _buildImage()
-              ]),
-              (widget.displayType == GroupCardDisplayType.homeGroups) ?
-                Expanded(child: Container()) : Container(),
-              Container(height: 4),
-              // (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups) ?
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Expanded(child:
-                  _buildUpdateTime(),
-                ),
-                _buildMembersCount()
-              ])
-              // : Container()
-            ]),
-            Visibility(visible: (_bussy == true), child:
-              Positioned.fill(child:
-                Align(alignment: Alignment.center, child:
-                  SizedBox(height: 24, width: 24, child:
-                    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
+                  Visibility(visible: (_bussy == true), child:
+                    Positioned.fill(child:
+                      Align(alignment: Alignment.center, child:
+                        SizedBox(height: 24, width: 24, child:
+                          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                ],),
               ),
             ),
-          ],),
-        )
+            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.surface, vertDir: TriangleVertDirection.bottomToTop), child:
+              Container(height: _contentSize?.height, width: (_contentSize?.width ?? MediaQuery.sizeOf(context).width) * widget.triangleWidthFraction),
+            ),
+          ],
+        ),
       )
     );
   }
@@ -995,6 +1016,21 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
   void _onDismissPrivacyAlert(BuildContext context) {
     Analytics().logSelect(target: 'OK');
     Navigator.of(context).pop();
+  }
+
+  void _evalContentSize() {
+    try {
+      final RenderObject? renderBox = _contentKey.currentContext?.findRenderObject();
+      if (renderBox is RenderBox) {
+        if (mounted) {
+          setState(() {
+            _contentSize = renderBox.size;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   String get _timeUpdatedText {

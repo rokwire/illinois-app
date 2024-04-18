@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/service/DeepLink.dart';
@@ -36,6 +37,7 @@ import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Services.dart' as illinois;
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/service/Storage.dart';
 
 import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
@@ -47,6 +49,8 @@ import 'package:illinois/ui/widgets/FlexContent.dart';
 
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/device_calendar.dart';
+import 'package:rokwire_plugin/service/events.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
@@ -114,8 +118,8 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       Guide(),
       Inbox(),
       DeviceCalendar(),
-      // Events(),
-      // Events2(),
+      Events(),
+      Events2(),
       Groups(),
       // CheckList(CheckList.giesOnboarding),
       // CheckList(CheckList.uiucOnboarding),
@@ -130,8 +134,8 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       // StudentCourses(),
       // Appointments(),
       // MTD(),
-      // SpeechToText(),
-    //Assistant(),
+      SpeechToText(),
+      // Assistant(),
     //   MobileAccess(),
     ]);
 

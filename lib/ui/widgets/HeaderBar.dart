@@ -66,7 +66,7 @@ class HeaderBar extends rokwire.HeaderBar {
     titleWidget: titleWidget,
     title: title,
     textStyle: textStyle,
-    textColor: textColor ?? Styles().colors.white,
+    textColor: textColor ?? Styles().colors.surface,
     fontFamily: fontFamily ?? Styles().fontFamilies.extraBold,
     fontSize: fontSize,
     letterSpacing: letterSpacing,
@@ -133,7 +133,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     flexBackColor: flexBackColor ?? Styles().colors.background,
     flexRightToLeftTriangleColor: flexRightToLeftTriangleColor ?? Styles().colors.background,
     flexRightToLeftTriangleHeight: flexRightToLeftTriangleHeight,
-    flexLeftToRightTriangleColor: flexLeftToRightTriangleColor ?? Styles().colors.fillColorSecondaryTransparent05,
+    flexLeftToRightTriangleColor: flexLeftToRightTriangleColor ?? Styles().colors.fillColorSecondary,
     flexLeftToRightTriangleHeight: flexLeftToRightTriangleHeight,
 
     leadingWidget: leadingWidget,
@@ -148,7 +148,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     titleWidget: titleWidget,
     title: title,
     textStyle: textStyle,
-    textColor: textColor ?? Styles().colors.white,
+    textColor: textColor ?? Styles().colors.surface,
     fontFamily: fontFamily ?? Styles().fontFamilies.extraBold,
     fontSize: fontSize,
     letterSpacing: letterSpacing,
@@ -207,7 +207,7 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     titleWidget: titleWidget,
     title: title,
     textStyle: textStyle,
-    textColor: textColor ?? Styles().colors.white,
+    textColor: textColor ?? Styles().colors.surface,
     fontFamily: fontFamily ?? Styles().fontFamilies.extraBold,
     fontSize: fontSize,
     letterSpacing: letterSpacing,
@@ -354,7 +354,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 
   Widget _buildHeaderTitleText() {
     return Semantics(label: widget.title, excludeSemantics: true, child:
-      Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),),);
+      Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat.light"),),);
   }
 
   Widget _buildHeaderRadioButton() {
@@ -375,7 +375,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 //    IconButton(icon: Styles().images.getImage('images/settings-white.png', excludeFromSemantics: true) ?? Container(), onPressed: () => onTapSettings())
       InkWell(onTap: () => _onTapSettings(), child:
         Padding(padding: EdgeInsets.only(top: 16, bottom: 16, right: 16, left: 6), child:
-          Styles().images.getImage('settings-white', excludeFromSemantics: true),
+          Styles().images.getImage('settings-white', excludeFromSemantics: true, color: Styles().colors.iconPrimary),
         )
       )
     );
@@ -388,7 +388,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
       InkWell(onTap: () => _onTapNotifications(), child:
         Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 2), child:
           Stack(alignment: Alignment.topRight, children: [
-            Center(child: Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Styles().images.getImage('notification-white', excludeFromSemantics: true,))),
+            Center(child: Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Styles().images.getImage('notification-white', excludeFromSemantics: true, color: Styles().colors.iconPrimary))),
             Opacity(opacity: (unreadMsgsCount > 0) ? 1 : 0, child:
               Align(alignment: Alignment.topRight, child: Container(padding: EdgeInsets.all(4), decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.red), child:
                 Text(unreadMsgsCount.toString(), style: Styles().textStyles.getTextStyle("widget.title.light.tiny")))))
@@ -411,7 +411,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
             )
           ) :
           Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 6), child:
-            Styles().images.getImage('person-circle-white', excludeFromSemantics: true),
+            Styles().images.getImage('person-circle-white', excludeFromSemantics: true, color: Styles().colors.iconPrimary),
           ),
       )
     );
