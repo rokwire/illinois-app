@@ -12,17 +12,16 @@ A clear and concise description of the accessibility issue
 
 **To Reproduce**
 **Steps to reproduce the behavior:**
-
 1. Go to '...'
-Click on '....'
-Scroll down to '....'
-See error
+2. Click on '....'
+3. Scroll down to '....'
+4. See error
 
 **Expected behavior**
-A clear and concise description of what you expected to happen.
+A clear and concise description of what you <u>expect</u> to happen.
 
 **Actual behavior**
-A clear and concise description of what you expected to happen.
+A clear and concise description of what <u>actually <u> happens.
 
 **Screenshots**
 
