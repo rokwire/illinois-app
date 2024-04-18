@@ -1,5 +1,5 @@
 ---
-name: Accessibility report
+name: Accessibility
 about: Report an issue with accessiblity
 title: "[ACCESSIBILITY]"
 labels: 'Type: Accessibility'
@@ -18,10 +18,10 @@ A clear and concise description of the accessibility issue
 4. See error
 
 **Expected behavior**
-A clear and concise description of what you <u>expect</u> to happen.
+A clear and concise description of what you **_expect_** to happen.
 
 **Actual behavior**
-A clear and concise description of what <u>actually <u> happens.
+A clear and concise description of what **_actually_** happens.
 
 **Screenshots**
 
