@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Require privacy level 4 for ability to create groups [#4030](https://github.com/rokwire/illinois-app/issues/4030).
+
+## [5.2.4] - 2024-04-05
+### Changed
+- Group Direct Messages separated from Posts [#4026](https://github.com/rokwire/illinois-app/issues/4026).
 
 ## [5.2.3] - 2024-04-02
 ### Changed

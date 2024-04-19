@@ -653,7 +653,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
   
   bool get _canCreateGroup {
-    return Auth2().isOidcLoggedIn && FlexUI().isSharingAvailable;
+    return Auth2().isOidcLoggedIn;
   }
 
   bool get _canTapGroupsContentType {
