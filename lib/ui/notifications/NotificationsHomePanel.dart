@@ -205,7 +205,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
   Widget _buildSheet(BuildContext context) {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
     return Column(children: [
-      Container(color: Styles().colors.white, child:
+      Container(color: Styles().colors.gradientColorPrimary, child:
         Row(key: _sheetHeaderKey, children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:
@@ -244,8 +244,8 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(key: _contentDropDownKey, padding: EdgeInsets.only(left: _defaultPadding, top: _defaultPadding, right: _defaultPadding), child:
           RibbonButton(
-            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-            backgroundColor: Styles().colors.white,
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+            backgroundColor: Styles().colors.gradientColorPrimary,
             borderRadius: BorderRadius.all(Radius.circular(5)),
             border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
@@ -299,7 +299,8 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
 
   Widget _buildContentItem(NotificationsContent contentItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
+        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+        backgroundColor: Styles().colors.gradientColorPrimary,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentItemName(contentItem),

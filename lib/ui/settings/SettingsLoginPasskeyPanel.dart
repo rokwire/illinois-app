@@ -21,7 +21,8 @@ import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsSignInOptionsPanel.dart';
-import 'package:illinois/ui/widgets/SlantedButton.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/widgets/SlantedWidget.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -195,14 +196,17 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
         break;
     }
 
-    return AngledRibbonButton(
-      label: primaryButtonText,
-      textAlign: TextAlign.center,
-      backgroundColor: Styles().colors.fillColorSecondary,
-      textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.light'),
-      onTap: () => _primaryButtonAction(context),
-      progress: _loading,
-      progressColor: Styles().colors.fillColorPrimary,
+    return SlantedWidget(
+      color: Styles().colors.fillColorSecondary,
+      child: RibbonButton(
+        label: primaryButtonText,
+        textAlign: TextAlign.center,
+        backgroundColor: Styles().colors.fillColorSecondary,
+        textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.light'),
+        onTap: () => _primaryButtonAction(context),
+        progress: _loading,
+        progressColor: Styles().colors.fillColorPrimary,
+      ),
     );
   }
 
@@ -338,14 +342,17 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
           SizedBox(height: 16.0),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: AngledRibbonButton(
-              label: primaryButtonText,
-              textAlign: TextAlign.center,
-              backgroundColor: Styles().colors.fillColorSecondary,
-              textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.light'),
-              onTap: () => _primaryButtonAction(context),
-              progress: _loading,
-              progressColor: Styles().colors.fillColorPrimary,
+            child: SlantedWidget(
+              color: Styles().colors.fillColorSecondary,
+              child: RibbonButton(
+                label: primaryButtonText,
+                textAlign: TextAlign.center,
+                backgroundColor: Styles().colors.fillColorSecondary,
+                textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.light'),
+                onTap: () => _primaryButtonAction(context),
+                progress: _loading,
+                progressColor: Styles().colors.fillColorPrimary,
+              ),
             ),
           )
         ]

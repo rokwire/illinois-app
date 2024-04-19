@@ -132,7 +132,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   Widget _buildSheet(BuildContext context) {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
     return Column(children: [
-      Container(color: Styles().colors.white, child:
+      Container(color: Styles().colors.gradientColorPrimary, child:
         Row(children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:
@@ -173,8 +173,8 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Padding(key: _pageHeadingKey, padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
                 RibbonButton(
-                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-                  backgroundColor: Styles().colors.white,
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+                  backgroundColor: Styles().colors.gradientColorPrimary,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                   rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
@@ -237,7 +237,8 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   Widget _buildContentItem(ProfileContent contentItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
+        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+        backgroundColor: Styles().colors.gradientColorPrimary,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentItemName(contentItem),

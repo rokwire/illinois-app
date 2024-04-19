@@ -1,14 +1,14 @@
 {
   "color": {
     "fillColorPrimary"                      :"#1D1F22",
-    "fillColorPrimaryTransparent03"         :"#4D001e62",
-    "fillColorPrimaryTransparent05"         :"#80001e62",
-    "fillColorPrimaryTransparent09"         :"#E6001e62",
-    "fillColorPrimaryTransparent015"        :"#26001e62",
+    "fillColorPrimaryTransparent03"         :"#4D1D1F22",
+    "fillColorPrimaryTransparent05"         :"#801D1F22",
+    "fillColorPrimaryTransparent09"         :"#E61D1F22",
+    "fillColorPrimaryTransparent015"        :"#261D1F22",
     "textColorPrimary"                      :"#FFFFFF",
     "fillColorPrimaryVariant"               :"#1D1F22",
     "fillColorSecondary"                    :"#D29E01",
-    "fillColorSecondaryTransparent05"       :"#80ebc03f",
+    "fillColorSecondaryTransparent05"       :"#80D29E01",
     "textColorSecondary"                    :"#FFFFFF",
     "fillColorSecondaryVariant"             :"#ebc03f",
     "textColorSecondaryVariant"             :"#FFFFFF",
@@ -49,7 +49,7 @@
 
     "alert"                                 :"#ff0000",
 
-    "transparentWalletColor"                : "#ff0f2040",
+    "transparentWalletColor"                :"#ff0f2040",
 
     "eventColor"                            :"#D50032",
     "diningColor"                           :"#FF7500",
@@ -183,7 +183,7 @@
     "widget.title.medium_large": {"font_family": "regular", "size": 22.0, "color": "textPrimary"},
     "widget.title.large": { "font_family": "regular", "size": 20.0, "color": "textPrimary"},
     "widget.title.large.semi_fat": { "font_family": "semi_bold", "size": 20.0, "color": "textPrimary"},
-    "widget.title.large.fat": { "font_family": "bold", "size": 20.0, "color": "textPrimary"},
+    "widget.title.large.fat": { "font_family": "bold", "size": 20.0, "color": "textColorPrimary"},
     "widget.title.large.extra_fat": { "font_family": "extra_bold", "size": 20.0, "color": "textPrimary"},
     "widget.title.medium": {"font_family": "regular", "size": 18.0, "color": "textPrimary"},
     "widget.title.medium.semi_fat": {"font_family": "medium", "size": 18.0, "color": "textPrimary"},
@@ -338,7 +338,7 @@
     "widget.button.title.regular.thin": { "font_family": "regular", "size": 18.0, "color": "textPrimary"},
     "widget.button.title.regular.thin.underline": { "font_family": "regular", "size": 18.0, "color": "textPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.title.medium": { "font_family": "medium", "size": 16.0, "color": "textPrimary"},
-    "widget.button.title.medium.fat": { "font_family": "bold", "size": 16.0, "color": "textPrimary"},
+    "widget.button.title.medium.fat": { "font_family": "bold", "size": 16.0, "color": "textColorPrimary"},
     "widget.button.title.medium.fat.variant": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant"},
     "widget.button.title.medium.fat.variant2": { "font_family": "bold", "size": 16.0, "color": "surface"},
     "widget.button.title.medium.fat.variant3": { "font_family": "bold", "size": 16.0, "color": "surfaceAccent"},

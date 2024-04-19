@@ -24,6 +24,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
+import 'package:illinois/ui/widgets/SlantedWidget.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -146,7 +147,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton<T>>{
     String? buttonDescription = _getButtonDescriptionText();
     return Container (
       decoration: widget.decoration ?? BoxDecoration(
-        color: Styles().colors.white,
+        color: Styles().colors.surface,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         borderRadius: BorderRadius.all(Radius.circular(4))
       ),
@@ -155,18 +156,18 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton<T>>{
         Semantics(container: true, label: buttonTitle, hint: widget.buttonHint, excludeSemantics: true, child:
           Theme(data: ThemeData(
             /// This is as a workaround to make dropdown backcolor always white according to Miro & Zepplin wireframes
-            hoverColor: Styles().colors.white,
-            focusColor: Styles().colors.white,
-            canvasColor: Styles().colors.white,
-            primaryColor: Styles().colors.white,
-            /*accentColor: Styles().colors.white,*/
-            highlightColor: Styles().colors.white,
-            splashColor: Styles().colors.white,),
+            hoverColor: Styles().colors.surface,
+            focusColor: Styles().colors.surface,
+            canvasColor: Styles().colors.surface,
+            primaryColor: Styles().colors.surface,
+            /*accentColor: Styles().colors.surface,*/
+            highlightColor: Styles().colors.surface,
+            splashColor: Styles().colors.surface,),
             child: DropdownButton(
               icon: Styles().images.getImage('chevron-down', excludeFromSemantics: true), //Image.asset('images/icon-down-orange.png', excludeFromSemantics: true),
               isExpanded: true,
               itemHeight: null,
-              focusColor: Styles().colors.white,
+              focusColor: Styles().colors.surface,
               underline: Container(),
               hint: Text(buttonTitle ?? "", style: (widget.initialSelectedValue == null ? hintStyle : valueStyle)),
               items: _constructItems(),
@@ -370,8 +371,8 @@ class GroupsConfirmationDialog extends StatelessWidget{
                         RoundedButton(
                           label: Localization().getStringEx('headerbar.back.title', "Back"),
                           textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.thin"),
-                          borderColor: Styles().colors.white,
-                          backgroundColor: Styles().colors.white,
+                          borderColor: Styles().colors.surface,
+                          backgroundColor: Styles().colors.surface,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                           onTap: (){
                             Analytics().logAlert(text: message, selection: "Back");
@@ -384,7 +385,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
                           label: buttonTitle ?? '',
                           textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                           borderColor: Styles().colors.fillColorSecondary,
-                          backgroundColor: Styles().colors.white,
+                          backgroundColor: Styles().colors.surface,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                           onTap: (){
                             Analytics().logAlert(text: message, selection: buttonTitle);
@@ -629,8 +630,6 @@ class GroupCard extends StatefulWidget {
 class _GroupCardState extends State<GroupCard> implements NotificationsListener {
   static const double _smallImageSize = 64;
 
-  final GlobalKey _contentKey = GlobalKey();
-  Size? _contentSize;
   GroupStats? _groupStats;
   bool? _bussy;
 
@@ -641,9 +640,6 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
     ]);
     _loadGroupStats();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _evalContentSize();
-    });
     super.initState();
   }
 
@@ -665,55 +661,46 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
     return GestureDetector(onTap: () => _onTapCard(context), child:
       Padding(
         padding: widget.margin,
-        child: Row(
-          children: [
-            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.surface, horzDir: TriangleHorzDirection.leftToRight, vertDir: TriangleVertDirection.topToBottom), child:
-              Container(height: _contentSize?.height, width: (_contentSize?.width ?? MediaQuery.sizeOf(context).width) * widget.triangleWidthFraction),
-            ),
-            Expanded(
-              child: Container(key: _contentKey, padding: EdgeInsets.all(16), color: Styles().colors.surface, child:
-                Stack(children: [
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                    _buildHeading(),
-                    Container(height: 6),
-                    Row(children:[
-                      Expanded(child:
-                        Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
-                          _buildCategories(),
-                          _buildTitle(),
-                          _buildProperties(),
-                        ]),
-                      ),
-                      _buildImage()
+        child: SlantedWidget(
+          color: Styles().colors.surface,
+          child: Container(padding: EdgeInsets.all(16), color: Styles().colors.surface, child:
+            Stack(children: [
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                _buildHeading(),
+                Container(height: 6),
+                Row(children:[
+                  Expanded(child:
+                    Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
+                      _buildCategories(),
+                      _buildTitle(),
+                      _buildProperties(),
                     ]),
-                    (widget.displayType == GroupCardDisplayType.homeGroups) ?
-                      Expanded(child: Container()) : Container(),
-                    Container(height: 4),
-                    // (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups) ?
-                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Expanded(child:
-                        _buildUpdateTime(),
-                      ),
-                      _buildMembersCount()
-                    ])
-                    // : Container()
-                  ]),
-                  Visibility(visible: (_bussy == true), child:
-                    Positioned.fill(child:
-                      Align(alignment: Alignment.center, child:
-                        SizedBox(height: 24, width: 24, child:
-                          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
-                        ),
-                      ),
+                  ),
+                  _buildImage()
+                ]),
+                (widget.displayType == GroupCardDisplayType.homeGroups) ?
+                Expanded(child: Container()) : Container(),
+                Container(height: 4),
+                // (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups) ?
+                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  Expanded(child:
+                    _buildUpdateTime(),
+                  ),
+                  _buildMembersCount()
+                ])
+                // : Container()
+              ]),
+              Visibility(visible: (_bussy == true), child:
+                Positioned.fill(child:
+                  Align(alignment: Alignment.center, child:
+                    SizedBox(height: 24, width: 24, child:
+                      CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
                     ),
                   ),
-                ],),
+                ),
               ),
-            ),
-            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.surface, vertDir: TriangleVertDirection.bottomToTop), child:
-              Container(height: _contentSize?.height, width: (_contentSize?.width ?? MediaQuery.sizeOf(context).width) * widget.triangleWidthFraction),
-            ),
-          ],
+            ],),
+          ),
         ),
       )
     );
@@ -1016,21 +1003,6 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
   void _onDismissPrivacyAlert(BuildContext context) {
     Analytics().logSelect(target: 'OK');
     Navigator.of(context).pop();
-  }
-
-  void _evalContentSize() {
-    try {
-      final RenderObject? renderBox = _contentKey.currentContext?.findRenderObject();
-      if (renderBox is RenderBox) {
-        if (mounted) {
-          setState(() {
-            _contentSize = renderBox.size;
-          });
-        }
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-    }
   }
 
   String get _timeUpdatedText {

@@ -18,7 +18,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:illinois/ui/settings/SettingsLoginPasskeyPanel.dart';
-import 'package:illinois/ui/widgets/SlantedButton.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/widgets/SlantedWidget.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -125,13 +126,16 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
   }
 
   Widget _buildPrimaryActionButton() {
-    return AngledRibbonButton(
-      label: Localization().getStringEx("panel.settings.confirm_identifier.button.confirm.label", "Confirm"),
-      textAlign: TextAlign.center,
-      backgroundColor: Styles().colors.fillColorSecondary,
-      textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.light'),
-      onTap: () => _primaryButtonAction(context),
-      progressColor: Styles().colors.fillColorPrimary,
+    return SlantedWidget(
+      color: Styles().colors.fillColorSecondary,
+      child: RibbonButton(
+        label: Localization().getStringEx("panel.settings.confirm_identifier.button.confirm.label", "Confirm"),
+        textAlign: TextAlign.center,
+        backgroundColor: Styles().colors.fillColorSecondary,
+        textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.light'),
+        onTap: () => _primaryButtonAction(context),
+        progressColor: Styles().colors.fillColorPrimary,
+      ),
     );
   }
 

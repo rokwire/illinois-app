@@ -100,6 +100,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
 
     contentList.add(RoundedButton(
         label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Sign Out"),
+        backgroundColor: Styles().colors.fillColorSecondary,
         textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
         onTap: _onDisconnectNetIdClicked
@@ -144,6 +145,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
             )
           ),);
           contentList.add(RibbonButton(
+            backgroundColor: Styles().colors.gradientColorPrimary,
             border: _allBorder,
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.title", "Sign in with your NetID"),
@@ -165,6 +167,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
             ),
           ),);
           contentList.add(RibbonButton(
+            backgroundColor: Styles().colors.gradientColorPrimary,
             borderRadius: _allRounding,
             border: _allBorder,
             label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.title", "Sign in with mobile phone or email"),
@@ -236,7 +239,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: Styles().colors.surface,
+            color: Styles().colors.gradientColorPrimary,
             borderRadius: BorderRadius.all(Radius.circular(4)),
             border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)
           ),
@@ -265,6 +268,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
           RoundedButton(
             label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Sign Out"),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+            backgroundColor: Styles().colors.gradientColorPrimary,
             contentWeight: 0.45,
             conentAlignment: MainAxisAlignment.start,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
@@ -302,6 +306,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       }
       else if (code == 'verify') {
         contentList.add(RibbonButton(
+            backgroundColor: Styles().colors.gradientColorPrimary,
             border: _allBorder,
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.phone_ver.button.connect", "Verify Your Mobile Phone Number"),
@@ -312,6 +317,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
           RoundedButton(
             label: Localization().getStringEx("panel.settings.home.phone_ver.button.disconnect", "Sign Out"),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+            backgroundColor: Styles().colors.gradientColorPrimary,
             contentWeight: 0.45,
             conentAlignment: MainAxisAlignment.start,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
@@ -348,6 +354,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       }
       else if (code == 'login') {
         contentList.add(RibbonButton(
+          backgroundColor: Styles().colors.gradientColorPrimary,
           border: _allBorder,
           borderRadius: _allRounding,
           label: Localization().getStringEx("panel.settings.home.email_login.button.connect", "Login With Email"),
@@ -359,6 +366,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
           RoundedButton(
             label: Localization().getStringEx("panel.settings.home.email_login.button.disconnect", "Sign Out"),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+            backgroundColor: Styles().colors.gradientColorPrimary,
             contentWeight: 0.45,
             conentAlignment: MainAxisAlignment.start,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
@@ -575,7 +583,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       if (code == 'netid') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: Styles().colors.surface,
+            backgroundColor: Styles().colors.gradientColorPrimary,
             border: _allBorder,
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Add a NetID"),
@@ -586,7 +594,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       else if (code == 'phone') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: Styles().colors.surface,
+            backgroundColor: Styles().colors.gradientColorPrimary,
             textColor: Styles().colors.textLight,
             border: _allBorder,
             borderRadius: _allRounding,
@@ -597,7 +605,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       else if (code == 'email') {
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
-            backgroundColor: Styles().colors.surface,
+            backgroundColor: Styles().colors.gradientColorPrimary,
             border: _allBorder,
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
@@ -746,6 +754,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
 
   Widget _buildDebug() => Padding(padding: EdgeInsets.only(top: 24), child:
     RibbonButton(
+      backgroundColor: Styles().colors.gradientColorPrimary,
       border: _allBorder,
       borderRadius: _allRounding,
       textColor: Styles().colors.textLight,
