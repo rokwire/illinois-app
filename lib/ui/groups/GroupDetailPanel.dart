@@ -2134,7 +2134,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (_group != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostCreatePanel(group: _group!))).then((result) {
         if (result is GroupPost) {
-          if (result.isPost) {
+          if(result.isScheduled){ //Post and messages can be both scheduled, so check for scheduled first
+            _scrollToLastScheduledPostsAfterRefresh = true;
+            if (_refreshingScheduledPosts != true) {
+              _refreshCurrentScheduledPosts();
+            }
+          }
+          else if (result.isPost) {
             _scrollToLastPostAfterRefresh = true;
             if (_refreshingPosts != true) {
               _refreshCurrentPosts();
@@ -2198,6 +2204,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _refreshGroupStats();
       _refreshEvents();
       _refreshCurrentPosts();
+      _refreshCurrentScheduledPosts();
       _refreshCurrentMessages();
     }
   }
