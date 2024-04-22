@@ -252,6 +252,14 @@ extension GroupPostExt on GroupPost {
     }
     return null;
   }
+
+  String? get displayScheduledTime {
+    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateScheduledUtc);
+    if(deviceDateTime != null){
+      return DateFormat("MMM dd, HH:mm").format(deviceDateTime);
+    }
+    return null;
+  }
 }
 
 extension GroupSettingsExt on GroupSettings{

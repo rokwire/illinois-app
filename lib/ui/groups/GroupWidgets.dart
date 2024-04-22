@@ -1068,6 +1068,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                                 child: Text(StringUtils.ensureNotEmpty(repliesLabel),
                                     style: Styles().textStyles.getTextStyle('widget.description.small')))
                           ])),
+                      _buildScheduledDateWidget
                     ]),
                     Row(
                       children: [
@@ -1109,7 +1110,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                     ],),
                     Container(
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Expanded(
                             flex: 3,
@@ -1121,19 +1122,37 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           )),
                           Expanded(
                             flex: 2,
-                            child: Semantics(child: Container(
-                              padding: EdgeInsets.only(left: 6),
-                              child: Text(StringUtils.ensureNotEmpty(widget.post?.displayDateTime),
-                                semanticsLabel: "Updated ${widget.post?.displayDateTime ?? ""} ago",
-                                textAlign: TextAlign.right,
-                                style: Styles().textStyles.getTextStyle('widget.description.small'))),
-                          )),
+                            child: _buildDisplayDateWidget),
                         ],
                       )
                     )
                   ]))))),
     ]);
   }
+
+  Widget get _buildDisplayDateWidget => Semantics(child: Container(
+      padding: EdgeInsets.only(left: 6),
+      child: Text(StringUtils.ensureNotEmpty(widget.post?.displayDateTime),
+          semanticsLabel: "Updated ${widget.post?.displayDateTime ?? ""} ago",
+          textAlign: TextAlign.right,
+          style: Styles().textStyles.getTextStyle('widget.description.small'))));
+
+  Widget get _buildScheduledDateWidget => Visibility(visible: widget.post?.isScheduled == true, child:
+    Row( mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.end,
+      children:[
+        Container(width: 6,),
+        Container( padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors.mediumGray1, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+          Semantics(label: "Scheduled for ${widget.post?.displayScheduledTime ?? ""}", excludeSemantics: true, child:
+            Text("Scheduled: ${widget.post?.displayScheduledTime ?? ""}", style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
+        ))
+    ]));
+
+      // Semantics(child: Container(
+      // padding: EdgeInsets.all(6),
+      // child: Text("Scheduled: ${widget.post?.displayScheduledTime ?? ""}",
+      //     semanticsLabel: "Scheduled for ${widget.post?.displayScheduledTime ?? ""}",
+      //     textAlign: TextAlign.right,
+      //     style: Styles().textStyles.getTextStyle('widget.description.small.fat'))));
 
   void _onTapCard() {
     Analytics().logSelect(target: "Group post");
@@ -1158,6 +1177,8 @@ class _GroupPostCardState extends State<GroupPostCard> {
     }
     return result;
   }
+
+
 }
 
 //////////////////////////////////////
