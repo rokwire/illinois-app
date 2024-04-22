@@ -96,7 +96,7 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
   Widget build(BuildContext context) {
 
     return Column(children: [
-      Container(color: Styles().colors.white, child:
+      Container(color: Styles().colors.gradientColorPrimary, child:
         Row(children: [
           Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16), child:

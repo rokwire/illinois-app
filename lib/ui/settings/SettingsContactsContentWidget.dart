@@ -46,7 +46,8 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
 
   Widget _buildLinkButton({String? label, Function? onTap, BorderRadius? borderRadius}) =>
       RibbonButton(
-          backgroundColor: Styles().colors.white,
+          backgroundColor: Styles().colors.gradientColorPrimary,
+          textStyle: Styles().textStyles.getTextStyle('widget.label.regular.fat'),
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           rightIconKey: "external-link-medium",
           borderRadius: borderRadius,

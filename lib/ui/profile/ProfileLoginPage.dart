@@ -226,11 +226,14 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       if (code == 'netid') {
         contentList.addAll(_buildConnectedNetIdLayout());
       }
-      else if (code == 'phone') {
-        contentList.addAll(_buildConnectedPhoneLayout());
+      else if (code == 'code') {
+        contentList.addAll(_buildConnectedCodeLayout());
       }
-      else if (code == 'email') {
-        contentList.addAll(_buildConnectedEmailLayout());
+      else if (code == 'password') {
+        contentList.addAll(_buildConnectedPasswordLayout());
+      }
+      else if (code == 'passkey') {
+        contentList.addAll(_buildConnectedPasskeyLayout());
       }
     }
 
@@ -281,18 +284,18 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
     return contentList;
   }
 
-  List<Widget> _buildConnectedPhoneLayout() {
+  List<Widget> _buildConnectedCodeLayout() {
     List<Widget> contentList = [];
 
     String fullName = Auth2().fullName ?? "";
     bool hasFullName = StringUtils.isNotEmpty(fullName);
 
-    List<dynamic> codes = FlexUI()['authenticate.connected.phone'] ?? [];
+    List<dynamic> codes = FlexUI()['authenticate.connected.code'] ?? [];
     for (int index = 0; index < codes.length; index++) {
       String code = codes[index];
       if (code == 'info') {
         contentList.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Text(Localization().getStringEx("panel.settings.home.phone_ver.message", "Signed in with your Phone"),
+          Text(Localization().getStringEx("panel.settings.home.code_login.message", "Signed in with your Phone"),
               style: Styles().textStyles.getTextStyle("widget.message.regular.extra_fat")),
           Visibility(visible: hasFullName, child:
             Padding(padding: EdgeInsets.only(top: 3), child:
@@ -309,13 +312,13 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
             backgroundColor: Styles().colors.gradientColorPrimary,
             border: _allBorder,
             borderRadius: _allRounding,
-            label: Localization().getStringEx("panel.settings.home.phone_ver.button.connect", "Verify Your Mobile Phone Number"),
+            label: Localization().getStringEx("panel.settings.home.code_login.button.connect", "Verify Code"),
             onTap: _onPhoneOrEmailLoginClicked));
       }
       else if (code == 'disconnect') {
         contentList.add(Padding(padding: EdgeInsets.only(top: 12), child:
           RoundedButton(
-            label: Localization().getStringEx("panel.settings.home.phone_ver.button.disconnect", "Sign Out"),
+            label: Localization().getStringEx("panel.settings.home.code_login.button.disconnect", "Sign Out"),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
             backgroundColor: Styles().colors.gradientColorPrimary,
             contentWeight: 0.45,
@@ -329,18 +332,18 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
     return contentList;
   }
 
-  List<Widget> _buildConnectedEmailLayout() {
+  List<Widget> _buildConnectedPasswordLayout() {
     List<Widget> contentList = [];
 
     String fullName = Auth2().fullName ?? "";
     bool hasFullName = StringUtils.isNotEmpty(fullName);
 
-    List<dynamic> codes = FlexUI()['authenticate.connected.email'] ?? [];
+    List<dynamic> codes = FlexUI()['authenticate.connected.password'] ?? [];
     for (int index = 0; index < codes.length; index++) {
       String code = codes[index];
       if (code == 'info') {
         contentList.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Text(Localization().getStringEx("panel.settings.home.email_login.message", "Signed in with your Email"),
+          Text(Localization().getStringEx("panel.settings.home.password_login.message", "Signed in with password"),
               style: Styles().textStyles.getTextStyle("widget.message.regular.extra_fat")),
           Visibility(visible: hasFullName, child:
             Padding(padding: EdgeInsets.only(top: 3), child:
@@ -357,20 +360,69 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
           backgroundColor: Styles().colors.gradientColorPrimary,
           border: _allBorder,
           borderRadius: _allRounding,
-          label: Localization().getStringEx("panel.settings.home.email_login.button.connect", "Login With Email"),
+          label: Localization().getStringEx("panel.settings.home.password_login.button.connect", "Login With Password"),
           onTap: _onPhoneOrEmailLoginClicked
         ));
       }
       else if (code == 'disconnect') {
         contentList.add(Padding(padding: EdgeInsets.only(top: 12), child:
           RoundedButton(
-            label: Localization().getStringEx("panel.settings.home.email_login.button.disconnect", "Sign Out"),
+            label: Localization().getStringEx("panel.settings.home.password_login.button.disconnect", "Sign Out"),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
             backgroundColor: Styles().colors.gradientColorPrimary,
             contentWeight: 0.45,
             conentAlignment: MainAxisAlignment.start,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
             onTap: _onDisconnectNetIdClicked
+          )
+        ));
+      }
+    }
+    return contentList;
+  }
+
+  List<Widget> _buildConnectedPasskeyLayout() {
+    List<Widget> contentList = [];
+
+    String fullName = Auth2().fullName ?? "";
+    bool hasFullName = StringUtils.isNotEmpty(fullName);
+
+    List<dynamic> codes = FlexUI()['authenticate.connected.passkey'] ?? [];
+    for (int index = 0; index < codes.length; index++) {
+      String code = codes[index];
+      if (code == 'info') {
+        contentList.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Text(Localization().getStringEx("panel.settings.home.passkey_login.message", "Signed in with passkey"),
+              style: Styles().textStyles.getTextStyle("widget.message.regular.extra_fat")),
+          Visibility(visible: hasFullName, child:
+            Padding(padding: EdgeInsets.only(top: 3), child:
+              Text(fullName, style: Styles().textStyles.getTextStyle("widget.detail.large.fat"))
+            )
+          ),
+          Padding(padding: EdgeInsets.only(top: 3), child:
+            Text(Auth2().emails.isNotEmpty ? Auth2().emails.first : "", style:  Styles().textStyles.getTextStyle("widget.detail.large.fat"))
+          )
+        ]));
+      }
+      else if (code == 'login') {
+        contentList.add(RibbonButton(
+            backgroundColor: Styles().colors.gradientColorPrimary,
+            border: _allBorder,
+            borderRadius: _allRounding,
+            label: Localization().getStringEx("panel.settings.home.passkey_login.button.connect", "Login With Passkey"),
+            //TODO onTap: _onPhoneOrEmailLoginClicked
+        ));
+      }
+      else if (code == 'disconnect') {
+        contentList.add(Padding(padding: EdgeInsets.only(top: 12), child:
+          RoundedButton(
+              label: Localization().getStringEx("panel.settings.home.passkey_login.button.disconnect", "Sign Out"),
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+              backgroundColor: Styles().colors.gradientColorPrimary,
+              contentWeight: 0.45,
+              conentAlignment: MainAxisAlignment.start,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+              //TODO onTap: _onDisconnectNetIdClicked
           )
         ));
       }

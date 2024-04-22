@@ -37,7 +37,6 @@ import 'package:illinois/ui/settings/SettingsPrivacyCenterContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsResearchContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsSectionsContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -163,7 +162,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   Widget _buildSheet(BuildContext context) {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
     return Column(children: [
-        Container(color: Styles().colors.white, child:
+        Container(color: Styles().colors.gradientColorPrimary, child:
           Row(children: [
             Expanded(child:
               _DebugContainer(child:
@@ -207,8 +206,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
                   RibbonButton(
-                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-                    backgroundColor: Styles().colors.white,
+                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+                    backgroundColor: Styles().colors.gradientColorPrimary,
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                     rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
@@ -254,7 +253,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
                   });
                 },
                 child: Container(
-                  color: Styles().colors.blackTransparent06,
+                  color: Styles().colors.background.withAlpha(153),
                   height: MediaQuery.of(context).size.height,
                   
                 ))));
@@ -262,7 +261,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
 
   Widget _buildContentValuesWidget() {
     List<Widget> sectionList = [];
-    sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
+    sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
     for (SettingsContent section in _contentValues ?? []) {
       if ((_selectedContent != section)) {
         // Add i_card content only if icard mobile is available
@@ -276,7 +275,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
 
   Widget _buildContentItem(SettingsContent contentItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentItem),
