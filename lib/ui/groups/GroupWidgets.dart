@@ -1130,12 +1130,13 @@ class _GroupPostCardState extends State<GroupPostCard> {
     ]);
   }
 
-  Widget get _buildDisplayDateWidget => Semantics(child: Container(
+  Widget get _buildDisplayDateWidget =>  Visibility(visible: widget.post?.isScheduled != true, child:
+    Semantics(child: Container(
       padding: EdgeInsets.only(left: 6),
       child: Text(StringUtils.ensureNotEmpty(widget.post?.displayDateTime),
           semanticsLabel: "Updated ${widget.post?.displayDateTime ?? ""} ago",
           textAlign: TextAlign.right,
-          style: Styles().textStyles.getTextStyle('widget.description.small'))));
+          style: Styles().textStyles.getTextStyle('widget.description.small')))));
 
   Widget get _buildScheduledDateWidget => Visibility(visible: widget.post?.isScheduled == true, child:
     Row( mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.end,
