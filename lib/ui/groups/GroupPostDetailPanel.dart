@@ -288,7 +288,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                           });
                         },),
                       Container(height: 6,),
-
                       Visibility(visible: widget.post?.dateScheduledUtc != null, child:
                         GroupScheduleTimeWidget(
                           timeZone: null,//TBD pass timezone
