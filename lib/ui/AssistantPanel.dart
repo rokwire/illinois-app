@@ -239,7 +239,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                                 Text(Localization().getStringEx('panel.assistant.label.example.eg.title', "eg. ") + message.content,
                                   style: Styles().textStyles.getTextStyle('widget.title.light.regular')
                                 ) : SelectableText(message.content,
-                                  style: Styles().textStyles.getTextStyle('widget.title.light.regular')
+                                  style: Styles().textStyles.getTextStyle('widget.title.regular')
                                 ),
                               Visibility(
                                 visible: sourceLinks.isNotEmpty,
@@ -255,7 +255,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                                         runSpacing: 8.0,
                                         children: [
                                           Text(Localization().getStringEx('panel.assistant.label.sources.title', "More from the web: "),
-                                              style: Styles().textStyles.getTextStyle('widget.title.light.small.fat')),
+                                              style: Styles().textStyles.getTextStyle('widget.title.small.fat')),
                                           ...sourceLinks
                                         ],
                                       ),
@@ -406,7 +406,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                   padding: const EdgeInsets.only(right: 8.0),
                   child: Styles().images.getImage(link.iconKey ?? '') ?? Container(),
                 )),
-                Expanded(child: Text(link.name, style: Styles().textStyles.getTextStyle('widget.title.light.regular'))),
+                Expanded(child: Text(link.name, style: Styles().textStyles.getTextStyle('widget.title.regular'))),
                 Styles().images.getImage('chevron-right-white') ?? Container(),
               ],
             ),

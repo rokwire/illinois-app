@@ -138,6 +138,12 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
+    - family: BrownLLBold
+      fonts:
+        - asset: fonts/brownLL-bold.otf
+    - family: BrownLLRegular
+      fonts:
+        - asset: fonts/brownLL-regular.otf
     - family: ProximaNovaBlack
       fonts:
         - asset: fonts/proximanova-black.otf

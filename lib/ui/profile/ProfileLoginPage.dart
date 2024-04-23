@@ -98,14 +98,6 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       }
     }
 
-    contentList.add(RoundedButton(
-        label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Sign Out"),
-        backgroundColor: Styles().colors.fillColorSecondary,
-        textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-        onTap: _onDisconnectNetIdClicked
-    ));
-
     if (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
       contentList.add(_buildDebug());
     }
@@ -275,7 +267,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
             contentWeight: 0.45,
             conentAlignment: MainAxisAlignment.start,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-            onTap: _onDisconnectNetIdClicked
+            onTap: _onDisconnectClicked
           )
         ));
       }
@@ -320,11 +312,11 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
           RoundedButton(
             label: Localization().getStringEx("panel.settings.home.code_login.button.disconnect", "Sign Out"),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-            backgroundColor: Styles().colors.gradientColorPrimary,
+            backgroundColor: Styles().colors.fillColorSecondary,
             contentWeight: 0.45,
             conentAlignment: MainAxisAlignment.start,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-            onTap: _onDisconnectNetIdClicked
+            onTap: _onDisconnectClicked
           )
         ));
       }
@@ -369,11 +361,11 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
           RoundedButton(
             label: Localization().getStringEx("panel.settings.home.password_login.button.disconnect", "Sign Out"),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-            backgroundColor: Styles().colors.gradientColorPrimary,
+            backgroundColor: Styles().colors.fillColorSecondary,
             contentWeight: 0.45,
             conentAlignment: MainAxisAlignment.start,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-            onTap: _onDisconnectNetIdClicked
+            onTap: _onDisconnectClicked
           )
         ));
       }
@@ -418,11 +410,11 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
           RoundedButton(
               label: Localization().getStringEx("panel.settings.home.passkey_login.button.disconnect", "Sign Out"),
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-              backgroundColor: Styles().colors.gradientColorPrimary,
+              backgroundColor: Styles().colors.fillColorSecondary,
               contentWeight: 0.45,
               conentAlignment: MainAxisAlignment.start,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-              //TODO onTap: _onDisconnectNetIdClicked
+              onTap: _onDisconnectClicked
           )
         ));
       }
@@ -430,13 +422,15 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
     return contentList;
   }
 
-  void _onDisconnectNetIdClicked() {
+  void _onDisconnectClicked() {
     if (Auth2().isOidcLoggedIn) {
       Analytics().logSelect(target: "Disconnect netId");
     } else if (Auth2().isCodeLoggedIn) {
-      Analytics().logSelect(target: "Disconnect phone");
+      Analytics().logSelect(target: "Disconnect code");
     } else if (Auth2().isPasswordLoggedIn) {
-      Analytics().logSelect(target: "Disconnect email");
+      Analytics().logSelect(target: "Disconnect password");
+    } else if (Auth2().isPasskeyLoggedIn) {
+      Analytics().logSelect(target: "Disconnect passkey");
     }
     showDialog(context: context, builder: (context) => _buildLogoutDialog(context));
   }
@@ -756,16 +750,9 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       Auth2OidcAuthenticateResult? result = await Auth2().authenticateWithOidc();
       return (result != null) ? (result.status == Auth2OidcAuthenticateResultStatus.succeeded) : null;
     }
-    else if (Auth2().isPasswordLoggedIn) {
-      Completer<bool?> completer = Completer<bool?>();
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) =>
-        SettingsLoginEmailPanel(email: Auth2().account?.identifier?.identifier, state: Auth2AccountState.verified, onFinish: () {
-          completer.complete(true);
-        },)
-      ),).then((_) {
-        completer.complete(null);
-      });
-      return completer.future;
+    else if (Auth2().isPasskeyLoggedIn) {
+      Auth2PasskeySignInResult result = await Auth2().authenticateWithPasskey();
+      return result.status == Auth2PasskeySignInResultStatus.succeeded;
     }
     else if (Auth2().isCodeLoggedIn) {
       Completer<bool?> completer = Completer<bool?>();

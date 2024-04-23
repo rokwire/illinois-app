@@ -288,7 +288,7 @@ class HomeSlantWidget extends StatelessWidget {
               Expanded(child:
                 Padding(padding: titleTextPadding, child:
                   Semantics(label: title, header: true, excludeSemantics: true, child:
-                    Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat"))
+                    Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.large.fat"))
                   )
                 )
               ),

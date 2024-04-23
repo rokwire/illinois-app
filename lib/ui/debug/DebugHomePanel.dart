@@ -149,7 +149,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
       body: Column(children: <Widget>[
         Expanded(child:
           SingleChildScrollView(child:
-            Container(color: Styles().colors.background, child:
+            Container(color: Colors.white, child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 Container(height: 16,),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5), child:
@@ -247,7 +247,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                     ),
                     RoundedButton(
                       label: "Edit",
-                      backgroundColor: Styles().colors.background,
+                      backgroundColor: Styles().colors.surface,
                       fontSize: 16.0,
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.fillColorPrimary,
@@ -257,7 +257,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                     Container(width: 5,),
                     RoundedButton(
                       label: "Clear",
-                      backgroundColor: Styles().colors.background,
+                      backgroundColor: Styles().colors.surface,
                       fontSize: 16.0,
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.fillColorPrimary,
@@ -273,7 +273,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                     ),
                     RoundedButton(
                       label: "Clear",
-                      backgroundColor: Styles().colors.background,
+                      backgroundColor: Styles().colors.surface,
                       fontSize: 16.0,
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.fillColorPrimary,
@@ -285,7 +285,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "Clear Account Prefs",
-                    backgroundColor: Styles().colors.background,
+                    backgroundColor: Styles().colors.surface,
                     fontSize: 16.0,
                     textColor: Styles().colors.fillColorPrimary,
                     borderColor: Styles().colors.fillColorPrimary,
@@ -295,7 +295,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "Clear Voting",
-                    backgroundColor: Styles().colors.background,
+                    backgroundColor: Styles().colors.surface,
                     fontSize: 16.0,
                     textColor: Styles().colors.fillColorPrimary,
                     borderColor: Styles().colors.fillColorPrimary,
@@ -305,7 +305,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: _refreshTokenTitle,
-                    backgroundColor: Styles().colors.background,
+                    backgroundColor: Styles().colors.surface,
                     fontSize: 16.0,
                     textColor: Styles().colors.fillColorPrimary,
                     borderColor: Styles().colors.fillColorPrimary,
@@ -318,7 +318,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "Create Event",
-                    backgroundColor: Styles().colors.background,
+                    backgroundColor: Styles().colors.surface,
                     fontSize: 16.0,
                     textColor: Styles().colors.fillColorPrimary,
                     borderColor: Styles().colors.fillColorPrimary,
@@ -328,7 +328,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "Create Message",
-                    backgroundColor: Styles().colors.background,
+                    backgroundColor: Styles().colors.surface,
                     fontSize: 16.0,
                     textColor: Styles().colors.fillColorPrimary,
                     borderColor: Styles().colors.fillColorPrimary,
@@ -341,7 +341,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "Inbox User Info",
-                    backgroundColor: Styles().colors.background,
+                    backgroundColor: Styles().colors.surface,
                     fontSize: 16.0,
                     textColor: Styles().colors.fillColorPrimary,
                     borderColor: Styles().colors.fillColorPrimary,
@@ -351,7 +351,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 Padding( padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "User Profile Info",
-                    backgroundColor: Styles().colors.background,
+                    backgroundColor: Styles().colors.surface,
                     fontSize: 16.0,
                     textColor: Styles().colors.fillColorPrimary,
                     borderColor: Styles().colors.fillColorPrimary,
@@ -361,7 +361,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "User Card Info",
-                    backgroundColor: Styles().colors.background,
+                    backgroundColor: Styles().colors.surface,
                     fontSize: 16.0,
                     textColor: Styles().colors.fillColorPrimary,
                     borderColor: Styles().colors.fillColorPrimary,
@@ -371,7 +371,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: 'Canvas User Info',
-                    backgroundColor: Styles().colors.background,
+                    backgroundColor: Styles().colors.surface,
                     fontSize: 16.0,
                     textColor: Styles().colors.fillColorPrimary,
                     borderColor: Styles().colors.fillColorPrimary,
@@ -385,7 +385,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
                       label: "Campus Guide",
-                      backgroundColor: Styles().colors.background,
+                      backgroundColor: Styles().colors.surface,
                       fontSize: 16.0,
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.fillColorPrimary,
@@ -397,7 +397,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
                       label: "Student Courses",
-                      backgroundColor: Styles().colors.background,
+                      backgroundColor: Styles().colors.surface,
                       fontSize: 16.0,
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.fillColorPrimary,
@@ -409,7 +409,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
                       label: "Styles",
-                      backgroundColor: Styles().colors.background,
+                      backgroundColor: Styles().colors.surface,
                       fontSize: 16.0,
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.fillColorPrimary,
@@ -421,7 +421,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
                       label: 'Rewards',
-                      backgroundColor: Styles().colors.background,
+                      backgroundColor: Styles().colors.surface,
                       fontSize: 16.0,
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.fillColorPrimary,
@@ -436,7 +436,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
                       label: 'Rate App',
-                      backgroundColor: Styles().colors.background,
+                      backgroundColor: Styles().colors.surface,
                       fontSize: 16.0,
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.fillColorPrimary,
@@ -450,7 +450,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
                       label: 'Review App',
-                      backgroundColor: Styles().colors.background,
+                      backgroundColor: Styles().colors.surface,
                       fontSize: 16.0,
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.fillColorPrimary,
@@ -464,7 +464,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
                       label: 'Mobile Access Keys',
-                      backgroundColor: Styles().colors.background,
+                      backgroundColor: Styles().colors.surface,
                       fontSize: 16.0,
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.fillColorPrimary,
@@ -478,7 +478,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
                       label: "Http Proxy",
-                      backgroundColor: Styles().colors.background,
+                      backgroundColor: Styles().colors.surface,
                       fontSize: 16.0,
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.fillColorPrimary,
@@ -489,7 +489,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "Test Onboarding",
-                    backgroundColor: Styles().colors.background,
+                    backgroundColor: Styles().colors.surface,
                     fontSize: 16.0,
                     textColor: Styles().colors.fillColorPrimary,
                     borderColor: Styles().colors.fillColorPrimary,
@@ -499,7 +499,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "Test Crash",
-                    backgroundColor: Styles().colors.background,
+                    backgroundColor: Styles().colors.surface,
                     fontSize: 16.0,
                     textColor: Styles().colors.fillColorPrimary,
                     borderColor: Styles().colors.fillColorPrimary,
@@ -512,7 +512,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                       label: "Clear Essential Skills Coach Data",
-                      backgroundColor: Styles().colors.background,
+                      backgroundColor: Styles().colors.surface,
                       fontSize: 16.0,
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.fillColorPrimary,
@@ -549,7 +549,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
           Expanded(flex: 2, child: Text(survey.title)),
           Expanded(child: RoundedButton(
             label: 'Edit',
-            backgroundColor: Styles().colors.background,
+            backgroundColor: Styles().colors.surface,
             textColor: Styles().colors.fillColorPrimary,
             fontFamily: Styles().fontFamilies.bold,
             fontSize: 16,
@@ -565,7 +565,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
       ...userSurveyEntries,
       Padding(padding: const EdgeInsets.only(top: 16), child: RoundedButton(
         label: 'Create New Survey',
-        backgroundColor: Styles().colors.background,
+        backgroundColor: Styles().colors.surface,
         textColor: Styles().colors.fillColorPrimary,
         fontFamily: Styles().fontFamilies.bold,
         fontSize: 16,
@@ -860,7 +860,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   Widget _buildTextContentInfoDialog(String? textContent) {
     return Material(type: MaterialType.transparency, borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)), child:
-      Dialog(backgroundColor: Styles().colors.background, child:
+      Dialog(backgroundColor: Styles().colors.surface, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Container(color: Styles().colors.fillColorPrimary, child:
             Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[

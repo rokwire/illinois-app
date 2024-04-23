@@ -41,9 +41,9 @@ class SettingsDialog extends StatefulWidget{
            Material(
              type: MaterialType.transparency,
              child: Container(
-               color: Styles().colors.blackTransparent06,
+               color: Styles().colors.background.withAlpha(153),
                child: SingleChildScrollView(child:
-               Column(children:[
+                 Column(children:[
                    Stack(
                      children: <Widget>[
                        Align(alignment: Alignment.center,
@@ -55,7 +55,8 @@ class SettingsDialog extends StatefulWidget{
                      ],
                    ),
                  ])
-             )),
+               )
+             ),
            );
         },
      );
@@ -83,7 +84,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.background.withAlpha(153), spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -193,7 +194,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
           alignment: Alignment.center,
 //          height: widget.longButtonTitle?56 : 42,
           decoration: BoxDecoration(
-            color: (Styles().colors.white),
+            color: (Styles().colors.surface),
             border: Border.all(
                 color: Styles().colors.fillColorPrimary,
                 width: 1),
@@ -219,7 +220,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
                 alignment: Alignment.center,
 //                height: widget.longButtonTitle? 56: 42,
                 decoration: BoxDecoration(
-                  color: (_getIsContinueEnabled? Styles().colors.fillColorSecondaryVariant : Styles().colors.white),
+                  color: (_getIsContinueEnabled? Styles().colors.fillColorSecondaryVariant : Styles().colors.surface),
                   border: Border.all(
                       color: _getIsContinueEnabled? Styles().colors.fillColorSecondaryVariant: Styles().colors.fillColorPrimary,
                       width: 1),
@@ -237,7 +238,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
               SizedBox(width: _confirmSize!.width, height: _confirmSize!.height,
               child: Align(alignment: Alignment.center,
                 child: SizedBox(height: 24, width: 24,
-                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white), strokeWidth: 2,),),),
+                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.surface), strokeWidth: 2,),),),
               ) : Container(),
           )
         ],));
@@ -316,7 +317,7 @@ class InfoButton extends StatelessWidget {
     InkWell(onTap: onTap, child:
     Container(
       padding: EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.background.withAlpha(48), spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
       child: Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,

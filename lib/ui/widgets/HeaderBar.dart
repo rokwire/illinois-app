@@ -354,7 +354,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 
   Widget _buildHeaderTitleText() {
     return Semantics(label: widget.title, excludeSemantics: true, child:
-      Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat.light"),),);
+      Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.fat.light"),),);
   }
 
   Widget _buildHeaderRadioButton() {

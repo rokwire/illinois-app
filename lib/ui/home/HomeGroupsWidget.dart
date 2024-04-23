@@ -16,6 +16,7 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 
@@ -204,6 +205,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
         LinkButton(
           title: Localization().getStringEx('widget.home.groups.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.groups.button.all.hint', 'Tap to view all groups'),
+          textStyle: Styles().textStyles.getTextStyle('widget.description.regular.light.underline'),
           onTap: _onSeeAll,
         ),
       ),
