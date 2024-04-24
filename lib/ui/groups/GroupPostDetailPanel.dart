@@ -292,7 +292,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         GroupScheduleTimeWidget(
                           timeZone: null,//TBD pass timezone
                           scheduleTime: widget.post?.dateScheduledUtc,
-                          enabled: _isEditMainPost,
+                          enabled: false, //_isEditMainPost, Disable editing since the BB do not support editing of the create notification
                           onDateChanged: (DateTime? dateTimeUtc){
                             setStateIfMounted(() {
                               Log.d(groupUtcDateTimeToString(dateTimeUtc)??"");
