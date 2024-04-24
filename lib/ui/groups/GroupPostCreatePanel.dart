@@ -276,6 +276,11 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
       return;
     }
 
+    if (scheduleDate != null && scheduleDate.isBefore(DateTime.now())) {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.validation.schedule.msg', "Schedule time must be in future"));
+      return;
+    }
+
     String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
     _increaseProgress();
 
