@@ -112,14 +112,14 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
         Semantics(header: true, label: title, excludeSemantics: true, focused: true,
             child: Text(title, textAlign: TextAlign.center,
-              style: Styles().textStyles.getTextStyle('widget.info.regular'),
+              style: Styles().textStyles.getTextStyle('widget.info.regular.light'),
             )),
         const SizedBox(height: 16),
         Text(sprintf(
             Localization().getStringEx(
                 'panel.settings.confirm_identifier.description.send', 'A one time code has been sent to %s. Enter your code below to continue.'),
             [maskedIdentifier]), textAlign: TextAlign.center,
-          style: Styles().textStyles.getTextStyle('widget.info.regular'),
+          style: Styles().textStyles.getTextStyle('widget.info.regular.light'),
         )
       ]),
     );

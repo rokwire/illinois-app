@@ -346,6 +346,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
         LinkButton(
           title: Localization().getStringEx('widget.home.event2_feed.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.event2_feed.button.all.hint', 'Tap to view all events'),
+          textStyle: Styles().textStyles.getTextStyle('widget.description.regular.light.underline'),
           onTap: _onTapViewAll,
         ),
       ),

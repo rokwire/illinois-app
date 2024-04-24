@@ -170,7 +170,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
           'The NEOM U Assistant is an experimental feature. Some results may be inaccurate; '
               'verify the answer information with other official university sources. '
               'Your questions and feedback will be stored and analyzed to improve quality.'),
-        style: Styles().textStyles.getTextStyle('widget.item.small.thin.italic')
+        style: Styles().textStyles.getTextStyle('widget.item.small.light.thin.italic')
       ),
     );
   }

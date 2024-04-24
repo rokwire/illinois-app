@@ -19,6 +19,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 enum HomeInboxContent { all, unread }
@@ -277,6 +278,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
         LinkButton(
           title: Localization().getStringEx('widget.home.inbox.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.inbox.button.all.hint', 'Tap to view all notifications'),
+          textStyle: Styles().textStyles.getTextStyle('widget.description.regular.light.underline'),
           onTap: _onTapSeeAll,
         ),
       ),

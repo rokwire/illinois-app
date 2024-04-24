@@ -506,7 +506,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 5), child:
           Text(Localization().getStringEx("panel.settings.home.linked.title", "Alternate Sign Ins"),
-            style: Styles().textStyles.getTextStyle("widget.title.large.fat"),
+            style: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),
           ),
         ),
         ...contentList,

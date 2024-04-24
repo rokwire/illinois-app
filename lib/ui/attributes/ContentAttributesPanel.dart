@@ -84,7 +84,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(title: widget.title, actions: _headerBarActions),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors.surface,
       body: _buildScaffoldContent(),
     );
   }
@@ -397,7 +397,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
               Container(
                 decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.white, width: 1.5, ))),
                 child: Text(title ?? '',
-                  style: Styles().textStyles.getTextStyle("widget.heading.regular.fat"),
+                  style: Styles().textStyles.getTextStyle("widget.heading.regular.fat.light"),
                   semanticsLabel: "",
                 ),
               ),
@@ -438,10 +438,10 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
         Expanded(flex: 1, child: Container()),
         Expanded(flex: 2, child: RoundedButton(
           label: Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
-            textColor: canClearAttributes ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
+            textColor: canClearAttributes ? Styles().colors.fillColorPrimary : Styles().colors.textMedium,
             borderColor: canClearAttributes ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
           backgroundColor: Styles().colors.white,
-          textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),
+          textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat.variant'),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           enabled: canClearAttributes,
           onTap: _onTapClearAttributes

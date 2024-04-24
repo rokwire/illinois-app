@@ -108,7 +108,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
               Semantics(label: widget.title, header: true, excludeSemantics: true, child:
-                Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),)
+                Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.medium.fat"),)
               )
             )
           ),

@@ -976,7 +976,7 @@ class Event2Popup {
       actions: <Widget>[
         TextButton(
           child: Text(positiveButtonTitle ?? Localization().getStringEx("dialog.ok.title", "OK"), style:
-            Styles().textStyles.getTextStyle("widget.button.title.medium.fat")
+            Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant")
           ),
           onPressed: () {
             Analytics().logAlert(text: message, selection: positiveAnalyticsTitle ?? positiveButtonTitle ?? "OK");
@@ -985,7 +985,7 @@ class Event2Popup {
         ),
         TextButton(
           child: Text(negativeButtonTitle ?? Localization().getStringEx("dialog.cancel.title", "Cancel"), style:
-            Styles().textStyles.getTextStyle("widget.button.title.medium.fat")
+            Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant")
           ),
           onPressed: () {
             Analytics().logAlert(text: message, selection: negativeAnalyticsTitle ?? negativeButtonTitle ?? "Cancel");

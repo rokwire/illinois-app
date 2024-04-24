@@ -616,7 +616,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       Localization().getStringEx("panel.event2.update.header.title", "Update Event"),
       onLeading: _onHeaderBack,),
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors.white,
+    backgroundColor: Styles().colors.surface,
   );
 
   Widget _buildPanelContent() =>
@@ -2171,7 +2171,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     if (modified) {
       bool? result = await Event2Popup.showPrompt(context,
         Localization().getStringEx('panel.event2.create.exit.prompt.title', 'Exit'),
-        Localization().getStringEx('panel.event2.create.exit.prompt.message', 'Exit and loose your changes?'),
+        Localization().getStringEx('panel.event2.create.exit.prompt.message', 'Exit and lose your changes?'),
       );
       return (result == true);
     }

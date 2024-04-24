@@ -46,7 +46,7 @@ class _Event2SetupGroupsState extends State<Event2SetupGroups> {
   Widget build(BuildContext context) => Scaffold(
     appBar: HeaderBar(title: Localization().getStringEx('panel.event2.setup.groups.header.title', 'Select Groups'), actions: _barActions,),
     body: _scaffoldContent,
-    backgroundColor: Styles().colors.background,
+    backgroundColor: Styles().colors.surface,
   );
 
   Widget get _scaffoldContent =>

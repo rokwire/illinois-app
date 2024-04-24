@@ -199,6 +199,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
         LinkButton(
           title: Localization().getStringEx('widget.home.recent_items.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.recent_items.button.all.hint', 'Tap to view all items'),
+          textStyle: Styles().textStyles.getTextStyle('widget.description.regular.light.underline'),
           onTap: _onSeeAll,
         ),
       ),

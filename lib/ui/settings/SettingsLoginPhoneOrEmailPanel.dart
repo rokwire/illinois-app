@@ -118,14 +118,14 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
                   child: Row(children: [ Expanded(child:
-                    Text(description, style:  Styles().textStyles.getTextStyle("widget.description.medium"),)
+                    Text(description, style:  Styles().textStyles.getTextStyle("widget.description.medium.light"),)
                   )],),
                 ),
                 Container(height: 48),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Row(children: [ Expanded(child:
-                    Text(headingTitle, style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),)
+                    Text(headingTitle, style: Styles().textStyles.getTextStyle("widget.title.light.medium.fat"),)
                   )],),
                 ),
                 Container(height: 6),
@@ -158,7 +158,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                       Visibility(visible: StringUtils.isNotEmpty(_validationErrorDetails), child:
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: Styles().textStyles.getTextStyle("widget.detail.small")),
+                          child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: Styles().textStyles.getTextStyle("widget.detail.light.small")),
                         ),
                       ),
                     ],),
@@ -306,8 +306,6 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
   void _onEmailInitiated(BuildContext context, String? email, Auth2RequestCodeResult result) {
     if (result == Auth2RequestCodeResult.succeeded) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginCodePanel(identifier: email, defaultIdentifierType: Auth2Identifier.typeEmail, onFinish: widget.onFinish)));
-    } else if (result == Auth2RequestCodeResult.succeededMustVerify) {
-      setErrorMsg(Localization().getStringEx("panel.settings.email.sign_up.succeeded.text", "A verification email has been sent to your email address. To activate your account you need to confirm it. Then you will be able to login with a one-time code."));
     } else if (result == Auth2RequestCodeResult.failedAccountExist) {
       setErrorMsg(Localization().getStringEx('panel.settings.profile.error.email.exists', 'The email address you selected is already in use. Please pick a different one.'));
     } else if (result == Auth2RequestCodeResult.failed) {

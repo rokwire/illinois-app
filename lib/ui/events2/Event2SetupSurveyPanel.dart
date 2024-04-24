@@ -123,7 +123,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors.background
+    backgroundColor: Styles().colors.surface
   );
 
   Widget _buildPanelContent() {

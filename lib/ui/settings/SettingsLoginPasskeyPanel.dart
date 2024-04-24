@@ -154,12 +154,12 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
         Semantics(header: true, label: title, excludeSemantics: true, focused: true,
             child: Text(title, textAlign: TextAlign.center,
-              style: Styles().textStyles.getTextStyle('widget.info.regular'),
+              style: Styles().textStyles.getTextStyle('widget.info.regular.light'),
             )),
         if (description.isNotEmpty)
           const SizedBox(height: 16),
         Text(description, textAlign: TextAlign.center,
-          style: Styles().textStyles.getTextStyle('widget.info.regular'),
+          style: Styles().textStyles.getTextStyle('widget.info.regular.light'),
         )
       ]),
     );
@@ -401,7 +401,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
                     Text(
                         Localization().getStringEx("panel.settings.passkey.label.resend_email.text", "Resend Verification"),
                         textAlign: TextAlign.right,
-                        style: Styles().textStyles.getTextStyle('widget.info.regular')
+                        style: Styles().textStyles.getTextStyle('widget.info.regular.light')
                     )
                   ],
                 )),
@@ -427,7 +427,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
         children: [
           TextSpan(
             text: Localization().getStringEx("panel.settings.passkey.label.switch_mode.sign_up.text", "Don't have an account?"),
-            style: Styles().textStyles.getTextStyle('widget.info.regular'),
+            style: Styles().textStyles.getTextStyle('widget.info.regular.light'),
           ),
           WidgetSpan(
             child: TextButton(
@@ -452,7 +452,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       child: Text(
           Localization().getStringEx("panel.settings.passkey.label.another_way.text", "Try another way"),
           textAlign: TextAlign.center,
-          style: Styles().textStyles.getTextStyle('widget.info.regular'),
+          style: Styles().textStyles.getTextStyle('widget.info.regular.light'),
     ));
   }
 

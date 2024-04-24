@@ -269,6 +269,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
         LinkButton(
           title: Localization().getStringEx('panel.saved.button.all.title', 'View All'),
           hint: _viewAllHint,
+          textStyle: Styles().textStyles.getTextStyle('widget.description.regular.light.underline'),
           onTap: _onTapViewAll,
         )      
       ),
