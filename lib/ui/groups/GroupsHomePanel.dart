@@ -395,7 +395,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           InkWell(onTap: _onTapCreate, child:
             Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
               Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Text(Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
+                Text(Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat")),
                 Padding(padding: EdgeInsets.only(left: 4), child:
                   Styles().images.getImage('plus-circle', excludeFromSemantics: true)
                 )

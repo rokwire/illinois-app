@@ -10,7 +10,6 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsLinkedAccountPanel.dart';
-import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginCodePanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
@@ -652,6 +651,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
         contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
           RibbonButton(
             backgroundColor: Styles().colors.gradientColorPrimary,
+            textColor: Styles().colors.textLight,
             border: _allBorder,
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
@@ -817,12 +817,12 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
     ),
     Padding(padding: const EdgeInsets.only(top: 8)),
     RichText(textAlign: TextAlign.left, text:
-      TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children:[
+      TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.light.thin"), children:[
         TextSpan(text: Localization().getStringEx('panel.settings.home.version.info.label', '{{app_title}} App Version:').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),),
-        TextSpan(text:  " $_appVersion", style : Styles().textStyles.getTextStyle("widget.item.regular.fat")),
+        TextSpan(text:  " $_appVersion", style : Styles().textStyles.getTextStyle("widget.item.regular.light.fat")),
       ])
     ),
-    Text(_copyrightText, textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.thin"))
+    Text(_copyrightText, textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.light.thin"))
   ],);
 
   String get _appVersion => Config().appVersion ?? '';

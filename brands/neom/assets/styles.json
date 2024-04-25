@@ -34,10 +34,10 @@
     "textLight"                             :"#FFFFFF",
     "textDisabled"                          :"#BDBDBD",
 
-    "iconPrimary"                           :"#EBC03F",
+    "iconPrimary"                           :"#D29E01",
     "iconLight"                             :"#FFFFFF",
     "iconDark"                              :"#404040",
-    "iconMedium"                            :"#FFFFFF",
+    "iconMedium"                            :"#717372",
     "iconDisabled"                          :"#BDBDBD",
 
     "accentColor1"                          :"#D50032",
@@ -63,7 +63,7 @@
     "blackTransparent06"                    :"#99000000",
     "blackTransparent018"                   :"#30000000",
     "blackTransparent038"                   :"#61000000",
-    "redTransparent01"                      :"#F44336FF",
+    "redTransparent01"                      :"#F4FF3643",
     "blueShade900"                          :"#0D47A1FF",
 
     "mediumGray"                            :"#717372",
@@ -274,7 +274,9 @@
     "widget.item.medium": { "font_family": "regular", "size": 18.0, "color": "textDark"},
     "widget.item.regular.extra_fat": { "font_family": "extra_bold", "size": 16.0, "color": "textDark"},
     "widget.item.regular.fat": { "font_family": "bold", "size": 16.0, "color": "textDark"},
+    "widget.item.regular.light.fat": { "font_family": "bold", "size": 16.0, "color": "textLight"},
     "widget.item.regular.thin": { "font_family": "regular", "size": 16.0, "color": "textDark"},
+    "widget.item.regular.light.thin": { "font_family": "regular", "size": 16.0, "color": "textLight"},
     "widget.item.regular_underline.thin": { "font_family": "regular", "size": 16.0, "color": "textDark", "decoration": "underline"},
     "widget.item.regular": { "font_family": "medium", "size": 16.0, "color": "textDark"},
     "widget.item.small.fat": { "font_family": "bold", "size": 14.0, "color": "textDark"},
@@ -351,7 +353,7 @@
     "widget.button.title.medium.thin.secondary": { "font_family": "regular", "size": 16.0, "color": "fillColorSecondary"},
     "widget.button.title.medium.fat.secondary": { "font_family": "bold", "size": 16.0, "color": "fillColorSecondary"},
     "widget.button.title.medium.underline": { "font_family": "medium", "size": 16.0, "color": "textPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
-    "widget.button.title.medium.underline.highlight": { "extends": "widget.button.title.medium.underline", "color": "white", "decoration_color": "white" },
+    "widget.button.title.medium.underline.highlight": { "extends": "widget.button.title.medium.underline", "color": "white", "decoration_color": "fillColorSecondary" },
     "widget.button.title.medium.fat.underline": { "font_family": "bold", "size": 16.0, "color": "textPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary", "height":  1.61},
     "widget.button.title.medium.fat.underline.highlight": { "extends": "widget.button.title.medium.fat.underline", "color": "white", "decoration_color": "white" },
     "widget.button.title.small": { "font_family": "regular", "size": 14.0, "color": "textPrimary"},
@@ -398,8 +400,8 @@
     "widget.input_field.dark.text.regular.thin": { "font_family": "regular", "size": 16.0, "color": "textPrimary"},
     "widget.input_field.disable.text.large": { "font_family": "medium", "size": 20.0, "color": "disabledTextColor"},
     "widget.input_field.enable.text.extra_large": { "font_family": "medium", "size": 26.0, "color": "black"},
-    "widget.input_field.text.medium": { "font_family": "regular", "size": 18.0, "color": "textBackground"},
-    "widget.input_field.text.regular": { "font_family": "regular", "size": 16.0, "color": "textBackground"},
+    "widget.input_field.text.medium": { "font_family": "regular", "size": 18.0, "color": "textLight"},
+    "widget.input_field.text.regular": { "font_family": "regular", "size": 16.0, "color": "textLight"},
 
     "widget.sheet.title.regular" : {"font_family": "bold", "size": 18.0, "color": "fillColorSecondary"},
 
@@ -439,8 +441,10 @@
     "widget.card.detail.regular.fat": { "font_family": "bold", "size": 16.0, "color": "textBackground"},
     "widget.card.detail.medium": { "font_family": "medium", "size": 16.0, "color": "textBackground"},
     "widget.card.detail.small.fat": { "font_family": "bold", "size": 14.0, "color": "textDark"},
+    "widget.card.detail.light.small.fat": { "font_family": "bold", "size": 14.0, "color": "textLight"},
     "widget.card.detail.small.medium": { "font_family": "medium", "size": 14.0, "color": "textBackground"},
     "widget.card.detail.small.regular": { "font_family": "regular", "size": 14.0, "color": "textDark"},
+    "widget.card.detail.light.small.regular": { "font_family": "regular", "size": 14.0, "color": "textLight"},
     "widget.card.detail.small": { "font_family": "regular", "size": 14.0, "color": "textBackground"},
     "widget.card.detail.tiny": { "font_family": "regular", "size": 12.0, "color": "textBackground"},
     "widget.card.detail.tiny.fat": { "font_family": "bold", "size": 12.0, "color": "textBackground"},
@@ -722,6 +726,13 @@
     "panel.canvas.item.regular.fat":  {"font_family": "bold", "size": 16.0, "color": "textSurfaceAccent"}
   },
   "image": {
+    "tab-assistant": {"src": "app/images/tab-assistant.png", "type": "flutter.asset", "color": "iconMedium", "size": 18},
+    "tab-assistant-selected": {"src": "app/images/tab-assistant-selected.png", "type": "flutter.asset", "color": "iconPrimary", "size": 18},
+    "tab-feed": {"src": "app/images/tab-feed.png", "type": "flutter.asset", "color": "iconMedium", "size": 18},
+    "tab-feed-selected": {"src": "app/images/tab-feed-selected.png", "type": "flutter.asset", "color": "iconPrimary", "size": 18},
+    "tab-more": {"src": "app/images/tab-more-selected.png", "type": "flutter.asset", "color": "iconMedium", "size": 18},
+    "tab-more-selected": {"src": "app/images/tab-more-selected.png", "type": "flutter.asset", "color": "iconPrimary", "size": 18},
+
     "campus-tools": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "calendar": {"src": "images/icon-calendar.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "news": {"src": "0xf0a1", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 17},

@@ -140,25 +140,25 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                       autofocus: false,
                       autocorrect: false,
                       onSubmitted: (_) => _clearErrorMsg,
-                      cursorColor: Styles().colors.textDark,
+                      cursorColor: Styles().colors.textLight,
                       keyboardType: keyboardType,
                       style: Styles().textStyles.getTextStyle("widget.input_field.text.medium"),
                       decoration: InputDecoration(
-                        disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 1.0),),
-                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 1.0),),
-                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 1.0),),
+                        disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.textLight, width: 1.0),),
+                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.textLight, width: 1.0),),
+                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.textLight, width: 1.0),),
                       ),
                     ),
                   ),
                 ),
                 Visibility(visible: StringUtils.isNotEmpty(_validationErrorMsg), child:
                   Padding(key: _validationErrorKey, padding: EdgeInsets.symmetric(vertical: 12), child:
-                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: Styles().textStyles.getTextStyle("panel.settings.error.text")),
+                    Column(children: [
+                      Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: Styles().textStyles.getTextStyle("panel.settings.error.text"), textAlign: TextAlign.center,),
                       Visibility(visible: StringUtils.isNotEmpty(_validationErrorDetails), child:
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: Styles().textStyles.getTextStyle("widget.detail.light.small")),
+                          child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: Styles().textStyles.getTextStyle("widget.detail.light.small"), textAlign: TextAlign.center,),
                         ),
                       ),
                     ],),
@@ -305,7 +305,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
 
   void _onEmailInitiated(BuildContext context, String? email, Auth2RequestCodeResult result) {
     if (result == Auth2RequestCodeResult.succeeded) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginCodePanel(identifier: email, defaultIdentifierType: Auth2Identifier.typeEmail, onFinish: widget.onFinish)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginCodePanel(identifier: email, defaultIdentifierType: Auth2Identifier.typeEmail, linkIdentifier: widget.link, onFinish: widget.onFinish)));
     } else if (result == Auth2RequestCodeResult.failedAccountExist) {
       setErrorMsg(Localization().getStringEx('panel.settings.profile.error.email.exists', 'The email address you selected is already in use. Please pick a different one.'));
     } else if (result == Auth2RequestCodeResult.failed) {

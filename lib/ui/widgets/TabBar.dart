@@ -40,10 +40,10 @@ class TabBar extends rokwire.TabBar {
     }
     else if (code == 'favorites') {
       return rokwire.TabWidget(
-        label: Localization().getStringEx('tabbar.favorites.title', 'Favorites'),
-        hint: Localization().getStringEx('tabbar.favorites.hint', ''),
-        iconKey: 'star-outline-gray',
-        selectedIconKey: 'star-filled',
+        label: Localization().getStringEx('tabbar.feed.title', 'Feed'),
+        hint: Localization().getStringEx('tabbar.feed.hint', ''),
+        iconKey: 'tab-feed',
+        selectedIconKey: 'tab-feed-selected',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
@@ -60,10 +60,10 @@ class TabBar extends rokwire.TabBar {
     }
     else if (code == 'browse') {
       return rokwire.TabWidget(
-        label: Localization().getStringEx('tabbar.browse.title', 'Browse'),
-        hint: Localization().getStringEx('tabbar.browse.hint', ''),
-        iconKey: 'browse-outline-gray',
-        selectedIconKey: 'browse-filled',
+        label: Localization().getStringEx('tabbar.more.title', 'More'),
+        hint: Localization().getStringEx('tabbar.more.hint', ''),
+        iconKey: 'tab-more',
+        selectedIconKey: 'tab-more-selected',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
@@ -81,9 +81,9 @@ class TabBar extends rokwire.TabBar {
     else if (code == 'assistant') {
       return rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.assistant.title', 'Assistant'),
-        hint: Localization().getStringEx('tabbar.assistant.hint', 'Illinois Assistant Page'),
-        iconKey: 'search-outline-gray',
-        selectedIconKey: 'search',
+        hint: Localization().getStringEx('tabbar.assistant.hint', 'NEOM U Assistant Page'),
+        iconKey: 'tab-assistant',
+        selectedIconKey: 'tab-assistant-selected',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );

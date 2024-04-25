@@ -66,14 +66,10 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
 
   late bool _link;
   bool _loading = false;
-  bool _resettingAccessibility = false;
 
   @override
   void initState() {
     _link = widget.onboardingContext?["link"] ?? widget.link ?? (Auth2().isLoggedIn && !Auth2().isPasskeyLinked);
-    if (_state == Auth2PasskeyAccountState.unverified) {
-      _responseMessage = Localization().getStringEx("panel.settings.passkey.sign_up.succeeded.text", "A verification email has been sent to your email address. To activate your account you need to confirm it. Then you will be able to login with your new credential.");
-    }
 
     if ((Storage().auth2PasskeySaved ?? false) && (widget.onboardingContext?["afterLogout"] != true) && !_link) {
       _loading = true;
@@ -116,8 +112,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
           // if (_state != Auth2PasskeyAccountState.exists || StringUtils.isNotEmpty(_responseMessage))
           _buildContentWidget(context),
           primaryActionButton,
-          if (_resettingAccessibility || _link)
-            _buildSignUpButton(),
+          _buildSignUpButton(),
           // _buildSkipButton(context),
         ],
       ),
@@ -383,10 +378,10 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
           ),
         ),),
       ),
-      Align(alignment: Alignment.center, child: Visibility(
-        visible: _state == Auth2PasskeyAccountState.failed && !_link,
-        child: _buildTryAnotherWayButton(),
-      )),
+      // Align(alignment: Alignment.center, child: Visibility(
+      //   visible: _state == Auth2PasskeyAccountState.failed && !_link,
+      //   child: _buildTryAnotherWayButton(),
+      // )),
       Visibility(
         visible: (_state == Auth2PasskeyAccountState.unverified),
         child: Padding(
@@ -446,28 +441,19 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
     );
   }
 
-  Widget _buildTryAnotherWayButton() {
-    return TextButton(
-      onPressed: _onTapAnotherWay,
-      child: Text(
-          Localization().getStringEx("panel.settings.passkey.label.another_way.text", "Try another way"),
-          textAlign: TextAlign.center,
-          style: Styles().textStyles.getTextStyle('widget.info.regular.light'),
-    ));
-  }
+  // Widget _buildTryAnotherWayButton() {
+  //   return TextButton(
+  //     onPressed: _onTapSignUp,
+  //     child: Text(
+  //         Localization().getStringEx("panel.settings.passkey.label.another_way.text", "Try another way"),
+  //         textAlign: TextAlign.center,
+  //         style: Styles().textStyles.getTextStyle('widget.info.regular.light'),
+  //   ));
+  // }
 
   void _onTapSignUp() {
     Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) {
-      return SettingsLoginPhoneOrEmailPanel(link: false, /*identifier: _identifierController.text*/);
-    }));
-  }
-
-  void _onTapAnotherWay() {
-    // _state = Auth2PasskeyAccountState.alternatives;
-    // _clearResponseMessage();
-
-    Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) {
-      return SettingsLoginPhoneOrEmailPanel(link: false, /*onFinish: () => _next(context), identifier: _identifierController.text*/);
+      return SettingsLoginPhoneOrEmailPanel(/*onFinish: () => _next(context), identifier: _identifierController.text*/);
     }));
   }
 
@@ -655,8 +641,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
     else if (result.status == Auth2PasskeySignInResultStatus.failedNoCredentials) {
       //TODO: go to sign up (or sign in) with email/phone and code or passkey on another device
       _state = Auth2PasskeyAccountState.failed;
-      // _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.no_credentials.text", "No credentials found."));
-      _onTapAnotherWay();
+      _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.no_credentials.text", "No credentials found."));
     }
     else if (result.status == Auth2PasskeySignInResultStatus.failedCancelled) {
       _state = Auth2PasskeyAccountState.failed;
@@ -665,7 +650,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
     else if (result.status == Auth2PasskeySignInResultStatus.failedBlocked) {
       _state = Auth2PasskeyAccountState.failed;
       //TODO: parse error message to make it more user-friendly? (e.g., During begin sign in, failure response from one tap: 16: Caller has been temporarily blocked due to too many canceled sign-in prompts.)
-      _setResponseMessage(result.error ?? Localization().getStringEx("panel.settings.passkey.sign_in.failed.blocked.text", "Sign in blocked by device."));
+      _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.blocked.text", "Sign in blocked by device. Please try again later."));
     }
     else {
       _next(context);

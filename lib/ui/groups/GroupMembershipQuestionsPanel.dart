@@ -143,7 +143,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
     return Padding(padding: EdgeInsets.symmetric(vertical: 8),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 4),
-          child: Text(Localization().getStringEx("panel.membership_questions.label.question", 'QUESTION #')+(index+1).toString(), style: Styles().textStyles.getTextStyle("widget.title.tiny")),
+          child: Text(Localization().getStringEx("panel.membership_questions.label.question", 'QUESTION #')+(index+1).toString(), style: Styles().textStyles.getTextStyle("widget.title.light.tiny")),
         ),
         Stack(children: <Widget>[
           Container(color: Styles().colors.white,
@@ -174,14 +174,14 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
   }
 
   Widget _buildSubmit() {
-    return Container(color: Colors.white,
+    return Container(color: Styles().colors.surface,
       child: Padding(padding: EdgeInsets.all(16),
         child: Row(children: <Widget>[
           Expanded(flex: 1,child: Container(),),
           Expanded(flex: 5,
           child: RoundedButton(label: Localization().getStringEx("panel.membership_questions.button.update_question.title", 'Update Questions'),
-            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-            backgroundColor: Styles().colors.white,
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant"),
+            backgroundColor: Styles().colors.surface,
             padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
             borderColor: Styles().colors.fillColorSecondary,
             borderWidth: 2,

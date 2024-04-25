@@ -326,9 +326,9 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-         GroupSectionTitle(title: title, requiredMark: true),
+         GroupSectionTitle(title: title, titleTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.highlight'), requiredMark: true),
           Container(
-            decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
+            decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.surface),
             child: Semantics(
                 label: fieldTitle,
                 hint: fieldHint,
@@ -371,10 +371,15 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          GroupSectionTitle(title: title, description: description),
+          GroupSectionTitle(
+            title: title,
+            titleTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.highlight'),
+            description: description,
+            descriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.small.thin.highlight'),
+          ),
           Container(height: 5,),
           Container(
-            decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
+            decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.surface),
             child:
             Row(children: [
               Expanded(child:
@@ -423,7 +428,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   padding: EdgeInsets.only(bottom: 8, top:24),
                   child: Text(
                     labelTitle,
-                    style: Styles().textStyles.getTextStyle("widget.title.tiny")
+                    style: Styles().textStyles.getTextStyle("widget.title.tiny.highlight")
                   ),
                 ),
                 Padding(
@@ -455,7 +460,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
             onTap: _onTapConfirmLinkUrl,
             child: Text(
               Localization().getStringEx("panel.groups_settings.link.button.confirm.link.title",'Confirm URL'),
-              style: Styles().textStyles.getTextStyle("widget.button.title.medium.underline")
+              style: Styles().textStyles.getTextStyle("widget.button.title.medium.underline.highlight")
             ),
           )
       ),
@@ -488,8 +493,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return Visibility(visible: _isResearchProject, child:
       Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          GroupSectionTitle(title: title),
-          Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white), child:
+          GroupSectionTitle(title: title, titleTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.highlight'), descriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.small.thin.highlight'),),
+          Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.surface), child:
             Row(children: [
               Expanded(child:
                 Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, value: _researchConsentDetailsController.text, child:
@@ -526,7 +531,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         Visibility(visible: _researchRequiresConsentConfirmation, child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             GroupSectionTitle(title: title),
-            Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white), child:
+            Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.surface), child:
               Row(children: [
                 Expanded(child:
                   Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, child:
@@ -565,9 +570,11 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           Expanded(flex: 5, child:
             GroupSectionTitle(
               title: Localization().getStringEx("panel.groups_create.attributes.title", "ATTRIBUTES"),
+              titleTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.highlight'),
               description: _isResearchProject?
                 Localization().getStringEx("panel.groups_create.attributes.project_description", "Attributes help you provide more information."):
                 Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
+              descriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.small.thin.highlight'),
               requiredMark: (!_isResearchProject) && (Groups().contentAttributes?.hasRequired(contentAttributeRequirementsFunctionalScopeCreate) ?? false),  //can we remove the * at the end of the label "Attributes" as it does not work here. //If you decide to fix this and keep the * then change the description text from...
             )
           ),
@@ -577,7 +584,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               label: Localization().getStringEx("panel.groups_create.button.attributes.title", "Edit"),
               hint: Localization().getStringEx("panel.groups_create.button.attributes.hint", ""),
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-              backgroundColor: Styles().colors.white,
+              backgroundColor: Styles().colors.surface,
               borderColor: Styles().colors.fillColorSecondary,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               onTap: _onTapAttributes,
@@ -600,11 +607,11 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
           attributesList.add(Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
-              Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
+              Styles().textStyles.getTextStyle("widget.card.detail.light.small.fat")
             ),
             Expanded(child:
               Text(displayAttributes.join(', '), /*overflow: TextOverflow.ellipsis, maxLines: 1,*/ style:
-                Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
+                Styles().textStyles.getTextStyle("widget.card.detail.light.small.regular")
               ),
             ),
           ],),);
@@ -669,7 +676,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         Semantics(container: true, child:
           Container(padding: EdgeInsets.symmetric(horizontal: 24,vertical: 12),
             child:Text(longDescription ?? '',
-              style: Styles().textStyles.getTextStyle("widget.item.small.thin.spaced")
+              style: Styles().textStyles.getTextStyle("widget.item.small.thin.highlight")
             ),)),
         Container(height: _isPrivateGroup ? 5 : 40)
       ],);
@@ -704,7 +711,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       child: Text(
                           Localization()
                               .getStringEx("panel.groups.common.private.search.hidden.description", "A hidden group is unsearchable."),
-                          style: Styles().textStyles.getTextStyle("widget.item.small.thin.spaced"))))
+                          style: Styles().textStyles.getTextStyle("widget.item.small.thin.highlight"))))
             ])));
   }
 
@@ -743,7 +750,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         onTap: onTap,
         child: Container(
             decoration: BoxDecoration(
-                color: Styles().colors.white,
+                color: Styles().colors.surface,
                 border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                 borderRadius: BorderRadius.all(Radius.circular(4))),
             padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
@@ -874,10 +881,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 GroupSectionTitle(
                   title: Localization().getStringEx("panel.groups_create.authman.group.name.label", "Membership name"),
+                  titleTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.highlight'),
+                  descriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.small.thin.highlight'),
                   requiredMark: true
                 ),
                 Container(
-                    decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white),
+                    decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.surface),
                     child: TextField(
                       onChanged: _onAuthManGroupNameChanged,
                       controller: _authManGroupNameController,
@@ -969,7 +978,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   } */
   //Buttons
   Widget _buildButtonsLayout() {
-    return Semantics(container: true, child: Container( color: Styles().colors.white,
+    return Semantics(container: true, child: Container( color: Styles().colors.background,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Center(
             child: RoundedButton(
@@ -977,7 +986,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 Localization().getStringEx("panel.groups_create.button.create.project.title", "Create Project") :
                 Localization().getStringEx("panel.groups_create.button.create.title", "Create Group"),
               textStyle: _canSave ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
-              backgroundColor: Styles().colors.white,
+              backgroundColor: Styles().colors.surface,
               borderColor: _canSave ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
               enabled: _canSave,
               progress:  _creating,
@@ -1088,7 +1097,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           Styles().images.getImage(iconKey, excludeFromSemantics: true) ?? Container(),
           Expanded(child:
             Container(padding: EdgeInsets.only(left: 14, right: 4), child:
-              Text(title, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),)
+              Text(title, style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat"),)
             ),
           ),
         ]),
@@ -1101,7 +1110,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return Semantics(label: title, value: semanticsValue, button: true, child:
       Container(
         decoration: BoxDecoration(
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
             border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))
         ),

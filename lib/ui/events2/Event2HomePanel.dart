@@ -531,13 +531,13 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
       ])),
       Expanded(flex: 4, child: Wrap(alignment: WrapAlignment.end, verticalDirection: VerticalDirection.up, children: [
-        LinkButton(
-          title: Localization().getStringEx('panel.events2.home.bar.button.map.title', 'Map'), 
-          hint: Localization().getStringEx('panel.events2.home.bar.button.map.hint', 'Tap to view map'),
-          textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.underline'),
-          padding: EdgeInsets.only(left: 0, right: 8, top: 12, bottom: 12),
-          onTap: _onMapView,
-        ),
+        // LinkButton(
+        //   title: Localization().getStringEx('panel.events2.home.bar.button.map.title', 'Map'),
+        //   hint: Localization().getStringEx('panel.events2.home.bar.button.map.hint', 'Tap to view map'),
+        //   textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.underline'),
+        //   padding: EdgeInsets.only(left: 0, right: 8, top: 12, bottom: 12),
+        //   onTap: _onMapView,
+        // ),
         Visibility(visible: Auth2().account?.isCalendarAdmin ?? false, child:
           Event2ImageCommandButton('plus-circle',
             label: Localization().getStringEx('panel.events2.home.bar.button.create.title', 'Create'),
