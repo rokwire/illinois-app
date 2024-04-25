@@ -35,7 +35,7 @@ class Feed {
     await Future.delayed(Duration(milliseconds: 2500));
 
     List<FeedItem>? items;
-    try { items = FeedItem.listFromResponseJson(JsonUtils.decodeMap(await rootBundle.loadString('assets/extra/feed.json'))); }
+    try { items = FeedItem.listFromResponseJson(JsonUtils.decodeMap(await rootBundle.loadString('assets/extra/feed2.json'))); }
     catch(e) { debugPrint(e.toString()); }
 
     if (items != null) {

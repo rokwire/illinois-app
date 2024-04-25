@@ -2,8 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/model/Feed.dart';
 import 'package:illinois/model/News.dart';
@@ -21,6 +23,7 @@ import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
 import 'package:illinois/ui/athletics/AthleticsWidgets.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/home/HomeTwitterWidget.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
@@ -29,14 +32,20 @@ import 'package:illinois/ui/wellness/WellnessDailyTipsContentWidget.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
 
 class FeedPanel extends StatefulWidget {
   FeedPanel();
@@ -192,6 +201,10 @@ class _FeedPanelState extends State<FeedPanel> with AutomaticKeepAliveClientMixi
     }
     else if ((feedItem.type == FeedItemType.notification) && (feedItem.data is InboxMessage)) {
       return _CardWrapper(child: InboxMessageCard(message: feedItem.data as InboxMessage, onTap: () => _onNotification(feedItem.data as InboxMessage),),
+      );
+    }
+    else if ((feedItem.type == FeedItemType.groupPost) && (feedItem.data is FeedGroupPost)) {
+      return _CardWrapper(child: FeedGroupPostCard(feedItem.data as FeedGroupPost,),
       );
     }
     else if ((feedItem.type == FeedItemType.appointment) && (feedItem.data is Appointment)) {
@@ -410,4 +423,218 @@ class _CardWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(padding: padding, child: child);
+}
+
+class FeedGroupPostCard extends StatefulWidget {
+  final FeedGroupPost feedGroupPost;
+
+  Group? get group => feedGroupPost.group;
+  GroupPost? get post => feedGroupPost.post;
+
+  FeedGroupPostCard(this.feedGroupPost, { super.key,});
+
+  @override
+  State<StatefulWidget> createState() => _FeedGroupPostCardState();
+}
+
+class _FeedGroupPostCardState extends State<FeedGroupPostCard>  {
+  static const double _smallImageSize = 64;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(onTap: () => _onTapCard(context), child:
+      Container(decoration: BoxDecoration( color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
+            _buildGroupContent(),
+          ),
+          Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+            Container(color: Styles().colors.surfaceAccent, height: 1,)
+          ),
+          Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+            _buildPostContent(),
+          ),
+        ]),
+      )
+    );
+  }
+
+  Widget _buildGroupContent() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      _buildGroupHeading(),
+      Container(height: 6),
+      Row(children:[
+        Expanded(child:
+          _buildGroupTitle(),
+        ),
+        _buildGroupImage()
+      ]),
+    ]);
+  }
+
+  Widget _buildGroupHeading() {
+
+    List<Widget> headingLine = <Widget>[];
+
+    List<String>? categoriesList = Groups().contentAttributes?.displaySelectedLabelsFromSelection(widget.group?.attributes, usage: ContentAttributeUsage.category);
+    headingLine.add(Expanded(child:
+      Text(categoriesList?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 10, style: Styles().textStyles.getTextStyle("widget.card.title.small.fat"))
+    ));
+
+    String? userStatus = widget.group?.currentUserStatusText;
+    if (StringUtils.isNotEmpty(userStatus)) {
+      headingLine.add(Padding(padding: EdgeInsets.only(right: 8), child:
+        _buildGroupHeadingLabel(userStatus!.toUpperCase(),
+          color: widget.group?.currentUserStatusColor,
+          semanticsLabel: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: '), [userStatus.toLowerCase()])
+        )
+      ));
+    }
+
+    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: headingLine,);
+  }
+
+  /*Widget _buildGroupHeadingWrapLabel(String text) {
+    return _buildGroupHeadingLabel(text.toUpperCase(),
+      color: Styles().colors.fillColorSecondary,
+      semanticsLabel: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: '), [text.toLowerCase()])
+    );
+  }*/
+
+  Widget _buildGroupHeadingLabel(String text, {Color? color, String? semanticsLabel}) {
+    return Semantics(label: semanticsLabel, excludeSemantics: true,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(color: color, borderRadius: BorderRadius.all(Radius.circular(2))),
+        child: Text(text,
+          style: Styles().textStyles.getTextStyle("widget.heading.small"))));
+  }
+
+  Widget _buildGroupTitle() {
+    return Row(children: [
+      Expanded(child:
+        Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
+          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: 10, style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))
+        )
+      )
+    ]);
+  }
+
+  Widget _buildGroupImage() {
+    double maxImageWidgth = 150;
+    String? imageUrl = widget.group?.imageURL;
+    return
+      StringUtils.isEmpty(imageUrl) ? Container() :
+      // Expanded(
+      //     flex: 1,
+      //     child:
+      Semantics(
+          label: "Group image",
+          button: true,
+          hint: "Double tap to zoom the image",
+          child: GestureDetector(
+              onTap: _onTapGroupImage,
+              child: Container(
+                padding: EdgeInsets.only(left: 8),
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: maxImageWidgth),
+                  // width: _smallImageSize,
+                  height: _smallImageSize,
+                  child: Image.network(imageUrl!, excludeFromSemantics: true,
+                    fit: BoxFit.fill,),),))
+        // )
+      );
+  }
+
+  Widget _buildPostContent() {
+    String? memberName = widget.post?.member?.displayShortName;
+    String? htmlBody = widget.post?.body;
+    String? imageUrl = widget.post?.imageUrl;
+    int visibleRepliesCount = getVisibleRepliesCount();
+    bool isRepliesLabelVisible = (visibleRepliesCount > 0);
+    String? repliesLabel = (visibleRepliesCount == 1)
+        ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
+        : Localization().getStringEx('widget.group.card.reply.multiple.replies.label', 'Replies');
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
+        Expanded(child:
+          Text(StringUtils.ensureNotEmpty(widget.post!.subject), overflow: TextOverflow.ellipsis, maxLines: 1, style: Styles().textStyles.getTextStyle('widget.card.title.regular.fat'))
+        ),
+        Visibility(visible: isRepliesLabelVisible, child:
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Padding(padding: EdgeInsets.only(left: 8), child:
+              Text(StringUtils.ensureNotEmpty(visibleRepliesCount.toString()), style: Styles().textStyles.getTextStyle('widget.description.small'))
+            ),
+            Padding(padding: EdgeInsets.only(left: 8), child:
+              Text(StringUtils.ensureNotEmpty(repliesLabel), style: Styles().textStyles.getTextStyle('widget.description.small'))
+            )
+          ])
+        ),
+      ]),
+      Row(children: [
+        Expanded(flex: 2, child:
+          Padding(padding: EdgeInsets.only(top: 10, bottom: 10), child:
+            HtmlWidget("<div style= text-overflow:ellipsis;max-lines:3> ${StringUtils.ensureNotEmpty(htmlBody)}</div>",
+              onTapUrl : (url) {_onTapLink(url); return true;},
+              textStyle:  Styles().textStyles.getTextStyle("widget.card.title.small")
+            )
+          )
+        ),
+        StringUtils.isEmpty(imageUrl) ? Container() : Expanded(flex: 1, child:
+          Semantics(label: "post image", button: true, hint: "Double tap to zoom the image", child:
+            Container(padding: EdgeInsets.only(left: 8, bottom: 8, top: 8), child:
+              SizedBox(width: _smallImageSize, height: _smallImageSize, child:
+                ModalImageHolder(child: Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,)),
+              ),
+            )
+          )
+        ),
+      ],),
+      Container(child:
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Expanded(flex: 3, child:
+            Padding(padding: EdgeInsets.only(right: 6), child:
+              Text(StringUtils.ensureNotEmpty(memberName), textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle('widget.description.small')),
+            )
+          ),
+          Expanded(flex: 2, child:
+            Padding(padding: EdgeInsets.only(left: 6), child:
+              Text(StringUtils.ensureNotEmpty(widget.post?.displayDateTime), textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle('widget.description.small'))
+            ),
+          ),
+        ],)
+      )
+    ]);
+  }
+
+  int getVisibleRepliesCount() {
+    int result = 0;
+    List<GroupPost>? replies = widget.post?.replies;
+    if (replies != null) {
+      bool? memberOrAdmin = widget.group?.currentUserIsMemberOrAdmin;
+      for (GroupPost? reply in replies) {
+        if ((reply!.private != true) || (memberOrAdmin == true)) {
+          result++;
+        }
+      }
+    }
+    return result;
+  }
+
+  void _onTapLink(String? url) {
+    Analytics().logSelect(target: url);
+    UrlUtils.launchExternal(url);
+  }
+
+  void _onTapGroupImage() {
+    Analytics().logSelect(target: "Image");
+    if(widget.group?.imageURL!=null){
+      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: widget.group!.imageURL!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
+    }
+  }
+
+  void _onTapCard(BuildContext context) {
+    Analytics().logSelect(target: "Group post");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group)));
+  }
 }

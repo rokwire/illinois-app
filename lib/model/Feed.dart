@@ -20,12 +20,13 @@ import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/Twitter.dart';
 import 'package:illinois/model/wellness/WellnessToDo.dart';
 import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 // FeedItemType
 
-enum FeedItemType { event, notification, appointment, studentCourse, campusReminder, sportNews, tweet, wellnessToDo, wellnessTip }
+enum FeedItemType { event, notification, groupPost, appointment, studentCourse, campusReminder, sportNews, tweet, wellnessToDo, wellnessTip }
 
 // FeedItem
 
@@ -35,11 +36,11 @@ class FeedItem {
 
   FeedItem({required this.type, required this.data});
 
-  static FeedItem? fromJson(Map<String, dynamic>? json, { List<TweetsPage>? tweets }) {
+  static FeedItem? fromJson(Map<String, dynamic>? json, { List<TweetsPage>? tweets, Map<String, Group>? groups }) {
     if (json != null) {
       FeedItemType? type = feedItemTypeFromString(JsonUtils.stringValue(json['type']));
       if (type != null) {
-        Object? data = _dataFromJson(json['data'], type: type);
+        Object? data = _dataFromJson(json['data'], type: type, tweets: tweets, groups: groups);
         if (data != null) {
           return FeedItem(type: type, data: data);
         }
@@ -48,10 +49,11 @@ class FeedItem {
     return null;
   }
 
-  static Object? _dataFromJson(dynamic json, { required FeedItemType type, List<TweetsPage>? tweets }) {
+  static Object? _dataFromJson(dynamic json, { required FeedItemType type, List<TweetsPage>? tweets, Map<String, Group>? groups }) {
     switch (type) {
       case FeedItemType.event:          return Event2.fromJson(JsonUtils.mapValue(json));
       case FeedItemType.notification:   return InboxMessage.fromJson(JsonUtils.mapValue(json));
+      case FeedItemType.groupPost:      return FeedGroupPost.fromJson(JsonUtils.mapValue(json), groups: groups);
       case FeedItemType.appointment:    return Appointment.fromJson(JsonUtils.mapValue(json));
       case FeedItemType.studentCourse:  return StudentCourse.fromJson(JsonUtils.mapValue(json));
       case FeedItemType.campusReminder: return JsonUtils.mapValue(json); // Student Guide Aricle Json
@@ -62,19 +64,20 @@ class FeedItem {
     }
   }
 
-  static List<FeedItem>? listFromJson(List<dynamic>? jsonList, { List<TweetsPage>? tweets }) {
+  static List<FeedItem>? listFromJson(List<dynamic>? jsonList, { List<TweetsPage>? tweets, Map<String, Group>? groups }) {
     List<FeedItem>? result;
     if (jsonList != null) {
       result = <FeedItem>[];
       for (dynamic json in jsonList) {
-        ListUtils.add(result, FeedItem.fromJson(json, tweets: tweets));
+        ListUtils.add(result, FeedItem.fromJson(json, tweets: tweets, groups: groups));
       }
     }
     return result;
   }
 
   static List<FeedItem>? listFromResponseJson(Map<String, dynamic>? json) => (json != null) ? FeedItem.listFromJson(JsonUtils.listValue(json['result']),
-    tweets: TweetsPage.listFromJson(JsonUtils.listValue(json['tweets']))
+    tweets: TweetsPage.listFromJson(JsonUtils.listValue(json['tweets'])),
+    groups: Group.mapFromJson(JsonUtils.listValue(json['groups'])),
   ) : null;
 }
 
@@ -84,6 +87,7 @@ FeedItemType? feedItemTypeFromString(String? value) {
   switch(value) {
     case 'event': return FeedItemType.event;
     case 'notification': return FeedItemType.notification;
+    case 'group_post': return FeedItemType.groupPost;
     case 'appointment': return FeedItemType.appointment;
     case 'student_course': return FeedItemType.studentCourse;
     case 'campus_reminder': return FeedItemType.campusReminder;
@@ -92,5 +96,19 @@ FeedItemType? feedItemTypeFromString(String? value) {
     case 'wellness_todo': return FeedItemType.wellnessToDo;
     case 'wellness_tip': return FeedItemType.wellnessTip;
     default: return null;
+  }
+}
+
+// FeedGroupPost
+
+class FeedGroupPost extends GroupPost {
+  GroupPost? post;
+  Group? group;
+
+  FeedGroupPost(this.post, {this.group});
+
+  static FeedGroupPost? fromJson(Map<String, dynamic>? json, { Map<String, Group>? groups }) {
+    GroupPost? post = GroupPost.fromJson(json);
+    return (post != null) ? FeedGroupPost(post, group: groups?[post.groupId]) : null;
   }
 }
