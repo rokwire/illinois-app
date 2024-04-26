@@ -31,7 +31,7 @@ class Feed {
 
   // Service
 
-  Future<List<FeedItem>?> load({int offset = 0, int? limit}) async {
+  Future<List<FeedItem>?> loadSample({int offset = 0, int? limit}) async {
     await Future.delayed(Duration(milliseconds: 2500));
 
     List<FeedItem>? items;

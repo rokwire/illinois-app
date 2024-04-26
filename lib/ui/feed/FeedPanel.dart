@@ -291,7 +291,7 @@ class _FeedPanelState extends State<FeedPanel> with AutomaticKeepAliveClientMixi
         _extending = false;
       });
 
-      List<FeedItem>? result = await Feed().load(offset: 0, limit: limit);
+      List<FeedItem>? result = await Feed().loadSample(offset: 0, limit: limit);
 
       setStateIfMounted(() {
         _feed = (result != null) ? List<FeedItem>.from(result) : null;
@@ -309,7 +309,7 @@ class _FeedPanelState extends State<FeedPanel> with AutomaticKeepAliveClientMixi
       });
 
       int limit = max(_feed?.length ?? 0, _pageLength);
-      List<FeedItem>? result = await Feed().load(offset: 0, limit: limit);
+      List<FeedItem>? result = await Feed().loadSample(offset: 0, limit: limit);
 
       setStateIfMounted(() {
         if (result != null) {
@@ -329,7 +329,7 @@ class _FeedPanelState extends State<FeedPanel> with AutomaticKeepAliveClientMixi
 
       int offset = _feed?.length ?? 0;
       int limit = _pageLength;
-      List<FeedItem>? result = await Feed().load(offset: offset, limit: limit);
+      List<FeedItem>? result = await Feed().loadSample(offset: offset, limit: limit);
 
       if ((_extending == true) && (_loading != true) && (_refreshing != true)) {
         setStateIfMounted(() {
