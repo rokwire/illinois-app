@@ -221,7 +221,7 @@ extension GroupPostExt on GroupPost {
   GroupPostType get type => (members?.isNotEmpty == true) ? GroupPostType.message : GroupPostType.post;
   bool get isPost => (type == GroupPostType.post);
   bool get isMessage => (type == GroupPostType.message);
-  bool get isScheduled => dateScheduledUtc?.isBefore(DateTime.now()) == true;
+  bool get isScheduled => dateScheduledUtc?.isAfter(DateTime.now()) == true;
 
   String? get displayDateTime {
     DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);

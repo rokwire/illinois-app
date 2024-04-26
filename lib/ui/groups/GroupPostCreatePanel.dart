@@ -190,17 +190,23 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
   }
 
   Widget _buildScheduleWidget(){
-    return Container(
+    return Visibility( visible: _canSchedule,
       child: GroupScheduleTimeWidget(
-        onDateChanged: (DateTime? dateTimeUtc){
-          _postData.dateScheduled = dateTimeUtc;
-        },
+        scheduleTime: _postData.dateScheduled,
+        onDateChanged: (DateTime? dateTimeUtc) => _postData.dateScheduled = dateTimeUtc,
       )
     );
   }
 
+  void _clearScheduleDate(){
+    if( _postData.dateScheduled != null){
+      _postData.dateScheduled = null;
+    }
+  }
+
   void _onMembersSelectionChanged(List<Member>? selectedMembers){
     _selectedMembers = selectedMembers;
+    _clearScheduleDate(); //Members Selection disables scheduling
     _updateState();
   }
 
@@ -400,6 +406,10 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     return (widget.group.currentUserIsAdmin == true) ||
         (widget.group.currentUserIsMember &&
             widget.group.isMemberAllowedToPostToSpecificMembers);
+  }
+
+  bool get _canSchedule {
+    return CollectionUtils.isEmpty(_selectedMembers);
   }
 
   bool get _canSentToOtherAdminCroups{
