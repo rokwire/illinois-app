@@ -118,7 +118,8 @@ class Feed {
   }
 
   Future<List<FeedItem>?> _loadGroupPostsFeed(DateTime currentDateTime, Group group) async {
-    int offset = 0, pageSize = 16;
+    int offset = 0;
+    final int pageSize = 16;
     DateTime startDateTimeUtc = currentDateTime.subtract(Duration(seconds: Config().feedPastDuration)).toUtc();
     DateTime endDateTimeUtc = currentDateTime.add(Duration(seconds: Config().feedFutureDuration)).toUtc();
     List<FeedItem>? feed;
@@ -131,7 +132,7 @@ class Feed {
           DateTime? groupPostDateTimeUtc = groupPost.dateCreatedUtc;
           if ((groupPostDateTimeUtc != null) && groupPostDateTimeUtc.isAfter(startDateTimeUtc) && groupPostDateTimeUtc.isBefore(endDateTimeUtc)) {
             feed.add(FeedItem.fromGroupPost(groupPost, group: group));
-            if ((index + 1) == groupPosts.length) {
+            if ((groupPosts.length == pageSize) && ((index + 1) == groupPosts.length)) {
               offset += pageSize;
               continue;
             }
