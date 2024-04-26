@@ -25,6 +25,7 @@ import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/service/Log.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -285,7 +286,21 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                           setStateIfMounted(() {
                             _mainPostUpdateData?.members = members;
                           });
-                        },)
+                        },),
+                      Container(height: 6,),
+                      Visibility(visible: widget.post?.dateScheduledUtc != null, child:
+                        GroupScheduleTimeWidget(
+                          timeZone: null,//TBD pass timezone
+                          scheduleTime: widget.post?.dateScheduledUtc,
+                          enabled: false, //_isEditMainPost, Disable editing since the BB do not support editing of the create notification
+                          onDateChanged: (DateTime? dateTimeUtc){
+                            setStateIfMounted(() {
+                              Log.d(groupUtcDateTimeToString(dateTimeUtc)??"");
+                              _mainPostUpdateData?.dateScheduled = dateTimeUtc;
+                            });
+                          },
+                        )
+                      )
                     ],
                   )),
 
@@ -702,7 +717,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _onTapEditMainPost(){
-    _mainPostUpdateData = PostDataModel(body:_post?.body, imageUrl: _post?.imageUrl, members: GroupMembersSelectionWidget.constructUpdatedMembersList(selection:_post?.members, upToDateMembers: _allMembersAllowedToPost));
+    _mainPostUpdateData = PostDataModel(body:_post?.body, imageUrl: _post?.imageUrl, members: GroupMembersSelectionWidget.constructUpdatedMembersList(selection:_post?.members, upToDateMembers: _allMembersAllowedToPost), dateScheduled: _post?.dateScheduledUtc);
     setStateIfMounted(() { });
   }
 
@@ -718,7 +733,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
 
     _setLoading(true);
-    GroupPost postToUpdate = GroupPost(id: _post?.id, subject: _post?.subject, body: htmlModifiedBody, imageUrl: imageUrl, members: toMembers, private: true);
+    GroupPost postToUpdate = GroupPost(id: _post?.id, subject: _post?.subject, body: htmlModifiedBody, imageUrl: imageUrl, members: toMembers, dateScheduledUtc: _mainPostUpdateData?.dateScheduled, private: true);
     Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
       _mainPostUpdateData = null;
       _setLoading(false);
