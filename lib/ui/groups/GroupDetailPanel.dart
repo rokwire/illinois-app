@@ -111,6 +111,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool?              _hasMorePosts;
   bool?              _scrollToLastPostAfterRefresh;
 
+  List<GroupPost>    _scheduledPosts = <GroupPost>[];
+  GlobalKey          _lastScheduledPostKey = GlobalKey();
+  bool?              _refreshingScheduledPosts;
+  bool?              _loadingScheduledPostsPage;
+  bool?              _hasMoreScheduledPosts;
+  bool?              _scrollToLastScheduledPostsAfterRefresh;
+
   List<GroupPost>    _messages = <GroupPost>[];
   GlobalKey          _lastMessageKey = GlobalKey();
   bool?              _refreshingMessages;
@@ -263,6 +270,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         _redirectToGroupPostIfExists();
         _loadGroupAdmins();
         _loadInitialPosts();
+        _loadInitialScheduledPosts();
         _loadInitialMessages();
         _loadPolls();
       }
@@ -284,6 +292,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           _refreshGroupAdmins();
         });
         _refreshCurrentPosts();
+        _refreshCurrentScheduledPosts();
         _refreshCurrentMessages();
         _refreshPolls();
       }
@@ -342,6 +351,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       else if (post?.isMessage == true) {
         _refreshCurrentMessages(delta: (post?.parentId == null) ? 1 : null);
       }
+      //For both post and messages
+      if(post?.isScheduled == true){
+        _refreshCurrentScheduledPosts(delta: (post?.parentId == null) ? 1 : null);
+      }
   }
 
   void _onGroupPostUpdated(GroupPost? post) {
@@ -351,6 +364,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       else if (post?.isMessage == true) {
         _refreshCurrentMessages();
       }
+      //For both post and messages
+      if(post?.isScheduled == true){
+        _refreshCurrentScheduledPosts();
+      }
   }
 
   void _onGroupPostDeleted(GroupPost? post) {
@@ -359,6 +376,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
       else if (post?.isMessage == true) {
         _refreshCurrentMessages(delta: (post?.parentId == null) ? -1 : null);
+      }
+      //For both post and messages
+      if(post?.isScheduled == true){
+        _refreshCurrentScheduledPosts();
       }
   }
 
@@ -424,6 +445,72 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _posts.addAll(postsPage);
       if (postsPage.length < _postsPageSize) {
         _hasMorePosts = false;
+      }
+    }
+  }
+
+  // Scheduled Posts
+
+  void _loadInitialScheduledPosts() {
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin) {
+      setState(() {
+        _progress++;
+        _loadingScheduledPostsPage = true;
+      });
+      _loadScheduledPostsPage().then((_) {
+        if (mounted) {
+          setState(() {
+            _progress--;
+            _loadingScheduledPostsPage = false;
+          });
+        }
+      });
+    }
+  }
+
+  void _refreshCurrentScheduledPosts({int? delta}) {
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_refreshingScheduledPosts != true)) {
+      int limit = _scheduledPosts.length + (delta ?? 0);
+      _refreshingScheduledPosts = true;
+      Groups().loadGroupPosts(widget.groupId, type: GroupPostType.post, offset: 0, limit: limit, order: GroupSortOrder.desc, scheduledOnly: true).then((List<GroupPost>? scheduledPost) {
+        _refreshingScheduledPosts = false;
+        if (mounted && (scheduledPost != null)) {
+          setState(() {
+            _scheduledPosts = scheduledPost;
+            if (scheduledPost.length < limit) {
+              _hasMoreScheduledPosts = false;
+            }
+          });
+          if (_scrollToLastScheduledPostsAfterRefresh == true) {
+            _scheduleLastScheduledPostScroll();
+          }
+        }
+        _scrollToLastScheduledPostsAfterRefresh = null;
+      });
+    }
+  }
+
+  void _loadNextScheduledPostsPage() {
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_loadingScheduledPostsPage != true)) {
+      setState(() {
+        _loadingScheduledPostsPage = true;
+      });
+      _loadScheduledPostsPage().then((_) {
+        if (mounted) {
+          setState(() {
+            _loadingScheduledPostsPage = false;
+          });
+        }
+      });
+    }
+  }
+
+  Future<void> _loadScheduledPostsPage() async {
+    List<GroupPost>? scheduledPostsPage = await Groups().loadGroupPosts(widget.groupId, type: GroupPostType.post , offset: _scheduledPosts.length, limit: _postsPageSize, order: GroupSortOrder.desc, scheduledOnly: true);
+    if (scheduledPostsPage != null) {
+      _scheduledPosts.addAll(scheduledPostsPage);
+      if (scheduledPostsPage.length < _postsPageSize) {
+        _hasMoreScheduledPosts = false;
       }
     }
   }
@@ -730,6 +817,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if (_currentTab != _DetailTab.About) {
         content.add(_buildEvents());
         content.add(_buildPosts());
+        content.add(_buildScheduledPosts());
         content.add(_buildMessages());
         content.add(_buildPolls());
       }
@@ -1121,6 +1209,46 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           rightIconAction: _canCreatePost ? _onTapCreatePost : null,
           rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post") : null,
           children: postsContent)
+    ]);
+  }
+
+  Widget _buildScheduledPosts() {
+    List<Widget> scheduledPostsContent = [];
+
+    if (CollectionUtils.isEmpty(_scheduledPosts)) {
+      return Container();
+    }
+
+    for (int i = 0; i <_scheduledPosts.length ; i++) {
+      GroupPost? post = _scheduledPosts[i];
+      if (i > 0) {
+        scheduledPostsContent.add(Container(height: 16));
+      }
+      scheduledPostsContent.add(GroupPostCard(key: (i == 0) ? _lastScheduledPostKey : null, post: post, group: _group));
+    }
+
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMoreScheduledPosts != false) && (0 < _scheduledPosts.length)) {
+      String title = Localization().getStringEx('panel.group_detail.button.show_older.title', 'Show older');
+      scheduledPostsContent.add(Container(padding: EdgeInsets.only(top: 16),
+          child: Semantics(label: title, button: true, excludeSemantics: true,
+              child: InkWell(onTap: _loadNextScheduledPostsPage,
+                  child: Container(height: 36,
+                    child: Align(alignment: Alignment.topCenter,
+                      child: (_loadingScheduledPostsPage == true) ?
+                      SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), )) :
+                      Text(title, style: Styles().textStyles.getTextStyle('panel.group.button.show_older.title'),),
+                    ),
+                  )
+              )
+          ))
+      );
+    }
+
+    return Column(children: <Widget>[
+      SectionSlantHeader(
+          title: Localization().getStringEx("panel.group_detail.label.scheduled_posts", 'Scheduled Posts'),
+          titleIconKey: 'posts',
+          children: scheduledPostsContent)
     ]);
   }
 
@@ -2006,7 +2134,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (_group != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostCreatePanel(group: _group!))).then((result) {
         if (result is GroupPost) {
-          if (result.isPost) {
+          if(result.isScheduled){ //Post and messages can be both scheduled, so check for scheduled first
+            _scrollToLastScheduledPostsAfterRefresh = true;
+            if (_refreshingScheduledPosts != true) {
+              _refreshCurrentScheduledPosts();
+            }
+          }
+          else if (result.isPost) {
             _scrollToLastPostAfterRefresh = true;
             if (_refreshingPosts != true) {
               _refreshCurrentPosts();
@@ -2070,6 +2204,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _refreshGroupStats();
       _refreshEvents();
       _refreshCurrentPosts();
+      _refreshCurrentScheduledPosts();
       _refreshCurrentMessages();
     }
   }
@@ -2082,6 +2217,16 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _scrollToLastPost() {
     _scrollTo(_lastPostKey);
+  }
+
+  void _scheduleLastScheduledPostScroll() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToLastScheduledPost();
+    });
+  }
+
+  void _scrollToLastScheduledPost() {
+    _scrollTo(_lastScheduledPostKey);
   }
 
   void _scheduleLastMessageScroll() {

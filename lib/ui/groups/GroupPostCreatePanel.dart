@@ -81,6 +81,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                     visible: _canSelectMembers,
                     child: GroupMembersSelectionWidget(allMembers: _allMembersAllowedToPost, selectedMembers: _selectedMembers, groupId: widget.group.id, groupPrivacy: widget.group.privacy, onSelectionChanged: _onMembersSelectionChanged),
                   ),
+                  Container(height: 12,),
+                  _buildScheduleWidget(),
                   _buildNudgesWidget(),
                   Container(height: 12,),
                   Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'),
@@ -124,7 +126,6 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                         }
                     ),
                   ),
-
                   Row(children: [
                     Flexible(
                       flex: 1,
@@ -188,8 +189,24 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
         ]));
   }
 
+  Widget _buildScheduleWidget(){
+    return Visibility( visible: _canSchedule,
+      child: GroupScheduleTimeWidget(
+        scheduleTime: _postData.dateScheduled,
+        onDateChanged: (DateTime? dateTimeUtc) => _postData.dateScheduled = dateTimeUtc,
+      )
+    );
+  }
+
+  void _clearScheduleDate(){
+    if( _postData.dateScheduled != null){
+      _postData.dateScheduled = null;
+    }
+  }
+
   void _onMembersSelectionChanged(List<Member>? selectedMembers){
     _selectedMembers = selectedMembers;
+    _clearScheduleDate(); //Members Selection disables scheduling
     _updateState();
   }
 
@@ -254,6 +271,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     String? body = _postData.body;
     String? imageUrl = _postData.imageUrl;
     String? subject = _postData.subject;
+    DateTime? scheduleDate = _postData.dateScheduled;
     if (StringUtils.isEmpty(subject)) {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.validation.subject.msg', "Post subject required"));
       return;
@@ -264,10 +282,15 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
       return;
     }
 
+    if (scheduleDate != null && scheduleDate.isBefore(DateTime.now())) {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.validation.schedule.msg', "Schedule time must be in future"));
+      return;
+    }
+
     String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
     _increaseProgress();
 
-    GroupPost post = GroupPost(subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl, members: _selectedMembers); // if no parentId then this is a new post for the group.
+    GroupPost post = GroupPost(subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl, members: _selectedMembers, dateScheduledUtc: scheduleDate); // if no parentId then this is a new post for the group.
 
     Groups().createPost(widget.group.id, post).then((success) {
       if(success){
@@ -383,6 +406,10 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     return (widget.group.currentUserIsAdmin == true) ||
         (widget.group.currentUserIsMember &&
             widget.group.isMemberAllowedToPostToSpecificMembers);
+  }
+
+  bool get _canSchedule {
+    return CollectionUtils.isEmpty(_selectedMembers);
   }
 
   bool get _canSentToOtherAdminCroups{

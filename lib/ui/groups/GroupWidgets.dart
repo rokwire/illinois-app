@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
+import 'package:device_calendar/device_calendar.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/mainImpl.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
+import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -1064,6 +1068,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                                 child: Text(StringUtils.ensureNotEmpty(repliesLabel),
                                     style: Styles().textStyles.getTextStyle('widget.description.small')))
                           ])),
+                      _buildScheduledDateWidget
                     ]),
                     Row(
                       children: [
@@ -1105,7 +1110,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                     ],),
                     Container(
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Expanded(
                             flex: 3,
@@ -1117,19 +1122,38 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           )),
                           Expanded(
                             flex: 2,
-                            child: Semantics(child: Container(
-                              padding: EdgeInsets.only(left: 6),
-                              child: Text(StringUtils.ensureNotEmpty(widget.post?.displayDateTime),
-                                semanticsLabel: "Updated ${widget.post?.displayDateTime ?? ""} ago",
-                                textAlign: TextAlign.right,
-                                style: Styles().textStyles.getTextStyle('widget.description.small'))),
-                          )),
+                            child: _buildDisplayDateWidget),
                         ],
                       )
                     )
                   ]))))),
     ]);
   }
+
+  Widget get _buildDisplayDateWidget =>  Visibility(visible: widget.post?.isScheduled != true, child:
+    Semantics(child: Container(
+      padding: EdgeInsets.only(left: 6),
+      child: Text(StringUtils.ensureNotEmpty(widget.post?.displayDateTime),
+          semanticsLabel: "Updated ${widget.post?.displayDateTime ?? ""} ago",
+          textAlign: TextAlign.right,
+          style: Styles().textStyles.getTextStyle('widget.description.small')))));
+
+  Widget get _buildScheduledDateWidget => Visibility(visible: widget.post?.isScheduled == true, child:
+    Row( mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.end,
+      children:[
+        Container(width: 6,),
+        Container( padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors.mediumGray1, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+          Semantics(label: "Scheduled for ${widget.post?.displayScheduledTime ?? ""}", excludeSemantics: true, child:
+            Text("Scheduled: ${widget.post?.displayScheduledTime ?? ""}", style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
+        ))
+    ]));
+
+      // Semantics(child: Container(
+      // padding: EdgeInsets.all(6),
+      // child: Text("Scheduled: ${widget.post?.displayScheduledTime ?? ""}",
+      //     semanticsLabel: "Scheduled for ${widget.post?.displayScheduledTime ?? ""}",
+      //     textAlign: TextAlign.right,
+      //     style: Styles().textStyles.getTextStyle('widget.description.small.fat'))));
 
   void _onTapCard() {
     Analytics().logSelect(target: "Group post");
@@ -1154,6 +1178,8 @@ class _GroupPostCardState extends State<GroupPostCard> {
     }
     return result;
   }
+
+
 }
 
 //////////////////////////////////////
@@ -1746,7 +1772,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
         height: 48,
         decoration: BoxDecoration(
             color:  widget.enabled? Colors.white: Styles().colors.background,
-            border: Border.all(color: Styles().colors.lightGray, width: 1),
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),
@@ -1766,7 +1792,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
                     // style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies.bold),
                     // value: _currentSelection,
                     items: _buildDropDownItems,
-                    hint: Text(_selectionText,  style: Styles().textStyles.getTextStyle('widget.group.members.title') ,),
+                    hint: Text(_selectionText,  style: Styles().textStyles.getTextStyle('widget.title.medium.fat') ,),
                     onChanged: widget.enabled? (GroupMemberSelectionData? data) {
                       _onDropDownItemChanged(data);
                     } : null,
@@ -3022,4 +3048,266 @@ class GroupMemberSettingsLayout extends StatelessWidget{
     }
   }
 
+}
+
+class GroupScheduleTimeWidget extends StatefulWidget {
+  final Location? timeZone;
+
+  final DateTime? scheduleTime;
+  final bool? enabled;
+  final bool enableTimeZone;
+  final Function(DateTime?)? onDateChanged;
+
+  const GroupScheduleTimeWidget({super.key,  this.timeZone, this.scheduleTime, this.onDateChanged, this.enabled = true, this.enableTimeZone = false,});
+
+  @override
+  State<StatefulWidget> createState() => _GroupScheduleTimeState();
+
+}
+
+class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
+  bool required = false;
+  bool _expanded = false;
+
+  late Location _timeZone;
+  DateTime? _date;
+  TimeOfDay? _time;
+
+  TZDateTime? get _dateTime => _date!= null ? _dateTimeWithDateAndTimeOfDay(_date!, _time) : null;
+
+  // DateTime? get _dateTimeUtc => _date!=null && _time!=null ?
+  //     DateTime.fromMillisecondsSinceEpoch(_dateTimeWithDateAndTimeOfDay(_date!, _time).toUtc().millisecondsSinceEpoch, isUtc: true) : null;
+  DateTime? get _dateTimeUtc => _dateTime?.toUtc();
+
+  @override
+  void initState() {
+    _timeZone = timeZoneDatabase.locations[widget.timeZone] ?? DateTimeLocal.timezoneLocal;
+    DateTime? dateTimeUtc = widget.scheduleTime;
+    if (dateTimeUtc != null) {
+      TZDateTime scheduleTime = TZDateTime.from(dateTimeUtc, _timeZone);
+      _date = TZDateTimeUtils.dateOnly(scheduleTime);
+      _time = TimeOfDay.fromDateTime(scheduleTime);
+    }
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(padding: EdgeInsets.only(top: 16), child:
+          Text("Schedule: ", style: Styles().textStyles.getTextStyle('widget.group.members.title'),)),
+        Expanded(child: _buildDropdown())
+    ]);
+  }
+
+  Widget _buildDropdown(){
+    // String title = (_time != null? DateFormat("EEE, MMM dd, h:mma").format(_dateWithTimeOfDay(_time!)) : "");
+    DateTime? selectedTime = _dateTime?.toLocal();
+    String title = (selectedTime != null? DateFormat("EEE, MMM dd, h:mma").format(selectedTime) : "");
+
+    return Padding(padding: EdgeInsets.zero, child:
+    Column(children: <Widget>[
+      Container(
+        decoration: BoxDecoration(
+            color: widget.enabled == true ? Styles().colors.white : null,
+            border: Border.all(color: /*widget.enabled == true ? Styles().colors.mediumGray2 :*/ Styles().colors.surfaceAccent, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(4))
+        ),
+        child: Column(children: <Widget>[
+          Semantics(button: true, label: title,
+              child: InkWell(
+                onTap: (){
+                  if(widget.enabled == true) {
+                    setStateIfMounted(() {
+                      _expanded = !_expanded;
+                    });
+                  }
+                },
+                child: Padding(padding: sectionHeadingContentPadding, child:
+                Row(children: [
+                  Expanded(child:
+                    Semantics ( label: title, child:
+                      RichText(text:
+                        TextSpan(text: title, style: Styles().textStyles.getTextStyle("widget.title.medium.fat"), semanticsLabel: "", children: required ? <InlineSpan>[
+                          TextSpan(text: ' *', style: Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
+                  ] : null),
+                  ))
+                  ),
+                  Visibility(visible: widget.enabled == true, child:
+                    Padding(padding: EdgeInsets.only(left: 8), child:
+                      Styles().images.getImage(_expanded ? 'chevron-up' : 'chevron-down') ?? Container()),)
+                ],),
+                ),
+              )
+          ),
+          Visibility(visible: _expanded, child:
+          Container(decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles().colors.mediumGray2, width: 1))),
+            child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+            Container(child: buildBody() ??
+                Container())
+            ),
+          ),
+          ),
+        ],),
+      ),
+    ]),
+    );
+  }
+
+  Widget? buildBody() => Column(children: [
+      _buildTimeZoneDropdown(),
+      Padding(padding: EdgeInsets.only(bottom: 12)),
+      Row(
+        children: [
+          Expanded(flex: 3, child:buildSectionTitleWidget(Localization().getStringEx("", "DATE"),)),
+          Expanded(flex: 7, child: _buildDropdownButton(label: (_date != null) ? DateFormat("EEE, MMM dd, yyyy").format(_date!) : "-", onTap: _onDate))
+        ],),
+      Padding(padding: EdgeInsets.only(bottom: 12)),
+      Row(
+        children: [
+          Expanded(flex: 3, child:buildSectionTitleWidget(Localization().getStringEx("", "TIME"),)),
+          Expanded(flex: 7, child: _buildDropdownButton(label: (_time != null) ? DateFormat("h:mma").format(_dateWithTimeOfDay(_time!)) : "-", onTap: _onTime))
+      ],)
+    ]);
+
+  Widget _buildDropdownButton({String? label, GestureTapCallback? onTap}) {
+    return InkWell(onTap: onTap, child:
+      Container(decoration: dropdownButtonDecoration, padding: dropdownButtonContentPadding, child:
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+          Text(label ??  '-', style: Styles().textStyles.getTextStyle("widget.title.regular"),),
+          Styles().images.getImage('chevron-down') ?? Container()
+        ],),
+      ),
+    );
+  }
+
+  void _onDate() {
+    Analytics().logSelect(target: "Date");
+    hideKeyboard(context);
+    DateTime now = DateUtils.dateOnly(DateTime.now());
+    DateTime minDate = now;
+    DateTime maxDate = now.add(Duration(days: 366));
+    DateTime selectedDate = (_date != null) ? DateTimeUtils.min(DateTimeUtils.max(_date!, minDate), maxDate) : minDate;
+    showDatePicker(context: context,
+      initialDate: selectedDate,
+      firstDate: minDate,
+      lastDate: maxDate,
+      currentDate: now,
+    ).then((DateTime? result) {
+      if ((result != null) && mounted) {
+        setState(() {
+          TZDateTime zoneTime = TZDateTime.from(result, _timeZone);
+          _date = DateUtils.dateOnly(zoneTime);
+          widget.onDateChanged?.call(_dateTimeUtc);
+          // _errorMap = _buildErrorMap(); //TBD handle error
+        });
+      }
+    });
+  }
+
+  void _onTime() {
+    Analytics().logSelect(target: "Time");
+    hideKeyboard(context);
+    showTimePicker(context: context, initialTime: _time ?? TimeOfDay(hour: 0, minute: 0)).then((TimeOfDay? result) {
+      if ((result != null) && mounted) {
+        setState(() {
+          _time = result;
+          widget.onDateChanged?.call(_dateTimeUtc);
+          // _errorMap = _buildErrorMap(); //TBD handle error
+        });
+      }
+    });
+  }
+
+  //TIMEZONE
+  Widget _buildTimeZoneDropdown(){
+    return Visibility(visible: widget.enableTimeZone, child:
+      Semantics(container: true, child:
+        Row(children: <Widget>[
+          Expanded(flex: 4, child:
+            buildSectionTitleWidget(Localization().getStringEx("", "TIME ZONE")),
+          ),
+          Container(width: 16,),
+          Expanded(flex: 6, child:
+            Container(decoration: dropdownButtonDecoration, child:
+              Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
+                DropdownButtonHideUnderline(child:
+                  DropdownButton<Location>(
+                      icon: Styles().images.getImage('chevron-down'),
+                      isExpanded: true,
+                      style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                      hint: Text(_timeZone.name,),
+                      items: _buildTimeZoneDropDownItems(),
+                      onChanged: _onTimeZoneChanged
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ])
+      )
+    );
+  }
+
+  List<DropdownMenuItem<Location>>? _buildTimeZoneDropDownItems() {
+    List<DropdownMenuItem<Location>> menuItems = <DropdownMenuItem<Location>>[];
+    timeZoneDatabase.locations.forEach((String name, Location location) {
+      if (name.startsWith('US/')) {
+        menuItems.add(DropdownMenuItem<Location>(
+          value: location,
+          child: Semantics(label: name, excludeSemantics: true, container:true, child: Text(name,)),
+        ));
+      }
+    });
+
+    return menuItems;
+  }
+
+  void _onTimeZoneChanged(Location? value) {
+    Analytics().logSelect(target: "Time Zone selected: $value");
+    hideKeyboard(context);
+    if ((value != null) && mounted) {
+      setState(() {
+        _timeZone = value;
+        widget.onDateChanged?.call(_dateTimeUtc);
+      });
+    }
+  }
+
+  DateTime _dateWithTimeOfDay(TimeOfDay time) =>
+      _dateTimeWithDateAndTimeOfDay(DateTime.now(), time);
+
+  TZDateTime _dateTimeWithDateAndTimeOfDay(DateTime date, TimeOfDay? time, { bool inclusive = false}) =>
+      TZDateTime(_timeZone, date.year, date.month, date.day, time?.hour ?? (inclusive ? 23 : 0), time?.minute ?? (inclusive ? 59 : 0));
+
+  //Common
+  static Widget buildSectionTitleWidget(String title, { bool required = false, TextStyle? textStyle, TextStyle? requiredTextStyle,  }) =>
+      Semantics ( label: title, child:
+        RichText(textScaler: textScaler, text:
+          TextSpan(text: title, style: textStyle ?? headingTextStype, semanticsLabel: "", children: required ? <InlineSpan>[
+            TextSpan(text: ' *', style: requiredTextStyle ?? Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
+          ] : null),
+      ));
+
+  static TextStyle? get headingTextStype => Styles().textStyles.getTextStyle("widget.title.small.fat.spaced");
+
+  static const EdgeInsetsGeometry dropdownButtonContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
+  static const EdgeInsetsGeometry sectionHeadingContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 14);
+
+  static BoxDecoration get dropdownButtonDecoration => BoxDecoration(
+      color: Styles().colors.surface,
+      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+      borderRadius: BorderRadius.all(Radius.circular(4))
+  );
+
+  static TextScaler get textScaler {
+    BuildContext? context = App.instance?.currentContext;
+    return (context != null) ? MediaQuery.of(context).textScaler : TextScaler.noScaling;
+  }
+
+  static void hideKeyboard(BuildContext context) {
+    FocusScope.of(context).unfocus();
+  }
 }

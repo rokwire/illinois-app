@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [5.2.5] - 2024-04-26
+### Added
+- Added Group post scheduling [#4027](https://github.com/rokwire/illinois-app/issues/4027).
 ### Changed
 - Require privacy level 4 for ability to create groups [#4030](https://github.com/rokwire/illinois-app/issues/4030).
 
