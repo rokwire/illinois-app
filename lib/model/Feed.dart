@@ -205,7 +205,7 @@ FeedItemType? feedItemTypeFromData(Object data) {
 
 // FeedGroupPost
 
-class FeedGroupPost extends GroupPost {
+class FeedGroupPost {
   GroupPost post;
   Group? group;
 
