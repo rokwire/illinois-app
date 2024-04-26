@@ -217,9 +217,12 @@ class Config extends rokwire.Config {
   String? get bessiSurveyID          => JsonUtils.stringValue(settings['bessi_survey_id']);
   String? get essentialSkillsCoachKey => JsonUtils.stringValue(settings['essential_skills_coach_key']) ?? 'essential_skills_coach';
 
-  int get mobileAccessDeleteTimeoutMins   => JsonUtils.intValue(settings['mobileAccessDeleteTimeout']) ?? 10;
+  int get feedFutureDuration         => JsonUtils.intValue(settings['feedFutureDuration']) ?? (24 * 3600);
+  int get feedPastDuration           => JsonUtils.intValue(settings['feedPastDuration']) ?? 24 * 3600;
 
-  int get inAppNotificationToastTimeout   => JsonUtils.intValue(settings['inAppNotificationToastTimeout']) ?? 6;
+  int get mobileAccessDeleteTimeoutMins => JsonUtils.intValue(settings['mobileAccessDeleteTimeout']) ?? 10;
+
+  int get inAppNotificationToastTimeout => JsonUtils.intValue(settings['inAppNotificationToastTimeout']) ?? 6;
 
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;

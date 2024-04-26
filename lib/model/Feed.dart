@@ -19,6 +19,7 @@ import 'package:illinois/model/News.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/Twitter.dart';
 import 'package:illinois/model/wellness/WellnessToDo.dart';
+import 'package:illinois/service/Guide.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -35,6 +36,77 @@ class FeedItem {
   final Object data;
 
   FeedItem({required this.type, required this.data});
+
+  factory FeedItem.fromEvent(Event2 event) => FeedItem(type: FeedItemType.event, data: event);
+  factory FeedItem.fromInboxMessage(InboxMessage message) => FeedItem(type: FeedItemType.notification, data: message);
+  factory FeedItem.fromGroupPost(GroupPost post, {Group? group}) => FeedItem(type: FeedItemType.groupPost, data: FeedGroupPost(post, group: group));
+
+  static List<FeedItem>? listFromData(List<Object>? dataList, { FeedItemType? type }) {
+    if (dataList != null) {
+      List<FeedItem> feed = <FeedItem>[];
+      for (Object data in dataList) {
+        FeedItemType? itemType = type ?? feedItemTypeFromData(data);
+        if (itemType != null) {
+          feed.add(FeedItem(type: itemType, data: data));
+        }
+      }
+      return feed;
+    }
+    return null;
+  }
+
+  DateTime? dateTimeUtc({DateTime? rangeStartTimeUtc, DateTime? rangeEndTimeUtc, DateTime? rangeCurrentTimeUtc }) {
+    if (data is Event2) {
+      Event2 event = data as Event2;
+      if ((rangeStartTimeUtc != null) && (rangeEndTimeUtc != null)) {
+        return ((event.startTimeUtc?.isAfter(rangeStartTimeUtc) == true) &&
+            (event.startTimeUtc?.isBefore(rangeEndTimeUtc) == true)) ? event.startTimeUtc : event.endTimeUtc;
+      }
+      else {
+        return event.startTimeUtc ?? event.endTimeUtc;
+      }
+    }
+    else if (data is InboxMessage) {
+      return (data as InboxMessage).dateCreatedUtc;
+    }
+    else if (data is FeedGroupPost) {
+      return (data as FeedGroupPost).post.dateCreatedUtc;
+    }
+    else if (data is Appointment) {
+      return (data as Appointment).startTimeUtc;
+    }
+    else if (data is StudentCourse) {
+      return null; // TBD
+    }
+    else if (data is News) {
+      return (data as News).pubDateUtc;
+    }
+    else if (data is Tweet) {
+      return (data as Tweet).createdAtUtc;
+    }
+    else if (data is WellnessToDoItem) {
+      WellnessToDoItem toDoItem = data as WellnessToDoItem;
+      if ((rangeStartTimeUtc != null) && (rangeEndTimeUtc != null)) {
+        return ((toDoItem.dueDateTimeUtc?.isAfter(rangeStartTimeUtc) == true) &&
+            (toDoItem.dueDateTimeUtc?.isBefore(rangeEndTimeUtc) == true)) ? toDoItem.dueDateTimeUtc : toDoItem.endDateTimeUtc;
+      }
+      else {
+        return toDoItem.dueDateTimeUtc ?? toDoItem.endDateTimeUtc;
+      }
+    }
+    else if (type == FeedItemType.campusReminder) {
+      return Guide().reminderDate(JsonUtils.mapValue(data));
+    }
+    else if (type == FeedItemType.wellnessTip) {
+      return rangeCurrentTimeUtc;
+    }
+    else {
+      // return ;
+      return null;
+    }
+  }
+
+  // Sample Tools
 
   static FeedItem? fromJson(Map<String, dynamic>? json, { List<TweetsPage>? tweets, Map<String, Group>? groups }) {
     if (json != null) {
@@ -99,10 +171,42 @@ FeedItemType? feedItemTypeFromString(String? value) {
   }
 }
 
+FeedItemType? feedItemTypeFromData(Object data) {
+  if (data is Event2) {
+    return FeedItemType.event;
+  }
+  else if (data is InboxMessage) {
+    return FeedItemType.notification;
+  }
+  else if (data is FeedGroupPost) {
+    return FeedItemType.groupPost;
+  }
+  else if (data is Appointment) {
+    return FeedItemType.appointment;
+  }
+  else if (data is StudentCourse) {
+    return FeedItemType.studentCourse;
+  }
+  else if (data is News) {
+    return FeedItemType.sportNews;
+  }
+  else if (data is Tweet) {
+    return FeedItemType.tweet;
+  }
+  else if (data is WellnessToDoItem) {
+    return FeedItemType.wellnessToDo;
+  }
+  else {
+    // return FeedItemType.campusReminder;
+    // return FeedItemType.wellnessTip;
+    return null;
+  }
+}
+
 // FeedGroupPost
 
 class FeedGroupPost extends GroupPost {
-  GroupPost? post;
+  GroupPost post;
   Group? group;
 
   FeedGroupPost(this.post, {this.group});

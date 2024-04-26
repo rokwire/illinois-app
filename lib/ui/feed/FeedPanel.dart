@@ -59,6 +59,8 @@ class _FeedPanelState extends State<FeedPanel> with AutomaticKeepAliveClientMixi
   static const int _pageLength = 8;
 
   List<FeedItem>? _feed;
+  DateTime? _feedDateTime;
+
   bool? _loadedAll;
   bool _loading = false;
   bool _loadingLocation = false;
@@ -291,10 +293,12 @@ class _FeedPanelState extends State<FeedPanel> with AutomaticKeepAliveClientMixi
         _extending = false;
       });
 
-      List<FeedItem>? result = await Feed().loadSample(offset: 0, limit: limit);
+      DateTime currentDateTime = DateTime.now();
+      List<FeedItem>? result = await Feed().load(currentDateTime, offset: 0, limit: limit);
 
       setStateIfMounted(() {
         _feed = (result != null) ? List<FeedItem>.from(result) : null;
+        _feedDateTime = (result != null) ? currentDateTime : null;
         _loadedAll = (result != null) ? (result.length < limit) : null;
         _loading = false;
       });
@@ -309,11 +313,13 @@ class _FeedPanelState extends State<FeedPanel> with AutomaticKeepAliveClientMixi
       });
 
       int limit = max(_feed?.length ?? 0, _pageLength);
-      List<FeedItem>? result = await Feed().loadSample(offset: 0, limit: limit);
+      DateTime currentDateTime = DateTime.now();
+      List<FeedItem>? result = await Feed().load(currentDateTime, offset: 0, limit: limit);
 
       setStateIfMounted(() {
         if (result != null) {
           _feed = List<FeedItem>.from(result);
+          _feedDateTime = currentDateTime;
           _loadedAll = (result.length < limit);
         }
         _refreshing = false;
@@ -329,7 +335,8 @@ class _FeedPanelState extends State<FeedPanel> with AutomaticKeepAliveClientMixi
 
       int offset = _feed?.length ?? 0;
       int limit = _pageLength;
-      List<FeedItem>? result = await Feed().loadSample(offset: offset, limit: limit);
+      DateTime currentDateTime = _feedDateTime ?? DateTime.now();
+      List<FeedItem>? result = await Feed().load(currentDateTime, offset: offset, limit: limit);
 
       if ((_extending == true) && (_loading != true) && (_refreshing != true)) {
         setStateIfMounted(() {
@@ -340,6 +347,7 @@ class _FeedPanelState extends State<FeedPanel> with AutomaticKeepAliveClientMixi
             else {
               _feed = List<FeedItem>.from(result);
             }
+            _feedDateTime ??= currentDateTime;
             _loadedAll = (result.length < limit);
           }
           _extending = false;
