@@ -23,11 +23,13 @@ import 'package:illinois/service/Guide.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
+import 'package:rokwire_plugin/model/survey.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 // FeedItemType
 
-enum FeedItemType { event, notification, groupPost, appointment, studentCourse, campusReminder, sportNews, tweet, wellnessToDo, wellnessTip }
+enum FeedItemType { event, eventInfo, notification, groupPost, appointment, studentCourse, campusReminder, sportNews, tweet, wellnessToDo, wellnessTip }
 
 // FeedItem
 
@@ -38,6 +40,7 @@ class FeedItem {
   FeedItem({required this.type, required this.data});
 
   factory FeedItem.fromEvent(Event2 event) => FeedItem(type: FeedItemType.event, data: event);
+  factory FeedItem.fromEventInfo(FeedEventInfo eventInfo) => FeedItem(type: FeedItemType.eventInfo, data: eventInfo);
   factory FeedItem.fromInboxMessage(InboxMessage message) => FeedItem(type: FeedItemType.notification, data: message);
   factory FeedItem.fromGroupPost(GroupPost post, {Group? group}) => FeedItem(type: FeedItemType.groupPost, data: FeedGroupPost(post, group: group));
 
@@ -57,14 +60,10 @@ class FeedItem {
 
   DateTime? dateTimeUtc({DateTime? rangeStartTimeUtc, DateTime? rangeEndTimeUtc, DateTime? rangeCurrentTimeUtc }) {
     if (data is Event2) {
-      Event2 event = data as Event2;
-      if ((rangeStartTimeUtc != null) && (rangeEndTimeUtc != null)) {
-        return ((event.startTimeUtc?.isAfter(rangeStartTimeUtc) == true) &&
-            (event.startTimeUtc?.isBefore(rangeEndTimeUtc) == true)) ? event.startTimeUtc : event.endTimeUtc;
-      }
-      else {
-        return event.startTimeUtc ?? event.endTimeUtc;
-      }
+      return (data as Event2).feedDateTimeUtc(rangeStartTimeUtc: rangeStartTimeUtc, rangeEndTimeUtc: rangeEndTimeUtc);
+    }
+    else if (data is FeedEventInfo) {
+      return (data as FeedEventInfo).event.feedDateTimeUtc(rangeStartTimeUtc: rangeStartTimeUtc, rangeEndTimeUtc: rangeEndTimeUtc);
     }
     else if (data is InboxMessage) {
       return (data as InboxMessage).dateCreatedUtc;
@@ -124,6 +123,7 @@ class FeedItem {
   static Object? _dataFromJson(dynamic json, { required FeedItemType type, List<TweetsPage>? tweets, Map<String, Group>? groups }) {
     switch (type) {
       case FeedItemType.event:          return Event2.fromJson(JsonUtils.mapValue(json));
+      case FeedItemType.eventInfo:      return FeedEventInfo.fromJson(JsonUtils.mapValue(json));
       case FeedItemType.notification:   return InboxMessage.fromJson(JsonUtils.mapValue(json));
       case FeedItemType.groupPost:      return FeedGroupPost.fromJson(JsonUtils.mapValue(json), groups: groups);
       case FeedItemType.appointment:    return Appointment.fromJson(JsonUtils.mapValue(json));
@@ -158,6 +158,7 @@ class FeedItem {
 FeedItemType? feedItemTypeFromString(String? value) {
   switch(value) {
     case 'event': return FeedItemType.event;
+    case 'event_info': return FeedItemType.eventInfo;
     case 'notification': return FeedItemType.notification;
     case 'group_post': return FeedItemType.groupPost;
     case 'appointment': return FeedItemType.appointment;
@@ -174,6 +175,9 @@ FeedItemType? feedItemTypeFromString(String? value) {
 FeedItemType? feedItemTypeFromData(Object data) {
   if (data is Event2) {
     return FeedItemType.event;
+  }
+  else if (data is FeedEventInfo) {
+    return FeedItemType.eventInfo;
   }
   else if (data is InboxMessage) {
     return FeedItemType.notification;
@@ -203,11 +207,25 @@ FeedItemType? feedItemTypeFromData(Object data) {
   }
 }
 
+// _FeedEvent2Ext
+
+extension _FeedEvent2Ext on Event2 {
+  DateTime? feedDateTimeUtc({DateTime? rangeStartTimeUtc, DateTime? rangeEndTimeUtc }) {
+    if ((rangeStartTimeUtc != null) && (rangeEndTimeUtc != null)) {
+      return ((startTimeUtc?.isAfter(rangeStartTimeUtc) == true) && (startTimeUtc?.isBefore(rangeEndTimeUtc) == true)) ?
+        startTimeUtc : endTimeUtc;
+    }
+    else {
+      return startTimeUtc ?? endTimeUtc;
+    }
+  }
+}
+
 // FeedGroupPost
 
 class FeedGroupPost {
-  GroupPost post;
-  Group? group;
+  final GroupPost post;
+  final Group? group;
 
   FeedGroupPost(this.post, {this.group});
 
@@ -215,4 +233,28 @@ class FeedGroupPost {
     GroupPost? post = GroupPost.fromJson(json);
     return (post != null) ? FeedGroupPost(post, group: groups?[post.groupId]) : null;
   }
+}
+
+// FeedEventWithSurvey
+
+class FeedEventInfo {
+  final Survey survey;
+  final Event2 event;
+  final Event2PersonsResult? persons;
+  final List<SurveyResponse>? surveyResponses;
+
+  FeedEventInfo({required this.survey, required this.event, this.surveyResponses, this.persons});
+
+  static FeedEventInfo? fromJson(Map<String, dynamic>? json) {
+    Event2? event = Event2.fromJson(JsonUtils.mapValue(json?['event']));
+    Survey? survey = Survey.fromJsonExt(JsonUtils.mapValue(json?['survey']));
+    return ((event != null) && (survey != null)) ? FeedEventInfo(
+      event: event,
+      survey: survey,
+      persons: Event2PersonsResult.fromJson(JsonUtils.mapValue(json?['persons'])),
+      surveyResponses: SurveyResponse.listFromJson(JsonUtils.listValue(json?['survey_responses'])),
+    ) : null;
+  }
+
+  bool get hasSurveyResponse => (surveyResponses?.isNotEmpty == true);
 }

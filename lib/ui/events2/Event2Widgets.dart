@@ -8,6 +8,7 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/SyrveyPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
@@ -18,12 +19,14 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
+import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 //
@@ -139,6 +142,8 @@ class Event2ImageCommandButton extends StatelessWidget {
 class Event2Card extends StatefulWidget {
   final Event2 event;
   final Group? group;
+  final Survey? survey;
+  final bool? hasSurveyResponse;
   final Event2CardDisplayMode displayMode;
   final Event2GroupingType? linkType;
   final Position? userLocation;
@@ -146,7 +151,7 @@ class Event2Card extends StatefulWidget {
   
   final List<String>? displayCategories;
   
-  Event2Card(this.event, { Key? key, this.group, this.displayMode = Event2CardDisplayMode.list, this.linkType, this.userLocation, this.onTap}) :
+  Event2Card(this.event, { Key? key, this.group, this.survey, this.hasSurveyResponse, this.displayMode = Event2CardDisplayMode.list, this.linkType, this.userLocation, this.onTap}) :
     displayCategories = Events2().contentAttributes?.displaySelectedLabelsFromSelection(event.attributes, usage: ContentAttributeUsage.category),
     super(key: key);
 
@@ -164,7 +169,8 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   // Keep a copy of the user position in the State because it gets cleared somehow in the widget
   // when sending the appliction to background in iOS.
   late Event2 _event;
-  Position? _userLocation; 
+  Position? _userLocation;
+  bool? _hasSurveyResponse;
 
   @override
   void initState() {
@@ -174,6 +180,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     ]);
     _event = widget.event;
     _userLocation = widget.userLocation;
+    _hasSurveyResponse = widget.hasSurveyResponse;
     super.initState();
   }
 
@@ -514,6 +521,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
       ...?_onlineDetailWidget,
       ...?_locationDetailWidget,
       ...?_groupingDetailWidget,
+      ...?_surveyDetailWidget,
     ];
 
     return detailWidgets.isNotEmpty ? Padding(padding: EdgeInsets.only(top: 4), child:
@@ -579,6 +587,17 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     return null;
   }
 
+  List<Widget>? get _surveyDetailWidget {
+    if (Auth2().isLoggedIn && (widget.survey != null) && _event.isSurveyAvailable) {
+      return <Widget>[(_hasSurveyResponse != true) ? _buildButtonWidget(
+          title: Localization().getStringEx('panel.event2.detail.survey.button.follow_up_survey.title', 'Take Survey'),
+          onTap: _onFollowUpSurvey,
+      ) : _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.survey.button.follow_up_survey.completed.message', 'You have completed this event\'s survey'), 'check', maxLines: 2)];
+    }
+
+    return null;
+  }
+
   Widget _buildLocationTextDetailWidget(String text) =>
     _buildDetailWidget(Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero);
 
@@ -614,6 +633,32 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     );
   }
 
+  Widget _buildButtonWidget({String? title,
+    String? hint,
+    bool enabled = true,
+    bool externalLink = false,
+    bool progress = false,
+    void Function()? onTap,
+  }) => StringUtils.isNotEmpty(title) ?
+    Padding(padding: EdgeInsets.only(top: 8), child:
+      Row(children:<Widget>[
+        Expanded(child:
+          RoundedButton(
+              label: StringUtils.ensureNotEmpty(title),
+              hint: hint,
+              textStyle: enabled ? Styles().textStyles.getTextStyle("widget.button.title.small.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.small.fat"),
+              backgroundColor: enabled ? Colors.white : Styles().colors.background,
+              borderColor: enabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+              rightIcon:externalLink? Styles().images.getImage(enabled ? 'external-link' : 'external-link-dark' ) : null,
+              padding: EdgeInsets.symmetric(vertical: 6, horizontal: 6),
+              onTap: onTap ?? (){},
+            progress: progress,
+            contentWeight: 0.5,
+          ),
+        ),
+        ] )
+      ) : Container();
+
   List<Widget> get _linkedEventsPagerWidget {
     Event2Grouping? linkedGroupingQuery = _event.linkedEventsGroupingQuery;
     return (linkedGroupingQuery != null) ? <Widget>[
@@ -627,6 +672,23 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   void _onFavorite() {
     Analytics().logSelect(target: "Favorite: ${_event.name}");
     Auth2().prefs?.toggleFavorite(_event);
+  }
+
+  void _onFollowUpSurvey(){
+    Analytics().logSelect(target: "Follow up survey");
+    if (widget.survey != null) {
+      Survey displaySurvey = Survey.fromOther(widget.survey!);
+      displaySurvey.replaceKey('event_name', _event.name);
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: displaySurvey, onComplete: _onCompleteSurvey)));
+    }
+  }
+
+  void _onCompleteSurvey(dynamic result) {
+    if (result is SurveyResponse && result.id.isNotEmpty) {
+      setStateIfMounted(() {
+        _hasSurveyResponse = true;
+      });
+    }
   }
 
   void _onGroupEventOptions() {

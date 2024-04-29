@@ -199,7 +199,13 @@ class _FeedPanelState extends State<FeedPanel> with AutomaticKeepAliveClientMixi
       Event2 event = feedItem.data as Event2;
       return event.hasGame ?
         AthleticsEventCard(sportEvent: event, showImage: true, onTap: () => _onEvent(event)) :
-        _CardWrapper(child: Event2Card(feedItem.data as Event2, userLocation: _currentLocation, onTap: () => _onEvent(event),),);
+        _CardWrapper(child: Event2Card(event, userLocation: _currentLocation, onTap: () => _onEvent(event),),);
+    }
+    else if ((feedItem.type == FeedItemType.eventInfo) && (feedItem.data is FeedEventInfo)) {
+      FeedEventInfo eventInfo = feedItem.data as FeedEventInfo;
+      return eventInfo.event.hasGame ?
+        AthleticsEventCard(sportEvent: eventInfo.event, showImage: true, onTap: () => _onEvent(eventInfo.event)) :
+        _CardWrapper(child: Event2Card(eventInfo.event, survey: eventInfo.survey, hasSurveyResponse: eventInfo.hasSurveyResponse, userLocation: _currentLocation, onTap: () => _onEvent(eventInfo.event),),);
     }
     else if ((feedItem.type == FeedItemType.notification) && (feedItem.data is InboxMessage)) {
       return _CardWrapper(child: InboxMessageCard(message: feedItem.data as InboxMessage, onTap: () => _onNotification(feedItem.data as InboxMessage),),

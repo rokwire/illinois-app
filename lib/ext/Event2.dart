@@ -282,11 +282,14 @@ extension Event2Ext on Event2 {
     }
   }
 
-  bool get isSurveyAvailable {
-    int? hours = surveyDetails?.hoursAfterEvent ?? 0;
+  DateTime? get surveyTime {
+    int hours = surveyDetails?.hoursAfterEvent ?? 0;
     DateTime? eventTime = endTimeUtc ?? startTimeUtc;
-    return (eventTime == null) || eventTime.toUtc().add(Duration(hours: hours)).isBefore(DateTime.now().toUtc());
+    return (0 < hours) ? eventTime?.add(Duration(hours: hours)) : eventTime;
   }
+
+  bool get isSurveyAvailable =>
+    surveyTime?.isBefore(DateTime.now().toUtc()) != false;
 
   bool get isFavorite =>
     //isRecurring //TBD Recurring id

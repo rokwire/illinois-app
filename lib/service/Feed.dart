@@ -17,12 +17,17 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Feed.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/ext/Survey.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
+import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
+import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Feed {
@@ -43,24 +48,25 @@ class Feed {
 
   Future<List<FeedItem>?> load(DateTime currentDateTime, {int offset = 0, int? limit}) async {
     if ((_feed == null) || (currentDateTime != _feedDateTime)) {
-      _feed = await _buildFeed(currentDateTime);
-      _feedDateTime = (_feed != null) ? currentDateTime : null;
+      await _buildFeed(currentDateTime);
     }
     else {
       await Future.delayed(Duration(milliseconds: 1500));
     }
+
     return ListUtils.range(_feed, offset: offset, limit: limit);
   }
 
-  Future<List<FeedItem>?> _buildFeed(DateTime currentDateTime) async {
-    List<FeedItem>? feed;
+  Future<void> _buildFeed(DateTime currentDateTime) async {
 
+    // List<FeedItem>?
     List<List<FeedItem>?> typedFeeds = await Future.wait(<Future<List<FeedItem>?>>[
       _loadEventsFeed(currentDateTime),
       _loadNotificationsFeed(currentDateTime),
       _loadGroupsPostsFeed(currentDateTime),
     ]);
 
+    List<FeedItem>? feed;
     for (List<FeedItem>? typedFeed in typedFeeds) {
       if (typedFeed != null) {
         (feed ??= <FeedItem>[]).addAll(typedFeed);
@@ -75,31 +81,89 @@ class Feed {
       feedItem1.dateTimeUtc(rangeStartTimeUtc: rangeStartTimeUtc, rangeEndTimeUtc: rangeEndTimeUtc, rangeCurrentTimeUtc: rangeCurrentTimeUtc),
     ));
 
-    return feed;
+    _feed = feed;
+    _feedDateTime = (feed != null) ? currentDateTime : null;
   }
 
   // Events
 
-  Future<List<FeedItem>?> _loadEventsFeed(DateTime currentDateTime) async =>
-    FeedItem.listFromData(await Events2().loadEventsList(Events2Query(
+  Future<List<FeedItem>?> _loadEventsFeed(DateTime currentDateTime) async {
+    List<Event2>? events = await Events2().loadEventsList(Events2Query(
       timeFilter: Event2TimeFilter.customRange,
       customStartTimeUtc: currentDateTime.subtract(Duration(seconds: Config().feedPastDuration)).toUtc(),
       customEndTimeUtc: currentDateTime.add(Duration(seconds: Config().feedFutureDuration)).toUtc(),
-    )), type: FeedItemType.event);
+      adjustCustomTime: false,
+    ));
+
+    Map<String, FeedEventInfo>? eventInfos = ((events != null) && Auth2().isLoggedIn) ? await _loadEventsInfo(events) : null;
+    if ((events != null) && (eventInfos != null)) {
+      List<FeedItem> eventsFeed = <FeedItem>[];
+      for (Event2 event in events) {
+        FeedEventInfo? eventInfo = eventInfos[event.id];
+        eventsFeed.add((eventInfo != null) ? FeedItem.fromEventInfo(eventInfo) : FeedItem.fromEvent(event));
+      }
+      return eventsFeed;
+    }
+
+    return FeedItem.listFromData(events, type: FeedItemType.event);
+  }
+
+  Future<Map<String, FeedEventInfo>> _loadEventsInfo(List<Event2> events) async {
+    Map<String, FeedEventInfo> eventInfos = <String, FeedEventInfo>{};
+
+    List<Future<FeedEventInfo?>> futures = <Future<FeedEventInfo?>>[];
+    for (Event2 event in events) {
+      if (event.hasSurvey) {
+        futures.add(_loadEventInfo(event));
+      }
+    }
+
+    if (futures.isNotEmpty) {
+      List<FeedEventInfo?> responses = await Future.wait(futures);
+
+      for (FeedEventInfo? eventInfo in responses) {
+        String? eventId = eventInfo?.event.id;
+        if ((eventInfo != null) && (eventId != null)) {
+          eventInfos[eventId] = eventInfo;
+        }
+      }
+    }
+
+    return eventInfos;
+  }
+
+  Future<FeedEventInfo?> _loadEventInfo(Event2 event) async {
+    String? eventId = event.id;
+    if (eventId != null) {
+      List<dynamic> responseList = await Future.wait([
+        Surveys().loadEvent2Survey(eventId),
+        Events2().loadEventPeople(eventId),
+      ]);
+      Survey? survey = responseList[0];
+      Event2PersonsResult? persons = responseList[1];
+      String? surveyId = survey?.id;
+      bool isAttendee = (persons?.attendees?.indexWhere((person) => person.identifier?.accountId == Auth2().accountId) ?? -1) > -1;
+      if ((survey != null) && (surveyId != null) && isAttendee) {
+        List<SurveyResponse>? surveyResponses = await Surveys().loadUserSurveyResponses(surveyIDs: [surveyId]);
+        return FeedEventInfo(survey: survey, event: event, persons: persons, surveyResponses: surveyResponses);
+      }
+    }
+    return null;
+  }
 
   // Notifications
 
   Future<List<FeedItem>?> _loadNotificationsFeed(DateTime currentDateTime) async =>
-    FeedItem.listFromData(await Inbox().loadMessages(
+    Auth2().isLoggedIn ? FeedItem.listFromData(await Inbox().loadMessages(
       startDate: currentDateTime.subtract(Duration(seconds: Config().feedPastDuration)).toUtc(),
       endDate: currentDateTime.add(Duration(seconds: Config().feedFutureDuration)).toUtc(),
-    ), type: FeedItemType.notification);
+    ), type: FeedItemType.notification) : null;
 
   // Group Posts
 
   Future<List<FeedItem>?> _loadGroupsPostsFeed(DateTime currentDateTime) async {
     List<FeedItem>? feed;
-    List<Group>? userGroups = Groups().userGroups;
+    List<Group>? userGroups = Auth2().isLoggedIn ? Groups().userGroups : null;
     if (userGroups != null) {
       List<Future<List<FeedItem>?>> futures = <Future<List<FeedItem>?>>[];
       for (Group group in userGroups) {
@@ -153,4 +217,3 @@ class Feed {
     return null;
   }
 }
-
