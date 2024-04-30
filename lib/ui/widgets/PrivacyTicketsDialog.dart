@@ -117,7 +117,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                           ])))),
               Container(
                   width: double.infinity,
-                  color: Styles().colors.white,
+                  color: Styles().colors.surface,
                   child: Padding(
                       padding: EdgeInsets.all(12),
                       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -210,7 +210,7 @@ class ShapesPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     Offset thumbCenter = size.center(Offset(0, 0));
     canvas.drawCircle(thumbCenter, 20, Paint()..color = Styles().colors.fillColorSecondaryVariant);
-    canvas.drawCircle(thumbCenter, 18, Paint()..color = Styles().colors.white);
+    canvas.drawCircle(thumbCenter, 18, Paint()..color = Styles().colors.surface);
     canvas.drawCircle(thumbCenter, 15, Paint()..color = Styles().colors.fillColorPrimary);
   }
 

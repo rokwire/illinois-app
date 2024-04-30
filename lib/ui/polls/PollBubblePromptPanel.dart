@@ -98,8 +98,8 @@ class _PollContentState extends State<PollContentWidget> implements Notification
   @override
   void initState() {
     _backgroundColor = widget.backgroundColor ?? Styles().colors.fillColorPrimary;
-    _textColor = widget.textColor ?? Styles().colors.white;
-    _doneButtonColor = widget.doneButtonColor ?? Styles().colors.white;
+    _textColor = widget.textColor ?? Styles().colors.surface;
+    _doneButtonColor = widget.doneButtonColor ?? Styles().colors.surface;
 
     NotificationService().subscribe(this, [
       Polls.notifyResultsChanged,

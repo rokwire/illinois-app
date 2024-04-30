@@ -156,7 +156,7 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors.white, child:
+                Container(color: Styles().colors.surface, child:
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(child:
                       Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
@@ -166,7 +166,7 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
                   ])
                 ),
                 Container(color: Styles().colors.backgroundVariant, height: 1,),
-                Container(color: Styles().colors.white, child:
+                Container(color: Styles().colors.surface, child:
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
@@ -310,7 +310,7 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors.white, child:
+                Container(color: Styles().colors.surface, child:
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(child:
                       Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
@@ -321,7 +321,7 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
                   ]),
               ),
                 Container(color: Styles().colors.backgroundVariant, height: 1,),
-                Container(color: Styles().colors.white, child:
+                Container(color: Styles().colors.surface, child:
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     contentWidget,
                   ),
@@ -393,7 +393,7 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors.white, child:
+                Container(color: Styles().colors.surface, child:
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(child:
                       Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
@@ -404,7 +404,7 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
                   ]),
                 ),
                 Container(color: Styles().colors.backgroundVariant, height: 1,),
-                Container(color: Styles().colors.white, child:
+                Container(color: Styles().colors.surface, child:
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
@@ -498,7 +498,7 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors.white, child:
+                Container(color: Styles().colors.surface, child:
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(child:
                       Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
@@ -509,7 +509,7 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
                   ]),
                 ),
                 Container(color: Styles().colors.backgroundVariant, height: 1,),
-                Container(color: Styles().colors.white, child:
+                Container(color: Styles().colors.surface, child:
                   Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
@@ -596,7 +596,7 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors.white, child:
+                Container(color: Styles().colors.surface, child:
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(child:
                       Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
@@ -607,7 +607,7 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
                   ]),
                 ),
                 Container(color: Styles().colors.backgroundVariant, height: 1,),
-                Container(color: Styles().colors.white, child:
+                Container(color: Styles().colors.surface, child:
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:

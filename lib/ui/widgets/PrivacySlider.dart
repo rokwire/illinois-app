@@ -16,7 +16,7 @@ class PrivacyLevelSlider extends StatefulWidget {
 
 class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
   double? _discreteValue;
-  Color? _mainColor = Styles().colors.white;
+  Color? _mainColor = Styles().colors.surface;
   Color? _trackColor = Styles().colors.fillColorPrimaryVariant;
   Color? _inactiveTrackColor = Styles().colors.surfaceAccent;
 
@@ -32,7 +32,7 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
     final ThemeData theme = Theme.of(context);
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 18),
-        color: widget.color ?? Styles().colors.white,
+        color: widget.color ?? Styles().colors.surface,
         child: Column(
             children: <Widget>[
               Stack(
@@ -200,8 +200,8 @@ class _CustomThumbShape extends SliderComponentShape {
     );
 
     final ColorTween colorTween2 = ColorTween(
-      begin: Styles().colors.white,
-      end: Styles().colors.white,
+      begin: Styles().colors.surface,
+      end: Styles().colors.surface,
     );
 
     final ColorTween colorTween3 = ColorTween(

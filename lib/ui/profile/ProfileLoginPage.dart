@@ -252,7 +252,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       if (code == 'info') {
         contentList.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Text(Localization().getStringEx("panel.settings.home.net_id.message", "Signed in with your NetID"),
-            style: Styles().textStyles.getTextStyle("widget.message.regular.extra_fat")),
+            style: Styles().textStyles.getTextStyle("widget.detail.regular.extra_fat")),
           Padding(padding: EdgeInsets.only(top: 3), child: Text(Auth2().fullName ?? "",
             style: Styles().textStyles.getTextStyle("widget.detail.large.fat"))),
         ]));
@@ -287,7 +287,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       if (code == 'info') {
         contentList.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Text(Localization().getStringEx("panel.settings.home.code_login.message", "Signed in with your Phone"),
-              style: Styles().textStyles.getTextStyle("widget.message.regular.extra_fat")),
+              style: Styles().textStyles.getTextStyle("widget.detail.regular.extra_fat")),
           Visibility(visible: hasFullName, child:
             Padding(padding: EdgeInsets.only(top: 3), child:
               Text(fullName, style: Styles().textStyles.getTextStyle("widget.detail.large.fat"))
@@ -335,7 +335,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       if (code == 'info') {
         contentList.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Text(Localization().getStringEx("panel.settings.home.password_login.message", "Signed in with password"),
-              style: Styles().textStyles.getTextStyle("widget.message.regular.extra_fat")),
+              style: Styles().textStyles.getTextStyle("widget.detail.regular.extra_fat")),
           Visibility(visible: hasFullName, child:
             Padding(padding: EdgeInsets.only(top: 3), child:
               Text(fullName, style: Styles().textStyles.getTextStyle("widget.detail.large.fat"))
@@ -384,7 +384,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       if (code == 'info') {
         contentList.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Text(Localization().getStringEx("panel.settings.home.passkey_login.message", "Signed in with passkey"),
-              style: Styles().textStyles.getTextStyle("widget.message.regular.extra_fat")),
+              style: Styles().textStyles.getTextStyle("widget.detail.regular.extra_fat")),
           Visibility(visible: hasFullName, child:
             Padding(padding: EdgeInsets.only(top: 3), child:
               Text(fullName, style: Styles().textStyles.getTextStyle("widget.detail.large.fat"))

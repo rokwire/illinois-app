@@ -64,7 +64,7 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
         title: Localization().getStringEx('panel.home_canvas_course.header.title', 'Course'),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

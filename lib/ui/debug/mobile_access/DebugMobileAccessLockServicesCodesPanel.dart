@@ -61,7 +61,7 @@ class _DebugMobileAccessLockServicesCodesPanelState extends State<DebugMobileAcc
                     enabled: !_loading,
                     textColor: (!_loading) ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor,
                     borderColor: (!_loading) ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
-                    backgroundColor: Styles().colors.white,
+                    backgroundColor: Styles().colors.surface,
                     fontFamily: Styles().fontFamilies.bold,
                     contentWeight: 0.0,
                     fontSize: 16,
@@ -84,7 +84,7 @@ class _DebugMobileAccessLockServicesCodesPanelState extends State<DebugMobileAcc
           Semantics(
               textField: true,
               child: Container(
-                  color: Styles().colors.white,
+                  color: Styles().colors.surface,
                   child: TextField(
                       maxLines: 2,
                       controller: _codesController,

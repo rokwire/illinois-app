@@ -111,7 +111,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
               children: [
                 _eventImageHeader(),
                 Container(
-                  color: Styles().colors.white,
+                  color: Styles().colors.surface,
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
                     children: [
@@ -166,7 +166,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
             ),
           ),
           CustomPaint(
-            painter: TrianglePainter(painterColor: Styles().colors.white),
+            painter: TrianglePainter(painterColor: Styles().colors.surface),
             child: Container(
               height: 30,
             ),

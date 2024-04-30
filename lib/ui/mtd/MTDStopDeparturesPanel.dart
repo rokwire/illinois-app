@@ -129,7 +129,7 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
         ],
       ),
       body: _buildBody(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

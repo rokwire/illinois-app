@@ -428,7 +428,7 @@ class Event2CreatePanel extends StatefulWidget {
           Padding(padding: padding, child:
             Column(mainAxisSize: MainAxisSize.min, children: [
               Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.white, width: 1.5, ))),
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.surface, width: 1.5, ))),
                 child: Text(title ?? '',
                   style: Styles().textStyles.getTextStyle("widget.heading.regular.fat")
                 ),
@@ -446,7 +446,7 @@ class Event2CreatePanel extends StatefulWidget {
   static Widget buildHeaderBarActionProgress({ EdgeInsetsGeometry padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 20) }) =>
     Padding(padding: padding, child:
         SizedBox(width: 16, height: 16, child:
-          CircularProgressIndicator(color: Styles().colors.white, strokeWidth: 3,)
+          CircularProgressIndicator(color: Styles().colors.surface, strokeWidth: 3,)
         )
     );
 
@@ -662,7 +662,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
             Image.network(_imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders) : Container()
           ),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white), child: Container(height: 30)),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.surface), child: Container(height: 30)),
           Positioned.fill(child:
             Center(child:
               Semantics(label: buttonTitle, hint: buttonHint, button: true, excludeSemantics: true, child:
@@ -670,7 +670,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                   label: buttonTitle,
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                   onTap: _onTapAddImage,
-                  backgroundColor: Styles().colors.white,
+                  backgroundColor: Styles().colors.surface,
                   borderColor: Styles().colors.fillColorSecondary,
                   contentWeight: 0.67,
                 )
@@ -1165,7 +1165,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
           label: buttonTitle,
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.regular"),
           onTap: _onTapSelectLocation,
-          backgroundColor: Styles().colors.white,
+          backgroundColor: Styles().colors.surface,
           borderColor: Styles().colors.fillColorSecondary,
           contentWeight: 0.80,
         )
@@ -1736,7 +1736,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         label: buttonTitle,
         textStyle: buttonEnabled ? Styles().textStyles.getTextStyle('widget.button.title.large.fat') : Styles().textStyles.getTextStyle('widget.button.disabled.title.large.fat'),
         onTap: buttonEnabled ? _onTapCreateEvent : null,
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         borderColor: buttonEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
         progress: _creatingEvent,
       )

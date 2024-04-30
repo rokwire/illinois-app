@@ -37,16 +37,16 @@ class VideoPlayButton extends StatelessWidget {
                   width: (buttonHeight / 2),
                   child: CustomPaint(
                       painter: TrianglePainter(
-                          painterColor: Styles().colors.white,
+                          painterColor: Styles().colors.surface,
                           horzDir: TriangleHorzDirection.rightToLeft,
                           vertDir: TriangleVertDirection.topToBottom),
                       child: Container(height: (buttonHeight / 4)))),
-              Container(width: (buttonHeight / 2), height: 1, color: Styles().colors.white),
+              Container(width: (buttonHeight / 2), height: 1, color: Styles().colors.surface),
               Container(
                   width: (buttonHeight / 2),
                   child: CustomPaint(
                       painter: TrianglePainter(
-                          painterColor: Styles().colors.white,
+                          painterColor: Styles().colors.surface,
                           horzDir: TriangleHorzDirection.rightToLeft,
                           vertDir: TriangleVertDirection.bottomToTop),
                       child: Container(height: (buttonHeight / 4))))

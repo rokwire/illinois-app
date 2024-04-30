@@ -167,7 +167,7 @@ class _Event2AttributeButton extends StatelessWidget {
       borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
     ) :
     BoxDecoration(
-      color: Styles().colors.white,
+      color: Styles().colors.surface,
       border: Border.all(color: borderColor, width: 1),
       borderRadius: BorderRadius.circular(8),
     );
@@ -177,7 +177,7 @@ class _Event2AttributeButton extends StatelessWidget {
     Styles().textStyles.getTextStyle('widget.button.title.medium.fat');
 
   Widget? get headingRightIcon => expanded ?
-    Styles().images.getImage('chevron-up', color: Styles().colors.white, excludeFromSemantics: true) :
+    Styles().images.getImage('chevron-up', color: Styles().colors.surface, excludeFromSemantics: true) :
     Styles().images.getImage('chevron-down', color: Styles().colors.fillColorSecondary, excludeFromSemantics: true);
 
   List<Widget> buildValues() {
@@ -199,7 +199,7 @@ class _Event2AttributeButton extends StatelessWidget {
     TextStyle? textStyle = Styles().textStyles.getTextStyle(isSelected ? "widget.button.title.medium.fat" : "widget.button.title.medium");
     Decoration decoration =
       ((index + 2) < count) ? BoxDecoration(
-        color: Styles().colors.white,
+        color: Styles().colors.surface,
         border: Border(
           left: BorderSide(color: borderColor, width: 1),
           right: BorderSide(color: borderColor, width: 1),
@@ -207,13 +207,13 @@ class _Event2AttributeButton extends StatelessWidget {
         ),
       ) :
       ((index + 1) < count) ? BoxDecoration(
-        color: Styles().colors.white,
+        color: Styles().colors.surface,
         border: Border(
           left: BorderSide(color: borderColor, width: 1),
           right: BorderSide(color: borderColor, width: 1),
         ),
       ) : BoxDecoration(
-        color: Styles().colors.white,
+        color: Styles().colors.surface,
         border: Border.all(color: borderColor, width: 1),
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(8),),
       );

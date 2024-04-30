@@ -40,7 +40,7 @@ class _CanvasAccountNotificationDetailPanelState extends State<CanvasAccountNoti
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.canvas_notification.header.title', 'Notification')),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

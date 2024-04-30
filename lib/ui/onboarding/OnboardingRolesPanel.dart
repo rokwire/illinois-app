@@ -50,7 +50,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       body: SafeArea(child: Column( children: <Widget>[
         Padding(padding: EdgeInsets.only(top: 10, bottom: 10),
           child: Row(children: <Widget>[

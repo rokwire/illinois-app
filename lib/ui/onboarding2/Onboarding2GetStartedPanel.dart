@@ -57,7 +57,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   borderColor: Styles().colors.fillColorSecondary,
-                  backgroundColor: Styles().colors.white,
+                  backgroundColor: Styles().colors.surface,
                   onTap: () => _onGoNext(context),
                 ),
                 Onboarding2UnderlinedButton(

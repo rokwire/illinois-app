@@ -279,7 +279,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
               'panel.settings.meal_plan.button.login_to_view_meal_plan.hint',
               ''),
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-          backgroundColor: Styles().colors.white,
+          backgroundColor: Styles().colors.surface,
           borderColor: Styles().colors.fillColorSecondary,
           onTap: _onTapLogIn,
         ),
@@ -516,7 +516,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   }
 
   Widget _buildAmountView(String balance){
-    return _buildBalanceTableItem(text: balance, backColor: Styles().colors.white,
+    return _buildBalanceTableItem(text: balance, backColor: Styles().colors.surface,
         textAlign: TextAlign.right,
         textStyle: Styles().textStyles.getTextStyle("widget.item.small.fat"));
   }
@@ -541,8 +541,8 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
 
   Widget _buildPrivacyLevelIcon() {
     String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
-    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorSecondary, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 2), color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorSecondary, width: 2), color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
         Text(privacyLevel, style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat"))
       ),
     );

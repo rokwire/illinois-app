@@ -1209,6 +1209,15 @@
 
     "panel.settings.privacy_statement.label.title": "Privacy Statement",
 
+    "panel.settings.contacts.button.help_desk.title": "CONTACT HELP DESK",
+    "panel.settings.contacts.button.share_feedback.title": "SHARE FEEDBACK & IDEAS",
+    "panel.settings.contacts.button.develop_code.title": "DEVELOP CODE WITH ROKWIRE",
+    "panel.settings.partners.button.help_desk.title": "PARTNER WITH US",
+    "panel.settings.review.button.help_desk.title": "REVIEW APP",
+    "panel.settings.contact.info.row1": "",
+    "panel.settings.contact.info.row2": "",
+    "panel.settings.contact.feedback.app.description.format": "The NEOM U app is the official campus app of the <a href='{{university_url}}'> NEOM University</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>. The app is built on the <a href='{{rokwire_platform_url}}'>Rokwire</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> open source software platform.",
+
     "panel.saved.header.label": "Saved",
     "panel.saved.label.events": "My Events",
     "panel.saved.label.athletics": "My Athletics Events",

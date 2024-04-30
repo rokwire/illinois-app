@@ -65,7 +65,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.event2.detail.attendance.header.title', 'Event Attendance'), onLeading: _onTapBack),
       body: _buildPanelContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
     );
   }
 
@@ -231,7 +231,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
               label: Localization().getStringEx('panel.event2.detail.attendance.scan.button', 'Scan Illini ID'),
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
               onTap: _onTapScanButton,
-              backgroundColor: Styles().colors.white,
+              backgroundColor: Styles().colors.surface,
               borderColor: Styles().colors.fillColorSecondary,
               contentWeight: 0.5),
           Visibility(visible: _scanning, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 1))

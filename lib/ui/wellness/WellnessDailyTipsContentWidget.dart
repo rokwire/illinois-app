@@ -87,7 +87,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
   }
 
   Widget _buildTipDescription() {
-    Color? textColor = Styles().colors.white;
+    Color? textColor = Styles().colors.surface;
     Color? backColor = _tipColor ?? Styles().colors.accentColor3;
     return Container(color: backColor, padding: EdgeInsets.all(42), child:
       HtmlWidget(
@@ -149,7 +149,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
   Widget _buildEightDimensionsPopup(BuildContext context) {
     return Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
       ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
-        Container(color: Styles().colors.white, child:
+        Container(color: Styles().colors.surface, child:
           Stack(children: [
             Padding(padding: EdgeInsets.symmetric(vertical: 32), child:
               Column(mainAxisSize: MainAxisSize.min, children: <Widget>[

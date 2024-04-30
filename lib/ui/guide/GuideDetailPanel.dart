@@ -244,7 +244,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
     }
 
     return (0 < contentList.length) ? 
-      Container(color: widget.headingColor ?? Styles().colors.white, padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
+      Container(color: widget.headingColor ?? Styles().colors.surface, padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
         Row(children: [
           Expanded(child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList),
@@ -262,7 +262,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
           label: "Image",
           button: true,
           child:Stack(alignment: Alignment.bottomCenter, children: [
-            Container(color: widget.headingColor ?? Styles().colors.white, padding: EdgeInsets.all(16), child:
+            Container(color: widget.headingColor ?? Styles().colors.surface, padding: EdgeInsets.all(16), child:
               Row(children: [
                 Expanded(child:
                   Column(children: [
@@ -442,7 +442,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
               Padding(padding: EdgeInsets.only(top: 16), child:
                 RoundedButton(label: text ?? '',
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                  backgroundColor: Styles().colors.white,
+                  backgroundColor: Styles().colors.surface,
                   borderColor: Styles().colors.fillColorSecondary,
                   borderWidth: 2,
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),

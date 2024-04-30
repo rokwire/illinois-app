@@ -181,7 +181,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
           Expanded(
               child: Container(
                   decoration: BoxDecoration(
-                      color: Styles().colors.white,
+                      color: Styles().colors.surface,
                       border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
                       borderRadius: BorderRadius.all(Radius.circular(4))),
                   child: Padding(

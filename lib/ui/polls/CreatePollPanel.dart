@@ -90,7 +90,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         ),
         body: SafeArea(
           child: Container(
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
             child: SingleChildScrollView(
               child: Column(children: [
                 _buildDescription(),
@@ -134,7 +134,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
 
   Widget _buildDescription() {
     return Container(
-        color: Styles().colors.white,
+        color: Styles().colors.surface,
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 24),
             child: Text(
@@ -161,7 +161,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
             Expanded(
               flex: 3,
               child: Text(wantToKnowText,
-                style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
+                style: Styles().textStyles.getTextStyle("widget.item.regular.fat")),
             )
           ],
         )));
@@ -225,7 +225,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
           Container(
             padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
             decoration: BoxDecoration(
-              color: Styles().colors.white,
+              color: Styles().colors.background,
               border: Border.all(color: Styles().colors.fillColorSecondary, width: 2.0),
               borderRadius: BorderRadius.circular(24.0),
             ),
@@ -393,7 +393,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                         style: Styles().textStyles.getTextStyle("widget.item.small.thin"),
                       )),
                   UnderlinedButton(
-                      title: Localization().getStringEx("panel.create_poll.setting.button.save.title", "Save poll for starting later"),//TBD localize
+                      title: Localization().getStringEx("panel.create_poll.setting.button.save.title", "Save poll to start later"),//TBD localize
                       // backgroundColor: Colors.white,
                       // borderColor: Styles().colors.fillColorPrimary,
                       // textColor: Styles().colors.fillColorPrimary,

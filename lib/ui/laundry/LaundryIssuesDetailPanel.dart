@@ -144,7 +144,7 @@ class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
           Container(
               padding: EdgeInsets.symmetric(horizontal: 8),
               decoration: BoxDecoration(
-                  color: Styles().colors.white,
+                  color: Styles().colors.surface,
                   boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]),
               child: TextField(
                   maxLines: 8,

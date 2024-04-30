@@ -60,7 +60,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
         title: Localization().getStringEx('panel.canvas_announcements.header.title', 'Announcements'),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -158,7 +158,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
             onTap: () => _onTapAnnouncement(announcement),
             child: Container(
                 decoration: BoxDecoration(
-                    color: Styles().colors.white,
+                    color: Styles().colors.surface,
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(color: Styles().colors.lightGray, width: 1),
                     boxShadow: [

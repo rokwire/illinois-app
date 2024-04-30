@@ -146,7 +146,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
           child: Text(Localization().getStringEx("panel.membership_questions.label.question", 'QUESTION #')+(index+1).toString(), style: Styles().textStyles.getTextStyle("widget.title.light.tiny")),
         ),
         Stack(children: <Widget>[
-          Container(color: Styles().colors.white,
+          Container(color: Styles().colors.surface,
             child: TextField(
               maxLines: 2,
               controller: _controllers![index],

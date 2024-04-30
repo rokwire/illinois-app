@@ -115,7 +115,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       borderColor: Styles().colors.fillColorSecondary,
-                      backgroundColor: Styles().colors.white,
+                      backgroundColor: Styles().colors.surface,
                       onTap: _onLoginTapped,
                     ),
                     Onboarding2UnderlinedButton(

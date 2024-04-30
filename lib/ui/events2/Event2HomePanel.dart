@@ -122,7 +122,7 @@ class Event2HomePanel extends StatefulWidget {
   static Widget _buildOnboardingDescription(BuildContext context) {
     String decriptionHtml = Localization().getStringEx("panel.events2.home.attributes.launch.header.description", "Customize your events feed by setting the below filters or <a href='{{events2_url}}'>view all events now<a> and choose your event filters later.").
       replaceAll('{{events2_url}}', url);
-    TextStyle? descriptionTextStyle = Styles().textStyles.getTextStyle('widget.description.medium.fat.highlight'); // TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.white);
+    TextStyle? descriptionTextStyle = Styles().textStyles.getTextStyle('widget.description.medium.fat.highlight'); // TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.surface);
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(mainAxisSize: MainAxisSize.min, children: [
         Padding(padding: EdgeInsets.only(top: 32), child:
@@ -196,7 +196,7 @@ class Event2HomePanel extends StatefulWidget {
     TextStyle? applyTextStyle = Styles().textStyles.getTextStyle(enabled ? 'widget.button.title.medium.fat' : 'widget.button.title.regular.variant3');
     Color? borderColor = enabled ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimaryVariant;
     Decoration? applyDecoration = BoxDecoration(
-      color: Styles().colors.white,
+      color: Styles().colors.surface,
       border: Border.all(color: borderColor, width: 1),
       borderRadius: BorderRadius.all(Radius.circular(16))
     );
@@ -513,7 +513,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   }
 
   Decoration get _commandBarDecoration => BoxDecoration(
-    color: Styles().colors.white,
+    color: Styles().colors.surface,
     border: Border.all(color: Styles().colors.disabledTextColor, width: 1)
   );
 
@@ -703,7 +703,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   }
 
   Decoration get _contentDescriptionDecoration => BoxDecoration(
-    color: Styles().colors.white,
+    color: Styles().colors.surface,
     border: Border(top: BorderSide(color: Styles().colors.disabledTextColor, width: 1))
   );
 

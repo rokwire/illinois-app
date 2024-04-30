@@ -227,7 +227,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
               padding: EdgeInsets.only(top: 5),
               child: Container(
                   height: 176,
-                  decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(5), boxShadow: [
+                  decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.circular(5), boxShadow: [
                     BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
                   ]),
                   child: Stack(children: [
@@ -375,7 +375,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         contentPadding: EdgeInsets.all(0),
         contentWidget: Container(
             height: 250,
-            decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)),
+            decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.circular(10.0)),
             child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
               Padding(
                   padding: EdgeInsets.all(30),

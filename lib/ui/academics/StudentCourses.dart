@@ -321,7 +321,7 @@ class StudentCoursesListPanel extends StatelessWidget {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.student_courses.header.title', 'My Courses')),
       body: Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child: StudentCoursesContentWidget()),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       bottomNavigationBar: uiuc.TabBar()
     );
   }
@@ -336,7 +336,7 @@ class StudentCourseDetailPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       bottomNavigationBar: uiuc.TabBar()
     );
   }

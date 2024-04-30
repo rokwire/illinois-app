@@ -63,7 +63,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
       appBar: HeaderBar(),
       body:
       Container(
-        color:  Styles().colors.white,
+        color:  Styles().colors.surface,
         child:Column(
         children: <Widget>[
           Expanded(
@@ -149,7 +149,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
   }
 
   Widget _buildApproval(){
-    return Container(color: Styles().colors.white, padding: EdgeInsets.symmetric(horizontal: 16), child:
+    return Container(color: Styles().colors.surface, padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Container(height: 28,),
         Row(children: [
@@ -221,7 +221,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
 
   Widget _buildBottomButtons(BuildContext context){
     return SafeArea(child: Container(
-      color: Styles().colors.white,
+      color: Styles().colors.surface,
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
         children: <Widget>[
@@ -230,7 +230,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                 label: _continueButtonText ?? '',
                 hint: Localization().getStringEx("panel.pending_member_detail.button.add.hint", ""),
                 textStyle: _canContinue ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
-                backgroundColor: Styles().colors.white,
+                backgroundColor: Styles().colors.surface,
                 borderColor: _canContinue? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 13),
                 progress: _updating,
@@ -309,7 +309,7 @@ class _MembershipAnswer extends StatelessWidget{
         Container(
           padding: EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
             border: Border.all(color: Styles().colors.fillColorPrimary)
           ),
           child: Column(

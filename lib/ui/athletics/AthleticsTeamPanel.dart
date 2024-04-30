@@ -120,7 +120,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
       SliverToutHeaderBar(
           flexImageUrl: randomImageURL,
           flexBackColor: Styles().colors.fillColorPrimary,
-          flexRightToLeftTriangleColor: Styles().colors.white,
+          flexRightToLeftTriangleColor: Styles().colors.surface,
           flexLeftToRightTriangleColor: Colors.transparent),
       SliverList(
           delegate: SliverChildListDelegate([

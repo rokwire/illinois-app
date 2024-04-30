@@ -55,7 +55,7 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
         title: Localization().getStringEx('panel.canvas_collaborations.header.title', 'Collaborations'),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -145,7 +145,7 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
             onTap: () => _onTapCollaboration(collaboration),
             child: Container(
                 decoration: BoxDecoration(
-                    color: Styles().colors.white,
+                    color: Styles().colors.surface,
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(color: Styles().colors.lightGray, width: 1),
                     boxShadow: [

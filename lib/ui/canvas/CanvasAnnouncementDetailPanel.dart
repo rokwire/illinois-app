@@ -40,7 +40,7 @@ class _CanvasAnnouncementDetailPanelState extends State<CanvasAnnouncementDetail
         title: Localization().getStringEx('panel.canvas_announcement.header.title', 'Announcement'),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

@@ -76,7 +76,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors.white,
+    backgroundColor: Styles().colors.surface,
   );
 
   Widget _buildPanelContent() =>

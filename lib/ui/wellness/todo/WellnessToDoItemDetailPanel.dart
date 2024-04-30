@@ -204,7 +204,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
               child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                   decoration:
-                      BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
+                      BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                     Text(
                         StringUtils.ensureNotEmpty(_category?.name,
@@ -268,7 +268,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
               child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                   decoration:
-                      BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
+                      BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                     Text(StringUtils.ensureNotEmpty(_formattedDueDate),
                         style: Styles().textStyles.getTextStyle("panel.wellness.todo.item_detail.title")),
@@ -292,7 +292,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                   child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                       decoration:
-                      BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
+                      BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
                       child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                         Text(StringUtils.ensureNotEmpty(_formattedEndDate),
                             style: Styles().textStyles.getTextStyle("panel.wellness.todo.item_detail.title")),
@@ -337,13 +337,13 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
           Container(
             decoration: BoxDecoration(
               border: Border.all(color: Styles().colors.mediumGray, width: 1),
-              color: Styles().colors.white,
+              color: Styles().colors.surface,
             ),
             child: Padding(
               padding: EdgeInsets.only(right: 5, left: 5),
               child: DropdownButton(
                   value: _selectedRecurringType,
-                  dropdownColor: Styles().colors.white,
+                  dropdownColor: Styles().colors.surface,
                   isExpanded: true,
                   icon: Styles().images.getImage(_reminderTypeDropDownValuesVisible ? 'chevron-up' : 'chevron-down'),
                   style: Styles().textStyles.getTextStyle("panel.wellness.todo.item_detail.title"),
@@ -375,7 +375,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                   child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                       decoration:
-                          BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
+                          BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
                       child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                         Text(StringUtils.ensureNotEmpty(_formattedDueTime),
                             style: Styles().textStyles.getTextStyle("panel.wellness.todo.item_detail.title")),
@@ -397,7 +397,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
               child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                   decoration:
-                      BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
+                      BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                     Text(StringUtils.ensureNotEmpty(selectedTypeLabel),
                         overflow: TextOverflow.ellipsis,
@@ -466,7 +466,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
               child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: (CollectionUtils.isEmpty(_workDays) ? 24 : 12)),
                   decoration:
-                      BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
+                      BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
                   child: Row(children: [
                     Expanded(
                         child: SingleChildScrollView(
@@ -536,7 +536,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   Widget _buildInputField({required TextEditingController controller}) {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 8),
-        decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
+        decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
         child: TextField(
             controller: controller,
             decoration: InputDecoration(border: InputBorder.none),

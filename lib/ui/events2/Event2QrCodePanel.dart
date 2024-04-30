@@ -108,7 +108,7 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
                       ? Semantics(
                     label: Localization().getStringEx('panel.event_qr_code.code.hint', "QR code image"),
                     child: Container(
-                      decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
+                      decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(5))),
                       padding: EdgeInsets.all(5),
                       child: Image.memory(
                         _qrCodeBytes!,

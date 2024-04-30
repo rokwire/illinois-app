@@ -371,11 +371,11 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   Widget _buildCreatePollButton() {
-    return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors.white,child:
+    return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors.surface,child:
       RoundedButton(label:Localization().getStringEx("panel.polls_home.text.create_poll","Create a Poll"),
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
           borderColor: Styles().colors.fillColorSecondary,
-          backgroundColor: Styles().colors.white,
+          backgroundColor: Styles().colors.surface,
         onTap:_onCreatePollTapped
     ));
   }
@@ -879,7 +879,7 @@ class _PollCardState extends State<PollCard> {
 
     return Semantics(container: true, child:
       Column(children: <Widget>[
-        Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(5)), child:
+        Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.circular(5)), child:
           contnetWidget
         ),
       ],),
@@ -937,7 +937,7 @@ class _PollCardState extends State<PollCard> {
               flex: 5,
               key: progressKey, child:
                 Stack(alignment: Alignment.centerLeft, children: <Widget>[
-              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.white, progressColor: useCustomColor ?Styles().colors.fillColorPrimary:Styles().colors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.surface, progressColor: useCustomColor ?Styles().colors.fillColorPrimary:Styles().colors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
               Container(/*height: 15+ 16*MediaQuery.of(context).textScaleFactor,*/ child:
                 Padding(padding: EdgeInsets.only(left: 5), child:
                     Row(children: <Widget>[
@@ -978,7 +978,7 @@ class _PollCardState extends State<PollCard> {
           Stack(children: <Widget>[
             Container(padding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
               decoration: BoxDecoration(
-                color: Styles().colors.white,
+                color: Styles().colors.surface,
                 border: Border.all(color: enabled? Styles().colors.fillColorSecondary :Styles().colors.surfaceAccent, width: 2.0),
                 borderRadius: BorderRadius.circular(24.0),
               ),

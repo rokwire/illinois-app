@@ -436,7 +436,7 @@ class _GuideFeatureButtonState extends State<GuideFeatureButton> {
       GestureDetector(onTap: widget.onTap ?? _nop, child:
         Container(
           decoration: BoxDecoration(
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
             boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.all(Radius.circular(4)),
           ), child:

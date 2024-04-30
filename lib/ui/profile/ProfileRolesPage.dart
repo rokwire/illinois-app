@@ -93,7 +93,7 @@ class _ProfileRolesPageState extends State<ProfileRolesPage> {
               hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
               enabled: _canSave,
               fontFamily: Styles().fontFamilies.bold,
-              backgroundColor: Styles().colors.white,
+              backgroundColor: Styles().colors.surface,
               fontSize: 16.0,
               textColor: Styles().colors.fillColorPrimary,
               borderColor: Styles().colors.fillColorSecondary,

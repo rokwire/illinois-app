@@ -109,7 +109,7 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
       Padding(padding: EdgeInsets.only(left: 24, right: 24), child:
         Stack(children: [
           Container(
-            decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white),
+            decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.surface),
             child: Semantics(textField: true, excludeSemantics: true,
               label: Localization().getStringEx('panel.group.detail.post.report_abuse.comment.label', 'Comment Label'),
               hint: Localization().getStringEx('panel.group.detail.post.report_abuse.comment.hint', ''),
@@ -147,7 +147,7 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
               label: Localization().getStringEx("panel.group.detail.post.report_abuse.button.send.label", "Send"),
               hint: Localization().getStringEx("panel.group.detail.post.report_abuse.button.send.hint", "Tap to send report"),
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-              backgroundColor: Styles().colors.white,
+              backgroundColor: Styles().colors.surface,
               borderColor: Styles().colors.fillColorSecondary,
               progress:  _sending,
               onTap: _onSend,

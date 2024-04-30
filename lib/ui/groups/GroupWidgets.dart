@@ -793,7 +793,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
     return Row(children: [
       Expanded(child:
         Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
-          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))
+          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: Styles().textStyles.getTextStyle('widget.card.title.large.extra_fat'))
         )
       )
     ]);
@@ -993,8 +993,8 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
 
   Widget _buildPrivacyLevelWidget() {
     String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
-    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorSecondary, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 2), color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorSecondary, width: 2), color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
         Text(privacyLevel, style: Styles().textStyles.getTextStyle('widget.card.title.regular.extra_fat'))
       ),
     );
@@ -1048,7 +1048,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
           onTap: _onTapCard,
           child: Container(
               decoration: BoxDecoration(
-                  color: Styles().colors.white,
+                  color: Styles().colors.surface,
                   boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
                   borderRadius: BorderRadius.all(Radius.circular(8))),
               child: Padding(
@@ -1220,7 +1220,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
         onTap: widget.onCardTap ?? _onTapCard,
          child:Container(
         decoration: BoxDecoration(
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
             boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
             borderRadius: BorderRadius.all(Radius.circular(8))),
         child: Padding(
@@ -1418,7 +1418,7 @@ class GroupPostReaction extends StatelessWidget {
 
     showModalBottomSheet(
         context: context,
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         isScrollControlled: true,
         isDismissible: true,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),
@@ -2127,7 +2127,7 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
     return Column(children: <Widget>[
       Container(
         decoration: BoxDecoration(
-          color: Styles().colors.white,
+          color: Styles().colors.surface,
           borderRadius: BorderRadius.all(Radius.circular(8)),
           boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
         ),
@@ -2228,7 +2228,7 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
                 flex: 5,
                 key: progressKey, child:
             Stack(alignment: Alignment.centerLeft, children: <Widget>[
-              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.white, progressColor: useCustomColor ?Styles().colors.fillColorPrimary:Styles().colors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.surface, progressColor: useCustomColor ?Styles().colors.fillColorPrimary:Styles().colors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
               Container(/*height: 15+ 16*MediaQuery.of(context).textScaleFactor,*/ child:
               Padding(padding: EdgeInsets.only(left: 5), child:
               Row(children: <Widget>[
@@ -2265,7 +2265,7 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 5,horizontal: 16),
                   decoration: BoxDecoration(
-                    color: Styles().colors.white,
+                    color: Styles().colors.surface,
                     border: Border.all(
                         color: enabled? Styles().colors.fillColorSecondary :Styles().colors.surfaceAccent,
                         width: 2.0),
@@ -2702,7 +2702,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
                       label: Localization().getStringEx("widget.groups.selection.button.send.label", "Send"),//TBD localize
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                       borderColor: Styles().colors.fillColorSecondary,
-                      backgroundColor: Styles().colors.white,
+                      backgroundColor: Styles().colors.surface,
                       onTap: _onTapSelect
                   )),
                   Container(width: 16,),
@@ -2710,7 +2710,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
                       label: Localization().getStringEx("widget.groups.selection.button.cancel.label", "Cancel"),//TBD localize
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                       borderColor: Styles().colors.fillColorPrimary,
-                      backgroundColor: Styles().colors.white,
+                      backgroundColor: Styles().colors.surface,
                       onTap: _onTapClose
                   ))
                 ],
@@ -2858,7 +2858,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
     preferenceWidgets.add(
         Container(
           padding: EdgeInsets.all(1),
-          decoration:  BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
+          decoration:  BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
           child: Column(
             children: [
               EnabledToggleButton(
@@ -2875,7 +2875,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
               Row(children: [
                 Expanded(
                     child: Container(
-                        color: Styles().colors.white,
+                        color: Styles().colors.surface,
                         child: Padding(
                             padding: EdgeInsets.only(left: 10),
                             child: Column(children: [
@@ -2936,7 +2936,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
     //Post
     preferenceWidgets.add(Container(
         padding: EdgeInsets.all(1),
-        decoration:  BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
+        decoration:  BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
         child: Column(
             children: [
               EnabledToggleButton(
@@ -2953,7 +2953,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
               Row(children: [
                 Expanded(
                     child: Container(
-                        color: Styles().colors.white,
+                        color: Styles().colors.surface,
                         child: Padding(
                             padding: EdgeInsets.only(left: 10),
                             child: Column(children: [

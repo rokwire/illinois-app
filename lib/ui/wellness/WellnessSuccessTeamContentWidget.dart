@@ -103,7 +103,7 @@ class _WellnessSuccessTeamContentWidgetState extends State<WellnessSuccessTeamCo
     }
     Widget noMembers = Padding(padding: EdgeInsets.only(bottom: 16), child: Container(
       decoration: BoxDecoration(
-      color: Styles().colors.white,
+      color: Styles().colors.surface,
       boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
       borderRadius: BorderRadius.circular(4)),
       child: Container(
@@ -124,7 +124,7 @@ class _WellnessSuccessTeamContentWidgetState extends State<WellnessSuccessTeamCo
   Widget _buildSuccessTeamItem(String department, String type, String name, String externalLink, [String image = ""]) {
     return Padding(padding: EdgeInsets.only(bottom: 16), child: Container(
         decoration: BoxDecoration(
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
             boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.circular(4)),
         child: Container(padding: EdgeInsets.all(16), child: Column(children: [

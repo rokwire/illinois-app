@@ -181,7 +181,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
       }
     }
 
-    return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
+    return Container(decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
       Column(children: widgetList)
     );
 
@@ -238,7 +238,7 @@ class WellnessLargeResourceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
+    return Container(decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
       InkWell(onTap: onTap, child:
         Padding(padding: EdgeInsets.only(left: 16), child:
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -269,7 +269,7 @@ class WellnessRegularResourceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return hasBorder ? Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
+    return hasBorder ? Container(decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
       _buildInterior()
     ) : _buildInterior();
   }

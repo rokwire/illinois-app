@@ -59,7 +59,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
         title: Localization().getStringEx('panel.canvas_modules.header.title', 'Modules')
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

@@ -198,7 +198,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
     RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(scrollDirection: Axis.vertical, controller: _scrollController, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Container(color: Styles().colors.white, child:
+          Container(color: Styles().colors.surface, child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               _buildSearchBar(),
               _buildCommandBar(),
@@ -228,7 +228,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
   );
 
   Decoration get _searchBarDecoration => BoxDecoration(
-    color: Styles().colors.white,
+    color: Styles().colors.surface,
     border: Border(bottom: BorderSide(color: Styles().colors.disabledTextColor, width: 1))
   );
 
@@ -393,7 +393,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
   }
 
   Decoration get _contentDescriptionDecoration => BoxDecoration(
-    color: Styles().colors.white,
+    color: Styles().colors.surface,
     border: Border(
       top: BorderSide(color: Styles().colors.disabledTextColor, width: 1),
       bottom: BorderSide(color: Styles().colors.disabledTextColor, width: 1),

@@ -143,11 +143,11 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors.white, child:
+                Container(color: Styles().colors.surface, child:
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        Container(color: Styles().colors.white, child:
+                        Container(color: Styles().colors.surface, child:
                           Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                             Row(children: <Widget>[
                               Expanded(child:

@@ -116,7 +116,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors.white,
+    backgroundColor: Styles().colors.surface,
   );
 
   Widget _buildPanelContent() =>

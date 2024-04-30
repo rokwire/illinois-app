@@ -717,7 +717,7 @@ class ExplorePanelState extends State<ExplorePanel>
   Widget _buildEventsDisplayTypesDropDownButton() {
     return RibbonButton(
       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       rightIconKey: (_eventsDisplayDropDownValuesVisible ? 'chevron-up' : 'chevron-down'),
@@ -757,7 +757,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   Widget _buildEventsDisplayTypeDropDownItem(EventsDisplayType displayType) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _eventsDisplayTypeLabel(displayType),
@@ -1155,7 +1155,7 @@ class _MTDInstructionsPopupState extends State<ExploreOptionalMessagePopup> {
     String dontShow = Localization().getStringEx("panel.explore.instructions.mtd.dont_show.msg", "Don't show me this again.");
 
     return AlertDialog(contentPadding: EdgeInsets.zero, content:
-      Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)), child:
+      Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.circular(10.0)), child:
         Stack(alignment: Alignment.center, children: [
           Padding(padding: EdgeInsets.only(top: 36, bottom: 9), child:
             Column(mainAxisSize: MainAxisSize.min, children: [

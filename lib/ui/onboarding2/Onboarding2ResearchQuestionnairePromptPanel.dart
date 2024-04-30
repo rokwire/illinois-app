@@ -20,8 +20,8 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
       backgroundColor: Styles().colors.background,
       body: Stack(children: [
         Column(children: [
-          Container(color: Styles().colors.white, height: 90,),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
+          Container(color: Styles().colors.surface, height: 90,),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.surface, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
             Container(height: 70,),
           ),
         ],),
@@ -83,7 +83,7 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
                 label: Localization().getStringEx('dialog.yes.title', 'Yes'),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                backgroundColor: Styles().colors.white,
+                backgroundColor: Styles().colors.surface,
                 borderColor: Styles().colors.fillColorSecondaryVariant,
                 onTap: () => _onYes(context),
               ),
@@ -94,7 +94,7 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
                 label: Localization().getStringEx('dialog.no.title', 'No'),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                backgroundColor: Styles().colors.white,
+                backgroundColor: Styles().colors.surface,
                 borderColor: Styles().colors.fillColorSecondaryVariant,
                 onTap: () => _onNo(context),
               ),

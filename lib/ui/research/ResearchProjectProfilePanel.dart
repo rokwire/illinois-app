@@ -148,7 +148,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
 
     return Column(children: <Widget>[
       Stack(children: [
-        Semantics(container: true, child:Container(color: Styles().colors.white, child:
+        Semantics(container: true, child:Container(color: Styles().colors.surface, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children:<Widget>[
               Padding(padding: EdgeInsets.zero, child:
@@ -207,7 +207,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
       ),
       
       Container(height: 1, color: Styles().colors.surfaceAccent,),
-      Container(color: Styles().colors.white, child:
+      Container(color: Styles().colors.surface, child:
         Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 24, bottom: 12,), child:
           SafeArea(child: 
           RoundedButton(
@@ -216,7 +216,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             borderColor: Styles().colors.fillColorSecondary,
-            backgroundColor: Styles().colors.white,
+            backgroundColor: Styles().colors.surface,
             onTap: () => _onSubmit(),
           ),
           ),

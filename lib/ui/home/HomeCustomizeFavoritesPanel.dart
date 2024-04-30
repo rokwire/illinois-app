@@ -392,7 +392,7 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
 
   void _showUnstarConfirmationDialog(List<String>? favorites) {
     AppAlert.showCustomDialog(context: context, contentPadding: EdgeInsets.zero, contentWidget:
-      Container(height: 250, decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(15.0)), child:
+      Container(height: 250, decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.circular(15.0)), child:
         Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
           Padding(padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16), child:
             Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [

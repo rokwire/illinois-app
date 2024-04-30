@@ -174,7 +174,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                       border: Border.all(color: Styles().colors.fillColorPrimary, width: 2),
-                      color: Styles().colors.white,
+                      color: Styles().colors.surface,
                       borderRadius: BorderRadius.all(Radius.circular(100))),
                   child: Container(
                       height: 52,
@@ -182,7 +182,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                           border: Border.all(color: Styles().colors.fillColorSecondary, width: 2),
-                          color: Styles().colors.white,
+                          color: Styles().colors.surface,
                           borderRadius: BorderRadius.all(Radius.circular(100))),
                       child: Semantics(
                           label: Localization().getStringEx("panel.settings.privacy.label.privacy_level.title", "Privacy Level: "),

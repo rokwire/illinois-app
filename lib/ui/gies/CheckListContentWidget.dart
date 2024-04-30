@@ -71,7 +71,7 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
     return Column(children: <Widget>[
       _buildTitle(),
       Expanded(child:
-        Container(color: Styles().colors.white, child:
+        Container(color: Styles().colors.surface, child:
           Stack(children: [
             _buildSlant(slantHeight),
             SingleChildScrollView(child:
@@ -188,7 +188,7 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
   Widget _buildSlant(double height) {
     return Column(children: <Widget>[
       Container(color: Styles().colors.fillColorPrimary, child:
-        CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white, horzDir: TriangleHorzDirection.rightToLeft), child:
+        CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.surface, horzDir: TriangleHorzDirection.rightToLeft), child:
           Container(height: height,),
         ),
       ),
@@ -484,7 +484,7 @@ class _CheckListPageWidget extends StatelessWidget{
                 Semantics(container: true,
                   child: RoundedButton(label: title ?? '',
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                    backgroundColor: Styles().colors.white,
+                    backgroundColor: Styles().colors.surface,
                     borderColor: Styles().colors.fillColorSecondary,
                     borderWidth: 2,
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -518,12 +518,12 @@ class _CheckListPageWidget extends StatelessWidget{
           buttonWidgets.add(
               Semantics(container: true,
                   child: RoundedButton(label: position == "right"? Localization().getStringEx("panel.checklist.button.next_page.label", "Next Page") : Localization().getStringEx("panel.checklist.button.previous_page.label",  "Previous Page"),
-                      backgroundColor: Styles().colors.white,
+                      backgroundColor: Styles().colors.surface,
                       textWidget: Text(
                         title ?? "",
                         semanticsLabel: "",
                         style: Styles().textStyles.getTextStyle("widget.button.title.extra_large"),),
-                      borderColor: Styles().colors.white,
+                      borderColor: Styles().colors.surface,
                       borderWidth: 2,
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       contentWeight: 0,
@@ -548,7 +548,7 @@ class _CheckListPageWidget extends StatelessWidget{
 
     return Padding(padding: EdgeInsets.only(), child:
       Container(
-      //color: Styles().colors.white,
+      //color: Styles().colors.surface,
       clipBehavior: Clip.none,
       child: Padding(padding: EdgeInsets.only(top: 0, bottom: 16), child:
       Row(children: [ Expanded(child: Column(children: contentList))],)
@@ -659,7 +659,7 @@ class _CheckListNotesWidgetState extends State<CheckListNotesWidget> {
                 Analytics().logAlert(text: "Things to Remember", selection: "Close");
                 Navigator.of(context).pop();
               }, child:
-              Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white, width: 2),), child:
+              Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.surface, width: 2),), child:
               Center(child:
               Text('\u00D7', style: Styles().textStyles.getTextStyle("widget.dialog.message.large"),semanticsLabel: "", ),
               ),
@@ -882,7 +882,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
         child:Container(
           decoration: BoxDecoration(
-              color: Styles().colors.white,
+              color: Styles().colors.surface,
               boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
               borderRadius: BorderRadius.all(Radius.circular(4))
           ),
@@ -899,7 +899,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
     return Column(children: <Widget>[
       Container(color:  Styles().colors.fillColorPrimary, height: 40,),
       Container(color: Styles().colors.fillColorPrimary, child:
-      CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white, horzDir: TriangleHorzDirection.rightToLeft), child:
+      CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.surface, horzDir: TriangleHorzDirection.rightToLeft), child:
       Container(height: 55,),
       )),
     ],);

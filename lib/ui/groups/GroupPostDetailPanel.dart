@@ -248,7 +248,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                           label: Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update'),
                                           textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                                           borderColor: Styles().colors.fillColorSecondary,
-                                          backgroundColor: Styles().colors.white,
+                                          backgroundColor: Styles().colors.surface,
                                           onTap: _onTapUpdateMainPost)),
                                 ])
 
@@ -348,7 +348,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                           Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send'),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                         borderColor: Styles().colors.fillColorSecondary,
-                        backgroundColor: Styles().colors.white,
+                        backgroundColor: Styles().colors.surface,
                         onTap: _onTapSend)),
                 Container(width: 20),
                 Flexible(
@@ -359,7 +359,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                             'Cancel'),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                         borderColor: Styles().colors.textSurface,
-                        backgroundColor: Styles().colors.white,
+                        backgroundColor: Styles().colors.surface,
                         onTap: _onTapCancel))
               ])
             ])));
@@ -549,7 +549,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     Analytics().logSelect(target: 'Post Options');
     showModalBottomSheet(
       context: context,
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       isScrollControlled: true,
       isDismissible: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),
@@ -579,7 +579,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     Analytics().logSelect(target: 'Reply Options');
     showModalBottomSheet(
       context: context,
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       isScrollControlled: true,
       isDismissible: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),

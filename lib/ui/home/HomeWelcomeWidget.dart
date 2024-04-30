@@ -135,7 +135,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
               ClipRRect(borderRadius: BorderRadius.circular(4), child:
                 Image.network(_video!.thumbUrl!, loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                   return imagePlaceholder(child: (loadingProgress != null) ? Center(child:
-                    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white), ) 
+                    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.surface), ) 
                   ) : child);
                 })
               ) :

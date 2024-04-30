@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:illinois/ui/settings/SettingsLoginCodePanel.dart';
@@ -112,8 +113,21 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
           Expanded(child:
             SingleChildScrollView(scrollDirection: Axis.vertical, child:
               Column(children:[
-                Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
-                  Onboarding2TitleWidget(),
+                Stack(
+                  children: [
+                    Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
+                      Onboarding2TitleWidget(),
+                    ),
+                    Positioned(
+                      top: 32,
+                      left: 0,
+                      child: Onboarding2BackButton(padding: const EdgeInsets.only(left: 17,),
+                          onTap:() {
+                            Analytics().logSelect(target: "Back");
+                            Navigator.pop(context);
+                          }),
+                    ),
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),

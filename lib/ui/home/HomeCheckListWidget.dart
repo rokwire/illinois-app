@@ -92,7 +92,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
         Container(
           constraints: BoxConstraints(maxHeight: 100),
           padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(color: Styles().colors.white,
+            decoration: BoxDecoration(color: Styles().colors.surface,
                 borderRadius: BorderRadius.circular(5)),
             child: Column(children: <Widget>[
               Expanded(
@@ -107,7 +107,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
   Widget _buildStartContent() {
     return 
         Container(padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(color: Styles().colors.white,
+            decoration: BoxDecoration(color: Styles().colors.surface,
                 borderRadius: BorderRadius.circular(5)),
             child: Column(
               children: [
@@ -123,7 +123,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                 RoundedButton(
                   label: Localization().getStringEx('widget.gies.button.title.begin', "Begin Checklist"),
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                  backgroundColor: Styles().colors.white,
+                  backgroundColor: Styles().colors.surface,
                   borderColor: Styles().colors.fillColorSecondary,
                   onTap: () => _onTapContinue(analyticsAction: 'Begin Checklist'),
                 ),
@@ -135,7 +135,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
   Widget _buildEndedContent() {
     return 
         Container(padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(color: Styles().colors.white,
+            decoration: BoxDecoration(color: Styles().colors.surface,
                 borderRadius: BorderRadius.circular(5)),
             child: Column(
               children: [
@@ -151,7 +151,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                 RoundedButton(
                   label: Localization().getStringEx('widget.gies.button.title.review', "Review Checklist"),
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                  backgroundColor: Styles().colors.white,
+                  backgroundColor: Styles().colors.surface,
                   borderColor: Styles().colors.fillColorSecondary,
                   onTap: () => _onTapContinue(analyticsAction: 'Review Checklist'),
                 ),
@@ -164,7 +164,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
   Widget _buildProgressContent() {
     return 
         Container(padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(color: Styles().colors.white,
+            decoration: BoxDecoration(color: Styles().colors.surface,
                 borderRadius: BorderRadius.circular(5)),
             child: Column(
               children: [
@@ -179,7 +179,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                 RoundedButton(
                   label: Localization().getStringEx('widget.gies.button.title.continue', "Continue"),
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                  backgroundColor: Styles().colors.white,
+                  backgroundColor: Styles().colors.surface,
                   borderColor: Styles().colors.fillColorSecondary,
                   onTap: () => _onTapContinue(analyticsAction: 'Continue'),
                 ),

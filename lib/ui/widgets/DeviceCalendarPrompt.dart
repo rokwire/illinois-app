@@ -58,7 +58,7 @@ class _DeviceCalendarPromptState extends State<DeviceCalendarPrompt>{
                           label: Localization().getStringEx("dialog.no.title","No"),
                           textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
                           borderColor: Styles().colors.fillColorPrimary,
-                          backgroundColor: Styles().colors.white,
+                          backgroundColor: Styles().colors.surface,
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           onTap: _onDecline
                           ))),
@@ -68,7 +68,7 @@ class _DeviceCalendarPromptState extends State<DeviceCalendarPrompt>{
                           label: Localization().getStringEx("dialog.yes.title","Yes"),
                           textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
                           borderColor: Styles().colors.fillColorSecondary,
-                          backgroundColor: Styles().colors.white,
+                          backgroundColor: Styles().colors.surface,
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           onTap: _onConfirm
                         ))),
@@ -127,7 +127,7 @@ class DeviceCalendarMessage extends StatelessWidget {
                   label: Localization().getStringEx("dialog.ok.title", "OK"),
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
                   borderColor: Styles().colors.fillColorPrimary,
-                  backgroundColor: Styles().colors.white,
+                  backgroundColor: Styles().colors.surface,
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   onTap: () => Navigator.of(context).pop()
                   )

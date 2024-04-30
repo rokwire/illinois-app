@@ -149,7 +149,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                         hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        backgroundColor: Styles().colors.white,
+                        backgroundColor: Styles().colors.surface,
                         borderColor: Styles().colors.fillColorSecondaryVariant,
                         onTap: () => _goNext(context),
                       ),),

@@ -18,8 +18,8 @@ class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatelessWidg
       backgroundColor: Styles().colors.background,
       body: Stack(children: [
         Column(children: [
-          Container(color: Styles().colors.white, height: 90,),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
+          Container(color: Styles().colors.surface, height: 90,),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.surface, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
             Container(height: 70,),
           ),
         ],),
@@ -60,7 +60,7 @@ class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatelessWidg
             label: Localization().getStringEx('dialog.OK.title', 'OK'),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            backgroundColor: Styles().colors.white,
+            backgroundColor: Styles().colors.surface,
             borderColor: Styles().colors.fillColorSecondaryVariant,
             onTap: () => _onContinue(context),
           ),

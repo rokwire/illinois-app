@@ -188,7 +188,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
       textStyle = 'widget.colourful_button.title.accent';
     }
     else {
-      backColor = Styles().colors.white;
+      backColor = Styles().colors.surface;
       textStyle = 'widget.button.title.enabled';
     }
 

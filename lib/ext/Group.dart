@@ -40,7 +40,7 @@ extension GroupExt on Group {
     if(member?.status != null){
       return groupMemberStatusToColor(member!.status);
     }
-    return Styles().colors.white;
+    return Styles().colors.surface;
   }
 
   String? get displayUpdateTime {

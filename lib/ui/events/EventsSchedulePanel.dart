@@ -95,7 +95,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.events_schedule.header.title', 'Event Schedule'),),
       body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Container(color: Styles().colors.white, child :
+        Container(color: Styles().colors.surface, child :
           Padding(padding: EdgeInsets.all(12), child:
             Row(children: _buildTabWidgets(),)
           ),
@@ -107,7 +107,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Container( color: Styles().colors.white,
+                      Container( color: Styles().colors.surface,
                         width: double.infinity,
                         child :
                         SingleChildScrollView(

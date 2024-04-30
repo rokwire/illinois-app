@@ -59,7 +59,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
               Expanded(child:
                 SingleChildScrollView(child:
                   Container(
-                    color: Styles().colors.white,
+                    color: Styles().colors.surface,
                     child:Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
@@ -179,7 +179,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                       hint: Localization().getStringEx('panel.onboarding2.explore_campus.button.continue.hint', ''),
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      backgroundColor: Styles().colors.white,
+                      backgroundColor: Styles().colors.surface,
                       borderColor: Styles().colors.fillColorSecondaryVariant,
                       onTap: () => _goNext(context),
                     )

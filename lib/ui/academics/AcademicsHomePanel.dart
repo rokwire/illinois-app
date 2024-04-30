@@ -147,7 +147,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
           container: true,
           child: RibbonButton(
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-            backgroundColor: Styles().colors.white,
+            backgroundColor: Styles().colors.surface,
             borderRadius: BorderRadius.all(Radius.circular(5)),
             border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
@@ -201,7 +201,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
 
   Widget _buildContentItem(AcademicsContent contentItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         rightIcon: _buildContentItemRightIcon(contentItem),

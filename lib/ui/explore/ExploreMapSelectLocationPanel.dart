@@ -283,7 +283,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     if (_selectedMapExplore is Explore) {
       title = (_selectedMapExplore as Explore).mapMarkerTitle;
       description = (_selectedMapExplore as Explore).mapMarkerSnippet;
-      exploreColor = (_selectedMapExplore as Explore).uiColor ?? Styles().colors.white;
+      exploreColor = (_selectedMapExplore as Explore).uiColor ?? Styles().colors.surface;
       if (_selectedMapExplore is ExplorePOI) {
         title = title?.replaceAll('\n', ' ');
         detailsLabel = Localization().getStringEx('panel.explore.button.clear.title', 'Clear');
@@ -300,7 +300,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
       exploreColor = explore?.uiColor ?? Styles().colors.fillColorSecondary;
     }
     else {
-      exploreColor = Styles().colors.white;
+      exploreColor = Styles().colors.surface;
       canSelect = canDetail = false;
     }
 

@@ -67,7 +67,7 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
                 enabled: (_isRegistered == false),
                 textColor: (_isRegistered == false) ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor,
                 borderColor: (_isRegistered == false) ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
-                backgroundColor: Styles().colors.white,
+                backgroundColor: Styles().colors.surface,
                 fontFamily: Styles().fontFamilies.bold,
                 contentWeight: 0.0,
                 fontSize: 16,
@@ -79,7 +79,7 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
                 enabled: (_isRegistered == true),
                 textColor: (_isRegistered == true) ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor,
                 borderColor: (_isRegistered == true) ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
-                backgroundColor: Styles().colors.white,
+                backgroundColor: Styles().colors.surface,
                 fontFamily: Styles().fontFamilies.bold,
                 contentWeight: 0.0,
                 fontSize: 16,
@@ -102,7 +102,7 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
           Semantics(
               textField: true,
               child: Container(
-                  color: Styles().colors.white,
+                  color: Styles().colors.surface,
                   child: TextField(
                       maxLines: 2,
                       controller: _invitationCodeController,

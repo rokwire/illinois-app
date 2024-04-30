@@ -292,7 +292,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
         ),
         Container (
           decoration: BoxDecoration(
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
             border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))
           ),
@@ -395,7 +395,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
             Column(mainAxisSize: MainAxisSize.min, children: [
               Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.white, width: 1.5, ))),
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.surface, width: 1.5, ))),
                 child: Text(title ?? '',
                   style: Styles().textStyles.getTextStyle("widget.heading.regular.fat.light"),
                   semanticsLabel: "",
@@ -440,7 +440,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
           label: Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
             textColor: canClearAttributes ? Styles().colors.fillColorPrimary : Styles().colors.textMedium,
             borderColor: canClearAttributes ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-          backgroundColor: Styles().colors.white,
+          backgroundColor: Styles().colors.surface,
           textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat.variant'),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           enabled: canClearAttributes,
@@ -466,7 +466,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
           label: widget.applyTitle ?? _applyTitle,
           textColor: canApply ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
           borderColor: canApply ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-          backgroundColor: Styles().colors.white,
+          backgroundColor: Styles().colors.surface,
           enabled: canApply,
           onTap: _onTapApply
         )),
@@ -521,7 +521,7 @@ class _AttributeRibbonButton extends StatelessWidget {
     return InkWell(onTap: onTap, child:
       Container (
         decoration: BoxDecoration(
-          color: Styles().colors.white,
+          color: Styles().colors.surface,
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(4))
         ),

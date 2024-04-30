@@ -71,7 +71,7 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
 
   //Buttons
   Widget _buildButtonsLayout() {
-    return SafeArea(child: Container( color: Styles().colors.white,
+    return SafeArea(child: Container( color: Styles().colors.surface,
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Center(
         child:

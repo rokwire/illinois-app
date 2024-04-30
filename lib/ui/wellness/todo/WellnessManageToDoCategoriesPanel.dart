@@ -102,7 +102,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
                   style: Styles().textStyles.getTextStyle("widget.description.small.fat"))),
           Container(
               padding: EdgeInsets.symmetric(horizontal: 8),
-              decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
+              decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
               child: TextField(
                   controller: _nameController,
                   decoration: InputDecoration(border: InputBorder.none),

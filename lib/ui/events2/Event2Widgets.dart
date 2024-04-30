@@ -98,7 +98,7 @@ class Event2FilterCommandButton extends StatelessWidget {
   }
 
   static BoxDecoration get defaultContentDecoration => BoxDecoration(
-    color: Styles().colors.white,
+    color: Styles().colors.surface,
     border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
     borderRadius: BorderRadius.circular(16),
   );
@@ -387,7 +387,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   static BorderRadiusGeometry get _pageContentBottomBorderRadius => BorderRadius.vertical(bottom: _pageContentRadius);
 
   static Decoration get _linkContentDecoration => BoxDecoration(
-    color: Styles().colors.white,
+    color: Styles().colors.surface,
     borderRadius: _linkContentBorderRadius,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     boxShadow: _linkContentShadow

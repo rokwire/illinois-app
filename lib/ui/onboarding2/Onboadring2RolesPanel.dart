@@ -58,7 +58,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
         Container(
-          color: Styles().colors.white,
+          color: Styles().colors.surface,
           padding: EdgeInsets.only(top: 19, bottom: 19),
           child: Row(children: <Widget>[
             Onboarding2BackButton(padding: const EdgeInsets.only(left: 17,),
@@ -113,7 +113,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 enabled: _allowNext,
                 progress: _updating,
-                backgroundColor: (Styles().colors.white),
+                backgroundColor: (Styles().colors.surface),
                 borderColor: (_allowNext
                     ? Styles().colors.fillColorSecondary
                     : Styles().colors.fillColorPrimaryTransparent03),

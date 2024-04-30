@@ -245,7 +245,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
           onChanged: (values)=> nextCallBack(),
           decoration: new InputDecoration(
             filled: true,
-            fillColor: Styles().colors.white,
+            fillColor: Styles().colors.surface,
             border: new OutlineInputBorder(
               borderRadius: const BorderRadius.all(
                 const Radius.circular(4),
@@ -265,7 +265,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
             label: Localization().getStringEx('dialog.continue.title', 'Continue'),
             hint: Localization().getStringEx('dialog.continue.hint', ''),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-            backgroundColor: Styles().colors.white,
+            backgroundColor: Styles().colors.surface,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             progress: _loading,
             borderColor: Styles().colors.fillColorSecondary,

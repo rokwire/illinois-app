@@ -395,7 +395,7 @@ class _AthleticsTeamsFilterWidgetState extends State<AthleticsTeamsFilterWidget>
   Widget build(BuildContext context) {
     return Column(children: [
       Container(
-          color: _showFilterDescription ? Styles().colors.white : null,
+          color: _showFilterDescription ? Styles().colors.surface : null,
           decoration: !_showFilterDescription ? _filterDecoration : null,
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -472,7 +472,7 @@ class _AthleticsTeamsFilterWidgetState extends State<AthleticsTeamsFilterWidget>
 
   bool get _filterApplied => CollectionUtils.isNotEmpty(Auth2().prefs?.sportsInterests);
 
-  BoxDecoration get _filterDecoration => BoxDecoration(color: Styles().colors.white, boxShadow: kElevationToShadow[2]);
+  BoxDecoration get _filterDecoration => BoxDecoration(color: Styles().colors.surface, boxShadow: kElevationToShadow[2]);
 
   // Notifications Listener
 

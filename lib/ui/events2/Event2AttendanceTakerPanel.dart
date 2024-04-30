@@ -36,7 +36,7 @@ class Event2AttendanceTakerPanel extends StatelessWidget {
         ),
       ),
     ),
-    backgroundColor: Styles().colors.white,
+    backgroundColor: Styles().colors.surface,
   );
 
   Future<void> _onRefresh() async {
@@ -543,7 +543,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       label: Localization().getStringEx('panel.event2.detail.attendance.scan.button', 'Scan Illini ID'),
       textStyle: Styles().textStyles.getTextStyle(widget.scanEnabled ? 'widget.button.title.large.fat' : 'widget.button.title.large.fat.variant3'),
       borderColor: widget.scanEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       onTap: _onTapScanButton,
       contentWeight: 0.5,
       progress: _scanning,

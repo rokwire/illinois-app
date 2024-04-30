@@ -127,7 +127,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
     return Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), container: true, child:
       RibbonButton(
         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         borderRadius: BorderRadius.all(Radius.circular(5)),
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: _isProvidersExpanded ? 'chevron-up' : 'chevron-down',
@@ -164,7 +164,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
 
     if (_providers != null) {
       items.add(RibbonButton(
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: Localization().getStringEx('panel.academics.appointments.home.label.providers.all', 'All Providers'),
@@ -173,7 +173,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
 
       for (AppointmentProvider provider in _providers!) {
         items.add(RibbonButton(
-          backgroundColor: Styles().colors.white,
+          backgroundColor: Styles().colors.surface,
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           rightIconKey: null,
           label: provider.name,
@@ -438,7 +438,7 @@ class AppointmentsListPanel extends StatelessWidget {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.academics.appointments.home.header.title', 'Appointments')),
       body: Padding(padding: EdgeInsets.all(16), child: AcademicsAppointmentsContentWidget()),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       bottomNavigationBar: uiuc.TabBar()
     );
   }

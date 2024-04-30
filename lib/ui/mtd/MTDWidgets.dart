@@ -82,7 +82,7 @@ class MTDStopCard extends StatelessWidget {
     return Padding(padding: EdgeInsets.only(bottom: 4), child:
       InkWell(onTap: () => _onTapDetail(stop), child:
         Container(
-          decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
+          decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
           padding: EdgeInsets.only(left: 16,),
           child: Column(children: [
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [

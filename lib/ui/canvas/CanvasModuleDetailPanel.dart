@@ -52,7 +52,7 @@ class _CanvasModuleDetailPanelState extends State<CanvasModuleDetailPanel> {
     return Scaffold(
       appBar: HeaderBar(title: StringUtils.ensureNotEmpty(widget.module.name), maxLines: 3,),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -120,7 +120,7 @@ class _CanvasModuleDetailPanelState extends State<CanvasModuleDetailPanel> {
         onTap: () => _onTapItem(item),
         child: Container(
             decoration: BoxDecoration(
-                color: Styles().colors.white,
+                color: Styles().colors.surface,
                 border: Border(left: borderSide, top: (isFirst ? borderSide : BorderSide.none), right: borderSide, bottom: borderSide)),
             padding: EdgeInsets.only(
                 left: ((item.indent ?? 0) * 20 + innerPadding), top: innerPadding, right: innerPadding, bottom: innerPadding),

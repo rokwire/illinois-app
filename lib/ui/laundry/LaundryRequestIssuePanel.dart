@@ -115,7 +115,7 @@ class _LaundryRequestIssuePanelState extends State<LaundryRequestIssuePanel> {
           Container(
               padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
-                  color: Styles().colors.white,
+                  color: Styles().colors.surface,
                   borderRadius: BorderRadius.all(Radius.circular(4)),
                   boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]),
               child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: _buildMachineIdInputFields()))

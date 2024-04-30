@@ -113,7 +113,7 @@ class _SpecialOfferState extends State<_SpecialOffer> {
 
     return Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
       ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
-        Container(width: width, color: Styles().colors.white, child:
+        Container(width: width, color: Styles().colors.surface, child:
           Row(/*crossAxisAlignment: CrossAxisAlignment.stretch,*/ children: <Widget>[
             _hasImage ? ModalImageHolder(child:
               Image.network(widget.special!.imageUrl!, excludeFromSemantics: true, width: imageWidth, height: _imageHeight, fit: BoxFit.cover,)

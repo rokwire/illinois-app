@@ -77,7 +77,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
         title: Localization().getStringEx('panel.canvas_calendar.header.title', 'Calendar'),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -521,7 +521,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
   }
 
   Color _weekDayTextColor(DateTime date) {
-    return _isToday(date) ? Styles().colors.white : Styles().colors.fillColorPrimary;
+    return _isToday(date) ? Styles().colors.surface : Styles().colors.fillColorPrimary;
   }
 
   bool _isToday(DateTime currentDate) {

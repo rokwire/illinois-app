@@ -50,7 +50,7 @@ class _CanvasAccountNotificationsPanelState extends State<CanvasAccountNotificat
         title: Localization().getStringEx('panel.canvas_notifications.header.title', 'Account Notifications'),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -110,7 +110,7 @@ class _CanvasAccountNotificationsPanelState extends State<CanvasAccountNotificat
             onTap: () => _onTapNotification(notification),
             child: Container(
                 decoration: BoxDecoration(
-                    color: Styles().colors.white,
+                    color: Styles().colors.surface,
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
                 padding: EdgeInsets.all(10),

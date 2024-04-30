@@ -107,7 +107,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         body: Column(children: [
           Row(children: [
             Expanded(
@@ -137,7 +137,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
           child: SingleChildScrollView(
               physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null),
               child: Container(
-                  color: Styles().colors.white,
+                  color: Styles().colors.surface,
                   child: Stack(children: [
                     _contentWidget,
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -145,7 +145,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
                           padding: EdgeInsets.only(left: 16, top: 16, right: 16),
                           child: RibbonButton(
                               textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-                              backgroundColor: Styles().colors.white,
+                              backgroundColor: Styles().colors.surface,
                               borderRadius: BorderRadius.all(Radius.circular(5)),
                               border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                               rightIconKey: (_contentValuesVisible ? 'icon-up-orange' : 'icon-down-orange'),
@@ -188,7 +188,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
 
   Widget _buildContentItem(ICardContent contentItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentItem),

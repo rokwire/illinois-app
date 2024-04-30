@@ -283,7 +283,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
         contentPadding: EdgeInsets.all(0),
         contentWidget: Container(
             height: 300,
-            decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)),
+            decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.circular(10.0)),
             child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
               Padding(
                   padding: EdgeInsets.all(19),

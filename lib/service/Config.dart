@@ -214,17 +214,20 @@ class Config extends rokwire.Config {
   bool get allowGroupsAuthmanSync    => JsonUtils.boolValue(settings['allowGroupsAuthmanSync']) ?? false;
   bool get showGroupPostReactions    => JsonUtils.boolValue(settings['showGroupPostReactions']) ?? false;
 
-  String? get healthScreenerSurveyID => JsonUtils.stringValue(settings['health_screener_survey_id']);
-  String? get bessiSurveyID          => JsonUtils.stringValue(settings['bessi_survey_id']);
+  String? get healthScreenerSurveyID  => JsonUtils.stringValue(settings['health_screener_survey_id']);
+  String? get bessiSurveyID           => JsonUtils.stringValue(settings['bessi_survey_id']);
   String? get essentialSkillsCoachKey => JsonUtils.stringValue(settings['essential_skills_coach_key']) ?? 'essential_skills_coach';
 
-  int get mobileAccessDeleteTimeoutMins   => JsonUtils.intValue(settings['mobileAccessDeleteTimeout']) ?? 10;
+  int get mobileAccessDeleteTimeoutMins  => JsonUtils.intValue(settings['mobileAccessDeleteTimeout']) ?? 10;
 
-  int get inAppNotificationToastTimeout   => JsonUtils.intValue(settings['inAppNotificationToastTimeout']) ?? 6;
+  int get inAppNotificationToastTimeout  => JsonUtils.intValue(settings['inAppNotificationToastTimeout']) ?? 6;
 
   double? get mapDefaultLatitude     => JsonUtils.doubleValue(settings['map_default_latitude']);
   double? get mapDefaultLongitude    => JsonUtils.doubleValue(settings['map_default_longitude']);
   double? get mapDefaultZoom         => JsonUtils.doubleValue(settings['map_default_zoom']);
+
+  bool get assistantEnabled         => JsonUtils.boolValue(settings['assistant_enabled']) ?? true;
+  bool get assistantComingSoon      => JsonUtils.boolValue(settings['assistant_coming_soon']) ?? true;
 
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;

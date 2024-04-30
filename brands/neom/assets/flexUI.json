@@ -13,7 +13,7 @@
 			"home.connect": ["phone_or_email"],
 			"home.app_help": ["faqs", "feedback", "review"],
 
-			"browse": ["groups", "events", "inbox", "recent"],
+			"browse": ["groups", "events", "inbox"],
 			"browse.events": ["event_feed", "my_events"],
 			"browse.groups": ["all_groups", "my_groups"],
 			"browse.inbox": ["all_notifications", "unread_notifications"],

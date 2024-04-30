@@ -340,7 +340,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
     if(_mode == RecorderMode.play){
       return Styles().images.getImage('icon-play', excludeFromSemantics: true,);
         // _controller.isPlaying ?
-        // Container(padding: EdgeInsets.all(20), child: Container(width: 20, height: 20, color: Styles().colors.white,)) : //TBD do we need another icon for stop?
+        // Container(padding: EdgeInsets.all(20), child: Container(width: 20, height: 20, color: Styles().colors.surface,)) : //TBD do we need another icon for stop?
         //Styles().images.getImage('icon-play', excludeFromSemantics: true, size: iconSize);
     } else {
       return _controller.isRecording ?

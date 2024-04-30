@@ -168,7 +168,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
       Container(
         decoration: BoxDecoration(
           border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),
-          color: Styles().colors.white),
+          color: Styles().colors.surface),
         child: Semantics(textField: true, excludeSemantics: true, value: textController?.text,
           label: Localization().getStringEx('panel.appointment.schedule.notes.field', 'NOTES FIELD'),
           hint: Localization().getStringEx('panel.appointment.schedule.notes.field.hint', ''),
@@ -283,7 +283,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
     return Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
       Container (
         decoration: BoxDecoration(
-          color: Styles().colors.white,
+          color: Styles().colors.surface,
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(4))
         ),

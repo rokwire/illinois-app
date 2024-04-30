@@ -176,7 +176,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   ? Positioned.fill(child: Image.network(_imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders))
                                   : Container(),
                               CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
-                              CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white), child: Container(height: 30)),
+                              CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.surface), child: Container(height: 30)),
                               Container(
                                 height: _imageHeight,
                                 child: Center(
@@ -187,7 +187,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
                                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                                       onTap: _onTapAddImage,
-                                      backgroundColor: Styles().colors.white,
+                                      backgroundColor: Styles().colors.surface,
                                       borderColor: Styles().colors.fillColorSecondary,
                                       contentWeight: 0.67,
                                     )
@@ -896,7 +896,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               padding:
                               EdgeInsets.symmetric(horizontal: 12),
                               decoration: BoxDecoration(
-                                  color: Styles().colors.white,
+                                  color: Styles().colors.surface,
                                   border: Border.all(
                                       color: Styles().colors.fillColorPrimary,
                                       width: 1)),
@@ -935,7 +935,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               padding:
                               EdgeInsets.symmetric(horizontal: 12),
                               decoration: BoxDecoration(
-                                  color: Styles().colors.white,
+                                  color: Styles().colors.surface,
                                   border: Border.all(
                                       color: Styles().colors.fillColorPrimary,
                                       width: 1)),
@@ -974,7 +974,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               padding:
                               EdgeInsets.symmetric(horizontal: 12),
                               decoration: BoxDecoration(
-                                  color: Styles().colors.white,
+                                  color: Styles().colors.surface,
                                   border: Border.all(
                                       color: Styles().colors.fillColorPrimary,
                                       width: 1)),
@@ -998,7 +998,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   child: RoundedButton(
                                     label: Localization().getStringEx("panel.create_event.location.button.select_location.title","Select location on a map"),
                                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                                    backgroundColor: Styles().colors.white,
+                                    backgroundColor: Styles().colors.surface,
                                     borderColor: Styles().colors.fillColorSecondary,
                                     onTap: _onTapSelectLocation,
                                   ))

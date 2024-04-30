@@ -75,7 +75,7 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
                             padding: EdgeInsets.symmetric(horizontal: cardInnerPadding),
                             child: Container(
                                 padding: EdgeInsets.symmetric(vertical: 2, horizontal: 6),
-                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Styles().colors.white),
+                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Styles().colors.surface),
                                 child: _buildGradeScoreWidget(courseColor: defaultColor))))))
           ]),
           Expanded(
@@ -83,7 +83,7 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
             Expanded(
                 child: Container(
                     decoration: BoxDecoration(
-                        color: Styles().colors.white,
+                        color: Styles().colors.surface,
                         borderRadius: (widget.isSmall ? BorderRadius.horizontal(right: Radius.circular(borderRadiusValue)) : null)),
                     child: Padding(
                         padding: EdgeInsets.all(cardInnerPadding),

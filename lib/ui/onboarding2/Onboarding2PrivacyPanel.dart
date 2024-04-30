@@ -76,7 +76,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 //                                padding: EdgeInsets.symmetric(vertical: 19),
                                 child: Row(children: [
                                 Onboarding2BackButton(padding: const EdgeInsets.only(top:19,left: 17, right: 20, bottom: 19),
-                                    color: Styles().colors.white,
+                                    color: Styles().colors.surface,
                                     onTap: () {
                                       Analytics().logSelect(target: "Back");
                                       _goBack(context);
@@ -102,7 +102,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 //                                            style: TextStyle(
 //                                                fontFamily: Styles().fontFamilies.regular,
 //                                                fontSize: 16,
-//                                                color: Styles().colors.white,
+//                                                color: Styles().colors.surface,
 //                                                decoration: TextDecoration.underline,
 //                                                decorationColor: Styles().colors.fillColorSecondary,
 //                                                decorationThickness: 1,
@@ -128,7 +128,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 //                                        child: Text(
 //                                            titleText,
 //                                            style: TextStyle(
-//                                                color: Styles().colors.white,
+//                                                color: Styles().colors.surface,
 //                                                fontSize: 24,
 //                                                fontFamily: Styles().fontFamilies.bold
 //                                            ))
@@ -213,7 +213,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                         hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        backgroundColor: Styles().colors.white,
+                        backgroundColor: Styles().colors.surface,
                         borderColor: Styles().colors.fillColorSecondaryVariant,
                         onTap: () => _goNext(context),
                       ),),
@@ -243,7 +243,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                   padding: EdgeInsets.symmetric(horizontal: 15),
                   child: Container(
                       height: 1,
-                      color: Styles().colors.white,
+                      color: Styles().colors.surface,
                     )
               ))
             ]),
@@ -269,7 +269,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: _privacyLevel==1? selectedTextSize: deselectedTextSize,
-                          color: Styles().colors.white
+                          color: Styles().colors.surface
                         ),
                       )
                     )
@@ -296,7 +296,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: _privacyLevel==2? selectedTextSize: deselectedTextSize,
-                              color: Styles().colors.white
+                              color: Styles().colors.surface
                           ),
                         )
                     )
@@ -323,7 +323,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: _privacyLevel==3? selectedTextSize: deselectedTextSize,
-                              color: Styles().colors.white
+                              color: Styles().colors.surface
                           ),
                         )
                     )
@@ -350,7 +350,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: _privacyLevel==4? selectedTextSize: deselectedTextSize,
-                              color: Styles().colors.white
+                              color: Styles().colors.surface
                           ),
                         )
                     )
@@ -377,7 +377,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: _privacyLevel==5? selectedTextSize: deselectedTextSize,
-                              color: Styles().colors.white
+                              color: Styles().colors.surface
                           ),
                         )
                     )

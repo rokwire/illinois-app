@@ -67,7 +67,7 @@ class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDeta
         title: Localization().getStringEx('panel.canvas_calendar_event.header.title', 'Calendar Event')
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

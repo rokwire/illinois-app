@@ -73,7 +73,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
           title: Localization().getStringEx('panel.group.members.header.title', 'Members'),
           onLeading: _onTapDone,
         ),
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         body: Stack(alignment: Alignment.center, children: <Widget>[
           Column(
             children:[
@@ -82,7 +82,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     // Padding(padding: EdgeInsets.only(top: 12), child: Row(children: [
                     //   Expanded(child: Container()),
-                    //   RoundedButton(label: Localization().getStringEx('panel.group.members.button.done.title', 'Done'), contentWeight: 0.0, textColor: Styles().colors.fillColorPrimary, borderColor: Styles().colors.fillColorSecondary, backgroundColor: Styles().colors.white, onTap: _onTapDone)
+                    //   RoundedButton(label: Localization().getStringEx('panel.group.members.button.done.title', 'Done'), contentWeight: 0.0, textColor: Styles().colors.fillColorPrimary, borderColor: Styles().colors.fillColorSecondary, backgroundColor: Styles().colors.surface, onTap: _onTapDone)
                     // ])),
                     Container(
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -127,7 +127,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                   textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                   contentWeight: 0.5,
                   borderColor: Styles().colors.fillColorSecondary,
-                  backgroundColor: Styles().colors.white,
+                  backgroundColor: Styles().colors.surface,
                   onTap: _onTapDone),
               ),
             ]),

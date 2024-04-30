@@ -278,7 +278,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
       RoundedButton(
         label: Localization().getStringEx('panel.explore_detail.button.order_online', 'Order Online'),
         textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         borderColor: Styles().colors.fillColorSecondary,
         onTap: () => _onTapOrderOnline(onlineOrderPlatformDetails),
       ),
@@ -439,7 +439,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
             Expanded(child:
               StringUtils.isNotEmpty(_diningFeedback?.feedbackUrl) ? RoundedButton(
                 label: Localization().getStringEx('panel.explore_detail.button.text_feedback', 'Text Feedback'),
-                backgroundColor: Styles().colors.white,
+                backgroundColor: Styles().colors.surface,
                 borderColor: Styles().colors.fillColorSecondary,
                 textStyle: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -450,7 +450,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
             Expanded(child:
               StringUtils.isNotEmpty(_diningFeedback?.dieticianUrl) ? RoundedButton(
                 label: Localization().getStringEx('panel.explore_detail.button.ask_dietician', 'Ask a Dietitian'),
-                backgroundColor: Styles().colors.white,
+                backgroundColor: Styles().colors.surface,
                 borderColor: Styles().colors.fillColorSecondary,
                 textStyle: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -816,7 +816,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
           if (products.isNotEmpty) {
 
             if (list.isNotEmpty) {
-              list.add(Container(height: 1, color: Styles().colors.white,));
+              list.add(Container(height: 1, color: Styles().colors.surface,));
             }
 
             list.add(
@@ -1170,7 +1170,7 @@ class _FeedbackBodyWidgetState extends State<_FeedbackBodyWidget> {
                     Semantics(label: Localization().getStringEx("dialog.close.title", "Close"), button: true, child:
                       InkWell(onTap: _onClose, child:
                         Padding(padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), child:
-                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white, width: 2),), child:
+                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.surface, width: 2),), child:
                             Center(child:
                               Text('\u00D7', style: Styles().textStyles.getTextStyle("widget.dialog.message.large"),semanticsLabel: "", ),
                             ),

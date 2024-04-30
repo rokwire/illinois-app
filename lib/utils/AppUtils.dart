@@ -108,7 +108,7 @@ class AppAlert {
   static Future<void> showPopup(BuildContext context, String? message) async {
     return showDialog(context: context, builder: (context) {
       return AlertDialog(contentPadding: EdgeInsets.zero, content:
-        Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)), child:
+        Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.circular(10.0)), child:
           Stack(alignment: Alignment.center, children: [
             Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32), child:
               Column(mainAxisSize: MainAxisSize.min, children: [

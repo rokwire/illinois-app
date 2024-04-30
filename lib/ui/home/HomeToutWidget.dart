@@ -113,7 +113,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
         return (loadingProgress != null) ?
           Container(color: Styles().colors.fillColorPrimary, width: imageWidth, height: imageHeight, child:
             Center(child:
-              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white))
+              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.surface))
             )
           ) :
           AspectRatio(aspectRatio: (1080.0 / 810.0), child: 
@@ -240,10 +240,10 @@ class _InfoDialog extends StatelessWidget {
                       StringUtils.ensureNotEmpty(contentHtml),
                       onTapUrl : (url) {_onTapLink(context ,url); return true;},
                       textStyle:  Styles().textStyles.getTextStyle("widget.dialog.message.medium.fat"),
-                      customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.white)} : null
+                      customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.surface)} : null
                   )
                     //Text('Illinois app uses your first name from Student Self-Service. You can change your preferred name under Personal Information and Preferred First Name',
-                    //  style: TextStyle(color: Styles().colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold,),
+                    //  style: TextStyle(color: Styles().colors.surface, fontSize: 16, fontFamily: Styles().fontFamilies.bold,),
                     //)
                   )
                 ),

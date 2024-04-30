@@ -17,7 +17,7 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildContent(context),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       bottomNavigationBar: uiuc.TabBar()
     );
   }

@@ -126,7 +126,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
       RibbonButton(
         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         borderRadius: BorderRadius.all(Radius.circular(5)),
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: _contentTypesDropdownExpanded ? 'chevron-up' : 'chevron-down',
@@ -159,7 +159,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     }
     if (_canCreateResearchProject) {
       contentList.add(RibbonButton(
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: Localization().getStringEx('panel.research_projects.home.dropdown.create.title', 'Create New Research Project'),
@@ -167,7 +167,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
       ),);
     }
     contentList.add(RibbonButton(
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
       label: Localization().getStringEx('panel.research_projects.home.dropdown.search.title', 'Search Research Projects'),
@@ -182,7 +182,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
 
   Widget _buildContentTypeDropdownItem(ResearchProjectsContentType contentType) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentTypeName(contentType),

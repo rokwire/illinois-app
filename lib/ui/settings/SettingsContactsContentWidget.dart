@@ -72,7 +72,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
           HtmlWidget(
             StringUtils.ensureNotEmpty(descriptionHtml),
             onTapUrl : (url) {_processUrl(url); return true;},
-            textStyle:  Styles().textStyles.getTextStyle("widget.item.regular.thin"),
+            textStyle:  Styles().textStyles.getTextStyle("widget.detail.regular.thin"),
             customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.textBackground)} : null
         )));
   }

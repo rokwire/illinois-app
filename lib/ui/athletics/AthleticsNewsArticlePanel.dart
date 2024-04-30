@@ -123,8 +123,8 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
     return CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
       SliverToutHeaderBar(
         flexImageUrl: _article?.imageUrl,
-        flexBackColor: Styles().colors.white,
-        flexRightToLeftTriangleColor: Styles().colors.white,
+        flexBackColor: Styles().colors.surface,
+        flexRightToLeftTriangleColor: Styles().colors.surface,
         flexLeftToRightTriangleColor: Styles().colors.fillColorSecondaryTransparent05,
       ),
       SliverList(delegate: SliverChildListDelegate([

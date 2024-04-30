@@ -35,7 +35,7 @@ class _CanvasCoursesListPanelState extends State<CanvasCoursesListPanel> {
         appBar: HeaderBar(title: Localization().getStringEx('panel.canvas_courses.header.title', 'My Gies Canvas Courses')),
         body: SingleChildScrollView(
             child: Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child: CanvasCoursesContentWidget())),
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         bottomNavigationBar: uiuc.TabBar());
   }
 }

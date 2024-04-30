@@ -53,7 +53,7 @@ class _CanvasFileSystemEntitiesListPanelState extends State<CanvasFileSystemEnti
         title: Localization().getStringEx('panel.canvas_files.header.title', 'Files'),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

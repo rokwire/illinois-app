@@ -132,7 +132,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                         label: Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send'),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                         borderColor: Styles().colors.fillColorSecondary,
-                        backgroundColor: Styles().colors.white,
+                        backgroundColor: Styles().colors.surface,
                         onTap: _onTapSend)),
                     Container(width: 20),
                     Flexible(
@@ -141,7 +141,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                         label: Localization().getStringEx('panel.group.detail.post.create.button.cancel.title', 'Cancel'),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                         borderColor: Styles().colors.textSurface,
-                        backgroundColor: Styles().colors.white,
+                        backgroundColor: Styles().colors.surface,
                         onTap: _onTapCancel))
                   ])
               ],),

@@ -544,7 +544,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     if (_selectedMapExplore is Explore) {
       title = (_selectedMapExplore as Explore).mapMarkerTitle;
       description = (_selectedMapExplore as Explore).mapMarkerSnippet;
-      exploreColor = (_selectedMapExplore as Explore).uiColor ?? Styles().colors.white;
+      exploreColor = (_selectedMapExplore as Explore).uiColor ?? Styles().colors.surface;
       if (_selectedMapExplore is MTDStop) {
         detailsLabel = Localization().getStringEx('panel.explore.button.bus_schedule.title', 'Bus Schedule');
         detailsHint = Localization().getStringEx('panel.explore.button.bus_schedule.hint', '');
@@ -565,7 +565,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       exploreColor = explore?.uiColor ?? Styles().colors.fillColorSecondary;
     }
     else {
-      exploreColor = Styles().colors.white;
+      exploreColor = Styles().colors.surface;
       canDirections = canDetail = false;
     }
 
@@ -793,7 +793,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   void _showMessagePopup(String? message) {
     if ((message != null) && message.isNotEmpty) {
       showDialog(context: context, builder: (context) => AlertDialog(contentPadding: EdgeInsets.zero, content: 
-        Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)), child:
+        Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.circular(10.0)), child:
           Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
             Padding(padding: EdgeInsets.all(30), child:
               Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
@@ -1048,7 +1048,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   Widget _buildExploreTypesDropDownButton() {
     return RibbonButton(
       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       rightIconKey: (_itemsDropDownValuesVisible ? 'chevron-up' : 'chevron-down'),
@@ -1112,7 +1112,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   Widget _buildEventsDisplayTypeDropDownItem(EventsDisplayType displayType) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _eventsDisplayTypeName(displayType),
@@ -1179,7 +1179,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   Widget _buildExploreDropDownItem(ExploreMapType exploreItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _exploreItemName(exploreItem),

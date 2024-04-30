@@ -58,7 +58,7 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
         title: Localization().getStringEx('panel.canvas_assignments.header.title', 'Assignments'),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -182,7 +182,7 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
         onTap: () => _onTapAssignment(assignment),
         child: Container(
             decoration:
-                BoxDecoration(color: Styles().colors.white, border: Border(left: borderSide, right: borderSide, bottom: borderSide)),
+                BoxDecoration(color: Styles().colors.surface, border: Border(left: borderSide, right: borderSide, bottom: borderSide)),
             padding: EdgeInsets.only(left: 30, top: 10, right: 10, bottom: 10),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [

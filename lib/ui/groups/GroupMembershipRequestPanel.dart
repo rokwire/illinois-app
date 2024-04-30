@@ -138,11 +138,11 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
 
   Widget _buildSubmit() {
     if (widget.group?.researchProject != true) {
-      return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
+      return Container(decoration: BoxDecoration(color: Styles().colors.surface, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
         Padding(padding: EdgeInsets.all(16), child:
           RoundedButton(label: Localization().getStringEx("panel.membership_request.button.submit.title", 'Submit request'),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-            backgroundColor: Styles().colors.white,
+            backgroundColor: Styles().colors.surface,
             borderColor: Styles().colors.fillColorSecondary,
             borderWidth: 2,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -180,7 +180,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
           Padding(padding: EdgeInsets.only(left: 16, right: 16, top: showConsent ? 0 : 16, bottom: 16), child:
             RoundedButton(label: "Request to participate",
               textStyle: requestToJoinEnabled ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
-              backgroundColor: Styles().colors.white,
+              backgroundColor: Styles().colors.surface,
               padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
               borderColor: requestToJoinEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
               borderWidth: 2,

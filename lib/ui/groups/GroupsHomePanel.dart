@@ -256,7 +256,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Widget _buildContentItem(rokwire.GroupsContentType contentType) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentType),
@@ -267,7 +267,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     return Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child: RibbonButton(
       progress: _myGroupsBusy,
       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.surface,
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       rightIconKey: _contentTypesVisible ? 'chevron-up' : 'chevron-down',

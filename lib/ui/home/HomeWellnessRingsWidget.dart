@@ -65,7 +65,7 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors.white, child:
+                Container(color: Styles().colors.surface, child:
                   Padding(padding: EdgeInsets.only(top: 20, right: 13, bottom: 0, left: 2), child:
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

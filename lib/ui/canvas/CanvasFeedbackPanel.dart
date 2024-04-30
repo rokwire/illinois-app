@@ -39,7 +39,7 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
     return Scaffold(
         appBar: HeaderBar(title: Localization().getStringEx('panel.canvas_feedback.header.title', 'Feedback')),
         body: _buildContent(),
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         bottomNavigationBar: uiuc.TabBar());
   }
 
@@ -99,7 +99,7 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                       onTap: _onTapSubmit,
                       contentWeight: 0.0,
-                      backgroundColor: Styles().colors.white,
+                      backgroundColor: Styles().colors.surface,
                       borderColor: Styles().colors.fillColorSecondary)
                 ]))
           ])),

@@ -94,7 +94,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
 
     return Container(
       decoration: BoxDecoration(
-          color: Styles().colors.white,
+          color: Styles().colors.surface,
           boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
       ),

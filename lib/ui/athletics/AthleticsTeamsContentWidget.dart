@@ -54,7 +54,7 @@ class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidge
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: Styles().colors.white,
+        color: Styles().colors.surface,
         child: Column(children: [
           AthleticsTeamsFilterWidget(hideFilterDescription: true),
           Expanded(child: _buildContent())

@@ -127,7 +127,7 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> impleme
   }
 
   Widget _buildLoading() {
-    return Container(color: Styles().colors.white, child:
+    return Container(color: Styles().colors.surface, child:
       Padding(padding: EdgeInsets.all(32), child:
         Row(children: <Widget>[
           Expanded(child:
@@ -143,7 +143,7 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> impleme
   }
 
   Widget _buildTip() {
-    Color? backColor = Styles().colors.white; // _tipColor ?? Styles().colors.accentColor3;
+    Color? backColor = Styles().colors.surface; // _tipColor ?? Styles().colors.accentColor3;
     return Container(color: backColor, child:
       Padding(padding: EdgeInsets.all(16), child:
         Row(children: <Widget>[

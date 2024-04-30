@@ -113,7 +113,7 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
                   container: true,
                   child: RibbonButton(
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-                      backgroundColor: Styles().colors.white,
+                      backgroundColor: Styles().colors.surface,
                       borderRadius: BorderRadius.all(Radius.circular(5)),
                       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                       rightIconKey: (_contentValuesVisible ? 'icon-up-orange' : 'icon-down-orange'),
@@ -163,7 +163,7 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
 
   Widget _buildContentItem(AthleticsContent contentItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentItem),

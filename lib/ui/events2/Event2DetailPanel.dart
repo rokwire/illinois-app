@@ -145,7 +145,8 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     return Scaffold(body:
       Column(children: <Widget>[
         Expanded(child: _content),
-      ])
+      ]),
+      backgroundColor: Styles().colors.surface,
     );
   }
 
@@ -166,11 +167,11 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         title: _event?.name,
         flexImageUrl:  _event?.imageUrl,
         flexImageKey: 'event-detail-default',
-        flexRightToLeftTriangleColor: Colors.white,
+        flexRightToLeftTriangleColor: Styles().colors.surface,
       ),
       SliverList(delegate:
       SliverChildListDelegate([
-        Container(color: Styles().colors.white, child:
+        Container(color: Styles().colors.surface, child:
           Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
             _roleBadgeWidget,
             _contentHeadingWidget,

@@ -91,7 +91,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
 
     if (description.isNotEmpty) {
       contentList.add(
-        Container(color: Styles().colors.white, child:
+        Container(color: Styles().colors.surface, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
             Semantics(label: description, hint: '', excludeSemantics: true, child:
               Row(children: [
@@ -126,7 +126,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium"),
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               borderColor: Styles().colors.fillColorPrimary,
-              backgroundColor: Styles().colors.white,
+              backgroundColor: Styles().colors.surface,
               onTap: () => _onCancel(),
             ),
           ),
@@ -138,7 +138,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
               textStyle: submitEnabled ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               borderColor: submitEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-              backgroundColor: Styles().colors.white,
+              backgroundColor: Styles().colors.surface,
               onTap: () => _onSubmit(),
             ),
           ),
@@ -243,7 +243,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
         value: selected ?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
         child: InkWell(onTap: () { _onAnswer(answer, question: question); AppSemantics.announceCheckBoxStateChange(context, !selected, title);}, child:
       Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
-        Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: selected ? Styles().colors.fillColorPrimary : Styles().colors.white, width: 1)), child:
+        Container(decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: selected ? Styles().colors.fillColorPrimary : Styles().colors.surface, width: 1)), child:
           Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
             Row(children: [
               Padding(padding: EdgeInsets.only(right: 12), child:

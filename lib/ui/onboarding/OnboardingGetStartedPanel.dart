@@ -94,7 +94,7 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
                                 backgroundColor: Styles().colors.fillColorPrimary,
                                 onTap: () => _goNext(context),
                                 borderColor: Styles().colors.fillColorPrimary,
-                                secondaryBorderColor: Styles().colors.white,
+                                secondaryBorderColor: Styles().colors.surface,
                               ),
                             )
                           ],

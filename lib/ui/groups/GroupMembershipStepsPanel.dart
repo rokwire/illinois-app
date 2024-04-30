@@ -167,7 +167,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
         child: Text(Localization().getStringEx("panel.membership_request.button.add_steps.step", 'STEP ') +(index+1).toString(), style: Styles().textStyles.getTextStyle("widget.title.tiny")),
       ),
       Stack(children: <Widget>[
-        Container(color: Styles().colors.white,
+        Container(color: Styles().colors.surface,
           child: TextField(
             maxLines: 2,
             controller: _controllers![index],
@@ -221,7 +221,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
           Expanded(child: Container(),),
           RoundedButton(label:Localization().getStringEx("panel.membership_request.button.save.title", 'Save steps'),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-            backgroundColor: Styles().colors.white,
+            backgroundColor: Styles().colors.surface,
             borderColor: Styles().colors.fillColorSecondary,
             borderWidth: 2,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -320,7 +320,7 @@ class _EventCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Container(
         decoration: BoxDecoration(
-          color: Styles().colors.white,
+          color: Styles().colors.surface,
           boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
           borderRadius: BorderRadius.all(Radius.circular(8))
         ),

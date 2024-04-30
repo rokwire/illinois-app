@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
@@ -116,32 +117,50 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   Widget build(BuildContext context) {
     super.build(context);
 
-    Widget? accessWidget = AccessCard.builder(resource: resourceName);
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx('panel.assistant.header.title', 'Assistant')),
-      body: accessWidget != null ?
-        Column(children: [Padding(
-          padding: const EdgeInsets.only(top: 16.0),
-          child: accessWidget,
-        )]) :
-        RefreshIndicator(onRefresh: _onPullToRefresh, child:
-          Column(children: [
-            Expanded(child:
-              SingleChildScrollView(
-                physics: AlwaysScrollableScrollPhysics(),
-                controller: _scrollController,
-                reverse: true,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(children: _buildContentList(),),
-                )
-              )
-            ),
-            _buildChatBar(),
-          ]),
-      ),
+      body: Config().assistantComingSoon ? _comingSoon() : _assistantContent(),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: null,
+    );
+  }
+
+  Widget _assistantContent() {
+    Widget? accessWidget = AccessCard.builder(resource: resourceName);
+    return accessWidget != null ?
+      Column(children: [Padding(
+        padding: const EdgeInsets.only(top: 16.0),
+        child: accessWidget,
+      )])
+      : RefreshIndicator(onRefresh: _onPullToRefresh, child:
+        Column(children: [
+          Expanded(child:
+          SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              controller: _scrollController,
+              reverse: true,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(children: _buildContentList(),),
+              )
+          )
+          ),
+          _buildChatBar(),
+        ]),
+    );
+  }
+
+  Widget _comingSoon() {
+    return Padding(
+      padding: const EdgeInsets.all(32.0),
+      child: Center(
+        child: Padding(
+         padding: const EdgeInsets.only(bottom: 56.0),
+         child: Text(Localization().getStringEx('', 'NEOM U Assistant\nComing Soon!'),
+           style: Styles().textStyles.getTextStyle('widget.title.light.large.fat'),
+           textAlign: TextAlign.center,),
+        ),
+      ),
     );
   }
 

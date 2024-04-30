@@ -222,12 +222,12 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
           ),
           Container(
             padding: EdgeInsets.all(16),
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
             child: RoundedButton(
               label: Localization().getStringEx("panel.find_event.button.add_selected_events.title", "Add (#) event to group").replaceAll("#", _selectedEvents.length.toString()),
               hint: Localization().getStringEx("panel.find_event.button.add_selected_events.hint", ""),
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-              backgroundColor: Styles().colors.white,
+              backgroundColor: Styles().colors.surface,
               borderColor: Styles().colors.fillColorSecondary,
               onTap: _onTapAddEvents,
             ),
@@ -301,7 +301,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   Widget _buildFilterButtons(){
     return Container(
       width: double.infinity,
-      color: Styles().colors.white,
+      color: Styles().colors.surface,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Padding(
@@ -558,7 +558,7 @@ class _EventCardState extends State<_EventCard>{
               onTap: ()=>_onTapEvent(context),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Styles().colors.white,
+                  color: Styles().colors.surface,
                   borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4)),
                 ),
                 child: Column(

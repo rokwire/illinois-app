@@ -117,6 +117,9 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
     else if (Auth2().isPasswordLoggedIn) {
       contentWidget = _buildEmailLoginInfoContent();
     }
+    else if (Auth2().isPasskeyLoggedIn) {
+      contentWidget = _buildEmailLoginInfoContent();
+    }
 
     return (contentWidget != null) ? Padding(padding: EdgeInsets.only(top: 25), child: contentWidget) : Container() ;
   }
@@ -223,6 +226,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
 //          height: 48,
             child: TextField(
               controller: _nameController,
+              textCapitalization: TextCapitalization.words,
               onChanged: (text) { setState(() {});},
               decoration: InputDecoration(border: InputBorder.none),
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
@@ -274,6 +278,9 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
       contentWidget = _buildPhoneOrEmailAccountManagementOptions();
     }
     else if (Auth2().isPasswordLoggedIn) {
+      contentWidget = _buildPhoneOrEmailAccountManagementOptions();
+    }
+    else if (Auth2().isPasskeyLoggedIn) {
       contentWidget = _buildPhoneOrEmailAccountManagementOptions();
     }
     
@@ -685,7 +692,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
   }
 
   TextStyle? get _formFieldLabelTextStyle {
-    return  Styles().textStyles.getTextStyle("widget.item.small");
+    return  Styles().textStyles.getTextStyle("widget.detail.small");
   }
 }
 

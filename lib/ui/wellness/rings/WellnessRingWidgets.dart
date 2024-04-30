@@ -185,7 +185,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                         height: innerContentSize - widget.borderWidth,
                         decoration: BoxDecoration(
                             color: widget.backgroundColor ??
-                                Styles().colors.white,
+                                Styles().colors.surface,
                             shape: BoxShape.circle
                         ),
                         child: childWidget ??
@@ -445,7 +445,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
               Center(
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: Styles().images.getImage('plus-circle-white', excludeFromSemantics: true, color:  Styles().colors.white),
+                  child: Styles().images.getImage('plus-circle-white', excludeFromSemantics: true, color:  Styles().colors.surface),
                 ))
             ]
         ))

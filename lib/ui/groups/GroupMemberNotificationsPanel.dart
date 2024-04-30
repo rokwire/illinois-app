@@ -81,7 +81,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
                   child: RoundedButton(
                       label: Localization().getStringEx('panel.group_member_notifications.save.button', 'Save'), onTap: _onTapSave)))
         ]),
-        backgroundColor: Styles().colors.white);
+        backgroundColor: Styles().colors.surface);
   }
 
 
@@ -133,7 +133,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
     preferenceWidgets.add(Row(children: [
       Expanded(
           child: Container(
-              color: Styles().colors.white,
+              color: Styles().colors.surface,
               child: Padding(
                   padding: EdgeInsets.only(left: 10),
                   child: Column(children: [
@@ -180,7 +180,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
                   ]))))
     ]));
 
-    preferenceWidgets.add(Container(color: Styles().colors.white, height: 10,));
+    preferenceWidgets.add(Container(color: Styles().colors.surface, height: 10,));
     preferenceWidgets.add(_buildDescription());
 
     return Container(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: preferenceWidgets));
@@ -207,7 +207,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
         )
     ],));
 
-    widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
+    widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors.surface, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
       _DisabledToggleButton(
           toggled: groupPostNotificationsEnabled,
           label: Localization().getStringEx("panel.settings.notifications.group_updates.posts.label", "Posts"),
@@ -466,7 +466,9 @@ class _EnabledToggleButton extends ToggleRibbonButton {
         BorderRadius? borderRadius,
         TextStyle? textStyle,
         this.enabled = false, this.defaultValue = false})
-      : super(label: label, toggled: (toggled == true), onTap: onTap, border: border, borderRadius: borderRadius, textStyle: textStyle);
+      : super(label: label, toggled: (toggled == true), 
+        onTap: onTap, border: border, borderRadius: borderRadius, 
+        textStyle: textStyle ?? Styles().textStyles.getTextStyle('widget.title.dark.regular'));
 
   // @override
   // bool get toggled => (enabled == true) ? super.toggled == true : this.defaultValue == true;

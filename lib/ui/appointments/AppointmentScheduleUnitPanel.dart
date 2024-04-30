@@ -114,7 +114,7 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
       Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), container: true, child:
         RibbonButton(
           textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-          backgroundColor: Styles().colors.white,
+          backgroundColor: Styles().colors.surface,
           borderRadius: BorderRadius.all(Radius.circular(5)),
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           rightIconKey: _isProvidersExpanded ? 'chevron-up' : 'chevron-down',
@@ -153,7 +153,7 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
     if (_providers != null) {
       for (AppointmentProvider provider in _providers!) {
         items.add(RibbonButton(
-          backgroundColor: Styles().colors.white,
+          backgroundColor: Styles().colors.surface,
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           rightIconKey: null,
           label: provider.name,

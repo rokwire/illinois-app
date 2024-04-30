@@ -75,7 +75,7 @@ class _AthleticsMyTeamsPanelState extends State<AthleticsMyTeamsPanel> implement
   Widget build(BuildContext context) {
     return Column(children: [
       Container(
-          color: Styles().colors.white,
+          color: Styles().colors.surface,
           child: Row(children: [
             Expanded(
                 child: Padding(

@@ -282,7 +282,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
           Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
             RibbonButton(
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-              backgroundColor: Styles().colors.white,
+              backgroundColor: Styles().colors.surface,
               borderRadius: BorderRadius.all(Radius.circular(5)),
               border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                 rightIconKey: _statusValuesVisible ? 'chevron-up' : 'chevron-down',
@@ -477,7 +477,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   Widget _buildStatusItem(GroupMemberStatus? status) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.surface,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         rightIcon: null,
@@ -587,7 +587,7 @@ class _PendingMemberCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Styles().colors.white,
+          color: Styles().colors.surface,
           borderRadius: BorderRadius.circular(4),
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid)
       ),
@@ -613,7 +613,7 @@ class _PendingMemberCard extends StatelessWidget {
                         hint: Localization().getStringEx("panel.manage_members.button.review_request.hint", ""),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                         borderColor: Styles().colors.fillColorSecondary,
-                        backgroundColor: Styles().colors.white,
+                        backgroundColor: Styles().colors.surface,
                         rightIcon: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true),
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         onTap: (){
@@ -644,7 +644,7 @@ class _GroupMemberCard extends StatelessWidget {
       onTap: ()=>_onTapMemberCard(context),
       child: Container(
         decoration: BoxDecoration(
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
             borderRadius: BorderRadius.circular(4),
             border: Border.all(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid)
         ),

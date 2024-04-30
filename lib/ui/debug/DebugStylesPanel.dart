@@ -90,7 +90,7 @@ class _DebugStylesPanelState extends State<DebugStylesPanel> implements Notifica
               ),
             ),
             Padding(padding: EdgeInsets.only(top: 16, bottom: 16), child:
-              RoundedButton(label: "Apply", backgroundColor: Styles().colors.white, fontSize: 16.0, textColor: Styles().colors.fillColorPrimary, borderColor: Styles().colors.fillColorPrimary, onTap: _onTapApply),
+              RoundedButton(label: "Apply", backgroundColor: Styles().colors.surface, fontSize: 16.0, textColor: Styles().colors.fillColorPrimary, borderColor: Styles().colors.fillColorPrimary, onTap: _onTapApply),
             ),
           ],),
         ),

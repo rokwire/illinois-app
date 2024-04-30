@@ -224,7 +224,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
     if (_loadingPage == true) {
       pages.add(_TweetLoadingWidget(
-        progressColor: Styles().colors.white,
+        progressColor: Styles().colors.surface,
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24)
       ));
     }
@@ -648,7 +648,7 @@ class _TweetWidget extends StatelessWidget {
     return Padding(padding: margin ?? EdgeInsets.zero, child:
       Container(
         decoration: BoxDecoration(
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
             boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.all(Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
         ),

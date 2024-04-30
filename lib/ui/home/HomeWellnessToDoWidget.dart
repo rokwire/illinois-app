@@ -73,7 +73,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors.white, child:
+                Container(color: Styles().colors.surface, child:
                   Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Row(children: [Expanded(child: Text(Localization().getStringEx('widget.home.wellness.todo.items.today.label', 'TODAY\'S ITEMS'), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("widget.label.tiny.fat")))]),

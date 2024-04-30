@@ -159,7 +159,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
     return
       Container(
         padding: EdgeInsets.symmetric(vertical:18),
-        color: Styles().colors.white,
+        color: Styles().colors.surface,
         child: SafeArea(
           top: false,
           child: Column(children: <Widget>[
@@ -230,19 +230,19 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
         Stack(alignment: Alignment.center, children: <Widget>[
           Column(children: <Widget>[
             Container(height: 48, color: Styles().colors.fillColorPrimary,),
-            Container(height: 48, color: Styles().colors.white,),
+            Container(height: 48, color: Styles().colors.surface,),
           ],),
           Center(child:
             Container(height: 86, width: 86, child:
               Padding(padding: EdgeInsets.all(6), child:
                 Container(padding: EdgeInsets.all(1),
                   decoration: BoxDecoration(
-                    color: Styles().colors.white,
+                    color: Styles().colors.surface,
                     borderRadius: BorderRadius.circular(100),
                     border: Border.all(width:2, color: Styles().colors.fillColorPrimary,)),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Styles().colors.white,
+                      color: Styles().colors.surface,
                       borderRadius: BorderRadius.circular(100),
                       border: Border.all(width:2, color: Styles().colors.fillColorSecondary,)
                     ),
@@ -441,7 +441,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
   Widget _buildSliderInstructions(){
     return Container(
       padding: EdgeInsets.only(left: 22, right: 22,),
-      color: Styles().colors.white,
+      color: Styles().colors.surface,
       child: Row(children: <Widget>[
         Expanded(child:
         Text(
@@ -472,7 +472,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
     return ConstrainedBox(
       constraints: BoxConstraints(minHeight: 180),
       child: Container(
-        color: Styles().colors.white,
+        color: Styles().colors.surface,
         child: Padding(
             padding: EdgeInsets.only(top: 24, left: 22, right: 22, bottom: 8),
             child: Row(
@@ -484,7 +484,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                 alignment: Alignment.center,
                 decoration:  BoxDecoration(
                   border: Border.all(color: Styles().colors.fillColorPrimary,width: 2),
-                  color: Styles().colors.white,
+                  color: Styles().colors.surface,
                   borderRadius: BorderRadius.all(Radius.circular(100)),
                 ),
                 child: Container(
@@ -493,7 +493,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                   alignment: Alignment.center,
                   decoration:  BoxDecoration(
                     border: Border.all(color: Styles().colors.fillColorSecondary, width: 2),
-                    color: Styles().colors.white,
+                    color: Styles().colors.surface,
                     borderRadius: BorderRadius.all(Radius.circular(100)),
                   ),
                   child: Semantics( label:Localization().getStringEx("panel.settings.privacy.label.privacy_level.title", "Privacy Level: "),
@@ -629,8 +629,8 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
       child: Container(
         decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors.surfaceAccent, width: 1)),
         padding: EdgeInsets.symmetric(horizontal: 0),
-        child: Theme(data: ThemeData(/*accentColor: Styles().colors.white,*/
-            /*backgroundColor: Styles().colors.white,*/
+        child: Theme(data: ThemeData(/*accentColor: Styles().colors.surface,*/
+            /*backgroundColor: Styles().colors.surface,*/
             dividerColor: Colors.white,
             ),
             child: ExpansionTile(
@@ -645,7 +645,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
               children: _buildCategoryEntries(category),
               trailing: RotationTransition(
                   turns: _iconTurns,
-                  child: Icon(Icons.arrow_drop_down, color: Styles().colors.white,)),
+                  child: Icon(Icons.arrow_drop_down, color: Styles().colors.surface,)),
               onExpansionChanged: (bool expand) {
                 if (expand) {
                   _controller.forward();
@@ -740,7 +740,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
       Semantics( container: true,
         child: Container(
         padding: EdgeInsets.only(top: 14, bottom: 19, left: 14, right: 24),
-        color: Styles().colors.white,
+        color: Styles().colors.surface,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
