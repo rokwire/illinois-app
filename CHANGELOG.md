@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [5.2.6] - 2024-04-30
 - Perform more precise permissions detection in Auth2Account [#445](https://github.com/rokwire/app-flutter-plugin/issues/445).
 
 ## [5.2.5] - 2024-04-26
