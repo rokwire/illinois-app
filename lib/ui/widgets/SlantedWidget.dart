@@ -17,7 +17,7 @@ class SlantedWidget extends StatefulWidget {
 }
 
 class _SlantedWidgetState extends State<SlantedWidget> {
-  late GlobalKey _contentKey = GlobalKey();
+  GlobalKey _contentKey = GlobalKey();
   Size? _contentSize;
 
   @override

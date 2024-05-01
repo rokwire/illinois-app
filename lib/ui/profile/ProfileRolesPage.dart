@@ -64,7 +64,7 @@ class _ProfileRolesPageState extends State<ProfileRolesPage> {
                   padding: EdgeInsets.only(top: 16, left: 4, right: 4),
                   child: Text(
                     Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
-                    style: Styles().textStyles.getTextStyle("widget.item.small.thin")
+                    style: Styles().textStyles.getTextStyle("widget.item.light.small.thin")
                   ),
                 ),
               ),

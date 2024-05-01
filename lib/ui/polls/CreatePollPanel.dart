@@ -416,15 +416,15 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(
-                    Localization().getStringEx("panel.create_poll.cancel_dialog.title", "Illinois"),
-                    style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.large"),
+                    Localization().getStringEx("panel.create_poll.cancel_dialog.title", "NEOM U"),
+                    style: Styles().textStyles.getTextStyle("widget.dialog.message.large"),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 26),
                     child: Text(
                       Localization().getStringEx("panel.create_poll.cancel_dialog.message", "Are you sure you want to cancel this Quick Poll?"),
                       textAlign: TextAlign.left,
-                      style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.regular"),
+                      style: Styles().textStyles.getTextStyle("widget.dialog.message.regular"),
                     ),
                   ),
                   Row(

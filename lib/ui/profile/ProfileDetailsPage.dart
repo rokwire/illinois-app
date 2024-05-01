@@ -303,9 +303,9 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
     return RoundedButton(
       label: Localization().getStringEx("panel.profile_info.button.save.title", "Save Changes"),
       hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
-       textStyle: _canSave ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
+      textStyle: _canSave ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
       enabled: _canSave,
-      backgroundColor: _canSave ? Styles().colors.surface : Styles().colors.background,
+      backgroundColor: _canSave ? Styles().colors.fillColorSecondary : Styles().colors.background,
       borderColor: _canSave? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
       progress: _isSaving,
       onTap: _onSaveChangesClicked,

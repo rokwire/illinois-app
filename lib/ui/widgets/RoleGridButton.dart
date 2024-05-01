@@ -49,6 +49,7 @@ class RoleGridButton extends TileToggleButton {
     selectedIconKey: selectedIconKey,
     selectedTitleColor: selectedTitleColor,
     selectedBackgroundColor: selectedBackgroundColor,
+    selectedBorderColor: Styles().colors.fillColorSecondary,
     selected: selected, 
     selectionMarkerKey: 'check-circle-filled',
     iconFit: BoxFit.fitWidth,

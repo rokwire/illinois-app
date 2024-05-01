@@ -1054,13 +1054,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     if (!_isResearchProject) {
       contentList.add(Padding(padding: EdgeInsets.only(bottom: 4), child:
-        Text(Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'), ),),
+        Text(Localization().getStringEx("panel.group_detail.label.about_us", 'About us'), style: Styles().textStyles.getTextStyle('panel.group.detail.light.fat'), ),),
       );
     }
 
     if (StringUtils.isNotEmpty(_group?.description)) {
       contentList.add(ExpandableText(_group?.description ?? '',
-        textStyle: Styles().textStyles.getTextStyle('panel.group.detail.regular'),
+        textStyle: Styles().textStyles.getTextStyle('panel.group.detail.light.regular'),
         trimLinesCount: 4,
         readMoreIcon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),),
       );
@@ -1097,8 +1097,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(padding: EdgeInsets.only(bottom: 4), child:
-            Text(title!, style:  Styles().textStyles.getTextStyle('panel.group.detail.fat'), ),),
-          Text(description!, style: Styles().textStyles.getTextStyle('panel.group.detail.regular'), ),
+            Text(title!, style:  Styles().textStyles.getTextStyle('panel.group.detail.light.fat'), ),),
+          Text(description!, style: Styles().textStyles.getTextStyle('panel.group.detail.light.regular'), ),
         ],),) :
       Container(width: 0, height: 0);
   }
@@ -1579,7 +1579,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       border: Border.all(color: Styles().colors.textSurface, width: 1),
       alignment: Alignment.center,
       infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
-      infoTextStyle: Styles().textStyles.getTextStyle('widget.description.regular.thin"'),
+      infoTextStyle: Styles().textStyles.getTextStyle('widget.description.regular.thin'),
       closeIcon: Styles().images.getImage('close', excludeFromSemantics: true),
     ),);
   }
@@ -1952,11 +1952,11 @@ class _OfficerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 128,
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      child: Column(children: <Widget>[
         Container(height: 144, width: 128, child: GroupMemberProfileImage(userId: groupMember?.userId)),
         Padding(padding: EdgeInsets.only(top: 4),
-          child: Text(groupMember?.name ?? "", style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),),),
-        Text(groupMember?.officerTitle ?? "", style:  Styles().textStyles.getTextStyle('widget.card.detail.regular')),
+          child: Text(groupMember?.name ?? "", style: Styles().textStyles.getTextStyle('panel.group.detail.light.small'),),),
+        Text(groupMember?.officerTitle ?? "", style:  Styles().textStyles.getTextStyle('panel.group.detail.light.regular')),
       ],),
     );
   }
