@@ -384,7 +384,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       if (code == 'info') {
         contentList.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Text(Localization().getStringEx("panel.settings.home.passkey_login.message", "Signed in with passkey"),
-              style: Styles().textStyles.getTextStyle("widget.detail.regular.extra_fat")),
+              style: Styles().textStyles.getTextStyle("widget.detail.light.regular.extra_fat")),
           Visibility(visible: hasFullName, child:
             Padding(padding: EdgeInsets.only(top: 3), child:
               Text(fullName, style: Styles().textStyles.getTextStyle("widget.detail.large.fat"))
@@ -435,15 +435,16 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
   }
 
   Widget _buildLogoutDialog(BuildContext context) {
-    return Dialog(child:
-      Padding(padding: EdgeInsets.all(18), child:
+    return Dialog(
+      backgroundColor: Styles().colors.background,
+      child: Padding(padding: EdgeInsets.all(18), child:
         Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
           Text(Localization().getStringEx("panel.settings.home.logout.title", "{{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-            style: Styles().textStyles.getTextStyle("widget.message.dark.extra_large"),
+            style: Styles().textStyles.getTextStyle("widget.title.light.extra_large"),
           ),
           Padding(padding: EdgeInsets.symmetric(vertical: 26), child:
             Text(Localization().getStringEx("panel.settings.home.logout.message", _promptEn), textAlign: TextAlign.left,
-              style: Styles().textStyles.getTextStyle("widget.message.dark.medium")
+              style: Styles().textStyles.getTextStyle("widget.message.light.medium")
             ),
           ),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[

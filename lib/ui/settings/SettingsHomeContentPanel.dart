@@ -171,15 +171,15 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
                 )
               ),
             ),
-            Visibility(visible: (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)), child:
-              Semantics(label: "debug", child:
-                InkWell(onTap : _onTapDebug, child:
-                  Container(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
-                    Styles().images.getImage('bug', excludeFromSemantics: true),
-                  ),
-                ),
-              )
-            ),
+            // Visibility(visible: (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)), child:
+            //   Semantics(label: "debug", child:
+            //     InkWell(onTap : _onTapDebug, child:
+            //       Container(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
+            //         Styles().images.getImage('bug', excludeFromSemantics: true),
+            //       ),
+            //     ),
+            //   )
+            // ),
             Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
               InkWell(onTap : _onTapClose, child:
                 Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
@@ -275,7 +275,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
 
   Widget _buildContentItem(SettingsContent contentItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors.surface,
+        backgroundColor: Styles().colors.gradientColorPrimary,
+        textColor: Styles().colors.textLight,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentItem),
@@ -364,12 +365,12 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
     }
   }
 
-  void _onTapDebug() {
-    Analytics().logSelect(target: 'Debug', source: widget.runtimeType.toString());
-    if (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
-    }
-  }
+  // void _onTapDebug() {
+  //   Analytics().logSelect(target: 'Debug', source: widget.runtimeType.toString());
+  //   if (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
+  //     Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
+  //   }
+  // }
 
   void _onTapClose() {
     Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
@@ -451,7 +452,7 @@ class _DebugContainerState extends State<_DebugContainer> {
         _clickedCount++;
 
         if (_clickedCount == 7) {
-          if (Auth2().isDebugManager) {
+          if (kDebugMode || Auth2().isDebugManager) {
             Analytics().logSelect(target: 'Debug 7th Click', source: 'Header Bar');
             Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
           }

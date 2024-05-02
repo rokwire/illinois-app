@@ -139,15 +139,15 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
               Text(Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),)
             )
           ),
-          Visibility(visible: (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)), child:
-            Semantics(label: "debug", child:
-              InkWell(onTap : _onTapDebug, child:
-                Container(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
-                  Styles().images.getImage('bug', excludeFromSemantics: true),
-                ),
-              ),
-            )
-          ),
+          // Visibility(visible: (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)), child:
+          //   Semantics(label: "debug", child:
+          //     InkWell(onTap : _onTapDebug, child:
+          //       Container(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
+          //         Styles().images.getImage('bug', excludeFromSemantics: true),
+          //       ),
+          //     ),
+          //   )
+          // ),
           Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
             InkWell(onTap : _onTapClose, child:
               Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
@@ -253,12 +253,13 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     });
   }
 
-  void _onTapDebug() {
-    Analytics().logSelect(target: 'Debug', source: widget.runtimeType.toString());
-    if (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
-    }
-  }
+  // void _onTapDebug() {
+  //   Analytics().logSelect(target: 'Debug', source: widget.runtimeType.toString());
+  //   if (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
+  //     Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
+  //   }
+  // }
+
   void _onTapClose() {
     Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
     Navigator.of(context).pop();

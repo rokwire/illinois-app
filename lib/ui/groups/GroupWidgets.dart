@@ -793,7 +793,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
     return Row(children: [
       Expanded(child:
         Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
-          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: Styles().textStyles.getTextStyle('widget.card.title.large.extra_fat'))
+          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'))
         )
       )
     ]);
@@ -2228,7 +2228,7 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
                 flex: 5,
                 key: progressKey, child:
             Stack(alignment: Alignment.centerLeft, children: <Widget>[
-              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.surface, progressColor: useCustomColor ?Styles().colors.fillColorPrimary:Styles().colors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.surface, progressColor: useCustomColor ? Styles().colors.fillColorPrimary : Styles().colors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
               Container(/*height: 15+ 16*MediaQuery.of(context).textScaleFactor,*/ child:
               Padding(padding: EdgeInsets.only(left: 5), child:
               Row(children: <Widget>[
