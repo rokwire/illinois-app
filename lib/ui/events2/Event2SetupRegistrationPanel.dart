@@ -155,13 +155,19 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
             Container(decoration: Event2CreatePanel.dropdownButtonDecoration, child:
               Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
                 DropdownButtonHideUnderline(child:
-                  DropdownButton<Event2RegistrationType>(
-                    icon: Styles().images.getImage('chevron-down'),
-                    isExpanded: true,
-                    style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
-                    hint: Text(event2RegistrationToDisplayString(_registrationType)),
-                    items: _buildRegistrationTypeDropDownItems(),
-                    onChanged: _onRegistrationTypeChanged
+                  Theme(
+                    data: ThemeData(
+                      canvasColor: Styles().colors.surface,
+                    ),
+                    child: DropdownButton<Event2RegistrationType>(
+                      icon: Styles().images.getImage('chevron-down'),
+                      isExpanded: true,
+                      style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                      hint: Text(event2RegistrationToDisplayString(_registrationType)),
+                      items: _buildRegistrationTypeDropDownItems(),
+                      value: _registrationType,
+                      onChanged: _onRegistrationTypeChanged
+                    ),
                   ),
                 ),
               ),
@@ -177,7 +183,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     for (Event2RegistrationType value in Event2RegistrationType.values) {
       menuItems.add(DropdownMenuItem<Event2RegistrationType>(
         value: value,
-        child: Text(event2RegistrationToDisplayString(value),),
+        child: Text(event2RegistrationToDisplayString(value), style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),),
       ));
     }
     return menuItems;
@@ -568,7 +574,7 @@ class _GuestListItemWidget extends StatelessWidget {
 
   Widget get _nameWidget {
     String? registrantNetId = registrant.identifier?.netId;
-    String textStyleKey = (enabled ? (highlighted ? 'widget.label.regular.fat' : 'widget.card.title.small.fat') : 'widget.card.title.small.fat.variant3');
+    String textStyleKey = (enabled ? (highlighted ? 'widget.label.regular.fat' : 'widget.card.title.small.fat') : 'widget.card.title.small.fat');
     return Text(registrantNetId ?? '', style: Styles().textStyles.getTextStyle(textStyleKey));
   }
 

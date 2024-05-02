@@ -495,7 +495,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                           padding: EdgeInsets.all(10),
                           child: RoundedButton(
                               label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url"),
-                              textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                              textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.large.fat"),
                               borderColor: Styles().colors.fillColorSecondary,
                               backgroundColor: Styles().colors.background,
                               onTap: _onTapUseUrl)),
@@ -503,7 +503,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                           padding: EdgeInsets.all(10),
                           child: RoundedButton(
                               label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from Device"),
-                              textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                              textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.large.fat"),
                               borderColor: Styles().colors.fillColorSecondary,
                               backgroundColor: Styles().colors.background,
                               progress: _showProgress,
@@ -667,7 +667,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
             Stack(children: [
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 _buildHeading(),
-                Container(height: 6),
+                // Container(height: 6),
                 Row(children:[
                   Expanded(child:
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
@@ -678,9 +678,9 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
                   ),
                   _buildImage()
                 ]),
-                (widget.displayType == GroupCardDisplayType.homeGroups) ?
-                Expanded(child: Container()) : Container(),
-                Container(height: 4),
+                // (widget.displayType == GroupCardDisplayType.homeGroups) ?
+                // Expanded(child: Container()) : Container(),
+                // Container(height: 4),
                 // (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups) ?
                 Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                   Expanded(child:
@@ -1540,11 +1540,14 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                     textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
                         hintText: _hint,
+                        hintStyle: Styles().textStyles.getTextStyle("widget.input_field.hint.regular"),
+                        fillColor: Styles().colors.surface,
+                        filled: true,
                         border: OutlineInputBorder(
                             borderSide: BorderSide(
                                 color: Styles().colors.mediumGray,
                                 width: 0.0))),
-                    style: Styles().textStyles.getTextStyle(''))),
+                    style: Styles().textStyles.getTextStyle('widget.input_field.text.regular'))),
           ],
         )
     );
@@ -1762,23 +1765,28 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
               DropdownButtonHideUnderline(
                 // child: ButtonTheme(
                 //   alignedDropdown: true,
-                  child: DropdownButton2<GroupMemberSelectionData>(
-                    isExpanded: true,
-                    dropdownStyleData: DropdownStyleData(padding: EdgeInsets.zero,
-                      decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 2, style: BorderStyle.solid),
-                          borderRadius: BorderRadius.only(bottomRight: Radius.circular(8), bottomLeft: Radius.circular(8))),
+                  child: Theme(
+                    data: ThemeData(
+                      canvasColor: Styles().colors.surface,
                     ),
-                    iconStyleData: IconStyleData(icon: widget.enabled? Icon(Icons.arrow_drop_down): Container(),
-                        iconEnabledColor: Styles().colors.fillColorSecondary),
-                    // buttonDecoration: widget.enabled? null : BoxDecoration(color: Styles().colors.background),
-                    // style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies.bold),
-                    // value: _currentSelection,
-                    items: _buildDropDownItems,
-                    hint: Text(_selectionText,  style: Styles().textStyles.getTextStyle('widget.group.members.title') ,),
-                    onChanged: widget.enabled? (GroupMemberSelectionData? data) {
-                      _onDropDownItemChanged(data);
-                    } : null,
-                )))
+                    child: DropdownButton2<GroupMemberSelectionData>(
+                      isExpanded: true,
+                      dropdownStyleData: DropdownStyleData(padding: EdgeInsets.zero,
+                        decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 2, style: BorderStyle.solid),
+                            borderRadius: BorderRadius.only(bottomRight: Radius.circular(8), bottomLeft: Radius.circular(8))),
+                      ),
+                      iconStyleData: IconStyleData(icon: widget.enabled? Icon(Icons.arrow_drop_down): Container(),
+                          iconEnabledColor: Styles().colors.fillColorSecondary),
+                      // buttonDecoration: widget.enabled? null : BoxDecoration(color: Styles().colors.background),
+                      // style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies.bold),
+                      // value: _currentSelection,
+                      items: _buildDropDownItems,
+                      hint: Text(_selectionText,  style: Styles().textStyles.getTextStyle('widget.title.large.fat') ,),
+                      onChanged: widget.enabled? (GroupMemberSelectionData? data) {
+                        _onDropDownItemChanged(data);
+                      } : null,
+                                    ),
+                  )))
               // )
     );
   }
@@ -1788,18 +1796,16 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
 
     items.add(DropdownMenuItem(alignment: AlignmentDirectional.topCenter,enabled: false, value: null,
         child:
-          Container(
-            color: Styles().colors.fillColorPrimary,
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-              Expanded(child:
-                Container(color: Styles().colors.fillColorPrimary,
-                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                  child:Text("Select Recipient(s)", style:  Styles().textStyles.getTextStyle('widget.group.members.dropdown.item'),))
-          )
-          ])))
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+            Expanded(child:
+              Container(color: Styles().colors.surface,
+                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                child:Text("Select Recipient(s)", style:  Styles().textStyles.getTextStyle('widget.group.members.dropdown.item'),))
+                    )
+                    ]))
     );
     items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.Selection, selection: null), child: _buildDropDownItemLayout("All Members")));
     items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.PerformNewSelection, selection: null) , child: _buildDropDownItemLayout("Select Members")));

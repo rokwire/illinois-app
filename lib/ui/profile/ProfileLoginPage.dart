@@ -2,12 +2,10 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsLinkedAccountPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginCodePanel.dart';
@@ -97,9 +95,9 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       }
     }
 
-    if (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
-      contentList.add(_buildDebug());
-    }
+    // if (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
+    //   contentList.add(_buildDebug());
+    // }
 
     contentList.add(Container(height: 48,),);
 
@@ -792,20 +790,20 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
 
   // Debug
 
-  Widget _buildDebug() => Padding(padding: EdgeInsets.only(top: 24), child:
-    RibbonButton(
-      backgroundColor: Styles().colors.gradientColorPrimary,
-      border: _allBorder,
-      borderRadius: _allRounding,
-      textColor: Styles().colors.textLight,
-      label: Localization().getStringEx("panel.profile_info.button.debug.title", "Debug"),
-      onTap: _onDebugClicked)
-    );
+  // Widget _buildDebug() => Padding(padding: EdgeInsets.only(top: 24), child:
+  //   RibbonButton(
+  //     backgroundColor: Styles().colors.gradientColorPrimary,
+  //     border: _allBorder,
+  //     borderRadius: _allRounding,
+  //     textColor: Styles().colors.textLight,
+  //     label: Localization().getStringEx("panel.profile_info.button.debug.title", "Debug"),
+  //     onTap: _onDebugClicked)
+  //   );
 
-  void _onDebugClicked() {
-    Analytics().logSelect(target: "Debug");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
-  }
+  // void _onDebugClicked() {
+  //   Analytics().logSelect(target: "Debug");
+  //   Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
+  // }
 
   // App Info
 
@@ -818,12 +816,12 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
     ),
     Padding(padding: const EdgeInsets.only(top: 8)),
     RichText(textAlign: TextAlign.left, text:
-      TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.light.thin"), children:[
+      TextSpan(style: Styles().textStyles.getTextStyle("widget.item.light.regular.thin"), children:[
         TextSpan(text: Localization().getStringEx('panel.settings.home.version.info.label', '{{app_title}} App Version:').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),),
-        TextSpan(text:  " $_appVersion", style : Styles().textStyles.getTextStyle("widget.item.regular.light.fat")),
+        TextSpan(text:  " $_appVersion", style : Styles().textStyles.getTextStyle("widget.item.light.regular.fat")),
       ])
     ),
-    Text(_copyrightText, textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.light.thin"))
+    Text(_copyrightText, textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.light.regular.thin"))
   ],);
 
   String get _appVersion => Config().appVersion ?? '';

@@ -74,7 +74,7 @@ class Event2CreatePanel extends StatefulWidget {
   static const EdgeInsetsGeometry textEditContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 20);
   static const EdgeInsetsGeometry innerTextEditContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
 
-  static TextStyle? get headingTextStype => Styles().textStyles.getTextStyle("widget.title.small.fat.spaced");
+  static TextStyle? get headingTextStype => Styles().textStyles.getTextStyle("widget.title.dark.small.fat.spaced");
   static TextStyle? get headingDisabledTextStype => Styles().textStyles.getTextStyle("widget.title.small.fat.disabled.spaced");
   static TextStyle? get subTitleTextStype => Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
   static TextStyle? get textEditStyle => Styles().textStyles.getTextStyle('widget.input_field.dark.text.regular.thin');
@@ -83,27 +83,31 @@ class Event2CreatePanel extends StatefulWidget {
   static BoxDecoration get sectionDisabledDecoration => sectionDecorationEx(enabled: false);
 
   static BoxDecoration sectionDecorationEx({bool enabled = true}) => BoxDecoration(
-    border: Border.all(color: enabled ? Styles().colors.mediumGray2 : Styles().colors.surfaceAccent, width: 1),
+    border: Border.all(color: enabled ? Styles().colors.background : Styles().colors.textMedium, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(8))
   );
 
   static BoxDecoration get sectionSplitterDecoration => BoxDecoration(
-    border: Border(top: BorderSide(color: Styles().colors.mediumGray2, width: 1))
+    border: Border(top: BorderSide(color: Styles().colors.background, width: 1))
   );
 
   static InputDecoration textEditDecoration({EdgeInsetsGeometry? padding}) => InputDecoration(
     fillColor: Styles().colors.surface,
     filled: true,
-    border: OutlineInputBorder(
-      borderSide: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
-      borderRadius: BorderRadius.circular(8)
+    enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Styles().colors.background, width: 1),
+        borderRadius: BorderRadius.circular(8)
+    ),
+    focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Styles().colors.background, width: 1),
+        borderRadius: BorderRadius.circular(8)
     ),
     contentPadding: padding,
   );
 
   static BoxDecoration get dropdownButtonDecoration => BoxDecoration(
     color: Styles().colors.surface,
-    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    border: Border.all(color: Styles().colors.background, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(4))
   );
 
@@ -325,7 +329,7 @@ class Event2CreatePanel extends StatefulWidget {
         keyboardType: keyboardType,
         autocorrect: autocorrect,
         onChanged: (onChanged != null) ? ((_) => onChanged) : null,
-    ));
+      ));
 
   static Widget buildInnerTextEditWidget(TextEditingController controller, {
     FocusNode? focusNode,
@@ -823,13 +827,18 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
           Container(decoration: Event2CreatePanel.dropdownButtonDecoration, child:
             Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
               DropdownButtonHideUnderline(child:
-                DropdownButton<Location>(
-                  icon: Styles().images.getImage('chevron-down'),
-                  isExpanded: true,
-                  style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
-                  hint: Text(_timeZone.name,),
-                  items: _buildTimeZoneDropDownItems(),
-                  onChanged: _onTimeZoneChanged
+                Theme(
+                  data: ThemeData(
+                    canvasColor: Styles().colors.surface,
+                  ),
+                  child: DropdownButton<Location>(
+                    icon: Styles().images.getImage('chevron-down'),
+                    isExpanded: true,
+                    style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.light.regular"),
+                    hint: Text(_timeZone.name,),
+                    items: _buildTimeZoneDropDownItems(),
+                    onChanged: _onTimeZoneChanged
+                  ),
                 ),
               ),
             ),
@@ -845,9 +854,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       if (name.startsWith('US/')) {
         menuItems.add(DropdownMenuItem<Location>(
           value: location,
-          child: Semantics(label: name, excludeSemantics: true, container:true, child: Text(name,)),
+          child: Semantics(label: name, excludeSemantics: true, container:true, child: Text(name, style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"))),
         ));
-        }
+      }
     });
     
     return menuItems;
@@ -1087,13 +1096,18 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
           Container(decoration: Event2CreatePanel.dropdownButtonDecoration, child:
             Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
               DropdownButtonHideUnderline(child:
-                DropdownButton<Event2Type>(
-                  icon: Styles().images.getImage('chevron-down'),
-                  isExpanded: true,
-                  style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
-                  hint: Text(event2TypeToDisplayString(_eventType) ?? '-',),
-                  items: _buildEventTypeDropDownItems(),
-                  onChanged: _onEventTypeChanged
+                Theme(
+                  data: ThemeData(
+                    canvasColor: Styles().colors.surface,
+                  ),
+                  child: DropdownButton<Event2Type>(
+                    icon: Styles().images.getImage('chevron-down'),
+                    isExpanded: true,
+                    style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.light.regular"),
+                    hint: Text(event2TypeToDisplayString(_eventType) ?? '-',),
+                    items: _buildEventTypeDropDownItems(),
+                    onChanged: _onEventTypeChanged
+                  ),
                 ),
               ),
             ),
@@ -1109,7 +1123,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     for (Event2Type eventType in Event2Type.values) {
       menuItems.add(DropdownMenuItem<Event2Type>(
         value: eventType,
-        child: Text(event2TypeToDisplayString(eventType) ?? '',),
+        child: Text(event2TypeToDisplayString(eventType) ?? '', style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),),
       ));
     }
 
@@ -1647,13 +1661,19 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
             Container(decoration: Event2CreatePanel.dropdownButtonDecoration, child:
               Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
                 DropdownButtonHideUnderline(child:
-                  DropdownButton<_Event2Visibility>(
-                    icon: Styles().images.getImage('chevron-down'),
-                    isExpanded: true,
-                    style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
-                    hint: Text(_event2VisibilityToDisplayString(_visibility, _isGroupEvent),),
-                    items: _buildVisibilityDropDownItems(),
-                    onChanged: _onVisibilityChanged
+                  Theme(
+                    data: ThemeData(
+                      canvasColor: Styles().colors.surface,
+                    ),
+                    child: DropdownButton<_Event2Visibility>(
+                      icon: Styles().images.getImage('chevron-down'),
+                      isExpanded: true,
+                      style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                      hint: Text(_event2VisibilityToDisplayString(_visibility, _isGroupEvent),),
+                      items: _buildVisibilityDropDownItems(),
+                      value: _visibility,
+                      onChanged: _onVisibilityChanged
+                    ),
                   ),
                 ),
               ),
@@ -1669,7 +1689,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     for (_Event2Visibility value in _Event2Visibility.values) {
       menuItems.add(DropdownMenuItem<_Event2Visibility>(
         value: value,
-        child: Text(_event2VisibilityToDisplayString(value, _isGroupEvent),),
+        child: Text(_event2VisibilityToDisplayString(value, _isGroupEvent), style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),),
       ));
     }
     return menuItems;

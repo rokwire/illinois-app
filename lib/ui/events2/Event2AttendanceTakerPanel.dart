@@ -849,8 +849,8 @@ class _AttendeeListItemWidget extends StatelessWidget {
       }
     }
     else {
-      titleStyleKey = 'widget.card.title.small.fat.variant3';
-      descriptionStyleKey = 'widget.card.title.small.variant3';
+      titleStyleKey = 'widget.card.title.small.fat';
+      descriptionStyleKey = 'widget.card.title.small';
     }
 
     String? registrantNetId = registrant.identifier?.netId;

@@ -406,6 +406,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                         readOnly: !_canUpdate,
                         decoration: InputDecoration(
                             hintText:  Localization().getStringEx("panel.groups_settings.link.hint", "Add URL"),
+                            hintStyle: Styles().textStyles.getTextStyle("widget.input_field.hint.regular"),
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
                         style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
@@ -425,7 +426,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               onTap: _onTapConfirmLinkUrl,
               child: Text(
                 Localization().getStringEx("panel.groups_settings.link.button.confirm.link.title", 'Confirm URL'),
-                style: Styles().textStyles.getTextStyle("widget.button.title.medium.underline")
+                style: Styles().textStyles.getTextStyle("widget.button.title.medium.underline.highlight")
               ),
             )
         ),
@@ -493,11 +494,11 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             Semantics(container:true, child:
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
-                  Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
+                  Styles().textStyles.getTextStyle("widget.card.detail.light.small.fat")
                 ),
                 Expanded(child:
                   Text(displayAttributeValues.join(', '), /*overflow: TextOverflow.ellipsis, maxLines: 1,*/ style:
-                    Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
+                    Styles().textStyles.getTextStyle("widget.card.detail.light.small.regular")
                   ),
               ),
           ],)),);
@@ -569,7 +570,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 8,vertical: 12),
               child:Text(longDescription ?? '',
-                style: Styles().textStyles.getTextStyle("widget.item.small.thin.spaced"),
+                style: Styles().textStyles.getTextStyle("widget.item.small.thin.highlight"),
             ),)),
           Container(height: 8,)
       ],));
@@ -608,7 +609,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                       padding: EdgeInsets.only(left: 8, right: 8, top: 12),
                       child: Text(
                           Localization().getStringEx("panel.groups.common.private.search.hidden.description", "A hidden group is unsearchable."),
-                          style: Styles().textStyles.getTextStyle("widget.item.small.thin.spaced"))))
+                          style: Styles().textStyles.getTextStyle("widget.item.small.thin.highlight"))))
             ])));
   }
 
@@ -676,7 +677,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     Expanded(child:
                       Text(
                         title,
-                        style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
+                        style: Styles().textStyles.getTextStyle("widget.title.dark.regular.fat")
                       ),
                     ),
                     Padding(
@@ -687,7 +688,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 Container(
                   padding: EdgeInsets.only(right: 42,top: 4),
                   child: Text(description,
-                    style: Styles().textStyles.getTextStyle("widget.detail.light.regular")
+                    style: Styles().textStyles.getTextStyle("widget.detail.regular")
                   ),
                 )
               ]
@@ -1168,10 +1169,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       Semantics(container: true, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Semantics(label: title, header: true, excludeSemantics: true, child:
-            Text(title, style: Styles().textStyles.getTextStyle("widget.title.tiny")),
+            Text(title, style: Styles().textStyles.getTextStyle("widget.title.tiny.highlight")),
           ),
           ((description != null) && description.isNotEmpty) ? Container(padding: EdgeInsets.only(top: 2), child:
-              Text(description, style: Styles().textStyles.getTextStyle("widget.item.small.thin")),
+              Text(description, style: Styles().textStyles.getTextStyle("widget.item.small.thin.highlight")),
             ) : Container(),
         ],),
       )

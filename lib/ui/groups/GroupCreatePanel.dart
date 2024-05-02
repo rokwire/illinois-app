@@ -759,7 +759,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 Expanded(
                     child: Text(
                   title,
-                  style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
+                  style: Styles().textStyles.getTextStyle("widget.title.dark.regular.fat")
                 )),
                 Padding(
                   padding: EdgeInsets.only(left: 5),
@@ -770,7 +770,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   padding: EdgeInsets.only(right: 42, top: 4),
                   child: Text(
                     description,
-                    style: Styles().textStyles.getTextStyle("widget.detail.light.regular")
+                    style: Styles().textStyles.getTextStyle("widget.detail.regular")
                   ))
             ])));
   }
@@ -1118,7 +1118,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Expanded(child:
-              Text(title ?? "", semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.title.regular.fat"))
+              Text(title ?? "", semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.title.dark.regular.fat"))
             ),
             GestureDetector(
               onTap: ((onTap != null)) ?() {

@@ -107,7 +107,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
       Localization().getStringEx("panel.membership_request.label.group.description", 'This group asks you to answer the following question(s) for membership consideration.') :
       Localization().getStringEx("panel.membership_request.label.project.description", 'This Research Project wants you to answer the following question(s) for participation consideration.');
     return Padding(padding: EdgeInsets.only(left: outerPadding, right: outerPadding, top: outerPadding), child:
-      Text(headingText, style: Styles().textStyles.getTextStyle("widget.description.variant.regular.thin"))
+      Text(headingText, style: Styles().textStyles.getTextStyle("widget.description.regular.highlight"))
     );
   }
 
@@ -128,7 +128,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
             maxLines: 6,
             controller: controller,
             focusNode: focusNode,
-            decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
+            decoration: InputDecoration(fillColor: Styles().colors.surface, filled: true, border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
             style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
           ),
         ),
@@ -141,7 +141,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
       return Container(decoration: BoxDecoration(color: Styles().colors.surface, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
         Padding(padding: EdgeInsets.all(16), child:
           RoundedButton(label: Localization().getStringEx("panel.membership_request.button.submit.title", 'Submit request'),
-            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.dark"),
             backgroundColor: Styles().colors.surface,
             borderColor: Styles().colors.fillColorSecondary,
             borderWidth: 2,

@@ -82,21 +82,21 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
       Column(children: [
         Container(
           padding: const EdgeInsets.all(6),
-          child: SizedBox(width: 32, height: 32, child:
-          Styles().images.getImage('university-logo-dark-frame'),
+          child: SizedBox(width: 51, height: 51, child:
+            Styles().images.getImage('university-logo-dark-frame'),
           ),
         ),
-        Text( Localization().getStringEx("panel.settings.contact.info.row1", "Smart, Healthy Communities Initiative | Rokwire"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.fat")),
-        Text( Localization().getStringEx("panel.settings.contact.info.row2", "Grainger Engineering Library, Room 333 \n 1301 West Springfield Avenue; Urbana, IL 61801"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.thin")),
+        Text( Localization().getStringEx("panel.settings.contact.info.row1", "Smart, Healthy Communities Initiative | Rokwire"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.light.regular.fat")),
+        Text( Localization().getStringEx("panel.settings.contact.info.row2", "Grainger Engineering Library, Room 333 \n 1301 West Springfield Avenue; Urbana, IL 61801"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.light.regular.thin")),
         RichText(textAlign: TextAlign.left, text:
-          TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children:[
-              TextSpan(text: "rokwire@illinois.edu",
-                  style: Styles().textStyles.getTextStyle("widget.item.regular_underline.thin"),
-                  recognizer: TapGestureRecognizer()..onTap = () => _processUrl("mailto:rokwire@illinois.edu")),
+          TextSpan(style: Styles().textStyles.getTextStyle("widget.item.light.regular.thin"), children:[
+              TextSpan(text: "rokwire@neom.edu",
+                  style: Styles().textStyles.getTextStyle("widget.item.light.regular_underline.thin"),
+                  recognizer: TapGestureRecognizer()), //..onTap = () => _processUrl("mailto:rokwire@illinois.edu")),
               TextSpan(text: " • "),
-              TextSpan(text: "app.illinois.edu",
-                style: Styles().textStyles.getTextStyle("widget.item.regular_underline.thin"),
-                recognizer: TapGestureRecognizer()..onTap = () => _processUrl("app.illinois.edu")),
+              TextSpan(text: "app.neom.edu",
+                style: Styles().textStyles.getTextStyle("widget.item.light.regular_underline.thin"),
+                recognizer: TapGestureRecognizer()), //..onTap = () => _processUrl("app.illinois.edu")),
           ]))
       ],)
     );
@@ -104,9 +104,9 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
   Widget get _appVersionWidget =>
       Padding(padding: const EdgeInsets.only(top: 0), child:
         RichText(textAlign: TextAlign.left, text:
-        TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children:[
+        TextSpan(style: Styles().textStyles.getTextStyle("widget.item.light.regular.thin"), children:[
           TextSpan(text: Localization().getStringEx('panel.settings.home.version.info.label', '{{app_title}} App Version:').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),),
-          TextSpan(text:  " $_appVersion", style : Styles().textStyles.getTextStyle("widget.item.regular.fat")),
+          TextSpan(text:  " $_appVersion", style : Styles().textStyles.getTextStyle("widget.item.light.regular.fat")),
         ])
         ),
     );

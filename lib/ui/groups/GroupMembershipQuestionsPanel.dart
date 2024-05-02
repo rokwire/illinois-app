@@ -108,7 +108,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
         child: Column(crossAxisAlignment: CrossAxisAlignment.start,
           children:<Widget>[
             Row(children: <Widget>[
-              Text(Localization().getStringEx("panel.membership_questions.label.edit", 'Edit Questions'), style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
+              Text(Localization().getStringEx("panel.membership_questions.label.edit", 'Edit Questions'), style: Styles().textStyles.getTextStyle("widget.title.dark.regular.fat")),
             ],),
             Padding(padding: EdgeInsets.only(top: 8), child:
               Text(description, style: Styles().textStyles.getTextStyle("widget.description.variant.regular.thin")),

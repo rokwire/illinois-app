@@ -560,15 +560,20 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   Widget get _sortButton {
     _sortDropdownWidth ??= _evaluateSortDropdownWidth();
     return DropdownButtonHideUnderline(child:
-      DropdownButton2<Event2SortType>(
-        dropdownStyleData: DropdownStyleData(width: _sortDropdownWidth),
-        customButton: Event2FilterCommandButton(
-          title: Localization().getStringEx('panel.events2.home.bar.button.sort.title', 'Sort'),
-          leftIconKey: 'sort'
+      Theme(
+        data: ThemeData(
+          canvasColor: Styles().colors.surface,
         ),
-        isExpanded: false,
-        items: _buildSortDropdownItems(),
-        onChanged: _onSortType,
+        child: DropdownButton2<Event2SortType>(
+          dropdownStyleData: DropdownStyleData(width: _sortDropdownWidth),
+          customButton: Event2FilterCommandButton(
+            title: Localization().getStringEx('panel.events2.home.bar.button.sort.title', 'Sort'),
+            leftIconKey: 'sort'
+          ),
+          isExpanded: false,
+          items: _buildSortDropdownItems(),
+          onChanged: _onSortType,
+        ),
       ),
     );
   }
@@ -750,9 +755,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: _screenHeight / 6), child:
       Column(children: [
         (title != null) ? Padding(padding: EdgeInsets.only(bottom: 12), child:
-          Text(title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat'),)
+          Text(title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.light.medium.fat'),)
         ) : Container(),
-        Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
+        Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle((title != null) ? 'widget.item.light.regular.thin' : 'widget.item.light.medium.fat'),),
       ],),
     );
 

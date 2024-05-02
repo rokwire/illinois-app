@@ -350,7 +350,7 @@ class AppDialogButtonState extends State<AppDialogButton> {
       onPressed: widget.onPressed,
       child: Text(
         widget.buttonTitle,
-        style: Styles().textStyles.getTextStyle("widget.button.title.regular.thin")
+        style: Styles().textStyles.getTextStyle("widget.button.light.title.regular.thin")
       ),
     );
   }

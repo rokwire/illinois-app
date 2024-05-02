@@ -94,6 +94,9 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                       textCapitalization: TextCapitalization.sentences,
                       decoration: InputDecoration(
                         hintText: Localization().getStringEx('panel.group.detail.post.create.subject.field.hint', 'Write a Subject'),
+                        hintStyle: Styles().textStyles.getTextStyle("widget.input_field.hint.regular"),
+                        fillColor: Styles().colors.surface,
+                        filled: true,
                         border: OutlineInputBorder(
                           borderSide: BorderSide(
                               color: Styles().colors.mediumGray,
@@ -140,7 +143,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                       child: RoundedButton(
                         label: Localization().getStringEx('panel.group.detail.post.create.button.cancel.title', 'Cancel'),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                        borderColor: Styles().colors.textSurface,
+                        borderColor: Styles().colors.textDark,
                         backgroundColor: Styles().colors.surface,
                         onTap: _onTapCancel))
                   ])
