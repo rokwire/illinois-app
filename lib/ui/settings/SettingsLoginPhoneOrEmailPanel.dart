@@ -50,7 +50,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
   Widget build(BuildContext context) {
     String description, headingTitle, headingHint, buttonProceedTitle, buttonProceedHint;
     TextInputType keyboardType;
-    Widget? proceedRightIcon;
+    // Widget? proceedRightIcon;
     
     if (widget.link == true) {
       if (widget.mode == SettingsLoginPhoneOrEmailMode.phone) {
@@ -77,7 +77,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
         buttonProceedHint = Localization().getStringEx('panel.settings.link.both.button.proceed.hint', '');
         keyboardType = TextInputType.emailAddress;
       }
-      proceedRightIcon = Styles().images.getImage('plus-circle', excludeFromSemantics: true);
+      // proceedRightIcon = Styles().images.getImage('plus-circle', excludeFromSemantics: true);
     }
     else {
       if (widget.mode == SettingsLoginPhoneOrEmailMode.phone) {
@@ -154,10 +154,12 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                       autofocus: false,
                       autocorrect: false,
                       onSubmitted: (_) => _clearErrorMsg,
-                      cursorColor: Styles().colors.textLight,
+                      cursorColor: Styles().colors.textDark,
                       keyboardType: keyboardType,
                       style: Styles().textStyles.getTextStyle("widget.input_field.text.medium"),
                       decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Styles().colors.surface,
                         disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.textLight, width: 1.0),),
                         enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.textLight, width: 1.0),),
                         focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.textLight, width: 1.0),),
@@ -190,9 +192,10 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                       backgroundColor: Styles().colors.fillColorSecondary,
                       textStyle: Styles().textStyles.getTextStyle('widget.button.title.large.fat'),
                       onTap: _onTapProceed,
-                      rightIcon: proceedRightIcon,
+                      // rightIcon: proceedRightIcon,
+                      rightIconKey: null,
                       progress: _isLoading,
-                      progressColor: Styles().colors.fillColorPrimary,
+                      progressColor: Styles().colors.background,
                     ),
                   ),
                 ),

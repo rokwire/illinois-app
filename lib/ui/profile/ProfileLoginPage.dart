@@ -389,7 +389,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
             )
           ),
           Padding(padding: EdgeInsets.only(top: 3), child:
-            Text(Auth2().emails.isNotEmpty ? Auth2().emails.first : "", style:  Styles().textStyles.getTextStyle("widget.detail.large.fat"))
+            Text(Auth2().phones.isNotEmpty ? Auth2().phones.first : (Auth2().emails.isNotEmpty ? Auth2().emails.first : ""), style:  Styles().textStyles.getTextStyle("widget.detail.large.fat"))
           )
         ]));
       }

@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileDetailsPage.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
 import 'package:illinois/ui/profile/ProfileRolesPage.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -58,7 +54,8 @@ class ProfileHomePanel extends StatefulWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
         builder: (context) {
           return ProfileHomePanel._(content: content);
-        }
+        },
+        useSafeArea: true,
       );
 
       /*Navigator.push(context, PageRouteBuilder(
@@ -131,38 +128,41 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   Widget _buildSheet(BuildContext context) {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
-    return Column(children: [
-      Container(color: Styles().colors.gradientColorPrimary, child:
-        Row(children: [
-          Expanded(child:
-            Padding(padding: EdgeInsets.only(left: 16), child:
-              Text(Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),)
-            )
-          ),
-          // Visibility(visible: (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)), child:
-          //   Semantics(label: "debug", child:
-          //     InkWell(onTap : _onTapDebug, child:
-          //       Container(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
-          //         Styles().images.getImage('bug', excludeFromSemantics: true),
-          //       ),
-          //     ),
-          //   )
-          // ),
-          Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
-            InkWell(onTap : _onTapClose, child:
-              Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-                Styles().images.getImage('close', excludeFromSemantics: true),
+    return Padding(
+      padding: MediaQuery.of(context).viewInsets,
+      child: Column(children: [
+        Container(color: Styles().colors.gradientColorPrimary, child:
+          Row(children: [
+            Expanded(child:
+              Padding(padding: EdgeInsets.only(left: 16), child:
+                Text(Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),)
+              )
+            ),
+            // Visibility(visible: (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)), child:
+            //   Semantics(label: "debug", child:
+            //     InkWell(onTap : _onTapDebug, child:
+            //       Container(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
+            //         Styles().images.getImage('bug', excludeFromSemantics: true),
+            //       ),
+            //     ),
+            //   )
+            // ),
+            Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+              InkWell(onTap : _onTapClose, child:
+                Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
+                  Styles().images.getImage('close', excludeFromSemantics: true),
+                ),
               ),
             ),
-          ),
 
-        ],),
-      ),
-      Container(color: Styles().colors.surfaceAccent, height: 1,),
-      Expanded(child:
-        _buildPage(context),
-      )
-    ],);
+          ],),
+        ),
+        Container(color: Styles().colors.surfaceAccent, height: 1,),
+        Expanded(child:
+          _buildPage(context),
+        )
+      ],),
+    );
   }
 
   Widget _buildPage(BuildContext context) {

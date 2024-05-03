@@ -13,6 +13,7 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/widgets/SlantedWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -204,8 +205,11 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   @override
   Widget build(BuildContext context) => Semantics(label: _semanticsLabel, hint: _semanticsHint, button: true, child:
     InkWell(onTap: widget.onTap, child:
-       Semantics(excludeSemantics: StringUtils.isNotEmpty(_semanticsLabel), child:
-        _contentWidget
+      Semantics(excludeSemantics: StringUtils.isNotEmpty(_semanticsLabel), child:
+        SlantedWidget(
+           color: Styles().colors.surface,
+           child: _contentWidget
+        )
       )
     )
   );
@@ -283,7 +287,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
 
   Widget get _linkContentWidget =>
     Container(decoration: _linkContentDecoration, child:
-      ClipRRect(borderRadius: _linkContentBorderRadius, child: 
+      ClipRRect(borderRadius: _linkContentBorderRadius, child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16, top: 14, bottom: 14), child:
@@ -347,18 +351,18 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
 
   static Decoration get _listContentDecoration => BoxDecoration(
     color: Styles().colors.surface,
-    borderRadius: _listContentBorderRadius,
+    // borderRadius: _listContentBorderRadius,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-    boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]
+    // boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]
   );
 
   static BorderRadiusGeometry get _listContentBorderRadius => BorderRadius.all(Radius.circular(8));
 
   static Decoration get _pageContentDecoration => BoxDecoration(
     color: Styles().colors.surface,
-    borderRadius: _pageContentBorderRadius,
+    // borderRadius: _pageContentBorderRadius,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-    boxShadow: _pageContentShadow
+    // boxShadow: _pageContentShadow
   );
 
   static Decoration get _pageTopContentDecoration => BoxDecoration(
@@ -388,9 +392,9 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
 
   static Decoration get _linkContentDecoration => BoxDecoration(
     color: Styles().colors.surface,
-    borderRadius: _linkContentBorderRadius,
+    // borderRadius: _linkContentBorderRadius,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-    boxShadow: _linkContentShadow
+    // boxShadow: _linkContentShadow
   );
 
   static Decoration get _linkBottomContentDecoration => BoxDecoration(

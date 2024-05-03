@@ -98,11 +98,11 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[
+    return Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
       _buildProfilePicture(),
       _buildInfoContent(),
       _buildAccountManagementOptions(),
-      _buildDeleteMyAccount()
+      _buildDeleteMyAccount(),
     ]);
   }
 
@@ -118,7 +118,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
       contentWidget = _buildEmailLoginInfoContent();
     }
     else if (Auth2().isPasskeyLoggedIn) {
-      contentWidget = _buildEmailLoginInfoContent();
+      contentWidget = _buildPasskeyLoginInfoContent();
     }
 
     return (contentWidget != null) ? Padding(padding: EdgeInsets.only(top: 25), child: contentWidget) : Container() ;
@@ -175,35 +175,41 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
           )
           ),
           Container(height: 33,),
-          Semantics(
-            label: Localization().getStringEx("panel.profile_info.phone_or_email.email.title", "Email Address"),
-            //hint: Localization().getStringEx("panel.profile_info.phone_or_email.email.hint", ""),
-            header: true, excludeSemantics: true,
-               child: Padding(padding: EdgeInsets.only(bottom: 8),
-                 child: Text(Localization().getStringEx("panel.profile_info.phone_or_email.email.title","Email Address"), textAlign: TextAlign.left,
-                    style: _formFieldLabelTextStyle)
-              )
-          ),
-          Semantics(
-            label:Localization().getStringEx("panel.profile_info.phone_or_email.email.title","Email Address"),
-            hint: Localization().getStringEx("panel.profile_info.phone_or_email.email.hint",""),
-            textField: true, excludeSemantics: true,
-            child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
-//                height: 48,
-                child: TextField(
-                  controller: _emailController,
-                  onChanged: (text) { setState(() {});},
-                  decoration: InputDecoration(border: InputBorder.none),
-                  maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                  style: Styles().textStyles.getTextStyle("widget.input_field.text.regular")
-                ),
-              )
-          ),
-          _PersonalInfoEntry(
-              title: Localization().getStringEx("panel.profile_info.phone_number.title", "Phone Number"),
-              value: Auth2().phones.isNotEmpty ? Auth2().phones.first : ""),
+          //TODO: provide text fields here once Core BB has been updated to handle profile email and phone updates
+          if (Auth2().phones.isNotEmpty)
+            _PersonalInfoEntry(
+                title: Localization().getStringEx("panel.profile_info.phone.title", "Phone Number"),
+                value: Auth2().phones.first),
+          if (Auth2().emails.isNotEmpty)
+            _PersonalInfoEntry(
+                title: Localization().getStringEx("panel.profile_info.email.title", "Email Address"),
+                value: Auth2().emails.first),
+//           Semantics(
+//             label: Localization().getStringEx("panel.profile_info.phone_or_email.email.title", "Email Address"),
+//             //hint: Localization().getStringEx("panel.profile_info.phone_or_email.email.hint", ""),
+//             header: true, excludeSemantics: true,
+//                child: Padding(padding: EdgeInsets.only(bottom: 8),
+//                  child: Text(Localization().getStringEx("panel.profile_info.phone_or_email.email.title","Email Address"), textAlign: TextAlign.left,
+//                     style: _formFieldLabelTextStyle)
+//               )
+//           ),
+//           Semantics(
+//             label:Localization().getStringEx("panel.profile_info.phone_or_email.email.title","Email Address"),
+//             hint: Localization().getStringEx("panel.profile_info.phone_or_email.email.hint",""),
+//             textField: true, excludeSemantics: true,
+//             child: Container(
+//                 padding: EdgeInsets.symmetric(horizontal: 8),
+//                 decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+// //                height: 48,
+//                 child: TextField(
+//                   controller: _emailController,
+//                   onChanged: (text) { setState(() {});},
+//                   decoration: InputDecoration(border: InputBorder.none),
+//                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
+//                   style: Styles().textStyles.getTextStyle("widget.input_field.text.regular")
+//                 ),
+//               )
+//           ),
         ],
       );
   }
@@ -235,35 +241,81 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
           )
           ),
           Container(height: 33,),
-          Semantics(
-            label: Localization().getStringEx("panel.profile_info.phone_or_email.phone.title", "Phone Number"),
-            //hint: Localization().getStringEx("panel.profile_info.phone_or_email.phone.hint", ""),
-            header: true, excludeSemantics: true,
-               child: Padding(padding: EdgeInsets.only(bottom: 8),
-                 child: Text(Localization().getStringEx("panel.profile_info.phone_or_email.phone.title","Phone Number"), textAlign: TextAlign.left, style: _formFieldLabelTextStyle)
-              )
-          ),
-          Semantics(
-            label:Localization().getStringEx("panel.profile_info.phone_or_email.phone.title","Phone Number"),
-            hint: Localization().getStringEx("panel.profile_info.phone_or_email.phone.hint",""),
+          //TODO: provide text fields here once Core BB has been updated to handle profile email and phone updates
+          if (Auth2().phones.isNotEmpty)
+            _PersonalInfoEntry(
+                title: Localization().getStringEx("panel.profile_info.phone.title", "Phone Number"),
+                value: Auth2().phones.first),
+          if (Auth2().emails.isNotEmpty)
+            _PersonalInfoEntry(
+                title: Localization().getStringEx("panel.profile_info.email.title", "Email Address"),
+                value: Auth2().emails.first),
+//           Semantics(
+//             label: Localization().getStringEx("panel.profile_info.phone_or_email.phone.title", "Phone Number"),
+//             //hint: Localization().getStringEx("panel.profile_info.phone_or_email.phone.hint", ""),
+//             header: true, excludeSemantics: true,
+//                child: Padding(padding: EdgeInsets.only(bottom: 8),
+//                  child: Text(Localization().getStringEx("panel.profile_info.phone_or_email.phone.title","Phone Number"), textAlign: TextAlign.left, style: _formFieldLabelTextStyle)
+//               )
+//           ),
+//           Semantics(
+//             label:Localization().getStringEx("panel.profile_info.phone_or_email.phone.title","Phone Number"),
+//             hint: Localization().getStringEx("panel.profile_info.phone_or_email.phone.hint",""),
+//             textField: true, excludeSemantics: true,
+//             child: Container(
+//                 padding: EdgeInsets.symmetric(horizontal: 8),
+//                 decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+// //                height: 48,
+//                 child: TextField(
+//                   controller: _phoneController,
+//                   onChanged: (text) { setState(() {});},
+//                   decoration: InputDecoration(border: InputBorder.none),
+//                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
+//                   style: Styles().textStyles.getTextStyle("widget.input_field.text.regular")
+//                 ),
+//               )
+//           ),
+        ],
+      );
+  }
+
+  Widget _buildPasskeyLoginInfoContent(){
+    return
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Semantics(label: Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), header: true, excludeSemantics: true, child:
+          Padding(padding: EdgeInsets.only(bottom: 8), child:
+            Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), textAlign: TextAlign.left, style: _formFieldLabelTextStyle)
+          )
+        ),
+        Semantics(
+            label: Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"),
+            hint: Localization().getStringEx("panel.profile_info.phone_or_email.name.hint",""),
             textField: true, excludeSemantics: true,
             child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
-//                height: 48,
-                child: TextField(
-                  controller: _phoneController,
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+//          height: 48,
+              child: TextField(
+                  controller: _nameController,
+                  textCapitalization: TextCapitalization.words,
                   onChanged: (text) { setState(() {});},
                   decoration: InputDecoration(border: InputBorder.none),
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
                   style: Styles().textStyles.getTextStyle("widget.input_field.text.regular")
-                ),
-              )
-          ),
+              ),
+            )
+        ),
+        Container(height: 33,),
+        //TODO: provide text fields here once Core BB has been updated to handle profile email and phone updates
+        if (Auth2().phones.isNotEmpty)
+          _PersonalInfoEntry(
+              title: Localization().getStringEx("panel.profile_info.phone.title", "Phone Number"),
+              value: Auth2().phones.first),
+        if (Auth2().emails.isNotEmpty)
           _PersonalInfoEntry(
               title: Localization().getStringEx("panel.profile_info.email.title", "Email Address"),
-              value: Auth2().emails.isNotEmpty ? Auth2().emails.first : ""),
-        ],
+              value: Auth2().emails.first),
+      ],
       );
   }
 
@@ -308,6 +360,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
       backgroundColor: _canSave ? Styles().colors.fillColorSecondary : Styles().colors.background,
       borderColor: _canSave? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
       progress: _isSaving,
+      progressColor: Styles().colors.background,
       onTap: _onSaveChangesClicked,
     );
   }
@@ -479,43 +532,43 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
       } else {
         firstName = fullName;
       }
-    }
 
-    setState(() { _isSaving = true; });
+      setState(() { _isSaving = true; });
 
-    Auth2().loadUserProfile().then((Auth2UserProfile? userProfile) {
-      if (mounted) {
-        if (userProfile != null) {
-          Auth2UserProfile? updatedUserProfile = Auth2UserProfile.fromOther(userProfile,
-            email: email,
-            phone: phone,
-            firstName: firstName,
-            middleName: middleName,
-            lastName: lastName,
-          );
-          if (userProfile != updatedUserProfile) {
-            Auth2().saveAccountUserProfile(updatedUserProfile).then((bool result) {
-              if (mounted) {
-                setState(() { _isSaving = false; });
-                if (result == true) {
-                  Navigator.pop(context);
-                } else {
-                  AppToast.showMessage("Unable to perform save");
+      Auth2().loadUserProfile().then((Auth2UserProfile? userProfile) {
+        if (mounted) {
+          if (userProfile != null) {
+            Auth2UserProfile? updatedUserProfile = Auth2UserProfile.fromOther(userProfile,
+              firstName: firstName,
+              middleName: middleName,
+              lastName: lastName,
+            );
+            if (userProfile != updatedUserProfile) {
+              Auth2().saveAccountUserProfile(updatedUserProfile).then((bool result) {
+                if (mounted) {
+                  setState(() {
+                    _isSaving = false;
+                  });
+                  if (result == true) {
+                    Navigator.pop(context);
+                  } else {
+                    AppToast.showMessage("Unable to perform save");
+                  }
                 }
-              }
-            });
+              });
+            }
+            else {
+              setState(() { _isSaving = false; });
+              Navigator.pop(context);
+            }
           }
           else {
             setState(() { _isSaving = false; });
-            Navigator.pop(context);
+            AppToast.showMessage("Unable to perform save");
           }
         }
-        else {
-          setState(() { _isSaving = false; });
-          AppToast.showMessage("Unable to perform save");
-        }
-      }
-    });
+      });
+    }
   }
 
   void _onTapProfilePicture() {
@@ -587,7 +640,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
     AppAlert.showCustomDialog(context: context,
         contentWidget:
         Text(promptEn,
-          style: Styles().textStyles.getTextStyle("widget.message.regular"),
+          style: Styles().textStyles.getTextStyle("widget.message.light.regular"),
         ),
         actions: [
           TextButton(

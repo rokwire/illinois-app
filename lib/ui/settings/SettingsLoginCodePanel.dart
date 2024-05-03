@@ -56,6 +56,7 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
   String? _identifier;
   String? _errorMessage;
   bool? _linkIdentifier;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -134,7 +135,9 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
         backgroundColor: Styles().colors.fillColorSecondary,
         textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.light'),
         onTap: () => _primaryButtonAction(context),
-        progressColor: Styles().colors.fillColorPrimary,
+        progress: _isLoading,
+        progressColor: Styles().colors.background,
+        rightIconKey: null,
       ),
     );
   }
@@ -144,7 +147,7 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
       Visibility(
         visible: StringUtils.isNotEmpty(_errorMessage),
         child: Padding(
-          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+          padding: const EdgeInsets.all(16.0),
           child: Text(
             _errorMessage ?? '',
             style: Styles().textStyles.getTextStyle('widget.error.regular.fat'),
@@ -152,7 +155,7 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
         ),
       ),
       Padding(
-          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+          padding: const EdgeInsets.all(16.0),
           child: Semantics(
             excludeSemantics: true,
             label: Localization().getStringEx("panel.settings.confirm_identifier.code.label", "One-Time Code"),
@@ -179,24 +182,29 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
   }
 
   Future<void> _primaryButtonAction(BuildContext context) async {
-    Analytics().logSelect(target: "Confirm ${widget.identifierType}");
-    _clearErrorMessage();
-    _validateCode();
-    if (StringUtils.isNotEmpty(_errorMessage)) {
-      return;
-    }
-    String? identifier = widget.onboardingContext?["identifier"] ?? widget.identifier;
-    if (_linkIdentifier == null) {
-      Auth2SendCodeResult result = await Auth2().handleCodeAuthentication(
-        widget.identifierId == null ? identifier : null,
-        _codeController.text,
-        identifierType: widget.defaultIdentifierType ?? Auth2Identifier.typePhone,
-        identifierId: widget.identifierId
-      );
-      _onIdentifierVerified(result);
-    } else {
-      Auth2LinkResult result = await Auth2().linkAccountIdentifier(identifier, widget.identifierType ?? '');
-      _onIdentifierVerified(auth2SendCodeResultFromAuth2LinkResult(result));
+    if (!_isLoading) {
+      setState(() { _isLoading = true; });
+
+      Analytics().logSelect(target: "Confirm ${widget.identifierType}");
+      _clearErrorMessage();
+      _validateCode();
+      if (StringUtils.isNotEmpty(_errorMessage)) {
+        return;
+      }
+
+      String? identifier = widget.onboardingContext?["identifier"] ?? widget.identifier;
+      if (_linkIdentifier == null) {
+        Auth2SendCodeResult result = await Auth2().handleCodeAuthentication(
+            widget.identifierId == null ? identifier : null,
+            _codeController.text,
+            identifierType: widget.defaultIdentifierType ?? Auth2Identifier.typePhone,
+            identifierId: widget.identifierId
+        );
+        _onIdentifierVerified(result);
+      } else {
+        Auth2LinkResult result = await Auth2().linkAccountIdentifier(identifier, widget.identifierType ?? '');
+        _onIdentifierVerified(auth2SendCodeResultFromAuth2LinkResult(result));
+      }
     }
   }
 
@@ -216,6 +224,7 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
         //   });
         //   return;
         // }
+        setState(() { _isLoading = false; });
         _next();
       }
     }
@@ -241,11 +250,13 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
     else if (widget.onFinish != null) {
       widget.onFinish?.call();
     }
-    else {
-      //TODO: check if account has existing webauthn auth type in account first?
+    else if (!Auth2().isPasskeyLinked) {
       Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) {
         return SettingsLoginPasskeyPanel(link: true, onboardingContext: widget.onboardingContext,);
       }));
+    } else {
+      // just login if a passkey is already linked
+      Onboarding().finish(context);
     }
   }
 

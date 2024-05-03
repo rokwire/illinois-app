@@ -201,6 +201,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
         onTap: () => _primaryButtonAction(context),
         progress: _loading,
         progressColor: Styles().colors.fillColorPrimary,
+        rightIconKey: null,
       ),
     );
   }
