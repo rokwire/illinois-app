@@ -38,7 +38,6 @@ import 'package:illinois/ui/settings/SettingsResearchContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsSectionsContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
@@ -326,6 +325,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
         return SettingsContent.favorites;
       case "assessments":
         return SettingsContent.assessments;
+      case "notifications":
+        return SettingsContent.notifications;
     }
     return null;
   }

@@ -19,7 +19,7 @@
 			"browse.inbox": ["all_notifications", "unread_notifications"],
 			"browse.recent": ["recent_items"],
 
-			"settings": ["favorites"],
+			"settings": ["favorites", "notifications"],
 			"authenticate": ["connect", "connected", "feedback"],
 			"authenticate.connect": ["phone_or_email"],
 			"authenticate.connected": ["code", "password", "passkey"],

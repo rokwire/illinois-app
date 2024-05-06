@@ -82,7 +82,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           padding: EdgeInsets.symmetric(horizontal: 6),
           child: Text(
             Localization().getStringEx("panel.settings.notifications.label.desctiption", "Don’t miss an event or campus update."),
-            style: Styles().textStyles.getTextStyle("widget.message.regular.fat"),
+            style: Styles().textStyles.getTextStyle("widget.message.light.regular.fat"),
           ),),
         Container(height: 24,),
         InfoButton(
@@ -99,6 +99,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
   }
 
   Widget _buildSettings(){
+    //TODO: move these settings into flex UI
 //  BorderRadius _bottomRounding = BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5));
     BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5));
     List<Widget> widgets = [];
@@ -112,6 +113,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
         textStyle: _notificationsEnabled? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
     ));
     widgets.add(Container(color:Styles().colors.surfaceAccent,height: 1,));
+    /*
     widgets.add(_CustomToggleButton(
           enabled: _appointmentsNotificationsEnabled,
           borderRadius: BorderRadius.zero,
@@ -156,6 +158,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
                       style: _notificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.disabled")
                   ))))
     ]));
+    */
     widgets.add(Container(color:Styles().colors.surfaceAccent,height: 1));
     widgets.add(_CustomToggleButton(
           enabled: _toggleButtonEnabled,
@@ -166,6 +169,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           textStyle: _toggleButtonEnabled? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
     ));
     widgets.add(Container(color:Styles().colors.surfaceAccent,height: 1,));
+    /*
     widgets.add(_CustomToggleButton(
           enabled: _toggleButtonEnabled,
           borderRadius: BorderRadius.zero,
@@ -211,6 +215,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
     )
     ]))))]));
     widgets.add(Container(color:Styles().colors.surfaceAccent,height: 1,));
+     */
     widgets.add(_CustomToggleButton(
         enabled: _toggleButtonEnabled,
         borderRadius: BorderRadius.zero,

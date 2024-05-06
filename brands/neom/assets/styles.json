@@ -168,6 +168,7 @@
     "widget.message.light.small": {"font_family": "regular", "size": 14.0, "color": "mediumGray"},
     "widget.message.light.small.semi_fat": {"font_family": "medium", "size": 14.0, "color": "mediumGray"},
     "widget.message.light.regular": {"font_family": "regular", "size": 16.0, "color": "mediumGray"},
+    "widget.message.light.regular.fat": {"font_family": "regular", "size": 16.0, "color": "textLight"},
     "widget.message.light.variant.small": {"font_family": "regular", "size": 14.0, "color": "mediumGray2"},
     "widget.message.dark.regular": {"font_family": "regular", "size": 16.0, "color": "textDark"},
 
@@ -526,6 +527,7 @@
     "widget.group.input_field.detail": {"extends": "widget.detail.regular"},
 
     "widget.group.members.title": {"extends": "widget.title.large.fat", "color": "textPrimary"},
+    "widget.group.members.card.title": {"extends": "widget.title.large.fat", "color": "textDark"},
     "widget.group.members.search": {"extends": "widget.input_field.text.regular"},
     "widget.group.members.selected_entry": {"font_family": "bold", "size": 18.0, "decoration": "underline", "color": "textPrimary"},
     "widget.group.members.dropdown.item": {"font_family": "regular", "size": 14.0, "color": "textDark"},

@@ -374,14 +374,14 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         Visibility(visible: showSynced,
           child: Semantics(container: true, child:
             Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Last sync:'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))),
-              Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))
+              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Last sync:'), style: Styles().textStyles.getTextStyle('panel.group.detail.light.fat'))),
+              Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('panel.group.detail.light.fat'))
         ]))),
         Visibility(visible: showUpdated,
           child: Semantics(container: true,
             child: Padding(padding: EdgeInsets.only(top: 5), child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Last updated:'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))),
-              Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))
+              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Last updated:'), style: Styles().textStyles.getTextStyle('panel.group.detail.light.fat'))),
+              Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('panel.group.detail.light.fat'))
         ]))))
     ]))));
   }
@@ -665,7 +665,7 @@ class _GroupMemberCard extends StatelessWidget {
                       children: <Widget>[
                         Expanded(child:
                           Text(StringUtils.ensureNotEmpty(_memberDisplayName),
-                            style: Styles().textStyles.getTextStyle('widget.group.members.title')
+                            style: Styles().textStyles.getTextStyle('widget.group.members.card.title')
                           )
                         )
                       ],
