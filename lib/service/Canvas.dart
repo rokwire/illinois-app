@@ -19,11 +19,11 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
-import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
@@ -787,13 +787,15 @@ class Canvas with Service implements NotificationsListener {
     if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     } else if (name == Auth2.notifyLoginChanged) {
-      _updateCourses();
+      if (isInitialized) {
+        _updateCourses();
+      }
     } else if (name == Connectivity.notifyStatusChanged) {
-      if (Connectivity().isNotOffline) {
+      if (Connectivity().isNotOffline && isInitialized) {
         _updateCourses();
       }
     } else if (name == Storage.notifySettingChanged) {
-      if (param == Storage.debugUseCanvasLmsKey) {
+      if ((param == Storage.debugUseCanvasLmsKey) && isInitialized) {
         _updateCourses();
       }
     } else if (name == DeepLink.notifyUri) {
