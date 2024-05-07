@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Make sure to always return successfully refreshed token in Auth2 service.
+- Fixed miscelanious service dependencies [#447](https://github.com/rokwire/app-flutter-plugin/issues/447).
 
 ## [5.2.6] - 2024-04-30
 ### Added
