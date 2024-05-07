@@ -271,7 +271,7 @@ class _HeadingItem extends StatelessWidget {
       padding: EdgeInsets.all(16),
       color: Styles().colors.backgroundVariant,
       child: Text(heading!,
-        style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat")
+        style: Styles().textStyles.getTextStyle("widget.title.dark.large.extra_fat")
       ),
     );
   }

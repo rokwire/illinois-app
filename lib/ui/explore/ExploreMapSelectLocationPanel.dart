@@ -318,7 +318,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Padding(padding: EdgeInsets.only(right: 10), child:
-                Text(title ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat")),
+                Text(title ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("widget.title.dark.large.extra_fat")),
               ),
               Text(description ?? "", overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("panel.event_schedule.map.description")),
               Container(height: 8,),

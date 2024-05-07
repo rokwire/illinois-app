@@ -54,6 +54,7 @@ class RoleGridButton extends TileToggleButton {
     selectionMarkerKey: 'check-circle-filled',
     iconFit: BoxFit.fitWidth,
     iconWidth: 38,
+    contentSpacing: 10,
     semanticsValue: "${Localization().getStringEx("toggle_button.status.unchecked", "unchecked",)}, ${Localization().getStringEx("toggle_button.status.checkbox", "checkbox")}",
     selectedSemanticsValue: "${Localization().getStringEx("toggle_button.status.checked", "checked",)}, ${Localization().getStringEx("toggle_button.status.checkbox", "checkbox")}",
     data: data,
@@ -69,7 +70,7 @@ class RoleGridButton extends TileToggleButton {
   static RoleGridButton? fromRole(UserRole? role, { bool? selected, double? sortOrder, TextScaler? textScaler, void Function(RoleGridButton)? onTap }) {
     if (role == UserRole.student) {
       return RoleGridButton(
-        title: Localization().getStringEx('panel.onboarding2.roles.button.student.title', 'University Student'),
+        title: Localization().getStringEx('panel.onboarding2.roles.button.student.title', 'Student'),
         hint: Localization().getStringEx('panel.onboarding2.roles.button.student.hint', ''),
         iconKey: 'role-student',
         selectedIconKey: 'role-student',
@@ -81,12 +82,12 @@ class RoleGridButton extends TileToggleButton {
         textScaler: textScaler ?? TextScaler.noScaling,
       );
     }
-    else if (role == UserRole.visitor) {
+    else if (role == UserRole.prospectiveStudent) {
       return RoleGridButton(
-        title: Localization().getStringEx('panel.onboarding2.roles.button.visitor.title', 'Visitor'),
-        hint: Localization().getStringEx('panel.onboarding2.roles.button.visitor.hint', ''),
-        iconKey: 'role-visitor',
-        selectedIconKey:  'role-visitor',
+        title: Localization().getStringEx('panel.onboarding2.roles.button.prospective_student.title', 'Prospective Student'),
+        hint: Localization().getStringEx('panel.onboarding2.roles.button.prospective_student.hint', ''),
+        iconKey: 'role-prospective-student',
+        selectedIconKey:  'role-prospective-student',
         selectedBackgroundColor: Styles().colors.surface,
         selected: (selected == true),
         data: role,
@@ -95,12 +96,12 @@ class RoleGridButton extends TileToggleButton {
         textScaler: textScaler ?? TextScaler.noScaling,
       );
     }
-    else if (role == UserRole.fan) {
+    else if (role == UserRole.faculty) {
       return RoleGridButton(
-        title: Localization().getStringEx('panel.onboarding2.roles.button.fan.title', 'Athletics Fan'),
-        hint: Localization().getStringEx('panel.onboarding2.roles.button.fan.hint', ''),
-        iconKey: 'role-athletics',
-        selectedIconKey:  'role-athletics',
+        title: Localization().getStringEx('panel.onboarding2.roles.button.faculty.title', 'Faculty'),
+        hint: Localization().getStringEx('panel.onboarding2.roles.button.faculty.hint', ''),
+        iconKey: 'role-faculty',
+        selectedIconKey:  'role-faculty',
         selectedBackgroundColor: Styles().colors.surface,
         selected: (selected == true),
         data: role,
@@ -109,55 +110,12 @@ class RoleGridButton extends TileToggleButton {
         textScaler: textScaler ?? TextScaler.noScaling,
       );
     }
-    else if (role == UserRole.employee) {
+    else if (role == UserRole.staff) {
       return RoleGridButton(
-        title: Localization().getStringEx('panel.onboarding2.roles.button.employee.title', 'University Employee'),
-        hint: Localization().getStringEx('panel.onboarding2.roles.button.employee.hint', ''),
-        iconKey: 'role-employee',
-        selectedIconKey: 'role-employee',
-        selectedBackgroundColor: Styles().colors.surface,
-        selected: (selected == true),
-        data: role,
-        sortOrder: sortOrder,
-        onTap: onTap,
-        textScaler: textScaler ?? TextScaler.noScaling,
-      );
-    }
-    else if (role == UserRole.alumni) {
-      return RoleGridButton(
-        title: Localization().getStringEx('panel.onboarding2.roles.button.alumni.title', 'Alumni'),
-        hint: Localization().getStringEx('panel.onboarding2.roles.button.alumni.hint', ''),
-        iconKey: 'role-alumni',
-        selectedIconKey: 'role-alumni',
-        selectedBackgroundColor: Styles().colors.surface,
-        selected:(selected == true),
-        data: role,
-        sortOrder: sortOrder,
-        onTap: onTap,
-        textScaler: textScaler ?? TextScaler.noScaling,
-      );
-    }
-    else if (role == UserRole.parent) {
-      return RoleGridButton(
-        title: Localization().getStringEx('panel.onboarding2.roles.button.parent.title', 'Parent'),
-        hint: Localization().getStringEx('panel.onboarding2.roles.button.parent.hint', ''),
-        iconKey: 'role-parent',
-        selectedIconKey:  'role-parent',
-        selectedBackgroundColor: Styles().colors.surface,
-        selected: (selected == true),
-        data: role,
-        sortOrder: sortOrder,
-        onTap: onTap,
-        textScaler: textScaler ?? TextScaler.noScaling,
-      );
-    }
-
-    else if (role == UserRole.gies) {
-      return RoleGridButton(
-        title: Localization().getStringEx('panel.onboarding2.roles.button.gies.title', 'GIES Student'),
-        hint: Localization().getStringEx('panel.onboarding2.roles.button.gies.hint', ''),
-        iconKey: 'role-alumni',
-        selectedIconKey: 'role-alumni',
+        title: Localization().getStringEx('panel.onboarding2.roles.button.staff.title', 'Staff'),
+        hint: Localization().getStringEx('panel.onboarding2.roles.button.staff.hint', ''),
+        iconKey: 'role-staff',
+        selectedIconKey: 'role-staff',
         selectedBackgroundColor: Styles().colors.surface,
         selected: (selected == true),
         data: role,

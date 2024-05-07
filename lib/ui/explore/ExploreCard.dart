@@ -299,7 +299,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     return Padding(
         padding: EdgeInsets.only(bottom: 12, left: 16, right: 16),
         child: Text(StringUtils.ensureNotEmpty(widget.explore?.exploreTitle),
-            style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat')));
+            style: Styles().textStyles.getTextStyle('widget.title.dark.large.extra_fat')));
   }
 
   Widget _exploreDetails() {
@@ -668,7 +668,7 @@ class _EventSmallCard extends StatelessWidget {
                   children: <Widget>[
                     Expanded(child: Text(_title!, overflow: TextOverflow.ellipsis,
                       maxLines: 2,
-                      style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat') ,),),
+                      style: Styles().textStyles.getTextStyle('widget.title.dark.large.extra_fat') ,),),
                     Visibility(
                       visible: starVisible, child: GestureDetector(
                         behavior: HitTestBehavior.opaque,

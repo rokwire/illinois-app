@@ -154,7 +154,7 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
                                 Padding(padding: EdgeInsets.all(16), child:
                                   Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors.fillColorSecondary , width: 3))), child:
                                     Padding(padding: EdgeInsets.only(left: 10), child:
-                                    Row(children: [Expanded(child: Text(buttonTitle, style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat')))]))))),
+                                    Row(children: [Expanded(child: Text(buttonTitle, style: Styles().textStyles.getTextStyle('widget.title.dark.large.extra_fat')))]))))),
                             ],),
                           ),
                         ),

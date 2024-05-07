@@ -123,7 +123,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
             RichText(text:
               TextSpan(text: title, style: Styles().textStyles.getTextStyle("widget.title.large.fat"),
                 children: [
-                  TextSpan(text: (question.required == true) ?  " *" : "", style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),
+                  TextSpan(text: (question.required == true) ?  " *" : "", style: Styles().textStyles.getTextStyle("widget.title.dark.large.extra_fat"),
                 )
               ],),
             ),

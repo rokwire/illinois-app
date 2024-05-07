@@ -113,7 +113,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
                   children: <Widget>[
                     Text(
                       voterTitle,
-                      style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),
+                      style: Styles().textStyles.getTextStyle("widget.title.dark.large.extra_fat"),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 8, bottom: 16),

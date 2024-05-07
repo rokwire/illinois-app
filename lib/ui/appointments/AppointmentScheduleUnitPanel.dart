@@ -336,7 +336,7 @@ class _AppointmentUnitCard extends StatelessWidget {
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
                       Padding(padding: EdgeInsets.only(top: 6, bottom: 2), child:
-                        Text(unit.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'),),
+                        Text(unit.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.dark.large.extra_fat'),),
                       ),
                       
                       Visibility(visible: StringUtils.isNotEmpty(unitAddress), child:

@@ -163,7 +163,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, mainAxisSize: MainAxisSize.max, children: <Widget>[
                         Expanded(
                             child: Text(Localization().getStringEx("panel.athletics_team.label.record.title", "Record"),
-                                textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"))),
+                                textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle("widget.title.dark.large.extra_fat"))),
                         Expanded(
                             child: Text(StringUtils.ensureNotEmpty(_record?.overallRecordUnformatted),
                                 textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle("widget.title.huge.extra_fat")))

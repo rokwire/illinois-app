@@ -16,9 +16,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
@@ -43,7 +43,7 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
 
   @override
   Widget build(BuildContext context) {
-    String titleText = Localization().getStringEx('panel.onboarding.notifications.label.title', 'Event info when you need it');
+    String titleText = Localization().getStringEx('panel.onboarding.notifications.label.title', 'UPDATES WHEN YOU NEED THEM');
     String notRightNow = Localization().getStringEx(
         'panel.onboarding.notifications.button.dont_allow.title',
         'Not right now');
@@ -58,51 +58,33 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      Stack(children: <Widget>[
-                        Styles().images.getImage(
-                          'header-notifications',
-                          fit: BoxFit.fitWidth,
-                          width: MediaQuery.of(context).size.width,
-                          excludeFromSemantics: true,
-                        ) ?? Container(),
-                        OnboardingBackButton(
-                          padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
-                          onTap:() {
-                            Analytics().logSelect(target: "Back");
-                            _goBack(context);
-                          }),
-                      ]),
+                      Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
+                        Onboarding2TitleWidget(),
+                      ),
                       Semantics(
                           label: titleText,
                           hint: Localization().getStringEx('panel.onboarding.notifications.label.title.hint', 'Header 1'),
                           excludeSemantics: true,
-                          child:
-                          Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24),
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              titleText,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontFamily: Styles().fontFamilies.bold,
-                                  fontSize: 32,
-                                  color: Styles().colors.fillColorPrimary),
-                            ),
-                          ))),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                titleText,
+                                style: Styles().textStyles.getTextStyle('panel.onboarding2.notifications.heading.title'),
+                              ),
+                            )
+                          )
+                      ),
                       Container(height: 12,),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 24),
                         child: Align(
-                        alignment: Alignment.topCenter,
-                        child: Text(
-                          Localization().getStringEx('panel.onboarding.notifications.label.description', 'Get notified about your “starred” events.'),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontFamily: Styles().fontFamilies.regular,
-                              fontSize: 20,
-                              color: Styles().colors.fillColorPrimary),
-                        )),
+                          alignment: Alignment.topCenter,
+                          child: Text(
+                            Localization().getStringEx('panel.onboarding.notifications.label.description', 'Get notified about your “starred” groups and events.'),
+                            style: Styles().textStyles.getTextStyle('widget.title.large'),
+                          )),
                       ),]),
               )),
               Padding(
@@ -113,10 +95,10 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                       RoundedButton(
                         label: Localization().getStringEx('panel.onboarding.notifications.button.allow.title', 'Receive Notifications'),
                         hint: Localization().getStringEx('panel.onboarding.notifications.button.allow.hint', ''),
-                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.dark"),
                         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         borderColor: Styles().colors.fillColorSecondary,
-                        backgroundColor: Styles().colors.surface,
+                        backgroundColor: Styles().colors.fillColorSecondary,
                         onTap: () => _onReceiveNotifications(context),
                       ),
                       GestureDetector(
@@ -130,18 +112,13 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                           button: true,
                           excludeSemantics: true,
                           child:Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20),
-                          child: Text(
-                              notRightNow,
-                              style: TextStyle(
-                                  fontFamily: Styles().fontFamilies.medium,
-                                  fontSize: 16,
-                                  color: Styles().colors.fillColorPrimary,
-                                  decoration: TextDecoration.underline,
-                                  decorationColor: Styles().colors.fillColorSecondary,
-                                  decorationThickness: 1,
-                                  decorationStyle: TextDecorationStyle.solid),
-                            ))),
+                            padding: EdgeInsets.symmetric(vertical: 20),
+                            child: Text(
+                                notRightNow,
+                                style: Styles().textStyles.getTextStyle('widget.button.title.medium.underline.highlight'),
+                            )
+                          )
+                        ),
                       )
                     ],
                   ),
@@ -190,17 +167,14 @@ void _requestAuthorization(BuildContext context) async {
           children: <Widget>[
             Text(
               Localization().getStringEx('app.title', 'Illinois'),
-              style: TextStyle(fontSize: 24, color: Colors.black),
+              style: Styles().textStyles.getTextStyle('widget.dialog.message.large'),
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 26),
               child: Text(
                 message ?? '',
                 textAlign: TextAlign.left,
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies.medium,
-                    fontSize: 16,
-                    color: Colors.black),
+                style: Styles().textStyles.getTextStyle('widget.dialog.message.medium'),
               ),
             ),
             Row(

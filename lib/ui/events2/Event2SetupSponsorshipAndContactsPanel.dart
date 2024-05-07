@@ -205,7 +205,7 @@ class _Event2ContactCard extends StatelessWidget {
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Expanded(child:
           Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
-            Text(contact.fullName, style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'), overflow: TextOverflow.ellipsis, maxLines: 2,)
+            Text(contact.fullName, style: Styles().textStyles.getTextStyle('widget.title.dark.large.extra_fat'), overflow: TextOverflow.ellipsis, maxLines: 2,)
           )
         ),
         _deleteButton

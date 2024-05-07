@@ -208,7 +208,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Padding(
                             padding: EdgeInsets.only(bottom: 16),
-                            child: Text(title ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))),
+                            child: Text(title ?? '', style: Styles().textStyles.getTextStyle('widget.title.dark.large.extra_fat'))),
                         Stack(alignment: Alignment.center, children: [
                           StringUtils.isNotEmpty(imageUrl)
                               ? ClipRRect(

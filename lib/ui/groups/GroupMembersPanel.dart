@@ -605,7 +605,7 @@ class _PendingMemberCard extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     member?.displayName ?? "",
-                    style: Styles().textStyles.getTextStyle('widget.group.members.title'),
+                    style: Styles().textStyles.getTextStyle('widget.group.members.card.title'),
                   ),
                   Container(height: 4,),
                       RoundedButton(
@@ -613,8 +613,8 @@ class _PendingMemberCard extends StatelessWidget {
                         hint: Localization().getStringEx("panel.manage_members.button.review_request.hint", ""),
                         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                         borderColor: Styles().colors.fillColorSecondary,
-                        backgroundColor: Styles().colors.surface,
-                        rightIcon: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true),
+                        backgroundColor: Styles().colors.fillColorSecondary,
+                        rightIcon: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true, color: Styles().colors.surface),
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         onTap: (){
                           Analytics().logSelect(target:"Review request");

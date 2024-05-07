@@ -557,7 +557,7 @@ class HomeCommandButton extends StatelessWidget {
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Expanded(child:
                 Padding(padding: EdgeInsets.only(top: 15, bottom: 7), child:
-                  Text(title ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'), semanticsLabel: "",),
+                  Text(title ?? '', style: Styles().textStyles.getTextStyle('widget.title.dark.large.extra_fat'), semanticsLabel: "",),
                 )
               ),
               // Styles().images.getImage('images/chevron-right.png', excludeFromSemantics: true)

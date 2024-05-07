@@ -188,7 +188,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
                               ])),
                           Padding(
                               padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                              child: Text(StringUtils.ensureNotEmpty(game?.title), style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))),
+                              child: Text(StringUtils.ensureNotEmpty(game?.title), style: Styles().textStyles.getTextStyle('widget.title.dark.large.extra_fat'))),
                           _athleticsDetails(),
                           Visibility(
                               visible: showDescription,

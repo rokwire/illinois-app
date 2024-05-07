@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -22,7 +23,6 @@ import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/RoleGridButton.dart';
-import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
@@ -50,31 +50,29 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles().colors.surface,
+      backgroundColor: Styles().colors.background,
       body: SafeArea(child: Column( children: <Widget>[
-        Padding(padding: EdgeInsets.only(top: 10, bottom: 10),
-          child: Row(children: <Widget>[
-            OnboardingBackButton(padding: const EdgeInsets.only(left: 10,),
-              onTap:() {
-                Analytics().logSelect(target: "Back");
-                Navigator.pop(context);
-              }),
-            Expanded(child: Column(children: <Widget>[
-              Semantics(
-                label: Localization().getStringEx('panel.onboarding.roles.label.title', 'Who Are You?').toLowerCase(),
-                hint: Localization().getStringEx('panel.onboarding.roles.label.title.hint', 'Header 1').toLowerCase(),
-                excludeSemantics: true,
+        Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
+          Onboarding2TitleWidget(),
+        ),
+        Padding(padding: EdgeInsets.symmetric(vertical: 8.0),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Semantics(
+              label: Localization().getStringEx('panel.onboarding.roles.label.title', 'Who Are You?').toLowerCase(),
+              hint: Localization().getStringEx('panel.onboarding.roles.label.title.hint', 'Header 1').toLowerCase(),
+              excludeSemantics: true,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(Localization().getStringEx('panel.onboarding.roles.label.title', 'Who Are You?'),
-                  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 24, color: Styles().colors.fillColorPrimary),
+                  style: Styles().textStyles.getTextStyle('panel.onboarding2.roles.heading.title'),
                 ),
               ),
-              Padding(padding: EdgeInsets.only(top: 8),
-                child: Text(Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
-                  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),
-                ),
-              )
-            ],),),
-            Padding(padding: EdgeInsets.only(left: 42),),
+            ),
+            Padding(padding: EdgeInsets.only(top: 8, left: 16.0, right: 16.0),
+              child: Text(Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
+                style: Styles().textStyles.getTextStyle('widget.title.light.regular.thin'),
+              ),
+            )
           ],),
         ),
 
@@ -82,16 +80,16 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
           RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton, textScaler: MediaQuery.of(context).textScaler,),
         ),),),        
 
-        Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 10, bottom: 20), child:
+        Padding(padding: EdgeInsets.all(24), child:
           RoundedButton(
-            label: Localization().getStringEx('panel.onboarding.roles.button.continue.title', 'Explore Illinois'),
+            label: Localization().getStringEx('panel.onboarding.roles.button.continue.title', 'Continue'),
             hint: Localization().getStringEx('panel.onboarding.roles.button.continue.hint', ''),
-            textStyle: _allowNext ? Styles().textStyles.getTextStyle("widget.button.title.large.fat.secondary") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat.variant"),
+            textStyle: _allowNext ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat.variant"),
             enabled: _allowNext,
-            backgroundColor: (Styles().colors.background),
+            backgroundColor: _allowNext ? Styles().colors.fillColorSecondary : Styles().colors.background,
             borderColor: (_allowNext
                 ? Styles().colors.fillColorSecondary
-                : Styles().colors.fillColorPrimaryTransparent03),
+                : Styles().colors.textMedium),
             progress: _updating,
             onTap: () => _onExploreClicked()),
         )

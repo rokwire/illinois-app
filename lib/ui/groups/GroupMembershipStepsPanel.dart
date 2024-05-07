@@ -328,7 +328,7 @@ class _EventCard extends StatelessWidget {
           Padding(padding: EdgeInsets.all(16),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Padding(padding: EdgeInsets.only(bottom: 8), child: 
-                Text(event!.name!,  style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat")),
+                Text(event!.name!,  style: Styles().textStyles.getTextStyle("widget.title.dark.large.extra_fat")),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
                 Padding(padding: EdgeInsets.only(right: 8), child: Styles().images.getImage('calendar', excludeFromSemantics: true)),
