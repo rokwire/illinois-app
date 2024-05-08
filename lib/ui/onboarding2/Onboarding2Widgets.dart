@@ -5,6 +5,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:neom/utils/AppUtils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class Onboarding2TitleWidget extends StatelessWidget{
   final String? title;
@@ -26,13 +27,14 @@ class Onboarding2TitleWidget extends StatelessWidget{
               Container(height: 64,),
               Styles().images.getImage("university-logo-dark", excludeFromSemantics: true, size: title == null ? 128 : null) ?? Container(),
               Container(height: 17,),
-              Row(children: <Widget>[
-                Container(width: 32,),
-                Expanded(child:
-                  Text(title ?? '', textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.heading.title"),),
-                ),
-                Container(width: 32,),
-              ]),
+              if (StringUtils.isNotEmpty(title))
+                Row(children: <Widget>[
+                  Container(width: 32,),
+                  Expanded(child:
+                    Text(title!, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.heading.title"),),
+                  ),
+                  Container(width: 32,),
+                ]),
               Container(height: 90,),
             ],),
           ),

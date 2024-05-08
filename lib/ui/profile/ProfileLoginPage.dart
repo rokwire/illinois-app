@@ -285,7 +285,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       String code = codes[index];
       if (code == 'info') {
         contentList.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Text(Localization().getStringEx("panel.settings.home.code_login.message", "Signed in with code"),
+          Text(Localization().getStringEx("panel.settings.home.code_login.message", "Signed in with"),
               style: Styles().textStyles.getTextStyle("widget.detail.regular.extra_fat")),
           Visibility(visible: hasFullName, child:
             Padding(padding: EdgeInsets.only(top: 3), child:
@@ -621,6 +621,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
   // Link
 
   Widget _buildLink() {
+    //TODO: Add option to link passkey in case user deletes from device? ("Passkey recovery") -> can we tell on backend which passkey the user may have deleted from device?
     List<Widget> contentList =  [];
     List<dynamic> codes = FlexUI()['authenticate.link'] ?? [];
     for (int index = 0; index < codes.length; index++) {

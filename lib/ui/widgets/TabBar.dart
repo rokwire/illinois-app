@@ -38,7 +38,7 @@ class TabBar extends rokwire.TabBar {
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
     }
-    else if (code == 'feed') {
+    else if (code == 'favorites') {
       return rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.feed.title', 'Feed'),
         hint: Localization().getStringEx('tabbar.feed.hint', ''),
@@ -58,7 +58,7 @@ class TabBar extends rokwire.TabBar {
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
     }
-    else if (code == 'more') {
+    else if (code == 'browse') {
       return rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.more.title', 'More'),
         hint: Localization().getStringEx('tabbar.more.hint', ''),

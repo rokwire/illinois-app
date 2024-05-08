@@ -72,17 +72,30 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
           backgroundColor: Styles().colors.background,
           body: SingleChildScrollView(
             child: Column(children: [
-              Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
-                Onboarding2TitleWidget(),
+              Stack(
+                children: [
+                  Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
+                    Onboarding2TitleWidget(),
+                  ),
+                  Positioned(
+                    top: 32,
+                    left: 0,
+                    child: Onboarding2BackButton(padding: const EdgeInsets.only(left: 17,),
+                        onTap:() {
+                          Analytics().logSelect(target: "Back");
+                          Navigator.pop(context);
+                        }),
+                  ),
+                ],
               ),
-              _buildContent(context, _buildPrimaryActionButton()),
+              _buildContent(context),
             ]),
           )
       ),
     );
   }
 
-  Widget _buildContent(BuildContext context, Widget primaryActionButton) {
+  Widget _buildContent(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: Column(
@@ -90,8 +103,10 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           _buildText(),
+          Container(height: 48),
           _buildContentWidget(),
-          primaryActionButton,
+          Container(height: 24),
+          _buildPrimaryActionButton(),
         ],
       ),
     );
@@ -107,22 +122,28 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
       }
     }
 
-    String title = Localization().getStringEx("panel.settings.confirm_identifier.title", "Confirm your code");
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        Semantics(header: true, label: title, excludeSemantics: true, focused: true,
-            child: Text(title, textAlign: TextAlign.center,
-              style: Styles().textStyles.getTextStyle('widget.info.regular.light'),
-            )),
-        const SizedBox(height: 16),
-        Text(sprintf(
-            Localization().getStringEx(
-                'panel.settings.confirm_identifier.description.send', 'A one time code has been sent to %s. Enter your code below to continue.'),
-            [maskedIdentifier]), textAlign: TextAlign.center,
-          style: Styles().textStyles.getTextStyle('widget.info.regular.light'),
-        )
-      ]),
+    // String title = Localization().getStringEx("panel.settings.confirm_identifier.title", "Confirm your code");
+    // return Padding(
+    //   padding: const EdgeInsets.symmetric(horizontal: 24),
+    //   child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+    //     Semantics(header: true, label: title, excludeSemantics: true, focused: true,
+    //         child: Text(title, textAlign: TextAlign.center,
+    //           style: Styles().textStyles.getTextStyle('widget.info.regular.light'),
+    //         )),
+    //     const SizedBox(height: 16),
+    //     Text(sprintf(
+    //         Localization().getStringEx(
+    //             'panel.settings.confirm_identifier.description.send', 'A one-time code has been sent to %s. Enter your code below to continue.'),
+    //         [maskedIdentifier]), textAlign: TextAlign.center,
+    //       style: Styles().textStyles.getTextStyle('widget.info.regular.light'),
+    //     )
+    //   ]),
+    // );
+    return Text(sprintf(
+        Localization().getStringEx(
+            'panel.settings.confirm_identifier.description.send', 'A one-time code has been sent to %s. Enter your code below to continue.'),
+        [maskedIdentifier]),
+      style: Styles().textStyles.getTextStyle('widget.description.medium.light'),
     );
   }
 
@@ -133,7 +154,7 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
         label: Localization().getStringEx("panel.settings.confirm_identifier.button.confirm.label", "Confirm"),
         textAlign: TextAlign.center,
         backgroundColor: Styles().colors.fillColorSecondary,
-        textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.light'),
+        textStyle: Styles().textStyles.getTextStyle('widget.button.title.large.fat'),
         onTap: () => _primaryButtonAction(context),
         progress: _isLoading,
         progressColor: Styles().colors.background,
@@ -154,29 +175,28 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
           ),
         ),
       ),
-      Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Semantics(
-            excludeSemantics: true,
-            label: Localization().getStringEx("panel.settings.confirm_identifier.code.label", "One-Time Code"),
-            hint: Localization().getStringEx("panel.settings.confirm_identifier.code.hint", ""),
-            value: _codeController.text,
-            child: TextField(
-              controller: _codeController,
-              autofocus: false,
-              onSubmitted: (_) => _clearErrorMessage(),
-              cursorColor: Styles().colors.textLight,
-              keyboardType: TextInputType.number,
-              style: Styles().textStyles.getTextStyle('widget.description.regular.light'),
-              decoration: InputDecoration(
-                  labelStyle: Styles().textStyles.getTextStyle('widget.description.regular.light'),
-                  labelText: Localization().getStringEx("panel.settings.confirm_identifier.code.label", "One-Time Code"),
-                  filled: true,
-                  fillColor: Styles().colors.fillColorPrimaryVariant,
-                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.background, width: 2.0, style: BorderStyle.solid)),
-                  focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.fillColorSecondary, width: 2.0),)),
-            ),
-          )
+      Row(children: [ Expanded(child:
+        Text(Localization().getStringEx("panel.settings.confirm_identifier.code.label", "One-Time Code:"), style: Styles().textStyles.getTextStyle("widget.title.light.medium.fat"),)
+      )],),
+      Container(height: 6),
+      Semantics(
+        excludeSemantics: true,
+        label: Localization().getStringEx("panel.settings.confirm_identifier.code.label", "One-Time Code"),
+        hint: Localization().getStringEx("panel.settings.confirm_identifier.code.hint", ""),
+        value: _codeController.text,
+        child: TextField(
+          controller: _codeController,
+          autofocus: false,
+          onSubmitted: (_) => _clearErrorMessage(),
+          cursorColor: Styles().colors.fillColorSecondary,
+          keyboardType: TextInputType.number,
+          style: Styles().textStyles.getTextStyle('widget.description.regular'),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Styles().colors.surface,
+            border: OutlineInputBorder(),
+          ),
+        ),
       ),
     ]);
   }
@@ -250,7 +270,8 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
     else if (widget.onFinish != null) {
       widget.onFinish?.call();
     }
-    else if (!Auth2().isPasskeyLinked) {
+    else if (!Auth2().isPasskeyLinked || !Auth2().hasPasskeyForPlatform) {
+      // direct user to link a passkey if no passkey has been linked for the current platform
       Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) {
         return SettingsLoginPasskeyPanel(link: true, onboardingContext: widget.onboardingContext,);
       }));

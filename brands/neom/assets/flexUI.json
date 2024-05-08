@@ -1,7 +1,7 @@
 {
 	"": {
 		"content": {
-			"tabbar": ["feed", "assistant", "more"],
+			"tabbar": ["favorites", "assistant", "browse"],
 
 			"home": [
 				"all_groups", "my_groups", "event_feed", "my_events",

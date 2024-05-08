@@ -533,17 +533,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       panels.add(_panels[rootTab] ?? Container());
     }
 
+    uiuc.TabBar tabBar = uiuc.TabBar(tabController: _tabBarController);
     return PopScopeFix(onBack: _onBack, child:
-      Container(color: Colors.white, child:
-        Scaffold(
-          body: TabBarView(
-            controller: _tabBarController,
-            physics: NeverScrollableScrollPhysics(), //disable scrolling
-            children: panels,
-          ),
-          bottomNavigationBar: uiuc.TabBar(tabController: _tabBarController),
-          backgroundColor: Styles().colors.background,
+      Scaffold(
+        body: TabBarView(
+          controller: _tabBarController,
+          physics: NeverScrollableScrollPhysics(), //disable scrolling
+          children: panels,
         ),
+        bottomNavigationBar: tabBar,
+        backgroundColor: tabBar.backgroundColor,
       ),
     );
   }

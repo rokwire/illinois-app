@@ -130,7 +130,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
                   child: Row(children: [ Expanded(child:
                     Text(description, style:  Styles().textStyles.getTextStyle("widget.description.medium.light"),)
                   )],),
@@ -160,9 +160,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Styles().colors.surface,
-                        disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.textLight, width: 1.0),),
-                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.textLight, width: 1.0),),
-                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.textLight, width: 1.0),),
+                        border: OutlineInputBorder(),
                       ),
                     ),
                   ),

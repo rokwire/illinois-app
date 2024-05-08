@@ -111,7 +111,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
               Text(Localization().getStringEx("panel.membership_questions.label.edit", 'Edit Questions'), style: Styles().textStyles.getTextStyle("widget.title.dark.regular.fat")),
             ],),
             Padding(padding: EdgeInsets.only(top: 8), child:
-              Text(description, style: Styles().textStyles.getTextStyle("widget.description.variant.regular.thin")),
+              Text(description, style: Styles().textStyles.getTextStyle("widget.description.medium.regular.thin")),
             ),
           ]),
       ),

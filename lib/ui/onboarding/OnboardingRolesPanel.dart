@@ -31,6 +31,9 @@ class OnboardingRolesPanel extends StatefulWidget with OnboardingPanel {
   OnboardingRolesPanel({this.onboardingContext});
 
   @override
+  bool get onboardingCanDisplay => Auth2().prefs?.roles?.isEmpty ?? true;
+
+  @override
   _OnboardingRoleSelectionPanelState createState() =>
       _OnboardingRoleSelectionPanelState();
 }

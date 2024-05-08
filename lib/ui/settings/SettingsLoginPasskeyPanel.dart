@@ -94,24 +94,27 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
                 Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
                   Onboarding2TitleWidget()
                 ),
-              _buildContent(context, _buildPrimaryActionButton()),
+              _buildContent(context),
             ]),
           )
       ),
     );
   }
 
-  Widget _buildContent(BuildContext context, Widget primaryActionButton) {
+  Widget _buildContent(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           _buildText(),
-          // if (_state != Auth2PasskeyAccountState.exists || StringUtils.isNotEmpty(_responseMessage))
-          _buildContentWidget(context),
-          primaryActionButton,
+          Container(height: 48),
+          if (_state == Auth2PasskeyAccountState.unverified || StringUtils.isNotEmpty(_responseMessage))
+            _buildContentWidget(context),
+          _buildPrimaryActionButton(),
+          Container(height: 8),
           _buildSignUpButton(),
           // _buildSkipButton(context),
         ],
@@ -128,7 +131,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
     } else {
       switch (_state) {
         case Auth2PasskeyAccountState.nonExistent:
-          title = Localization().getStringEx('panel.settings.passkey.sign_up.title.text', 'Sign up to continue');
+          title = Localization().getStringEx('panel.settings.passkey.sign_up.title.text', 'Sign up to continue.');
           // description = Localization().getStringEx('panel.settings.passkey.sign_up.description.text',
           //     'Choose a username. This is how you will be known in the Vogue community. The username must not already be in use by someone else.\n\nYou may use an email address or email address instead and choose a username later.');
           break;
@@ -138,26 +141,20 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
           //     'Please enter the username of the account you are trying to sign in with. You will then be able to choose an alternative sign-in option.');
           break;
         default:
-          title = Localization().getStringEx('panel.settings.passkey.sign_in.title.text', 'Sign in to continue');
+          title = Localization().getStringEx('panel.settings.passkey.sign_in.title.text', 'Sign in to continue.');
           // description = Localization().getStringEx('panel.settings.passkey.sign_in.description.text', 'Sign in with your passkey.');
           break;
       }
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        Semantics(header: true, label: title, excludeSemantics: true, focused: true,
-            child: Text(title, textAlign: TextAlign.center,
-              style: Styles().textStyles.getTextStyle('widget.info.regular.light'),
-            )),
-        if (description.isNotEmpty)
-          const SizedBox(height: 16),
-        Text(description, textAlign: TextAlign.center,
-          style: Styles().textStyles.getTextStyle('widget.info.regular.light'),
-        )
-      ]),
-    );
+    return Column(children: [
+      Semantics(header: true, label: title, excludeSemantics: true, focused: true,
+        child: Text(title, style: Styles().textStyles.getTextStyle('widget.description.medium.light'),)
+      ),
+      if (description.isNotEmpty)
+        const SizedBox(height: 16),
+      Text(description, style: Styles().textStyles.getTextStyle('widget.description.medium.light'),)
+    ]);
   }
 
   // Widget _buildSkipButton(BuildContext context) {
@@ -197,7 +194,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
         label: primaryButtonText,
         textAlign: TextAlign.center,
         backgroundColor: Styles().colors.fillColorSecondary,
-        textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.light'),
+        textStyle: Styles().textStyles.getTextStyle('widget.button.title.large.fat'),
         onTap: () => _primaryButtonAction(context),
         progress: _loading,
         progressColor: Styles().colors.fillColorPrimary,
@@ -213,7 +210,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
         color: Styles().colors.surface,
         borderRadius: BorderRadius.circular(16),
       ),
-      margin: const EdgeInsets.symmetric(vertical: 64.0, horizontal: 32.0),
+      margin: const EdgeInsets.symmetric(vertical: 48.0, horizontal: 32.0),
       padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -225,9 +222,8 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Text(
-              Localization().getStringEx('', 'Passkeys are a better way to sign in'),
-              style: Styles().textStyles.getTextStyle('widget.heading.extra_large.dark'),
-              textAlign: TextAlign.center,
+              Localization().getStringEx('', 'PASSKEYS ARE A BETTER WAY TO SIGN IN'),
+              style: Styles().textStyles.getTextStyle('panel.onboarding2.login_passkey.link.title'),
             ),
           ),
           Padding(
@@ -344,7 +340,8 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
                 label: primaryButtonText,
                 textAlign: TextAlign.center,
                 backgroundColor: Styles().colors.fillColorSecondary,
-                textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.light'),
+                textStyle: Styles().textStyles.getTextStyle('widget.button.title.large.fat'),
+                rightIconKey: null,
                 onTap: () => _primaryButtonAction(context),
                 progress: _loading,
                 progressColor: Styles().colors.fillColorPrimary,
@@ -423,16 +420,16 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
         children: [
           TextSpan(
             text: Localization().getStringEx("panel.settings.passkey.label.switch_mode.sign_up.text", "Don't have an account?"),
-            style: Styles().textStyles.getTextStyle('widget.info.regular.light'),
+            style: Styles().textStyles.getTextStyle('widget.description.medium.light'),
           ),
           WidgetSpan(
             child: TextButton(
-              style: ButtonStyle(overlayColor: MaterialStatePropertyAll(Styles().colors.fillColorSecondary), splashFactory: NoSplash.splashFactory),
+              style: ButtonStyle(overlayColor: MaterialStatePropertyAll(Styles().colors.gradientColorPrimary), splashFactory: NoSplash.splashFactory),
               onPressed: _onTapSignUp,
               child: Text(
                 Localization().getStringEx("panel.settings.passkey.label.switch_mode.sign_up.button.text", "Sign up"),
                 textAlign: TextAlign.center,
-                style: Styles().textStyles.getTextStyle('widget.button.title.medium.underline')?.apply(color: Styles().colors.fillColorSecondary),
+                style: Styles().textStyles.getTextStyle('widget.button.title.regular.secondary.underline'),
               )
             ),
             alignment: PlaceholderAlignment.middle

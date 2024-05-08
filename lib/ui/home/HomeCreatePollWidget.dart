@@ -80,7 +80,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
         Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
         Text((_canCreatePoll?Localization().getStringEx("widget.home_create_poll.text.description","People in your Group can be notified to vote through the {{app_title}} app. Or you can give voters the four-digit poll number.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')) :
         Localization().getStringEx("widget.home_create_poll.text.description.login","You need to be logged in to create and share polls with people near you. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.")),
-          style: Styles().textStyles.getTextStyle("widget.description.variant.regular")),),
+          style: Styles().textStyles.getTextStyle("widget.description.medium.regular")),),
         _buildButtons()
       ],);
   }
