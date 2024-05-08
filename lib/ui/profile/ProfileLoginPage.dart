@@ -823,7 +823,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
         TextSpan(text:  " $_appVersion", style : Styles().textStyles.getTextStyle("widget.item.light.regular.fat")),
       ])
     ),
-    Text(_copyrightText, textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.light.regular.thin"))
+    // Text(_copyrightText, textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.light.regular.thin"))
   ],);
 
   String get _appVersion => Config().appVersion ?? '';
