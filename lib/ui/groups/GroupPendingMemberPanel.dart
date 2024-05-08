@@ -61,24 +61,24 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
     return Scaffold(
       backgroundColor: Styles().colors.background,
       appBar: HeaderBar(),
-      body:
-      Container(
+      body: Container(
         color:  Styles().colors.surface,
-        child:Column(
-        children: <Widget>[
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                  children: <Widget>[
-                    _buildHeading(),
-                    _buildDetails(),
-                  ],
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                    children: <Widget>[
+                      _buildHeading(),
+                      _buildDetails(),
+                    ],
+                ),
               ),
             ),
-          ),
-          _buildBottomButtons(context)
-        ],
-      )),
+            _buildBottomButtons(context)
+          ],
+        )
+      ),
     );
   }
 
@@ -156,7 +156,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
           Styles().images.getImage('user-check', excludeFromSemantics: true) ?? Container(),
           Container(width: 8,),
           Text(_isResearchProject ? "Participant Approval" : Localization().getStringEx("panel.pending_member_detail.label.approval", "Member Approval"), style:
-            Styles().textStyles.getTextStyle("widget.title.light.regular.fat"),
+            Styles().textStyles.getTextStyle("widget.title.dark.regular.fat"),
           ),
         ],),
         Container(height: 21,),
@@ -167,7 +167,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           toggled: _approved,
           onTap: () {
-            Analytics().logSelect(target: 'Aprove');
+            Analytics().logSelect(target: 'Approve');
             setState(() {
               _approved = !_approved;
               _denied = !_approved;
@@ -191,8 +191,9 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
               }
             ),
             Container(padding: EdgeInsets.symmetric(horizontal: 13), child:
-              Text(Localization().getStringEx("panel.pending_member_detail.deny.description", "If you choose not to accept this person, please provide a reason."), style:
-    Styles().textStyles.getTextStyle("widget.info.small")
+              Text(
+                Localization().getStringEx("panel.pending_member_detail.deny.description", "If you choose not to accept this person, please provide a reason."),
+                style: Styles().textStyles.getTextStyle("widget.info.dark.small")
               )
             ),
             Container(height: 8,),
@@ -200,13 +201,16 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
               Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors.fillColorPrimary), ), child:
                 Row(children: [
                   Expanded(child:
-                    TextField(
-                      controller: _reasonController,
-                      decoration: InputDecoration(border: InputBorder.none),
-                      style: Styles().textStyles.getTextStyle("widget.title.regular"),
-                      onChanged: (text){setState(() {});},
-                      minLines: 4,
-                      maxLines: 999,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: TextField(
+                        controller: _reasonController,
+                        decoration: InputDecoration(border: InputBorder.none),
+                        style: Styles().textStyles.getTextStyle("widget.title.regular"),
+                        onChanged: (text){setState(() {});},
+                        minLines: 4,
+                        maxLines: 999,
+                      ),
                     ),
                   ),
                 ],)

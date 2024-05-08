@@ -223,7 +223,7 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
                         Padding(
                             padding: EdgeInsets.only(bottom: 16),
                             child: Text(StringUtils.ensureNotEmpty(videoTitle),
-                                style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))),
+                                style: Styles().textStyles.getTextStyle('widget.title.dark.large.extra_fat'))),
                         Stack(alignment: Alignment.center, children: [
                           hasImage
                                   ? ClipRRect(

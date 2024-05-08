@@ -352,7 +352,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   static Decoration get _listContentDecoration => BoxDecoration(
     color: Styles().colors.surface,
     // borderRadius: _listContentBorderRadius,
-    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    // border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     // boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]
   );
 
@@ -361,7 +361,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   static Decoration get _pageContentDecoration => BoxDecoration(
     color: Styles().colors.surface,
     // borderRadius: _pageContentBorderRadius,
-    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    // border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     // boxShadow: _pageContentShadow
   );
 
@@ -393,7 +393,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   static Decoration get _linkContentDecoration => BoxDecoration(
     color: Styles().colors.surface,
     // borderRadius: _linkContentBorderRadius,
-    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    // border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     // boxShadow: _linkContentShadow
   );
 
@@ -510,7 +510,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     ],) : Container();
 
   Widget get _titleContentWidget =>
-    Text(_event.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'), maxLines: 2, overflow: TextOverflow.ellipsis);
+    Text(_event.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.dark.large.extra_fat'), maxLines: 2, overflow: TextOverflow.ellipsis);
 
   Widget get _detailsWidget {
     List<Widget> detailWidgets = <Widget>[

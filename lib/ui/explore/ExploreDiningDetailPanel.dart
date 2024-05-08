@@ -729,7 +729,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
         Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
           Row(children: <Widget>[
             Expanded(child:
-              Text((_displayDates != null) ? _displayDates![_selectedDateFilterIndex] : '', style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat")),
+              Text((_displayDates != null) ? _displayDates![_selectedDateFilterIndex] : '', style: Styles().textStyles.getTextStyle("widget.title.dark.large.extra_fat")),
             ),
             Semantics(
               label: Localization().getStringEx("widget.food_detail.button.prev_menu.title", "Previous dining date"),

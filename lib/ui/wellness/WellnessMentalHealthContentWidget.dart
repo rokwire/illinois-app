@@ -99,7 +99,7 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
         }
         if (section.isNotEmpty) {
           widgetList.add(Padding(padding: EdgeInsets.only(bottom: 2), child:
-            Text(section, style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))
+            Text(section, style: Styles().textStyles.getTextStyle('widget.title.dark.large.extra_fat'))
           ));
         }
         int startLength = widgetList.length;

@@ -69,7 +69,7 @@ class MTDStopCard extends StatelessWidget {
         description = pointsDescription;
       }
 
-      titleStyle = Styles().textStyles.getTextStyle("widget.title.large.extra_fat");
+      titleStyle = Styles().textStyles.getTextStyle("widget.title.dark.large.extra_fat");
       titlePadding = EdgeInsets.only(top: 12);
       favoritePadding = EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8);
     }

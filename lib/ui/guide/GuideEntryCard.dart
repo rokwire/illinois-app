@@ -81,7 +81,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
         HtmlWidget(
           StringUtils.ensureNotEmpty(titleHtml),
           onTapUrl : (url) {_onTapLink(url); return true;},
-          textStyle: Styles().textStyles.getTextStyle("widget.title.large.extra_fat")
+          textStyle: Styles().textStyles.getTextStyle("widget.title.dark.large.extra_fat")
         ),
       ),
       Container(height: 8),

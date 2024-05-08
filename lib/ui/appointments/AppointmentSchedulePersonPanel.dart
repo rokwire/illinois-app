@@ -181,7 +181,7 @@ class _AppointmentPersonCard extends StatelessWidget {
                       Padding(padding: EdgeInsets.only(top: 6, bottom: 2), child:
                         Row(children: [
                           Expanded(child:
-                            Text(person.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'),),
+                            Text(person.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.dark.large.extra_fat'),),
                           ),
                         ]),
                       ),

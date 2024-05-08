@@ -45,7 +45,7 @@ class SettingsLoginCodePanel extends StatefulWidget with OnboardingPanel {
   State<StatefulWidget> createState() => _SettingsLoginCodePanelState();
 
   @override
-  bool get onboardingCanDisplay => true;
+  bool get onboardingCanDisplay => !Auth2().isLoggedIn;
 
   String? get identifierType => onboardingContext?["identifier_type"] ?? defaultIdentifierType;
 }
@@ -256,7 +256,7 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
       }));
     } else {
       // just login if a passkey is already linked
-      Onboarding().finish(context);
+      Onboarding().next(context, widget);
     }
   }
 

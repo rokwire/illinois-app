@@ -681,7 +681,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       title: _linkedEventsSectionTitle,
       slantImageKey: "slant-dark",
       slantColor: Styles().colors.backgroundVariant,
-      titleTextStyle: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),
+      titleTextStyle: Styles().textStyles.getTextStyle("widget.title.dark.large.extra_fat"),
       progressWidget: _linkedEventsProgress,
       children: !_linkedEventsLoading ? _linkedEventsContent : [Row(children: [Expanded(child: Container())],)],
   ) : Container();

@@ -614,12 +614,10 @@ class GroupCard extends StatefulWidget {
   final Function? onImageTap;
   final EdgeInsets margin;
 
-  final double triangleWidthFraction;
-
   GroupCard({required this.group,
     this.displayType = GroupCardDisplayType.allGroups,
     this.margin = const EdgeInsets.symmetric(horizontal: 16),
-    this.onImageTap, this.triangleWidthFraction = 1/20,
+    this.onImageTap,
     Key? key,
   }) : super(key: key);
 
@@ -667,7 +665,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
             Stack(children: [
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 _buildHeading(),
-                // Container(height: 6),
+                Container(height: 6),
                 Row(children:[
                   Expanded(child:
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
@@ -680,7 +678,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
                 ]),
                 // (widget.displayType == GroupCardDisplayType.homeGroups) ?
                 // Expanded(child: Container()) : Container(),
-                // Container(height: 4),
+                Container(height: 4),
                 // (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups) ?
                 Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                   Expanded(child:

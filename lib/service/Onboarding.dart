@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/ui/settings/SettingsLoginCodePanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPasskeyPanel.dart';
 import 'package:rokwire_plugin/service/onboarding.dart' as rokwire;
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneConfirmPanel.dart';
@@ -65,17 +66,8 @@ class Onboarding extends rokwire.Onboarding  {
     else if (code == 'login_passkey') {
       return SettingsLoginPasskeyPanel(onboardingContext: context);
     }
-    else if (code == 'login_phone') {
-      return OnboardingLoginPhonePanel(onboardingContext: context);
-    }
-    else if (code == 'verify_phone') {
-      return OnboardingLoginPhoneVerifyPanel(onboardingContext: context);
-    }
-    else if (code == 'confirm_phone') {
-      return OnboardingLoginPhoneConfirmPanel(onboardingContext: context);
-    }
-    else if (code == 'sport_prefs') {
-      return OnboardingSportPrefsPanel(onboardingContext: context);
+    else if (code == 'login_code') {
+      return SettingsLoginCodePanel(onboardingContext: context);
     }
     else {
       return null;
@@ -105,17 +97,8 @@ class Onboarding extends rokwire.Onboarding  {
     else if (panel is SettingsLoginPasskeyPanel) {
       return 'login_passkey';
     }
-    else if (panel is OnboardingLoginPhonePanel) {
-      return 'login_phone';
-    }
-    else if (panel is OnboardingLoginPhoneVerifyPanel) {
-      return 'verify_phone';
-    }
-    else if (panel is OnboardingLoginPhoneConfirmPanel) {
-      return 'confirm_phone';
-    }
-    else if (panel is OnboardingSportPrefsPanel) {
-      return 'sport_prefs';
+    else if (panel is SettingsLoginCodePanel) {
+      return 'login_code';
     }
     return null;
   }

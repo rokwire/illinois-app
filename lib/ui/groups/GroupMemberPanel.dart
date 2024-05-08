@@ -208,7 +208,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
               ),
               Container(height: 8,),
               Text(Localization().getStringEx("panel.member_detail.label.admin_description", "Admins can manage settings, members, and events."),
-                style: Styles().textStyles.getTextStyle("widget.detail.regular")
+                style: Styles().textStyles.getTextStyle("widget.detail.light.regular")
               ),
             ]
           ),

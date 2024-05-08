@@ -133,7 +133,7 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
       
       contentWidget = VerticalTitleValueSection(
         title: title,
-        titleTextStyle: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),
+        titleTextStyle: Styles().textStyles.getTextStyle("widget.title.dark.large.extra_fat"),
         value: status,
         valueTextStyle: Styles().textStyles.getTextStyle("widget.detail.medium"),
         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -277,7 +277,7 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
         Expanded(child:
           VerticalTitleValueSection(
             title: title,
-            titleTextStyle: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),
+            titleTextStyle: Styles().textStyles.getTextStyle("widget.title.dark.large.extra_fat"),
             value: status,
             valueTextStyle: Styles().textStyles.getTextStyle("widget.detail.medium"),
             margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -410,7 +410,7 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
                       Expanded(child:
                         VerticalTitleValueSection(
                           title: (message != null) ? message : Auth2().authCard?.role ?? '',
-                          titleTextStyle: (message != null) ? Styles().textStyles.getTextStyle("widget.message.regular.semi_fat") : Styles().textStyles.getTextStyle('widget.title.large.extra_fat'),
+                          titleTextStyle: (message != null) ? Styles().textStyles.getTextStyle("widget.message.regular.semi_fat") : Styles().textStyles.getTextStyle('widget.title.dark.large.extra_fat'),
                           value: (message != null) ? null : StringUtils.isNotEmpty(Auth2().authCard?.expirationDate) ? sprintf(Localization().getStringEx('widget.home.wallet.bus_pass.label.card_expires.text', 'Expires: %s'), [Auth2().authCard?.expirationDate ?? '']) : '',
                           valueTextStyle: (message != null) ? null : Styles().textStyles.getTextStyle("widget.detail.small"),
                           margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -517,7 +517,7 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
                           title: (message != null) ? message : StringUtils.isNotEmpty(Auth2().authCard?.fullName) ? Auth2().authCard?.fullName : Auth2().fullName,
                           titleTextStyle: (message != null) ? Styles().textStyles.getTextStyle("widget.message.regular.semi_fat") : null,
                           value: (message != null) ? null : Auth2().authCard?.uin,
-                          valueTextStyle: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'),
+                          valueTextStyle: Styles().textStyles.getTextStyle('widget.title.dark.large.extra_fat'),
                           hint: (warning != null) ? warning : null,
                           hintTextStyle: Styles().textStyles.getTextStyle('widget.card.detail.tiny'),
                           margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),

@@ -114,7 +114,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
                         Text(widget.appointment.title ?? '', style:
-                          Styles().textStyles.getTextStyle("widget.title.large.extra_fat")
+                          Styles().textStyles.getTextStyle("widget.title.dark.large.extra_fat")
                         ),
 
                         Visibility(visible: StringUtils.isNotEmpty(displayTime), child:
