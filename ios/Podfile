@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '13.0'
+platform :ios, '15.5'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -12,6 +12,9 @@ project 'Runner', {
   'Debug-IllinoisDev' => :debug,
   'Debug-IllinoisProd' => :debug,
   'Debug-IllinoisTst' => :debug,
+  'Debug-NeomDev' => :debug,
+  'Debug-NeomProd' => :debug,
+  'Debug-NeomTst' => :debug,
 
   'Profile' => :release,
   'Profile-Dev' => :release,
@@ -20,6 +23,9 @@ project 'Runner', {
   'Profile-IllinoisDev' => :release,
   'Profile-IllinoisProd' => :release,
   'Profile-IllinoisTst' => :release,
+  'Profile-NeomDev' => :release,
+  'Profile-NeomProd' => :release,
+  'Profile-NeomTst' => :release,
 
   'Release' => :release,
   'Release-Dev' => :release,
@@ -27,7 +33,10 @@ project 'Runner', {
   'Release-Tst' => :release,
   'Release-IllinoisDev' => :release,
   'Release-IllinoisProd' => :release,
-  'Release-IllinoisTst' => :release,
+  'Release-NeomTst' => :release,
+  'Release-NeomDev' => :release,
+  'Release-NeomProd' => :release,
+  'Release-NeomTst' => :release,
 }
 
 def flutter_root
@@ -54,10 +63,10 @@ def applibs
 #   pod 'SeosMobileKeysSDK', :path => '../../libs/hid-origo/ios/Debug/SeosMobileKeysSDK.podspec'
 #   pod 'OrigoSDK', :path => '../../libs/hid-origo/ios/Debug/OrigoSDK.podspec'
 
-    pod 'SeosMobileKeysSDK-Debug', :configuration => ['Debug', 'Debug-Dev', 'Debug-IllinoisDev', 'Debug-Prod', 'Debug-IllinoisProd', 'Debug-Tst', 'Debug-IllinoisTst'], :path => '../libs/hid-origo/ios/Debug/SeosMobileKeysSDK-Debug.podspec'
-    pod 'SeosMobileKeysSDK-Release', :configuration => ['Release', 'Release-Dev', 'Release-IllinoisDev', 'Release-Prod', 'Release-IllinoisProd', 'Release-Tst', 'Release-IllinoisTst'], :path => '../libs/hid-origo/ios/Release/SeosMobileKeysSDK-Release.podspec'
-    pod 'OrigoSDK-Debug', :configuration => ['Debug', 'Debug-Dev', 'Debug-IllinoisDev', 'Debug-Prod', 'Debug-IllinoisProd', 'Debug-Tst', 'Debug-IllinoisTst'], :path => '../libs/hid-origo/ios/Debug/OrigoSDK-Debug.podspec'
-    pod 'OrigoSDK-Release', :configuration => ['Release', 'Release-Dev', 'Release-IllinoisDev', 'Release-Prod', 'Release-IllinoisProd', 'Release-Tst', 'Release-IllinoisTst'], :path => '../libs/hid-origo/ios/Release/OrigoSDK-Release.podspec'
+    pod 'SeosMobileKeysSDK-Debug', :configuration => ['Debug', 'Debug-Dev', 'Debug-IllinoisDev', 'Debug-Prod', 'Debug-IllinoisProd', 'Debug-Tst', 'Debug-IllinoisTst', 'Debug-NeomDev'], :path => '../libs/hid-origo/ios/Debug/SeosMobileKeysSDK-Debug.podspec'
+    pod 'SeosMobileKeysSDK-Release', :configuration => ['Release', 'Release-Dev', 'Release-IllinoisDev', 'Release-Prod', 'Release-IllinoisProd', 'Release-Tst', 'Release-IllinoisTst', 'Release-NeomDev'], :path => '../libs/hid-origo/ios/Release/SeosMobileKeysSDK-Release.podspec'
+    pod 'OrigoSDK-Debug', :configuration => ['Debug', 'Debug-Dev', 'Debug-IllinoisDev', 'Debug-Prod', 'Debug-IllinoisProd', 'Debug-Tst', 'Debug-IllinoisTst', 'Debug-NeomDev'], :path => '../libs/hid-origo/ios/Debug/OrigoSDK-Debug.podspec'
+    pod 'OrigoSDK-Release', :configuration => ['Release', 'Release-Dev', 'Release-IllinoisDev', 'Release-Prod', 'Release-IllinoisProd', 'Release-Tst', 'Release-IllinoisTst', 'Release-NeomDev'], :path => '../libs/hid-origo/ios/Release/OrigoSDK-Release.podspec'
 end
 
 target 'Runner' do
@@ -68,6 +77,13 @@ target 'Runner' do
 end
 
 target 'Illinois' do
+  use_frameworks!
+  use_modular_headers!
+  applibs
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+end
+
+target 'Neom' do
   use_frameworks!
   use_modular_headers!
   applibs
