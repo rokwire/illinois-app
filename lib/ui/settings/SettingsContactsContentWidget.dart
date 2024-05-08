@@ -39,6 +39,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
         _feedbackDescriptionWidget,
         _dividerWidget,
         _contactInfoWidget,
+        _appLogo,
         _appVersionWidget
       ],
     );
@@ -80,15 +81,9 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
   Widget get _contactInfoWidget =>
     Container(padding: EdgeInsets.symmetric(vertical: 20), child:
       Column(children: [
-        Container(
-          padding: const EdgeInsets.all(6),
-          child: SizedBox(width: 51, height: 51, child:
-            Styles().images.getImage('university-logo-dark-frame'),
-          ),
-        ),
-        Text( Localization().getStringEx("panel.settings.contact.info.row1", "Smart, Healthy Communities Initiative | Rokwire"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.light.regular.fat")),
-        Text( Localization().getStringEx("panel.settings.contact.info.row2", "Grainger Engineering Library, Room 333 \n 1301 West Springfield Avenue; Urbana, IL 61801"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.light.regular.thin")),
-        RichText(textAlign: TextAlign.left, text:
+        // Text( Localization().getStringEx("panel.settings.contact.info.row1", "Smart, Healthy Communities Initiative | Rokwire"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.light.regular.fat")),
+        // Text( Localization().getStringEx("panel.settings.contact.info.row2", "Grainger Engineering Library, Room 333 \n 1301 West Springfield Avenue; Urbana, IL 61801"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.light.regular.thin")),
+        RichText(text:
           TextSpan(style: Styles().textStyles.getTextStyle("widget.item.light.regular.thin"), children:[
               TextSpan(text: "rokwire@neom.edu",
                   style: Styles().textStyles.getTextStyle("widget.item.light.regular_underline.thin"),
@@ -101,8 +96,15 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
       ],)
     );
 
+  Widget get _appLogo => Container(
+    padding: const EdgeInsets.all(6),
+    child: SizedBox(width: 51, height: 51, child:
+      Styles().images.getImage('university-logo-dark-frame'),
+    ),
+  );
+
   Widget get _appVersionWidget =>
-      Padding(padding: const EdgeInsets.only(top: 0), child:
+      Padding(padding: const EdgeInsets.only(top: 8), child:
         RichText(textAlign: TextAlign.left, text:
         TextSpan(style: Styles().textStyles.getTextStyle("widget.item.light.regular.thin"), children:[
           TextSpan(text: Localization().getStringEx('panel.settings.home.version.info.label', '{{app_title}} App Version:').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),),

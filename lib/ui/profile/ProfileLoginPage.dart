@@ -103,7 +103,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
 
     contentList.add(_buildAppInfo());
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
+    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: contentList);
   }
 
   // Connect
@@ -817,7 +817,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       ),
     ),
     Padding(padding: const EdgeInsets.only(top: 8)),
-    RichText(textAlign: TextAlign.left, text:
+    RichText(text:
       TextSpan(style: Styles().textStyles.getTextStyle("widget.item.light.regular.thin"), children:[
         TextSpan(text: Localization().getStringEx('panel.settings.home.version.info.label', '{{app_title}} App Version:').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),),
         TextSpan(text:  " $_appVersion", style : Styles().textStyles.getTextStyle("widget.item.light.regular.fat")),
