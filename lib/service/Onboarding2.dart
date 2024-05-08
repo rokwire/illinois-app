@@ -2,18 +2,18 @@
 import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/model/Questionnaire.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Questionnaire.dart';
-import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
-import 'package:illinois/ui/settings/SettingsLoginPasskeyPanel.dart';
+import 'package:neom/model/Questionnaire.dart';
+import 'package:neom/service/Auth2.dart';
+import 'package:neom/service/FlexUI.dart';
+import 'package:neom/service/Questionnaire.dart';
+import 'package:neom/service/Storage.dart';
+import 'package:neom/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
+import 'package:neom/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
+import 'package:neom/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
+import 'package:neom/ui/settings/SettingsLoginPasskeyPanel.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:illinois/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
+import 'package:neom/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
 
 
 class Onboarding2 with Service {

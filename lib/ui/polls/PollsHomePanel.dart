@@ -18,26 +18,26 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/FlexUI.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
-import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/polls/PollProgressPainter.dart';
-import 'package:illinois/ui/polls/CreatePollPanel.dart';
-import 'package:illinois/ui/polls/PollBubblePinPanel.dart';
-import 'package:illinois/ui/widgets/AccessWidgets.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:neom/service/Storage.dart';
+import 'package:neom/ui/polls/PollProgressPainter.dart';
+import 'package:neom/ui/polls/CreatePollPanel.dart';
+import 'package:neom/ui/polls/PollBubblePinPanel.dart';
+import 'package:neom/ui/widgets/AccessWidgets.dart';
+import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:illinois/service/Polls.dart' as illinois;
+import 'package:neom/service/Polls.dart' as illinois;
 
 
 class PollsHomePanel extends StatefulWidget {

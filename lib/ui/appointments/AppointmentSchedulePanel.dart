@@ -15,17 +15,17 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Appointment.dart';
-import 'package:illinois/ext/Appointment.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Appointments.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:neom/model/Appointment.dart';
+import 'package:neom/ext/Appointment.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/Appointments.dart';
+import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:neom/utils/AppUtils.dart';
+import 'package:neom/utils/Utils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-//import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+//import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 
 class AppointmentSchedulePanel extends StatefulWidget {
 

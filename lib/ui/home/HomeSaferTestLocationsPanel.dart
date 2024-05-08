@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
-import 'package:illinois/service/Analytics.dart';
+import 'package:neom/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/Config.dart';
+import 'package:neom/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 /////////////////////////////////////////////

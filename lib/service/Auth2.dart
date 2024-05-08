@@ -5,11 +5,11 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Storage.dart';
+import 'package:neom/model/Auth2.dart';
+import 'package:neom/service/Config.dart';
+import 'package:neom/service/FirebaseMessaging.dart';
+import 'package:neom/service/FlexUI.dart';
+import 'package:neom/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/model/auth2.dart';

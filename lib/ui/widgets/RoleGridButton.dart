@@ -17,9 +17,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:illinois/service/FlexUI.dart';
+import 'package:neom/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/ui/widgets/tile_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';

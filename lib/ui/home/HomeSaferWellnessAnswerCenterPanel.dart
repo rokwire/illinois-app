@@ -15,13 +15,13 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/DeepLink.dart';
-import 'package:illinois/service/Guide.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/Config.dart';
+import 'package:neom/service/DeepLink.dart';
+import 'package:neom/service/Guide.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget {

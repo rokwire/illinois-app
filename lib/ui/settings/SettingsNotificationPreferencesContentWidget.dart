@@ -18,16 +18,16 @@ import 'dart:io';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Appointments.dart';
-import 'package:illinois/service/FlexUI.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/Appointments.dart';
+import 'package:neom/service/FlexUI.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
-import 'package:illinois/service/FirebaseMessaging.dart';
+import 'package:neom/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
 
 import 'SettingsWidgets.dart';

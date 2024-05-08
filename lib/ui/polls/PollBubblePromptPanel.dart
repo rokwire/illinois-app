@@ -17,14 +17,14 @@
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
-import 'package:illinois/ui/polls/PollProgressPainter.dart';
+import 'package:neom/ui/polls/PollProgressPainter.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:illinois/service/Polls.dart' as illinois;
+import 'package:neom/service/Polls.dart' as illinois;
 
 class PollBubblePromptPanel extends StatefulWidget {
   final String? pollId;

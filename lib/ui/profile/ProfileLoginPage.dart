@@ -3,16 +3,16 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/profile/ProfileHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsLinkedAccountPanel.dart';
-import 'package:illinois/ui/settings/SettingsLoginCodePanel.dart';
-import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
-import 'package:illinois/ui/settings/SettingsWidgets.dart';
-import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/FirebaseMessaging.dart';
+import 'package:neom/service/FlexUI.dart';
+import 'package:neom/ui/profile/ProfileHomePanel.dart';
+import 'package:neom/ui/settings/SettingsLinkedAccountPanel.dart';
+import 'package:neom/ui/settings/SettingsLoginCodePanel.dart';
+import 'package:neom/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
+import 'package:neom/ui/settings/SettingsWidgets.dart';
+import 'package:neom/ui/widgets/RibbonButton.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -208,6 +208,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
   // Connected
 
   Widget _buildConnected() {
+    //TODO: where should all account identifiers be listed?
     List<Widget> contentList =  [];
 
     List<dynamic> codes = FlexUI()['authenticate.connected'] ?? [];
@@ -284,7 +285,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       String code = codes[index];
       if (code == 'info') {
         contentList.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Text(Localization().getStringEx("panel.settings.home.code_login.message", "Signed in with your Phone"),
+          Text(Localization().getStringEx("panel.settings.home.code_login.message", "Signed in with code"),
               style: Styles().textStyles.getTextStyle("widget.detail.regular.extra_fat")),
           Visibility(visible: hasFullName, child:
             Padding(padding: EdgeInsets.only(top: 3), child:
@@ -292,7 +293,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
             )
           ),
           Padding(padding: EdgeInsets.only(top: 3), child:
-            Text(Auth2().phones.isNotEmpty ? Auth2().phones.first : "", style: Styles().textStyles.getTextStyle("widget.detail.large.fat"))
+            Text(Auth2().phones.isNotEmpty ? Auth2().phones.first : (Auth2().emails.isNotEmpty ? Auth2().emails.first : ""), style: Styles().textStyles.getTextStyle("widget.detail.large.fat"))
           )
         ]));
       }

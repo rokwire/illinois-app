@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
+import 'package:neom/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/ui/widgets/tab_bar.dart' as rokwire;
@@ -38,7 +38,7 @@ class TabBar extends rokwire.TabBar {
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
     }
-    else if (code == 'favorites') {
+    else if (code == 'feed') {
       return rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.feed.title', 'Feed'),
         hint: Localization().getStringEx('tabbar.feed.hint', ''),
@@ -58,7 +58,7 @@ class TabBar extends rokwire.TabBar {
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
     }
-    else if (code == 'browse') {
+    else if (code == 'more') {
       return rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.more.title', 'More'),
         hint: Localization().getStringEx('tabbar.more.hint', ''),

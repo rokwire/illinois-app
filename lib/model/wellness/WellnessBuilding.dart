@@ -1,7 +1,7 @@
 
 import 'package:collection/collection.dart';
-import 'package:illinois/model/StudentCourse.dart';
-import 'package:illinois/service/Guide.dart';
+import 'package:neom/model/StudentCourse.dart';
+import 'package:neom/service/Guide.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 

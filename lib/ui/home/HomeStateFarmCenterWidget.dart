@@ -17,11 +17,11 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/home/HomePanel.dart';
-import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
-import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/ui/home/HomePanel.dart';
+import 'package:neom/ui/home/HomeWidgets.dart';
+import 'package:neom/ui/parking/ParkingEventsPanel.dart';
+import 'package:neom/ui/polls/CreateStadiumPollPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 
 class HomeStateFarmCenterWidget extends StatefulWidget {

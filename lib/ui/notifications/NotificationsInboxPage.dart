@@ -1,19 +1,19 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
-import 'package:illinois/ui/widgets/UnderlinedButton.dart';
+import 'package:neom/service/FlexUI.dart';
+import 'package:neom/ui/notifications/NotificationsHomePanel.dart';
+import 'package:neom/ui/widgets/UnderlinedButton.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
-import 'package:illinois/service/Analytics.dart';
+import 'package:neom/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:illinois/service/FirebaseMessaging.dart';
+import 'package:neom/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/Filters.dart';
+import 'package:neom/ui/widgets/Filters.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';

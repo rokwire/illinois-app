@@ -18,12 +18,12 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/MTD.dart';
-import 'package:illinois/service/MTD.dart';
-import 'package:illinois/ui/mtd/MTDWidgets.dart';
-import 'package:illinois/ui/widgets/FavoriteButton.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:neom/model/MTD.dart';
+import 'package:neom/service/MTD.dart';
+import 'package:neom/ui/mtd/MTDWidgets.dart';
+import 'package:neom/ui/widgets/FavoriteButton.dart';
+import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';

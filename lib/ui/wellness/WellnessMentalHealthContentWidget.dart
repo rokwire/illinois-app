@@ -15,14 +15,14 @@
  */
 
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/model/Video.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/DeepLink.dart';
-import 'package:illinois/service/Guide.dart';
-import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
-import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
-import 'package:illinois/ui/widgets/VideoPlayButton.dart';
+import 'package:neom/model/Video.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/Config.dart';
+import 'package:neom/service/DeepLink.dart';
+import 'package:neom/service/Guide.dart';
+import 'package:neom/ui/settings/SettingsVideoTutorialPanel.dart';
+import 'package:neom/ui/wellness/WellnessResourcesContentWidget.dart';
+import 'package:neom/ui/widgets/VideoPlayButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';

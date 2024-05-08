@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';

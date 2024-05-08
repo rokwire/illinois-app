@@ -16,13 +16,13 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
-import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
-import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
-import 'package:illinois/ui/settings/SettingsSignInOptionsPanel.dart';
-import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/SlantedWidget.dart';
+import 'package:neom/service/Storage.dart';
+import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
+import 'package:neom/ui/settings/SettingsLoginEmailPanel.dart';
+import 'package:neom/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
+import 'package:neom/ui/settings/SettingsSignInOptionsPanel.dart';
+import 'package:neom/ui/widgets/RibbonButton.dart';
+import 'package:neom/ui/widgets/SlantedWidget.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -32,7 +32,7 @@ import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-import 'package:illinois/service/Analytics.dart';
+import 'package:neom/service/Analytics.dart';
 
 class SettingsLoginPasskeyPanel extends StatefulWidget with OnboardingPanel {
   @override

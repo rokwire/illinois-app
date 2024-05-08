@@ -16,7 +16,7 @@
 
 import 'dart:ui';
 
-import 'package:illinois/service/Analytics.dart';
+import 'package:neom/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';

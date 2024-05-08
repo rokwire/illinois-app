@@ -17,32 +17,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
-import 'package:illinois/ext/Explore.dart';
-import 'package:illinois/ext/Event.dart';
-import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/ext/Explore.dart';
+import 'package:neom/ext/Event.dart';
+import 'package:neom/service/FlexUI.dart';
+import 'package:neom/ui/groups/GroupWidgets.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:illinois/model/RecentItem.dart';
+import 'package:neom/model/RecentItem.dart';
 import 'package:rokwire_plugin/model/group.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:neom/service/Auth2.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/service/Analytics.dart';
+import 'package:neom/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
+import 'package:neom/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
-import 'package:illinois/service/RecentItems.dart';
+import 'package:neom/service/RecentItems.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:neom/ui/explore/ExploreConvergeDetailItem.dart';
+import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 
 class ExploreEventDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Event? event;

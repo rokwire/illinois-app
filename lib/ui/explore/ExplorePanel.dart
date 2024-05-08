@@ -15,42 +15,42 @@
  */
 
 import 'package:flutter/semantics.dart';
-import 'package:illinois/service/Appointments.dart';
-import 'package:illinois/service/MTD.dart';
-import 'package:illinois/ui/explore/ExploreSearchPanel.dart';
-import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/service/Appointments.dart';
+import 'package:neom/service/MTD.dart';
+import 'package:neom/ui/explore/ExploreSearchPanel.dart';
+import 'package:neom/ui/widgets/RibbonButton.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:illinois/model/sport/Game.dart';
+import 'package:neom/model/sport/Game.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:illinois/service/Dinings.dart';
-import 'package:illinois/service/Analytics.dart';
+import 'package:neom/service/Dinings.dart';
+import 'package:neom/service/Analytics.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
-import 'package:illinois/ui/widgets/Filters.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
+import 'package:neom/service/Sports.dart';
+import 'package:neom/service/Storage.dart';
+import 'package:neom/ui/events/CompositeEventsDetailPanel.dart';
+import 'package:neom/ui/widgets/Filters.dart';
+import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:neom/ui/dining/HorizontalDiningSpecials.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/model/Dining.dart';
+import 'package:neom/model/Dining.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/explore.dart';
-import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreCard.dart';
+import 'package:neom/ui/explore/ExploreDetailPanel.dart';
+import 'package:neom/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:neom/ui/athletics/AthleticsGameDetailPanel.dart';
 
 enum ExploreType { Events, Dining }
 

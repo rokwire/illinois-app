@@ -1,4 +1,4 @@
-import 'package:illinois/model/CustomCourses.dart';
+import 'package:neom/model/CustomCourses.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 
 extension ReferenceExt on Reference {

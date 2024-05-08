@@ -1,8 +1,8 @@
 import 'dart:ui';
 
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Storage.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/Storage.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';

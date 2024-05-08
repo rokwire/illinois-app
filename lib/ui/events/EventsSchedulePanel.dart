@@ -16,20 +16,20 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/FlexUI.dart';
+import 'package:neom/service/FlexUI.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
-import 'package:illinois/ext/Event.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:neom/ext/Event.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/utils/AppUtils.dart';
+import 'package:neom/service/Auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
-import 'package:illinois/ui/widgets/Filters.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:neom/ui/explore/ExploreEventDetailPanel.dart';
+import 'package:neom/ui/widgets/Filters.dart';
+import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 

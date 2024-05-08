@@ -1,5 +1,5 @@
 
-import 'package:illinois/service/Config.dart';
+import 'package:neom/service/Config.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';

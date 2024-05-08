@@ -15,20 +15,20 @@
  */
 
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/ui/settings/SettingsLoginCodePanel.dart';
-import 'package:illinois/ui/settings/SettingsLoginPasskeyPanel.dart';
+import 'package:neom/ui/settings/SettingsLoginCodePanel.dart';
+import 'package:neom/ui/settings/SettingsLoginPasskeyPanel.dart';
 import 'package:rokwire_plugin/service/onboarding.dart' as rokwire;
-import 'package:illinois/ui/onboarding/OnboardingLoginPhoneConfirmPanel.dart';
-import 'package:illinois/ui/onboarding/OnboardingGetStartedPanel.dart';
-import 'package:illinois/ui/onboarding/OnboardingAuthLocationPanel.dart';
-import 'package:illinois/ui/onboarding/OnboardingLoginNetIdPanel.dart';
-import 'package:illinois/ui/onboarding/OnboardingLoginPhonePanel.dart';
-import 'package:illinois/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
-import 'package:illinois/ui/onboarding/OnboardingPrivacyStatementPanel.dart';
-import 'package:illinois/ui/onboarding/OnboardingRolesPanel.dart';
-import 'package:illinois/ui/onboarding/OnboardingSportPrefsPanel.dart';
-import 'package:illinois/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
-import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
+import 'package:neom/ui/onboarding/OnboardingLoginPhoneConfirmPanel.dart';
+import 'package:neom/ui/onboarding/OnboardingGetStartedPanel.dart';
+import 'package:neom/ui/onboarding/OnboardingAuthLocationPanel.dart';
+import 'package:neom/ui/onboarding/OnboardingLoginNetIdPanel.dart';
+import 'package:neom/ui/onboarding/OnboardingLoginPhonePanel.dart';
+import 'package:neom/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
+import 'package:neom/ui/onboarding/OnboardingPrivacyStatementPanel.dart';
+import 'package:neom/ui/onboarding/OnboardingRolesPanel.dart';
+import 'package:neom/ui/onboarding/OnboardingSportPrefsPanel.dart';
+import 'package:neom/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
+import 'package:neom/ui/settings/SettingsPrivacyPanel.dart';
 
 class Onboarding extends rokwire.Onboarding  {
 

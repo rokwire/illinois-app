@@ -15,9 +15,9 @@
  */
 
 import 'dart:io';
-import 'package:illinois/model/Dining.dart';
+import 'package:neom/model/Dining.dart';
 import 'package:rokwire_plugin/model/explore.dart';
-import 'package:illinois/service/Config.dart';
+import 'package:neom/service/Config.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';

@@ -15,8 +15,8 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Canvas.dart';
-import 'package:illinois/service/Canvas.dart';
+import 'package:neom/model/Canvas.dart';
+import 'package:neom/service/Canvas.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';

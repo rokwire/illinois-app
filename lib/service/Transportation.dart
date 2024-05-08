@@ -17,8 +17,8 @@
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:illinois/model/Parking.dart';
-import 'package:illinois/service/Config.dart';
+import 'package:neom/model/Parking.dart';
+import 'package:neom/service/Config.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';

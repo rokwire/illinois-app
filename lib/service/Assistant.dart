@@ -1,8 +1,8 @@
 
 import 'package:http/http.dart';
-import 'package:illinois/model/Assistant.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Config.dart';
+import 'package:neom/model/Assistant.dart';
+import 'package:neom/service/Auth2.dart';
+import 'package:neom/service/Config.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';

@@ -17,10 +17,10 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Canvas.dart';
-import 'package:illinois/service/Canvas.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:neom/model/Canvas.dart';
+import 'package:neom/service/Canvas.dart';
+import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';

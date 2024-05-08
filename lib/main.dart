@@ -1,4 +1,4 @@
-import 'package:illinois/mainImpl.dart';
+import 'package:neom/mainImpl.dart';
 
 void main() {
   mainImpl();

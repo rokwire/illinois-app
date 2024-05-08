@@ -23,8 +23,8 @@ SOFTWARE.*/
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:path/path.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';

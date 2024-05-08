@@ -17,14 +17,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/home/HomePanel.dart';
-import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/ui/home/HomePanel.dart';
+import 'package:neom/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/polls/CreatePollPanel.dart';
+import 'package:neom/ui/polls/CreatePollPanel.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 

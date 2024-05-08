@@ -16,11 +16,11 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2VideoTutorialPanel.dart';
-import 'package:illinois/ui/settings/SettingsLoginPasskeyPanel.dart';
+import 'package:neom/ui/onboarding2/Onboarding2VideoTutorialPanel.dart';
+import 'package:neom/ui/settings/SettingsLoginPasskeyPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
+import 'package:neom/ui/onboarding2/Onboadring2RolesPanel.dart';
+import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';

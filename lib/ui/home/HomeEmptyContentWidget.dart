@@ -2,11 +2,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/BrowsePanel.dart';
-import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/profile/ProfileHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/ui/BrowsePanel.dart';
+import 'package:neom/ui/home/HomeWidgets.dart';
+import 'package:neom/ui/profile/ProfileHomePanel.dart';
+import 'package:neom/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 

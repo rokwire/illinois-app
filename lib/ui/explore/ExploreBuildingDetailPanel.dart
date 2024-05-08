@@ -1,11 +1,11 @@
 
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/Explore.dart';
-import 'package:illinois/model/StudentCourse.dart';
-import 'package:illinois/service/Analytics.dart';
+import 'package:neom/ext/Explore.dart';
+import 'package:neom/model/StudentCourse.dart';
+import 'package:neom/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ExploreBuildingDetailPanel extends StatelessWidget {

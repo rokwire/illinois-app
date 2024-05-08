@@ -1,7 +1,7 @@
 import 'package:http/http.dart';
-import 'package:illinois/model/StudentCourse.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Config.dart';
+import 'package:neom/model/StudentCourse.dart';
+import 'package:neom/service/Auth2.dart';
+import 'package:neom/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 

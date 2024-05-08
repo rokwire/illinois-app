@@ -1,13 +1,13 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/CustomCourses.dart';
-import 'package:illinois/service/Config.dart';
-import 'package:illinois/ui/academics/courses/EssentialSkillsCoachWidgets.dart';
-import 'package:illinois/ui/academics/courses/PDFPanel.dart';
-import 'package:illinois/ui/academics/courses/VideoPanel.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/model/CustomCourses.dart';
+import 'package:neom/service/Config.dart';
+import 'package:neom/ui/academics/courses/EssentialSkillsCoachWidgets.dart';
+import 'package:neom/ui/academics/courses/PDFPanel.dart';
+import 'package:neom/ui/academics/courses/VideoPanel.dart';
+import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/content.dart' as con;

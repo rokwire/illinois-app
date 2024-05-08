@@ -16,8 +16,8 @@
 
 import 'dart:math';
 
-import 'package:illinois/model/Location.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/model/Location.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ParkingEvent {
