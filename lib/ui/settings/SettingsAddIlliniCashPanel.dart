@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:neom/service/IlliniCash.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -487,7 +488,7 @@ class _SettingsAddIlliniCashPanelState
                                               controller: _amountController,
                                               keyboardType: TextInputType.numberWithOptions(decimal: true),
                                               textInputAction: TextInputAction.done,
-                                              inputFormatters: [CurrencyTextInputFormatter(locale: 'en', symbol: '\$', decimalDigits: 2)],
+                                              inputFormatters: [CurrencyTextInputFormatter(NumberFormat.currency(locale: 'en', symbol: '\$', decimalDigits: 2))],
                                               onFieldSubmitted: (_){ _unfocus(); },
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(

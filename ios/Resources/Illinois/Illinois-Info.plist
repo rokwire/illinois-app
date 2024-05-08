@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
@@ -62,9 +64,9 @@
 	<string>Your bluetooth will be used for the maps to scan for nearby beacons.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>Your bluetooth will be used for the maps to scan for nearby beacons.</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>Save favorite events</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Save favorite events</string>
+	<key>NSCalendarsUsageDescription</key>
 	<string>Save favorite events</string>
 	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
 	<string>Save favorite events</string>
@@ -126,7 +128,5 @@
 	<false/>
 	<key>io.flutter.embedded_views_preview</key>
 	<string>YES</string>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
 </dict>
 </plist>

@@ -48,11 +48,15 @@ configs.json.enc
 config.keys.json
 configs.json
 
+GoogleService-Info.plist
 GoogleService-Info-Dev.plist
 GoogleService-Info-Prod.plist
 
 google-services.json
 keys.properties
+
+firebase.json
+firebase_options.dart
 
 # App Branding
 /app/assets/
