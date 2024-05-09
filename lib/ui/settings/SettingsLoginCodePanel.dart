@@ -80,7 +80,7 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
                   Positioned(
                     top: 32,
                     left: 0,
-                    child: Onboarding2BackButton(padding: const EdgeInsets.only(left: 17,),
+                    child: Onboarding2BackButton(padding: const EdgeInsets.all(16.0,),
                         onTap:() {
                           Analytics().logSelect(target: "Back");
                           Navigator.pop(context);
@@ -154,10 +154,10 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
         label: Localization().getStringEx("panel.settings.confirm_identifier.button.confirm.label", "Confirm"),
         textAlign: TextAlign.center,
         backgroundColor: Styles().colors.fillColorSecondary,
-        textStyle: Styles().textStyles.getTextStyle('widget.button.title.large.fat'),
+        textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.large.fat'),
         onTap: () => _primaryButtonAction(context),
         progress: _isLoading,
-        progressColor: Styles().colors.background,
+        progressColor: Styles().colors.textLight,
         rightIconKey: null,
       ),
     );

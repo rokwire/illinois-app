@@ -541,7 +541,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   Widget _buildScanIlliniIdSection() => Event2CreatePanel.buildSectionWidget(body:
     RoundedButton(
       label: Localization().getStringEx('panel.event2.detail.attendance.scan.button', 'Scan Illini ID'),
-      textStyle: Styles().textStyles.getTextStyle(widget.scanEnabled ? 'widget.button.title.large.fat' : 'widget.button.title.large.fat.variant3'),
+      textStyle: Styles().textStyles.getTextStyle(widget.scanEnabled ? 'widget.button.title.large.fat' : 'widget.button.title.large.fat'),
       borderColor: widget.scanEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
       backgroundColor: Styles().colors.surface,
       onTap: _onTapScanButton,

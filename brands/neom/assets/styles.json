@@ -378,7 +378,6 @@
     "widget.button.title.large.fat": { "font_family": "bold", "size": 20.0, "color": "textDark"},
     "widget.button.title.large.fat.variant": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimaryVariant"},
     "widget.button.title.large.fat.variant2": { "font_family": "bold", "size": 20.0, "color": "surface"},
-    "widget.button.title.large.fat.variant3": { "font_family": "bold", "size": 20.0, "color": "textDark"},
     "widget.button.title.large.fat.secondary": { "font_family": "bold", "size": 20.0, "color": "fillColorSecondary"},
     "widget.button.title.large.thin": { "font_family": "regular", "size": 20.0, "color": "textDark"},
     "widget.button.title.regular": { "font_family": "bold", "size": 18.0, "color": "textDark"},

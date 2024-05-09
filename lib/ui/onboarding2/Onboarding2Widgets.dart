@@ -66,7 +66,7 @@ class Onboarding2BackButton extends StatelessWidget {
         button: true,
         child: GestureDetector(
           onTap: onTap,
-          behavior: HitTestBehavior.translucent,
+          behavior: HitTestBehavior.opaque,
           child: Padding(
             padding: padding!,
             child: Container(child: Styles().images.getImage(imageKey, color: this.color, excludeFromSemantics: true)

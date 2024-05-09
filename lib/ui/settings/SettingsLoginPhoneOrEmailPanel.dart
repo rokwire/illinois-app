@@ -121,7 +121,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                     Positioned(
                       top: 32,
                       left: 0,
-                      child: Onboarding2BackButton(padding: const EdgeInsets.only(left: 17,),
+                      child: Onboarding2BackButton(padding: const EdgeInsets.all(16.0,),
                           onTap:() {
                             Analytics().logSelect(target: "Back");
                             Navigator.pop(context);
@@ -188,12 +188,12 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                       hint: buttonProceedHint,
                       textAlign: TextAlign.center,
                       backgroundColor: Styles().colors.fillColorSecondary,
-                      textStyle: Styles().textStyles.getTextStyle('widget.button.title.large.fat'),
+                      textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.large.fat'),
                       onTap: _onTapProceed,
                       // rightIcon: proceedRightIcon,
                       rightIconKey: null,
                       progress: _isLoading,
-                      progressColor: Styles().colors.background,
+                      progressColor: Styles().colors.textLight,
                     ),
                   ),
                 ),
