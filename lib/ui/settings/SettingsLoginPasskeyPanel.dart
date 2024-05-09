@@ -18,16 +18,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
-import 'package:neom/ui/settings/SettingsLoginEmailPanel.dart';
 import 'package:neom/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
-import 'package:neom/ui/settings/SettingsSignInOptionsPanel.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/ui/widgets/SlantedWidget.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -48,21 +45,16 @@ class SettingsLoginPasskeyPanel extends StatefulWidget with OnboardingPanel {
   @override
   bool get onboardingCanDisplay {
     return !Auth2().isPasskeyLinked;
-    // return onboardingContext?['auth_type'] == 'passkey';
   }
 }
 
 enum ResponseType { success, error, message }
 
 class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
-  final TextEditingController _identifierController = TextEditingController();
-  final FocusNode _identifierFocusNode = FocusNode();
-
   String? _responseMessage;
   ResponseType _responseType = ResponseType.message;
 
   Auth2PasskeyAccountState _state = Auth2PasskeyAccountState.exists;
-  String? _passkeyCreationOptions;
 
   late bool _link;
   bool _loading = false;
@@ -111,10 +103,10 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
         children: <Widget>[
           _buildText(),
           Container(height: 48),
-          if (_state == Auth2PasskeyAccountState.unverified || StringUtils.isNotEmpty(_responseMessage))
+          if (StringUtils.isNotEmpty(_responseMessage))
             _buildContentWidget(context),
           _buildPrimaryActionButton(),
-          Container(height: 8),
+          Container(height: 16),
           _buildSignUpButton(),
           // _buildSkipButton(context),
         ],
@@ -129,22 +121,8 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       title = Localization().getStringEx('panel.settings.passkey.add.title', 'Add a Passkey');
       // description = Localization().getStringEx('panel.settings.passkey.add.description', 'Add a new passkey on this device to sign in faster next time.');
     } else {
-      switch (_state) {
-        case Auth2PasskeyAccountState.nonExistent:
-          title = Localization().getStringEx('panel.settings.passkey.sign_up.title.text', 'Sign up to continue.');
-          // description = Localization().getStringEx('panel.settings.passkey.sign_up.description.text',
-          //     'Choose a username. This is how you will be known in the Vogue community. The username must not already be in use by someone else.\n\nYou may use an email address or email address instead and choose a username later.');
-          break;
-        case Auth2PasskeyAccountState.alternatives:
-          title = Localization().getStringEx('panel.settings.passkey.sign_in.alternative.title.text', 'Try another way');
-          // description = Localization().getStringEx('panel.settings.passkey.sign_in.alternative.description.text',
-          //     'Please enter the username of the account you are trying to sign in with. You will then be able to choose an alternative sign-in option.');
-          break;
-        default:
-          title = Localization().getStringEx('panel.settings.passkey.sign_in.title.text', 'Sign in to continue.');
-          // description = Localization().getStringEx('panel.settings.passkey.sign_in.description.text', 'Sign in with your passkey.');
-          break;
-      }
+      title = Localization().getStringEx('panel.settings.passkey.sign_in.title.text', 'Sign in to continue.');
+      // description = Localization().getStringEx('panel.settings.passkey.sign_in.description.text', 'Sign in with your passkey.');
     }
 
     return Column(children: [
@@ -175,23 +153,12 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
   // }
 
   Widget _buildPrimaryActionButton() {
-    String primaryButtonText = '';
-    switch (_state) {
-      case Auth2PasskeyAccountState.nonExistent:
-        primaryButtonText = Localization().getStringEx('panel.settings.passkey.button.sign_up.text', 'Sign Up');
-        break;
-      case Auth2PasskeyAccountState.alternatives:
-        primaryButtonText = Localization().getStringEx('panel.settings.passkey.button.sign_in.alternative.text', 'Continue');
-        break;
-      default:
-        primaryButtonText = Localization().getStringEx('panel.settings.passkey.button.sign_in.text', 'Sign In');
-        break;
-    }
-
     return SlantedWidget(
       color: Styles().colors.fillColorSecondary,
       child: RibbonButton(
-        label: primaryButtonText,
+        label: _state == Auth2PasskeyAccountState.alternatives ?
+          Localization().getStringEx('panel.settings.passkey.button.sign_in.alternative.text', 'Sign In With Passkey') :
+          Localization().getStringEx('panel.settings.passkey.button.sign_in.text', 'Sign In'),
         textAlign: TextAlign.center,
         backgroundColor: Styles().colors.fillColorSecondary,
         textStyle: Styles().textStyles.getTextStyle('widget.button.title.large.fat'),
@@ -204,6 +171,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
   }
 
   Widget _buildPasskeyInfo() {
+    bool linkCrossPlatform = Auth2().isPasskeyLinked;
     String primaryButtonText = Localization().getStringEx('panel.settings.passkey.add.button.label', 'Add Passkey');
     return Container(
       decoration: BoxDecoration(
@@ -222,45 +190,46 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Text(
-              Localization().getStringEx('', 'PASSKEYS ARE A BETTER WAY TO SIGN IN'),
+              linkCrossPlatform ? Localization().getStringEx('', 'CREATE A PASSKEY FOR THIS DEVICE') : Localization().getStringEx('', 'PASSKEYS ARE A BETTER WAY TO SIGN IN'),
               style: Styles().textStyles.getTextStyle('panel.onboarding2.login_passkey.link.title'),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                    child: Styles().images.getImage('fingerprint') ?? Container(),
-                  ),
-                ),
-                Flexible(
-                  flex: 5,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          Localization().getStringEx('', 'No need to remember a password'),
-                          style: Styles().textStyles.getTextStyle('widget.heading.large.dark'),
-                        ),
-                        SizedBox(height: 8.0),
-                        Text(
-                          Localization().getStringEx('', 'With passkeys, you can use things like your fingerprint or face to login'),
-                          style: Styles().textStyles.getTextStyle('widget.item.tiny.medium'),
-                        ),
-                      ]
+          if (!linkCrossPlatform)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Flexible(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                      child: Styles().images.getImage('fingerprint') ?? Container(),
                     ),
                   ),
-                )
-              ],
+                  Flexible(
+                    flex: 5,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            Localization().getStringEx('', 'No need to remember a password'),
+                            style: Styles().textStyles.getTextStyle('widget.heading.large.dark'),
+                          ),
+                          SizedBox(height: 8.0),
+                          Text(
+                            Localization().getStringEx('', 'With passkeys, you can use things like your fingerprint or face to login'),
+                            style: Styles().textStyles.getTextStyle('widget.item.tiny.medium'),
+                          ),
+                        ]
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -281,12 +250,12 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            Localization().getStringEx('', 'Works on all of your devices'),
+                            linkCrossPlatform ? Localization().getStringEx('', 'Easier login on this device') : Localization().getStringEx('', 'Works on all of your devices'),
                             style: Styles().textStyles.getTextStyle('widget.heading.large.dark'),
                           ),
                           SizedBox(height: 8.0),
                           Text(
-                            Localization().getStringEx('', 'Passkeys will automatically be available across your synced devices'),
+                            linkCrossPlatform ? Localization().getStringEx('', 'Your new passkey will be available without your other device') : Localization().getStringEx('', 'Passkeys will automatically be available across your synced devices'),
                             style: Styles().textStyles.getTextStyle('widget.item.tiny.medium'),
                           ),
                         ]
@@ -296,41 +265,42 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                    child: Styles().images.getImage('shield-halved') ?? Container(),
-                  ),
-                ),
-                Flexible(
-                  flex: 5,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            Localization().getStringEx('', 'Keeps your account safer'),
-                            style: Styles().textStyles.getTextStyle('widget.heading.large.dark'),
-                          ),
-                          SizedBox(height: 8.0),
-                          Text(
-                            Localization().getStringEx('', 'Passkeys offer state-of-the-art phishing resistance'),
-                            style: Styles().textStyles.getTextStyle('widget.item.tiny.medium'),
-                          ),
-                        ]
+          if (!linkCrossPlatform)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Flexible(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                      child: Styles().images.getImage('shield-halved') ?? Container(),
                     ),
                   ),
-                )
-              ],
+                  Flexible(
+                    flex: 5,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              Localization().getStringEx('', 'Keeps your account safer'),
+                              style: Styles().textStyles.getTextStyle('widget.heading.large.dark'),
+                            ),
+                            SizedBox(height: 8.0),
+                            Text(
+                              Localization().getStringEx('', 'Passkeys offer state-of-the-art phishing resistance'),
+                              style: Styles().textStyles.getTextStyle('widget.item.tiny.medium'),
+                            ),
+                          ]
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
           SizedBox(height: 16.0),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -365,52 +335,17 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       default:
         responseTextStyle = Styles().textStyles.getTextStyle('widget.message.regular.fat.light');
     }
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Visibility(
-        visible: StringUtils.isNotEmpty(_responseMessage),
-        child: Align(alignment: Alignment.center, child: Padding(
-          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-          child: Text(
-            _responseMessage ?? '',
-            style: responseTextStyle,
-          ),
-        ),),
-      ),
-      // Align(alignment: Alignment.center, child: Visibility(
-      //   visible: _state == Auth2PasskeyAccountState.failed && !_link,
-      //   child: _buildTryAnotherWayButton(),
-      // )),
-      Visibility(
-        visible: (_state == Auth2PasskeyAccountState.unverified),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: InkWell(
-            onTap: () => _onTapResendEmail(context),
-            child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                        Localization().getStringEx("panel.settings.passkey.label.resend_email.text", "Resend Verification"),
-                        textAlign: TextAlign.right,
-                        style: Styles().textStyles.getTextStyle('widget.info.regular.light')
-                    )
-                  ],
-                )),
-          ),
-        ),
-      ),
-    ]);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Text(_responseMessage ?? '', style: responseTextStyle,),
+    );
   }
 
   Future<void> _primaryButtonAction(BuildContext context) async {
-    if (_state == Auth2PasskeyAccountState.nonExistent || _link) {
-      _trySignUp(context);
-    } else if (_state == Auth2PasskeyAccountState.exists || _state == Auth2PasskeyAccountState.unverified || _state == Auth2PasskeyAccountState.failed) {
+    if (_link) {
+      _tryLink(context);
+    } else {
       _trySignIn(context);
-    } else if (_state == Auth2PasskeyAccountState.alternatives && !_link) {
-      _handleSignInOptions(context);
     }
   }
 
@@ -419,7 +354,9 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       TextSpan(
         children: [
           TextSpan(
-            text: Localization().getStringEx("panel.settings.passkey.label.switch_mode.sign_up.text", "Don't have an account?"),
+            text: _state == Auth2PasskeyAccountState.alternatives ?
+              Localization().getStringEx("panel.settings.passkey.sign_up.alternative.text", "Don't have a passkey or can't use it?") :
+              Localization().getStringEx("panel.settings.passkey.sign_up.text", "Don't have an account?"),
             style: Styles().textStyles.getTextStyle('widget.description.medium.light'),
           ),
           WidgetSpan(
@@ -427,7 +364,9 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
               style: ButtonStyle(overlayColor: MaterialStatePropertyAll(Styles().colors.gradientColorPrimary), splashFactory: NoSplash.splashFactory),
               onPressed: _onTapSignUp,
               child: Text(
-                Localization().getStringEx("panel.settings.passkey.label.switch_mode.sign_up.button.text", "Sign up"),
+                _state == Auth2PasskeyAccountState.alternatives ?
+                  Localization().getStringEx('panel.settings.passkey.sign_up.alternative.button.text', 'Try another way or sign up') :
+                  Localization().getStringEx("panel.settings.passkey.sign_up.button.text", "Sign up"),
                 textAlign: TextAlign.center,
                 style: Styles().textStyles.getTextStyle('widget.button.title.regular.secondary.underline'),
               )
@@ -435,19 +374,9 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
             alignment: PlaceholderAlignment.middle
           ),
         ],
-      )
+      ),
     );
   }
-
-  // Widget _buildTryAnotherWayButton() {
-  //   return TextButton(
-  //     onPressed: _onTapSignUp,
-  //     child: Text(
-  //         Localization().getStringEx("panel.settings.passkey.label.another_way.text", "Try another way"),
-  //         textAlign: TextAlign.center,
-  //         style: Styles().textStyles.getTextStyle('widget.info.regular.light'),
-  //   ));
-  // }
 
   void _onTapSignUp() {
     Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) {
@@ -455,137 +384,47 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
     }));
   }
 
-  void _onTapResendEmail(BuildContext context) {
-    Analytics().logSelect(target: "Resend Email");
-    _clearResponseMessage();
-    Auth2().resendIdentifierVerification(_identifierController.text).then((bool result) {
-      if (result == true) {
-        _identifierFocusNode.unfocus();
-        _setResponseMessage(Localization().getStringEx("panel.settings.passkey.resend_email.succeeded.text", "Verification email has been resent."));
-      }
-      else {
-        _setResponseMessage(Localization().getStringEx("panel.settings.passkey.resend_email.failed.text", "Failed to resend verification email."));
-      }
-    });
-  }
-
-  Future<void> _trySignUp(BuildContext context) async {
+  Future<void> _tryLink(BuildContext context) async {
     if (!_loading) {
       Analytics().logSelect(target: "Sign Up");
       _clearResponseMessage();
 
-      String identifier = _identifierController.text.trim();
-      if (!_link) {
-        if (identifier.isEmpty) {
-          _setResponseMessage(Localization().getStringEx("panel.settings.passkey.validation.identifier_empty.text", "Please enter an email address."));
-          return;
-        }
-
-        String? identifierType = _getIdentifierType(identifier);
-        if (identifierType == null) {
-          _setResponseMessage(Localization().getStringEx('panel.settings.passkey.validation.identifier.invalid.text', 'Invalid email address.'));
-          return;
-        }
-
-        Auth2PasskeySignUpResult result = Auth2PasskeySignUpResult(Auth2PasskeySignUpResultStatus.failed);
-        setState(() {
-          _loading = true;
-        });
-        if (_passkeyCreationOptions == null) {
-          result = await Auth2().signUpWithPasskey(identifier, displayName: identifier, identifierType: identifierType,
-              public: true, verifyIdentifier: identifierType == Auth2Identifier.typeEmail);
-        } else if (identifierType == Auth2Identifier.typeUsername || (await Auth2().canSignIn(identifier, identifierType) == true)) {
-          // canSignIn will return true once the identifier has been verified (verification not required for usernames)
-          try {
-            String? responseData = await RokwirePlugin.createPasskey(_passkeyCreationOptions);
-            result = await Auth2().completeSignUpWithPasskey(identifier, responseData, identifierType: identifierType);
-          } catch(error) {
-            Log.e(error.toString());
-          }
-        } else {
-          _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.not_activated.text", "Your account is not activated yet. Please confirm the email sent to your email address."));
-          return;
-        }
-
-        setState(() {
-          _loading = false;
-        });
-        if (mounted) {
-          _trySignUpCallback(context, result);
-        }
+      Map<String, dynamic> creds = {};  //TODO: change to use different identifier type?
+      String? identifier = '';
+      if (StringUtils.isNotEmpty(Auth2().username)) {
+        creds['username'] = identifier = Auth2().username;
+      } else if (Auth2().phones.isNotEmpty) {
+        creds['phone'] = identifier = Auth2().phones.first;
+      } else if (Auth2().emails.isNotEmpty) {
+        creds['email'] = identifier = Auth2().emails.first;
       } else {
-        Map<String, dynamic> creds = {};  //TODO: change to use different identifier type?
-        String? identifier = '';
-        if (StringUtils.isNotEmpty(Auth2().username)) {
-          creds['username'] = identifier = Auth2().username;
-        } else if (Auth2().phones.isNotEmpty) {
-          creds['phone'] = identifier = Auth2().phones.first;
-        } else if (Auth2().emails.isNotEmpty) {
-          creds['email'] = identifier = Auth2().emails.first;
-        } else {
-          _setResponseMessage(Localization().getStringEx("", "Your account could not be identified. Please try again later.")); //TODO: better error message for this case
-          return;
-        }
-        Map<String, dynamic> params = {'display_name': StringUtils.isNotEmpty(Auth2().fullName) ? Auth2().fullName : identifier};
-        setState(() {
-          _loading = true;
-        });
-        Auth2LinkResult auth2linkResult = await Auth2().linkAccountAuthType(Auth2Type.typePasskey, creds, params);
-        if (auth2linkResult.status == Auth2LinkResultStatus.succeeded) {
-          try {
-            creds['response'] = await RokwirePlugin.createPasskey(auth2linkResult.message);
-            auth2linkResult = await Auth2().linkAccountAuthType(Auth2Type.typePasskey, creds, params);
-            if (mounted) {
-              _tryLinkCallback(context, auth2linkResult);
-            }
-          } catch (e) {
-            debugPrint(e.toString());
+        _setResponseMessage(Localization().getStringEx("", "Your account could not be identified. Please try again later.")); //TODO: better error message for this case
+        return;
+      }
+      Map<String, dynamic> params = {'display_name': StringUtils.isNotEmpty(Auth2().fullName) ? Auth2().fullName : identifier};
+      setState(() {
+        _loading = true;
+      });
+      Auth2LinkResult auth2linkResult = await Auth2().linkAccountAuthType(Auth2Type.typePasskey, creds, params);
+      if (auth2linkResult.status == Auth2LinkResultStatus.succeeded) {
+        try {
+          creds['response'] = await RokwirePlugin.createPasskey(auth2linkResult.message);
+          auth2linkResult = await Auth2().linkAccountAuthType(Auth2Type.typePasskey, creds, params);
+          if (mounted) {
+            _tryLinkCallback(context, auth2linkResult);
           }
+        } catch (e) {
+          debugPrint(e.toString());
         }
-        setState(() {
-          _loading = false;
-        });
       }
-    }
-  }
-
-  void _trySignUpCallback(BuildContext context, Auth2PasskeySignUpResult result) {
-    if (result.status == Auth2PasskeySignUpResultStatus.succeeded) {
-      _identifierFocusNode.unfocus();
-      _state = Auth2PasskeyAccountState.exists;
-      if (result.creationOptions != null) {
-        // received creation options, so identifier must be verified before creating passkey
-        _passkeyCreationOptions = result.creationOptions;
-        _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_up.require_validation.text",
-            "A verification email has been sent to your email address. To activate your account you need to confirm it. Then you will be able to create a passkey."));
-      }
-    }
-    else if (result.status == Auth2PasskeySignUpResultStatus.failedNotSupported) {
-      _state = Auth2PasskeyAccountState.nonExistent;
-      _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_up.failed.not_supported.text",
-          "Sign up failed. Passkeys are not supported on this device."));
-    }
-    else if (result.status == Auth2PasskeySignUpResultStatus.failedAccountExist) {
-      _state = Auth2PasskeyAccountState.exists;
-      _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_up.failed.account_exists.text", "An account with this email address already exists. Please select a different email address."));
-    }
-    else if (result.status == Auth2PasskeySignUpResultStatus.failedNoCredentials) {
-      _state = Auth2PasskeyAccountState.failed;
-      _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_up.failed.no_credentials.text", "An account with this email address already exists, so sign in was attempted, but no credentials were found."));
-    }
-    else if (result.status == Auth2PasskeySignUpResultStatus.failedCancelled) {
-      _state = Auth2PasskeyAccountState.failed;
-      _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_up.failed.user_cancelled.text", "Sign up cancelled."));
-    }
-    else {
-      _state = Auth2PasskeyAccountState.failed;
-      _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_up.failed.text", "Sign up failed. An unexpected error occurred."));
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
   void _tryLinkCallback(BuildContext context, Auth2LinkResult result) {
     if (result.status == Auth2LinkResultStatus.succeeded) {
-      _identifierFocusNode.unfocus();
       _state = Auth2PasskeyAccountState.exists;
 
       Storage().auth2PasskeySaved = true;
@@ -596,7 +435,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       _setResponseMessage(Localization().getStringEx('panel.settings.passkey.already_exists.failed.text', 'Passkey already exists'));
     }
     else {
-      _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_up.failed.text", "Sign up failed. An unexpected error occurred."));
+      _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_up.failed.text", "Passkey creation failed. An unexpected error occurred."));
     }
   }
 
@@ -608,8 +447,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       setState(() {
         _loading = true;
       });
-      String identifier = _identifierController.text.trim();
-      Auth2PasskeySignInResult result = await Auth2().authenticateWithPasskey(identifier: identifier, identifierType: _getIdentifierType(identifier) ?? Auth2Identifier.typeUsername);
+      Auth2PasskeySignInResult result = await Auth2().authenticateWithPasskey();
       if (mounted) {
         setState(() {
           _loading = false;
@@ -625,11 +463,11 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
     }
 
     if (result.status == Auth2PasskeySignInResultStatus.failed) {
+      _state = Auth2PasskeyAccountState.failed;
       _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.text", "Sign in failed. An unexpected error occurred."));
     }
     else if (result.status == Auth2PasskeySignInResultStatus.failedNotSupported) {
-      //TODO: go to sign up?
-      _state = Auth2PasskeyAccountState.exists;
+      _state = Auth2PasskeyAccountState.failed;
       _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.not_supported.text", "Sign in failed. Passkeys are not supported on this device."));
     }
     else if (result.status == Auth2PasskeySignInResultStatus.failedNotFound) {
@@ -637,133 +475,20 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.not_found.text", "An account with this passkey does not exist. Try signing up instead."));
     }
     else if (result.status == Auth2PasskeySignInResultStatus.failedNoCredentials) {
-      //TODO: go to sign up (or sign in) with email/phone and code or passkey on another device
       _state = Auth2PasskeyAccountState.failed;
       _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.no_credentials.text", "No credentials found."));
     }
     else if (result.status == Auth2PasskeySignInResultStatus.failedCancelled) {
-      _state = Auth2PasskeyAccountState.failed;
+      _state = Auth2PasskeyAccountState.alternatives;
       _clearResponseMessage();
     }
     else if (result.status == Auth2PasskeySignInResultStatus.failedBlocked) {
-      _state = Auth2PasskeyAccountState.failed;
+      _state = Auth2PasskeyAccountState.alternatives;
       //TODO: parse error message to make it more user-friendly? (e.g., During begin sign in, failure response from one tap: 16: Caller has been temporarily blocked due to too many canceled sign-in prompts.)
       _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.blocked.text", "Sign in blocked by device. Please try again later."));
     }
     else {
       _next(context);
-    }
-  }
-
-  Future<void> _handleSignInOptions(BuildContext context) async {
-    if (!_loading) {
-      Analytics().logSelect(target: "Sign In Options");
-      _clearResponseMessage();
-
-      String identifierText = _identifierController.text.trim();
-      if (identifierText.isEmpty) {
-        _setResponseMessage(Localization().getStringEx("panel.settings.passkey.validation.identifier_empty.text", "Please enter an email address."));
-        return;
-      }
-
-      String? identifierType = _getIdentifierType(identifierText);
-      if (identifierType == null) {
-        _setResponseMessage(Localization().getStringEx('panel.settings.passkey.validation.identifier.invalid.text', 'Invalid email address.'));
-        return;
-      }
-
-      _loading = true;
-      Auth2SignInOptionsResult? optionsResult = await Auth2().signInOptions(identifierText, identifierType);
-      _loading = false;
-      optionsResult?.authTypeOptions?.removeWhere((element) => element.code == Auth2Type.typePasskey); // already know we cannot sign in with passkey
-      Auth2Type? authType;
-      Auth2Identifier? identifier;
-
-      if (optionsResult?.authTypeOptions?.length == 1) {
-        authType = optionsResult?.authTypeOptions?[0];
-      }
-      if ((authType == null || authType.code == Auth2Type.typeCode) && mounted) {
-        String? authIdentifierIds = await Navigator.push<String?>(context, CupertinoPageRoute(builder: (BuildContext context) {
-          return SettingsSignInOptionsPanel(options: optionsResult!.authTypeOptions!, identifiers: optionsResult.identifierOptions);
-        }));
-
-        List<String> idParts = authIdentifierIds?.split('_') ?? [];
-        if (idParts.length == 1) {
-          try {
-            authType = optionsResult!.authTypeOptions?.singleWhere((element) => element.id == idParts[0]);
-          } catch (e) {
-            debugPrint(e.toString());
-          }
-        } else if (idParts.length == 2) {
-          try {
-            authType = optionsResult!.authTypeOptions?.singleWhere((element) => element.id == idParts[0]);
-            identifier = optionsResult.identifierOptions?.singleWhere((element) => element.id == idParts[1]);
-          } catch (e) {
-            debugPrint(e.toString());
-          }
-        }
-      }
-
-      try {
-        bool success = false;
-        switch (authType?.code) {
-          case Auth2Type.typeCode:
-            if (identifier == null) {
-              _setResponseMessage(Localization().getStringEx("panel.settings.passkey.code.identifier_missing.text", "Failed to determine where to send an authentication code."));
-              break;
-            }
-            try {
-              _loading = true;
-              Auth2RequestCodeResult codeResult = await Auth2().authenticateWithCode(null, identifierId: identifier.id);
-              _loading = false;
-              if (codeResult == Auth2RequestCodeResult.succeeded && mounted) {
-                await Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginPhoneOrEmailPanel(
-                    identifier: identifier?.identifier,
-                    mode: SettingsLoginPhoneOrEmailMode.phone,
-                )));
-                success = (Auth2().account != null);
-              }
-            } catch (e) {
-              debugPrint(e.toString());
-            }
-            break;
-          case Auth2Type.typePassword:
-            if (mounted) {
-              // use username if password auth type is only option
-              try {
-                identifier = optionsResult?.identifierOptions?.firstWhere((element) => element.code == Auth2Identifier.typeUsername);
-
-                await Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginEmailPanel(
-                    email: identifier?.identifier,
-                    state: Auth2AccountState.verified,
-                )));
-                success = (Auth2().account != null);
-              } catch (e) {
-                debugPrint(e.toString());
-              }
-            }
-            break;
-          case Auth2Type.typeOidcIllinois:
-            _loading = true;
-            Auth2OidcAuthenticateResult? result = await Auth2().authenticateWithOidc();
-            _loading = false;
-            success = (result?.status == Auth2OidcAuthenticateResultStatus.succeeded);
-            break;
-          default: return;
-        }
-
-        if (success) {
-          // try linking a new passkey if the alternative authentication was successful
-          if (mounted) {
-            _link = true;
-            _clearResponseMessage();
-          }
-        } else if (identifier != null && authType != null) {
-          _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.alternative.failed.text", "Alternative sign-in failed. Please try again later."));
-        }
-      } catch (e) {
-        debugPrint(e.toString());
-      }
     }
   }
 
@@ -781,18 +506,16 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
     else if (onContinue != null) {
       onContinue();
     }
+    else if (!Auth2().hasPasskeyForPlatform && mounted) {
+      // direct user to link a passkey if no passkey has been linked for the current platform
+      //TODO: indicate to user that this is to link a passkey on the current platform to login faster than using cross-device
+      setState(() {
+        _link = true;
+      });
+    }
     else {
       Onboarding().next(context, widget);
     }
-  }
-
-  String? _getIdentifierType(String identifier) {
-    if (StringUtils.isEmailValid(identifier)) {
-      return Auth2Identifier.typeEmail;
-    } else if (StringUtils.isPhoneValid(identifier)) {
-      return Auth2Identifier.typePhone;
-    }
-    return null;
   }
 
   void _setResponseMessage(String? msg, {ResponseType type = ResponseType.error}) {
@@ -802,15 +525,6 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
         _responseType = type;
       });
     }
-
-    // if (StringUtils.isNotEmpty(msg)) {
-    //   WidgetsBinding.instance.addPostFrameCallback((_) {
-    //     if (_validationErrorKey.currentContext != null) {
-    //       Scrollable.ensureVisible(_validationErrorKey.currentContext!, duration: Duration(milliseconds: 300)).then((_) {
-    //       });
-    //     }
-    //   });
-    // }
   }
 
   void _clearResponseMessage() {
@@ -844,8 +558,6 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
 }
 
 enum Auth2PasskeyAccountState {
-  nonExistent,
-  unverified,
   exists,
   failed,
   alternatives,
