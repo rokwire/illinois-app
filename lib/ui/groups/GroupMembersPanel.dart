@@ -665,7 +665,7 @@ class _GroupMemberCard extends StatelessWidget {
                       children: <Widget>[
                         Expanded(child:
                           Text(StringUtils.ensureNotEmpty(_memberDisplayName),
-                            style: Styles().textStyles.getTextStyle('widget.group.members.card.title')
+                            style: Styles().textStyles.getTextStyle('widget.group.members.title')
                           )
                         )
                       ],

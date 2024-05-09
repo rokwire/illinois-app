@@ -613,68 +613,73 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     return ClipRRect(
       borderRadius: BorderRadius.all(Radius.circular(8)),
       child: Dialog(
+        backgroundColor: Styles().colors.background,
+        surfaceTintColor: Styles().colors.background,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Container(
-                    color: Styles().colors.fillColorPrimary,
-                    child: Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Center(
-                        child: Text(
-                          Localization().getStringEx("app.title", "Illinois"),
-                          style: Styles().textStyles.getTextStyle("widget.dialog.message.regular"),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      color: Styles().colors.fillColorPrimary,
+                      child: Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Center(
+                          child: Text(
+                            Localization().getStringEx("app.title", "Illinois"),
+                            style: Styles().textStyles.getTextStyle("widget.dialog.message.regular"),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            Container(height: 26,),
-            Text(
-              Localization().getStringEx(
-                  "common.message.exit_app", "Are you sure you want to exit?"),
-              textAlign: TextAlign.center,
-              style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.regular.fat")
-            ),
-            Container(height: 26,),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  RoundedButton(
-                      onTap: () {
-                        Analytics().logAlert(
-                            text: "Exit", selection: "Yes");
-                        Navigator.of(context).pop(true);
-                      },
-                      backgroundColor: Colors.transparent,
-                      borderColor: Styles().colors.fillColorSecondary,
-                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                      label: Localization().getStringEx("dialog.yes.title", 'Yes')),
-                  Container(height: 10,),
-                  RoundedButton(
-                      onTap: () {
-                        Analytics().logAlert(
-                            text: "Exit", selection: "No");
-                        Navigator.of(context).pop(false);
-                      },
-                      backgroundColor: Colors.transparent,
-                      borderColor: Styles().colors.fillColorSecondary,
-                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                      label: Localization().getStringEx("dialog.no.title", 'No'))
                 ],
               ),
-            ),
-          ],
+              Container(height: 26,),
+              Text(
+                Localization().getStringEx(
+                    "common.message.exit_app", "Are you sure you want to exit?"),
+                textAlign: TextAlign.center,
+                style: Styles().textStyles.getTextStyle("widget.dialog.message.regular.fat")
+              ),
+              Container(height: 26,),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    RoundedButton(
+                        onTap: () {
+                          Analytics().logAlert(
+                              text: "Exit", selection: "Yes");
+                          Navigator.of(context).pop(true);
+                        },
+                        backgroundColor: Colors.transparent,
+                        borderColor: Styles().colors.fillColorSecondary,
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.large.fat"),
+                        label: Localization().getStringEx("dialog.yes.title", 'Yes')),
+                    Container(height: 10,),
+                    RoundedButton(
+                        onTap: () {
+                          Analytics().logAlert(
+                              text: "Exit", selection: "No");
+                          Navigator.of(context).pop(false);
+                        },
+                        backgroundColor: Colors.transparent,
+                        borderColor: Styles().colors.fillColorSecondary,
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.large.fat"),
+                        label: Localization().getStringEx("dialog.no.title", 'No'))
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

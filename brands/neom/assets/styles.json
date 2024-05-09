@@ -417,10 +417,10 @@
     "widget.link.button.title.small": { "font_family": "regular", "size": 14.0, "color": "fillColorSecondary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
 
     "widget.button.light.title.regular.thin": { "font_family": "regular", "size": 18.0, "color": "textLight"},
-    "widget.button.light.title.medium": { "font_family": "medium", "size": 16.0, "color": "textBackground"},
-    "widget.button.light.title.medium.fat": { "font_family": "bold", "size": 16.0, "color": "textBackground"},
-    "widget.button.light.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground"},
-    "widget.button.light.title.medium.underline": { "font_family": "medium", "size": 16.0, "color": "textBackground",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+    "widget.button.light.title.medium": { "font_family": "medium", "size": 16.0, "color": "textLight"},
+    "widget.button.light.title.medium.fat": { "font_family": "bold", "size": 16.0, "color": "textLight"},
+    "widget.button.light.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "textLight"},
+    "widget.button.light.title.medium.underline": { "font_family": "medium", "size": 16.0, "color": "textLight",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.light.title.large.fat": { "font_family": "bold", "size": 20.0, "color": "textLight"},
 
     "widget.colourful_button.title.large.accent": { "font_family": "bold", "size": 20.0, "color": "white"},
@@ -528,7 +528,7 @@
     "widget.group.input_field.link": {"extends": "widget.detail.large.thin"},
     "widget.group.input_field.detail": {"extends": "widget.detail.regular"},
 
-    "widget.group.members.title": {"extends": "widget.title.large.fat", "color": "textPrimary"},
+    "widget.group.members.title": {"extends": "widget.title.large.fat", "color": "textDark"},
     "widget.group.members.card.title": {"extends": "widget.title.large.fat", "color": "textDark"},
     "widget.group.members.search": {"extends": "widget.input_field.text.regular"},
     "widget.group.members.selected_entry": {"font_family": "bold", "size": 18.0, "decoration": "underline", "color": "textPrimary"},

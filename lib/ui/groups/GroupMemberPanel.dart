@@ -224,7 +224,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
         RoundedButton(label: _isResearchProject?
             Localization().getStringEx("panel.member_detail.button.remove.title.project", "Remove from Project") :
             Localization().getStringEx("panel.member_detail.button.remove.title", 'Remove from Group'),
-          textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+          textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.medium.fat"),
           backgroundColor: Styles().colors.background,
           padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
           borderColor: Styles().colors.surface,

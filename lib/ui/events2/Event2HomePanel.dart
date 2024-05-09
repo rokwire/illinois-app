@@ -193,7 +193,7 @@ class Event2HomePanel extends StatefulWidget {
 
   static Widget _buildOnboardingApply(BuildContext context, bool enabled, void Function() onTap) {
     String applyTitle = Localization().getStringEx('panel.events2.home.attributes.launch.apply.title', 'Create My Events Feed');
-    TextStyle? applyTextStyle = Styles().textStyles.getTextStyle(enabled ? 'widget.button.title.medium.fat' : 'widget.button.title.regular.variant3');
+    TextStyle? applyTextStyle = Styles().textStyles.getTextStyle(enabled ? 'widget.button.title.medium.fat.dark' : 'widget.button.title.regular.variant3');
     Color? borderColor = enabled ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimaryVariant;
     Decoration? applyDecoration = BoxDecoration(
       color: Styles().colors.surface,
