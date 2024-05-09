@@ -1515,7 +1515,7 @@
     "panel.settings.link.email.label.failed.exists.detail": "1. You will need to sign in to the other account with this email address.\n2. Go to \"Settings\" and touch \"Forget all of my information\".\nYou can now use this as an alternate sign-in.",
 
     "panel.settings.login.both.label.title": "Sign In with Mobile or Email",
-    "panel.settings.login.both.label.description": "To sign in, please enter your mobile phone number to receive a verification code via text message. Or, enter your email address and follow the steps to sign in by email.",
+    "panel.settings.login.both.label.description": "Please enter your mobile phone number or email address to receive a verification code via text message or email.",
     "panel.settings.login.both.label.heading": "Mobile Phone Number or Email Address:",
     "panel.settings.login.both.label.heading.hint": "",
     "panel.settings.login.both.button.proceed.title": "Proceed",

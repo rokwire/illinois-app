@@ -86,6 +86,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
                 Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
                   Onboarding2TitleWidget()
                 ),
+              const SizedBox(height: 16),
               _buildContent(context),
             ]),
           )
@@ -102,7 +103,6 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           _buildText(),
-          Container(height: 48),
           if (StringUtils.isNotEmpty(_responseMessage))
             _buildContentWidget(context),
           _buildPrimaryActionButton(),

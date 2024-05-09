@@ -97,7 +97,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
         keyboardType = TextInputType.emailAddress;
       }
       else {
-        description = Localization().getStringEx('panel.settings.login.both.label.description', 'To sign in, please enter your mobile phone number to receive a verification code via text message. Or, enter your email address and follow the steps to sign in by email.');
+        description = Localization().getStringEx('panel.settings.login.both.label.description', 'Please enter your mobile phone number or email address to receive a verification code via text message or email.');
         headingTitle = Localization().getStringEx('panel.settings.login.both.label.heading', 'Mobile Phone Number or Email Address:');
         headingHint = Localization().getStringEx('panel.settings.login.both.label.heading.hint', '');
         buttonProceedTitle = Localization().getStringEx('panel.settings.login.both.button.proceed.title', 'Proceed');
@@ -105,7 +105,6 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
         keyboardType = TextInputType.emailAddress;
       }
     }
-
 
     return SafeArea(
       child: Scaffold(
@@ -129,20 +128,21 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                     ),
                   ],
                 ),
+                const SizedBox(height: 16),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
                   child: Row(children: [ Expanded(child:
                     Text(description, style:  Styles().textStyles.getTextStyle("widget.description.medium.light"),)
                   )],),
                 ),
-                Container(height: 48),
+                const SizedBox(height: 32),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Row(children: [ Expanded(child:
                     Text(headingTitle, style: Styles().textStyles.getTextStyle("widget.title.light.medium.fat"),)
                   )],),
                 ),
-                Container(height: 6),
+                Container(height: 8),
                 Semantics(label: headingTitle, hint: headingHint, textField: true, excludeSemantics: true,
                   value: _phoneOrEmailController?.text,
                   child: Container(
@@ -156,6 +156,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                       onSubmitted: (_) => _clearErrorMsg,
                       cursorColor: Styles().colors.textDark,
                       keyboardType: keyboardType,
+                      scrollPadding: EdgeInsets.only(bottom: 120),
                       style: Styles().textStyles.getTextStyle("widget.input_field.text.medium"),
                       decoration: InputDecoration(
                         filled: true,
@@ -165,8 +166,9 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                     ),
                   ),
                 ),
+                const SizedBox(height: 16),
                 Visibility(visible: StringUtils.isNotEmpty(_validationErrorMsg), child:
-                  Padding(key: _validationErrorKey, padding: EdgeInsets.symmetric(vertical: 12), child:
+                  Padding(key: _validationErrorKey, padding: EdgeInsets.symmetric(vertical: 16), child:
                     Column(children: [
                       Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: Styles().textStyles.getTextStyle("panel.settings.error.text"), textAlign: TextAlign.center,),
                       Visibility(visible: StringUtils.isNotEmpty(_validationErrorDetails), child:
