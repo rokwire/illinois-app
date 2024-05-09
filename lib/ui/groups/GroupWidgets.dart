@@ -1726,13 +1726,14 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
         children: [
           Row(
             children: [
-              Text("To: ", style: Styles().textStyles.getTextStyle('widget.group.members.title'),),
+              Text("To: ", style: Styles().textStyles.getTextStyle('widget.title.large.fat'),),
               Expanded(
                 child: _buildDropDown(),
               )
             ],
           ),
-          Visibility(visible: selectedMembers.isNotEmpty, child:
+          Visibility(visible: selectedMembers.isNotEmpty,
+            child:
             GestureDetector(
               onTap: _onTapEdit,
               child: Container(
@@ -1743,7 +1744,10 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
           ),
           Visibility(
             visible: _showChangeButton,
-            child: RoundedButton(label: "Edit", onTap: _onTapEdit, textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.secondary"),conentAlignment: MainAxisAlignment.start, contentWeight: 0.33, padding: EdgeInsets.all(3), maxBorderRadius: 5,)
+            child: RoundedButton(label: "Edit", onTap: _onTapEdit,
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.secondary"),
+              conentAlignment: MainAxisAlignment.start, contentWeight: 0.33,
+              padding: EdgeInsets.all(3), maxBorderRadius: 5,)
           )
         ],
       ),
@@ -1779,7 +1783,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
                       // style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies.bold),
                       // value: _currentSelection,
                       items: _buildDropDownItems,
-                      hint: Text(_selectionText,  style: Styles().textStyles.getTextStyle('widget.title.large.fat') ,),
+                      hint: Text(_selectionText,  style: widget.enabled ? Styles().textStyles.getTextStyle('widget.group.members.title') : Styles().textStyles.getTextStyle('widget.title.large.fat'),),
                       onChanged: widget.enabled? (GroupMemberSelectionData? data) {
                         _onDropDownItemChanged(data);
                       } : null,

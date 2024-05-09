@@ -115,7 +115,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                       Padding(padding: EdgeInsets.only(top: 12), child: _buildSearchWidget()),
                       Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.search.label', "SEARCH"), style: Styles().textStyles.getTextStyle('widget.title.dark.regular.fat')))),
                       Visibility(visible: _searchView, child: _buildMembersWidget(_filterMembers(_searchController.text))),
-                      Visibility(visible: (!_searchView) && hasGroupMembers, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.selected.label', "To: ")))),
+                      Visibility(visible: (!_searchView) && hasGroupMembers, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.selected.label', "To: "), style: Styles().textStyles.getTextStyle('widget.title.dark.regular.fat')))),
                       Visibility(visible: (!_searchView) && hasGroupMembers, child: _buildMembersWidget(_selectedMembers)),
                       Visibility(visible: true, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.all.label', "ALL MEMBERS"), style: Styles().textStyles.getTextStyle('widget.title.dark.regular.fat')))),
                       Visibility(visible: true, child: _buildMembersWidget(_allMembers))
@@ -439,7 +439,7 @@ class _MemberSelectionWidget extends StatelessWidget {
                           child:
                           Container(
                             child: Text(label,
-                              style: Styles().textStyles.getTextStyle("widget.title.regular.fat")))),
+                              style: Styles().textStyles.getTextStyle("widget.group.dropdown_button.item.selected")))),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
