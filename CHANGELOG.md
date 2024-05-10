@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated Event info strings for external registration events [#4043](https://github.com/rokwire/illinois-app/issues/4043).
+- Launch wellness daily tip URLs in an external broswer [#4037](https://github.com/rokwire/illinois-app/issues/4037).
 ### Fixed
 - Fixed content attributes selection [#4034](https://github.com/rokwire/illinois-app/issues/4034).
 
