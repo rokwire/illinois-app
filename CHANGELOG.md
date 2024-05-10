@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hide notifications from Browse and Favorites tabs [#4051](https://github.com/rokwire/illinois-app/issues/4051).
 ### Fixed
 - Fixed content attributes selection [#4034](https://github.com/rokwire/illinois-app/issues/4034).
+### Added
+- Added Clear button to image selection widget [#4044](https://github.com/rokwire/illinois-app/issues/4044).
 
 ## [5.2.7] - 2024-05-07
 ### Fixed

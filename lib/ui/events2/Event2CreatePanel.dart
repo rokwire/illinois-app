@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/ImagesResult.dart';
 import 'package:illinois/ext/Survey.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/Explore.dart';
@@ -34,6 +35,7 @@ import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -685,10 +687,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   void _onTapAddImage() {
     Analytics().logSelect(target: "Add Image");
     Event2CreatePanel.hideKeyboard(context);
-    GroupAddImageWidget.show(context: context, updateUrl: _imageUrl).then((String? updateUrl) {
-      if (mounted && (updateUrl != null) && (0 < updateUrl.length) && (_imageUrl != updateUrl)) {
-        setState(() {
-          _imageUrl = updateUrl;
+    GroupAddImageWidget.show(context: context, url: _imageUrl).then((ImagesResult? updateResult) {
+      if (updateResult?.succeeded == true && (_imageUrl != updateResult?.stringData)) {
+        setStateIfMounted(() {
+          _imageUrl = updateResult?.stringData;
         });
       }
     });
