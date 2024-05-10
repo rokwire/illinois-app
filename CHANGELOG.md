@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [5.2.8] - 2024-05-10
 ### Changed
 - Updated Event info strings for external registration events [#4043](https://github.com/rokwire/illinois-app/issues/4043).
 - Launch wellness daily tip URLs in an external broswer [#4037](https://github.com/rokwire/illinois-app/issues/4037).
