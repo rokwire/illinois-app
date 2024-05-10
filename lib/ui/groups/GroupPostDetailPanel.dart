@@ -389,7 +389,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           showSlant: false,
           wrapContent: true,
           buttonVisible: _editingReply!=null,
-          onImageChanged: (String imageUrl) => _replyEditData?.imageUrl = imageUrl,
+          onImageChanged: (String? imageUrl) => _replyEditData?.imageUrl = imageUrl,
           imageSemanticsLabel: Localization().getStringEx('panel.group.detail.post.reply.reply.label', "Reply"),
         )
      );

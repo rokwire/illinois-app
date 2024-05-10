@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/ext/ImagesResult.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Config.dart';
@@ -412,22 +413,32 @@ class GroupAddImageWidget extends StatefulWidget {
   static String _groupImageStoragePath = 'group/tout';
   static int _groupImageWidth = 1080;
 
+  final String? url;
+
+  const GroupAddImageWidget({super.key, this.url});
+
   @override
   _GroupAddImageWidgetState createState() => _GroupAddImageWidgetState();
+  //
+  // // static Future<String?> show({required BuildContext context, String? updateUrl}) async {
+  // static Future<ImagesResult?> show({required BuildContext context, String? url}) async {
+  //   ImagesResult? imageResult;
+  //
+  //   if(url == null){
+  //     Future<dynamic> result =  showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
+  //     return result.then((url) => url);
+  //   } else {
+  //     imageResult = await Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+  //         ImageEditPanel(storagePath: _groupImageStoragePath, width: _groupImageWidth, preloadImageUrl: url,)));
+  //   }
+  //
+  //   // return imageResult?.resultType == ImagesResultType.succeeded? imageResult?.data?.toString() : null;
+  //   return imageResult;
+  // }
 
-  static Future<String?> show({required BuildContext context, String? updateUrl}) async {
-    ImagesResult? imageResult;
+  static Future<ImagesResult?> show({required BuildContext context, String? url}) async =>
+      showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget(url: url)));
 
-    if(updateUrl == null){
-      Future<dynamic> result =  showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
-      return result.then((url) => url);
-    } else {
-      imageResult = await Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-          ImageEditPanel(storagePath: _groupImageStoragePath, width: _groupImageWidth, preloadImageUrl: updateUrl,)));
-    }
-
-    return imageResult?.resultType == ImagesResultType.succeeded? imageResult?.data?.toString() : null;
-  }
 }
 
 class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
@@ -436,6 +447,9 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
 
   @override
   void initState() {
+    if(StringUtils.isNotEmpty(widget.url)){
+      _imageUrlController.text = widget.url!;
+    }
     super.initState();
   }
 
@@ -476,7 +490,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                         style: Styles().textStyles.getTextStyle('widget.dialog.button.close'),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -511,6 +525,14 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                               backgroundColor: Styles().colors.background,
                               progress: _showProgress,
                               onTap: _onTapChooseFromDevice)),
+                      Padding(
+                          padding: EdgeInsets.all(10),
+                          child: RoundedButton(
+                              label:  Localization().getStringEx("widget.add_image.button.clear.label","Clear"), //TBD localize
+                              textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                              borderColor: Styles().colors.fillColorSecondary,
+                              backgroundColor: Styles().colors.background,
+                              onTap: _onTapClear)),
                     ]))
           ],
         ));
@@ -518,7 +540,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
 
   void _onTapCloseImageSelection() {
     Analytics().logSelect(target: "Close image selection");
-    Navigator.pop(context, "");
+    Navigator.pop(context, ImagesResult.cancel());
   }
 
   void _onTapUseUrl() {
@@ -533,7 +555,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
     if (isReadyUrl) {
       //ready
       AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
-      Navigator.pop(context, url);
+      Navigator.pop(context, ImagesResult.succeed(url));
     } else {
       //we need to process it
       setState(() {
@@ -559,7 +581,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
           case ImagesResultType.succeeded:
           //ready
             AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
-            Navigator.pop(context, logicResult.data);
+            Navigator.pop(context, logicResult);
             break;
           default:
             break;
@@ -578,7 +600,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
     // Future<ImagesResult?> result =
     // Content().selectImageFromDevice(storagePath: _groupImageStoragePath, width: _groupImageWidth);
     // result.then((logicResult) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ImageEditPanel(storagePath: GroupAddImageWidget._groupImageStoragePath, width: GroupAddImageWidget._groupImageWidth))).then((logicResult){
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ImageEditPanel(storagePath: GroupAddImageWidget._groupImageStoragePath, width: GroupAddImageWidget._groupImageWidth, preloadImageUrl: widget.url,))).then((logicResult){
       setState(() {
         _showProgress = false;
       });
@@ -594,12 +616,17 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
         case ImagesResultType.succeeded:
         //ready
           AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
-          Navigator.pop(context, logicResult.data);
+          Navigator.pop(context, logicResult);
           break;
         default:
           break;
       }
     });
+  }
+
+  void _onTapClear() {
+    Analytics().logSelect(target: "Clear");
+    Navigator.pop(context, ImagesResult.succeed(null));
   }
 
 
@@ -1968,7 +1995,7 @@ class GroupMemberSelectionData {
   GroupMemberSelectionData({required this.type, required this.selection, this.requiresValidation = false});
 }
 
-typedef void OnImageChangedListener(String imageUrl);
+typedef void OnImageChangedListener(String? imageUrl);
 class ImageChooserWidget extends StatefulWidget{ //TBD Localize properly
   final String? imageUrl;
   final bool wrapContent;
@@ -2033,16 +2060,15 @@ class _ImageChooserState extends State<ImageChooserWidget>{
 
   void _onTapAddImage() async {
     Analytics().logSelect(target: "Add Image");
-    String? imageUrl = await GroupAddImageWidget.show(context: context, updateUrl: _imageUrl);
-    if (StringUtils.isNotEmpty(imageUrl) && (widget.onImageChanged != null)) {
-      widget.onImageChanged!(imageUrl!);
-      if (mounted) {
-        setState(() {
-          _imageUrl = imageUrl;
-        });
-      }
+    ImagesResult? result = await GroupAddImageWidget.show(context: context, url: _imageUrl).then((result) => result);
+
+    if(result?.succeeded == true) {
+      widget.onImageChanged?.call(result?.stringData);
+      setStateIfMounted(() {
+        _imageUrl = result?.stringData;
+      });
+      Log.d("Image Url: ${result?.stringData}");
     }
-    Log.d("Image Url: $imageUrl");
   }
 }
 
