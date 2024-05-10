@@ -275,16 +275,23 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     }
   }
 
+
   void _processTapAttributeValue(ContentAttributeValue attributeValue, { bool forceProcessing = false }) {
     dynamic attributeRawValue = attributeValue.value;
+    bool hasRequirements = widget.attribute.requirements?.hasFunctionalScope(requirementsFunctionalScope) ?? false;
+    int minRequiredSelectedCount = widget.attribute.requirements?.minSelectedCount ?? 0;
     if (attributeRawValue != null) {
       if (_selection.contains(attributeRawValue)) {
-        int minSelectedCount = widget.attribute.requirements?.minSelectedCount ?? 0;
-        if (minSelectedCount < _selection.length) {
-          _selection.remove(attributeRawValue);
+        if (hasRequirements) {
+          if (minRequiredSelectedCount < _selection.length) {
+            _selection.remove(attributeRawValue);
+          }
+          else if (!forceProcessing) {
+            return;
+          }
         }
-        else if (!forceProcessing) {
-          return;
+        else {
+          _selection.remove(attributeRawValue);
         }
       }
       else {
@@ -295,7 +302,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
       _selection.clear();
     }
 
-    if (widget.attribute.requirements?.hasFunctionalScope(requirementsFunctionalScope) ?? false) {
+    if (hasRequirements) {
       widget.attribute.validateAttributeValuesSelection(_selection);
     }
 
