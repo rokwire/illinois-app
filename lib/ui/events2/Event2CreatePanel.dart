@@ -2051,7 +2051,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   bool get _hasOnlineDetails => _onlineUrlController.text.isNotEmpty;
   bool get _hasValidOnlineDetails => UrlUtils.isValidUrl(_onlineUrlController.text);
   bool get _hasAttendanceDetails => _attendanceDetails?.isNotEmpty ?? false;
-  bool get _hasRegistrationDetails => _registrationDetails?.requiresRegistration ?? false;
+  bool get _hasRegistrationDetails => _registrationDetails?.isNotEmpty ?? false;
   bool get _hasWebsiteURL => _websiteController.text.isNotEmpty;
   bool get _hasValidWebsiteURL => UrlUtils.isValidUrl(_websiteController.text);
 
