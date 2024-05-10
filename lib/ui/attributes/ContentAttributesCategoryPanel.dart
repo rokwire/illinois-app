@@ -38,6 +38,9 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   LinkedHashSet<dynamic> _selection = LinkedHashSet<dynamic>();
 
   int get requirementsFunctionalScope => widget.filtersMode ? contentAttributeRequirementsFunctionalScopeFilter : contentAttributeRequirementsFunctionalScopeCreate;
+  bool get hasRequirements => widget.attribute.requirements?.hasFunctionalScope(requirementsFunctionalScope) ?? false;
+  int get minRequiredSelectedCount => widget.attribute.requirements?.minSelectedCount ?? 0;
+  bool get canClearSelection => hasRequirements ? (minRequiredSelectedCount == 0) : true;
 
   bool get singleSelection => widget.attribute.isSingleSelection(requirementsFunctionalScope);
   bool get multipleSelection => widget.attribute.isMultipleSelection(requirementsFunctionalScope);
@@ -127,7 +130,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
         onTap: _onTapApply,
       ));
     }
-    else if ((0 < (widget.attributeValues?.length ?? 0)) && !DeepCollectionEquality().equals(widget.selection ?? emptySelection, emptySelection)) {
+    else if (canClearSelection && (0 < (widget.attributeValues?.length ?? 0)) && !DeepCollectionEquality().equals(widget.selection ?? emptySelection, emptySelection)) {
       actions.add(_buildHeaderBarButton(
         title:  Localization().getStringEx('dialog.clear.title', 'Clear'),
         onTap: _onTapClear,
@@ -278,8 +281,6 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
 
   void _processTapAttributeValue(ContentAttributeValue attributeValue, { bool forceProcessing = false }) {
     dynamic attributeRawValue = attributeValue.value;
-    bool hasRequirements = widget.attribute.requirements?.hasFunctionalScope(requirementsFunctionalScope) ?? false;
-    int minRequiredSelectedCount = widget.attribute.requirements?.minSelectedCount ?? 0;
     if (attributeRawValue != null) {
       if (_selection.contains(attributeRawValue)) {
         if (hasRequirements) {
