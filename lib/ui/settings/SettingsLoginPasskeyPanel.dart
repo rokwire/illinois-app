@@ -157,7 +157,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
     return SlantedWidget(
       color: Styles().colors.fillColorSecondary,
       child: RibbonButton(
-        label: _state == Auth2PasskeyAccountState.alternatives ?
+        label: _state == Auth2PasskeyAccountState.failed ?
           Localization().getStringEx('panel.settings.passkey.button.sign_in.alternative.text', 'Sign In With Passkey') :
           Localization().getStringEx('panel.settings.passkey.button.sign_in.text', 'Sign In'),
         textAlign: TextAlign.center,
@@ -172,7 +172,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
   }
 
   Widget _buildPasskeyInfo() {
-    bool linkCrossPlatform = Auth2().isPasskeyLinked;
+    bool linkCrossPlatform = !Auth2().hasPasskeyForPlatform;
     String primaryButtonText = Localization().getStringEx('panel.settings.passkey.add.button.label', 'Add Passkey');
     return Container(
       decoration: BoxDecoration(
@@ -364,7 +364,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       TextSpan(
         children: [
           TextSpan(
-            text: _state == Auth2PasskeyAccountState.alternatives ?
+            text: _state == Auth2PasskeyAccountState.failed ?
               Localization().getStringEx("panel.settings.passkey.sign_up.alternative.text", "Don't have a passkey or can't use it?") :
               Localization().getStringEx("panel.settings.passkey.sign_up.text", "Don't have an account?"),
             style: Styles().textStyles.getTextStyle('widget.description.medium.light'),
@@ -374,7 +374,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
               style: ButtonStyle(overlayColor: MaterialStatePropertyAll(Styles().colors.gradientColorPrimary), splashFactory: NoSplash.splashFactory),
               onPressed: _onTapSignUp,
               child: Text(
-                _state == Auth2PasskeyAccountState.alternatives ?
+                _state == Auth2PasskeyAccountState.failed ?
                   Localization().getStringEx('panel.settings.passkey.sign_up.alternative.button.text', 'Try another way or sign up') :
                   Localization().getStringEx("panel.settings.passkey.sign_up.button.text", "Sign up"),
                 textAlign: TextAlign.center,
@@ -473,7 +473,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
     }
 
     if (result.status == Auth2PasskeySignInResultStatus.failed) {
-      _state = Auth2PasskeyAccountState.alternatives;
+      _state = Auth2PasskeyAccountState.failed;
       _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.text", "Sign in failed. An unexpected error occurred."));
     }
     else if (result.status == Auth2PasskeySignInResultStatus.failedNotSupported) {
@@ -485,15 +485,15 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
       _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.not_found.text", "An account with this passkey does not exist. Try signing up instead."));
     }
     else if (result.status == Auth2PasskeySignInResultStatus.failedNoCredentials) {
-      _state = Auth2PasskeyAccountState.alternatives;
+      _state = Auth2PasskeyAccountState.failed;
       _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.no_credentials.text", "No credentials found."));
     }
     else if (result.status == Auth2PasskeySignInResultStatus.failedCancelled) {
-      _state = Auth2PasskeyAccountState.alternatives;
+      _state = Auth2PasskeyAccountState.failed;
       _clearResponseMessage();
     }
     else if (result.status == Auth2PasskeySignInResultStatus.failedBlocked) {
-      _state = Auth2PasskeyAccountState.alternatives;
+      _state = Auth2PasskeyAccountState.failed;
       //TODO: parse error message to make it more user-friendly? (e.g., During begin sign in, failure response from one tap: 16: Caller has been temporarily blocked due to too many canceled sign-in prompts.)
       _setResponseMessage(Localization().getStringEx("panel.settings.passkey.sign_in.failed.blocked.text", "Sign in blocked by device. Please try again later."));
     }
@@ -518,7 +518,6 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
     }
     else if (!Auth2().hasPasskeyForPlatform && mounted) {
       // direct user to link a passkey if no passkey has been linked for the current platform
-      //TODO: indicate to user that this is to link a passkey on the current platform to login faster than using cross-device
       setState(() {
         _link = true;
       });
@@ -570,5 +569,4 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
 enum Auth2PasskeyAccountState {
   exists,
   failed,
-  alternatives,
 }

@@ -283,12 +283,14 @@ class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
 
   void _setErrorMessage(String? msg) {
     setState(() {
+      _isLoading = false;
       _errorMessage = msg;
     });
   }
 
   void _clearErrorMessage() {
     setState(() {
+      _isLoading = false;
       _errorMessage = null;
     });
   }
