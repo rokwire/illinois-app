@@ -503,7 +503,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   Widget _buildCommandBar() {
     return Container(decoration: _commandBarDecoration, child:
-      Padding(padding: EdgeInsets.only(top: 8, bottom: 12), child:
+      Padding(padding: EdgeInsets.only(top: 8), child:
         Column(children: [
           _buildCommandButtons(),
           _buildContentDescription(),
@@ -691,24 +691,26 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     if (descriptionList.isNotEmpty) {
       descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
       return Padding(padding: EdgeInsets.only(top: 12), child:
-        Container(decoration: _contentDescriptionDecoration, padding: EdgeInsets.only(top: 12, left: 16, right: 16), child:
-          Row(children: [
+        Container(decoration: _contentDescriptionDecoration, child:
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Expanded(child:
-              RichText(text: TextSpan(style: regularStyle, children: descriptionList))
+              Padding(padding: EdgeInsets.only(left: 12, top: 16, bottom: 16), child:
+                RichText(text: TextSpan(style: regularStyle, children: descriptionList)),
+              ),
             ),
-            Visibility(visible: true, child:
-              Event2ImageCommandButton('close-circle',
-                label: Localization().getStringEx('panel.events2.home.bar.button.create.title', 'Create'),
-                hint: Localization().getStringEx('panel.events2.home.bar.button.create.hint', 'Tap to create event'),
-                contentPadding: EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 12),
-                onTap: _onCreate
+            Visibility(visible: _canClearFilters, child:
+              Event2ImageCommandButton('close',
+                label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
+                hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
+                contentPadding: EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 12),
+                onTap: _onClearFilters
               ),
             ),
           ],)
       ));
     }
     else {
-      return Container();
+      return Container(height: 12);
     }
   }
 
@@ -1053,6 +1055,35 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   void _onCreate() {
     Analytics().logSelect(target: 'Create');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel()));
+  }
+
+  bool get _canClearFilters =>
+    (_timeFilter != Event2TimeFilter.upcoming) ||
+    (_sortType != Event2SortType.dateTime) ||
+    _types.isNotEmpty ||
+    _attributes.isNotEmpty;
+
+  void _onClearFilters() {
+    Analytics().logSelect(target: 'Clear Filters');
+    setState(() {
+      _timeFilter = Event2TimeFilter.upcoming;
+      _customStartTime = null;
+      _customEndTime = null;
+      _types = LinkedHashSet<Event2TypeFilter>();
+      _attributes = <String, dynamic>{};
+      _sortType = Event2SortType.dateTime;
+    });
+
+    Storage().events2Time = event2TimeFilterToString(_timeFilter);
+    Storage().events2CustomStartTime = JsonUtils.encode(_customStartTime?.toJson());
+    Storage().events2CustomEndTime = JsonUtils.encode(_customEndTime?.toJson());
+    Storage().events2Types = event2TypeFilterListToStringList(_types.toList());
+    Storage().events2Attributes = _attributes;
+    Storage().events2SortType = event2SortTypeToString(_sortType);
+
+    Event2FilterParam.notifySubscribersChanged(except: this);
+
+    _reload();
   }
 
   void _onMapView() {

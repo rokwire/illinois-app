@@ -1173,6 +1173,8 @@
 	"panel.events2.home.bar.button.search.hint": "点击搜寻活动",
 	"panel.events2.home.bar.button.sort.title": "排序",
 	"panel.events2.home.bar.button.sort.hint": "点击排序活动",
+	"panel.events2.home.bar.button.clear.title": "Clear Filters",
+ 	"panel.events2.home.bar.button.clear.hint": "Tap to clear current filters",
 	"panel.events2.home.attributes.filters.header.title": "活动筛选器",
 	"panel.events2.home.attributes.filters.header.description": "选择一个或多个属性来筛选事件",
 	"panel.events2.home.attributes.filter.label.title": "筛选器： ",
