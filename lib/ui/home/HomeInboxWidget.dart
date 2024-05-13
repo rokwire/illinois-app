@@ -123,7 +123,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
       _onAppLifecycleStateChanged(param);
     }
     else if (name == Auth2.notifyLoginChanged) {
-      setStateIfMounted(() {});
+      _refresh(showProgress: true);
     }
     else if (name == Inbox.notifyInboxUserInfoChanged) {
       setStateIfMounted(() {});

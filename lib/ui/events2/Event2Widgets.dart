@@ -941,9 +941,9 @@ class Event2Popup {
     showDialog(context: context, builder: (BuildContext context) => AlertDialog(
       surfaceTintColor: Styles().colors.surface,
       content: Column(mainAxisSize: MainAxisSize.min, children: [
-        (title != null) ? Text(title, style: Styles().textStyles.getTextStyle("widget.card.title.regular.fat"),) : Container(),
+        (title != null) ? Text(title, style: Styles().textStyles.getTextStyle("widget.card.title.light.regular.fat"),) : Container(),
         (message != null) ? Padding(padding: (title != null) ? EdgeInsets.only(top: 12) : EdgeInsets.zero, child:
-          Text(message, style: Styles().textStyles.getTextStyle("widget.card.title.small"),),
+          Text(message, style: Styles().textStyles.getTextStyle("widget.card.title.light.small"),),
         ) : Container()
       ],),
       actions: <Widget>[

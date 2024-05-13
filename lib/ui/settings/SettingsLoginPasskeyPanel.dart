@@ -172,7 +172,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
   }
 
   Widget _buildPasskeyInfo() {
-    bool linkCrossPlatform = !Auth2().hasPasskeyForPlatform;
+    bool linkCrossPlatform = Auth2().isPasskeyLinked && !Auth2().hasPasskeyForPlatform;
     String primaryButtonText = Localization().getStringEx('panel.settings.passkey.add.button.label', 'Add Passkey');
     return Container(
       decoration: BoxDecoration(
