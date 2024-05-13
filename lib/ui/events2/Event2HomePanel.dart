@@ -1126,6 +1126,26 @@ class Event2FilterParam {
     this.types, this.attributes,
   });
 
+  factory Event2FilterParam.fromUriParams(Map<String, String> uriParams) {
+    return Event2FilterParam(
+      timeFilter: event2TimeFilterFromString(uriParams['time_filter']),
+      customStartTime: TZDateTimeExt.fromJson(JsonUtils.decodeMap(uriParams['custom_start_time'])),
+      customEndTime: TZDateTimeExt.fromJson(JsonUtils.decodeMap(uriParams['custom_end_time'])),
+      types: LinkedHashSetUtils.from(event2TypeFilterListFromStringList(JsonUtils.listStringsValue(JsonUtils.decodeList(uriParams['types'])))),
+      attributes: JsonUtils.decodeMap(uriParams['attributes']),
+    );
+  }
+
+  Map<String, String> toUriParams() {
+    Map <String, String> uriParams = <String, String>{};
+    MapUtils.add(uriParams, 'time_filter', event2TimeFilterToString(timeFilter));
+    MapUtils.add(uriParams, 'custom_start_time', JsonUtils.encode(customStartTime?.toJson()));
+    MapUtils.add(uriParams, 'custom_end_time', JsonUtils.encode(customEndTime?.toJson()));
+    MapUtils.add(uriParams, 'types', JsonUtils.encode(event2TypeFilterListToStringList(types)));
+    MapUtils.add(uriParams, 'attributes', JsonUtils.encode(attributes));
+    return uriParams;
+  }
+
   static void notifySubscribersChanged({NotificationsListener? except}) {
     Set<NotificationsListener>? subscribers = NotificationService().subscribers(notifyChanged);
     if (subscribers != null) {
