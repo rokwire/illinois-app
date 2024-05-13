@@ -799,7 +799,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
               Align(alignment: Alignment.topRight, child:
                 InkWell(onTap: () => _onCloseMessagePopup(message), child:
                   Padding(padding: EdgeInsets.all(16), child:
-                    Styles().images.getImage("close")
+                    Styles().images.getImage("close-circle")
                   )
                 )
               )

@@ -167,7 +167,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
                 Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
                   InkWell(onTap : () => _onClosePopup(context), child:
                     Padding(padding: EdgeInsets.all(18), child: 
-                      Styles().images.getImage('close', excludeFromSemantics: true),
+                      Styles().images.getImage('close-circle', excludeFromSemantics: true),
                     ),
                   ),
                 ),

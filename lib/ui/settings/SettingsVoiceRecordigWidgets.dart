@@ -280,7 +280,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
                             _onTapClose();
                           },
                           child: Container( padding: EdgeInsets.all(16), child:
-                          Styles().images.getImage('close', excludeFromSemantics: true)))),
+                          Styles().images.getImage('close-circle', excludeFromSemantics: true)))),
                 ]
             )
         )));

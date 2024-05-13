@@ -159,7 +159,7 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
         padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
         alignment: Alignment.center,
         infoTextWidget: infoTextWidget,
-        closeIcon: Styles().images.getImage('close', excludeFromSemantics: true),
+        closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
       ),);
     }
   }

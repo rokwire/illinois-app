@@ -692,9 +692,19 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
       return Padding(padding: EdgeInsets.only(top: 12), child:
         Container(decoration: _contentDescriptionDecoration, padding: EdgeInsets.only(top: 12, left: 16, right: 16), child:
-          Row(children: [ Expanded(child:
-            RichText(text: TextSpan(style: regularStyle, children: descriptionList))
-          ),],)
+          Row(children: [
+            Expanded(child:
+              RichText(text: TextSpan(style: regularStyle, children: descriptionList))
+            ),
+            Visibility(visible: true, child:
+              Event2ImageCommandButton('close-circle',
+                label: Localization().getStringEx('panel.events2.home.bar.button.create.title', 'Create'),
+                hint: Localization().getStringEx('panel.events2.home.bar.button.create.hint', 'Tap to create event'),
+                contentPadding: EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 12),
+                onTap: _onCreate
+              ),
+            ),
+          ],)
       ));
     }
     else {
