@@ -110,7 +110,7 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
                         padding: EdgeInsets.all(12),
                         child: GestureDetector(
                           onTap: _onTapClear,
-                          child: Styles().images.getImage('close', excludeFromSemantics: true),
+                          child: Styles().images.getImage('close-circle', excludeFromSemantics: true),
                         ),
                       )
                     ),

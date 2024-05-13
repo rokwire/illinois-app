@@ -214,7 +214,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
       Expanded(child:
         _buildSearchTextField()
       ),
-      _buildSearchImageButton('close',
+      _buildSearchImageButton('close-circle',
         label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
         hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
         onTap: _onTapClear,

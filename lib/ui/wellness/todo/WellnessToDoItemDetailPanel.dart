@@ -502,7 +502,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                       color: Styles().colors.lightGray,
                       child: Padding(
                           padding: EdgeInsets.only(left: 25, top: 7, right: 10, bottom: 7),
-                          child: Styles().images.getImage('close', excludeFromSemantics: true))))
+                          child: Styles().images.getImage('close-circle', excludeFromSemantics: true))))
             ])));
   }
 

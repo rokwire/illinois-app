@@ -1200,7 +1200,7 @@ class _MTDInstructionsPopupState extends State<ExploreOptionalMessagePopup> {
                 Navigator.of(context).pop();
                 }, child:
                 Padding(padding: EdgeInsets.all(16), child:
-                  Styles().images.getImage('close', excludeFromSemantics: true)
+                  Styles().images.getImage('close-circle', excludeFromSemantics: true)
                 )
               ))
             )

@@ -1174,6 +1174,8 @@
     "panel.events2.home.bar.button.search.hint": "Tap to search events",
     "panel.events2.home.bar.button.sort.title": "Sort",
     "panel.events2.home.bar.button.sort.hint": "Tap to sort events",
+    "panel.events2.home.bar.button.clear.title": "Clear Filters",
+    "panel.events2.home.bar.button.clear.hint": "Tap to clear current filters",
     "panel.events2.home.attributes.filters.header.title": "Event Filters",
     "panel.events2.home.attributes.filters.header.description": "Choose one or more attributes to filter the events",
     "panel.events2.home.attributes.filter.label.title": "Filter: ",

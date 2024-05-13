@@ -106,7 +106,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
               child:
                 Container(
                   padding: EdgeInsets.only(left: 50, top: 4),
-                  child: Styles().images.getImage('close', excludeFromSemantics: true)
+                  child: Styles().images.getImage('close-circle', excludeFromSemantics: true)
                 ),
               ),)
             ],),
