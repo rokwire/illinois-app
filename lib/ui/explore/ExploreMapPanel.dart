@@ -853,14 +853,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
           ),
         ),
         Visibility(visible: Auth2().account?.isCalendarAdmin ?? false, child:
-          Event2ImageCommandButton('plus-circle',
+          Event2ImageCommandButton(Styles().images.getImage('plus-circle'),
             label: Localization().getStringEx('panel.events2.home.bar.button.create.title', 'Create'),
             hint: Localization().getStringEx('panel.events2.home.bar.button.create.hint', 'Tap to create event'),
             contentPadding: EdgeInsets.only(left: 8, right: 8, top: 16, bottom: 16),
             onTap: _onEvent2Create
           ),
         ),
-        Event2ImageCommandButton('search',
+        Event2ImageCommandButton(Styles().images.getImage('search'),
           label: Localization().getStringEx('panel.events2.home.bar.button.search.title', 'Search'),
           hint: Localization().getStringEx('panel.events2.home.bar.button.search.hint', 'Tap to search events'),
           contentPadding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
