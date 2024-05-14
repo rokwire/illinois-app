@@ -1044,7 +1044,7 @@
     "lock": {"src": "0xf023", "type":  "fa.icon", "weight": "solid", "color": "surface", "size": 48},
     "closed-book": {"src": "0xf02d", "type":  "fa.icon", "weight": "solid", "color": "fillColorPrimary", "size": 30},
     "text-icon": {"src": "images/text-icon.png", "type": "flutter.asset", "size": 35},
-    "link-icon": {"src": "images/external-link-icon.png", "type": "flutter.asset", "size": 35},
+    "uri-icon": {"src": "images/external-link-icon.png", "type": "flutter.asset", "size": 35},
     "pdf-icon": {"src": "images/pdf-icon.png", "type": "flutter.asset", "size": 35},
     "powerpoint-icon": {"src": "images/powerpoint.png", "type": "flutter.asset", "size": 35},
     "video-icon": {"src": "images/blue-play.png", "type": "flutter.asset", "size": 35},
