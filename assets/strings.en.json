@@ -306,6 +306,8 @@
     "panel.browse.section.inbox.description": "Shortcuts to your in-app notifications from groups, academics, or athletics events, and more.",
     "panel.browse.section.polls.title": "Polls",
     "panel.browse.section.polls.description": "Create, participate and check out results of Polls you and others create.",
+    "panel.browse.section.radio_stations.title": "Radio Stations",
+    "panel.browse.section.radio_stations.description": "Listen to Illinois Public Media and student-run WPGU.",
     "panel.browse.section.recent.title": "Recent",
     "panel.browse.section.recent.description": "What you have viewed recently in the app. Return to easily view them again.",
     "panel.browse.section.state_farm_center.title": "State Farm Center",
@@ -360,7 +362,11 @@
 
     "panel.browse.entry.feeds.twitter.title": "X/Twitter",
     "panel.browse.entry.feeds.daily_illini.title": "The Daily Illini",
-    "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 FM",
+
+    "panel.browse.entry.radio_stations.will_radio.title": "WILL News & Talk (NPR)",
+    "panel.browse.entry.radio_stations.willfm_radio.title": "WILL Classical & More",
+    "panel.browse.entry.radio_stations.willhd_radio.title": "Illinois Soul 101.1 FM",
+    "panel.browse.entry.radio_stations.wpgufm_radio.title": "WPGU 107.1 FM",
 
     "panel.browse.entry.groups.all_groups.title": "All Groups",
     "panel.browse.entry.groups.my_groups.title": "My Groups",
@@ -3491,8 +3497,14 @@
 
     "widget.home.wallet.library_card.title": "Library Card",
 
-    "widget.home.radio.title": "WPGU 107.1 FM",
-    "widget.home.radio.disabled.message": "WPGU 107.1 FM is not enabled.",
+    "widget.home.radio.will.title": "WILL News & Talk (NPR)",
+    "widget.home.radio.will.disabled.message": "WILL News & Talk (NPR) is not enabled.",
+    "widget.home.radio.willfm.title": "WILL Classical & More",
+    "widget.home.radio.willfm.disabled.message": "WILL Classical & More is not enabled.",
+    "widget.home.radio.willhd.title": "Illinois Soul 101.1 FM",
+    "widget.home.radio.willhd.disabled.message": "Illinois Soul 101.1 FM is not enabled.",
+    "widget.home.radio.wpgufm.title": "WPGU 107.1 FM",
+    "widget.home.radio.wpgufm.disabled.message": "WPGU 107.1 FM is not enabled.",
     "widget.home.radio.button.pause.title": "Pause",
     "widget.home.radio.button.play.title": "Tune In",
     "widget.home.radio.button.initalize.title": "Initializing",

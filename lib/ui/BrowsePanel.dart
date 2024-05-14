@@ -18,6 +18,7 @@ import 'package:illinois/service/Content.dart' as uiuc;
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
+import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -567,7 +568,11 @@ class _BrowseEntry extends StatelessWidget {
 
       case "feeds.twitter":                  _onTapTwitter(context); break;
       case "feeds.daily_illini":             _onTapDailyIllini(context); break;
-      case "feeds.wpgufm_radio":             _onTapWPGUFMRadio(context); break;
+
+      case "radio_stations.will_radio":      _onTapRadioStation(context, RadioStation.will); break;
+      case "radio_stations.willfm_radio":    _onTapRadioStation(context, RadioStation.willfm); break;
+      case "radio_stations.willhd_radio":    _onTapRadioStation(context, RadioStation.willhd); break;
+      case "radio_stations.wpgufm_radio":    _onTapRadioStation(context, RadioStation.wpgufm); break;
 
       case "groups.all_groups":              _onTapAllGroups(context); break;
       case "groups.my_groups":               _onTapMyGroups(context); break;
@@ -896,9 +901,9 @@ class _BrowseEntry extends StatelessWidget {
     }
   }
 
-  void _onTapWPGUFMRadio(BuildContext context) {
-    Analytics().logSelect(target: "WPGU FM Radio");
-    HomeRadioWidget.showPopup(context);
+  void _onTapRadioStation(BuildContext context, RadioStation radioStation) {
+    Analytics().logSelect(target: "Radio Station (${radioStation.toString()})");
+    HomeRadioWidget.showPopup(context, radioStation);
   }
 
   void _onTapAllGroups(BuildContext context) {

@@ -30,6 +30,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Guide.dart';
+import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/ui/home/HomeAppHelpWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsEventsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsNewsWidget.dart';
@@ -357,13 +358,40 @@ class HomePanel extends StatefulWidget {
         return HomeWalletWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
+    else if (code == 'will_radio') {
+      if (title) {
+        return HomeRadioWidget.stationTitle(RadioStation.will);
+      } else if (handle) {
+        return HomeRadioWidget.handle(RadioStation.will, key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeRadioWidget(RadioStation.will, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+    else if (code == 'willfm_radio') {
+      if (title) {
+        return HomeRadioWidget.stationTitle(RadioStation.willfm);
+      } else if (handle) {
+        return HomeRadioWidget.handle(RadioStation.willfm, key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeRadioWidget(RadioStation.willfm, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+    else if (code == 'willhd_radio') {
+      if (title) {
+        return HomeRadioWidget.stationTitle(RadioStation.willhd);
+      } else if (handle) {
+        return HomeRadioWidget.handle(RadioStation.willhd, key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeRadioWidget(RadioStation.willhd, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
     else if (code == 'wpgufm_radio') {
       if (title) {
-        return HomeRadioWidget.title;
+        return HomeRadioWidget.stationTitle(RadioStation.wpgufm);
       } else if (handle) {
-        return HomeRadioWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+        return HomeRadioWidget.handle(RadioStation.wpgufm, key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
-        return HomeRadioWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+        return HomeRadioWidget(RadioStation.wpgufm, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'all_notifications') {
