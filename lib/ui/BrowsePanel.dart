@@ -37,7 +37,7 @@ import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
 import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
 import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
 import 'package:illinois/ui/home/HomeTwitterWidget.dart';
-import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
+import 'package:illinois/ui/home/HomeRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
@@ -898,7 +898,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapWPGUFMRadio(BuildContext context) {
     Analytics().logSelect(target: "WPGU FM Radio");
-    HomeWPGUFMRadioWidget.showPopup(context);
+    HomeRadioWidget.showPopup(context);
   }
 
   void _onTapAllGroups(BuildContext context) {

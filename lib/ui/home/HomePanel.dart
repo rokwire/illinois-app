@@ -50,7 +50,7 @@ import 'package:illinois/ui/home/HomeStateFarmCenterWidget.dart';
 import 'package:illinois/ui/home/HomeStudentCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeVideoTutorialsWidget.dart';
-import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
+import 'package:illinois/ui/home/HomeRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWalletWidget.dart';
 import 'package:illinois/ui/home/HomeWelcomeWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessMentalHealthWidget.dart';
@@ -359,11 +359,11 @@ class HomePanel extends StatefulWidget {
     }
     else if (code == 'wpgufm_radio') {
       if (title) {
-        return HomeWPGUFMRadioWidget.title;
+        return HomeRadioWidget.title;
       } else if (handle) {
-        return HomeWPGUFMRadioWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+        return HomeRadioWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
-        return HomeWPGUFMRadioWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+        return HomeRadioWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'all_notifications') {

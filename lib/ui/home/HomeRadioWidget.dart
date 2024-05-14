@@ -11,11 +11,11 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class HomeWPGUFMRadioWidget extends StatelessWidget {
+class HomeRadioWidget extends StatelessWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
 
-  const HomeWPGUFMRadioWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+  const HomeRadioWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
   static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
@@ -27,10 +27,10 @@ class HomeWPGUFMRadioWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: favoriteId,
-      title: HomeWPGUFMRadioWidget.title,
+      title: HomeRadioWidget.title,
       titleIconKey: 'radio',
       childPadding: HomeSlantWidget.defaultChildPadding,
-      child: _isEnabled ? _WPGUFMRadioControl(borderRadius: BorderRadius.all(Radius.circular(6)),) : HomeMessageCard(
+      child: _isEnabled ? _RadioControl(borderRadius: BorderRadius.all(Radius.circular(6)),) : HomeMessageCard(
         message: Localization().getStringEx('widget.home.radio.disabled.message', 'WPGU 107.1 FM is not enabled.'),
         margin: EdgeInsets.only(top: 8, bottom: 16),
       ),
@@ -57,7 +57,7 @@ class HomeWPGUFMRadioWidget extends StatelessWidget {
               Expanded(child:
                 Padding(padding: EdgeInsets.all(8), child:
                   Center(child:
-                    Text(HomeWPGUFMRadioWidget.title, style: Styles().textStyles.getTextStyle("widget.dialog.message.regular")),
+                    Text(HomeRadioWidget.title, style: Styles().textStyles.getTextStyle("widget.dialog.message.regular")),
                   ),
                 ),
               ),
@@ -70,29 +70,29 @@ class HomeWPGUFMRadioWidget extends StatelessWidget {
               ),
             ],),
           ),
-          _WPGUFMRadioControl(borderRadius: BorderRadius.vertical(bottom: Radius.circular(6))),
+          _RadioControl(borderRadius: BorderRadius.vertical(bottom: Radius.circular(6))),
         ],),
       ),
     );
   }
 
   static void _onClosePopup(BuildContext context) {
-    Analytics().logSelect(target: 'Close', source: 'HomeWPGUFMRadioWidget');
+    Analytics().logSelect(target: 'Close', source: 'HomeRadioWidget');
     Navigator.of(context).pop();
   }
 }
 
-class _WPGUFMRadioControl extends StatefulWidget {
+class _RadioControl extends StatefulWidget {
 
   final BorderRadius borderRadius;
 
-  const _WPGUFMRadioControl({Key? key, required this.borderRadius}) : super(key: key);
+  const _RadioControl({Key? key, required this.borderRadius}) : super(key: key);
 
   @override
-  State<_WPGUFMRadioControl> createState() => _WPGUFMRadioControlState();
+  State<_RadioControl> createState() => _RadioControlState();
 }
 
-class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements NotificationsListener {
+class _RadioControlState extends State<_RadioControl> implements NotificationsListener {
 
   @override
   void initState() {
@@ -180,7 +180,7 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
 
 
   void _onTapPlayPause() {
-    Analytics().logSelect(target: 'Play/Pause', source: 'HomeWPGUFMRadioWidget');
+    Analytics().logSelect(target: 'Play/Pause', source: 'HomeRadioWidget');
     RadioPlayer().togglePlayPause();
   }
 
