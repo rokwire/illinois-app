@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -16,9 +18,48 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:share/share.dart';
 
 class Event2QrCodePanel extends StatefulWidget { //TBD localize
-  final Event2? event;
+  //final Event2? event;
+  //const Event2QrCodePanel({required this.event});
 
-  const Event2QrCodePanel({required this.event});
+  final String deepLinkUrl;
+
+  final String saveFileName;
+  final String? saveWatermarkText;
+  final TextStyle? saveWatermarkStyle;
+
+  final String? title;
+  final String? description;
+
+  const Event2QrCodePanel({Key? key,
+    required this.deepLinkUrl,
+
+    required this.saveFileName,
+    this.saveWatermarkText,
+    this.saveWatermarkStyle,
+
+    this.title,
+    this.description,
+  });
+
+  factory Event2QrCodePanel.fromEvent(Event2? event, {Key? key}) => Event2QrCodePanel(
+    key: key,
+    deepLinkUrl: Events2.eventDetailUrl(event),
+      saveFileName: 'event - ${event?.name}',
+      saveWatermarkText: event?.name,
+      saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
+    title: Localization().getStringEx('panel.event_qr_code.event.title', 'Share this event'),
+    description: Localization().getStringEx('panel.event_qr_code.event.description', 'Invite others to view this event by sharing a link or the QR code after saving it to your photo library.'),
+  );
+
+  factory Event2QrCodePanel.fromFilterParam(Event2FilterParam filterParam, {Key? key}) => Event2QrCodePanel(
+    key: key,
+    deepLinkUrl: Events2.eventsQueryUrl(filterParam.toUriParams()),
+      saveFileName: "events ${DateFormat('yyyy-MM-dd HH.mm.ss').format(DateTime.now())}",
+      saveWatermarkText: filterParam.buildDescription().map((span) => span.toPlainText()).join(),
+      saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 32, color: Styles().colors.textSurface),
+    title: Localization().getStringEx('panel.event_qr_code.query.title', 'Share this event set'),
+    description: Localization().getStringEx('panel.event_qr_code.query.description', 'Invite others to view this set of filtered events by sharing a link or the QR code after saving it to your photo library.'),
+  );
 
   @override
   _EventQrCodePanelState createState() => _EventQrCodePanelState();
@@ -53,18 +94,14 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
     if (_qrCodeBytes == null) {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.event_qr_code.alert.no_qr_code.msg", "There is no QR Code"));
     } else {
-      final String? eventName = widget.event?.name;
-      Uint8List? updatedImageBytes = await ImageUtils.applyLabelOverImage(_qrCodeBytes, eventName,
+      Uint8List? updatedImageBytes = await ImageUtils.applyLabelOverImage(_qrCodeBytes, widget.saveWatermarkText,
         width: _imageSize.toDouble(),
         height: _imageSize.toDouble(),
-        fontFamily: Styles().fontFamilies.bold,
-        fontSize: 54,
-        textColor: Styles().colors.textSurface,
+        textStyle: widget.saveWatermarkStyle,
       );
       bool result = (updatedImageBytes != null);
       if (result) {
-        final String fileName = 'event - $eventName';
-        result = await ImageUtils.saveToFs(updatedImageBytes, fileName) ?? false;
+        result = await ImageUtils.saveToFs(updatedImageBytes, widget.saveFileName) ?? false;
       }
 
       const String destinationMacro = '{{Destination}}';
@@ -87,7 +124,7 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(
-        title: Localization().getStringEx('panel.event_qr_code.title', 'Share this event'),
+        title: widget.title,
         textAlign: TextAlign.center,
       ),
       body: SingleChildScrollView(
@@ -99,7 +136,7 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                    Localization().getStringEx('panel.event_qr_code.description.label', 'Invite others to view this event by sharing a link or the QR code after saving it to your photo library.'),
+                    widget.description ?? '',
                     style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
                 ),
                 Padding(
@@ -113,7 +150,7 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
                       child: Image.memory(
                         _qrCodeBytes!,
                         fit: BoxFit.fitWidth,
-                        semanticLabel: Localization().getStringEx("panel.event_qr_code.primary.heading.title", "Event promotion Key"),
+                        semanticLabel: Localization().getStringEx("panel.event_qr_code.primary.heading.title", "Promotion Key"),
                       ),
                     ),
                   )
@@ -173,8 +210,9 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
   }
 
   String get _promotionUrl {
-    String deepLink = "${Events2().eventDetailUrl}?event_id=${widget.event?.id}";
     String? redirectUrl = Config().deepLinkRedirectUrl;
-    return StringUtils.isNotEmpty(redirectUrl) ? "$redirectUrl?target=$deepLink" : deepLink;
+    return ((redirectUrl != null) && redirectUrl.isNotEmpty) ? UrlUtils.buildWithQueryParameters(redirectUrl, <String, String>{
+      'target': widget.deepLinkUrl
+    }) : widget.deepLinkUrl;
   }
 }

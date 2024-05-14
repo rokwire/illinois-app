@@ -1032,7 +1032,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   void _onPromote(){
     Analytics().logSelect(target: "Promote Event", attributes: _event?.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2QrCodePanel(event: _event)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2QrCodePanel.fromEvent(_event)));
   }
 
   void _onContactEmail(String? email){

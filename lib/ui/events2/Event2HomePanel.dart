@@ -19,6 +19,7 @@ import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2QrCodePanel.dart';
 import 'package:illinois/ui/events2/Event2SearchPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
@@ -548,14 +549,14 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
           onTap: _onMapView,
         ),
         Visibility(visible: Auth2().account?.isCalendarAdmin ?? false, child:
-          Event2ImageCommandButton('plus-circle',
+          Event2ImageCommandButton(Styles().images.getImage('plus-circle'),
             label: Localization().getStringEx('panel.events2.home.bar.button.create.title', 'Create'),
             hint: Localization().getStringEx('panel.events2.home.bar.button.create.hint', 'Tap to create event'),
             contentPadding: EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 12),
             onTap: _onCreate
           ),
         ),
-        Event2ImageCommandButton('search',
+        Event2ImageCommandButton(Styles().images.getImage('search'),
           label: Localization().getStringEx('panel.events2.home.bar.button.search.title', 'Search'),
           hint: Localization().getStringEx('panel.events2.home.bar.button.search.hint', 'Tap to search events'),
           contentPadding: EdgeInsets.only(left: 8, right: 16, top: 12, bottom: 12),
@@ -631,55 +632,21 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   }
 
   Widget _buildContentDescription() {
-    List<InlineSpan> descriptionList = <InlineSpan>[];
     TextStyle? boldStyle = Styles().textStyles.getTextStyle("widget.card.title.tiny.fat");
     TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
-
-    String? timeDescription = (_timeFilter != Event2TimeFilter.customRange) ?
-      event2TimeFilterToDisplayString(_timeFilter) :
-      event2TimeFilterDisplayInfo(Event2TimeFilter.customRange, customStartTime: _customStartTime, customEndTime: _customEndTime);
-    
-    if (timeDescription != null) {
-      if (descriptionList.isNotEmpty) {
-        descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
-      }
-      descriptionList.add(TextSpan(text: timeDescription, style: regularStyle,),);
-    }
-
-    for (Event2TypeFilter type in _types) {
-      if (descriptionList.isNotEmpty) {
-        descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
-      }
-      descriptionList.add(TextSpan(text: event2TypeFilterToDisplayString(type), style: regularStyle,),);
-    }
-
-    ContentAttributes? contentAttributes = Events2().contentAttributes;
-    List<ContentAttribute>? attributes = contentAttributes?.attributes;
-    if (_attributes.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
-      for (ContentAttribute attribute in attributes) {
-        List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(_attributes, complete: true);
-        if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
-          for (String attributeValue in displayAttributeValues) {
-            if (descriptionList.isNotEmpty) {
-              descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
-            }
-            descriptionList.add(TextSpan(text: attributeValue, style: regularStyle,),);
-          }
-        }
-      }
-    }
+    List<InlineSpan> descriptionList = _currentFilterParam.buildDescription(boldStyle: boldStyle, regularStyle: regularStyle);
 
     if (descriptionList.isNotEmpty) {
       descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filter.label.title', 'Filter: ') , style: boldStyle,));
     }
 
     if ((1 < (_events?.length ?? 0)) || _loadingEvents || _refreshingEvents) {
-      if (descriptionList.isNotEmpty) {
-        descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
-      }
-
       String? sortStatus = event2SortTypeDisplayStatusString(_sortType);
       if (sortStatus != null) {
+        if (descriptionList.isNotEmpty) {
+          descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
+        }
+
         descriptionList.add(TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.sort.label.title', 'Sort: ') , style: boldStyle,));
         descriptionList.add(TextSpan(text: sortStatus, style: regularStyle,),);
       }
@@ -690,12 +657,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
       }
 
-      String? sortStatus = event2SortTypeDisplayStatusString(_sortType);
-      if (sortStatus != null) {
-        descriptionList.add(TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.events.label.title', 'Events: ') , style: boldStyle,));
-        descriptionList.add(TextSpan(text: _totalEventsCount?.toString(), style: regularStyle,),);
-      }
-    } 
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.events.label.title', 'Events: ') , style: boldStyle,));
+      descriptionList.add(TextSpan(text: _totalEventsCount?.toString(), style: regularStyle,),);
+    }
 
     if (descriptionList.isNotEmpty) {
       descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
@@ -707,11 +671,19 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
                 RichText(text: TextSpan(style: regularStyle, children: descriptionList)),
               ),
             ),
-            Visibility(visible: _canClearFilters, child:
-              Event2ImageCommandButton('close',
+            Visibility(visible: _canShareFilters, child:
+              Event2ImageCommandButton(Styles().images.getImage('qr', weight: 'regular', size: 18),
                 label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
                 hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
-                contentPadding: EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 12),
+                contentPadding: EdgeInsets.only(left: 16, right: _canClearFilters ? 8 : 16, top: 12, bottom: 12),
+                onTap: _onShareFilters
+              ),
+            ),
+            Visibility(visible: _canClearFilters, child:
+              Event2ImageCommandButton(Styles().images.getImage('close'),
+                label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
+                hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
+                contentPadding: EdgeInsets.only(left: 8, right: 16, top: 12, bottom: 12),
                 onTap: _onClearFilters
               ),
             ),
@@ -1066,6 +1038,21 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel()));
   }
 
+  Event2FilterParam get _currentFilterParam => Event2FilterParam(
+    timeFilter: _timeFilter,
+    customStartTime: _customStartTime,
+    customEndTime: _customEndTime,
+    types: LinkedHashSetUtils.ensureEmpty(_types),
+    attributes: MapUtils.ensureEmpty(_attributes),
+  );
+
+  bool get _canShareFilters => true;
+
+  void _onShareFilters() {
+    Analytics().logSelect(target: 'Share Filters');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2QrCodePanel.fromFilterParam(_currentFilterParam)));
+  }
+
   bool get _canClearFilters =>
     (_timeFilter != Event2TimeFilter.upcoming) ||
     (_sortType != Event2SortType.dateTime) ||
@@ -1153,6 +1140,50 @@ class Event2FilterParam {
     MapUtils.add(uriParams, 'types', JsonUtils.encode(event2TypeFilterListToStringList(types)));
     MapUtils.add(uriParams, 'attributes', JsonUtils.encode(attributes));
     return uriParams;
+  }
+
+  List<InlineSpan> buildDescription({ TextStyle? boldStyle, TextStyle? regularStyle}) {
+    List<InlineSpan> descriptionList = <InlineSpan>[];
+    boldStyle ??= Styles().textStyles.getTextStyle("widget.card.title.tiny.fat");
+    regularStyle ??= Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
+
+    String? timeDescription = (timeFilter != Event2TimeFilter.customRange) ?
+      event2TimeFilterToDisplayString(timeFilter) :
+      event2TimeFilterDisplayInfo(Event2TimeFilter.customRange, customStartTime: customStartTime, customEndTime: customEndTime);
+
+    if (timeDescription != null) {
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
+      }
+      descriptionList.add(TextSpan(text: timeDescription, style: regularStyle,),);
+    }
+
+    if (types != null) {
+      for (Event2TypeFilter type in types!) {
+        if (descriptionList.isNotEmpty) {
+          descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
+        }
+        descriptionList.add(TextSpan(text: event2TypeFilterToDisplayString(type), style: regularStyle,),);
+      }
+    }
+
+    ContentAttributes? contentAttributes = Events2().contentAttributes;
+    List<ContentAttribute>? attributesList = contentAttributes?.attributes;
+    if ((attributes?.isNotEmpty == true) && (contentAttributes != null) && (attributesList != null)) {
+      for (ContentAttribute attribute in attributesList) {
+        List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(attributes, complete: true);
+        if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+          for (String attributeValue in displayAttributeValues) {
+            if (descriptionList.isNotEmpty) {
+              descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
+            }
+            descriptionList.add(TextSpan(text: attributeValue, style: regularStyle,),);
+          }
+        }
+      }
+    }
+
+    return descriptionList;
   }
 
   static void notifySubscribersChanged({NotificationsListener? except}) {
