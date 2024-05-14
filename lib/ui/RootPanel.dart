@@ -752,13 +752,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   Future<void> _onFirebaseEventsQuery(Map<String, dynamic>? content) async {
     Event2FilterParam? eventFilterParam = (content != null) ? Event2FilterParam.fromUriParams(content.cast()) : null;
     if (eventFilterParam != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2HomePanel(
-        timeFilter: eventFilterParam.timeFilter,
-        customStartTime: eventFilterParam.customStartTime,
-        customEndTime: eventFilterParam.customEndTime,
-        types: eventFilterParam.types,
-        attributes: eventFilterParam.attributes,
-      )));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2HomePanel.withFilter(eventFilterParam)));
     }
   }
 

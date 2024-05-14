@@ -60,6 +60,15 @@ class Event2HomePanel extends StatefulWidget {
     this.eventSelector
   }) : super(key: key);
 
+  factory Event2HomePanel.withFilter(Event2FilterParam filterParam, {Key? key}) => Event2HomePanel(
+    key: key,
+    timeFilter: filterParam.timeFilter,
+    customStartTime: filterParam.customStartTime,
+    customEndTime: filterParam.customEndTime,
+    types: filterParam.types,
+    attributes: filterParam.attributes,
+  );
+
   @override
   State<StatefulWidget> createState() => _Event2HomePanelState();
 
