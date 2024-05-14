@@ -179,7 +179,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
       Storage.notifySettingChanged,
       Events2.notifyChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
-      Auth2.notifyLoginChanged,
+      Auth2.notifyLoginSucceeded,
     ]);
 
     if (widget.updateController != null) {
@@ -235,8 +235,8 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
         _reloadIfVisible(); // or mark as needs refresh
       }
     }
-    else if (name == Auth2.notifyLoginChanged) {
-      _reloadIfVisible(); // or mark as needs refresh
+    else if (name == Auth2.notifyLoginSucceeded) {
+      _reload(); // or mark as needs refresh
     }
   }
 

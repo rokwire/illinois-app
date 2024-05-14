@@ -76,7 +76,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
       AppLifecycle.notifyStateChanged,
-      Auth2.notifyLoginChanged,
+      Auth2.notifyLoginSucceeded,
       Inbox.notifyInboxUserInfoChanged,
       Inbox.notifyInboxMessageRead,
     ]);
@@ -122,7 +122,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
     else if (name == AppLifecycle.notifyStateChanged) {
       _onAppLifecycleStateChanged(param);
     }
-    else if (name == Auth2.notifyLoginChanged) {
+    else if (name == Auth2.notifyLoginSucceeded) {
       _refresh(showProgress: true);
     }
     else if (name == Inbox.notifyInboxUserInfoChanged) {
