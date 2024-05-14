@@ -207,14 +207,19 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     Container(decoration: Event2CreatePanel.dropdownButtonDecoration, child:
     Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
       DropdownButtonHideUnderline(child:
-        DropdownButton<Survey?>(
-          icon: Styles().images.getImage('chevron-down'),
-          isExpanded: true,
-          value: _survey,
-          style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
-          hint: Text((_survey != null) ? (_survey?.displayTitle ?? '') : nullSurveyTitle),
-          items: _buildSurveyDropDownItems(),
-          onChanged: _onSurveyChanged
+        Theme(
+          data: ThemeData(
+            canvasColor: Styles().colors.surface,
+          ),
+          child: DropdownButton<Survey?>(
+            icon: Styles().images.getImage('chevron-down'),
+            isExpanded: true,
+            value: _survey,
+            style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+            hint: Text((_survey != null) ? (_survey?.displayTitle ?? '') : nullSurveyTitle),
+            items: _buildSurveyDropDownItems(),
+            onChanged: _onSurveyChanged
+          ),
         ),
       ),
     ),
@@ -476,6 +481,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
         summarizeResultRules: true,
         summarizeResultRulesWidget: _buildPreviewContinueWidget(),
         headerBar: _buildPreviewHeaderBar(),
+        backgroundColor: Styles().colors.surface,
     )));
   }
 }
