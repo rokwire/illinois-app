@@ -103,7 +103,10 @@ class Config extends rokwire.Config {
   String? get dateCatalogUrl         => JsonUtils.stringValue(otherUniversityServices['date_catalog_url']);
   String? get faqsUrl                => JsonUtils.stringValue(otherUniversityServices['faqs_url']);
   String? get wellness8DimensionsUrl => JsonUtils.stringValue(otherUniversityServices['wellness_8_dimensions_url']);
-  String? get wpgufmRadioUrl         => JsonUtils.stringValue(otherUniversityServices['wpgufm_radio_url']);
+  String? get willRadioUrl         => JsonUtils.stringValue(otherUniversityServices['will_radio_url']);
+  String? get willFmRadioUrl         => JsonUtils.stringValue(otherUniversityServices['willfm_radio_url']);
+  String? get willHdRadioUrl         => JsonUtils.stringValue(otherUniversityServices['willfm_radio_url']);
+  String? get wpgufmRadioUrl         => JsonUtils.stringValue(otherUniversityServices['willhd_radio_url']);
   String? get preferredFirstNameStmntUrl => JsonUtils.stringValue(otherUniversityServices['preferred_first_name_stmnt_url']);
   String? get rokwirePlatformUrl     => JsonUtils.stringValue(otherUniversityServices['rokwire_platform_url']);
   String? get smartHealthyInitiativeUrl  => JsonUtils.stringValue(otherUniversityServices['smart_healthy_initiative_url']);

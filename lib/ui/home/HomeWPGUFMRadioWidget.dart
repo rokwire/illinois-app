@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/WPGUFMRadio.dart';
+import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -97,8 +97,8 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      WPGUFMRadio.notifyInitializeStatusChanged,
-      WPGUFMRadio.notifyPlayerStateChanged,
+      RadioPlayer.notifyInitializeStatusChanged,
+      RadioPlayer.notifyPlayerStateChanged,
     ]);
 
     super.initState();
@@ -112,21 +112,21 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(visible: WPGUFMRadio().isEnabled, child:
+    return Visibility(visible: RadioPlayer().isEnabled, child:
       _buildContentCard(),
     );
   }
 
   Widget _buildContentCard() {
     String? buttonTitle, iconKey;
-    if (WPGUFMRadio().isInitialized) {
-      buttonTitle = WPGUFMRadio().isPlaying ? Localization().getStringEx('widget.home.radio.button.pause.title', 'Pause') :  Localization().getStringEx('widget.home.radio.button.play.title', 'Tune In');
-      iconKey = WPGUFMRadio().isPlaying ? 'pause-circle-large' : 'play-circle-large';
+    if (RadioPlayer().isInitialized) {
+      buttonTitle = RadioPlayer().isPlaying ? Localization().getStringEx('widget.home.radio.button.pause.title', 'Pause') :  Localization().getStringEx('widget.home.radio.button.play.title', 'Tune In');
+      iconKey = RadioPlayer().isPlaying ? 'pause-circle-large' : 'play-circle-large';
     }
-    else if (WPGUFMRadio().isInitializing) {
+    else if (RadioPlayer().isInitializing) {
       buttonTitle = Localization().getStringEx('widget.home.radio.button.initalize.title', 'Initializing');
     }
-    else if (!WPGUFMRadio().isEnabled) {
+    else if (!RadioPlayer().isEnabled) {
       buttonTitle = Localization().getStringEx('widget.home.radio.button.not_available.title', 'Not Available');
     }
     else {
@@ -181,7 +181,7 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
 
   void _onTapPlayPause() {
     Analytics().logSelect(target: 'Play/Pause', source: 'HomeWPGUFMRadioWidget');
-    WPGUFMRadio().togglePlayPause();
+    RadioPlayer().togglePlayPause();
   }
 
 
@@ -189,8 +189,8 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
 
   @override
   void onNotification(String name, dynamic param) {
-    if ((name == WPGUFMRadio.notifyInitializeStatusChanged) ||
-        (name == WPGUFMRadio.notifyPlayerStateChanged)) {
+    if ((name == RadioPlayer.notifyInitializeStatusChanged) ||
+        (name == RadioPlayer.notifyPlayerStateChanged)) {
       if (mounted) {
         setState(() {});
       }

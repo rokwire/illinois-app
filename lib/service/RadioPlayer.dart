@@ -6,7 +6,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class WPGUFMRadio with Service implements NotificationsListener {
+class RadioPlayer with Service implements NotificationsListener {
 
   static const String notifyInitializeStatusChanged  = "edu.illinois.rokwire.wpgufmradio.initialize.status.changed";
   static const String notifyPlaybackEvent            = "edu.illinois.rokwire.wpgufmradio.playback.event";
@@ -23,10 +23,10 @@ class WPGUFMRadio with Service implements NotificationsListener {
 
   // Singleton Factory
 
-  static final WPGUFMRadio _service = WPGUFMRadio._internal();
-  WPGUFMRadio._internal();
-  factory WPGUFMRadio() => _service;
-  WPGUFMRadio get instance => _service;
+  static final RadioPlayer _service = RadioPlayer._internal();
+  RadioPlayer._internal();
+  factory RadioPlayer() => _service;
+  RadioPlayer get instance => _service;
 
   // Service
 
