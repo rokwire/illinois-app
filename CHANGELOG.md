@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Added Clear button to event filter bar [#4041](https://github.com/rokwire/illinois-app/issues/4041).
+- Created share event set functionality [#4041](https://github.com/rokwire/illinois-app/issues/4041).
 
 ## [5.2.8] - 2024-05-10
 ### Changed
