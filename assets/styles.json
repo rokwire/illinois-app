@@ -781,7 +781,7 @@
     "history": {"src": "images/blue.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "size, color"},
     "chart": {"src": "images/icon-live-stats.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "wrong size"},
     "browse": {"src": "0xf0c9", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 19},
-    "close": {"src": "0xf057", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 24, "todo": "same as clear"},
+    "close": {"src": "images/close-orange-small.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14},
     "settings": {"src": "images/icon-settings.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "wrong size"},
     "external-link": {"src": "0xf08e", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 15},
     "web": {"src": "0xf08e", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 15, "todo":  "same as external-link"},

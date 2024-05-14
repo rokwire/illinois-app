@@ -67,7 +67,7 @@ class LiveStats with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config(), Storage()]);
+    return Set.from([Config(), Storage(), Auth2()]);
   }
 
   bool hasLiveGame(String? gameId) {

@@ -72,9 +72,11 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
       Uint8List? updatedImageBytes = await ImageUtils.applyLabelOverImage(_qrCodeBytes, groupName,
         width: _imageSize.toDouble(),
         height: _imageSize.toDouble(),
-        fontFamily: Styles().fontFamilies.bold,
-        fontSize: 54,
-        textColor: Styles().colors.textSurface,
+        textStyle: TextStyle(
+          fontFamily: Styles().fontFamilies.bold,
+          fontSize: 54,
+          color: Styles().colors.textSurface,
+        ),
       );
       bool result = (updatedImageBytes != null);
       if (result) {

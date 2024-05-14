@@ -18,6 +18,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/ImagesResult.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
@@ -28,6 +29,7 @@ import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/config.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -244,13 +246,13 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       return;
     }
     Analytics().logSelect(target: "Add Image");
-    String? _imageUrl = await GroupAddImageWidget.show(context: context, updateUrl: _group!.imageURL);
-    if(_imageUrl!=null){
-      setState(() {
-        _group!.imageURL = _imageUrl;
+    ImagesResult? result = await GroupAddImageWidget.show(context: context, url: _group!.imageURL).then((result) => result);
+    if(result?.succeeded == true &&  _group!.imageURL != result?.stringData){
+      setStateIfMounted(() {
+        _group!.imageURL = result?.stringData;
       });
     }
-    Log.d("Image Url: $_imageUrl");
+    Log.d("Image Url: ${result?.stringData}]");
   }
   //
   //Name

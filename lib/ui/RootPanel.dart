@@ -179,6 +179,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       ActionBuilder.notifyShowPanel,
       Events.notifyEventDetail,
       Events2.notifyLaunchDetail,
+      Events2.notifyLaunchQuery,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
       Appointments.notifyAppointmentDetail,
@@ -254,6 +255,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Events2.notifyLaunchDetail) {
       _onFirebaseEventDetail(param);
+    }
+    else if (name == Events2.notifyLaunchQuery) {
+      _onFirebaseEventsQuery(param);
     }
     else if (name == Sports.notifyGameDetail) {
       _onFirebaseGameDetail(param);
@@ -742,6 +746,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     if (StringUtils.isNotEmpty(eventId)) {
       //ExplorePanel.presentDetailPanel(context, eventId: eventId);
       Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId,)));
+    }
+  }
+
+  Future<void> _onFirebaseEventsQuery(Map<String, dynamic>? content) async {
+    Event2FilterParam? eventFilterParam = (content != null) ? Event2FilterParam.fromUriParams(content.cast()) : null;
+    if (eventFilterParam != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2HomePanel.withFilter(eventFilterParam)));
     }
   }
 

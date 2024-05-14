@@ -2,7 +2,7 @@
 name: Epic
 about: Create a new epic related to this project
 title: "[EPIC] "
-labels: epic
+labels: ''
 assignees: ''
 
 ---

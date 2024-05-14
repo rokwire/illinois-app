@@ -81,6 +81,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                     visible: _canSelectMembers,
                     child: GroupMembersSelectionWidget(allMembers: _allMembersAllowedToPost, selectedMembers: _selectedMembers, groupId: widget.group.id, groupPrivacy: widget.group.privacy, onSelectionChanged: _onMembersSelectionChanged),
                   ),
+                  Container(height: 12,),
+                  _buildScheduleWidget(),
                   _buildNudgesWidget(),
                   Container(height: 12,),
                   Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'),
@@ -124,7 +126,6 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                         }
                     ),
                   ),
-
                   Row(children: [
                     Flexible(
                       flex: 1,
@@ -188,8 +189,24 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
         ]));
   }
 
+  Widget _buildScheduleWidget(){
+    return Visibility( visible: _canSchedule,
+      child: GroupScheduleTimeWidget(
+        scheduleTime: _postData.dateScheduled,
+        onDateChanged: (DateTime? dateTimeUtc) => _postData.dateScheduled = dateTimeUtc,
+      )
+    );
+  }
+
+  void _clearScheduleDate(){
+    if( _postData.dateScheduled != null){
+      _postData.dateScheduled = null;
+    }
+  }
+
   void _onMembersSelectionChanged(List<Member>? selectedMembers){
     _selectedMembers = selectedMembers;
+    _clearScheduleDate(); //Members Selection disables scheduling
     _updateState();
   }
 
@@ -254,6 +271,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     String? body = _postData.body;
     String? imageUrl = _postData.imageUrl;
     String? subject = _postData.subject;
+    DateTime? scheduleDate = _postData.dateScheduled;
     if (StringUtils.isEmpty(subject)) {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.validation.subject.msg', "Post subject required"));
       return;
@@ -264,27 +282,32 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
       return;
     }
 
+    if (scheduleDate != null && scheduleDate.isBefore(DateTime.now())) {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.validation.schedule.msg', "Schedule time must be in future"));
+      return;
+    }
+
     String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
     _increaseProgress();
 
-    GroupPost post = GroupPost(subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl, members: _selectedMembers); // if no parentId then this is a new post for the group.
+    GroupPost post = GroupPost(subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl, members: _selectedMembers, dateScheduledUtc: scheduleDate); // if no parentId then this is a new post for the group.
 
     Groups().createPost(widget.group.id, post).then((success) {
       if(success){
           if(_canSentToOtherAdminCroups){
             _processPostToOtherAdminGroups(post).then((success){
-              _onCreateFinished(success); //Finished posting to other groups
+              _onCreateFinished(post); //Finished posting to other groups
             }).onError((error, stackTrace){
-              _onCreateFinished(false); //Failed posting to other groups
+              _onCreateFinished(null); //Failed posting to other groups
             });
           } else {// Don't want to post to other groups
-            _onCreateFinished(true); //Successfully posted single post
+            _onCreateFinished(post); //Successfully posted single post
           }
       } else { // Fail
-        _onCreateFinished(false); //Failed posting to original group
+        _onCreateFinished(null); //Failed posting to original group
       }
     }).onError((error, stackTrace) {
-      _onCreateFinished(false);//Failed posting to original group
+      _onCreateFinished(null);//Failed posting to original group
     });
   }
 
@@ -312,10 +335,10 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     return !results.contains(false);
   }
 
-  void _onCreateFinished(bool succeeded) {
+  void _onCreateFinished(GroupPost? post) {
     _decreaseProgress();
-    if (succeeded) {
-      Navigator.of(context).pop(true);
+    if (post != null) {
+      Navigator.of(context).pop(post);
     } else {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.post.failed.msg', 'Failed to create new post.'));
     }
@@ -383,6 +406,10 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     return (widget.group.currentUserIsAdmin == true) ||
         (widget.group.currentUserIsMember &&
             widget.group.isMemberAllowedToPostToSpecificMembers);
+  }
+
+  bool get _canSchedule {
+    return CollectionUtils.isEmpty(_selectedMembers);
   }
 
   bool get _canSentToOtherAdminCroups{

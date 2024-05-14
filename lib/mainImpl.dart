@@ -51,7 +51,7 @@ import 'package:illinois/service/Services.dart' as illinois;
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/WPGUFMRadio.dart';
+import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/service/WellnessRings.dart';
 
@@ -145,7 +145,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       OnCampus(),
       Wellness(),
       WellnessRings(),
-      WPGUFMRadio(),
+      RadioPlayer(),
       AppReview(),
       StudentCourses(),
       Appointments(),

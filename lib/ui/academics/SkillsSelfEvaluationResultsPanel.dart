@@ -394,7 +394,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
       messageTextAlign: TextAlign.center,
       buttons: buttons,
       buttonsPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 32),
-      closeButtonIcon: Styles().images.getImage('close', excludeFromSemantics: true),
+      closeButtonIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
     );
   }
 

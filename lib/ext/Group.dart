@@ -217,6 +217,12 @@ Color? groupMemberStatusToColor(GroupMemberStatus? value) {
 
 
 extension GroupPostExt on GroupPost {
+
+  GroupPostType get type => (members?.isNotEmpty == true) ? GroupPostType.message : GroupPostType.post;
+  bool get isPost => (type == GroupPostType.post);
+  bool get isMessage => (type == GroupPostType.message);
+  bool get isScheduled => dateScheduledUtc?.isAfter(DateTime.now()) == true;
+
   String? get displayDateTime {
     DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
     if (deviceDateTime != null) {
@@ -243,6 +249,14 @@ extension GroupPostExt on GroupPost {
         }
       }
       return DateFormat("MMM dd, yyyy").format(deviceDateTime);
+    }
+    return null;
+  }
+
+  String? get displayScheduledTime {
+    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateScheduledUtc);
+    if(deviceDateTime != null){
+      return DateFormat("MMM dd, HH:mm").format(deviceDateTime);
     }
     return null;
   }

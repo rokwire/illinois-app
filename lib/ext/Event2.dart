@@ -337,7 +337,7 @@ extension Event2ContactExt on Event2Contact {
 
 extension Event2RegistrationDetailsExt on Event2RegistrationDetails {
   
-  bool get requiresRegistration => (type == Event2RegistrationType.external) || (type == Event2RegistrationType.internal);
+  bool get requiresRegistration =>  (type == Event2RegistrationType.internal) /*|| (type == Event2RegistrationType.external)*/;
 
   bool? isRegistrationCapacityReached(int? participantsCount) =>
     ((type == Event2RegistrationType.internal) && (eventCapacity != null) && (participantsCount != null)) ? (eventCapacity! <= participantsCount) : null;
