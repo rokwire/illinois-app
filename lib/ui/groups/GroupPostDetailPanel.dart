@@ -506,21 +506,24 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   //Tap Actions
   void _onTapReplyCard(GroupPost? reply){
-    if((reply != null) &&
-        ((reply == _focusedReply) || (widget.replyThread!= null && widget.replyThread!.contains(reply)))){
-      //Already focused reply.
-      // Disabled listener for the focused reply. Prevent duplication. Fix for #2374
-      return;
+    if(_isSubReplySupported){  //Forbid sub reply //TODO if we do not bring back this functionality DELETE all related code.
+      if((reply != null) &&
+          ((reply == _focusedReply) || (widget.replyThread!= null && widget.replyThread!.contains(reply)))){
+        //Already focused reply.
+        // Disabled listener for the focused reply. Prevent duplication. Fix for #2374
+        return;
+      }
+
+      Analytics().logSelect(target: 'Reply Card');
+      List<GroupPost> thread = [];
+      if(CollectionUtils.isNotEmpty(widget.replyThread)){
+        thread.addAll(widget.replyThread!);
+      }
+      if(_focusedReply!=null) {
+        thread.add(_focusedReply!);
+      }
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true, replyThread: thread,)));
     }
-    Analytics().logSelect(target: 'Reply Card');
-    List<GroupPost> thread = [];
-    if(CollectionUtils.isNotEmpty(widget.replyThread)){
-      thread.addAll(widget.replyThread!);
-    }
-    if(_focusedReply!=null) {
-      thread.add(_focusedReply!);
-    }
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true, replyThread: thread,)));
   }
 
   void _onTapDeletePost() {
@@ -604,7 +607,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Visibility(visible: _isReplyVisible, child: RibbonButton(
+              Visibility(visible: _isReplyVisible && _isSubReplySupported, child: RibbonButton(
                 leftIconKey: "reply",
                 label: Localization().getStringEx("panel.group.detail.post.reply.reply.label", "Reply"),
                 onTap: () {
@@ -995,6 +998,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   bool get _isEditMainPost {
     return _mainPostUpdateData!=null;
   }
+
+  bool get _isSubReplySupported => false; //Disable sub-reply TBD if we do not return i sub-reply remove all internal logic and UI related to it.
 
   // Notifications Listener
   @override
