@@ -25,6 +25,7 @@ import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
+import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -175,6 +176,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   bool get _canEditGroup {
     return _isAdmin;
+  }
+
+  bool get _isReportAbuseVisible {
+    return _isMemberOrAdmin;
   }
 
   bool get _canDeleteGroup {
@@ -1725,6 +1730,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                           Navigator.of(context).pop();
                           _onTapCreatePost();
                         })),
+                Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
+                  leftIconKey: "report",
+                  label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
+                  onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true), post: widget.post),
+                )),
                 Visibility(
                     visible: _canLeaveGroup,
                     child: RibbonButton(
@@ -1924,6 +1934,22 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void _onTapNotifications() {
     Analytics().logSelect(target: "Notifications", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMemberNotificationsPanel(groupId: _group?.id, memberId: _group?.currentMember?.id)));
+  }
+
+  void _onTapReportAbuse({required GroupPostReportAbuseOptions options, GroupPost? post}) {
+    String? analyticsTarget;
+    if (options.reportToDeanOfStudents && !options.reportToGroupAdmins) {
+      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.students_dean.description.text', 'Report violation of Student Code to Dean of Students');
+    }
+    else if (!options.reportToDeanOfStudents && options.reportToGroupAdmins) {
+      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.group_admins.description.text', 'Report obscene, threatening, or harassing content to Group Administrators');
+    }
+    else if (options.reportToDeanOfStudents && options.reportToGroupAdmins) {
+      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.both.description.text', 'Report violation of Student Code to Dean of Students and obscene, threatening, or harassing content to Group Administrators');
+    }
+    Analytics().logSelect(target: analyticsTarget);
+
+    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbuse(options: options, groupId: widget.group?.id)));
   }
 
   /*void _onTapTakeAttendance() {
