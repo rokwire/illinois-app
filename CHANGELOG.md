@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Disable sub-reply with option to enable it again [#4049](https://github.com/rokwire/illinois-app/issues/4049).
 - Feeds section in Browse renamed to Illini News [#4060](https://github.com/rokwire/illinois-app/issues/4060).
+- Clean up share panels from Events and Groups [#4039](https://github.com/rokwire/illinois-app/issues/4039).
 ### Added
 - Added NewsAtIllinois twitter account [#4060](https://github.com/rokwire/illinois-app/issues/4060).
 
