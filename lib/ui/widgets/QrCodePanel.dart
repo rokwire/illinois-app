@@ -198,8 +198,6 @@ class _QrCodePanelState extends State<QrCodePanel> {
                     backgroundColor: Styles().colors.background,
                     borderColor: Styles().colors.fillColorSecondary,
                     onTap: _onTapShare,
-                    rightIcon: Styles().images.getImage('share-dark', excludeFromSemantics: true),
-                    rightIconPadding: EdgeInsets.only(right: 75),
                   ),
                 )
               ],
