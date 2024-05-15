@@ -481,7 +481,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
           Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
             Row(children:<Widget>[
               Padding(padding: EdgeInsets.only(right: 8), child:
-                Styles().images.getImage('close', excludeFromSemantics: true)
+                Styles().images.getImage('close-circle', excludeFromSemantics: true)
               ),
               Expanded(child:
                 Text("Cancel", style: Styles().textStyles.getTextStyle("widget.button.title.regular"),)

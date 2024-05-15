@@ -18,6 +18,7 @@ import 'package:illinois/service/Content.dart' as uiuc;
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
+import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -32,13 +33,12 @@ import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
-import 'package:illinois/ui/home/HomeCampusResourcesWidget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
 import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
 import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
 import 'package:illinois/ui/home/HomeTwitterWidget.dart';
-import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
+import 'package:illinois/ui/home/HomeRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
@@ -200,17 +200,11 @@ class _BrowseContentWidgetState extends State<BrowseContentWidget> implements No
       for (String code in _contentCodes!) {
         List<String>? entryCodes = _BrowseSection.buildBrowseEntryCodes(sectionId: code);
         if ((entryCodes != null) && entryCodes.isNotEmpty) {
-          sectionsList.add((code == 'campus_resources') ?
-            _BrowseCampusResourcesSection(
-              sectionId: code,
-              entryCodes: entryCodes,
-              expanded: _isExpanded(code),
-              onExpand: () => _toggleExpanded(code),) :
-            _BrowseSection(
-              sectionId: code,
-              entryCodes: entryCodes,
-              expanded: _isExpanded(code),
-              onExpand: () => _toggleExpanded(code),)
+          sectionsList.add(_BrowseSection(
+            sectionId: code,
+            entryCodes: entryCodes,
+            expanded: _isExpanded(code),
+            onExpand: () => _toggleExpanded(code),)
           );
         }
       }
@@ -600,19 +594,6 @@ class _BrowseEntry extends StatelessWidget {
       case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
       case "campus_guide.my_campus_guide":   _onTapMyCampusGuide(context); break;
 
-      case "campus_resources.events":       _onTapEvents(context); break;
-      case "campus_resources.dining":       _onTapDining(context); break;
-      case "campus_resources.athletics":    _onTapAthletics(context); break;
-      case "campus_resources.illini_cash":  _onTapIlliniCash(context); break;
-      case "campus_resources.laundry":      _onTapLaundry(context); break;
-      case "campus_resources.my_illini":    _onTapMyIllini(context); break;
-      case "campus_resources.wellness":     _onTapWellness(context); break;
-      case "campus_resources.crisis_help":  _onTapCrisisHelp(context); break;
-      case "campus_resources.groups":       _onTapGroups(context); break;
-      case "campus_resources.quick_polls":  _onTapQuickPolls(context); break;
-      case "campus_resources.campus_guide": _onTapCampusGuide(context); break;
-      case "campus_resources.all_notifications": _onTapNotifications(context); break;
-
       case "dinings.dinings_all":            _onTapDiningsAll(context); break;
       case "dinings.dinings_open":           _onTapDiningsOpen(context); break;
       case "dinings.my_dining":              _onTapMyDinings(context); break;
@@ -622,7 +603,11 @@ class _BrowseEntry extends StatelessWidget {
 
       case "feeds.twitter":                  _onTapTwitter(context); break;
       case "feeds.daily_illini":             _onTapDailyIllini(context); break;
-      case "feeds.wpgufm_radio":             _onTapWPGUFMRadio(context); break;
+
+      case "radio_stations.will_radio":      _onTapRadioStation(context, RadioStation.will); break;
+      case "radio_stations.willfm_radio":    _onTapRadioStation(context, RadioStation.willfm); break;
+      case "radio_stations.willhd_radio":    _onTapRadioStation(context, RadioStation.willhd); break;
+      case "radio_stations.wpgufm_radio":    _onTapRadioStation(context, RadioStation.wpgufm); break;
 
       case "groups.all_groups":              _onTapAllGroups(context); break;
       case "groups.my_groups":               _onTapMyGroups(context); break;
@@ -693,38 +678,6 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapStudentCourses(BuildContext context) {
     Analytics().logSelect(target: "Student Courses");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentCoursesListPanel()));
-  }
-
-  void _onTapMyIllini(BuildContext context) {
-    Analytics().logSelect(target: "My Illini");
-    if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
-    }
-    else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
-
-      // Please make this use an external browser
-      // Ref: https://github.com/rokwire/illinois-app/issues/1110
-      Uri? myIlliniUri = Uri.tryParse(Config().myIlliniUrl!);
-      if (myIlliniUri != null) {
-        launchUrl(myIlliniUri);
-      }
-
-      //
-      // Until webview_flutter get fixed for the dropdowns we will continue using it as a webview plugin,
-      // but we will open in an external browser all problematic pages.
-      // The other plugin doesn't work with VoiceOver
-      // Ref: https://github.com/rokwire/illinois-client/issues/284
-      //      https://github.com/flutter/plugins/pull/2330
-      //
-      // if (Platform.isAndroid) {
-      //   launch(Config().myIlliniUrl);
-      // }
-      // else {
-      //   String myIlliniPanelTitle = Localization().getStringEx(
-      //       'widget.home.campus_resources.header.my_illini.title', 'My Illini');
-      //   Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().myIlliniUrl, title: myIlliniPanelTitle,)));
-      // }
-    }
   }
 
   void _onTapCampusReminders(BuildContext context) {
@@ -919,21 +872,6 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Dining, initialFilter: ExploreFilter(type: ExploreFilterType.work_time, selectedIndexes: {1}))));
   }
 
-  void _onTapEvents(BuildContext context) {
-    Analytics().logSelect(target: "Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
-  }
-    
-  void _onTapDining(BuildContext context) {
-    Analytics().logSelect(target: "Dining");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Dining); } ));
-  }
-
-  void _onTapAthletics(BuildContext context) {
-    Analytics().logSelect(target: "Athletics");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.events)));
-  }
-
   void _onTapLaundry(BuildContext context) {
     Analytics().logSelect(target: "Laundry");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
@@ -952,34 +890,6 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapAddIlliniCash(BuildContext context) {
     Analytics().logSelect(target: "Add Illini Cash");
     SettingsAddIlliniCashPanel.present(context);
-  }
-
-  void _onTapWellness(BuildContext context) {
-    Analytics().logSelect(target: "Wellness");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel()));
-  }
-
-  void _onTapCrisisHelp(BuildContext context) {
-    Analytics().logSelect(target: "Crisis Help");
-    String? url = Config().crisisHelpUrl;
-    if (StringUtils.isNotEmpty(url)) {
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        launchUrl(uri);
-      }
-    } else {
-      debugPrint("Missing Config().crisisHelpUrl");
-    }
-  }
-
-  void _onTapGroups(BuildContext context) {
-    Analytics().logSelect(target: "Groups");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
-  }
-
-  void _onTapQuickPolls(BuildContext context) {
-    Analytics().logSelect(target: "Quick Polls");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
   }
 
   void _onTapCampusGuide(BuildContext context) {
@@ -1026,9 +936,9 @@ class _BrowseEntry extends StatelessWidget {
     }
   }
 
-  void _onTapWPGUFMRadio(BuildContext context) {
-    Analytics().logSelect(target: "WPGU FM Radio");
-    HomeWPGUFMRadioWidget.showPopup(context);
+  void _onTapRadioStation(BuildContext context, RadioStation radioStation) {
+    Analytics().logSelect(target: "Radio Station (${radioStation.toString()})");
+    HomeRadioWidget.showPopup(context, radioStation);
   }
 
   void _onTapAllGroups(BuildContext context) {
@@ -1195,25 +1105,6 @@ class _BrowseEntry extends StatelessWidget {
   }
 
 }
-
-//////////////////////////////////
-// BrowseCampusResourcesSection
-
-class _BrowseCampusResourcesSection extends _BrowseSection {
-
-  _BrowseCampusResourcesSection({Key? key, required String sectionId, List<String>? entryCodes, bool expanded = false, void Function()? onExpand}) :
-    super(key: key, sectionId: sectionId, entryCodes: entryCodes, expanded: expanded, onExpand: onExpand);
-
-  @override
-  Widget _buildEntries(BuildContext context) {
-    return (expanded && (_browseEntriesCodes?.isNotEmpty ?? false)) ?
-      Padding(padding: EdgeInsets.only(left: 16, bottom: 4), child:
-        HomeCampusResourcesGridWidget(favoriteCategory: sectionId, contentCodes: _browseEntriesCodes!, promptFavorite: kReleaseMode,)
-      ) :
-      Container();
-  }
-}
-
 
 ///////////////////////////
 // BrowseToutWidget

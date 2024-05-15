@@ -179,7 +179,7 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
       alignment: Alignment.topRight,
       infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
       infoTextStyle: Styles().textStyles.getTextStyle("widget.title.regular.medium_fat"),
-      closeIcon: Styles().images.getImage('close'),
+      closeIcon: Styles().images.getImage('close-circle'),
     ),);
   }
 

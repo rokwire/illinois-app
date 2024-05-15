@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/WPGUFMRadio.dart';
+import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
@@ -283,7 +283,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      WPGUFMRadio.notifyPlayerStateChanged,
+      RadioPlayer.notifyPlayerStateChanged,
       Inbox.notifyInboxUnreadMessagesCountChanged,
       Auth2.notifyPictureChanged,
     ]);
@@ -300,7 +300,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == WPGUFMRadio.notifyPlayerStateChanged) {
+    if (name == RadioPlayer.notifyPlayerStateChanged) {
       if (mounted) {
         setState(() {});
       }
@@ -346,7 +346,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
   }
 
   Widget _buildHeaderTitle() {
-    return WPGUFMRadio().isPlaying ? Row(mainAxisSize: MainAxisSize.min, children: [
+    return RadioPlayer().isPlaying ? Row(mainAxisSize: MainAxisSize.min, children: [
       _buildHeaderTitleText(),
       _buildHeaderRadioButton(),
     ],) : _buildHeaderTitleText();
@@ -429,7 +429,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 
   void _onTapRadio() {
     Analytics().logSelect(target: "WPGU FM Radio");
-    WPGUFMRadio().pause();
+    RadioPlayer().pause();
   }
 
   void _onTapSettings() {

@@ -179,7 +179,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
                             onTap: () {
                               Navigator.pop(context);
                             },
-                            child: Container(child: Styles().images.getImage("close", excludeFromSemantics: true)),
+                            child: Container(child: Styles().images.getImage('close-circle', excludeFromSemantics: true)),
                           ))),
                         Container(height: 12,),
                         content ?? Container(),

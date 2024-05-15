@@ -113,12 +113,12 @@ class Event2FilterCommandButton extends StatelessWidget {
 //
 
 class Event2ImageCommandButton extends StatelessWidget {
-  final String imageKey;
+  final Widget? image;
   final String? label;
   final String? hint;
   final EdgeInsetsGeometry contentPadding;
   final void Function()? onTap;
-  Event2ImageCommandButton(this.imageKey, { Key? key,
+  Event2ImageCommandButton(this.image, { Key? key,
     this.label, this.hint,
     this.contentPadding = const EdgeInsets.all(16),
     this.onTap,
@@ -129,7 +129,7 @@ class Event2ImageCommandButton extends StatelessWidget {
     Semantics(label: label, hint: hint, button: true, child:
       InkWell(onTap: onTap, child:
         Padding(padding: contentPadding, child:
-          Styles().images.getImage(imageKey)
+          image
         )
       ),
     );

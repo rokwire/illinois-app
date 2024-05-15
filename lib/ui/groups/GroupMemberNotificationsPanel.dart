@@ -444,7 +444,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
 class _DisabledToggleButton extends ToggleRibbonButton{
   static Map<bool, Widget> _rightIcons= {
     true: Styles().images.getImage('check-accent', excludeFromSemantics: true) ?? Container(),
-    false: Styles().images.getImage('close', excludeFromSemantics: true) ?? Container(),
+    false: Styles().images.getImage('close-circle', excludeFromSemantics: true) ?? Container(),
   };
 
   _DisabledToggleButton( {String? label,

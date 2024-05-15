@@ -215,7 +215,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
           Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
             InkWell(onTap : _onTapClose, child:
               Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-              Styles().images.getImage('close', excludeFromSemantics: true),
+              Styles().images.getImage('close-circle', excludeFromSemantics: true),
               ),
             ),
           ),
