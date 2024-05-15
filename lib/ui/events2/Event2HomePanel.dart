@@ -19,7 +19,7 @@ import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
-import 'package:illinois/ui/events2/Event2QrCodePanel.dart';
+import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/events2/Event2SearchPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
@@ -1050,7 +1050,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   void _onShareFilters() {
     Analytics().logSelect(target: 'Share Filters');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2QrCodePanel.fromFilterParam(_currentFilterParam)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromFilterParam(_currentFilterParam)));
   }
 
   bool get _canClearFilters =>

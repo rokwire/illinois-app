@@ -17,7 +17,7 @@ import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:share/share.dart';
 
-class Event2QrCodePanel extends StatefulWidget { //TBD localize
+class QrCodePanel extends StatefulWidget { //TBD localize
   //final Event2? event;
   //const Event2QrCodePanel({required this.event});
 
@@ -30,7 +30,7 @@ class Event2QrCodePanel extends StatefulWidget { //TBD localize
   final String? title;
   final String? description;
 
-  const Event2QrCodePanel({Key? key,
+  const QrCodePanel({Key? key,
     required this.deepLinkUrl,
 
     required this.saveFileName,
@@ -41,7 +41,7 @@ class Event2QrCodePanel extends StatefulWidget { //TBD localize
     this.description,
   });
 
-  factory Event2QrCodePanel.fromEvent(Event2? event, {Key? key}) => Event2QrCodePanel(
+  factory QrCodePanel.fromEvent(Event2? event, {Key? key}) => QrCodePanel(
     key: key,
     deepLinkUrl: Events2.eventDetailUrl(event),
       saveFileName: 'event - ${event?.name}',
@@ -51,7 +51,7 @@ class Event2QrCodePanel extends StatefulWidget { //TBD localize
     description: Localization().getStringEx('panel.event_qr_code.event.description', 'Invite others to view this event by sharing a link or the QR code after saving it to your photo library.'),
   );
 
-  factory Event2QrCodePanel.fromFilterParam(Event2FilterParam filterParam, {Key? key}) => Event2QrCodePanel(
+  factory QrCodePanel.fromFilterParam(Event2FilterParam filterParam, {Key? key}) => QrCodePanel(
     key: key,
     deepLinkUrl: Events2.eventsQueryUrl(filterParam.toUriParams()),
       saveFileName: "events ${DateFormat('yyyy-MM-dd HH.mm.ss').format(DateTime.now())}",
@@ -65,7 +65,7 @@ class Event2QrCodePanel extends StatefulWidget { //TBD localize
   _EventQrCodePanelState createState() => _EventQrCodePanelState();
 }
 
-class _EventQrCodePanelState extends State<Event2QrCodePanel> {
+class _EventQrCodePanelState extends State<QrCodePanel> {
   static final int _imageSize = 1024;
   Uint8List? _qrCodeBytes;
 
