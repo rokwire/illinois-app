@@ -1050,7 +1050,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   void _onShareFilters() {
     Analytics().logSelect(target: 'Share Filters');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromFilterParam(_currentFilterParam)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromEventFilterParam(_currentFilterParam)));
   }
 
   bool get _canClearFilters =>

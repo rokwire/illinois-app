@@ -51,7 +51,7 @@ class QrCodePanel extends StatefulWidget { //TBD localize
     description: Localization().getStringEx('panel.event_qr_code.event.description', 'Invite others to view this event by sharing a link or the QR code after saving it to your photo library.'),
   );
 
-  factory QrCodePanel.fromFilterParam(Event2FilterParam filterParam, {Key? key}) => QrCodePanel(
+  factory QrCodePanel.fromEventFilterParam(Event2FilterParam filterParam, {Key? key}) => QrCodePanel(
     key: key,
     deepLinkUrl: Events2.eventsQueryUrl(filterParam.toUriParams()),
       saveFileName: "events ${DateFormat('yyyy-MM-dd HH.mm.ss').format(DateTime.now())}",
