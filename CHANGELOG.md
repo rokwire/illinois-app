@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Disable sub-reply with option to enable it again [#4049](https://github.com/rokwire/illinois-app/issues/4049).
 
 ## [5.2.9] - 2024-05-14
 ### Added
