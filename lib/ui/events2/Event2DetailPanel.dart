@@ -1140,8 +1140,8 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
     if (_eventId != null) {
       Event2Popup.showPrompt(context,
-        Localization().getStringEx('panel.event2.detail.general.prompt.delete.title', 'Delete'),
-        Localization().getStringEx('panel.event2.detail.general.prompt.delete.message', 'Are you sure you want to delete this event and all data associated with it? This action cannot be undone.'),
+        title: Localization().getStringEx('panel.event2.detail.general.prompt.delete.title', 'Delete'),
+        message: Localization().getStringEx('panel.event2.detail.general.prompt.delete.message', 'Are you sure you want to delete this event and all data associated with it? This action cannot be undone.'),
       ).then((bool? result) {
         if (result == true) {
           setStateIfMounted(() {

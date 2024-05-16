@@ -961,16 +961,20 @@ class Event2Popup {
       message: StringUtils.isNotEmptyString(result) ? result : Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred'),
     );
 
-  static Future<bool?> showPrompt(BuildContext context, String title, String? message, {
+  static Future<bool?> showPrompt(BuildContext context, {
+    String? title, TextStyle? titleTextStyle,
+    String? message, TextStyle? messageTextStyle,
     String? positiveButtonTitle, String? positiveAnalyticsTitle,
     String? negativeButtonTitle, String? negativeAnalyticsTitle,
   }) async {
     return showDialog<bool?>(context: context, builder: (BuildContext context) => AlertDialog(
       surfaceTintColor: Styles().colors.surface,
       content: Column(mainAxisSize: MainAxisSize.min, children: [
-        Text(title, style: Styles().textStyles.getTextStyle("widget.card.title.regular.fat"),),
+        (title != null) ?
+          Text(title, style: titleTextStyle ?? Styles().textStyles.getTextStyle("widget.card.title.regular.fat"),)
+        : Container(),
         (message != null) ? Padding(padding: EdgeInsets.only(top: 12), child:
-          Text(message, style: Styles().textStyles.getTextStyle("widget.card.title.small"),),
+          Text(message, style: messageTextStyle ?? Styles().textStyles.getTextStyle("widget.card.title.small"),),
         ) : Container()
       ],),
       actions: <Widget>[
