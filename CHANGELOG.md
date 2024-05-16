@@ -5,9 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
 ### Changed
 - Updated messaged displayed on Event2DetailPanel Register/Unregister [#4042](https://github.com/rokwire/illinois-app/issues/4042).
+- Sort Academics dropdown items lexicographically [#4018](https://github.com/rokwire/illinois-app/issues/4018).
 
 ## [5.2.10] - 2024-05-15
 ### Changed
