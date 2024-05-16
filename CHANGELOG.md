@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ### Changed
-- Updated messaged displayed on Event2DetailPanel Register/Unregister [#4042].
+- Updated messaged displayed on Event2DetailPanel Register/Unregister [#4042](https://github.com/rokwire/illinois-app/issues/4042).
 
 ## [5.2.10] - 2024-05-15
 ### Changed
