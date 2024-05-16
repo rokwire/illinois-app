@@ -33,6 +33,8 @@
     "dialog.select_all.hint":"",
     "dialog.deselect_all.title":"Deselect All",
     "dialog.deselect_all.hint":"",
+    "dialog.success.title":"Success",
+    "dialog.success.hint":"",
 
     "tabbar.home.title":"Home",
     "tabbar.home.hint":"Home Page",
@@ -1415,7 +1417,9 @@
     "panel.event2.detail.linked_events.super_event.empty.message": "There are no scheduled upcoming events.",
     "panel.event2.detail.linked_events.recurrence.failed.message": "Failed to load available times.",
     "panel.event2.detail.linked_events.recurrence.empty.message": "There are no upcoming available times.",
-    "panel.event2.detail.star_event.dialog.message": "Do you want to star this event?",
+    "panel.event2.detail.register.succeeded": "You're registered!",
+    "panel.event2.detail.register.succeeded.star.prompt": "You're registered! Would vou like to add this event to <span style='color:{{star_color}};'><b>\u2605</b></span> My Events?",
+    "panel.event2.detail.unregister.succeeded": "You are no onder registerec for this event.",
 
     "panel.event2.detail.take_attendance.title": "Take Attendance",
     "panel.event2.detail.survey.description.reg_req": "Registration is required for this event.",

@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+- Updated messaged displayed on Event2DetailPanel Register/Unregister [#4042].
+
 ## [5.2.10] - 2024-05-15
 ### Changed
 - Disable sub-reply with option to enable it again [#4049](https://github.com/rokwire/illinois-app/issues/4049).

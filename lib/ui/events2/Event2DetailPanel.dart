@@ -956,20 +956,36 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   void _onRegister() {
     Analytics().logSelect(target: 'Register me');
-    _performRegistration(Events2().registerToEvent,
-        onSuccess: (Event2 event) {
-          if(!Auth2().isFavorite(event)){ //Show only if it's not favorite yet
-            AppAlert.showConfirmationDialog(buildContext: context,
-                message: Localization().getStringEx("panel.event2.detail.star_event.dialog.message", "Do you want to also Star this event?"),
-                positiveCallback: ()=> _onFavorite()
-            );
+    _performRegistration(Events2().registerToEvent, onSuccess: (Event2 event) {
+      if (Auth2().isFavorite(event)) {
+        Event2Popup.showMessage(context,
+          title: Localization().getStringEx("dialog.success.title", "Success"),
+          message: Localization().getStringEx("panel.event2.detail.register.succeeded", "You're registered!"),
+        );
+      }
+      else {
+        Event2Popup.showPrompt(context,
+          title: Localization().getStringEx("dialog.success.title", "Success"),
+          messageHtml: Localization().getStringEx("panel.event2.detail.register.succeeded.star.prompt", "You're registered! Would vou like to add this event to <span style='color:{{star_color}};'><b>\u2605</b></span> My Events?").replaceAll('{{star_color}}', ColorUtils.toHex(Styles().colors.fillColorSecondary)),
+          positiveButtonTitle: Localization().getStringEx("dialog.yes.title", "Yes"),
+          negativeButtonTitle: Localization().getStringEx("dialog.no.title", "No"),
+        ).then((bool? result) {
+          if (result == true) {
+            _onFavorite();
           }
+        });
+      }
     });
   }
 
   void _onUnregister() {
     Analytics().logSelect(target: 'Unregister me');
-    _performRegistration(Events2().unregisterFromEvent);
+    _performRegistration(Events2().unregisterFromEvent, onSuccess: (Event2 event) {
+      Event2Popup.showMessage(context,
+        title: Localization().getStringEx("dialog.success.title", "Success"),
+        message: Localization().getStringEx("panel.event2.detail.unregister.succeeded", "You are no onder registerec for this event."),
+      );
+    });
   }
 
   void _performRegistration(Future<dynamic> Function(String eventId) registrationApi, {Function(Event2 event)? onSuccess}) {
@@ -1140,8 +1156,8 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
     if (_eventId != null) {
       Event2Popup.showPrompt(context,
-        Localization().getStringEx('panel.event2.detail.general.prompt.delete.title', 'Delete'),
-        Localization().getStringEx('panel.event2.detail.general.prompt.delete.message', 'Are you sure you want to delete this event and all data associated with it? This action cannot be undone.'),
+        title: Localization().getStringEx('panel.event2.detail.general.prompt.delete.title', 'Delete'),
+        message: Localization().getStringEx('panel.event2.detail.general.prompt.delete.message', 'Are you sure you want to delete this event and all data associated with it? This action cannot be undone.'),
       ).then((bool? result) {
         if (result == true) {
           setStateIfMounted(() {
