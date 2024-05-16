@@ -191,11 +191,9 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   Widget _buildContentValuesWidget() {
     List<Widget> sectionList = <Widget>[];
     sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    if (CollectionUtils.isNotEmpty(_contentValues)) {
-      for (AcademicsContent section in _contentValues!) {
-        if ((_selectedContent != section)) {
-          sectionList.add(_buildContentItem(section));
-        }
+    for (AcademicsContent section in _contentValues) {
+      if ((_selectedContent != section)) {
+        sectionList.add(_buildContentItem(section));
       }
     }
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: sectionList)));
@@ -249,14 +247,12 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   void _initSelectedContentItem() {
     AcademicsContent? initialContent = _ensureContent(_initialContentItem) ?? _ensureContent(_lastSelectedContent);
     if (initialContent == null) {
-      if (CollectionUtils.isNotEmpty(_contentValues)) {
-        if (_contentValues!.contains(AcademicsContent.gies_checklist) && !_isCheckListCompleted(CheckList.giesOnboarding)) {
-          initialContent = AcademicsContent.gies_checklist;
-        } else if (_contentValues!.contains(AcademicsContent.canvas_courses)) {
-          initialContent = AcademicsContent.canvas_courses;
-        } else if (_contentValues!.contains(AcademicsContent.student_courses)) {
-          initialContent = AcademicsContent.student_courses;
-        }
+      if (_contentValues.contains(AcademicsContent.gies_checklist) && !_isCheckListCompleted(CheckList.giesOnboarding)) {
+        initialContent = AcademicsContent.gies_checklist;
+      } else if (_contentValues.contains(AcademicsContent.canvas_courses)) {
+        initialContent = AcademicsContent.canvas_courses;
+      } else if (_contentValues.contains(AcademicsContent.student_courses)) {
+        initialContent = AcademicsContent.student_courses;
       }
     }
     _selectedContent = initialContent ?? AcademicsContent.events;
@@ -480,7 +476,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
 
   AcademicsContent? _ensureContent(AcademicsContent? contentItem, {List<AcademicsContent>? contentItems}) {
     contentItems ??= _contentValues;
-    return ((contentItem != null) && (contentItem != AcademicsContent.my_illini) && contentItems!.contains(contentItem)) ? contentItem : null;
+    return ((contentItem != null) && (contentItem != AcademicsContent.my_illini) && contentItems.contains(contentItem)) ? contentItem : null;
   }
 
   AcademicsContent? get _initialContentItem => widget.params[AcademicsHomePanel.contentItemKey] ?? widget.content;
