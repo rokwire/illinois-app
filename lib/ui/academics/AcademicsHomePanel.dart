@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -34,6 +35,7 @@ import 'package:illinois/ui/canvas/CanvasCoursesContentWidget.dart';
 import 'package:illinois/ui/gies/CheckListContentWidget.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -86,14 +88,14 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
 
   static AcademicsContent? _lastSelectedContent;
   late AcademicsContent _selectedContent;
-  List<AcademicsContent>? _contentValues;
+  late List<AcademicsContent> _contentValues;
   bool _contentValuesVisible = false;
   UniqueKey _dueDateCatalogKey = UniqueKey();
 
   @override
   void initState() {
     NotificationService().subscribe(this, [FlexUI.notifyChanged, Auth2.notifyLoginChanged, AcademicsHomePanel.notifySelectContent]);
-    _buildContentValues();
+    _contentValues = _buildContentValues();
     _initSelectedContentItem();
     if (_initialContentItem == AcademicsContent.my_illini) {
       _onContentItem(_initialContentItem!);
@@ -221,11 +223,10 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     }
   }
 
-  void _buildContentValues() {
+  List<AcademicsContent> _buildContentValues() {
+    List<AcademicsContent> contentValues = <AcademicsContent>[];
     List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['academics']);
-    List<AcademicsContent>? contentValues;
     if (contentCodes != null) {
-      contentValues = [];
       for (String code in contentCodes) {
         AcademicsContent? value = _getContentValueFromCode(code);
         if (value != null) {
@@ -233,10 +234,15 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         }
       }
     }
+    return contentValues;
+  }
 
-    _contentValues = contentValues;
-    if (mounted) {
-      setState(() {});
+  void _updateContentValues() {
+    List<AcademicsContent> contentValues = _buildContentValues();
+    if (!DeepCollectionEquality().equals(_contentValues, contentValues)) {
+      setStateIfMounted(() {
+        _contentValues = contentValues;
+      });
     }
   }
 
@@ -484,9 +490,9 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   @override
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
-      _buildContentValues();
+      _updateContentValues();
     } else if (name == Auth2.notifyLoginChanged) {
-      _buildContentValues();
+      _updateContentValues();
     } else if (name == AcademicsHomePanel.notifySelectContent) {
       AcademicsContent? contentItem = (param is AcademicsContent) ? param : null;
       if (mounted && (contentItem != null) && (contentItem != _selectedContent)) {
