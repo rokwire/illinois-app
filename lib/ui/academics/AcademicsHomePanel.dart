@@ -223,15 +223,23 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
 
   List<AcademicsContent> _buildContentValues() {
     List<AcademicsContent> contentValues = <AcademicsContent>[];
+    Map<AcademicsContent, String> contentLabels = <AcademicsContent, String>{};
+
     List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['academics']);
     if (contentCodes != null) {
       for (String code in contentCodes) {
         AcademicsContent? value = _getContentValueFromCode(code);
         if (value != null) {
           contentValues.add(value);
+          contentLabels[value] = _getContentLabel(value);
         }
       }
     }
+
+    contentValues.sort((AcademicsContent cont1, AcademicsContent cont2) =>
+      SortUtils.compare(contentLabels[cont1]?.toLowerCase(), contentLabels[cont2]?.toLowerCase())
+    );
+
     return contentValues;
   }
 
