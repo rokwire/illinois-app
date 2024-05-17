@@ -89,6 +89,7 @@ class Feed {
 
   Future<List<FeedItem>?> _loadEventsFeed(DateTime currentDateTime) async {
     List<Event2>? events = await Events2().loadEventsList(Events2Query(
+      groupings: Event2Grouping.feedEvents(),
       timeFilter: Event2TimeFilter.customRange,
       customStartTimeUtc: currentDateTime.subtract(Duration(seconds: Config().feedPastDuration)).toUtc(),
       customEndTimeUtc: currentDateTime.add(Duration(seconds: Config().feedFutureDuration)).toUtc(),
