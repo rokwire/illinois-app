@@ -2,6 +2,7 @@
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
@@ -1023,18 +1024,30 @@ class Event2Popup {
       message: StringUtils.isNotEmptyString(result) ? result : Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred'),
     );
 
-  static Future<bool?> showPrompt(BuildContext context, String title, String? message, {
+  static Future<bool?> showPrompt(BuildContext context, {
+    String? title, TextStyle? titleTextStyle,
+    String? message, String? messageHtml, TextStyle? messageTextStyle,
     String? positiveButtonTitle, String? positiveAnalyticsTitle,
     String? negativeButtonTitle, String? negativeAnalyticsTitle,
   }) async {
     return showDialog<bool?>(context: context, builder: (BuildContext context) => AlertDialog(
       surfaceTintColor: Styles().colors.surface,
       content: Column(mainAxisSize: MainAxisSize.min, children: [
-        Text(title, style: Styles().textStyles.getTextStyle("widget.card.title.regular.fat"),),
+        (title != null) ?
+          Text(title, style: titleTextStyle ?? Styles().textStyles.getTextStyle("widget.card.title.regular.fat"),)
+        : Container(),
         (message != null) ? Padding(padding: EdgeInsets.only(top: 12), child:
-          Text(message, style: Styles().textStyles.getTextStyle("widget.card.title.small"),),
-        ) : Container()
+          Text(message, style: messageTextStyle ?? Styles().textStyles.getTextStyle("widget.message.regular.semi_fat"),),
+        ) : Container(),
+        (messageHtml != null) ? Padding(padding: EdgeInsets.only(top: 12), child:
+          HtmlWidget(
+            messageHtml,
+            textStyle:  messageTextStyle ?? Styles().textStyles.getTextStyle("widget.message.regular.semi_fat"),
+            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
+          )
+        ) : Container(),
       ],),
+      contentPadding: EdgeInsets.only(top: 8, left: 16, right: 16),
       actions: <Widget>[
         TextButton(
           child: Text(positiveButtonTitle ?? Localization().getStringEx("dialog.ok.title", "OK"), style:
@@ -1055,6 +1068,7 @@ class Event2Popup {
           }
         )
       ],
+      actionsPadding: EdgeInsets.zero,
     ));
   }
 }

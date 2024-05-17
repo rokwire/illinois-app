@@ -27,6 +27,7 @@ import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
+import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -48,7 +49,6 @@ import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
 import 'package:illinois/ui/groups/GroupPollListPanel.dart';
 import 'package:illinois/ui/groups/GroupPostCreatePanel.dart';
-import 'package:illinois/ui/groups/GroupQrCodePanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/widgets/ExpandableText.dart';
@@ -1918,7 +1918,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapPromote() {
     Analytics().logSelect(target: "Promote Group", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupQrCodePanel(group: _group)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromGroup(_group)));
   }
 
   void _onTapNotifications() {
