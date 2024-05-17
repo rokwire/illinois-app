@@ -60,10 +60,10 @@ class FeedItem {
 
   DateTime? dateTimeUtc({DateTime? rangeStartTimeUtc, DateTime? rangeEndTimeUtc, DateTime? rangeCurrentTimeUtc }) {
     if (data is Event2) {
-      return (data as Event2).feedDateTimeUtc(rangeStartTimeUtc: rangeStartTimeUtc, rangeEndTimeUtc: rangeEndTimeUtc);
+      return (data as Event2).feedDateTimeUtc(rangeStartTimeUtc: rangeStartTimeUtc, rangeEndTimeUtc: rangeEndTimeUtc, rangeCurrentTimeUtc: rangeCurrentTimeUtc);
     }
     else if (data is FeedEventInfo) {
-      return (data as FeedEventInfo).event.feedDateTimeUtc(rangeStartTimeUtc: rangeStartTimeUtc, rangeEndTimeUtc: rangeEndTimeUtc);
+      return (data as FeedEventInfo).event.feedDateTimeUtc(rangeStartTimeUtc: rangeStartTimeUtc, rangeEndTimeUtc: rangeEndTimeUtc, rangeCurrentTimeUtc: rangeCurrentTimeUtc);
     }
     else if (data is InboxMessage) {
       return (data as InboxMessage).dateCreatedUtc;
@@ -210,10 +210,19 @@ FeedItemType? feedItemTypeFromData(Object data) {
 // _FeedEvent2Ext
 
 extension _FeedEvent2Ext on Event2 {
-  DateTime? feedDateTimeUtc({DateTime? rangeStartTimeUtc, DateTime? rangeEndTimeUtc }) {
-    if ((rangeStartTimeUtc != null) && (rangeEndTimeUtc != null)) {
-      return ((startTimeUtc?.isAfter(rangeStartTimeUtc) == true) && (startTimeUtc?.isBefore(rangeEndTimeUtc) == true)) ?
-        startTimeUtc : endTimeUtc;
+  DateTime? feedDateTimeUtc({ DateTime? rangeStartTimeUtc, DateTime? rangeEndTimeUtc, DateTime? rangeCurrentTimeUtc }) {
+    if ((rangeStartTimeUtc != null) && (rangeEndTimeUtc != null) && (rangeCurrentTimeUtc != null)) {
+      DateTime? startTimeUtcFix = startTimeUtc ?? endTimeUtc;
+      DateTime? endTimeUtcFix = endTimeUtc ?? startTimeUtc;
+      if (startTimeUtcFix?.isAfter(rangeStartTimeUtc) == true) {
+        return startTimeUtcFix;
+      }
+      else if (endTimeUtcFix?.isBefore(rangeEndTimeUtc) == true) {
+        return endTimeUtcFix;
+      }
+      else {
+        return rangeCurrentTimeUtc;
+      }
     }
     else {
       return startTimeUtc ?? endTimeUtc;
