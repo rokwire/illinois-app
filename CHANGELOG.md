@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [6.0.0] - 2024-05-20
+- Increase version number to 6.0 [#4069](https://github.com/rokwire/illinois-app/issues/4069).
+
 ## [5.2.11] - 2024-05-16
 ### Changed
 - Updated messaged displayed on Event2DetailPanel Register/Unregister [#4042](https://github.com/rokwire/illinois-app/issues/4042).
