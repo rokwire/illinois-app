@@ -31,7 +31,7 @@ import 'package:illinois/ui/academics/EssentialSkillsCoachDashboardPanel.dart';
 import 'package:illinois/ui/academics/MedicineCoursesContentWidget.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
-import 'package:illinois/ui/canvas/CanvasCoursesContentWidget.dart';
+import 'package:illinois/ui/canvas/GiesCanvasCoursesContentWidget.dart';
 import 'package:illinois/ui/gies/CheckListContentWidget.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
@@ -421,7 +421,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       case AcademicsContent.uiuc_checklist:
         return CheckListContentWidget(contentKey: CheckList.uiucOnboarding);
       case AcademicsContent.gies_canvas_courses:
-        return CanvasCoursesContentWidget();
+        return GiesCanvasCoursesContentWidget();
       case AcademicsContent.medicine_courses:
         return MedicineCoursesContentWidget();
       case AcademicsContent.student_courses:

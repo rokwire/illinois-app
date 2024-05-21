@@ -28,14 +28,14 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class CanvasCoursesContentWidget extends StatefulWidget {
-  CanvasCoursesContentWidget();
+class GiesCanvasCoursesContentWidget extends StatefulWidget {
+  GiesCanvasCoursesContentWidget();
 
   @override
-  _CanvasCoursesContentWidgetState createState() => _CanvasCoursesContentWidgetState();
+  _GiesCanvasCoursesContentWidgetState createState() => _GiesCanvasCoursesContentWidgetState();
 }
 
-class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget> implements NotificationsListener {
+class _GiesCanvasCoursesContentWidgetState extends State<GiesCanvasCoursesContentWidget> implements NotificationsListener {
   List<CanvasCourse>? _courses;
 
   @override

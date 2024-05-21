@@ -5,7 +5,7 @@ import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
-import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
+import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -160,6 +160,6 @@ class _HomeGiesCanvasCoursesWidgetState extends State<HomeGiesCanvasCoursesWidge
 
   void _onViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCoursesListPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GiesCanvasCoursesListPanel()));
   }
 }
