@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 - Cleaned up "share" (ex. "qr") icon, align icon buttons in Event2HomePanel [#4041](https://github.com/rokwire/illinois-app/issues/4041).
+### Added
+- "My Canvas Courses" in the Academics panel [#4071](https://github.com/rokwire/illinois-app/issues/4071).
 
 ## [6.0.0] - 2024-05-20
 - Increase version number to 6.0 [#4069](https://github.com/rokwire/illinois-app/issues/4069).
