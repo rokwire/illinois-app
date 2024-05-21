@@ -190,7 +190,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
                     },
                     touchTooltipData: BarTouchTooltipData(
                       tooltipPadding: EdgeInsets.all(4),
-                      tooltipBgColor: Styles().colors.background,
+                      // tooltipBgColor: Styles().colors.background, //TODO: check if this needs to be replaced
                       tooltipBorder: BorderSide(color: Styles().colors.dividerLine, width: 1.0),
                       getTooltipItem: getTooltipItem,
                       // fitInsideVertically: true,

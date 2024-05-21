@@ -29,7 +29,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:weekday_selector/weekday_selector.dart';
+// import 'package:weekday_selector/weekday_selector.dart';
 
 class WellnessToDoItemDetailPanel extends StatefulWidget  implements AnalyticsPageAttributes {
   final String? itemId;
@@ -125,7 +125,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
             Stack(children: [
               Column(children: [
                 _buildRecurringContainer(),
-                _buildWeekdaySelectorContainer(),
+                // _buildWeekdaySelectorContainer(), //TODO: Replace this library
                 _buildDueDateContainer(),
                 _buildEndDateContainer(),
                 _buildDueTimeContainer(),
@@ -304,26 +304,26 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     );
   }
 
-  Widget _buildWeekdaySelectorContainer(){
-    return Visibility(
-        visible: _selectedRecurringType == "Weekdays",
-        child: Padding(
-            padding: EdgeInsets.only(top: 17),
-            child: WeekdaySelector(
-              color:  Styles().colors.mediumGray,
-              selectedFillColor: Styles().colors.fillColorPrimary,
-              selectedColor: Styles().colors.fillColorSecondary,
-              onChanged: (int day) {
-                setState(() {
-                  final index = day % 7;
-                  _weekdayValues[index] = !_weekdayValues[index];
-                });
-              },
-              values: _weekdayValues,
-            )
-        )
-    );
-  }
+  // Widget _buildWeekdaySelectorContainer(){
+  //   return Visibility(
+  //       visible: _selectedRecurringType == "Weekdays",
+  //       child: Padding(
+  //           padding: EdgeInsets.only(top: 17),
+  //           child: WeekdaySelector(
+  //             color:  Styles().colors.mediumGray,
+  //             selectedFillColor: Styles().colors.fillColorPrimary,
+  //             selectedColor: Styles().colors.fillColorSecondary,
+  //             onChanged: (int day) {
+  //               setState(() {
+  //                 final index = day % 7;
+  //                 _weekdayValues[index] = !_weekdayValues[index];
+  //               });
+  //             },
+  //             values: _weekdayValues,
+  //           )
+  //       )
+  //   );
+  // }
 
   Widget _buildRecurringContainer(){
     return Padding(

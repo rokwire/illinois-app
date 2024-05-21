@@ -27,7 +27,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.4
-  intl: ^0.18.0
+  intl: ^0.19.0
   http: ^0.13.3
   flutter_widget_from_html: ^0.9.1
   geolocator: ^9.0.2
@@ -56,15 +56,15 @@ dependencies:
   just_audio: ^0.9.21
   flutter_barcode_scanner: ^2.0.0
   confetti: ^0.7.0
-  flutter_colorpicker: ^1.0.3
+  flutter_colorpicker: ^1.1.0
   in_app_review: ^2.0.4
   speech_to_text: ^6.1.1
   visibility_detector: ^0.4.0+2
   table_calendar: ^3.0.9
   flutter_beep: ^1.0.0
   flutter_pdfview: ^1.3.2
-  fl_chart: ^0.62.0
-#  font_awesome_flutter: '>= 4.7.0' # comment if published plugin is used
+  fl_chart: ^0.68.0
+  font_awesome_flutter: '>= 4.7.0' # comment if published plugin is used
 # google_maps_flutter: ^2.2.5
 
   rokwire_plugin:
@@ -81,7 +81,7 @@ dependencies:
       path: packages/google_maps_flutter/google_maps_flutter
       ref: google_maps_flutter/add-poi-click-callback-60695
   record: ^4.4.4
-  weekday_selector: ^1.1.0
+#  weekday_selector: ^1.1.0
 
 # google_maps_flutter:
 #   git:
