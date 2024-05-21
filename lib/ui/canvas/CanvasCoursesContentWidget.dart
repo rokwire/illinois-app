@@ -69,16 +69,16 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
 
   Widget _buildContent() {
     if (Connectivity().isOffline) {
-      return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.offline.error.msg', 'My Gies Canvas Courses not available while offline.'),);
+      return _buildMessageContent(Localization().getStringEx('panel.gies_canvas_courses.load.offline.error.msg', 'My Gies Canvas Courses not available while offline.'),);
     }
     else if (!Auth2().isOidcLoggedIn) {
-      return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.logged_out.error.msg', 'You need to be logged in with your NetID to access My Gies Canvas Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'),);
+      return _buildMessageContent(Localization().getStringEx('panel.gies_canvas_courses.load.logged_out.error.msg', 'You need to be logged in with your NetID to access My Gies Canvas Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'),);
     }
     else if (_courses == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.failed.error.msg', 'Unable to load courses.'),);
+      return _buildMessageContent(Localization().getStringEx('panel.gies_canvas_courses.load.failed.error.msg', 'Unable to load courses.'),);
     }
     else if (_courses?.isEmpty ?? true) {
-      return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.empty.error.msg', 'You do not appear to be enrolled in any Gies Canvas courses.'),);
+      return _buildMessageContent(Localization().getStringEx('panel.gies_canvas_courses.load.empty.error.msg', 'You do not appear to be enrolled in any Gies Canvas courses.'),);
     }
     else {
       return _buildCoursesContent();

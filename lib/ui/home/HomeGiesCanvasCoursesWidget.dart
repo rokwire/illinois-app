@@ -17,24 +17,24 @@ import 'package:illinois/ui/canvas/CanvasCourseHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasWidgets.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 
-class HomeCanvasCoursesWidget extends StatefulWidget {
+class HomeGiesCanvasCoursesWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
 
-  HomeCanvasCoursesWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+  HomeGiesCanvasCoursesWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
   static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home.canvas_courses.header.label', 'My Gies Canvas Courses');
+  static String get title => Localization().getStringEx('widget.home.gies_canvas_courses.header.label', 'My Gies Canvas Courses');
   
   @override
-  _HomeCanvasCoursesWidgetState createState() => _HomeCanvasCoursesWidgetState();
+  _HomeGiesCanvasCoursesWidgetState createState() => _HomeGiesCanvasCoursesWidgetState();
 }
 
-class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> implements NotificationsListener {
+class _HomeGiesCanvasCoursesWidgetState extends State<HomeGiesCanvasCoursesWidget> implements NotificationsListener {
 
   List<CanvasCourse>? _courses;
 
@@ -81,7 +81,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
   Widget build(BuildContext context) {
 
     return HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: HomeCanvasCoursesWidget.title,
+      title: HomeGiesCanvasCoursesWidget.title,
       titleIconKey: 'courses',
       child: _buildContent(),
     );
@@ -89,16 +89,16 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
 
   Widget _buildContent() {
     if (Connectivity().isOffline) {
-      return HomeMessageCard(message: Localization().getStringEx('panel.canvas_courses.load.offline.error.msg', 'My Gies Canvas Courses not available while offline.'),);
+      return HomeMessageCard(message: Localization().getStringEx('panel.gies_canvas_courses.load.offline.error.msg', 'My Gies Canvas Courses not available while offline.'),);
     }
     else if (!Auth2().isOidcLoggedIn) {
-      return HomeMessageCard(message: Localization().getStringEx('panel.canvas_courses.load.logged_out.error.msg', 'You need to be logged in with your NetID to access My Gies Canvas Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'),);
+      return HomeMessageCard(message: Localization().getStringEx('panel.gies_canvas_courses.load.logged_out.error.msg', 'You need to be logged in with your NetID to access My Gies Canvas Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'),);
     }
     else if (_courses == null) {
-      return HomeMessageCard(message: Localization().getStringEx('panel.canvas_courses.load.failed.error.msg', 'Unable to load courses.'),);
+      return HomeMessageCard(message: Localization().getStringEx('panel.gies_canvas_courses.load.failed.error.msg', 'Unable to load courses.'),);
     }
     else if (_courses?.isEmpty ?? true) {
-      return HomeMessageCard(message: Localization().getStringEx('panel.canvas_courses.load.empty.error.msg', 'You do not appear to be enrolled in any Gies Canvas courses.'),);
+      return HomeMessageCard(message: Localization().getStringEx('panel.gies_canvas_courses.load.empty.error.msg', 'You do not appear to be enrolled in any Gies Canvas courses.'),);
     }
     else {
       return _buildCoursesContent();
@@ -136,8 +136,8 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
       ),
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => coursePages.length, centerWidget:
         LinkButton(
-          title: Localization().getStringEx('widget.home.canvas_courses.button.all.title', 'View All'),
-          hint: Localization().getStringEx('widget.home.canvas_courses.button.all.hint', 'Tap to view all courses'),
+          title: Localization().getStringEx('widget.home.gies_canvas_courses.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.gies_canvas_courses.button.all.hint', 'Tap to view all courses'),
           onTap: _onViewAll,
         ),
       ),

@@ -46,7 +46,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 enum AcademicsContent { events,
   gies_checklist, uiuc_checklist,
-  canvas_courses, medicine_courses, student_courses,
+  gies_canvas_courses, medicine_courses, student_courses,
   skills_self_evaluation, essential_skills_coach,
   todo_list, due_date_catalog, my_illini, appointments
 }
@@ -257,8 +257,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     if (initialContent == null) {
       if (_contentValues.contains(AcademicsContent.gies_checklist) && !_isCheckListCompleted(CheckList.giesOnboarding)) {
         initialContent = AcademicsContent.gies_checklist;
-      } else if (_contentValues.contains(AcademicsContent.canvas_courses)) {
-        initialContent = AcademicsContent.canvas_courses;
+      } else if (_contentValues.contains(AcademicsContent.gies_canvas_courses)) {
+        initialContent = AcademicsContent.gies_canvas_courses;
       } else if (_contentValues.contains(AcademicsContent.student_courses)) {
         initialContent = AcademicsContent.student_courses;
       }
@@ -271,8 +271,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       return AcademicsContent.gies_checklist;
     } else if (code == 'new_student_checklist') {
       return AcademicsContent.uiuc_checklist;
-    } else if (code == 'canvas_courses') {
-      return AcademicsContent.canvas_courses;
+    } else if (code == 'gies_canvas_courses') {
+      return AcademicsContent.gies_canvas_courses;
     } else if (code == 'medicine_courses') {
       return AcademicsContent.medicine_courses;
     } else if (code == 'student_courses') {
@@ -420,7 +420,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return CheckListContentWidget(contentKey: CheckList.giesOnboarding);
       case AcademicsContent.uiuc_checklist:
         return CheckListContentWidget(contentKey: CheckList.uiucOnboarding);
-      case AcademicsContent.canvas_courses:
+      case AcademicsContent.gies_canvas_courses:
         return CanvasCoursesContentWidget();
       case AcademicsContent.medicine_courses:
         return MedicineCoursesContentWidget();
@@ -461,8 +461,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return Localization().getStringEx('panel.academics.section.gies_checklist.label', 'iDegrees New Student Checklist');
       case AcademicsContent.uiuc_checklist:
         return Localization().getStringEx('panel.academics.section.uiuc_checklist.label', 'New Student Checklist');
-      case AcademicsContent.canvas_courses:
-        return Localization().getStringEx('panel.academics.section.canvas_courses.label', 'My Gies Canvas Courses');
+      case AcademicsContent.gies_canvas_courses:
+        return Localization().getStringEx('panel.academics.section.gies_canvas_courses.label', 'My Gies Canvas Courses');
       case AcademicsContent.medicine_courses:
         return Localization().getStringEx('panel.academics.section.medicine_courses.label', 'My College of Medicine Compliance');
       case AcademicsContent.student_courses:

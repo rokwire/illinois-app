@@ -132,7 +132,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyMapStateFarmWayfindingNotification,
       FirebaseMessaging.notifyAcademicsNotification,
       FirebaseMessaging.notifyAcademicsAppointmentsNotification,
-      FirebaseMessaging.notifyAcademicsCanvasCoursesNotification,
+      FirebaseMessaging.notifyAcademicsGiesCanvasCoursesNotification,
       FirebaseMessaging.notifyAcademicsDueDateCatalogNotification,
       FirebaseMessaging.notifyAcademicsEventsNotification,
       FirebaseMessaging.notifyAcademicsGiesChecklistNotification,
@@ -356,8 +356,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyAcademicsAppointmentsNotification) {
       _onFirebaseAcademicsNotification(AcademicsContent.appointments);
     }
-    else if (name == FirebaseMessaging.notifyAcademicsCanvasCoursesNotification) {
-      _onFirebaseAcademicsNotification(AcademicsContent.canvas_courses);
+    else if (name == FirebaseMessaging.notifyAcademicsGiesCanvasCoursesNotification) {
+      _onFirebaseAcademicsNotification(AcademicsContent.gies_canvas_courses);
     }
     else if (name == FirebaseMessaging.notifyAcademicsDueDateCatalogNotification) {
       _onFirebaseAcademicsNotification(AcademicsContent.due_date_catalog);

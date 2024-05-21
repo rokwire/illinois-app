@@ -17,7 +17,7 @@ Map<String, String> deeplinkNameMap = {
   'academics.gies_checklist': 'iDegrees New Student Checklist',
   'academics.uiuc_checklist': 'New Student Checklist',
   'academics.events': 'Academic Events',
-  'academics.canvas_courses': 'My Gies Canvas Courses',
+  'academics.gies_canvas_courses': 'My Gies Canvas Courses',
   'academics.medicine_courses': 'My College of Medicine Compliance',
   'academics.student_courses': 'My Courses',
   'academics.skills_self_evaluation': 'Skills Self-Evaluation',
