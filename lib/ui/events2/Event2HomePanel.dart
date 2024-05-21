@@ -675,15 +675,15 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
               Event2ImageCommandButton(Styles().images.getImage('share'),
                 label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
                 hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
-                contentPadding: EdgeInsets.only(left: 16, right: _canClearFilters ? 8 : 16, top: 12, bottom: 12),
+                contentPadding: EdgeInsets.only(left: 16, right: _canClearFilters ? (8 + 2) : 16, top: 12, bottom: 12),
                 onTap: _onShareFilters
               ),
             ),
             Visibility(visible: _canClearFilters, child:
-              Event2ImageCommandButton(Styles().images.getImage('close'),
+              Event2ImageCommandButton(Styles().images.getImage('close'), // size: 14
                 label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
                 hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
-                contentPadding: EdgeInsets.only(left: 8, right: 16, top: 12, bottom: 12),
+                contentPadding: EdgeInsets.only(left: 8 + 2, right: 16 + 2, top: 12, bottom: 12),
                 onTap: _onClearFilters
               ),
             ),
