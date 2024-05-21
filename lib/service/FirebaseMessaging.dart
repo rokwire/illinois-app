@@ -72,6 +72,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyMapStateFarmWayfindingNotification         = '$notifyBase.map.state_farm_wayfinding';
   static const String notifyAcademicsNotification                      = "$notifyBase.academics";
   static const String notifyAcademicsAppointmentsNotification          = "$notifyBase.academics.appointments";
+  static const String notifyAcademicsCanvasCoursesNotification         = "$notifyBase.academics.canvas_courses";
   static const String notifyAcademicsGiesCanvasCoursesNotification     = "$notifyBase.academics.gies_canvas_courses";
   static const String notifyAcademicsDueDateCatalogNotification        = "$notifyBase.academics.due_date_catalog";
   static const String notifyAcademicsEventsNotification                = "$notifyBase.academics.events";
@@ -212,6 +213,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeAcademicsGiesCheckilst = 'academics.gies_checklist';
   static const String payloadTypeAcademicsUiucCheckilst = 'academics.uiuc_checklist';
   static const String payloadTypeAcademicsEvents = 'academics.events';
+  static const String payloadTypeAcademicsCanvasCourses = 'academics.canvas_courses';
   static const String payloadTypeAcademicsGiesCanvasCourses = 'academics.gies_canvas_courses';
   static const String payloadTypeAcademicsMedicineCourses = 'academics.medicine_courses';
   static const String payloadTypeAcademicsStudentCourses = 'academics.student_courses';
@@ -450,6 +452,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
     else if (type == payloadTypeAcademicsAppointments) {
       NotificationService().notify(notifyAcademicsAppointmentsNotification, data);
+    }
+    else if (type == payloadTypeAcademicsCanvasCourses) {
+      NotificationService().notify(notifyAcademicsCanvasCoursesNotification, data);
     }
     else if (type == payloadTypeAcademicsGiesCanvasCourses) {
       NotificationService().notify(notifyAcademicsGiesCanvasCoursesNotification, data);
