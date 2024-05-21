@@ -672,7 +672,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
               ),
             ),
             Visibility(visible: _canShareFilters, child:
-              Event2ImageCommandButton(Styles().images.getImage('qr', weight: 'regular', size: 18),
+              Event2ImageCommandButton(Styles().images.getImage('share', weight: 'regular', size: 18),
                 label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
                 hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
                 contentPadding: EdgeInsets.only(left: 16, right: _canClearFilters ? 8 : 16, top: 12, bottom: 12),
