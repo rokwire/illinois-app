@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Board of Trustees of the University of Illinois.
+ * Copyright 2020 Board of Trustees of the University of Illinois.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,14 +28,14 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class CanvasCoursesContentWidget extends StatefulWidget {
-  CanvasCoursesContentWidget();
+class GiesCanvasCoursesContentWidget extends StatefulWidget {
+  GiesCanvasCoursesContentWidget();
 
   @override
-  _CanvasCoursesContentWidgetState createState() => _CanvasCoursesContentWidgetState();
+  _GiesCanvasCoursesContentWidgetState createState() => _GiesCanvasCoursesContentWidgetState();
 }
 
-class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget> implements NotificationsListener {
+class _GiesCanvasCoursesContentWidgetState extends State<GiesCanvasCoursesContentWidget> implements NotificationsListener {
   List<CanvasCourse>? _courses;
 
   @override
@@ -69,16 +69,16 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
 
   Widget _buildContent() {
     if (Connectivity().isOffline) {
-      return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.offline.error.msg', 'My Canvas Courses not available while offline.'));
+      return _buildMessageContent(Localization().getStringEx('panel.gies_canvas_courses.load.offline.error.msg', 'My Gies Canvas Courses not available while offline.'),);
     }
     else if (!Auth2().isOidcLoggedIn) {
-      return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.logged_out.error.msg', 'You need to be logged in with your NetID to access My Canvas Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'),);
+      return _buildMessageContent(Localization().getStringEx('panel.gies_canvas_courses.load.logged_out.error.msg', 'You need to be logged in with your NetID to access My Gies Canvas Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'),);
     }
     else if (_courses == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.failed.error.msg', 'Unable to load courses.'));
+      return _buildMessageContent(Localization().getStringEx('panel.gies_canvas_courses.load.failed.error.msg', 'Unable to load courses.'),);
     }
     else if (_courses?.isEmpty ?? true) {
-      return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.empty.error.msg', 'You do not appear to be enrolled in any Canvas courses.'));
+      return _buildMessageContent(Localization().getStringEx('panel.gies_canvas_courses.load.empty.error.msg', 'You do not appear to be enrolled in any Gies Canvas courses.'),);
     }
     else {
       return _buildCoursesContent();
@@ -113,10 +113,10 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
   Widget _buildCenterWidget({required Widget widget}) {
     return Center(
         child: Column(children: <Widget>[
-          Container(height: MediaQuery.of(context).size.height / 5),
-          widget,
-          Container(height: MediaQuery.of(context).size.height / 5 * 3)
-        ]));
+      Container(height: MediaQuery.of(context).size.height / 5),
+      widget,
+      Container(height: MediaQuery.of(context).size.height / 5 * 3)
+    ]));
   }
 
   void _onTapCourse(int courseId) {

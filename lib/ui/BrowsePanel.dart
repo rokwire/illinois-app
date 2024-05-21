@@ -26,7 +26,7 @@ import 'package:illinois/ui/academics/AcademicsAppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
-import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
+import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
@@ -523,7 +523,7 @@ class _BrowseEntry extends StatelessWidget {
       case "academics.essential_skills_coach":_onTapEssentialSkillCoach(context); break;
       case "academics.wellness_todo":         _onTapAcademicsToDo(context); break;
       case "academics.student_courses":       _onTapStudentCourses(context); break;
-      case "academics.canvas_courses":        _onTapCanvasCourses(context); break;
+      case "academics.gies_canvas_courses":   _onTapGiesCanvasCourses(context); break;
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
       case "academics.due_date_catalog":      _onTapDueDateCatalog(context); break;
       case "academics.appointments":          _onTapAcademicsAppointments(context); break;
@@ -635,9 +635,9 @@ class _BrowseEntry extends StatelessWidget {
     AcademicsHomePanel.push(context, AcademicsContent.todo_list);
   }
 
-  void _onTapCanvasCourses(BuildContext context) {
+  void _onTapGiesCanvasCourses(BuildContext context) {
     Analytics().logSelect(target: "Canvas Courses");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCoursesListPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GiesCanvasCoursesListPanel()));
   }
 
   void _onTapStudentCourses(BuildContext context) {

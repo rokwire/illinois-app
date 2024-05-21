@@ -6,6 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [6.0.1] - 2024-05-21
+### Changed
+- Cleaned up "share" (ex. "qr") icon, align icon buttons in Event2HomePanel [#4041](https://github.com/rokwire/illinois-app/issues/4041).
+### Added
+- "My Canvas Courses" in the Academics panel [#4071](https://github.com/rokwire/illinois-app/issues/4071).
+
+## [6.0.0] - 2024-05-20
+- Increase version number to 6.0 [#4069](https://github.com/rokwire/illinois-app/issues/4069).
+
+## [5.2.11] - 2024-05-16
+### Changed
+- Updated messaged displayed on Event2DetailPanel Register/Unregister [#4042](https://github.com/rokwire/illinois-app/issues/4042).
+- Sort Academics dropdown items lexicographically [#4018](https://github.com/rokwire/illinois-app/issues/4018).
+
+## [5.2.10] - 2024-05-15
+### Changed
+- Disable sub-reply with option to enable it again [#4049](https://github.com/rokwire/illinois-app/issues/4049).
+- Feeds section in Browse renamed to Illini News [#4060](https://github.com/rokwire/illinois-app/issues/4060).
+- Clean up share panels from Events and Groups [#4039](https://github.com/rokwire/illinois-app/issues/4039).
+### Added
+- Added NewsAtIllinois twitter account [#4060](https://github.com/rokwire/illinois-app/issues/4060).
+
 ## [5.2.9] - 2024-05-14
 ### Added
 - Added Clear button to event filter bar [#4041](https://github.com/rokwire/illinois-app/issues/4041).

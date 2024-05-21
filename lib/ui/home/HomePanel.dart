@@ -35,7 +35,7 @@ import 'package:illinois/ui/home/HomeAppHelpWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsEventsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsNewsWidget.dart';
 import 'package:illinois/ui/home/HomeCampusSafetyResourcesWidget.dart';
-import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
+import 'package:illinois/ui/home/HomeGiesCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeCheckListWidget.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomeDailyIlliniWidget.dart';
@@ -223,13 +223,13 @@ class HomePanel extends StatefulWidget {
         return HomeCheckListWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, contentKey: CheckList.uiucOnboarding, );
       }
     }
-    else if (code == 'canvas_courses') {
+    else if (code == 'gies_canvas_courses') {
       if (title) {
-        return HomeCanvasCoursesWidget.title;
+        return HomeGiesCanvasCoursesWidget.title;
       } else if (handle) {
-        return HomeCanvasCoursesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+        return HomeGiesCanvasCoursesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
-        return HomeCanvasCoursesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+        return HomeGiesCanvasCoursesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'student_courses') {

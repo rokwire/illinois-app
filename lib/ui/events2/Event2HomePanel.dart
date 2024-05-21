@@ -19,7 +19,7 @@ import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
-import 'package:illinois/ui/events2/Event2QrCodePanel.dart';
+import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/events2/Event2SearchPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
@@ -672,18 +672,18 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
               ),
             ),
             Visibility(visible: _canShareFilters, child:
-              Event2ImageCommandButton(Styles().images.getImage('qr', weight: 'regular', size: 18),
-                label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
-                hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
-                contentPadding: EdgeInsets.only(left: 16, right: _canClearFilters ? 8 : 16, top: 12, bottom: 12),
+              Event2ImageCommandButton(Styles().images.getImage('share'),
+                label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
+                hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
+                contentPadding: EdgeInsets.only(left: 16, right: _canClearFilters ? (8 + 2) : 16, top: 12, bottom: 12),
                 onTap: _onShareFilters
               ),
             ),
             Visibility(visible: _canClearFilters, child:
-              Event2ImageCommandButton(Styles().images.getImage('close'),
-                label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
-                hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
-                contentPadding: EdgeInsets.only(left: 8, right: 16, top: 12, bottom: 12),
+              Event2ImageCommandButton(Styles().images.getImage('close'), // size: 14
+                label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
+                hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
+                contentPadding: EdgeInsets.only(left: 8 + 2, right: 16 + 2, top: 12, bottom: 12),
                 onTap: _onClearFilters
               ),
             ),
@@ -1050,7 +1050,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   void _onShareFilters() {
     Analytics().logSelect(target: 'Share Filters');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2QrCodePanel.fromFilterParam(_currentFilterParam)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromEventFilterParam(_currentFilterParam)));
   }
 
   bool get _canClearFilters =>

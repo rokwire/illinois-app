@@ -2172,8 +2172,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
     if (modified) {
       bool? result = await Event2Popup.showPrompt(context,
-        Localization().getStringEx('panel.event2.create.exit.prompt.title', 'Exit'),
-        Localization().getStringEx('panel.event2.create.exit.prompt.message', 'Exit and loose your changes?'),
+        title: Localization().getStringEx('panel.event2.create.exit.prompt.title', 'Exit'),
+        message: Localization().getStringEx('panel.event2.create.exit.prompt.message', 'Exit and loose your changes?'),
       );
       return (result == true);
     }
