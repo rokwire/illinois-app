@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+- Cleaned up "share" (ex. "qr") icon, align icon buttons in Event2HomePanel [#4041](https://github.com/rokwire/illinois-app/issues/4041).
 
 ## [6.0.0] - 2024-05-20
 - Increase version number to 6.0 [#4069](https://github.com/rokwire/illinois-app/issues/4069).
