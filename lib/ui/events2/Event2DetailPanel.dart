@@ -971,7 +971,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
           negativeButtonTitle: Localization().getStringEx("dialog.no.title", "No"),
         ).then((bool? result) {
           if (result == true) {
-            _onFavorite();
+            Auth2().prefs?.setFavorite(_event, true);
           }
         });
       }
