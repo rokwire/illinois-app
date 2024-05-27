@@ -94,6 +94,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogEvent                           = "event";
   static const String   LogEventName                       = "name";
   static const String   LogEventPageName                   = "page";
+  static const String   LogEventPageFeature                = "feature";
 
   static const List<String> DefaultAttributes = [
     LogStdTimestampName,
@@ -128,6 +129,58 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     LogStdStudentFirstYear,
   ];
 
+  // Features
+  static const AnalyticsFeature   LogFeatureAcademics                = AnalyticsFeature("Academics", key: "Academic");
+  static const AnalyticsFeature   LogFeatureAppHelp                  = AnalyticsFeature("App Help");
+  static const AnalyticsFeature   LogFeatureAppointments             = AnalyticsFeature("Appointments", key: "Appointment");
+  static const AnalyticsFeature   LogFeatureAthletics                = AnalyticsFeature("Big 10 Athletics", key: "Appointment");
+  static const AnalyticsFeature   LogFeatureGuide                    = AnalyticsFeature("Campus Guide", key: "Guide");
+  static const AnalyticsFeature   LogFeatureDining                   = AnalyticsFeature("Dining");
+  static const AnalyticsFeature   LogFeatureEvents                   = AnalyticsFeature("Events", key: "Event");
+  static const AnalyticsFeature   LogFeatureFavorites                = AnalyticsFeature("Favorites", key: "Home");
+  static const AnalyticsFeature   LogFeatureFeeds                    = AnalyticsFeature("Feeds");
+  static const AnalyticsFeature   LogFeatureGroups                   = AnalyticsFeature("Groups", key: "Group");
+  static const AnalyticsFeature   LogFeatureMap                      = AnalyticsFeature("Map");
+  static const AnalyticsFeature   LogFeatureMTD                      = AnalyticsFeature("MTD Buses", key: "MTD");
+  static const AnalyticsFeature   LogFeatureNotifications            = AnalyticsFeature("Notifications");
+  static const AnalyticsFeature   LogFeaturePolls                    = AnalyticsFeature("Polls", key: "Poll");
+  static const AnalyticsFeature   LogFeatureProfile                  = AnalyticsFeature("Profile");
+  static const AnalyticsFeature   LogFeatureResearchProject          = AnalyticsFeature("Research at Illinois");
+  static const AnalyticsFeature   LogFeatureSettings                 = AnalyticsFeature("Settings");
+  static const AnalyticsFeature   LogFeatureWallet                   = AnalyticsFeature("Wallet");
+  static const AnalyticsFeature   LogFeatureWalletBusPass            = AnalyticsFeature("Wallet: Bus Pass");
+  static const AnalyticsFeature   LogFeatureWalletIlliniCash         = AnalyticsFeature("Wallet: Illini Cash");
+  static const AnalyticsFeature   LogFeatureWalletIlliniID           = AnalyticsFeature("Wallet: Illini ID");
+  static const AnalyticsFeature   LogFeatureWalletMealPlan           = AnalyticsFeature("Wallet: Meal Plan");
+  static const AnalyticsFeature   LogFeatureWellness                 = AnalyticsFeature("Wellness");
+
+  static const List<AnalyticsFeature> _features = <AnalyticsFeature>[
+    LogFeatureAcademics,
+    LogFeatureAppHelp,
+    LogFeatureAppointments,
+    LogFeatureAthletics,
+    LogFeatureGuide,
+    LogFeatureDining,
+    LogFeatureEvents,
+    LogFeatureFavorites,
+    LogFeatureFeeds,
+    LogFeatureGroups,
+    LogFeatureMap,
+    LogFeatureMTD,
+    LogFeatureNotifications,
+    LogFeaturePolls,
+    LogFeatureProfile,
+    LogFeatureResearchProject,
+    LogFeatureSettings,
+    LogFeatureWallet,
+    LogFeatureWalletBusPass,
+    LogFeatureWalletIlliniCash,
+    LogFeatureWalletIlliniID,
+    LogFeatureWalletMealPlan,
+    LogFeatureWellness,
+  ];
+
+
   // Livecycle Event
   // { "event" : { "name":"livecycle", "livecycle_event":"..." } }
   static const String   LogLivecycleEventName              = "livecycle";
@@ -141,7 +194,9 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   // { "event" : { "name":"page", "page":"...", "page_name":"...", "previous_page_name":"" } }
   static const String   LogPageEventName                   = "page";
   static const String   LogPageName                        = "page_name";
+  static const String   LogPageFeature                     = "page_feature";
   static const String   LogPagePreviousName                = "previous_page_name";
+  static const String   LogPagePreviousFeature             = "previous_page_feature";
 
   // Select Event
   // "event" : { "name":"select", "page":"...", "target":"..." } }
@@ -318,6 +373,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   // Data
 
   String?               _currentPageName;
+  AnalyticsFeature?     _currentPageFeature;
   Map<String, dynamic>? _currentPageAttributes;
   String?               _connectionName;
   String?               _locationServices;
@@ -568,17 +624,32 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       }
       
       String? panelName;
+      AnalyticsFeature? panelFeature;
       Map<String, dynamic>? panelAttributes;
       if (panel is AnalyticsPage) {
         panelName = (panel as AnalyticsPage).analyticsPageName;
+        panelFeature = (panel as AnalyticsPage).analyticsFeature;
         panelAttributes = (panel as AnalyticsPage).analyticsPageAttributes;
       }
       if (panelName == null) {
         panelName = panel.runtimeType.toString();
       }
+      if (panelFeature == null) {
+        panelFeature = _featureOfPanel(panelName);
+      }
 
-      logPage(name: panelName, attributes: panelAttributes);
+      logPage(name: panelName, feature: panelFeature, attributes: panelAttributes);
     }
+  }
+
+  static AnalyticsFeature? _featureOfPanel(String panelName) {
+    String panelNameCase = panelName.toLowerCase();
+    for (AnalyticsFeature feature in _features) {
+      if (panelNameCase.contains(feature.key.toLowerCase())) {
+        return feature;
+      }
+    }
+    return null;
   }
 
   // Location Services
@@ -650,6 +721,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     if (FlexUI().isAnalyticsAvailable) {
 
       event[LogEventPageName] = _currentPageName;
+      event[LogEventPageFeature] = _currentPageFeature?.name;
 
       Map<String, dynamic> analyticsEvent = {
         LogEvent:            event,
@@ -754,33 +826,33 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     }
   }
 
-  void logLivecycle({String? name}) {
+  void logLivecycle({String? name}) =>
     logEvent({
       LogEventName          : LogLivecycleEventName,
       LogLivecycleName      : name,
     });
-  }
 
-  String? get currentPageName {
-    return _currentPageName;
-  }
+  String? get currentPageName => _currentPageName;
+  AnalyticsFeature? get currentPageFeature => _currentPageFeature;
+  Map<String, dynamic>? get currentPageAttributes => _currentPageAttributes;
 
-  Map<String, dynamic>? get currentPageAttributes {
-    return _currentPageAttributes;
-  }
-
-  void logPage({String? name,  Map<String, dynamic>? attributes}) {
+  void logPage({String? name, AnalyticsFeature? feature,  Map<String, dynamic>? attributes}) {
 
     // Update Current page name
     String? previousPageName = _currentPageName;
-    _currentPageName        = name;
-    _currentPageAttributes  = attributes;
+    AnalyticsFeature? previousPageFeature = _currentPageFeature;
+
+    _currentPageName         = name;
+    _currentPageFeature      = feature;
+    _currentPageAttributes   = attributes;
 
     // Build event data
     Map<String, dynamic> event = {
-      LogEventName          : LogPageEventName,
-      LogPageName           : name,
-      LogPagePreviousName   : previousPageName
+      LogEventName           : LogPageEventName,
+      LogPageName            : name,
+      LogPageFeature         : feature?.name,
+      LogPagePreviousName    : previousPageName,
+      LogPagePreviousFeature : previousPageFeature?.name,
     };
 
     // Add optional attribute, if applied
@@ -1072,8 +1144,19 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
 }
 
 
+class AnalyticsFeature {
+  final String name;
+  final String? _key;
+
+  const AnalyticsFeature(this.name, { String? key}) :
+    _key = key;
+
+  String get key => _key ?? name;
+}
+
 abstract class AnalyticsPage {
   String? get analyticsPageName => null;
+  AnalyticsFeature? get analyticsFeature => null;
   Map<String, dynamic>? get analyticsPageAttributes => null;
 }
 
