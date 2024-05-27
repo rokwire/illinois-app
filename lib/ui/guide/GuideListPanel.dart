@@ -29,7 +29,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class GuideListPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GuideListPanel extends StatefulWidget with AnalyticsPage {
   final String? guide;
   final String? category;
   final GuideSection? section;

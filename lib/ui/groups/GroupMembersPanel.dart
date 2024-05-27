@@ -35,7 +35,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class GroupMembersPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GroupMembersPanel extends StatefulWidget with AnalyticsPage {
   final Group? group;
 
   String? get groupId => group?.id;

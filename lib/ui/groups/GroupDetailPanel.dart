@@ -67,7 +67,7 @@ import 'GroupSettingsPanel.dart';
 
 enum _DetailTab { Events, Posts, Messages, Polls, About }
 
-class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GroupDetailPanel extends StatefulWidget with AnalyticsPage {
   static final String routeName = 'group_detail_content_panel';
 
   final Group? group;

@@ -29,7 +29,7 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Polls.dart' as illinois;
 
-class GroupPollListPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GroupPollListPanel extends StatefulWidget with AnalyticsPage {
   final Group group;
 
   GroupPollListPanel({required this.group});

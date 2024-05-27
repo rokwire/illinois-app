@@ -27,7 +27,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class GroupMembershipRequestPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GroupMembershipRequestPanel extends StatefulWidget with AnalyticsPage {
   final Group? group;
 
   GroupMembershipRequestPanel({this.group});

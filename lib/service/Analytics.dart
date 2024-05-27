@@ -568,16 +568,13 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       }
       
       String? panelName;
-      if (panel is AnalyticsPageName) {
-        panelName = (panel as AnalyticsPageName).analyticsPageName;
+      Map<String, dynamic>? panelAttributes;
+      if (panel is AnalyticsPage) {
+        panelName = (panel as AnalyticsPage).analyticsPageName;
+        panelAttributes = (panel as AnalyticsPage).analyticsPageAttributes;
       }
       if (panelName == null) {
         panelName = panel.runtimeType.toString();
-      }
-
-      Map<String, dynamic>? panelAttributes;
-      if (panel is AnalyticsPageAttributes) {
-        panelAttributes = (panel as AnalyticsPageAttributes).analyticsPageAttributes;
       }
 
       logPage(name: panelName, attributes: panelAttributes);
@@ -1075,12 +1072,9 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
 }
 
 
-abstract class AnalyticsPageName {
-  String? get analyticsPageName;
-}
-
-abstract class AnalyticsPageAttributes {
-  Map<String, dynamic>? get analyticsPageAttributes;
+abstract class AnalyticsPage {
+  String? get analyticsPageName => null;
+  Map<String, dynamic>? get analyticsPageAttributes => null;
 }
 
 class _TicketWidget extends StatefulWidget {

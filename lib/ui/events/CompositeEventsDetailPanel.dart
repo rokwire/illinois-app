@@ -51,7 +51,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CompositeEventsDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class CompositeEventsDetailPanel extends StatefulWidget with AnalyticsPage {
 
   final Event? parentEvent;
   final Core.Position? initialLocationData;

@@ -44,7 +44,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
-class ExploreEventDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class ExploreEventDetailPanel extends StatefulWidget with AnalyticsPage {
   final Event? event;
   final bool previewMode;
   final Core.Position? initialLocationData;

@@ -44,7 +44,7 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class Event2DetailPanel extends StatefulWidget with AnalyticsPage {
   final Event2? event;
   final String? eventId;
   final Event2? superEvent;

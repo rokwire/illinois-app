@@ -30,7 +30,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
-class GroupMemberPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GroupMemberPanel extends StatefulWidget with AnalyticsPage {
   final Group group;
   final String memberId;
 

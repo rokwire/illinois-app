@@ -22,7 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:rokwire_plugin/ui/panels/web_panel.dart' as rokwire;
 
-class WebPanel extends rokwire.WebPanel implements AnalyticsPageName, AnalyticsPageAttributes {
+class WebPanel extends rokwire.WebPanel with AnalyticsPage {
   final String? analyticsName;
   final Map<String, dynamic>? analyticsSource;
 

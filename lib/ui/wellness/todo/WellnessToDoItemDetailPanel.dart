@@ -31,7 +31,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:weekday_selector/weekday_selector.dart';
 
-class WellnessToDoItemDetailPanel extends StatefulWidget  implements AnalyticsPageAttributes {
+class WellnessToDoItemDetailPanel extends StatefulWidget  with AnalyticsPage {
   final String? itemId;
   final WellnessToDoItem? item;
   final bool? optionalFieldsExpanded;

@@ -48,7 +48,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
-class ExploreDiningDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class ExploreDiningDetailPanel extends StatefulWidget with AnalyticsPage {
   final Dining? dining;
   final Core.Position? initialLocationData;
 

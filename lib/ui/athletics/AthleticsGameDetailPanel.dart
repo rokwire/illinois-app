@@ -39,7 +39,7 @@ import 'package:rokwire_plugin/ui/widgets/tile_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class AthleticsGameDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class AthleticsGameDetailPanel extends StatefulWidget with AnalyticsPage {
   final Game? game;
 
   final String? gameId;

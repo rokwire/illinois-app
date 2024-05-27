@@ -39,7 +39,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:rokwire_plugin/model/group.dart';
 
-class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttributes {
+class ExploreDetailPanel extends StatelessWidget with AnalyticsPage {
   final Explore? explore;
   final Position? initialLocationData;
   final Group? browseGroup;

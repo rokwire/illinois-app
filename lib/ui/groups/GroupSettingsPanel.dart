@@ -45,7 +45,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class GroupSettingsPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GroupSettingsPanel extends StatefulWidget with AnalyticsPage {
   final Group? group;
   final GroupStats? groupStats;
   

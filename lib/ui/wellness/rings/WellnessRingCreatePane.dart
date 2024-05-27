@@ -12,7 +12,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-class WellnessRingCreatePanel extends StatefulWidget implements AnalyticsPageAttributes {
+class WellnessRingCreatePanel extends StatefulWidget with AnalyticsPage {
   final WellnessRingDefinition? data;
   final String? examplesText;
   final bool initialCreation;

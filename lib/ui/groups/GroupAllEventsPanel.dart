@@ -17,7 +17,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
-class GroupAllEventsPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GroupAllEventsPanel extends StatefulWidget with AnalyticsPage {
   final Group? group;
 
   const GroupAllEventsPanel({Key? key, this.group}) : super(key: key);

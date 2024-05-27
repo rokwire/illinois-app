@@ -26,7 +26,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
-class GuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GuideDetailPanel extends StatefulWidget with AnalyticsPage {
   final String? favoriteKey;
   final String? guideEntryId;
   final Map<String, dynamic>? guideEntry;

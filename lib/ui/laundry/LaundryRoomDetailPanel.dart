@@ -34,7 +34,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
-class LaundryRoomDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class LaundryRoomDetailPanel extends StatefulWidget with AnalyticsPage {
   final LaundryRoom room;
 
   LaundryRoomDetailPanel({required this.room});

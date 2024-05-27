@@ -38,7 +38,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
-class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GroupPostDetailPanel extends StatefulWidget with AnalyticsPage {
   final GroupPost? post;
   final GroupPost? focusedReply;
   final List<GroupPost>? replyThread;
