@@ -614,42 +614,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     }
     catch(e) { print(e.toString()); }
 
-    if (panel != null) {
-      
-      if (panel is RootPanel) {
-        Widget? tabPanel = RootPanel.stateKey.currentState?.currentTabPanel;
-        if (tabPanel != null) {
-          panel = tabPanel;
-        }
-      }
-      
-      String? panelName;
-      AnalyticsFeature? panelFeature;
-      Map<String, dynamic>? panelAttributes;
-      if (panel is AnalyticsPage) {
-        panelName = (panel as AnalyticsPage).analyticsPageName;
-        panelFeature = (panel as AnalyticsPage).analyticsFeature;
-        panelAttributes = (panel as AnalyticsPage).analyticsPageAttributes;
-      }
-      if (panelName == null) {
-        panelName = panel.runtimeType.toString();
-      }
-      if (panelFeature == null) {
-        panelFeature = _featureOfPanel(panelName);
-      }
-
-      logPage(name: panelName, feature: panelFeature, attributes: panelAttributes);
-    }
-  }
-
-  static AnalyticsFeature? _featureOfPanel(String panelName) {
-    String panelNameCase = panelName.toLowerCase();
-    for (AnalyticsFeature feature in _features) {
-      if (panelNameCase.contains(feature.key.toLowerCase())) {
-        return feature;
-      }
-    }
-    return null;
+    logPageWidget(panel);
   }
 
   // Location Services
@@ -836,6 +801,34 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   AnalyticsFeature? get currentPageFeature => _currentPageFeature;
   Map<String, dynamic>? get currentPageAttributes => _currentPageAttributes;
 
+  void logPageWidget(Widget? panel) {
+    if (panel != null) {
+      if (panel is RootPanel) {
+        Widget? tabPanel = RootPanel.stateKey.currentState?.currentTabPanel;
+        if (tabPanel != null) {
+          panel = tabPanel;
+        }
+      }
+
+      String? panelName;
+      AnalyticsFeature? panelFeature;
+      Map<String, dynamic>? panelAttributes;
+      if (panel is AnalyticsPage) {
+        panelName = (panel as AnalyticsPage).analyticsPageName;
+        panelFeature = (panel as AnalyticsPage).analyticsFeature;
+        panelAttributes = (panel as AnalyticsPage).analyticsPageAttributes;
+      }
+      if (panelName == null) {
+        panelName = panel.runtimeType.toString();
+      }
+      if (panelFeature == null) {
+        panelFeature = _featureOfPanel(panelName);
+      }
+
+      logPage(name: panelName, feature: panelFeature, attributes: panelAttributes);
+    }
+  }
+
   void logPage({String? name, AnalyticsFeature? feature,  Map<String, dynamic>? attributes}) {
 
     // Update Current page name
@@ -862,6 +855,16 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
 
     // Log the event
     logEvent(event);
+  }
+
+  static AnalyticsFeature? _featureOfPanel(String panelName) {
+    String panelNameCase = panelName.toLowerCase();
+    for (AnalyticsFeature feature in _features) {
+      if (panelNameCase.contains(feature.key.toLowerCase())) {
+        return feature;
+      }
+    }
+    return null;
   }
 
   void logSelect({String? target, String? source,  Map<String, dynamic>? attributes}) {

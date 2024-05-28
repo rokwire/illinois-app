@@ -204,6 +204,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     _tabBarController = TabController(initialIndex: _currentTabIndex, length: _tabs.length, vsync: this);
     _updatePanels(_tabs);
 
+    Analytics().logPageWidget(_getTabPanelAtIndex(_currentTabIndex));
+
     Services().initUI();
     _showPresentPoll();
     _checkDidNotificationLaunch().then((action) {
@@ -576,7 +578,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       }
 
       Widget? tabPanel = _getTabPanelAtIndex(tabIndex);
-      Analytics().logPage(name: tabPanel?.runtimeType.toString());
+      Analytics().logPageWidget(tabPanel);
 
       if (getRootTabByIndex(_currentTabIndex) == RootTab.Maps) {
         Analytics().logMapShow();
