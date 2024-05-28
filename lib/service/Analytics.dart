@@ -134,6 +134,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const AnalyticsFeature   LogFeatureAppHelp                  = AnalyticsFeature("App Help");
   static const AnalyticsFeature   LogFeatureAppointments             = AnalyticsFeature("Appointments", key: "Appointment");
   static const AnalyticsFeature   LogFeatureAthletics                = AnalyticsFeature("Big 10 Athletics", key: "Appointment");
+  static const AnalyticsFeature   LogFeatureBrowse                   = AnalyticsFeature("Browse");
   static const AnalyticsFeature   LogFeatureGuide                    = AnalyticsFeature("Campus Guide", key: "Guide");
   static const AnalyticsFeature   LogFeatureDining                   = AnalyticsFeature("Dining");
   static const AnalyticsFeature   LogFeatureEvents                   = AnalyticsFeature("Events", key: "Event");
