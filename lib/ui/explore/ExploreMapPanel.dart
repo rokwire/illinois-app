@@ -619,7 +619,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   void _onTapMapExploreDirections() async {
-    Analytics().logSelect(target: 'Directions');
+    Analytics().logSelect(
+      target: 'Directions',
+      feature: Analytics.featureFromClassName(_selectedMapExplore?.runtimeType.toString()),
+    );
     
     dynamic explore = _selectedMapExplore;
     _selectMapExplore(null);
@@ -639,7 +642,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
   
   void _onTapMapExploreDetail() {
-    Analytics().logSelect(target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details');
+    Analytics().logSelect(
+      target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details',
+      feature: Analytics.featureFromClassName(_selectedMapExplore?.runtimeType.toString()),
+    );
     if (_selectedMapExplore is Explore) {
         (_selectedMapExplore as Explore).exploreLaunchDetail(context);
     }
@@ -650,7 +656,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   void _onTapMapClear() {
-    Analytics().logSelect(target: 'Clear');
+    Analytics().logSelect(
+      target: 'Clear',
+      feature: Analytics.featureFromClassName(_selectedMapExplore?.runtimeType.toString()),
+    );
     dynamic selectedMapExplore = _selectedMapExplore;
     _selectMapExplore(null);
     if (selectedMapExplore is Favorite) {
@@ -710,13 +719,19 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   void _logAnalyticsSelect(dynamic explore) {
     String? exploreTarget;
+    AnalyticsFeature? exploreFeature;
     if (explore is Explore) {
       exploreTarget = explore.exploreTitle ?? explore.exploreLocation?.name ?? explore.exploreLocation?.displayAddress ?? explore.exploreLocation?.displayCoordinates;
+      exploreFeature = Analytics.featureFromClassName(explore.runtimeType.toString());
     }
     else if (explore is List<Explore>) {
       exploreTarget = '${explore.length} ${ExploreExt.getExploresListDisplayTitle(explore, language: 'en')}';
+      exploreFeature = ExploreExt.getExploresListAnalyticsFeature(explore);
     }
-    Analytics().logMapSelect(target: exploreTarget);
+    Analytics().logMapSelect(
+      target: exploreTarget,
+      feature: exploreFeature,
+    );
   }
 
   Widget? _buildExploreBarStopDescription() {

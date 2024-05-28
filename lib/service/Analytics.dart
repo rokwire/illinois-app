@@ -210,6 +210,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogSelectEventName                 = "select";
   static const String   LogSelectTargetName                = "target";
   static const String   LogSelectSourceName                = "source";
+  static const String   LogSelectFeatureName               = "target_feature";
 
   // Alert Event
   // {  "event" : { "name":"alert", "page":"...", "text":"...", "selection":"..." }}
@@ -271,7 +272,8 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogMapDisplayHideActionName        = "hide";
 
   static const String   LogMapSelectEventName             = "map_select";
-  static const String   LogMapSelectTarget                = "target";
+  static const String   LogMapSelectTargetName            = "target";
+  static const String   LogMapSelectTargetFeature         = "target_feature";
 
   // GeoFence Regions
   static const String   LogGeoFenceRegionEventName         = "geofence_region";
@@ -829,7 +831,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         panelName = panel.runtimeType.toString();
       }
       if (panelFeature == null) {
-        panelFeature = _featureOfPanel(panelName);
+        panelFeature = featureFromClassName(panelName);
       }
 
       logPage(name: panelName, feature: panelFeature, attributes: panelAttributes);
@@ -864,22 +866,25 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     logEvent(event);
   }
 
-  static AnalyticsFeature? _featureOfPanel(String panelName) {
-    for (AnalyticsFeature feature in _features) {
-      if (feature.matchKey(panelName)) {
-        return feature;
+  static AnalyticsFeature? featureFromClassName(String? className) {
+    if (className != null) {
+      for (AnalyticsFeature feature in _features) {
+        if (feature.matchKey(className)) {
+          return feature;
+        }
       }
     }
     return null;
   }
 
-  void logSelect({String? target, String? source,  Map<String, dynamic>? attributes}) {
+  void logSelect({String? target, String? source, AnalyticsFeature? feature,  Map<String, dynamic>? attributes}) {
 
     // Build event data
     Map<String, dynamic> event = {
       LogEventName          : LogSelectEventName,
       LogSelectTargetName   : target,
       LogSelectSourceName   : source,
+      LogSelectFeatureName  : feature?.name,
     };
 
     // Add optional attribute, if applied
@@ -1006,11 +1011,12 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     });
   }
 
-  void logMapSelect({String? target}) {
+  void logMapSelect({String? target, AnalyticsFeature? feature}) {
     
     logEvent({
       LogEventName             : LogMapSelectEventName,
-      LogMapSelectTarget       : target
+      LogMapSelectTargetName   : target,
+      LogMapSelectTargetFeature : feature?.name,
     });
   }
 
@@ -1160,14 +1166,14 @@ class AnalyticsFeature {
   const AnalyticsFeature(this.name, { dynamic key}) :
     _key = key;
 
-  bool matchKey(String panelName) {
+  bool matchKey(String className) {
     dynamic key = _key ?? name;
     if (key is String) {
-      return panelName.contains(RegExp(key, caseSensitive: false));
+      return className.contains(RegExp(key, caseSensitive: false));
     }
     else if ((key is List) || (key is Set)) {
       for (dynamic keyEntry in key) {
-        if ((keyEntry is String) && panelName.contains(RegExp(keyEntry, caseSensitive: false))) {
+        if ((keyEntry is String) &&  className.contains(RegExp(keyEntry, caseSensitive: false))) {
           return true;
         }
       }

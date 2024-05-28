@@ -158,6 +158,23 @@ extension ExploreExt on Explore {
     }
   }
 
+  static AnalyticsFeature? getExploresListAnalyticsFeature(List<Explore>? exploresList) {
+    AnalyticsFeature? feature;
+    if (exploresList != null) {
+      for (Explore explore in exploresList) {
+        AnalyticsFeature? exploreFeature = Analytics.featureFromClassName(explore.runtimeType.toString());
+        if ((exploreFeature != null) && (feature == null)) {
+          feature = exploreFeature;
+        }
+        else if ((exploreFeature == null) || (feature != exploreFeature)) {
+          feature = null;
+          break;
+        }
+      }
+    }
+    return feature;
+  }
+
   String? get typeDisplayString {
     if (this is Event) {
       return (this as Event).typeDisplayString;
