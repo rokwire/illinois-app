@@ -130,19 +130,21 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   ];
 
   // Features
-  static const AnalyticsFeature   LogFeatureAcademics                = AnalyticsFeature("Academics", key: "Academic");
+  static const AnalyticsFeature   LogFeatureAcademics                = AnalyticsFeature("Academics", key: {"Academic", "Course"});
   static const AnalyticsFeature   LogFeatureAppHelp                  = AnalyticsFeature("App Help");
   static const AnalyticsFeature   LogFeatureAppointments             = AnalyticsFeature("Appointments", key: "Appointment");
-  static const AnalyticsFeature   LogFeatureAthletics                = AnalyticsFeature("Big 10 Athletics", key: "Appointment");
+  static const AnalyticsFeature   LogFeatureAthletics                = AnalyticsFeature("Athletics", key: {"Athletic", "Sport"});
   static const AnalyticsFeature   LogFeatureBrowse                   = AnalyticsFeature("Browse");
+  static const AnalyticsFeature   LogFeatureBuildings                = AnalyticsFeature("Buildings", key: "Building");
   static const AnalyticsFeature   LogFeatureGuide                    = AnalyticsFeature("Campus Guide", key: "Guide");
   static const AnalyticsFeature   LogFeatureDining                   = AnalyticsFeature("Dining");
   static const AnalyticsFeature   LogFeatureEvents                   = AnalyticsFeature("Events", key: "Event");
   static const AnalyticsFeature   LogFeatureFavorites                = AnalyticsFeature("Favorites", key: "Home");
   static const AnalyticsFeature   LogFeatureFeeds                    = AnalyticsFeature("Feeds");
   static const AnalyticsFeature   LogFeatureGroups                   = AnalyticsFeature("Groups", key: "Group");
+  static const AnalyticsFeature   LogFeatureLaundry                  = AnalyticsFeature("Laundry");
   static const AnalyticsFeature   LogFeatureMap                      = AnalyticsFeature("Map");
-  static const AnalyticsFeature   LogFeatureMTD                      = AnalyticsFeature("MTD Buses", key: "MTD");
+  static const AnalyticsFeature   LogFeatureMTD                      = AnalyticsFeature("MTD", key: {"MTD", "POI"});
   static const AnalyticsFeature   LogFeatureNotifications            = AnalyticsFeature("Notifications");
   static const AnalyticsFeature   LogFeaturePolls                    = AnalyticsFeature("Polls", key: "Poll");
   static const AnalyticsFeature   LogFeatureProfile                  = AnalyticsFeature("Profile");
@@ -156,29 +158,33 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const AnalyticsFeature   LogFeatureWellness                 = AnalyticsFeature("Wellness");
 
   static const List<AnalyticsFeature> _features = <AnalyticsFeature>[
+    // Sort Order is significant, e.g. we should match WellnessBuilding and Wellness category, not Building
+    LogFeatureFavorites,
+    LogFeatureBrowse,
+    LogFeatureMap,
     LogFeatureAcademics,
-    LogFeatureAppHelp,
+    LogFeatureWellness,
     LogFeatureAppointments,
     LogFeatureAthletics,
-    LogFeatureGuide,
-    LogFeatureDining,
     LogFeatureEvents,
-    LogFeatureFavorites,
-    LogFeatureFeeds,
     LogFeatureGroups,
-    LogFeatureMap,
-    LogFeatureMTD,
-    LogFeatureNotifications,
-    LogFeaturePolls,
-    LogFeatureProfile,
-    LogFeatureResearchProject,
+    LogFeatureGuide,
     LogFeatureSettings,
+    LogFeatureProfile,
+    LogFeatureNotifications,
+
+    LogFeatureAppHelp,
+    LogFeatureDining,
+    LogFeatureBuildings,
+    LogFeatureFeeds,
+    LogFeatureMTD,
+    LogFeaturePolls,
+    LogFeatureResearchProject,
     LogFeatureWallet,
     LogFeatureWalletBusPass,
     LogFeatureWalletIlliniCash,
     LogFeatureWalletIlliniID,
     LogFeatureWalletMealPlan,
-    LogFeatureWellness,
   ];
 
 
@@ -859,9 +865,8 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   }
 
   static AnalyticsFeature? _featureOfPanel(String panelName) {
-    String panelNameCase = panelName.toLowerCase();
     for (AnalyticsFeature feature in _features) {
-      if (panelNameCase.contains(feature.key.toLowerCase())) {
+      if (feature.matchKey(panelName)) {
         return feature;
       }
     }
@@ -1150,12 +1155,25 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
 
 class AnalyticsFeature {
   final String name;
-  final String? _key;
+  final dynamic _key;
 
-  const AnalyticsFeature(this.name, { String? key}) :
+  const AnalyticsFeature(this.name, { dynamic key}) :
     _key = key;
 
-  String get key => _key ?? name;
+  bool matchKey(String panelName) {
+    dynamic key = _key ?? name;
+    if (key is String) {
+      return panelName.contains(RegExp(key, caseSensitive: false));
+    }
+    else if ((key is List) || (key is Set)) {
+      for (dynamic keyEntry in key) {
+        if ((keyEntry is String) && panelName.contains(RegExp(keyEntry, caseSensitive: false))) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 }
 
 abstract class AnalyticsPage {
