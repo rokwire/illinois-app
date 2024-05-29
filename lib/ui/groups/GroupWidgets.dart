@@ -22,6 +22,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/ImagesResult.dart';
 import 'package:illinois/mainImpl.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
@@ -2417,13 +2418,16 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
   }
 }
 
-class _GroupPollOptions extends StatefulWidget {
+class _GroupPollOptions extends StatefulWidget with AnalyticsInfo {
   final GroupPollCard pollCard;
   
   _GroupPollOptions({Key? key, required this.pollCard}) : super(key: key);
   
   @override
   State<_GroupPollOptions> createState() => _GroupPollOptionsState();
+
+  @override
+  AnalyticsFeature? get analytcsFeature => AnalyticsFeature.Groups;
 }
 
 class _GroupPollOptionsState extends State<_GroupPollOptions> {
