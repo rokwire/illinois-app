@@ -31,7 +31,7 @@ class CheckListPanel extends StatelessWidget with AnalyticsInfo {
   const CheckListPanel({Key? key, required this.contentKey}) : super(key: key);
 
   @override
-  AnalyticsFeature? get analytcsFeature => AnalyticsFeature.Academics;
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Academics;
 
   static void present(BuildContext context, { required String contentKey }) {
     if (Connectivity().isOffline) {

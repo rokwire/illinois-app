@@ -2427,7 +2427,7 @@ class _GroupPollOptions extends StatefulWidget with AnalyticsInfo {
   State<_GroupPollOptions> createState() => _GroupPollOptionsState();
 
   @override
-  AnalyticsFeature? get analytcsFeature => AnalyticsFeature.Groups;
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Groups;
 }
 
 class _GroupPollOptionsState extends State<_GroupPollOptions> {
