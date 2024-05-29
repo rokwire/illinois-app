@@ -29,6 +29,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Browse                   = AnalyticsFeature("Browse");
   static const AnalyticsFeature   Buildings                = AnalyticsFeature("Buildings", key: "Building", priority: -1); // e.g. WellnessBuilding => Wellness
   static const AnalyticsFeature   Guide                    = AnalyticsFeature("Campus Guide", key: "Guide");
+  static const AnalyticsFeature   Debug                    = AnalyticsFeature("Debug", priority: 1);
   static const AnalyticsFeature   Dining                   = AnalyticsFeature("Dining");
   static const AnalyticsFeature   Events                   = AnalyticsFeature("Events", key: "Event");
   static const AnalyticsFeature   Favorites                = AnalyticsFeature("Favorites", key: "Home", priority: -1); // e.g. Event2HomePanel => Event
@@ -71,6 +72,8 @@ class AnalyticsFeature {
     Feeds,
     MTD,
     Polls,
+    Laundry,
+    Debug,
     ResearchProject,
     Wallet,
     WalletBusPass,
