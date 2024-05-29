@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
@@ -39,7 +40,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class ExploreListPanel extends StatefulWidget with AnalyticsPage {
+class ExploreListPanel extends StatefulWidget with AnalyticsInfo {
   final List<Explore>? explores;
   final ExploreMapType? exploreMapType;
   final Position? initialLocationData;

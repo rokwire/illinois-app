@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
@@ -29,7 +30,6 @@ import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:rokwire_plugin/model/event.dart';
-import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 
@@ -39,7 +39,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:rokwire_plugin/model/group.dart';
 
-class ExploreDetailPanel extends StatelessWidget with AnalyticsPage {
+class ExploreDetailPanel extends StatelessWidget with AnalyticsInfo {
   final Explore? explore;
   final Position? initialLocationData;
   final Group? browseGroup;

@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -27,7 +28,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class GroupMembershipRequestPanel extends StatefulWidget with AnalyticsPage {
+class GroupMembershipRequestPanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
 
   GroupMembershipRequestPanel({this.group});

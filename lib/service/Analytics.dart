@@ -20,6 +20,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/mainImpl.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/wellness/WellnessToDo.dart' as wellness;
 import 'package:illinois/model/wellness/WellnessRing.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -158,7 +159,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const AnalyticsFeature   LogFeatureWellness                 = AnalyticsFeature("Wellness");
 
   static const List<AnalyticsFeature> _features = <AnalyticsFeature>[
-    // Sort Order is significant, e.g. we should match WellnessBuilding and Wellness category, not Building
+    // Sort Order is significant, e.g. we should match WellnessBuilding as Wellness feature, not Building
     LogFeatureFavorites,
     LogFeatureBrowse,
     LogFeatureMap,
@@ -822,10 +823,10 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       String? panelName;
       AnalyticsFeature? panelFeature;
       Map<String, dynamic>? panelAttributes;
-      if (panel is AnalyticsPage) {
-        panelName = (panel as AnalyticsPage).analyticsPageName;
-        panelFeature = (panel as AnalyticsPage).analyticsFeature;
-        panelAttributes = (panel as AnalyticsPage).analyticsPageAttributes;
+      if (panel is AnalyticsInfo) {
+        panelName = (panel as AnalyticsInfo).analyticsPageName;
+        panelFeature = (panel as AnalyticsInfo).analyticsFeature;
+        panelAttributes = (panel as AnalyticsInfo).analyticsPageAttributes;
       }
       if (panelName == null) {
         panelName = panel.runtimeType.toString();
@@ -1156,36 +1157,6 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     // Log the event
     logEvent(event);
   }
-}
-
-
-class AnalyticsFeature {
-  final String name;
-  final dynamic _key;
-
-  const AnalyticsFeature(this.name, { dynamic key}) :
-    _key = key;
-
-  bool matchKey(String className) {
-    dynamic key = _key ?? name;
-    if (key is String) {
-      return className.contains(RegExp(key, caseSensitive: false));
-    }
-    else if ((key is List) || (key is Set)) {
-      for (dynamic keyEntry in key) {
-        if ((keyEntry is String) &&  className.contains(RegExp(keyEntry, caseSensitive: false))) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-}
-
-abstract class AnalyticsPage {
-  String? get analyticsPageName => null;
-  AnalyticsFeature? get analyticsFeature => null;
-  Map<String, dynamic>? get analyticsPageAttributes => null;
 }
 
 class _TicketWidget extends StatefulWidget {

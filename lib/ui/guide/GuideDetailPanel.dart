@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -26,7 +27,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
-class GuideDetailPanel extends StatefulWidget with AnalyticsPage {
+class GuideDetailPanel extends StatefulWidget with AnalyticsInfo {
   final String? favoriteKey;
   final String? guideEntryId;
   final Map<String, dynamic>? guideEntry;

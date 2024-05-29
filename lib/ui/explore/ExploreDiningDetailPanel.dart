@@ -22,6 +22,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -48,7 +49,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
-class ExploreDiningDetailPanel extends StatefulWidget with AnalyticsPage {
+class ExploreDiningDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Dining? dining;
   final Core.Position? initialLocationData;
 

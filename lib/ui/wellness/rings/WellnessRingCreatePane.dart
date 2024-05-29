@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/wellness/WellnessRing.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/WellnessRings.dart';
@@ -12,7 +13,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-class WellnessRingCreatePanel extends StatefulWidget with AnalyticsPage {
+class WellnessRingCreatePanel extends StatefulWidget with AnalyticsInfo {
   final WellnessRingDefinition? data;
   final String? examplesText;
   final bool initialCreation;

@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -35,7 +36,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class GroupMembersPanel extends StatefulWidget with AnalyticsPage {
+class GroupMembersPanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
 
   String? get groupId => group?.id;

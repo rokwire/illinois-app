@@ -20,6 +20,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -51,7 +52,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CompositeEventsDetailPanel extends StatefulWidget with AnalyticsPage {
+class CompositeEventsDetailPanel extends StatefulWidget with AnalyticsInfo {
 
   final Event? parentEvent;
   final Core.Position? initialLocationData;

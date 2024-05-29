@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -30,7 +31,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
-class GroupPendingMemberPanel extends StatefulWidget with AnalyticsPage {
+class GroupPendingMemberPanel extends StatefulWidget with AnalyticsInfo {
   final Member? member;
   final Group? group;
   

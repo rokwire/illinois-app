@@ -19,6 +19,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/ImagesResult.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
@@ -45,7 +46,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class GroupSettingsPanel extends StatefulWidget with AnalyticsPage {
+class GroupSettingsPanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
   final GroupStats? groupStats;
   

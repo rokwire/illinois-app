@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:illinois/model/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -22,7 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:rokwire_plugin/ui/panels/web_panel.dart' as rokwire;
 
-class WebPanel extends rokwire.WebPanel with AnalyticsPage {
+class WebPanel extends rokwire.WebPanel with AnalyticsInfo {
   final String? analyticsName;
   final Map<String, dynamic>? analyticsSource;
 

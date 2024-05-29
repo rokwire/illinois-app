@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -32,7 +33,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
-class GroupEventDetailPanel extends StatefulWidget with AnalyticsPage {
+class GroupEventDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Event2? event;
   final Group? group;
   final bool previewMode;
