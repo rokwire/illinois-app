@@ -622,7 +622,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   void _onTapMapExploreDirections() async {
     Analytics().logSelect(
       target: 'Directions',
-      feature: Analytics.featureFromClassName(_selectedMapExplore?.runtimeType.toString()),
+      feature: AnalyticsFeature.fromClass(_selectedMapExplore),
     );
     
     dynamic explore = _selectedMapExplore;
@@ -645,7 +645,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   void _onTapMapExploreDetail() {
     Analytics().logSelect(
       target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details',
-      feature: Analytics.featureFromClassName(_selectedMapExplore?.runtimeType.toString()),
+      feature: AnalyticsFeature.fromClass(_selectedMapExplore),
     );
     if (_selectedMapExplore is Explore) {
         (_selectedMapExplore as Explore).exploreLaunchDetail(context);
@@ -659,7 +659,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   void _onTapMapClear() {
     Analytics().logSelect(
       target: 'Clear',
-      feature: Analytics.featureFromClassName(_selectedMapExplore?.runtimeType.toString()),
+      feature: AnalyticsFeature.fromClass(_selectedMapExplore),
     );
     dynamic selectedMapExplore = _selectedMapExplore;
     _selectMapExplore(null);
@@ -723,7 +723,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     AnalyticsFeature? exploreFeature;
     if (explore is Explore) {
       exploreTarget = explore.exploreTitle ?? explore.exploreLocation?.name ?? explore.exploreLocation?.displayAddress ?? explore.exploreLocation?.displayCoordinates;
-      exploreFeature = Analytics.featureFromClassName(explore.runtimeType.toString());
+      exploreFeature = AnalyticsFeature.fromClass(explore);
     }
     else if (explore is List<Explore>) {
       exploreTarget = '${explore.length} ${ExploreExt.getExploresListDisplayTitle(explore, language: 'en')}';

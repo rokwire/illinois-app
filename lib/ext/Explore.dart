@@ -163,7 +163,7 @@ extension ExploreExt on Explore {
     AnalyticsFeature? feature;
     if (exploresList != null) {
       for (Explore explore in exploresList) {
-        AnalyticsFeature? exploreFeature = Analytics.featureFromClassName(explore.runtimeType.toString());
+        AnalyticsFeature? exploreFeature = AnalyticsFeature.fromClass(explore);
         if ((exploreFeature != null) && (feature == null)) {
           feature = exploreFeature;
         }
