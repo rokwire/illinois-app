@@ -27,11 +27,11 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Appointments             = AnalyticsFeature("Appointments", key: "Appointment");
   static const AnalyticsFeature   Athletics                = AnalyticsFeature("Athletics", key: {"Athletic", "Sport"});
   static const AnalyticsFeature   Browse                   = AnalyticsFeature("Browse");
-  static const AnalyticsFeature   Buildings                = AnalyticsFeature("Buildings", key: "Building");
+  static const AnalyticsFeature   Buildings                = AnalyticsFeature("Buildings", key: "Building", priority: -1); // e.g. WellnessBuilding => Wellness
   static const AnalyticsFeature   Guide                    = AnalyticsFeature("Campus Guide", key: "Guide");
   static const AnalyticsFeature   Dining                   = AnalyticsFeature("Dining");
   static const AnalyticsFeature   Events                   = AnalyticsFeature("Events", key: "Event");
-  static const AnalyticsFeature   Favorites                = AnalyticsFeature("Favorites", key: "Home");
+  static const AnalyticsFeature   Favorites                = AnalyticsFeature("Favorites", key: "Home", priority: -1); // e.g. Event2HomePanel => Event
   static const AnalyticsFeature   Feeds                    = AnalyticsFeature("Feeds");
   static const AnalyticsFeature   Groups                   = AnalyticsFeature("Groups", key: "Group");
   static const AnalyticsFeature   Laundry                  = AnalyticsFeature("Laundry");
@@ -80,21 +80,23 @@ class AnalyticsFeature {
   ];
 
   final String name;
-  final dynamic _key;
+  final int priority;
+  final dynamic key;
 
-  const AnalyticsFeature(this.name, { dynamic key}) :
-    _key = key;
+  const AnalyticsFeature(this.name, { this.key, this.priority = 0 });
 
   @override
   bool operator==(Object other) =>
     (other is AnalyticsFeature) &&
     (name == other.name) &&
-    (DeepCollectionEquality().equals(_key, other._key));
+    (priority == other.priority) &&
+    (DeepCollectionEquality().equals(key, other.key));
 
   @override
   int get hashCode =>
-    name.hashCode ^
-    DeepCollectionEquality().hash(_key);
+    (name.hashCode) ^
+    (priority.hashCode ?? 0) ^
+    DeepCollectionEquality().hash(key);
 
   static AnalyticsFeature? fromClass(dynamic classInstance) {
     AnalyticsFeature? feature;
@@ -108,23 +110,26 @@ class AnalyticsFeature {
   }
 
   static AnalyticsFeature? fromName(String? className) {
+    AnalyticsFeature? result;
     if (className != null) {
       for (AnalyticsFeature feature in _features) {
         if (feature.matchKey(className)) {
-          return feature;
+          if ((result == null) || (result.priority < feature.priority)) {
+            result = feature;
+          }
         }
       }
     }
-    return null;
+    return result;
   }
 
   bool matchKey(String className) {
-    dynamic key = _key ?? name;
-    if (key is String) {
-      return className.contains(RegExp(key, caseSensitive: false));
+    dynamic useKey = this.key ?? name;
+    if (useKey is String) {
+      return className.contains(RegExp(useKey, caseSensitive: false));
     }
-    else if ((key is List) || (key is Set)) {
-      for (dynamic keyEntry in key) {
+    else if ((useKey is List) || (useKey is Set)) {
+      for (dynamic keyEntry in useKey) {
         if ((keyEntry is String) &&  className.contains(RegExp(keyEntry, caseSensitive: false))) {
           return true;
         }
