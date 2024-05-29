@@ -236,7 +236,6 @@ class Event2HomePanel extends StatefulWidget {
     return contentAttributes;
   }
 
-  static const String internalContentAttributesScope = 'internal';
   static const String eventTypeContentAttributeId = 'event-type';
   static const String eventTimeContentAttributeId = 'event-time';
 
@@ -259,7 +258,7 @@ class Event2HomePanel extends StatefulWidget {
       emptyHint: Localization().getStringEx('panel.events2.home.attributes.event_type.hint.empty', 'Select an event type'),
       semanticsHint: Localization().getStringEx('panel.events2.home.attributes.event_type.hint.semantics', 'Double type to show event options.'),
       widget: ContentAttributeWidget.dropdown,
-      scope: <String>{ internalContentAttributesScope },
+      scope: <String>{ Events2.contentAttributesScope },
       requirements: ContentAttributeRequirements(maxSelectedCount: 1, functionalScope: contentAttributeRequirementsFunctionalScopeFilter),
       values: values
     );
@@ -294,7 +293,7 @@ class Event2HomePanel extends StatefulWidget {
       emptyHint: Localization().getStringEx('panel.events2.home.attributes.event_time.hint.empty', 'Select an date & time'),
       semanticsHint: Localization().getStringEx('panel.events2.home.attributes.event_time.hint.semantics', 'Double type to show date & time options.'),
       widget: ContentAttributeWidget.dropdown,
-      scope: <String>{ internalContentAttributesScope },
+      scope: <String>{ Events2.contentAttributesScope },
       requirements: ContentAttributeRequirements(minSelectedCount: 1, maxSelectedCount: 1, functionalScope: contentAttributeRequirementsFunctionalScopeFilter),
       values: values,
     );
