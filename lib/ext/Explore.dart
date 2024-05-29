@@ -243,6 +243,7 @@ extension ExploreExt on Explore {
         feature = AnalyticsFeature.fromClass(this);
       }
     }
+    return feature;
   }
 
   Color? get uiColor {
