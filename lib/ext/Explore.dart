@@ -163,7 +163,7 @@ extension ExploreExt on Explore {
     AnalyticsFeature? feature;
     if (exploresList != null) {
       for (Explore explore in exploresList) {
-        AnalyticsFeature? exploreFeature = AnalyticsFeature.fromClass(explore);
+        AnalyticsFeature? exploreFeature = explore.analyticsFeature;
         if ((exploreFeature != null) && (feature == null)) {
           feature = exploreFeature;
         }
@@ -224,6 +224,24 @@ extension ExploreExt on Explore {
       return {
         Analytics.LogAttributeLocation : exploreLocation?.analyticsValue,
       };
+    }
+  }
+
+  AnalyticsFeature? get analyticsFeature {
+    AnalyticsFeature? feature;
+    if (this is AnalyticsInfo) {
+      feature = (this as AnalyticsInfo).analyticsFeature;
+    }
+    if (feature == null) {
+      if (this is Event) {
+        feature = (this as Event).isGameEvent ? AnalyticsFeature.Athletics : AnalyticsFeature.Events;
+      }
+      else if (this is Event2) {
+        feature = (this as Event2).isSportEvent ? AnalyticsFeature.Athletics : AnalyticsFeature.Events;
+      }
+      else {
+        feature = AnalyticsFeature.fromClass(this);
+      }
     }
   }
 
