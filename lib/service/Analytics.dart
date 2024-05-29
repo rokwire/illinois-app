@@ -775,7 +775,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         panelName = panel.runtimeType.toString();
       }
       if (panelFeature == null) {
-        panelFeature = AnalyticsFeature.fromClassName(panelName);
+        panelFeature = AnalyticsFeature.fromName(panelName);
       }
 
       logPage(name: panelName, feature: panelFeature, attributes: panelAttributes);

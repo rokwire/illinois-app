@@ -102,12 +102,12 @@ class AnalyticsFeature {
       feature = classInstance.analyticsFeature;
     }
     if ((feature == null) && (classInstance != null)) {
-      feature = fromClassName(classInstance.runtimeType.toString());
+      feature = fromName(classInstance.runtimeType.toString());
     }
     return feature;
   }
 
-  static AnalyticsFeature? fromClassName(String? className) {
+  static AnalyticsFeature? fromName(String? className) {
     if (className != null) {
       for (AnalyticsFeature feature in _features) {
         if (feature.matchKey(className)) {
