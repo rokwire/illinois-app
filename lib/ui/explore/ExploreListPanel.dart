@@ -52,15 +52,11 @@ class ExploreListPanel extends StatefulWidget with AnalyticsInfo {
       _ExploreListPanelState();
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes {
-    if ((explores != null) && explores!.isNotEmpty) {
-      return { Analytics.LogAttributeLocation : explores!.first.exploreLocation?.description };
-    }
-    else {
-      return null;
-    }
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Map;
 
-  }
+  @override
+  Map<String, dynamic>? get analyticsPageAttributes => ((explores != null) && (explores?.isNotEmpty == true)) ?
+    { Analytics.LogAttributeLocation : explores?.first.exploreLocation?.description } : null;
 }
 
 class _ExploreListPanelState extends State<ExploreListPanel> implements NotificationsListener {

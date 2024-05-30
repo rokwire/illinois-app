@@ -85,6 +85,9 @@ class ExploreDetailPanel extends StatelessWidget with AnalyticsInfo {
   }
 
   @override
+  AnalyticsFeature? get analyticsFeature => explore?.analyticsFeature;
+
+  @override
   Map<String, dynamic>? get analyticsPageAttributes => explore?.analyticsAttributes;
 
   @override

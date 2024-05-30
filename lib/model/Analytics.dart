@@ -22,7 +22,7 @@ import 'package:collection/collection.dart';
 class AnalyticsFeature {
 
   // Predefined Features
-  static const AnalyticsFeature   Academics                = AnalyticsFeature("Academics", key: {"Academic", "Course"});
+  static const AnalyticsFeature   Academics                = AnalyticsFeature("Academics", key: {"Academic", "Course", "Essential"});
   static const AnalyticsFeature   AppHelp                  = AnalyticsFeature("App Help");
   static const AnalyticsFeature   Appointments             = AnalyticsFeature("Appointments", key: "Appointment");
   static const AnalyticsFeature   Athletics                = AnalyticsFeature("Athletics", key: {"Athletic", "Sport"});
