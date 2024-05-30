@@ -23,6 +23,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Config.dart';
@@ -809,14 +810,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   Future<void> _onGuideDetail(Map<String, dynamic>? content) async {
-    String? guideId = (content != null) ? JsonUtils.stringValue(content['guide_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
-    if (StringUtils.isNotEmpty(guideId)){
-      WidgetsBinding.instance.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
-        Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
-          GuideDetailPanel(guideEntryId: guideId,)));
-      });
-      if (mounted) {
-        setState(() {}); // Force the postFrameCallback invokation.
+    if (content != null) {
+      String? guideId = JsonUtils.stringValue(content['guide_id']) ?? JsonUtils.stringValue(content['entity_id']);
+      if (StringUtils.isNotEmpty(guideId)){
+        WidgetsBinding.instance.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
+          Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
+            GuideDetailPanel(guideEntryId: guideId, analyticsFeature: AnalyticsFeature.fromName(JsonUtils.stringValue(content['analytics_feature'])),)));
+        });
+        if (mounted) {
+          setState(() {}); // Force the postFrameCallback invokation.
+        }
       }
     }
   }

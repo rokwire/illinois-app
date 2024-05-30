@@ -31,11 +31,21 @@ class GuideDetailPanel extends StatefulWidget with AnalyticsInfo {
   final String? favoriteKey;
   final String? guideEntryId;
   final Map<String, dynamic>? guideEntry;
+  final AnalyticsFeature? _analyticsFeature;
   final bool showTabBar;
-  GuideDetailPanel({ this.guideEntryId, this.guideEntry, this.favoriteKey = GuideFavorite.favoriteKeyName, this.showTabBar = true });
+  GuideDetailPanel({ this.guideEntryId, this.guideEntry, AnalyticsFeature? analyticsFeature, this.favoriteKey = GuideFavorite.favoriteKeyName, this.showTabBar = true }) :
+    _analyticsFeature = analyticsFeature;
 
   @override
   _GuideDetailPanelState createState() => _GuideDetailPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature =>
+    _analyticsFeature ??
+    AnalyticsFeature.fromName(Guide().entryContentType(theGuideEntry)) ??
+    AnalyticsFeature.fromName(Guide().entryGuide(theGuideEntry));
+
+  Map<String, dynamic>? get theGuideEntry => Guide().entryById(guideEntryId) ?? guideEntry;
 
   @override
   Map<String, dynamic> get analyticsPageAttributes => Guide().entryAnalyticsAttributes(Guide().entryById(guideEntryId)) ?? {};
@@ -47,7 +57,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> {
 
   @override
   void initState() {
-    _guideEntry = Guide().entryById(widget.guideEntryId) ?? widget.guideEntry;
+    _guideEntry = widget.theGuideEntry;
     RecentItems().addRecentItem(RecentItem.fromGuideItem(_guideEntry));
     super.initState();
   }
@@ -60,12 +70,12 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'header_title'))),
+      appBar: HeaderBar(title: JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'header_title')), analyticsFeature: widget.analyticsFeature,),
       body: Column(children: <Widget>[
         Expanded(child:
           SingleChildScrollView(child:
             SafeArea(child:
-              GuideDetailWidget(guideEntryId: widget.guideEntryId, guideEntry: widget.guideEntry, favoriteKey: widget.favoriteKey,)
+              GuideDetailWidget(guideEntryId: widget.guideEntryId, guideEntry: widget.guideEntry, favoriteKey: widget.favoriteKey, analyticsFeature: widget.analyticsFeature,)
             ),
           ),
         ),
@@ -80,8 +90,9 @@ class GuideDetailWidget extends StatefulWidget {
   final String? favoriteKey;
   final String? guideEntryId;
   final Map<String, dynamic>? guideEntry;
+  final AnalyticsFeature? analyticsFeature;
   final Color? headingColor;
-  GuideDetailWidget({Key? key, this.guideEntryId, this.guideEntry, this.favoriteKey, this.headingColor }) : super(key: key);
+  GuideDetailWidget({Key? key, this.guideEntryId, this.guideEntry, this.favoriteKey, this.headingColor, this.analyticsFeature }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GuideDetailWidgetState();
@@ -528,13 +539,13 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
   void _onTapFavorite() {
     if (widget.favoriteKey != null) {
       String? title = Guide().entryTitle(_guideEntry, stripHtmlTags: true);
-      Analytics().logSelect(target: "Favorite: $title");
+      Analytics().logSelect(target: "Favorite: $title", feature: widget.analyticsFeature);
       Auth2().prefs?.toggleFavorite(FavoriteItem(key: widget.favoriteKey!, id: Guide().entryId(_guideEntry)));
     }
   }
 
   void _onTapLink(String? url, { bool? useInternalBrowser }) {
-    Analytics().logSelect(target: 'Link: $url');
+    Analytics().logSelect(target: 'Link: $url', feature: widget.analyticsFeature);
     if (StringUtils.isNotEmpty(url)) {
       if (DeepLink().isAppUrl(url)) {
         DeepLink().launchUrl(url);

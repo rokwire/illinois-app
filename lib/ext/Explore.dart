@@ -334,7 +334,7 @@ extension ExploreExt on Explore {
       route = CupertinoPageRoute(builder: (context) => ExploreBuildingDetailPanel(building: this as Building),);
     }
     else if (this is WellnessBuilding) {
-      route = CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as WellnessBuilding).guideId),);
+      route = CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as WellnessBuilding).guideId, analyticsFeature: AnalyticsFeature.Wellness,),);
     }
     else if (this is MTDStop) {
       route = CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: this as MTDStop,),);

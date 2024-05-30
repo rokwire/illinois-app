@@ -247,7 +247,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
           switch (link.panel) {
             case "GuideDetailPanel":
               if (link.params != null) {
-                Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: link.params!['guideEntryId'])));
+                Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: link.params!['guideEntryId'] /*, analyticsFeature: TBD */ ,)));
               }
           }
         }

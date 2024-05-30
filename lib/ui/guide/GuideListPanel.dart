@@ -45,6 +45,11 @@ class GuideListPanel extends StatefulWidget with AnalyticsInfo {
   _GuideListPanelState createState() => _GuideListPanelState();
 
   @override
+  AnalyticsFeature? get analyticsFeature =>
+    AnalyticsFeature.fromName(guide) ??
+    AnalyticsFeature.fromName(Guide().listContentType(contentList));
+
+  @override
   Map<String, dynamic> get analyticsPageAttributes {
     return {
       Analytics.LogAttributeGuide : guide,
