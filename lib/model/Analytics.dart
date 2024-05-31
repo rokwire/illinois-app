@@ -97,8 +97,8 @@ class AnalyticsFeature {
 
   @override
   int get hashCode =>
-    (name.hashCode) ^
-    (priority.hashCode ?? 0) ^
+    name.hashCode ^
+    priority.hashCode ^
     DeepCollectionEquality().hash(key);
 
   static AnalyticsFeature? fromClass(dynamic classInstance) {
