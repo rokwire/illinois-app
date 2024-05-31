@@ -41,6 +41,9 @@ class GroupPendingMemberPanel extends StatefulWidget with AnalyticsInfo {
   _GroupPendingMemberPanelState createState() => _GroupPendingMemberPanelState();
 
   @override
+  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
+
+  @override
   Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
 }
 

@@ -27,6 +27,9 @@ class GroupAllEventsPanel extends StatefulWidget with AnalyticsInfo {
   State<StatefulWidget> createState() => _GroupAllEventsState();
 
   @override
+  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
+
+  @override
   Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
 }
 

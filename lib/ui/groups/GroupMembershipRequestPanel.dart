@@ -38,8 +38,10 @@ class GroupMembershipRequestPanel extends StatefulWidget with AnalyticsInfo {
       _GroupMembershipRequestPanelState();
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes =>
-    group?.analyticsAttributes;
+  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
+
+  @override
+  Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
 }
 
 class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPanel> {

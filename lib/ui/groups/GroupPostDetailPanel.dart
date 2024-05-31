@@ -53,6 +53,9 @@ class GroupPostDetailPanel extends StatefulWidget with AnalyticsInfo {
   _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
 
   @override
+  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
+
+  @override
   Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
 }
 

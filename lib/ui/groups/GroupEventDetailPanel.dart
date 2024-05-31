@@ -48,9 +48,10 @@ class GroupEventDetailPanel extends StatefulWidget with AnalyticsInfo {
   }
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes {
-    return group?.analyticsAttributes;
-  }
+  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
+
+  @override
+  Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
 }
 
 class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with NotificationsListener{
