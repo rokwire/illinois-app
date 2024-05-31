@@ -34,7 +34,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Events                   = AnalyticsFeature("Events", key: "Event");
   static const AnalyticsFeature   Favorites                = AnalyticsFeature("Favorites", key: "Home", priority: -1); // e.g. Event2HomePanel => Event
   static const AnalyticsFeature   Feeds                    = AnalyticsFeature("Feeds");
-  static const AnalyticsFeature   Groups                   = AnalyticsFeature("Groups", key: "Group");
+  static const AnalyticsFeature   Groups                   = AnalyticsFeature("Groups", key: "Group", priority: 1);
   static const AnalyticsFeature   Laundry                  = AnalyticsFeature("Laundry");
   static const AnalyticsFeature   Map                      = AnalyticsFeature("Map");
   static const AnalyticsFeature   MTD                      = AnalyticsFeature("MTD", key: {"MTD", "POI"});
@@ -43,7 +43,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Polls                    = AnalyticsFeature("Polls", key: "Poll", priority: -1);
   static const AnalyticsFeature   Profile                  = AnalyticsFeature("Profile");
   static const AnalyticsFeature   Recent                   = AnalyticsFeature("Recent");
-  static const AnalyticsFeature   ResearchProject          = AnalyticsFeature("Research at Illinois", key: "ResearchProject");
+  static const AnalyticsFeature   ResearchProject          = AnalyticsFeature("Research at Illinois", key: "ResearchProject", priority: 1);
   static const AnalyticsFeature   Settings                 = AnalyticsFeature("Settings");
   static const AnalyticsFeature   StateFarmCenter          = AnalyticsFeature("StateFarm Center", key: {"StateFarm", "Parking", "StadiumPoll"});
   static const AnalyticsFeature   Wallet                   = AnalyticsFeature("Wallet");
