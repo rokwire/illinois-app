@@ -789,7 +789,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     AnalyticsFeature? previousPageFeature = _currentPageFeature;
 
     _currentPageName         = name;
-    _currentPageFeature      = feature;
+    _currentPageFeature      = (feature != null) ? feature : previousPageFeature;
     _currentPageAttributes   = attributes;
 
     // Build event data
