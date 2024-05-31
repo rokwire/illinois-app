@@ -45,10 +45,10 @@ class AnalyticsFeature {
   static const AnalyticsFeature   ResearchProject          = AnalyticsFeature("Research at Illinois");
   static const AnalyticsFeature   Settings                 = AnalyticsFeature("Settings");
   static const AnalyticsFeature   Wallet                   = AnalyticsFeature("Wallet");
-  static const AnalyticsFeature   WalletBusPass            = AnalyticsFeature("Wallet: Bus Pass");
-  static const AnalyticsFeature   WalletIlliniCash         = AnalyticsFeature("Wallet: Illini Cash");
-  static const AnalyticsFeature   WalletIlliniID           = AnalyticsFeature("Wallet: Illini ID");
-  static const AnalyticsFeature   WalletMealPlan           = AnalyticsFeature("Wallet: Meal Plan");
+  static const AnalyticsFeature   WalletBusPass            = AnalyticsFeature("Wallet: Bus Pass", key: "BusPass", priority: 1);
+  static const AnalyticsFeature   WalletIlliniCash         = AnalyticsFeature("Wallet: Illini Cash", key: "IlliniCash", priority: 1);
+  static const AnalyticsFeature   WalletIlliniID           = AnalyticsFeature("Wallet: Illini ID", key: "ICard", priority: 1);
+  static const AnalyticsFeature   WalletMealPlan           = AnalyticsFeature("Wallet: Meal Plan", key: "MealPlan", priority: 1);
   static const AnalyticsFeature   Wellness                 = AnalyticsFeature("Wellness");
 
   static const List<AnalyticsFeature> _features = <AnalyticsFeature>[
