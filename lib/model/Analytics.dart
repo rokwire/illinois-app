@@ -39,6 +39,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Map                      = AnalyticsFeature("Map");
   static const AnalyticsFeature   MTD                      = AnalyticsFeature("MTD", key: {"MTD", "POI"});
   static const AnalyticsFeature   Notifications            = AnalyticsFeature("Notifications");
+  static const AnalyticsFeature   Onboarding               = AnalyticsFeature("Onboarding");
   static const AnalyticsFeature   Polls                    = AnalyticsFeature("Polls", key: "Poll");
   static const AnalyticsFeature   Profile                  = AnalyticsFeature("Profile");
   static const AnalyticsFeature   Recent                   = AnalyticsFeature("Recent");
@@ -52,7 +53,6 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Wellness                 = AnalyticsFeature("Wellness");
 
   static const List<AnalyticsFeature> _features = <AnalyticsFeature>[
-    // Sort Order is significant, e.g. we should match WellnessBuilding as Wellness feature, not Building
     Favorites,
     Browse,
     Map,
@@ -77,6 +77,7 @@ class AnalyticsFeature {
     Recent,
     Debug,
     ResearchProject,
+    Onboarding,
     Wallet,
     WalletBusPass,
     WalletIlliniCash,
