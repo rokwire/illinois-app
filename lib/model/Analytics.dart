@@ -40,11 +40,12 @@ class AnalyticsFeature {
   static const AnalyticsFeature   MTD                      = AnalyticsFeature("MTD", key: {"MTD", "POI"});
   static const AnalyticsFeature   Notifications            = AnalyticsFeature("Notifications");
   static const AnalyticsFeature   Onboarding               = AnalyticsFeature("Onboarding");
-  static const AnalyticsFeature   Polls                    = AnalyticsFeature("Polls", key: "Poll");
+  static const AnalyticsFeature   Polls                    = AnalyticsFeature("Polls", key: "Poll", priority: -1);
   static const AnalyticsFeature   Profile                  = AnalyticsFeature("Profile");
   static const AnalyticsFeature   Recent                   = AnalyticsFeature("Recent");
-  static const AnalyticsFeature   ResearchProject          = AnalyticsFeature("Research at Illinois");
+  static const AnalyticsFeature   ResearchProject          = AnalyticsFeature("Research at Illinois", key: "ResearchProject");
   static const AnalyticsFeature   Settings                 = AnalyticsFeature("Settings");
+  static const AnalyticsFeature   StateFarmCenter          = AnalyticsFeature("StateFarm Center", key: {"StateFarm", "Parking", "StadiumPoll"});
   static const AnalyticsFeature   Wallet                   = AnalyticsFeature("Wallet");
   static const AnalyticsFeature   WalletBusPass            = AnalyticsFeature("Wallet: Bus Pass", key: "BusPass", priority: 1);
   static const AnalyticsFeature   WalletIlliniCash         = AnalyticsFeature("Wallet: Illini Cash", key: "IlliniCash", priority: 1);
