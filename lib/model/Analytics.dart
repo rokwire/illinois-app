@@ -30,7 +30,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Buildings                = AnalyticsFeature("Buildings", key: "Building", priority: -1); // e.g. WellnessBuilding => Wellness
   static const AnalyticsFeature   Guide                    = AnalyticsFeature("Campus Guide", key: {"Campus", "Guide", "For Students"});
   static const AnalyticsFeature   Debug                    = AnalyticsFeature("Debug", priority: 1);
-  static const AnalyticsFeature   Dining                   = AnalyticsFeature("Dining");
+  static const AnalyticsFeature   Dining                   = AnalyticsFeature("Dining", key: {"Dining", "Food"});
   static const AnalyticsFeature   Events                   = AnalyticsFeature("Events", key: "Event");
   static const AnalyticsFeature   Favorites                = AnalyticsFeature("Favorites", key: "Home", priority: -1); // e.g. Event2HomePanel => Event
   static const AnalyticsFeature   Feeds                    = AnalyticsFeature("Feeds");
