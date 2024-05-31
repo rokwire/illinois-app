@@ -41,6 +41,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Notifications            = AnalyticsFeature("Notifications");
   static const AnalyticsFeature   Polls                    = AnalyticsFeature("Polls", key: "Poll");
   static const AnalyticsFeature   Profile                  = AnalyticsFeature("Profile");
+  static const AnalyticsFeature   Recent                   = AnalyticsFeature("Recent");
   static const AnalyticsFeature   ResearchProject          = AnalyticsFeature("Research at Illinois");
   static const AnalyticsFeature   Settings                 = AnalyticsFeature("Settings");
   static const AnalyticsFeature   Wallet                   = AnalyticsFeature("Wallet");
@@ -73,6 +74,7 @@ class AnalyticsFeature {
     MTD,
     Polls,
     Laundry,
+    Recent,
     Debug,
     ResearchProject,
     Wallet,
