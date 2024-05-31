@@ -801,6 +801,13 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       LogPagePreviousFeature : previousPageFeature?.name,
     };
 
+    if (previousPageFeature != feature) {
+      event.addAll(<String, dynamic>{
+        LogPageFeature         : feature?.name,
+        LogPagePreviousFeature : previousPageFeature?.name,
+      });
+    }
+
     // Add optional attribute, if applied
     if (attributes != null) {
       event.addAll(attributes);
