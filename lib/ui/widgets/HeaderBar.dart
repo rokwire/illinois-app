@@ -15,7 +15,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/RadioPlayer.dart';
@@ -32,11 +31,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class HeaderBar extends rokwire.HeaderBar {
 
   static const String defaultLeadingIconKey = 'chevron-left-white';
-  final AnalyticsFeature? analyticsFeature;
 
   HeaderBar({super.key,
     super.sortKey,
-    this.analyticsFeature,
 
     Widget? leadingWidget,
     String? leadingLabel,
@@ -80,7 +77,7 @@ class HeaderBar extends rokwire.HeaderBar {
 
   @override
   void leadingHandler(BuildContext context) {
-    Analytics().logSelect(target: "Back", feature: analyticsFeature);
+    Analytics().logSelect(target: "Back");
     Navigator.pop(context);
   }
 }
@@ -89,11 +86,8 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
 
   static const String defaultLeadingIconKey = 'chevron-left-white';
 
-  final AnalyticsFeature? analyticsFeature;
-
   SliverToutHeaderBar({
     super.key,
-    this.analyticsFeature,
 
     bool pinned = true,
     bool floating = false,
@@ -164,7 +158,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
 
   @override
   void leadingHandler(BuildContext context) {
-    Analytics().logSelect(target: "Back", feature: analyticsFeature);
+    Analytics().logSelect(target: "Back");
     Navigator.pop(context);
   }
 }
@@ -174,11 +168,8 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
 class SliverHeaderBar extends rokwire.SliverHeaderBar  {
   static const String defaultLeadingIconKey = 'close-circle-white';
 
-  final AnalyticsFeature? analyticsFeature;
-
   SliverHeaderBar({
     super.key,
-    this.analyticsFeature,
 
     bool pinned = true,
     bool floating = false,
@@ -230,7 +221,7 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
 
   @override
   void leadingHandler(BuildContext context) {
-    Analytics().logSelect(target: "Back", feature: analyticsFeature);
+    Analytics().logSelect(target: "Back");
     Navigator.pop(context);
   }
 }

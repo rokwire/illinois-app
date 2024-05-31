@@ -70,7 +70,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'header_title')), analyticsFeature: widget.analyticsFeature,),
+      appBar: HeaderBar(title: JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'header_title'))),
       body: Column(children: <Widget>[
         Expanded(child:
           SingleChildScrollView(child:
@@ -539,13 +539,13 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
   void _onTapFavorite() {
     if (widget.favoriteKey != null) {
       String? title = Guide().entryTitle(_guideEntry, stripHtmlTags: true);
-      Analytics().logSelect(target: "Favorite: $title", feature: widget.analyticsFeature);
+      Analytics().logSelect(target: "Favorite: $title");
       Auth2().prefs?.toggleFavorite(FavoriteItem(key: widget.favoriteKey!, id: Guide().entryId(_guideEntry)));
     }
   }
 
   void _onTapLink(String? url, { bool? useInternalBrowser }) {
-    Analytics().logSelect(target: 'Link: $url', feature: widget.analyticsFeature);
+    Analytics().logSelect(target: 'Link: $url');
     if (StringUtils.isNotEmpty(url)) {
       if (DeepLink().isAppUrl(url)) {
         DeepLink().launchUrl(url);
