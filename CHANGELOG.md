@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Prompt to star event after creation [#3655](https://github.com/rokwire/illinois-app/issues/3655).
+### Fixed
+- Fixed unhandled exception in refreshing HomeTwitterWidget.
 
 ## [6.0.1] - 2024-05-21
 ### Changed
