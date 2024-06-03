@@ -16,9 +16,12 @@
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/service.dart';
+import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class NativeCommunicator with Service {
   
@@ -75,12 +78,14 @@ class NativeCommunicator with Service {
   }
 
   Future<void> setLaunchScreenStatus(String? status) async {
-    try {
-      await _platformChannel.invokeMethod('setLaunchScreenStatus', {
-        'status': status
-      });
-    } on PlatformException catch (e) {
-      print(e.message);
+    if (kIsWeb) {
+      AppToast.showMessage(StringUtils.ensureNotEmpty(status), textColor: Styles().colors.black);
+    } else {
+      try {
+        await _platformChannel.invokeMethod('setLaunchScreenStatus', {'status': status});
+      } on PlatformException catch (e) {
+        print(e.message);
+      }
     }
   }
 
