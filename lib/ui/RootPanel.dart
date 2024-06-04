@@ -26,8 +26,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/ui/AssistantPanel.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
+import 'package:illinois/ui/assistant/AssistantHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
@@ -96,7 +96,7 @@ class RootPanel extends StatefulWidget {
 class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin implements NotificationsListener {
 
   List<RootTab>  _tabs = [];
-  Map<RootTab, Widget> _panels = {};
+  Map<RootTab, Widget?> _panels = {};
 
   TabController?  _tabBarController;
   int            _currentTabIndex = 0;
@@ -559,7 +559,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   
   void _selectTab(int tabIndex) {
 
-    if ((0 <= tabIndex) && (tabIndex < _tabs.length) && (tabIndex != _currentTabIndex)) {
+    //Treat Assistant tab differently because it is modal bottom sheet
+    if (getRootTabByIndex(tabIndex) == RootTab.Assistant) {
+        Analytics().logPage(name: AssistantHomePanel.pageRuntimeTypeName);
+        AssistantHomePanel.present(context);
+    }
+    else if ((0 <= tabIndex) && (tabIndex < _tabs.length) && (tabIndex != _currentTabIndex)) {
       _tabBarController!.animateTo(tabIndex);
 
       if (getRootTabByIndex(_currentTabIndex) == RootTab.Maps) {
@@ -930,9 +935,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     for (RootTab rootTab in tabs) {
       if (_panels[rootTab] == null) {
         Widget? panel = _createPanelForTab(rootTab);
-        if (panel != null) {
-          _panels[rootTab] = panel;
-        }
+        _panels[rootTab] = panel;
       }
     }
   }
@@ -959,7 +962,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       return ExploreMapPanel();
     }
     else if (rootTab == RootTab.Assistant) {
-      return AssistantPanel();
+      return null;
     }
     else if (rootTab == RootTab.Academics) {
       return AcademicsHomePanel(rootTabDisplay: true,);

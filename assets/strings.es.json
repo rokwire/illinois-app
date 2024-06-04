@@ -410,7 +410,11 @@
     "panel.browse.entry.wellness.wellness_mental_health.title": "Recursos de salud mental",
     "panel.browse.entry.wellness.wellness_success_team.title": "My Success Team",
 
-    "panel.assistant.header.title": "Asistante",
+    "panel.assistant.header.title": "Asistente de Illinois",
+    "panel.assistant.offline.label": "El Asistente de Illinois no está disponible sin conexión.",
+    "panel.assistant.logged_out.label": "Para acceder al Asistente de Illinois, debe iniciar sesión con su NetID y configurar su nivel de privacidad en 4 o 5 en Perfil.",
+    "panel.assistant.content.conversation.label": "Pregunta al asistente de Illinois",
+    "panel.assistant.content.faqs.label": "Preguntas frecuentes sobre el asistente de Illinois",
     "panel.assistant.label.disclaimer.title": "El Illinois Assistant es una función experimental. Algunos resultados pueden ser imprecisos. Verifica la información de la respuesta con otras fuentes oficiales de la universidad. Tus preguntas y comentarios se almacenarán y se analizarán para mejorar la calidad.",
     "panel.assistant.label.welcome_message.title": "Puedes preguntar cualquier cosa sobre la Universidad de Illinois Urbana-Champaign. Escribe una pregunta a continuación para empezar.",
     "panel.assistant.label.example.eg.title": "p.ej. ",

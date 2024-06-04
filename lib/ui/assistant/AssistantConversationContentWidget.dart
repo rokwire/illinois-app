@@ -1,4 +1,16 @@
-import 'dart:async';
+// Copyright 2024 Board of Trustees of the University of Illinois.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +22,6 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TypingIndicator.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -20,17 +31,17 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class AssistantPanel extends StatefulWidget {
-
-  static const String notifyRefresh      = "edu.illinois.rokwire.assistant.refresh";
-
-  AssistantPanel();
+class AssistantConversationContentWidget extends StatefulWidget {
+  AssistantConversationContentWidget();
 
   @override
-  _AssistantPanelState createState() => _AssistantPanelState();
+  State<AssistantConversationContentWidget> createState() => _AssistantConversationContentWidgetState();
 }
 
-class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAliveClientMixin<AssistantPanel> implements NotificationsListener {
+class _AssistantConversationContentWidgetState extends State<AssistantConversationContentWidget>
+    with AutomaticKeepAliveClientMixin<AssistantConversationContentWidget>
+    implements NotificationsListener {
+
   static final String resourceName = 'assistant';
 
   List<String>? _contentCodes;
@@ -58,16 +69,18 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
       SpeechToText.notifyError,
     ]);
 
-    _messages.add(Message(content: Localization().getStringEx('panel.assistant.label.welcome_message.title',
-        "You can ask anything about the University of Illinois Urbana-Champaign. Type a question below to get started.",),
+    _messages.add(Message(
+        content: Localization().getStringEx(
+          'panel.assistant.label.welcome_message.title',
+          "You can ask anything about the University of Illinois Urbana-Champaign. Type a question below to get started.",
+        ),
         // sources: ["https://google.com", "https://illinois.edu", "https://grad.illinois.edu", "https://uillinois.edu"],
         user: false));
 
-    _messages.add(Message(content: Localization().getStringEx('panel.assistant.label.example.question.title',
-        "How many students attend UIUC?"),
-      user: true,
-      example: true
-    ));
+    _messages.add(Message(
+        content: Localization().getStringEx('panel.assistant.label.example.question.title', "How many students attend UIUC?"),
+        user: true,
+        example: true));
 
     _contentCodes = buildContentCodes();
 
@@ -88,24 +101,21 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   @override
   bool get wantKeepAlive => true;
 
-
   // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
       _updateContentCodes();
       if (mounted) {
-        setState(() { });
+        setState(() {});
       }
-    }
-    else if((name == Auth2UserPrefs.notifyFavoritesChanged) ||
-      (name == Localization.notifyStringsUpdated) ||
-      (name == Styles.notifyChanged)) {
+    } else if ((name == Auth2UserPrefs.notifyFavoritesChanged) ||
+        (name == Localization.notifyStringsUpdated) ||
+        (name == Styles.notifyChanged)) {
       if (mounted) {
-        setState(() { });
+        setState(() {});
       }
-    }
-    else if (name == SpeechToText.notifyError) {
+    } else if (name == SpeechToText.notifyError) {
       setState(() {
         _listening = false;
       });
@@ -117,32 +127,29 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
     super.build(context);
 
     Widget? accessWidget = AccessCard.builder(resource: resourceName);
-    return Scaffold(
-      appBar: RootHeaderBar(title: Localization().getStringEx('panel.assistant.header.title', 'Assistant')),
-      body: accessWidget != null ?
-        Column(children: [Padding(
-          padding: const EdgeInsets.only(top: 16.0),
-          child: accessWidget,
-        )]) :
-        RefreshIndicator(onRefresh: _onPullToRefresh, child:
-          Column(children: [
-            Expanded(child:
-              SingleChildScrollView(
-                physics: AlwaysScrollableScrollPhysics(),
-                controller: _scrollController,
-                reverse: true,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(children: _buildContentList(),),
-                )
+    return accessWidget != null
+          ? Column(children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: accessWidget,
               )
-            ),
-            _buildChatBar(),
-          ]),
-      ),
-      backgroundColor: Styles().colors.background,
-      bottomNavigationBar: null,
-    );
+            ])
+          : RefreshIndicator(
+              onRefresh: _onPullToRefresh,
+              child: Column(children: [
+                SingleChildScrollView(
+                        physics: AlwaysScrollableScrollPhysics(),
+                        controller: _scrollController,
+                        reverse: true,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: _buildContentList(),
+                          ),
+                        )),
+                _buildChatBar()
+              ])
+            );
   }
 
   List<Widget> _buildContentList() {
@@ -166,18 +173,18 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   Widget _buildDisclaimer() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
-      child: Text(Localization().getStringEx('panel.assistant.label.disclaimer.title',
-          'The Illinois Assistant is an experimental feature. Some results may be inaccurate; '
-              'verify the answer information with other official university sources. '
-              'Your questions and feedback will be stored and analyzed to improve quality.'),
-        style: Styles().textStyles.getTextStyle('widget.item.small.thin.italic')
-      ),
+      child: Text(
+          Localization().getStringEx(
+              'panel.assistant.label.disclaimer.title',
+              'The Illinois Assistant is an experimental feature. Some results may be inaccurate; '
+                  'verify the answer information with other official university sources. '
+                  'Your questions and feedback will be stored and analyzed to improve quality.'),
+          style: Styles().textStyles.getTextStyle('widget.item.small.thin.italic')),
     );
   }
 
   Widget _buildChatBubble(Message message) {
-    EdgeInsets bubblePadding = message.user ? const EdgeInsets.only(left: 32.0) :
-      const EdgeInsets.only(right: 0);
+    EdgeInsets bubblePadding = message.user ? const EdgeInsets.only(left: 32.0) : const EdgeInsets.only(right: 0);
 
     List<Link>? deepLinks = message.links;
 
@@ -192,56 +199,68 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
           ),
           color: Styles().colors.fillColorPrimaryVariant,
           child: InkWell(
-            onTap: () => _onTapSourceLink(source),
-            borderRadius: BorderRadius.circular(16.0),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-              child: Row(mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(uri.host, style: Styles().textStyles.getTextStyle('widget.title.light.small')),
-                  SizedBox(width: 8),
-                  Styles().images.getImage('external-link') ?? Container(),
-                ],
-              ),
-            )
-          ),
+              onTap: () => _onTapSourceLink(source),
+              borderRadius: BorderRadius.circular(16.0),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(uri.host, style: Styles().textStyles.getTextStyle('widget.title.light.small')),
+                    SizedBox(width: 8),
+                    Styles().images.getImage('external-link') ?? Container(),
+                  ],
+                ),
+              )),
         ));
       }
     }
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: bubblePadding,
-          child: Row(mainAxisSize: MainAxisSize.max,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: message.user ? MainAxisAlignment.end : MainAxisAlignment.start,
             children: [
               Flexible(
                 child: Opacity(
                   opacity: message.example ? 0.5 : 1.0,
                   child: Material(
-                    color: message.user ? message.example ? Styles().colors.background : Styles().colors.surface : Styles().colors.fillColorPrimary,
+                    color: message.user
+                        ? message.example
+                            ? Styles().colors.background
+                            : Styles().colors.surface
+                        : Styles().colors.fillColorPrimary,
                     borderRadius: BorderRadius.circular(16.0),
                     child: InkWell(
-                      onTap: message.example ? () {
-                        _messages.remove(message);
-                        _submitMessage(message.content);
-                      } : null,
+                      onTap: message.example
+                          ? () {
+                              _messages.remove(message);
+                              _submitMessage(message.content);
+                            }
+                          : null,
                       child: Container(
-                        decoration: message.example ? BoxDecoration(borderRadius: BorderRadius.circular(16.0),
-                            border: Border.all(color: Styles().colors.fillColorPrimary)) : null,
+                        decoration: message.example
+                            ? BoxDecoration(
+                                borderRadius: BorderRadius.circular(16.0), border: Border.all(color: Styles().colors.fillColorPrimary))
+                            : null,
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              message.example ?
-                                Text(Localization().getStringEx('panel.assistant.label.example.eg.title', "eg. ") + message.content,
-                                  style: message.user ? Styles().textStyles.getTextStyle('widget.title.regular') :
-                                  Styles().textStyles.getTextStyle('widget.title.light.regular'))
+                              message.example
+                                  ? Text(Localization().getStringEx('panel.assistant.label.example.eg.title', "eg. ") + message.content,
+                                      style: message.user
+                                          ? Styles().textStyles.getTextStyle('widget.title.regular')
+                                          : Styles().textStyles.getTextStyle('widget.title.light.regular'))
                                   : SelectableText(message.content,
-                                  style: message.user ? Styles().textStyles.getTextStyle('widget.title.regular') :
-                                  Styles().textStyles.getTextStyle('widget.title.light.regular')),
+                                      style: message.user
+                                          ? Styles().textStyles.getTextStyle('widget.title.regular')
+                                          : Styles().textStyles.getTextStyle('widget.title.light.regular')),
                               Visibility(
                                 visible: sourceLinks.isNotEmpty,
                                 child: Column(
@@ -274,46 +293,62 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
               ),
               Visibility(
                 visible: message.acceptsFeedback,
-                child: Column(crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [// TODO: Handle material icons in styles images
-                    IconButton(onPressed: _onTapFeedbackInfo,
-                        icon: Icon(Icons.info_outline,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // TODO: Handle material icons in styles images
+                    IconButton(
+                        onPressed: _onTapFeedbackInfo,
+                        icon: Icon(Icons.info_outline, size: 24, color: Styles().colors.fillColorPrimary),
+                        iconSize: 24,
+                        splashRadius: 24),
+                    IconButton(
+                        onPressed: message.feedbackExplanation == null
+                            ? () {
+                                _sendFeedback(message, true);
+                              }
+                            : null,
+                        icon: Icon(message.feedback == MessageFeedback.good ? Icons.thumb_up : Icons.thumb_up_outlined,
+                            size: 24,
+                            color:
+                                message.feedbackExplanation == null ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor),
+                        iconSize: 24,
+                        splashRadius: 24),
+                    IconButton(
+                        onPressed: message.feedbackExplanation == null
+                            ? () {
+                                _sendFeedback(message, false);
+                              }
+                            : null,
+                        icon: Icon(message.feedback == MessageFeedback.bad ? Icons.thumb_down : Icons.thumb_down_outlined,
                             size: 24, color: Styles().colors.fillColorPrimary),
                         iconSize: 24,
                         splashRadius: 24),
-                    IconButton(onPressed: message.feedbackExplanation == null ? () {
-                      _sendFeedback(message, true);
-                    }: null,
-                      icon: Icon(message.feedback == MessageFeedback.good ? Icons.thumb_up : Icons.thumb_up_outlined,
-                          size: 24, color: message.feedbackExplanation == null ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor),
-                      iconSize: 24,
-                      splashRadius: 24),
-                    IconButton(onPressed: message.feedbackExplanation == null ? () {
-                      _sendFeedback(message, false);
-                    }: null,
-                      icon: Icon(message.feedback == MessageFeedback.bad ? Icons.thumb_down :Icons.thumb_down_outlined,
-                          size: 24, color: Styles().colors.fillColorPrimary),
-                      iconSize: 24,
-                      splashRadius: 24),
                   ],
                 ),
               )
             ],
           ),
         ),
-        Visibility(visible: CollectionUtils.isNotEmpty(deepLinks), child: Padding(
-          padding: const EdgeInsets.only(top: 8.0, left: 24.0, right: 32.0),
-          child: _buildLinkWidgets(deepLinks),
-        ))
+        Visibility(
+            visible: CollectionUtils.isNotEmpty(deepLinks),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8.0, left: 24.0, right: 32.0),
+              child: _buildLinkWidgets(deepLinks),
+            ))
       ],
     );
   }
 
   void _onTapFeedbackInfo() {
-    AppAlert.showDialogResult(context, Localization().getStringEx("panel.assistant.label.feedback.info.description", "Provide feedback on this response to help us improve the Illinois Assistant!"
-        "\n\nIf you found the response helpful and accurate give it a 'thumbs up' to let us know. "
-        "\n\nIf you noticed an issue with the response give it a 'thumbs down' and you will "
-        "be prompted to provide a brief explanation of the problem."));
+    AppAlert.showDialogResult(
+        context,
+        Localization().getStringEx(
+            "panel.assistant.label.feedback.info.description",
+            "Provide feedback on this response to help us improve the Illinois Assistant!"
+                "\n\nIf you found the response helpful and accurate give it a 'thumbs up' to let us know. "
+                "\n\nIf you noticed an issue with the response give it a 'thumbs down' and you will "
+                "be prompted to provide a brief explanation of the problem."));
   }
 
   void _sendFeedback(Message message, bool good) {
@@ -335,9 +370,11 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
           message.feedback = null;
         } else {
           message.feedback = MessageFeedback.bad;
-          _messages.add(Message(content: Localization().getStringEx('panel.assistant.label.feedback.negative.prompt.title',
-              "Thank you for providing feedback! Could you please explain "
-                  "the issue with my response?"),
+          _messages.add(Message(
+              content: Localization().getStringEx(
+                  'panel.assistant.label.feedback.negative.prompt.title',
+                  "Thank you for providing feedback! Could you please explain "
+                      "the issue with my response?"),
               user: false));
           _feedbackMessage = message;
           bad = true;
@@ -365,8 +402,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: TypingIndicator(
-              flashingCircleBrightColor: Styles().colors.surface,
-              flashingCircleDarkColor: Styles().colors.fillColorPrimary),
+                flashingCircleBrightColor: Styles().colors.surface, flashingCircleDarkColor: Styles().colors.fillColorPrimary),
           ),
         ),
       ),
@@ -403,10 +439,12 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
             padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
-                Visibility(visible: link.iconKey != null, child: Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Styles().images.getImage(link.iconKey ?? '') ?? Container(),
-                )),
+                Visibility(
+                    visible: link.iconKey != null,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Styles().images.getImage(link.iconKey ?? '') ?? Container(),
+                    )),
                 Expanded(child: Text(link.name, style: Styles().textStyles.getTextStyle('widget.title.light.regular'))),
                 Styles().images.getImage('chevron-right-white') ?? Container(),
               ],
@@ -423,22 +461,28 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
       color: Styles().colors.surface,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(mainAxisSize: MainAxisSize.max,
+            Row(
+              mainAxisSize: MainAxisSize.max,
               children: [
                 Visibility(
                   visible: enabled && SpeechToText().isEnabled,
-                  child: IconButton(//TODO: Enable support for material icons in styles images
+                  child: IconButton(
+                    //TODO: Enable support for material icons in styles images
                     splashRadius: 24,
                     icon: Icon(_listening ? Icons.stop_circle_outlined : Icons.mic, color: Styles().colors.fillColorSecondary),
-                    onPressed: enabled ? () {
-                      if (_listening) {
-                        _stopListening();
-                      } else {
-                        _startListening();
-                      }
-                    } : null,
+                    onPressed: enabled
+                        ? () {
+                            if (_listening) {
+                              _stopListening();
+                            } else {
+                              _startListening();
+                            }
+                          }
+                        : null,
                   ),
                 ),
                 Expanded(
@@ -448,40 +492,40 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: TextField(
-                        enabled: enabled,
-                        controller: _inputController,
-                        minLines: 1,
-                        maxLines: 3,
-                        textCapitalization: TextCapitalization.sentences,
-                        textInputAction: TextInputAction.send,
-                        onSubmitted: _submitMessage,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: _feedbackMessage == null ?
-                            enabled ? Localization().getStringEx('panel.assistant.field.question.title',
-                                  'Type your question here...') :
-                              Localization().getStringEx('panel.assistant.label.queries.limit.title',
-                                  'Sorry you are out of questions for today. Please check back tomorrow to ask more questions!')
-                            : Localization().getStringEx('panel.assistant.field.feedback.title',
-                                  'Type your feedback here...'),
-                        ),
-                        style: Styles().textStyles.getTextStyle('widget.title.regular')
-                      ),
+                          enabled: enabled,
+                          controller: _inputController,
+                          minLines: 1,
+                          maxLines: 3,
+                          textCapitalization: TextCapitalization.sentences,
+                          textInputAction: TextInputAction.send,
+                          onSubmitted: _submitMessage,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: _feedbackMessage == null
+                                ? enabled
+                                    ? Localization().getStringEx('panel.assistant.field.question.title', 'Type your question here...')
+                                    : Localization().getStringEx('panel.assistant.label.queries.limit.title',
+                                        'Sorry you are out of questions for today. Please check back tomorrow to ask more questions!')
+                                : Localization().getStringEx('panel.assistant.field.feedback.title', 'Type your feedback here...'),
+                          ),
+                          style: Styles().textStyles.getTextStyle('widget.title.regular')),
                     ),
                   ),
                 ),
-                IconButton(//TODO: Enable support for material icons in styles images
+                IconButton(
+                  //TODO: Enable support for material icons in styles images
                   splashRadius: 24,
                   icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor),
-                  onPressed: enabled ? () {
-                    _submitMessage(_inputController.text);
-                  }: null,
+                  onPressed: enabled
+                      ? () {
+                          _submitMessage(_inputController.text);
+                        }
+                      : null,
                 ),
               ],
             ),
             _buildQueryLimit(),
-            Visibility(visible: Auth2().isDebugManager && FlexUI().hasFeature('assistant_personalization'),
-                child: _buildContextButton()),
+            Visibility(visible: Auth2().isDebugManager && FlexUI().hasFeature('assistant_personalization'), child: _buildContextButton()),
           ],
         ),
       ),
@@ -499,14 +543,15 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
           height: 10,
           width: 10,
           decoration: BoxDecoration(
-            color: (_queryLimit ?? 0) > 0 ? Styles().colors.saferLocationWaitTimeColorGreen :
-              Styles().colors.saferLocationWaitTimeColorRed,
-            shape: BoxShape.circle
-          ),
+              color:
+                  (_queryLimit ?? 0) > 0 ? Styles().colors.saferLocationWaitTimeColorGreen : Styles().colors.saferLocationWaitTimeColorRed,
+              shape: BoxShape.circle),
         ),
         SizedBox(width: 8),
-        Text(Localization().getStringEx('panel.assistant.label.queries.remaining.title', "{{query_limit}} questions remaining today")
-            .replaceAll('{{query_limit}}', _queryLimit.toString()),
+        Text(
+          Localization()
+              .getStringEx('panel.assistant.label.queries.remaining.title', "{{query_limit}} questions remaining today")
+              .replaceAll('{{query_limit}}', _queryLimit.toString()),
           style: Styles().textStyles.getTextStyle('widget.title.small'),
         ),
       ]),
@@ -524,42 +569,37 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   }
 
   Future<void> _showContext() {
-
     List<String> userContextKeys = _userContext?.keys.toList() ?? [];
     List<String> userContextVals = _userContext?.values.toList() ?? [];
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-
-        return StatefulBuilder(
-          builder: (context, setStateForDialog) {
+        return StatefulBuilder(builder: (context, setStateForDialog) {
           List<Widget> contextFields = [];
           for (int i = 0; i < userContextKeys.length; i++) {
             String key = userContextKeys[i];
-            String val = userContextVals[i];            // TextEditingController controller = TextEditingController();
+            String val = userContextVals[i]; // TextEditingController controller = TextEditingController();
             // controller.text = context;
-            contextFields.add(Row(mainAxisSize: MainAxisSize.max,
+            contextFields.add(Row(
+              mainAxisSize: MainAxisSize.max,
               children: [
                 Expanded(
                   child: TextFormField(
-                    initialValue: key,
-                    onChanged: (value) {
-                      userContextKeys[i] = value;
-                    }
-                  ),
+                      initialValue: key,
+                      onChanged: (value) {
+                        userContextKeys[i] = value;
+                      }),
                 ),
                 SizedBox(width: 8.0),
                 Expanded(
                   child: TextFormField(
-                    initialValue: val,
-                    onChanged: (value) {
-                      userContextVals[i] = value;
-                    }
-                  ),
+                      initialValue: val,
+                      onChanged: (value) {
+                        userContextVals[i] = value;
+                      }),
                 ),
               ],
-            )
-            );
+            ));
           }
           return AlertDialog(
             title: Text(Localization().getStringEx('panel.assistant.dialog.context.title', 'User Context')),
@@ -569,7 +609,8 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
               ),
             ),
             actions: [
-              Row(mainAxisSize: MainAxisSize.max,
+              Row(
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   Expanded(
                     child: RoundedButton(
@@ -582,7 +623,9 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                       },
                     ),
                   ),
-                  SizedBox(width: 8.0,),
+                  SizedBox(
+                    width: 8.0,
+                  ),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(top: 8.0),
@@ -598,7 +641,8 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                   ),
                 ],
               ),
-              Row(mainAxisSize: MainAxisSize.max,
+              Row(
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   Expanded(
                     child: Padding(
@@ -607,19 +651,16 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                         label: Localization().getStringEx('panel.assistant.dialog.context.button.profile1.title', 'Profile 1'),
                         onTap: () {
                           _userContext = _getUserContext(
-                              name: 'John Doe',
-                              netID: 'jdoe',
-                              college: 'Media',
-                              department: 'Journalism',
-                              studentLevel: 'Sophomore'
-                          );
+                              name: 'John Doe', netID: 'jdoe', college: 'Media', department: 'Journalism', studentLevel: 'Sophomore');
                           Navigator.of(context).pop();
                           _showContext();
                         },
                       ),
                     ),
                   ),
-                  SizedBox(width: 8.0,),
+                  SizedBox(
+                    width: 8.0,
+                  ),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(top: 8.0),
@@ -631,8 +672,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                               netID: 'jsmith',
                               college: 'Grainger Engineering',
                               department: 'Electrical and Computer Engineering',
-                              studentLevel: 'Senior'
-                          );
+                              studentLevel: 'Senior');
                           Navigator.of(context).pop();
                           _showContext();
                         },
@@ -685,12 +725,14 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
       _feedbackMessage?.feedbackExplanation = message;
       Message? response = await Assistant().sendFeedback(_feedbackMessage!);
       setState(() {
-        if (response != null){
+        if (response != null) {
           _messages.add(response);
         } else {
           _messages.add(Message(
-              content: Localization().getStringEx('panel.assistant.label.feedback.thank_you.title', 'Thank you for the explanation! '
-                  'Your response has been recorded and will be used to improve results in the future.'),
+              content: Localization().getStringEx(
+                  'panel.assistant.label.feedback.thank_you.title',
+                  'Thank you for the explanation! '
+                      'Your response has been recorded and will be used to improve results in the future.'),
               user: false));
         }
         _loadingResponse = false;
@@ -704,8 +746,9 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
       setState(() {
         _messages.add(Message(
             content: Localization().getStringEx(
-                'panel.assistant.label.queries.limit.title', 'Sorry you are out of questions for today. '
-                'Please check back tomorrow to ask more questions!'),
+                'panel.assistant.label.queries.limit.title',
+                'Sorry you are out of questions for today. '
+                    'Please check back tomorrow to ask more questions!'),
             user: false));
       });
       return;
@@ -717,13 +760,12 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
       curve: Curves.fastOutSlowIn,
     );
 
-    Map<String, String>? context = FlexUI().hasFeature('assistant_personalization') ?
-        _userContext : null;
+    Map<String, String>? context = FlexUI().hasFeature('assistant_personalization') ? _userContext : null;
 
     Message? response = await Assistant().sendQuery(message, context: context);
     if (mounted) {
       setState(() {
-        if (response != null){
+        if (response != null) {
           _messages.add(response);
           if (_queryLimit != null) {
             if (response.queryLimit != null) {
@@ -733,7 +775,10 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
             }
           }
         } else {
-          _messages.add(Message(content: Localization().getStringEx('panel.assistant.label.error.title', 'Sorry something went wrong! Please try asking your question again.'), user: false));
+          _messages.add(Message(
+              content: Localization()
+                  .getStringEx('panel.assistant.label.error.title', 'Sorry something went wrong! Please try asking your question again.'),
+              user: false));
           _inputController.text = message;
         }
         _loadingResponse = false;
@@ -797,19 +842,18 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   }
 
   void _updateContentCodes() {
-    List<String>?  contentCodes = buildContentCodes();
+    List<String>? contentCodes = buildContentCodes();
     if ((contentCodes != null) && !DeepCollectionEquality().equals(_contentCodes, contentCodes)) {
       if (mounted) {
         setState(() {
           _contentCodes = contentCodes;
         });
-      }
-      else {
+      } else {
         _contentCodes = contentCodes;
       }
     }
   }
-  
+
   Future<void> _onPullToRefresh() async {
     if (mounted) {
       Assistant().getQueryLimit().then((limit) {

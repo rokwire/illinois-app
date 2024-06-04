@@ -410,7 +410,11 @@
 	"panel.browse.entry.wellness.wellness_mental_health.title": "心理健康資源",
 	"panel.browse.entry.wellness.wellness_success_team.title": "My Success Team",
 
-	"panel.assistant.header.title": "Assistant",
+	"panel.assistant.header.title": "伊利諾伊州助理",
+	"panel.assistant.offline.label": "離線時，伊利諾伊州助手不可用。",
+	"panel.assistant.logged_out.label": "要存取伊利諾伊州助手，您需要使用 NetID 登錄，並在個人資料下將您的隱私等級設定為 4 或 5。",
+	"panel.assistant.content.conversation.label": "詢問伊利諾伊州助理",
+	"panel.assistant.content.faqs.label": "伊利諾伊州助理常見問題解答",
 	"panel.assistant.label.disclaimer.title": "Illinois Assistant是一个实验性的功能。 部分结果可能有误，请与其他官方校园资源确认结果。您的问题与回馈将会被储存并分析，以改善此功能质量。",
 	"panel.assistant.label.welcome_message.title": "您可以问任何与伊利诺伊大学相关的问题。請在下方键入问题。",
 	"panel.assistant.label.example.eg.title": "例如： ",
