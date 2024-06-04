@@ -17,6 +17,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
@@ -46,7 +47,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 enum SettingsContent { interests, food_filters, sports, favorites, assessments, calendar, appointments, i_card, language, contact, maps, research, privacy, notifications}
 
-class SettingsHomeContentPanel extends StatefulWidget {
+class SettingsHomeContentPanel extends StatefulWidget with AnalyticsInfo {
   static final List<SettingsContent> _dropdownSettings = [ //SettingsContent visible in the dropdown. Some can be accessed only from outside. Example: SettingsHomeContentPanel.present(context, content: SettingsContent.food_filters);
     SettingsContent.contact,
     SettingsContent.maps,
@@ -68,6 +69,9 @@ class SettingsHomeContentPanel extends StatefulWidget {
 
   @override
   _SettingsHomeContentPanelState createState() => _SettingsHomeContentPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Settings;
 
   static void present(BuildContext context, { SettingsContent? content}) {
     if (ModalRoute.of(context)?.settings.name != routeName) {
