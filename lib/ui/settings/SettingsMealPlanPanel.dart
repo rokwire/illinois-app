@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
+import 'package:illinois/ui/wallet/WalletIlliniCashPanel.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/IlliniCash.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -51,7 +51,7 @@ class SettingsMealPlanPanel extends StatefulWidget {
       AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.meal_plan', 'You need to be logged in with your NetID to access University Housing Meal Plan. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
     }
     else {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: SettingsIlliniCashPanel.routeName), builder: (context) => SettingsMealPlanPanel()));
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: WalletIlliniCashPanel.routeName), builder: (context) => SettingsMealPlanPanel()));
     }
   }
 }

@@ -7,7 +7,7 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
-import 'package:illinois/ui/wallet/ICardHomeContentPanel.dart';
+import 'package:illinois/ui/wallet/WalletICardHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -22,9 +22,9 @@ import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
+import 'package:illinois/ui/wallet/WalletIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
-import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
+import 'package:illinois/ui/wallet/WalletMTDBusPassPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -342,7 +342,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateBusPass() {
     Analytics().logSelect(target: "Bus Pass");
-    MTDBusPassPanel.present(context);
+    WalletMTDBusPassPanel.present(context);
   }
 
   void _navigateDining() {
@@ -362,12 +362,12 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateIlliniCash() {
     Analytics().logSelect(target: "Illini Cash");
-    SettingsIlliniCashPanel.present(context);
+    WalletIlliniCashPanel.present(context);
   }
 
   void _navigateIlliniId() {
     Analytics().logSelect(target: "Illini ID");
-    ICardHomeContentPanel.present(context, content: ICardContent.i_card);
+    WalletICardHomeContentPanel.present(context, content: WalletICardContent.i_card);
   }
 
   void _navigateLaundry() {
