@@ -19,6 +19,7 @@ import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
@@ -81,12 +82,15 @@ import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class HomePanel extends StatefulWidget {
+class HomePanel extends StatefulWidget with AnalyticsInfo {
   static const String notifyRefresh      = "edu.illinois.rokwire.home.refresh";
   static const String notifySelect       = "edu.illinois.rokwire.home.select";
 
   @override
   _HomePanelState createState() => _HomePanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Favorites;
 
   static dynamic dataFromCode(String code, {
     bool title = false,
