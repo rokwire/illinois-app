@@ -7,18 +7,18 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class SettingsLinkedAccountPanel extends StatefulWidget{
+class ProfileLoginLinkedAccountPanel extends StatefulWidget{
   final Auth2Type? linkedAccount;
   final LinkAccountMode mode;
 
-  const SettingsLinkedAccountPanel({Key? key, this.linkedAccount, required this.mode}) :super(key: key);
+  const ProfileLoginLinkedAccountPanel({Key? key, this.linkedAccount, required this.mode}) :super(key: key);
 
 
   @override
   State<StatefulWidget> createState() => _SettingsLinkedAccountState();
 }
 
-class _SettingsLinkedAccountState extends State<SettingsLinkedAccountPanel>{
+class _SettingsLinkedAccountState extends State<ProfileLoginLinkedAccountPanel>{
   bool _isLoading = false;
   String _errorMsg = "";
 

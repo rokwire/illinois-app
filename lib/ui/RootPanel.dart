@@ -445,7 +445,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onFirebaseProfileNotification(profileContent: ProfileContent.login);
     }
     else if (name == FirebaseMessaging.notifySettingsSectionsNotification) { //TBD deprecate use notifyProfileLoginNotification instead
-      _onFirebaseSettingsNotification(settingsContent: SettingsContent.sections);
+      _onFirebaseProfileNotification(profileContent: ProfileContent.login);
     }
     else if (name == FirebaseMessaging.notifySettingsInterestsNotification) {
       _onFirebaseSettingsNotification(settingsContent: SettingsContent.interests);

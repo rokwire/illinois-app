@@ -32,8 +32,8 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class MTDBusPassPanel extends StatefulWidget {
-  _MTDBusPassPanelState createState() => _MTDBusPassPanelState();
+class WalletMTDBusPassPanel extends StatefulWidget {
+  _WalletMTDBusPassPanelState createState() => _WalletMTDBusPassPanelState();
 
   static void present(BuildContext context) {
     if (!Auth2().isOidcLoggedIn) {
@@ -47,12 +47,12 @@ class MTDBusPassPanel extends StatefulWidget {
         isScrollControlled: true,
         isDismissible: true,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
-        builder: (context) => MTDBusPassPanel());
+        builder: (context) => WalletMTDBusPassPanel());
     }
   }
 }
 
-class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements NotificationsListener {
+class _WalletMTDBusPassPanelState extends State<WalletMTDBusPassPanel> implements NotificationsListener {
   final double _headingH1 = 180;
   final double _headingH2 = 80;
   final double _photoSize = 240;

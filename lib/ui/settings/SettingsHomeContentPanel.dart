@@ -34,7 +34,6 @@ import 'package:illinois/ui/settings/SettingsMapsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsNotificationPreferencesContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsResearchContentWidget.dart';
-import 'package:illinois/ui/settings/SettingsSectionsContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
@@ -45,7 +44,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum SettingsContent { sections, interests, food_filters, sports, favorites, assessments, calendar, appointments, i_card, language, contact, maps, research, privacy, notifications}
+enum SettingsContent { interests, food_filters, sports, favorites, assessments, calendar, appointments, i_card, language, contact, maps, research, privacy, notifications}
 
 class SettingsHomeContentPanel extends StatefulWidget {
   static final List<SettingsContent> _dropdownSettings = [ //SettingsContent visible in the dropdown. Some can be accessed only from outside. Example: SettingsHomeContentPanel.present(context, content: SettingsContent.food_filters);
@@ -285,8 +284,6 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
 
   Widget get _contentWidget {
     switch (_selectedContent) {
-      case SettingsContent.sections: //TBD remove and use profile.login instead
-        return SettingsSectionsContentWidget();
       case SettingsContent.interests:
         return SettingsInterestsContentWidget();
       case SettingsContent.food_filters:
@@ -334,8 +331,6 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
 
   String _getContentLabel(SettingsContent section) {
     switch (section) {
-      case SettingsContent.sections: //TBD remove and use profile.login instead
-        return Localization().getStringEx('panel.settings.home.settings.sections.section.label', 'Sign In/Sign Out');
       case SettingsContent.interests:
         return Localization().getStringEx('panel.settings.home.settings.sections.interests.label', 'My Interests');
       case SettingsContent.food_filters:
