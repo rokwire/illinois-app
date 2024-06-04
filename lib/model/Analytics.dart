@@ -46,6 +46,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   ResearchProject          = AnalyticsFeature("Research at Illinois", key: "ResearchProject", priority: 1);
   static const AnalyticsFeature   Settings                 = AnalyticsFeature("Settings");
   static const AnalyticsFeature   StateFarmCenter          = AnalyticsFeature("StateFarm Center", key: {"StateFarm", "Parking", "StadiumPoll"});
+  static const AnalyticsFeature   Unknown                  = AnalyticsFeature("Unknown");
   static const AnalyticsFeature   Wallet                   = AnalyticsFeature("Wallet");
   static const AnalyticsFeature   WalletBusPass            = AnalyticsFeature("Wallet: Bus Pass", key: "BusPass", priority: 1);
   static const AnalyticsFeature   WalletIlliniCash         = AnalyticsFeature("Wallet: Illini Cash", key: "IlliniCash", priority: 1);
@@ -78,6 +79,7 @@ class AnalyticsFeature {
     Recent,
     Debug,
     ResearchProject,
+    StateFarmCenter,
     Onboarding,
     Wallet,
     WalletBusPass,
