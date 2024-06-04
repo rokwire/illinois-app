@@ -622,7 +622,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   void _onTapMapExploreDirections() async {
     Analytics().logSelect(
       target: 'Directions',
-      feature: _selectedMapExplore.analyticsFeature,
+      feature: ExploreExt.getExploreAnalyticsFeature(_selectedMapExplore),
     );
     
     dynamic explore = _selectedMapExplore;
@@ -645,7 +645,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   void _onTapMapExploreDetail() {
     Analytics().logSelect(
       target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details',
-      feature: _selectedMapExplore.analyticsFeature,
+      feature: ExploreExt.getExploreAnalyticsFeature(_selectedMapExplore),
     );
     if (_selectedMapExplore is Explore) {
         (_selectedMapExplore as Explore).exploreLaunchDetail(context);
@@ -659,7 +659,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   void _onTapMapClear() {
     Analytics().logSelect(
       target: 'Clear',
-      feature: _selectedMapExplore.analyticsFeature,
+      feature: ExploreExt.getExploreAnalyticsFeature(_selectedMapExplore),
     );
     dynamic selectedMapExplore = _selectedMapExplore;
     _selectMapExplore(null);

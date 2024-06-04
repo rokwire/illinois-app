@@ -159,6 +159,18 @@ extension ExploreExt on Explore {
     }
   }
 
+  static AnalyticsFeature? getExploreAnalyticsFeature(dynamic explore) {
+    if (explore is Explore) {
+      return explore.analyticsFeature;
+    }
+    else if (explore is List<Explore>) {
+      return getExploresListAnalyticsFeature(explore);
+    }
+    else {
+      return null;
+    }
+  }
+
   static AnalyticsFeature? getExploresListAnalyticsFeature(List<Explore>? exploresList) {
     AnalyticsFeature? feature;
     if (exploresList != null) {
