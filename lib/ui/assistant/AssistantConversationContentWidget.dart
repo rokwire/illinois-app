@@ -41,7 +41,6 @@ class AssistantConversationContentWidget extends StatefulWidget {
 class _AssistantConversationContentWidgetState extends State<AssistantConversationContentWidget>
     with AutomaticKeepAliveClientMixin<AssistantConversationContentWidget>
     implements NotificationsListener {
-
   static final String resourceName = 'assistant';
 
   List<String>? _contentCodes;
@@ -70,17 +69,10 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     ]);
 
     _messages.add(Message(
-        content: Localization().getStringEx(
-          'panel.assistant.label.welcome_message.title',
-          "You can ask anything about the University of Illinois Urbana-Champaign. Type a question below to get started.",
-        ),
+        content: Localization().getStringEx('panel.assistant.label.welcome_message.title',
+            'The Illinois Assistant is a search feature that brings official university resources to your fingertips. Ask a question below to get started.'),
         // sources: ["https://google.com", "https://illinois.edu", "https://grad.illinois.edu", "https://uillinois.edu"],
         user: false));
-
-    _messages.add(Message(
-        content: Localization().getStringEx('panel.assistant.label.example.question.title', "How many students attend UIUC?"),
-        user: true,
-        example: true));
 
     _contentCodes = buildContentCodes();
 
@@ -106,15 +98,11 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
       _updateContentCodes();
-      if (mounted) {
-        setState(() {});
-      }
+      setStateIfMounted((){});
     } else if ((name == Auth2UserPrefs.notifyFavoritesChanged) ||
         (name == Localization.notifyStringsUpdated) ||
         (name == Styles.notifyChanged)) {
-      if (mounted) {
-        setState(() {});
-      }
+      setStateIfMounted((){});
     } else if (name == SpeechToText.notifyError) {
       setState(() {
         _listening = false;
@@ -127,35 +115,23 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     super.build(context);
 
     Widget? accessWidget = AccessCard.builder(resource: resourceName);
+
     return accessWidget != null
-          ? Column(children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: accessWidget,
-              )
-            ])
-          : RefreshIndicator(
-              onRefresh: _onPullToRefresh,
-              child: Column(children: [
-                SingleChildScrollView(
-                        physics: AlwaysScrollableScrollPhysics(),
-                        controller: _scrollController,
-                        reverse: true,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: _buildContentList(),
-                          ),
-                        )),
-                _buildChatBar()
-              ])
-            );
+        ? Column(children: [Padding(padding: const EdgeInsets.only(top: 16.0), child: accessWidget)])
+        : RefreshIndicator(
+            onRefresh: _onPullToRefresh,
+            child: Column(children: [
+              SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  controller: _scrollController,
+                  reverse: true,
+                  child: Padding(padding: EdgeInsets.all(16), child: Column(children: _buildContentList()))),
+              _buildChatBar()
+            ]));
   }
 
   List<Widget> _buildContentList() {
     List<Widget> contentList = <Widget>[];
-
-    contentList.add(_buildDisclaimer());
 
     for (Message message in _messages) {
       contentList.add(_buildChatBubble(message));
@@ -170,21 +146,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     return contentList;
   }
 
-  Widget _buildDisclaimer() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
-      child: Text(
-          Localization().getStringEx(
-              'panel.assistant.label.disclaimer.title',
-              'The Illinois Assistant is an experimental feature. Some results may be inaccurate; '
-                  'verify the answer information with other official university sources. '
-                  'Your questions and feedback will be stored and analyzed to improve quality.'),
-          style: Styles().textStyles.getTextStyle('widget.item.small.thin.italic')),
-    );
-  }
-
   Widget _buildChatBubble(Message message) {
-    EdgeInsets bubblePadding = message.user ? const EdgeInsets.only(left: 32.0) : const EdgeInsets.only(right: 0);
+    EdgeInsets bubblePadding = message.user ? EdgeInsets.only(left: 100.0) : EdgeInsets.only(right: 100);
 
     List<Link>? deepLinks = message.links;
 
@@ -193,26 +156,19 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       Uri? uri = Uri.tryParse(source);
       if (uri != null && uri.host.isNotEmpty) {
         sourceLinks.add(Material(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: Styles().colors.fillColorSecondary, width: 1),
-          ),
-          color: Styles().colors.fillColorPrimaryVariant,
-          child: InkWell(
-              onTap: () => _onTapSourceLink(source),
-              borderRadius: BorderRadius.circular(16.0),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(uri.host, style: Styles().textStyles.getTextStyle('widget.title.light.small')),
-                    SizedBox(width: 8),
-                    Styles().images.getImage('external-link') ?? Container(),
-                  ],
-                ),
-              )),
-        ));
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16), side: BorderSide(color: Styles().colors.fillColorSecondary, width: 1)),
+            color: Styles().colors.fillColorPrimaryVariant,
+            child: InkWell(
+                onTap: () => _onTapSourceLink(source),
+                borderRadius: BorderRadius.circular(16.0),
+                child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      Text(uri.host, style: Styles().textStyles.getTextStyle('widget.title.light.small')),
+                      SizedBox(width: 8),
+                      Styles().images.getImage('external-link') ?? Container()
+                    ])))));
       }
     }
 
@@ -232,8 +188,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                     color: message.user
                         ? message.example
                             ? Styles().colors.background
-                            : Styles().colors.surface
-                        : Styles().colors.fillColorPrimary,
+                            : Styles().colors.blueAccent
+                        : Styles().colors.white,
                     borderRadius: BorderRadius.circular(16.0),
                     child: InkWell(
                       onTap: message.example
@@ -259,8 +215,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                           : Styles().textStyles.getTextStyle('widget.title.light.regular'))
                                   : SelectableText(message.content,
                                       style: message.user
-                                          ? Styles().textStyles.getTextStyle('widget.title.regular')
-                                          : Styles().textStyles.getTextStyle('widget.title.light.regular')),
+                                          ? Styles().textStyles.getTextStyle('widget.dialog.message.medium.thin')
+                                          : Styles().textStyles.getTextStyle('widget.message.regular')),
                               Visibility(
                                 visible: sourceLinks.isNotEmpty,
                                 child: Column(
@@ -777,7 +733,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         } else {
           _messages.add(Message(
               content: Localization()
-                  .getStringEx('panel.assistant.label.error.title', 'Sorry something went wrong! Please try asking your question again.'),
+                  .getStringEx('panel.assistant.label.error.title', 'Sorry, something went wrong. For the best results, please restart the app and try your question again.'),
               user: false));
           _inputController.text = message;
         }
@@ -788,16 +744,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   Map<String, String>? _getUserContext({String? name, String? netID, String? college, String? department, String? studentLevel}) {
     Map<String, String> context = {};
-
-    // name ??= Auth2().profile?.fullName;
-    // if (name != null) {
-    //   context['name'] = name;
-    // }
-    //
-    // netID ??= Auth2().netId;
-    // if (netID != null) {
-    //   context['net_id'] = netID;
-    // }
 
     college ??= IlliniCash().studentClassification?.collegeName;
     department ??= IlliniCash().studentClassification?.departmentName;
