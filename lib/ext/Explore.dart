@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
@@ -158,6 +159,35 @@ extension ExploreExt on Explore {
     }
   }
 
+  static AnalyticsFeature? getExploreAnalyticsFeature(dynamic explore) {
+    if (explore is Explore) {
+      return explore.analyticsFeature;
+    }
+    else if (explore is List<Explore>) {
+      return getExploresListAnalyticsFeature(explore);
+    }
+    else {
+      return null;
+    }
+  }
+
+  static AnalyticsFeature? getExploresListAnalyticsFeature(List<Explore>? exploresList) {
+    AnalyticsFeature? feature;
+    if (exploresList != null) {
+      for (Explore explore in exploresList) {
+        AnalyticsFeature? exploreFeature = explore.analyticsFeature;
+        if ((exploreFeature != null) && (feature == null)) {
+          feature = exploreFeature;
+        }
+        else if ((exploreFeature == null) || (feature != exploreFeature)) {
+          feature = null;
+          break;
+        }
+      }
+    }
+    return feature;
+  }
+
   String? get typeDisplayString {
     if (this is Event) {
       return (this as Event).typeDisplayString;
@@ -207,6 +237,25 @@ extension ExploreExt on Explore {
         Analytics.LogAttributeLocation : exploreLocation?.analyticsValue,
       };
     }
+  }
+
+  AnalyticsFeature? get analyticsFeature {
+    AnalyticsFeature? feature;
+    if (this is AnalyticsInfo) {
+      feature = (this as AnalyticsInfo).analyticsFeature;
+    }
+    if (feature == null) {
+      if (this is Event) {
+        feature = (this as Event).isGameEvent ? AnalyticsFeature.Athletics : AnalyticsFeature.Events;
+      }
+      else if (this is Event2) {
+        feature = (this as Event2).isSportEvent ? AnalyticsFeature.Athletics : AnalyticsFeature.Events;
+      }
+      else {
+        feature = AnalyticsFeature.fromClass(this);
+      }
+    }
+    return feature;
   }
 
   Color? get uiColor {
@@ -297,7 +346,7 @@ extension ExploreExt on Explore {
       route = CupertinoPageRoute(builder: (context) => ExploreBuildingDetailPanel(building: this as Building),);
     }
     else if (this is WellnessBuilding) {
-      route = CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as WellnessBuilding).guideId),);
+      route = CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as WellnessBuilding).guideId, analyticsFeature: AnalyticsFeature.Wellness,),);
     }
     else if (this is MTDStop) {
       route = CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: this as MTDStop,),);

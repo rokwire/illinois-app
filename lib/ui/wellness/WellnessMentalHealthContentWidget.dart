@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -176,7 +177,7 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
     Analytics().logSelect(target: title, source: widget.runtimeType.toString());
 
     String? id = Guide().entryId(guideItem);
-    String? url = "${Guide().guideDetailUrl}?guide_id=$id";
+    String? url = "${Guide().guideDetailUrl}?guide_id=$id&analytics_feature=${AnalyticsFeature.Wellness}";
     if (DeepLink().isAppUrl(url)) {
       DeepLink().launchUrl(url);
     }

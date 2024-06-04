@@ -9,6 +9,7 @@ import 'package:illinois/ext/DeviceCalendar.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Survey.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -44,7 +45,7 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class Event2DetailPanel extends StatefulWidget with AnalyticsInfo {
   final Event2? event;
   final String? eventId;
   final Event2? superEvent;
