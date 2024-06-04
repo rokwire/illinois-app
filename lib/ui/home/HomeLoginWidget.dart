@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
+import 'package:illinois/ui/profile/ProfileLoginPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -223,7 +223,7 @@ class _HomeLoginPhoneOrEmailWidget extends StatelessWidget{
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute(
         settings: RouteSettings(),
-        builder: (context) => SettingsLoginPhoneOrEmailPanel(
+        builder: (context) => ProfileLoginPhoneOrEmailPanel(
           onFinish: () {
             _didLogin(context);
           }
