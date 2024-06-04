@@ -40,16 +40,16 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class SettingsIlliniCashPanel extends StatefulWidget {
+class WalletIlliniCashPanel extends StatefulWidget {
 
   static final String routeName = 'settings_illini_cash';
 
   final ScrollController? scrollController;
 
-  SettingsIlliniCashPanel({this.scrollController});
+  WalletIlliniCashPanel({this.scrollController});
 
   @override
-  _SettingsIlliniCashPanelState createState() => _SettingsIlliniCashPanelState();
+  _WalletIlliniCashPanelState createState() => _WalletIlliniCashPanelState();
 
   static void present(BuildContext context) {
     if (Connectivity().isOffline) {
@@ -59,12 +59,12 @@ class SettingsIlliniCashPanel extends StatefulWidget {
       AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.illini_cash', 'You need to be logged in with your NetID to access Illini Cash. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
     }
     else {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: SettingsIlliniCashPanel.routeName), builder: (context) => SettingsIlliniCashPanel()));
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: WalletIlliniCashPanel.routeName), builder: (context) => WalletIlliniCashPanel()));
     }
   }
 }
 
-class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> implements NotificationsListener {
+class _WalletIlliniCashPanelState extends State<WalletIlliniCashPanel> implements NotificationsListener {
 
   DateTime? _startDate;
   DateTime? _endDate;
@@ -74,7 +74,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   bool _authLoading = false;
   bool _illiniCashLoading = false;
 
-  _SettingsIlliniCashPanelState();
+  _WalletIlliniCashPanelState();
 
   @override
   void initState() {
@@ -587,7 +587,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
             name:"settings_add_illini_cash"
         ),
         builder: (context){
-          return SettingsAddIlliniCashPanel(scrollController: widget.scrollController,);
+          return WalletAddIlliniCashPanel(scrollController: widget.scrollController,);
         }
     ));
   }

@@ -53,8 +53,8 @@ import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialListPanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
-import 'package:illinois/ui/wallet/ICardHomeContentPanel.dart';
-import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
+import 'package:illinois/ui/wallet/WalletICardHomePanel.dart';
+import 'package:illinois/ui/wallet/WalletMTDBusPassPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -763,7 +763,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapBuildingAccess(BuildContext context) {
     Analytics().logSelect(target: 'Building Access');
-    ICardHomeContentPanel.present(context, content: ICardContent.i_card);
+    WalletICardHomeContentPanel.present(context, content: WalletICardContent.i_card);
   }
   
   void _onTapTestLocations(BuildContext context) {
@@ -849,12 +849,12 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapIlliniCash(BuildContext context) {
     Analytics().logSelect(target: "Illini Cash");
-    SettingsIlliniCashPanel.present(context);
+    WalletIlliniCashPanel.present(context);
   }
 
   void _onTapAddIlliniCash(BuildContext context) {
     Analytics().logSelect(target: "Add Illini Cash");
-    SettingsAddIlliniCashPanel.present(context);
+    WalletAddIlliniCashPanel.present(context);
   }
 
   void _onTapCampusGuide(BuildContext context) {
@@ -1027,12 +1027,12 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapBusPass(BuildContext context) {
     Analytics().logSelect(target: "Bus Pass");
-    MTDBusPassPanel.present(context);
+    WalletMTDBusPassPanel.present(context);
   }
 
   void _onTapIlliniId(BuildContext context) {
     Analytics().logSelect(target: "Illini ID");
-    ICardHomeContentPanel.present(context, content: ICardContent.i_card);
+    WalletICardHomeContentPanel.present(context, content: WalletICardContent.i_card);
   }
 
   void _onTapLibraryCard(BuildContext context) {
