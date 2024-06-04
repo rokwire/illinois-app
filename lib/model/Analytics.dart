@@ -26,6 +26,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   AppHelp                  = AnalyticsFeature("App Help");
   static const AnalyticsFeature   Appointments             = AnalyticsFeature("Appointments", key: "Appointment");
   static const AnalyticsFeature   Athletics                = AnalyticsFeature("Athletics", key: {"Athletic", "Sport"});
+  static const AnalyticsFeature   Assistant                = AnalyticsFeature("Assistant");
   static const AnalyticsFeature   Browse                   = AnalyticsFeature("Browse");
   static const AnalyticsFeature   Buildings                = AnalyticsFeature("Buildings", key: "Building", priority: -1); // e.g. WellnessBuilding => Wellness
   static const AnalyticsFeature   Guide                    = AnalyticsFeature("Campus Guide", key: {"Campus", "Guide", "For Students"});
