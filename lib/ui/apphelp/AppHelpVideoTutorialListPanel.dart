@@ -18,22 +18,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
+import 'package:illinois/ui/apphelp/AppHelpVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class SettingsVideoTutorialListPanel extends StatefulWidget {
+class AppHelpVideoTutorialListPanel extends StatefulWidget {
   final List<Video>? videoTutorials;
 
-  SettingsVideoTutorialListPanel({this.videoTutorials});
+  AppHelpVideoTutorialListPanel({this.videoTutorials});
 
   @override
-  State<SettingsVideoTutorialListPanel> createState() => _SettingsVideoTutorialListPanelState();
+  State<AppHelpVideoTutorialListPanel> createState() => _AppHelpVideoTutorialListPanelState();
 }
 
-class _SettingsVideoTutorialListPanelState extends State<SettingsVideoTutorialListPanel> {
+class _AppHelpVideoTutorialListPanelState extends State<AppHelpVideoTutorialListPanel> {
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +82,6 @@ class _SettingsVideoTutorialListPanelState extends State<SettingsVideoTutorialLi
 
   void _onTapVideoTutorial(Video video) {
     Analytics().logSelect(target: 'Video Tutorial', source: widget.runtimeType.toString(), attributes: video.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVideoTutorialPanel(videoTutorial: video)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppHelpVideoTutorialPanel(videoTutorial: video)));
   }
 }

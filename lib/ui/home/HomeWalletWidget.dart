@@ -10,7 +10,7 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wallet/WalletAddIlliniCashPanel.dart';
 import 'package:illinois/ui/wallet/WalletIlliniCashPanel.dart';
-import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
+import 'package:illinois/ui/wallet/WalletMealPlanPanel.dart';
 import 'package:illinois/ui/wallet/WalletICardHomePanel.dart';
 import 'package:illinois/ui/wallet/WalletMTDBusPassPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
@@ -336,7 +336,7 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
 
   void _onTap() {
     Analytics().logSelect(target: 'Meal Plan', source: widget.runtimeType.toString());
-    SettingsMealPlanPanel.present(context);
+    WalletMealPlanPanel.present(context);
   }
 }
 

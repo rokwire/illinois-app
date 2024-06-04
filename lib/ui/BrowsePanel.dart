@@ -49,10 +49,10 @@ import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/wallet/WalletAddIlliniCashPanel.dart';
 import 'package:illinois/ui/wallet/WalletIlliniCashPanel.dart';
-import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
+import 'package:illinois/ui/wallet/WalletMealPlanPanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsVideoTutorialListPanel.dart';
-import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
+import 'package:illinois/ui/apphelp/AppHelpVideoTutorialListPanel.dart';
+import 'package:illinois/ui/apphelp/AppHelpVideoTutorialPanel.dart';
 import 'package:illinois/ui/wallet/WalletICardHomePanel.dart';
 import 'package:illinois/ui/wallet/WalletMTDBusPassPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
@@ -668,11 +668,11 @@ class _BrowseEntry extends StatelessWidget {
         Video? videoTutorial = videoTutorials?.first;
         if (videoTutorial != null) {
           Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString(), attributes: videoTutorial.analyticsAttributes);
-          Navigator.push(context, CupertinoPageRoute( settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel(videoTutorial: videoTutorial)));
+          Navigator.push(context, CupertinoPageRoute( settings: RouteSettings(), builder: (context) => AppHelpVideoTutorialPanel(videoTutorial: videoTutorial)));
         }
       } else {
         Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString());
-        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialListPanel(videoTutorials: videoTutorials)));
+        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => AppHelpVideoTutorialListPanel(videoTutorials: videoTutorials)));
       }
     }
   }
@@ -1022,7 +1022,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapMealPlan(BuildContext context) {
     Analytics().logSelect(target: "Meal Plan");
-    SettingsMealPlanPanel.present(context);
+    WalletMealPlanPanel.present(context);
   }
 
   void _onTapBusPass(BuildContext context) {
