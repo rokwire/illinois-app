@@ -30,16 +30,16 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:video_player/video_player.dart';
 
-class SettingsVideoTutorialPanel extends StatefulWidget {
+class AppHelpVideoTutorialPanel extends StatefulWidget {
   final Video videoTutorial;
 
-  SettingsVideoTutorialPanel({required this.videoTutorial});
+  AppHelpVideoTutorialPanel({required this.videoTutorial});
 
   @override
-  State<SettingsVideoTutorialPanel> createState() => _SettingsVideoTutorialPanelState();
+  State<AppHelpVideoTutorialPanel> createState() => _AppHelpVideoTutorialPanelState();
 }
 
-class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel> {
+class _AppHelpVideoTutorialPanelState extends State<AppHelpVideoTutorialPanel> {
   VideoPlayerController? _controller;
   Future<void>? _initializeVideoPlayerFuture;
   List<DeviceOrientation>? _allowedOrientations;

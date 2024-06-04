@@ -20,7 +20,7 @@ import 'package:flutter/services.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/OnCampus.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
-import 'package:illinois/ui/settings/SettingsVoiceRecordigWidgets.dart';
+import 'package:illinois/ui/profile/ProfileVoiceRecordigWidgets.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -130,7 +130,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
       _PersonalInfoEntry(
           title: Localization().getStringEx('panel.profile_info.full_name.title', 'Full Name'),
           value: Auth2().account?.authType?.uiucUser?.fullName ?? ""),
-      NamePronouncementWidget(),
+      ProfileNamePronouncementWidget(),
       _PersonalInfoEntry(
           title: Localization().getStringEx('panel.profile_info.middle_name.title', 'Middle Name'),
           value: Auth2().account?.authType?.uiucUser?.middleName ?? ""),

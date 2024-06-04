@@ -18,7 +18,7 @@ import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
-import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
+import 'package:illinois/ui/apphelp/AppHelpVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
@@ -227,7 +227,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
 
   void _onTapVideo(BuildContext context, Video video) {
     Analytics().logSelect(target: 'Video', source: runtimeType.toString(), attributes: video.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVideoTutorialPanel(videoTutorial: video)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppHelpVideoTutorialPanel(videoTutorial: video)));
   }
 
   void _onTapLink(BuildContext context, SkillsSelfEvaluationLink link) {
