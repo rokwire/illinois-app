@@ -21,7 +21,7 @@ import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
+import 'package:illinois/ui/wallet/WalletIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';

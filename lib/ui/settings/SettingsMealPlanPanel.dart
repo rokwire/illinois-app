@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
+import 'package:illinois/ui/wallet/WalletIlliniCashPanel.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/IlliniCash.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
