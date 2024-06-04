@@ -18,6 +18,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/assistant/AssistantConversationContentWidget.dart';
 import 'package:illinois/ui/assistant/AssistantFaqsContentWidget.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -84,6 +85,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
 
     if (widget.content != null) {
       _selectedContent = _lastSelectedContent = widget.content;
+    } else if (_lastSelectedContent != null) {
+      _selectedContent = _lastSelectedContent;
     } else {
       _selectedContent = _initialSelectedContent;
     }
@@ -119,13 +122,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
                     padding: EdgeInsets.only(left: 16),
                     child: Text(Localization().getStringEx('panel.assistant.header.title', 'Illinois Assistant'),
                         style: Styles().textStyles.getTextStyle("widget.label.medium.fat")))),
-            Semantics(
-                label: "debug",
-                child: InkWell(
-                    onTap: _onTapClearAll,
-                    child: Container(
-                        padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16),
-                        child: Styles().images.getImage('bug', excludeFromSemantics: true)))),
+            LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14,),
             Semantics(
                 label: Localization().getStringEx('dialog.close.title', 'Close'),
                 hint: Localization().getStringEx('dialog.close.hint', ''),
@@ -217,6 +214,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
   void _onTapClearAll() {
     Analytics().logSelect(target: 'Clear All', source: widget.runtimeType.toString());
     //TBD: DD - implement
+    AppAlert.showMessage(context, 'Not Implemented');
   }
 
   void _onTapClose() {
