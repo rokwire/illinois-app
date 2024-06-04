@@ -20,7 +20,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
+import 'package:illinois/ui/apphelp/AppHelpVideoTutorialPanel.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -235,7 +235,7 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
     if (_video != null) {
       Analytics().logSelect(
           target: 'Mental Health Video', source: widget.runtimeType.toString(), attributes: _video!.analyticsAttributes);
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVideoTutorialPanel(videoTutorial: _video!)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AppHelpVideoTutorialPanel(videoTutorial: _video!)));
     }
   }
 }

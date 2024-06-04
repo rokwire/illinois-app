@@ -22,7 +22,7 @@ import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/wallet/WalletIlliniCashPanel.dart';
-import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
+import 'package:illinois/ui/wallet/WalletMealPlanPanel.dart';
 import 'package:illinois/ui/wallet/WalletMTDBusPassPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -376,7 +376,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateMealPlan() {
     Analytics().logSelect(target: "Meal Plan");
-    SettingsMealPlanPanel.present(context);
+    WalletMealPlanPanel.present(context);
   }
 
   void _navigateMyIllini() {
