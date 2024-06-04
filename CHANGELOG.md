@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cleanup settings directory content, rename and move panels to proper locations [#4029](https://github.com/rokwire/illinois-app/issues/4029).
 ### Fixed
 - Fixed unhandled exception in refreshing HomeTwitterWidget.
+### Added
+- Added standard property "feature" in Analytics [#4029](https://github.com/rokwire/illinois-app/issues/4029).
 
 ## [6.0.1] - 2024-05-21
 ### Changed
