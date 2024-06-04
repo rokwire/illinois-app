@@ -145,11 +145,13 @@ enum _RecorderMode {record, play}
 class _ProfileSoundRecorderDialog extends StatefulWidget {
   final Uint8List? initialRecordBytes;
 
+  // ignore: unused_element
   const _ProfileSoundRecorderDialog({super.key, this.initialRecordBytes});
 
   @override
   _ProfileSoundRecorderDialogState createState() => _ProfileSoundRecorderDialogState();
 
+  // ignore: unused_element
   static Future show(BuildContext context, {String? initialRecordPath, Uint8List? initialRecordBytes}) {
     return showDialog(
         context: context,
