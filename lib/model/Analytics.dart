@@ -44,7 +44,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Profile                  = AnalyticsFeature("Profile");
   static const AnalyticsFeature   Recent                   = AnalyticsFeature("Recent");
   static const AnalyticsFeature   ResearchProject          = AnalyticsFeature("Research at Illinois", key: "ResearchProject", priority: 1);
-  static const AnalyticsFeature   Settings                 = AnalyticsFeature("Settings");
+  static const AnalyticsFeature   Settings                 = AnalyticsFeature("Settings", priority: -1);
   static const AnalyticsFeature   StateFarmCenter          = AnalyticsFeature("StateFarm Center", key: {"StateFarm", "Parking", "StadiumPoll"});
   static const AnalyticsFeature   Unknown                  = AnalyticsFeature("Unknown");
   static const AnalyticsFeature   Wallet                   = AnalyticsFeature("Wallet");
