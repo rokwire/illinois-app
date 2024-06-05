@@ -46,6 +46,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   List<String>? _contentCodes;
   TextEditingController _inputController = TextEditingController();
   ScrollController _scrollController = ScrollController();
+  final GlobalKey _chatBarKey = GlobalKey();
 
   bool _listening = false;
 
@@ -60,6 +61,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   @override
   void initState() {
+    super.initState();
     NotificationService().subscribe(this, [
       FlexUI.notifyChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
@@ -120,12 +122,12 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         ? Column(children: [Padding(padding: EdgeInsets.only(top: 16.0), child: accessWidget)])
         : Positioned.fill(
             child: Stack(children: [
-            RefreshIndicator(
+            Padding(padding: EdgeInsets.only(bottom: _chatBarHeight), child: RefreshIndicator(
                 onRefresh: _onPullToRefresh,
                 child: SingleChildScrollView(
                     physics: AlwaysScrollableScrollPhysics(),
                     controller: _scrollController,
-                    child: Padding(padding: EdgeInsets.all(16), child: Column(children: _buildContentList())))),
+                    child: Padding(padding: EdgeInsets.all(16), child: Column(children: _buildContentList()))))),
             Positioned(bottom: MediaQuery.of(context).viewInsets.bottom, left: 0, right: 0, child: _buildChatBar())
           ]));
   }
@@ -414,78 +416,76 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Widget _buildChatBar() {
     bool enabled = _feedbackMessage != null || _queryLimit == null || _queryLimit! > 0;
     return Material(
-      color: Styles().colors.surface,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Visibility(
-                  visible: enabled && SpeechToText().isEnabled,
-                  child: IconButton(
-                    //TODO: Enable support for material icons in styles images
-                    splashRadius: 24,
-                    icon: Icon(_listening ? Icons.stop_circle_outlined : Icons.mic, color: Styles().colors.fillColorSecondary),
-                    onPressed: enabled
-                        ? () {
-                            if (_listening) {
-                              _stopListening();
-                            } else {
-                              _startListening();
-                            }
-                          }
-                        : null,
-                  ),
-                ),
+      key: _chatBarKey,
+        color: Styles().colors.surface,
+        child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Padding(padding: EdgeInsets.symmetric(horizontal: 14), child: Row(mainAxisSize: MainAxisSize.max, children: [
                 Expanded(
-                  child: Material(
-                    color: Styles().colors.background,
-                    borderRadius: BorderRadius.circular(16.0),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: TextField(
-                          enabled: enabled,
-                          controller: _inputController,
-                          minLines: 1,
-                          maxLines: 3,
-                          textCapitalization: TextCapitalization.sentences,
-                          textInputAction: TextInputAction.send,
-                          onSubmitted: _submitMessage,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: _feedbackMessage == null
-                                ? enabled
-                                    ? Localization().getStringEx('panel.assistant.field.question.title', 'Type your question here...')
-                                    : Localization().getStringEx('panel.assistant.label.queries.limit.title',
-                                        'Sorry you are out of questions for today. Please check back tomorrow to ask more questions!')
-                                : Localization().getStringEx('panel.assistant.field.feedback.title', 'Type your feedback here...'),
-                          ),
-                          style: Styles().textStyles.getTextStyle('widget.title.regular')),
-                    ),
-                  ),
-                ),
-                IconButton(
-                  //TODO: Enable support for material icons in styles images
-                  splashRadius: 24,
-                  icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor),
-                  onPressed: enabled
-                      ? () {
-                          _submitMessage(_inputController.text);
-                        }
-                      : null,
-                ),
-              ],
-            ),
-            _buildQueryLimit(),
-            Visibility(visible: Auth2().isDebugManager && FlexUI().hasFeature('assistant_personalization'), child: _buildContextButton()),
-          ],
-        ),
-      ),
-    );
+                    child: Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Styles().colors.surfaceAccent), borderRadius: BorderRadius.circular(12.0)),
+                        child: Padding(
+                            padding: const EdgeInsets.only(left: 16.0),
+                            child: Stack(children: [
+                              TextField(
+                                  enabled: enabled,
+                                  controller: _inputController,
+                                  minLines: 1,
+                                  maxLines: 3,
+                                  textCapitalization: TextCapitalization.sentences,
+                                  textInputAction: TextInputAction.send,
+                                  onSubmitted: _submitMessage,
+                                  onChanged: (_) => setStateIfMounted((){}),
+                                  decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: _feedbackMessage == null
+                                          ? enabled
+                                          ? null
+                                          : Localization().getStringEx('panel.assistant.label.queries.limit.title',
+                                          'Sorry you are out of questions for today. Please check back tomorrow to ask more questions!')
+                                          : Localization()
+                                          .getStringEx('panel.assistant.field.feedback.title', 'Type your feedback here...')),
+                                  style: Styles().textStyles.getTextStyle('widget.title.regular')),
+                              Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Padding(padding: EdgeInsets.only(right: 0), child: _buildSendImage(enabled)))
+                            ]))))
+              ])),
+              _buildQueryLimit(),
+              Visibility(visible: Auth2().isDebugManager && FlexUI().hasFeature('assistant_personalization'), child: _buildContextButton())
+            ])));
+  }
+
+  Widget _buildSendImage(bool enabled) {
+    if (StringUtils.isNotEmpty(_inputController.text)) {
+      return IconButton(
+        //TODO: Enable support for material icons in styles images
+          splashRadius: 24,
+          icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor),
+          onPressed: enabled
+              ? () {
+            _submitMessage(_inputController.text);
+          }
+              : null);
+    } else {
+      return Visibility(
+          visible: enabled && SpeechToText().isEnabled,
+          child: IconButton(
+            //TODO: Enable support for material icons in styles images
+              splashRadius: 24,
+              icon: Icon(_listening ? Icons.stop_circle_outlined : Icons.mic, color: Styles().colors.fillColorSecondary),
+              onPressed: enabled
+                  ? () {
+                if (_listening) {
+                  _stopListening();
+                } else {
+                  _startListening();
+                }
+              }
+                  : null));
+    }
   }
 
   Widget _buildQueryLimit() {
@@ -665,6 +665,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   Future<void> _submitMessage(String message) async {
+    FocusScope.of(context).requestFocus(FocusNode());
     if (_loadingResponse) {
       return;
     }
@@ -716,9 +717,9 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       curve: Curves.fastOutSlowIn,
     );
 
-    Map<String, String>? context = FlexUI().hasFeature('assistant_personalization') ? _userContext : null;
+    Map<String, String>? userContext = FlexUI().hasFeature('assistant_personalization') ? _userContext : null;
 
-    Message? response = await Assistant().sendQuery(message, context: context);
+    Message? response = await Assistant().sendQuery(message, context: userContext);
     if (mounted) {
       setState(() {
         if (response != null) {
@@ -808,6 +809,12 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         });
       }
     });
+  }
+
+  double get _chatBarHeight {
+    RenderObject? chatBarRenderBox = _chatBarKey.currentContext?.findRenderObject();
+    double? chatBarHeight = (chatBarRenderBox is RenderBox) ? chatBarRenderBox.size.height : null;
+    return chatBarHeight ?? 0;
   }
 
   static List<String>? buildContentCodes() {

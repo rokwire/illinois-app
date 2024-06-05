@@ -426,7 +426,6 @@
     "panel.assistant.label.queries.limit.title": "Perdón. Has agotado tus preguntas para hoy. Vuelve mañana para ¡hacer más preguntas!",
     "panel.assistant.label.error.title": "Perdón, algo salió mal. Para obtener mejores resultados, reinicie la aplicación y vuelva a intentar responder su pregunta.",
     "panel.assistant.label.sources.title": "Más en la web: ",
-    "panel.assistant.field.question.title": "Escribe tu pregunta aquí...",
     "panel.assistant.field.feedback.title": "Escribe tus comentarios aquí...",
     "panel.assistant.button.context.title": "Contexto",
     "panel.assistant.dialog.context.title": "Contexto del Usuario",

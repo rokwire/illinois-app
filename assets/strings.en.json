@@ -427,7 +427,6 @@
     "panel.assistant.label.queries.limit.title": "Sorry, you are out of questions for today. Please check back tomorrow to ask more questions!",
     "panel.assistant.label.error.title": "Sorry, something went wrong. For the best results, please restart the app and try your question again.",
     "panel.assistant.label.sources.title": "More from the web: ",
-    "panel.assistant.field.question.title": "Type your question here...",
     "panel.assistant.field.feedback.title": "Type your feedback here...",
     "panel.assistant.button.context.title": "Context",
     "panel.assistant.dialog.context.title": "User Context",
