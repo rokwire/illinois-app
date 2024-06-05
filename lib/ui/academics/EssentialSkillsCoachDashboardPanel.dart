@@ -297,7 +297,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       color: Styles().colors.fillColorPrimary,
       child: Column(
         children: [
-          if (!userUnit.current)
+          if (!userUnit.current && !userUnit.isCompleted)
             Padding(
               padding: const EdgeInsets.only(top: 16.0),
               child: Text(sprintf(Localization().getStringEx('panel.essential_skills_coach.dashboard.complete_to_unlock.text', 'Complete Unit %d to unlock'), [displayNumber-1]), style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat")),
@@ -327,7 +327,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                         Padding(
                           padding: EdgeInsets.only(bottom: 4),
                           child: ElevatedButton(
-                            onPressed: userUnit.current ? () {
+                            onPressed: userUnit.current || userUnit.isCompleted ? () {
                               Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourcesPanel(
                                   color: _selectedModulePrimaryColor,
                                   unitNumber: displayNumber,
@@ -393,9 +393,9 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     int activityNumber = userUnit.unit?.getActivityNumber(scheduleIndex) ?? scheduleIndex;
 
     bool required = userUnit.unit?.scheduleItems?[scheduleIndex].isRequired ?? false;
-    bool isCompleted = (scheduleIndex < userUnit.completed) && userUnit.current;
+    bool isCompleted = userUnit.isCompleted || ((scheduleIndex < userUnit.completed) && userUnit.current);
     bool isCurrent = (scheduleIndex == userUnit.completed) && userUnit.current;
-    bool isNextWithCurrentComplete = (scheduleIndex == userUnit.completed + 1) && userUnit.current && (userUnit.currentUserScheduleItem?.isComplete ?? false);
+    bool isNextWithCurrentComplete = (scheduleIndex == userUnit.completed + 1) && userUnit.current && (userUnit.currentUserScheduleItem?.isComplete ?? false); //TODO: add check for first schedule item of next unit
     bool isCompletedOrCurrent = isCompleted || isCurrent;
 
     bool isFirstIncompleteInScheduleItem = userContentReference.contentKey != null && userUnit.currentUserScheduleItem?.firstIncomplete?.contentKey == userContentReference.contentKey;
@@ -475,16 +475,8 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       key: shouldHighlight && userUnit.moduleKey != null ? _currentActivityKey[userUnit.moduleKey!] : null,
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: ElevatedButton(
-        onPressed: userUnit.current ? () {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => !required ? UnitInfoPanel(
-              content: content,
-              contentReference: userContentReference,
-              color: _selectedModulePrimaryColor,
-              colorAccent: _selectedModuleAccentColor,
-              preview: !isCompletedOrCurrent,
-              moduleIcon: _selectedModuleIcon,
-              moduleName: _selectedModule?.name ?? '',
-            ) : AssignmentPanel(
+        onPressed: userUnit.current || userUnit.isCompleted ? () {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => required ? AssignmentPanel(
               content: content,
               contentReference: userContentReference,
               color: _selectedModulePrimaryColor,
@@ -497,6 +489,14 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
               unitNumber: unitNumber,
               unitName: userUnit.unit?.name ?? '',
               activityNumber: activityNumber,
+            ) : UnitInfoPanel(
+              content: content,
+              contentReference: userContentReference,
+              color: _selectedModulePrimaryColor,
+              colorAccent: _selectedModuleAccentColor,
+              preview: !isCompletedOrCurrent,
+              moduleIcon: _selectedModuleIcon,
+              moduleName: _selectedModule?.name ?? '',
             )
           )).then((result) {
             if (result is Map<String, dynamic>) {
@@ -531,6 +531,10 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       }
     }
     return dropDownItems;
+  }
+
+  Unit? _getNextUnit(UserUnit userUnit) {
+    
   }
 
   Future<void> _loadCourseAndUnits() async {

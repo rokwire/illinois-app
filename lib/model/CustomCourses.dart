@@ -476,6 +476,8 @@ class UserUnit {
   }
 
   UserScheduleItem? get currentUserScheduleItem => completed >= 0 && completed < (userSchedule?.length ?? 0) ? (userSchedule?[completed]) : null;
+
+  bool get isCompleted => completed == (userSchedule?.length ?? -1);
 }
 
 class UserScheduleItem{
