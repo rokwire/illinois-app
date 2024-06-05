@@ -231,61 +231,66 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                                         children: [
                                                           Text(
                                                               Localization().getStringEx(
-                                                                  'panel.assistant.label.sources.title', "More from the web: "),
+                                                                  'panel.assistant.label.sources.title', 'More from the web: '),
                                                               style: Styles().textStyles.getTextStyle('widget.title.light.small.fat')),
                                                           ...sourceLinks
                                                         ]))
                                               ]))
-                                        ]))))))),
-                Visibility(
-                    visible: message.acceptsFeedback,
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                      // TODO: Handle material icons in styles images
-                      IconButton(
-                          onPressed: _onTapFeedbackInfo,
-                          icon: Icon(Icons.info_outline, size: 24, color: Styles().colors.fillColorPrimary),
-                          iconSize: 24,
-                          splashRadius: 24),
-                      IconButton(
-                          onPressed: message.feedbackExplanation == null
-                              ? () {
-                                  _sendFeedback(message, true);
-                                }
-                              : null,
-                          icon: Icon(message.feedback == MessageFeedback.good ? Icons.thumb_up : Icons.thumb_up_outlined,
-                              size: 24,
-                              color: message.feedbackExplanation == null
-                                  ? Styles().colors.fillColorPrimary
-                                  : Styles().colors.disabledTextColor),
-                          iconSize: 24,
-                          splashRadius: 24),
-                      IconButton(
-                          onPressed: message.feedbackExplanation == null
-                              ? () {
-                                  _sendFeedback(message, false);
-                                }
-                              : null,
-                          icon: Icon(message.feedback == MessageFeedback.bad ? Icons.thumb_down : Icons.thumb_down_outlined,
-                              size: 24, color: Styles().colors.fillColorPrimary),
-                          iconSize: 24,
-                          splashRadius: 24)
-                    ]))
+                                        ])))))))
               ])),
       Visibility(
           visible: CollectionUtils.isNotEmpty(deepLinks),
-          child: Padding(padding: const EdgeInsets.only(top: 8.0, left: 24.0, right: 32.0), child: _buildLinkWidgets(deepLinks)))
+          child: Padding(padding: const EdgeInsets.only(top: 8.0, left: 24.0, right: 32.0), child: _buildLinkWidgets(deepLinks))),
+      Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        _buildMessageFeedbackWidget(message),
+        _buildSourceAndLinksLabelWidget(message)
+      ])
     ]);
   }
 
-  void _onTapFeedbackInfo() {
-    AppAlert.showDialogResult(
-        context,
-        Localization().getStringEx(
-            "panel.assistant.label.feedback.info.description",
-            "Provide feedback on this response to help us improve the Illinois Assistant!"
-                "\n\nIf you found the response helpful and accurate give it a 'thumbs up' to let us know. "
-                "\n\nIf you noticed an issue with the response give it a 'thumbs down' and you will "
-                "be prompted to provide a brief explanation of the problem."));
+  Widget _buildMessageFeedbackWidget(Message message) {
+    final double iconSize = 24;
+    return Visibility(
+        visible: message.acceptsFeedback,
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          IconButton(
+              onPressed: message.feedbackExplanation == null
+                  ? () {
+                      _sendFeedback(message, true);
+                    }
+                  : null,
+              icon: Icon(message.feedback == MessageFeedback.good ? Icons.thumb_up : Icons.thumb_up_outlined,
+                  size: iconSize,
+                  color: message.feedbackExplanation == null ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor),
+              iconSize: iconSize,
+              splashRadius: iconSize),
+          IconButton(
+              onPressed: message.feedbackExplanation == null
+                  ? () {
+                      _sendFeedback(message, false);
+                    }
+                  : null,
+              icon: Icon(message.feedback == MessageFeedback.bad ? Icons.thumb_down : Icons.thumb_down_outlined,
+                  size: iconSize, color: Styles().colors.fillColorPrimary),
+              iconSize: iconSize,
+              splashRadius: iconSize)
+        ]));
+  }
+
+  Widget _buildSourceAndLinksLabelWidget(Message message) {
+    bool isVisible = !message.user && (_messages.indexOf(message) != 0);
+    return Visibility(visible: isVisible, child: Padding(padding: EdgeInsets.only(top: 5), child: InkWell(
+        onTap: _onTapSourcesAndLinksLabel,
+        splashColor: Colors.transparent,
+        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Text(Localization().getStringEx('panel.assistant.sources_links.label', 'Sources and Links'),
+              style: Styles().textStyles.getTextStyle('widget.message.small')),
+          Padding(padding: EdgeInsets.only(left: 10), child: Styles().images.getImage('chevron-up-dark-blue') ?? Container())
+        ]))));
+  }
+
+  void _onTapSourcesAndLinksLabel() {
+    //TBD: DD - implement
   }
 
   void _sendFeedback(Message message, bool good) {
