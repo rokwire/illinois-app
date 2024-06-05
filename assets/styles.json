@@ -361,6 +361,8 @@
     "widget.link.button.title.regular": { "font_family": "regular", "size": 16.0, "color": "fillColorSecondary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.link.button.title.small": { "font_family": "regular", "size": 14.0, "color": "fillColorSecondary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
 
+    "widget.button.link.source.title.semi_fat": {"font_family": "medium", "size": 14.0, "color": "fillColorPrimaryVariant"},
+
     "widget.button.light.title.medium": { "font_family": "medium", "size": 16.0, "color": "textBackground"},
     "widget.button.light.title.medium.fat": { "font_family": "bold", "size": 16.0, "color": "textBackground"},
     "widget.button.light.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground"},

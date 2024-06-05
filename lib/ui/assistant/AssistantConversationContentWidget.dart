@@ -159,143 +159,122 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       if (uri != null && uri.host.isNotEmpty) {
         sourceLinks.add(Material(
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16), side: BorderSide(color: Styles().colors.fillColorSecondary, width: 1)),
-            color: Styles().colors.fillColorPrimaryVariant,
+                borderRadius: BorderRadius.circular(22), side: BorderSide(color: Styles().colors.fillColorSecondary, width: 1)),
+            color: Styles().colors.white,
             child: InkWell(
                 onTap: () => _onTapSourceLink(source),
-                borderRadius: BorderRadius.circular(16.0),
+                borderRadius: BorderRadius.circular(22),
                 child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
-                      Text(uri.host, style: Styles().textStyles.getTextStyle('widget.title.light.small')),
-                      SizedBox(width: 8),
-                      Styles().images.getImage('external-link') ?? Container()
+                      Styles().images.getImage('external-link') ?? Container(),
+                      Padding(padding: EdgeInsets.only(left: 8), child: Text(uri.host, style: Styles().textStyles.getTextStyle('widget.button.link.source.title.semi_fat')))
+
                     ])))));
       }
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Padding(
           padding: bubblePadding,
           child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: message.user ? MainAxisAlignment.end : MainAxisAlignment.start,
-            children: [
-              Flexible(
-                child: Opacity(
-                  opacity: message.example ? 0.5 : 1.0,
-                  child: Material(
-                    color: message.user
-                        ? message.example
-                            ? Styles().colors.background
-                            : Styles().colors.blueAccent
-                        : Styles().colors.white,
-                    borderRadius: BorderRadius.circular(16.0),
-                    child: InkWell(
-                      onTap: message.example
-                          ? () {
-                              _messages.remove(message);
-                              _submitMessage(message.content);
-                            }
-                          : null,
-                      child: Container(
-                        decoration: message.example
-                            ? BoxDecoration(
-                                borderRadius: BorderRadius.circular(16.0), border: Border.all(color: Styles().colors.fillColorPrimary))
-                            : null,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              message.example
-                                  ? Text(Localization().getStringEx('panel.assistant.label.example.eg.title', "eg. ") + message.content,
-                                      style: message.user
-                                          ? Styles().textStyles.getTextStyle('widget.title.regular')
-                                          : Styles().textStyles.getTextStyle('widget.title.light.regular'))
-                                  : SelectableText(message.content,
-                                      style: message.user
-                                          ? Styles().textStyles.getTextStyle('widget.dialog.message.medium.thin')
-                                          : Styles().textStyles.getTextStyle('widget.message.regular')),
-                              Visibility(
-                                visible: sourceLinks.isNotEmpty,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 16.0),
-                                      child: Wrap(
-                                        alignment: WrapAlignment.start,
-                                        crossAxisAlignment: WrapCrossAlignment.center,
-                                        spacing: 8.0,
-                                        runSpacing: 8.0,
-                                        children: [
-                                          Text(Localization().getStringEx('panel.assistant.label.sources.title', "More from the web: "),
-                                              style: Styles().textStyles.getTextStyle('widget.title.light.small.fat')),
-                                          ...sourceLinks
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Visibility(
-                visible: message.acceptsFeedback,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // TODO: Handle material icons in styles images
-                    IconButton(
-                        onPressed: _onTapFeedbackInfo,
-                        icon: Icon(Icons.info_outline, size: 24, color: Styles().colors.fillColorPrimary),
-                        iconSize: 24,
-                        splashRadius: 24),
-                    IconButton(
-                        onPressed: message.feedbackExplanation == null
-                            ? () {
-                                _sendFeedback(message, true);
-                              }
-                            : null,
-                        icon: Icon(message.feedback == MessageFeedback.good ? Icons.thumb_up : Icons.thumb_up_outlined,
-                            size: 24,
-                            color:
-                                message.feedbackExplanation == null ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor),
-                        iconSize: 24,
-                        splashRadius: 24),
-                    IconButton(
-                        onPressed: message.feedbackExplanation == null
-                            ? () {
-                                _sendFeedback(message, false);
-                              }
-                            : null,
-                        icon: Icon(message.feedback == MessageFeedback.bad ? Icons.thumb_down : Icons.thumb_down_outlined,
-                            size: 24, color: Styles().colors.fillColorPrimary),
-                        iconSize: 24,
-                        splashRadius: 24),
-                  ],
-                ),
-              )
-            ],
-          ),
-        ),
-        Visibility(
-            visible: CollectionUtils.isNotEmpty(deepLinks),
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8.0, left: 24.0, right: 32.0),
-              child: _buildLinkWidgets(deepLinks),
-            ))
-      ],
-    );
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: message.user ? MainAxisAlignment.end : MainAxisAlignment.start,
+              children: [
+                Flexible(
+                    child: Opacity(
+                        opacity: message.example ? 0.5 : 1.0,
+                        child: Material(
+                            color: message.user
+                                ? message.example
+                                    ? Styles().colors.background
+                                    : Styles().colors.blueAccent
+                                : Styles().colors.white,
+                            borderRadius: BorderRadius.circular(16.0),
+                            child: InkWell(
+                                onTap: message.example
+                                    ? () {
+                                        _messages.remove(message);
+                                        _submitMessage(message.content);
+                                      }
+                                    : null,
+                                child: Container(
+                                    decoration: message.example
+                                        ? BoxDecoration(
+                                            borderRadius: BorderRadius.circular(16.0),
+                                            border: Border.all(color: Styles().colors.fillColorPrimary))
+                                        : null,
+                                    child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                          message.example
+                                              ? Text(
+                                                  Localization().getStringEx('panel.assistant.label.example.eg.title', "eg. ") +
+                                                      message.content,
+                                                  style: message.user
+                                                      ? Styles().textStyles.getTextStyle('widget.title.regular')
+                                                      : Styles().textStyles.getTextStyle('widget.title.light.regular'))
+                                              : SelectableText(message.content,
+                                                  style: message.user
+                                                      ? Styles().textStyles.getTextStyle('widget.dialog.message.medium.thin')
+                                                      : Styles().textStyles.getTextStyle('widget.message.regular')),
+                                          Visibility(
+                                              visible: sourceLinks.isNotEmpty,
+                                              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                                Padding(
+                                                    padding: const EdgeInsets.only(top: 16.0),
+                                                    child: Wrap(
+                                                        alignment: WrapAlignment.start,
+                                                        crossAxisAlignment: WrapCrossAlignment.center,
+                                                        spacing: 8.0,
+                                                        runSpacing: 8.0,
+                                                        children: [
+                                                          Text(
+                                                              Localization().getStringEx(
+                                                                  'panel.assistant.label.sources.title', "More from the web: "),
+                                                              style: Styles().textStyles.getTextStyle('widget.title.light.small.fat')),
+                                                          ...sourceLinks
+                                                        ]))
+                                              ]))
+                                        ]))))))),
+                Visibility(
+                    visible: message.acceptsFeedback,
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                      // TODO: Handle material icons in styles images
+                      IconButton(
+                          onPressed: _onTapFeedbackInfo,
+                          icon: Icon(Icons.info_outline, size: 24, color: Styles().colors.fillColorPrimary),
+                          iconSize: 24,
+                          splashRadius: 24),
+                      IconButton(
+                          onPressed: message.feedbackExplanation == null
+                              ? () {
+                                  _sendFeedback(message, true);
+                                }
+                              : null,
+                          icon: Icon(message.feedback == MessageFeedback.good ? Icons.thumb_up : Icons.thumb_up_outlined,
+                              size: 24,
+                              color: message.feedbackExplanation == null
+                                  ? Styles().colors.fillColorPrimary
+                                  : Styles().colors.disabledTextColor),
+                          iconSize: 24,
+                          splashRadius: 24),
+                      IconButton(
+                          onPressed: message.feedbackExplanation == null
+                              ? () {
+                                  _sendFeedback(message, false);
+                                }
+                              : null,
+                          icon: Icon(message.feedback == MessageFeedback.bad ? Icons.thumb_down : Icons.thumb_down_outlined,
+                              size: 24, color: Styles().colors.fillColorPrimary),
+                          iconSize: 24,
+                          splashRadius: 24)
+                    ]))
+              ])),
+      Visibility(
+          visible: CollectionUtils.isNotEmpty(deepLinks),
+          child: Padding(padding: const EdgeInsets.only(top: 8.0, left: 24.0, right: 32.0), child: _buildLinkWidgets(deepLinks)))
+    ]);
   }
 
   void _onTapFeedbackInfo() {
