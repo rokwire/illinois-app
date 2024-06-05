@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
-import 'package:illinois/ui/settings/SettingsLoginPhoneConfirmPanel.dart';
+import 'package:illinois/ui/profile/ProfileLoginEmailPanel.dart';
+import 'package:illinois/ui/profile/ProfileLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -13,18 +13,18 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class SettingsLoginPhoneOrEmailPanel extends StatefulWidget {
+class ProfileLoginPhoneOrEmailPanel extends StatefulWidget {
   final SettingsLoginPhoneOrEmailMode mode;
   final bool? link;
   final String? identifier;
   final void Function()? onFinish;
 
-  SettingsLoginPhoneOrEmailPanel({this.mode = SettingsLoginPhoneOrEmailMode.both, this.link, this.identifier, this.onFinish });
+  ProfileLoginPhoneOrEmailPanel({this.mode = SettingsLoginPhoneOrEmailMode.both, this.link, this.identifier, this.onFinish });
 
-  _SettingsLoginPhoneOrEmailPanelState createState() => _SettingsLoginPhoneOrEmailPanelState();
+  _ProfileLoginPhoneOrEmailPanelState createState() => _ProfileLoginPhoneOrEmailPanelState();
 }
 
-class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEmailPanel>  {
+class _ProfileLoginPhoneOrEmailPanelState extends State<ProfileLoginPhoneOrEmailPanel>  {
 
   TextEditingController? _phoneOrEmailController;
 
@@ -261,7 +261,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
       setState(() { _isLoading = false; });
 
       if (result == Auth2PhoneRequestCodeResult.succeeded) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginPhoneConfirmPanel(phoneNumber: phoneNumber, link: widget.link, onFinish: widget.onFinish)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => ProfileLoginPhoneConfirmPanel(phoneNumber: phoneNumber, link: widget.link, onFinish: widget.onFinish)));
       } else if (result == Auth2PhoneRequestCodeResult.failedAccountExist) {
         setErrorMsg(Localization().getStringEx("panel.settings.link.phone.label.failed.exists", "An account is already using this phone number."),
             details: Localization().getStringEx("panel.settings.link.phone.label.failed.exists.detail", "1. You will need to sign in to the other account with this phone number.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login."));
@@ -289,7 +289,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
             setErrorMsg(Localization().getStringEx("panel.settings.link.email.label.linked", "You have already added an email address to your account."));
           }
           else {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginEmailPanel(email: email, state: Auth2EmailAccountState.nonExistent, link: widget.link, onFinish: widget.onFinish)));
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => ProfileLoginEmailPanel(email: email, state: Auth2EmailAccountState.nonExistent, link: widget.link, onFinish: widget.onFinish)));
           }
         }
       });
@@ -299,7 +299,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
         if (mounted) {
           setState(() { _isLoading = false; });
           if (result != null) {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginEmailPanel(email: email,
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => ProfileLoginEmailPanel(email: email,
                 state: result ? Auth2EmailAccountState.verified : Auth2EmailAccountState.nonExistent, link: widget.link, onFinish: widget.onFinish)));
           }
           else {

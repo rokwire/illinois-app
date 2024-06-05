@@ -29,7 +29,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class LocationsWithSpecialPanel extends StatefulWidget {
+class LocationsWithDiningSpecialPanel extends StatefulWidget {
 
   final DiningSpecial? special;
 
@@ -37,12 +37,12 @@ class LocationsWithSpecialPanel extends StatefulWidget {
 
   final bool onlyOpened;
 
-  LocationsWithSpecialPanel({required this.special, this.onlyOpened = false, this.locationData});
+  LocationsWithDiningSpecialPanel({required this.special, this.onlyOpened = false, this.locationData});
 
-  _LocationsWithSpecialPanelState createState() => _LocationsWithSpecialPanelState();
+  _LocationsWithDiningSpecialPanelState createState() => _LocationsWithDiningSpecialPanelState();
 }
 
-class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
+class _LocationsWithDiningSpecialPanelState extends State<LocationsWithDiningSpecialPanel> {
 
   bool _isLoading = false;
 

@@ -19,13 +19,13 @@ import 'dart:io';
 
 import '../../service/Analytics.dart';
 
-class NamePronouncementWidget extends StatefulWidget {
+class ProfileNamePronouncementWidget extends StatefulWidget {
 
   @override
-  State<StatefulWidget> createState() => _NamePronouncementState();
+  State<StatefulWidget> createState() => _ProfileNamePronouncementState();
 }
 
-class _NamePronouncementState extends State<NamePronouncementWidget> implements NotificationsListener {
+class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidget> implements NotificationsListener {
   late AudioPlayer _audioPlayer;
   bool _loading = false;
 
@@ -113,16 +113,16 @@ class _NamePronouncementState extends State<NamePronouncementWidget> implements 
   void _prepareAudioPlayer() async {
     Log.d("AUDIO PREPARING");
     if(_hasStoredPronouncement) {
-      await _audioPlayer.setAudioSource(BytesAudioSource(_storedAudioPronouncement!));
+      await _audioPlayer.setAudioSource(_BytesAudioSource(_storedAudioPronouncement!));
     }
   }
 
   void _onRecordNamePronouncement(){
-    SoundRecorderDialog.show(context);
+    _ProfileSoundRecorderDialog.show(context);
   }
 
   void _onEditRecord(){
-    SoundRecorderDialog.show(context, initialRecordBytes: _storedAudioPronouncement);
+    _ProfileSoundRecorderDialog.show(context, initialRecordBytes: _storedAudioPronouncement);
   }
 
   void _onDeleteNamePronouncement(){
@@ -140,15 +140,18 @@ class _NamePronouncementState extends State<NamePronouncementWidget> implements 
   Uint8List? get _storedAudioPronouncement => Auth2().authVoiceRecord;
 }
 
-enum RecorderMode{record, play}
-class SoundRecorderDialog extends StatefulWidget {
+enum _RecorderMode {record, play}
+
+class _ProfileSoundRecorderDialog extends StatefulWidget {
   final Uint8List? initialRecordBytes;
 
-  const SoundRecorderDialog({super.key, this.initialRecordBytes});
+  // ignore: unused_element
+  const _ProfileSoundRecorderDialog({super.key, this.initialRecordBytes});
 
   @override
-  _SoundRecorderDialogState createState() => _SoundRecorderDialogState();
+  _ProfileSoundRecorderDialogState createState() => _ProfileSoundRecorderDialogState();
 
+  // ignore: unused_element
   static Future show(BuildContext context, {String? initialRecordPath, Uint8List? initialRecordBytes}) {
     return showDialog(
         context: context,
@@ -156,21 +159,21 @@ class SoundRecorderDialog extends StatefulWidget {
             Material(
               type: MaterialType.transparency,
               borderRadius: BorderRadius.all(Radius.circular(5)),
-              child: SoundRecorderDialog(initialRecordBytes: initialRecordBytes),
+              child: _ProfileSoundRecorderDialog(initialRecordBytes: initialRecordBytes),
             )
     );
   }
 }
 
-class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
-  late SoundRecorderController _controller;
+class _ProfileSoundRecorderDialogState extends State<_ProfileSoundRecorderDialog> {
+  late _ProfileSoundRecorderController _controller;
   bool _loading = false;
 
-  RecorderMode get _mode => _controller.canPlay ? RecorderMode.play : RecorderMode.record;
+  _RecorderMode get _mode => _controller.canPlay ? _RecorderMode.play : _RecorderMode.record;
 
   @override
   void initState() {
-    _controller = SoundRecorderController(
+    _controller = _ProfileSoundRecorderController(
       initialAudio: widget.initialRecordBytes,
       notifyChanged: (fn) =>setStateIfMounted(fn)
     );
@@ -206,7 +209,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
                           child: Column(children: [
                             GestureDetector(
                               onTap:(){
-                                  if(_mode == RecorderMode.play){
+                                  if(_mode == _RecorderMode.play){
                                     if(_controller.isPlaying){
                                       _onPausePlay();
                                     }else {
@@ -215,12 +218,12 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
                                   }
                               },
                               onLongPressStart: (_){
-                                if(_mode == RecorderMode.record) {
+                                if(_mode == _RecorderMode.record) {
                                   _onStartRecording();
                                 }
                               },
                               onLongPressEnd:(_){
-                                if(_mode == RecorderMode.record){
+                                if(_mode == _RecorderMode.record){
                                   _onStopRecording();
                                 }
                               } ,
@@ -337,7 +340,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
   }
 
   Widget? get _playButtonIcon {
-    if(_mode == RecorderMode.play){
+    if(_mode == _RecorderMode.play){
       return Styles().images.getImage('icon-play', excludeFromSemantics: true,);
         // _controller.isPlaying ?
         // Container(padding: EdgeInsets.all(20), child: Container(width: 20, height: 20, color: Styles().colors.white,)) : //TBD do we need another icon for stop?
@@ -350,7 +353,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
   }
 
   String get _hintText{
-    if(_mode == RecorderMode.record){
+    if(_mode == _RecorderMode.record){
       return _controller.isRecording ?
       Localization().getStringEx("", "Release to stop") :
       Localization().getStringEx("", "Hold to record");
@@ -360,7 +363,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
   }
 
   String get _statusText{
-    if(_mode == RecorderMode.record){
+    if(_mode == _RecorderMode.record){
       return _controller.isRecording ?
         Localization().getStringEx("", "Recording") :
         Localization().getStringEx("", "Record");
@@ -377,7 +380,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
 
   String get _defaultPlayerTime => "0:00";
 
-  bool get _resetEnabled => _mode == RecorderMode.play;
+  bool get _resetEnabled => _mode == _RecorderMode.play;
 
   bool get _saveEnabled => _controller.hasRecord;
 
@@ -393,7 +396,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
   }
 }
 
-class SoundRecorderController {
+class _ProfileSoundRecorderController {
   final Function(void Function()) notifyChanged;
   final Uint8List? initialAudio;
 
@@ -404,7 +407,7 @@ class SoundRecorderController {
   Uint8List? _audio;//The bytes of the recorded audio
   bool _recording = false;
 
-  SoundRecorderController({required this.notifyChanged, this.initialAudio});
+  _ProfileSoundRecorderController({required this.notifyChanged, this.initialAudio});
 
   void init() {
     _audioRecord = Record();
@@ -536,7 +539,7 @@ class SoundRecorderController {
 
   Duration? get playerTime => _playerTimer;
 
-  AudioSource? get _audioSource => _haveAudio ? BytesAudioSource(_audio!) : null;
+  AudioSource? get _audioSource => _haveAudio ? _BytesAudioSource(_audio!) : null;
 
   bool get _haveAudio => CollectionUtils.isNotEmpty(_audio);
 
@@ -562,10 +565,10 @@ class SoundRecorderController {
   }
 }
 
-class BytesAudioSource extends StreamAudioSource{
+class _BytesAudioSource extends StreamAudioSource{
   final Uint8List _data;
 
-  BytesAudioSource(this._data);
+  _BytesAudioSource(this._data);
 
   @override
   Future<StreamAudioResponse> request([int? start, int? end]) async {

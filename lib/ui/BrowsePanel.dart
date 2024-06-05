@@ -47,14 +47,14 @@ import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
-import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
-import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
+import 'package:illinois/ui/wallet/WalletAddIlliniCashPanel.dart';
+import 'package:illinois/ui/wallet/WalletIlliniCashPanel.dart';
+import 'package:illinois/ui/wallet/WalletMealPlanPanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsVideoTutorialListPanel.dart';
-import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
-import 'package:illinois/ui/wallet/ICardHomeContentPanel.dart';
-import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
+import 'package:illinois/ui/apphelp/AppHelpVideoTutorialListPanel.dart';
+import 'package:illinois/ui/apphelp/AppHelpVideoTutorialPanel.dart';
+import 'package:illinois/ui/wallet/WalletICardHomePanel.dart';
+import 'package:illinois/ui/wallet/WalletMTDBusPassPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -668,11 +668,11 @@ class _BrowseEntry extends StatelessWidget {
         Video? videoTutorial = videoTutorials?.first;
         if (videoTutorial != null) {
           Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString(), attributes: videoTutorial.analyticsAttributes);
-          Navigator.push(context, CupertinoPageRoute( settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel(videoTutorial: videoTutorial)));
+          Navigator.push(context, CupertinoPageRoute( settings: RouteSettings(), builder: (context) => AppHelpVideoTutorialPanel(videoTutorial: videoTutorial)));
         }
       } else {
         Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString());
-        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialListPanel(videoTutorials: videoTutorials)));
+        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => AppHelpVideoTutorialListPanel(videoTutorials: videoTutorials)));
       }
     }
   }
@@ -763,7 +763,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapBuildingAccess(BuildContext context) {
     Analytics().logSelect(target: 'Building Access');
-    ICardHomeContentPanel.present(context, content: ICardContent.i_card);
+    WalletICardHomeContentPanel.present(context, content: WalletICardContent.i_card);
   }
   
   void _onTapTestLocations(BuildContext context) {
@@ -849,12 +849,12 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapIlliniCash(BuildContext context) {
     Analytics().logSelect(target: "Illini Cash");
-    SettingsIlliniCashPanel.present(context);
+    WalletIlliniCashPanel.present(context);
   }
 
   void _onTapAddIlliniCash(BuildContext context) {
     Analytics().logSelect(target: "Add Illini Cash");
-    SettingsAddIlliniCashPanel.present(context);
+    WalletAddIlliniCashPanel.present(context);
   }
 
   void _onTapCampusGuide(BuildContext context) {
@@ -1022,17 +1022,17 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapMealPlan(BuildContext context) {
     Analytics().logSelect(target: "Meal Plan");
-    SettingsMealPlanPanel.present(context);
+    WalletMealPlanPanel.present(context);
   }
 
   void _onTapBusPass(BuildContext context) {
     Analytics().logSelect(target: "Bus Pass");
-    MTDBusPassPanel.present(context);
+    WalletMTDBusPassPanel.present(context);
   }
 
   void _onTapIlliniId(BuildContext context) {
     Analytics().logSelect(target: "Illini ID");
-    ICardHomeContentPanel.present(context, content: ICardContent.i_card);
+    WalletICardHomeContentPanel.present(context, content: WalletICardContent.i_card);
   }
 
   void _onTapLibraryCard(BuildContext context) {

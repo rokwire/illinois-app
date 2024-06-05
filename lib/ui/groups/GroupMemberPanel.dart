@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -30,7 +31,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
-class GroupMemberPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GroupMemberPanel extends StatefulWidget with AnalyticsInfo {
   final Group group;
   final String memberId;
 
@@ -38,6 +39,9 @@ class GroupMemberPanel extends StatefulWidget implements AnalyticsPageAttributes
 
   @override
   _GroupMemberPanelState createState() => _GroupMemberPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => (group.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes => group.analyticsAttributes;

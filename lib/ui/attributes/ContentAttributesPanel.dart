@@ -3,6 +3,8 @@ import 'dart:collection';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/ContentAttributes.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/attributes/ContentAttributesCategoryPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -16,7 +18,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 enum ContentAttributesSortType { native, explicit, alphabetical, }
 
-class ContentAttributesPanel extends StatefulWidget {
+class ContentAttributesPanel extends StatefulWidget with AnalyticsInfo {
   final String? title;
   final String? bgImageKey;
   final String? description;
@@ -55,6 +57,9 @@ class ContentAttributesPanel extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _ContentAttributesPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => contentAttributes?.analyticsFeature;
 }
 
 class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
