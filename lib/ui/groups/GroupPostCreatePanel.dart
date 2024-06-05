@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -16,13 +17,19 @@ import 'package:sprintf/sprintf.dart';
 
 import 'GroupWidgets.dart';
 
-class GroupPostCreatePanel extends StatefulWidget{
+class GroupPostCreatePanel extends StatefulWidget with AnalyticsInfo {
   final Group group;
 
   GroupPostCreatePanel({required this.group});
 
   @override
   State<StatefulWidget> createState() => _GroupPostCreatePanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => (group.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
+
+  @override
+  Map<String, dynamic>? get analyticsPageAttributes => group.analyticsAttributes;
 }
 
 class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{

@@ -47,13 +47,13 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sprintf/sprintf.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
-class IDCardContentWidget extends StatefulWidget {
-  IDCardContentWidget();
+class WalletICardContentWidget extends StatefulWidget {
+  WalletICardContentWidget();
 
-  _IDCardContentWidgetState createState() => _IDCardContentWidgetState();
+  _WalletICardContentWidgetState createState() => _WalletICardContentWidgetState();
 }
 
-class _IDCardContentWidgetState extends State<IDCardContentWidget>
+class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
   with SingleTickerProviderStateMixin
   implements NotificationsListener {
 

@@ -3,6 +3,8 @@ import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/ContentAttributes.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -11,7 +13,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class ContentAttributesCategoryPanel extends StatefulWidget {
+class ContentAttributesCategoryPanel extends StatefulWidget with AnalyticsInfo {
 
   final ContentAttribute attribute;
   final ContentAttributes? contentAttributes;
@@ -28,6 +30,9 @@ class ContentAttributesCategoryPanel extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _ContentAttributesCategoryPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => contentAttributes?.analyticsFeature;
 
   LinkedHashSet<dynamic> get emptySelection => (attribute.nullValue != null) ? LinkedHashSet<dynamic>.from([attribute.nullValue]) : LinkedHashSet<dynamic>();
 }

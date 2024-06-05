@@ -9,10 +9,10 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsLinkedAccountPanel.dart';
-import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
-import 'package:illinois/ui/settings/SettingsLoginPhoneConfirmPanel.dart';
-import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
+import 'package:illinois/ui/profile/ProfileLoginLinkedAccountPanel.dart';
+import 'package:illinois/ui/profile/ProfileLoginEmailPanel.dart';
+import 'package:illinois/ui/profile/ProfileLoginPhoneConfirmPanel.dart';
+import 'package:illinois/ui/profile/ProfileLoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -191,7 +191,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
   void _onPhoneOrEmailLoginClicked() {
     Analytics().logSelect(target: "Phone or Email Login");
     if (Connectivity().isNotOffline) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsLoginPhoneOrEmailPanel(onFinish: () {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => ProfileLoginPhoneOrEmailPanel(onFinish: () {
         _popToMe();
       },),),);
     } else {
@@ -676,7 +676,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       progressController(loading: false);
       _popToMe();
       if (result == true) {
-        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsLoginPhoneOrEmailPanel(mode: mode, link: true, onFinish: () {
+        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => ProfileLoginPhoneOrEmailPanel(mode: mode, link: true, onFinish: () {
           _popToMe();
         },)),);
       }
@@ -691,7 +691,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
     else if (Auth2().isEmailLoggedIn) {
       Completer<bool?> completer = Completer<bool?>();
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) =>
-        SettingsLoginEmailPanel(email: Auth2().account?.authType?.identifier, state: Auth2EmailAccountState.verified, onFinish: () {
+        ProfileLoginEmailPanel(email: Auth2().account?.authType?.identifier, state: Auth2EmailAccountState.verified, onFinish: () {
           completer.complete(true);
         },)
       ),).then((_) {
@@ -704,7 +704,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       Auth2().authenticateWithPhone(Auth2().account?.authType?.identifier).then((Auth2PhoneRequestCodeResult result) {
         if (result == Auth2PhoneRequestCodeResult.succeeded) {
           Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) =>
-            SettingsLoginPhoneConfirmPanel(phoneNumber: Auth2().account?.authType?.identifier, onFinish: () {
+            ProfileLoginPhoneConfirmPanel(phoneNumber: Auth2().account?.authType?.identifier, onFinish: () {
               completer.complete(true);
             },)
           ),).then((_) {
@@ -726,12 +726,12 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
 
   void _onTapAlternateEmail(Auth2Type linked) {
     Analytics().logSelect(target: "Alternate Email");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedAccountPanel(linkedAccount: linked, mode: LinkAccountMode.email,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ProfileLoginLinkedAccountPanel(linkedAccount: linked, mode: LinkAccountMode.email,)));
   }
 
   void _onTapAlternatePhone(Auth2Type linked) {
     Analytics().logSelect(target: "Alternate Phone");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedAccountPanel(linkedAccount: linked, mode: LinkAccountMode.phone,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ProfileLoginLinkedAccountPanel(linkedAccount: linked, mode: LinkAccountMode.phone,)));
   }
 
   // Debug

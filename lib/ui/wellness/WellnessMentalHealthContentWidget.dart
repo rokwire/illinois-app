@@ -15,12 +15,13 @@
  */
 
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
+import 'package:illinois/ui/apphelp/AppHelpVideoTutorialPanel.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -176,7 +177,7 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
     Analytics().logSelect(target: title, source: widget.runtimeType.toString());
 
     String? id = Guide().entryId(guideItem);
-    String? url = "${Guide().guideDetailUrl}?guide_id=$id";
+    String? url = "${Guide().guideDetailUrl}?guide_id=$id&analytics_feature=${AnalyticsFeature.Wellness}";
     if (DeepLink().isAppUrl(url)) {
       DeepLink().launchUrl(url);
     }
@@ -235,7 +236,7 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
     if (_video != null) {
       Analytics().logSelect(
           target: 'Mental Health Video', source: widget.runtimeType.toString(), attributes: _video!.analyticsAttributes);
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVideoTutorialPanel(videoTutorial: _video!)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AppHelpVideoTutorialPanel(videoTutorial: _video!)));
     }
   }
 }
