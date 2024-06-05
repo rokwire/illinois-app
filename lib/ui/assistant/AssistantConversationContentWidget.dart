@@ -353,12 +353,12 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         width: 100,
         height: 50,
         child: Material(
-          color: Styles().colors.fillColorPrimary,
+          color: Styles().colors.blueAccent,
           borderRadius: BorderRadius.circular(16.0),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: TypingIndicator(
-                flashingCircleBrightColor: Styles().colors.surface, flashingCircleDarkColor: Styles().colors.fillColorPrimary),
+                flashingCircleBrightColor: Styles().colors.surface, flashingCircleDarkColor: Styles().colors.blueAccent),
           ),
         ),
       ),
