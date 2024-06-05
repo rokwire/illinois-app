@@ -90,6 +90,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
     } else {
       _selectedContent = _initialSelectedContent;
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Force to calculate correct content height
+      setStateIfMounted((){});
+    });
   }
 
   @override
@@ -122,7 +126,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
                     padding: EdgeInsets.only(left: 16),
                     child: Text(Localization().getStringEx('panel.assistant.header.title', 'Illinois Assistant'),
                         style: Styles().textStyles.getTextStyle("widget.label.medium.fat")))),
-            LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14,),
+            Visibility(visible: (_selectedContent == AssistantContent.conversation), child: LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14)),
             Semantics(
                 label: Localization().getStringEx('dialog.close.title', 'Close'),
                 hint: Localization().getStringEx('dialog.close.hint', ''),
@@ -141,8 +145,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
 
   Widget _buildPage(BuildContext context) {
     return Column(key: _pageKey, children: <Widget>[
-      Expanded(
-          child: Container(
+      Container(
               color: Styles().colors.background,
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Padding(
@@ -157,16 +160,12 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
                         label: _getContentItemName(_selectedContent) ?? '',
                         onTap: _onTapContentSwitch)),
                 _buildContent(),
-              ])))
+              ]))
     ]);
   }
 
   Widget _buildContent() {
-    return Stack(children: [
-      (_contentWidget ?? Container()),
-      Container(height: _contentHeight),
-      _buildContentValuesContainer()
-    ]);
+    return Stack(children: [(_contentWidget ?? Container()), Container(height: _contentHeight), _buildContentValuesContainer()]);
   }
 
   Widget _buildContentValuesContainer() {

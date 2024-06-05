@@ -80,12 +80,12 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
     _userContext = _getUserContext();
 
-    super.initState();
   }
 
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _inputController.dispose();
     super.dispose();
   }
 
@@ -117,17 +117,17 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     Widget? accessWidget = AccessCard.builder(resource: resourceName);
 
     return accessWidget != null
-        ? Column(children: [Padding(padding: const EdgeInsets.only(top: 16.0), child: accessWidget)])
-        : RefreshIndicator(
-            onRefresh: _onPullToRefresh,
-            child: Column(children: [
-              SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  controller: _scrollController,
-                  reverse: true,
-                  child: Padding(padding: EdgeInsets.all(16), child: Column(children: _buildContentList()))),
-              _buildChatBar()
-            ]));
+        ? Column(children: [Padding(padding: EdgeInsets.only(top: 16.0), child: accessWidget)])
+        : Positioned.fill(
+            child: Stack(children: [
+            RefreshIndicator(
+                onRefresh: _onPullToRefresh,
+                child: SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    controller: _scrollController,
+                    child: Padding(padding: EdgeInsets.all(16), child: Column(children: _buildContentList())))),
+            Positioned(bottom: MediaQuery.of(context).viewInsets.bottom, left: 0, right: 0, child: _buildChatBar())
+          ]));
   }
 
   List<Widget> _buildContentList() {
@@ -801,15 +801,13 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   Future<void> _onPullToRefresh() async {
-    if (mounted) {
-      Assistant().getQueryLimit().then((limit) {
-        if (limit != null) {
-          setState(() {
-            _queryLimit = limit;
-          });
-        }
-      });
-    }
+    Assistant().getQueryLimit().then((limit) {
+      if (limit != null) {
+        setStateIfMounted(() {
+          _queryLimit = limit;
+        });
+      }
+    });
   }
 
   static List<String>? buildContentCodes() {
