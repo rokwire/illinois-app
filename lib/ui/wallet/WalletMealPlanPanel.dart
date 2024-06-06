@@ -48,7 +48,7 @@ class WalletMealPlanPanel extends StatefulWidget {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.meal_plan', 'University Housing Meal Plan is not available while offline.'));
     }
     else if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.meal_plan', 'You need to be logged in with your NetID to access University Housing Meal Plan. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
+      AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.meal_plan', 'University Housing Meal Plan'));
     }
     else {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: WalletIlliniCashPanel.routeName), builder: (context) => WalletMealPlanPanel()));

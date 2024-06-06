@@ -233,18 +233,18 @@ extension GroupPostExt on GroupPost {
           return "now";
         }
         else if (difference.inMinutes < 60) {
-          return "${difference.inMinutes} ${Localization().getStringEx("generic.minutes", "minutes")}";
+          return "${difference.inMinutes} ${Localization().getStringEx("generic.time.minutes", "minutes")}";
         }
         else if (difference.inHours < 24) {
-          return "${difference.inHours} ${Localization().getStringEx("generic.hours", "hours")}";
+          return "${difference.inHours} ${Localization().getStringEx("generic.time.hours", "hours")}";
         }
         else if (difference.inDays < 30) {
-          return "${difference.inDays} ${Localization().getStringEx("generic.days", "days")}";
+          return "${difference.inDays} ${Localization().getStringEx("generic.time.days", "days")}";
         }
         else {
           int differenceInMonths = difference.inDays ~/ 30;
           if (differenceInMonths < 12) {
-            return "$differenceInMonths ${Localization().getStringEx("generic.months", "months")}";
+            return "$differenceInMonths ${Localization().getStringEx("generic.time.months", "months")}";
           }
         }
       }

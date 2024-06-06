@@ -37,7 +37,7 @@ class WalletMTDBusPassPanel extends StatefulWidget {
 
   static void present(BuildContext context) {
     if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.bus_pass', 'You need to be logged in with your NetID to access MTD Bus Pass. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
+      AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.bus_pass', 'MTD Bus Pass'));
     }
     else if (Auth2().authCard == null) {
       AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.no_card.bus_pass', 'You need a valid Illini Identity card to access MTD Bus Pass.'));
