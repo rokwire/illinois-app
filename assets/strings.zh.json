@@ -89,12 +89,6 @@
 	"headerbar.radio.title":"WPGU 107.1 調頻",
 	"headerbar.radio.hint":"",
 
-	"generic.time.minutes": "分",
-	"generic.time.hours": "时",
-	"generic.time.days": "日",
-	"generic.time.months": "月",
-	"generic.time.years": "年",
-
 	"toggle_button.status.checked":"选中",
 	"toggle_button.status.unchecked":"未选中",
 	"toggle_button.status.checkbox":"复选框",
@@ -108,6 +102,32 @@
 	"payment_type.text.cash":"现金",
 	"payment_type.text.google_pay":"GooglePay",
 	"payment_type.text.apple_pay":"ApplePay",
+
+	"auth.logged_out.feature.not_available.message.verbose": "To access {{feature}}, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.",
+	"auth.logged_out.feature.not_available.message.short": "To access {{feature}}, you need to sign in with your NetID.",
+
+	"generic.app.feature.illini_cash": "Illini Cash",
+	"generic.app.feature.meal_plan": "University Housing Meal Plan",
+	"generic.app.feature.bus_pass": "MTD Bus Pass",
+	"generic.app.feature.illini_id": "Illini ID",
+	"generic.app.feature.library_card": "Library Card",
+	"generic.app.feature.stadium_polls": "Stadium Polls",
+	"generic.app.feature.polls": "Polls",
+	"generic.app.feature.notifications": "Notifications",
+	"generic.app.feature.research_projects": "Research Projects",
+	"generic.app.feature.student_courses": "My Courses",
+	"generic.app.feature.canvas_courses.uiuc": "My Canvas Courses",
+	"generic.app.feature.canvas_courses.gies": "My Gies Canvas Courses",
+	"generic.app.feature.medicine_courses": "My College of Medicine Compliance",
+	"generic.app.feature.skills_self_evaluation": "Assessments",
+	"generic.app.feature.checklist.uiuc": "New Student Checklist",
+	"generic.app.feature.checklist.gies": "iDegrees New Student Checklist",
+
+	"generic.time.minutes": "分",
+	"generic.time.hours": "时",
+	"generic.time.days": "日",
+	"generic.time.months": "月",
+	"generic.time.years": "年",
 
 	"panel.menu.button.events.title":"活动",
 	"panel.menu.button.events.hint":"",
@@ -236,19 +256,6 @@
 	"panel.browse.label.offline.date_cat": "截止日期目錄在離線時不可用。",
 	"panel.browse.label.offline.video_tutorial": "離線時無法使用視頻教程.",
 	"panel.browse.label.offline.inbox": "離線時通知不可用。",
-
-	"panel.browse.label.logged_out.illini_cash": "您需要使用您的 NetID 登入才能訪問 Illini Cash。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登入提示。",
-	"panel.browse.label.logged_out.illini_cash.short": "您需要使用您的 NetID 登入才能訪問 Illini Cash。",
-	"panel.browse.label.logged_out.meal_plan": "您需要使用您的 NetID 登入才能訪問大學住房膳食計劃。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登入提示。",
-	"panel.browse.label.logged_out.meal_plan.short": "您需要使用您的 NetID 登入才能訪問大學住宿膳食計劃。",
-	"panel.browse.label.logged_out.bus_pass": "您需要使用您的 NetID 登入才能訪問 MTD Bus Pass。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登入提示。",
-	"panel.browse.label.logged_out.bus_pass.short": "您需要使用您的 NetID 登入才能訪問 MTD Bus Pass。",
-	"panel.browse.label.logged_out.illini_id": "您需要使用您的 NetID 登入才能訪問 Illini ID。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登入提示。",
-	"panel.browse.label.logged_out.illini_id.short": "您需要使用您的 NetID 登入才能訪問 Illini ID。",
-	"panel.browse.label.logged_out.library_card": "您需要使用您的 NetID 登入才能訪問借書證。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在“設置”下找到登入提示。",
-	"panel.browse.label.logged_out.library_card.short": "您需要使用您的 NetID 登入才能訪問借書證。",
-	"panel.browse.label.logged_out.create_stadium_poll": "您需要使用您的 NetID 登入才能創建體育場投票。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登入提示。",
-	"panel.browse.label.logged_out.inbox": "您需要使用您的 NetID 登入才能訪問通知。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登入提示。",
 
 	"panel.browse.label.no_card.bus_pass": "您需要有效的 Illini ID才能使用 MTD Bus Pass。",
 	"panel.browse.label.no_card.library_card": "您需要有效的Illini ID才能訪問借書證。",
@@ -2132,7 +2139,6 @@
 	"panel.create_poll_panel.counter.hint": "最多, %s, 字符",
 	"panel.create_poll.message.error.default": "創建投票失敗. 請填寫所有字段, 然後重試.",
 	"panel.create_poll.description.non_editable.text": "一旦開始, 您將無法再編輯投票.",
-	"panel.create_poll.message.logged_out.text": "您需要使用您的 NetID 登入才能創建投票。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在“設置”下找到登入提示。",
 
 	"panel.create_stadium_poll.header.title": " 创建体育场投票 ",
 	"panel.create_stadium_poll.text.wants_to_know": "想知道…",
@@ -2161,7 +2167,6 @@
 	"panel.polls_home.text.header.title":"快速投票",
 	"panel.polls_home.text.loading":" 加载中。请稍等 ...",
 	"panel.polls_home.text.pin_description":"向民意調查的創建者詢問其四位數字.",
-	"panel.polls_home.text.login_description":" 您需要登入才能创建投票，并与附近的人共享投票.",
 	"panel.polls_home.button.find_poll.title":"查找投票",
 	"panel.polls_home.text.error":"错误",
 	"panel.polls_home.tab.title.recent_polls":"最近的民意测验",
@@ -3030,16 +3035,13 @@
 	"panel.canvas_courses.load.empty.error.msg": "您似乎沒有註冊任何 Canvas 課程。",
 	"panel.canvas_courses.load.failed.error.msg": "無法載入課程。",
 	"panel.canvas_courses.load.offline.error.msg": "我的 Canvas 課程在離線時不可用。",
-	"panel.canvas_courses.load.logged_out.error.msg": "您需要使用 NetID 登入才能存取「我的 Canvas 課程」。 在您的個人資料中將您的隱私等級設為 4 或 5。 然後在“設定”下找到登入提示。",
 
 	"panel.gies_canvas_courses.header.title": "我的 Gies 帆布課程",
 	"panel.gies_canvas_courses.load.empty.error.msg": "You do not appear to be enrolled in any Gies Canvas courses.",
 	"panel.gies_canvas_courses.load.failed.error.msg": "Unable to load courses.",
 	"panel.gies_canvas_courses.load.offline.error.msg": "My Gies Canvas Courses not available while offline.",
-	"panel.gies_canvas_courses.load.logged_out.error.msg": "You need to be logged in with your NetID to access My Gies Canvas Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
 
 	"panel.medicine_courses.load.offline.error.msg": "My College of Medicine Compliance not available while offline.",
-	"panel.medicine_courses.load.logged_out.error.msg": "You need to be logged in with your NetID to access My College of Medicine Compliance. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
 	"panel.medicine_courses.load.failed.error.msg": "Unable to load courses.",
 	"panel.medicine_courses.load.empty.error.msg": "You do not appear to be enrolled in any Medicine courses.",
 
@@ -3048,7 +3050,6 @@
 	"panel.student_courses.empty.content.msg": "You do not appear to be enrolled in any courses.",
 	"panel.student_courses.load.failed.error.msg": "您似乎沒有註冊所選學期的任何課程。",
 	"panel.student_courses.load.offline.error.msg": "My Courses not available while offline.",
-	"panel.student_courses.load.logged_out.error.msg": "You need to be logged in with your NetID to access My Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
 
 	"panel.skills_self_evaluation.get_started.section.title": "技能自我評估",
 	"panel.skills_self_evaluation.button.more.hint": "展示更多",
@@ -3101,9 +3102,6 @@
 	"panel.skills_self_evaluation.occupation_details.importance.title": "重要性",
 	"panel.skills_self_evaluation.occupation_details.offline.error.msg": "離線時無法獲得結果。",
 	"panel.skills_self_evaluation.occupation_details.unavailable.message": "獲取職業數據失敗。 請重試。",
-	"panel.skills_self_evaluation.auth_dialog.prefix": "您需要使用您的 NetID 登入才能訪問評估。\n",
-	"panel.skills_self_evaluation.auth_dialog.privacy": "將您的隱私級別設置為 4 或 5。",
-	"panel.skills_self_evaluation.auth_dialog.suffix": " 然後，在“設置”下使用您的 NetID 登入。",
 
 	"panel.essential_skills_coach.get_started.header.title": "Take the Self-Evaluation",
 	"panel.essential_skills_coach.get_started.take_evaluation_header": "Take the Essential Skills Self-Evaluation",
@@ -3421,7 +3419,6 @@
 	"widget.home.research_projects.my.html.empty.user.description": "您目前沒有參與任何研究項目。 <a href='{{open_projects_url}}'>查看與您的<a href='{{questionnaire_url}}'>研究興趣表</a>匹配的當前研究</a>以選擇加入並成為研究的一部分招聘池。",
 	"widget.home.research_projects.all.text.empty.description": "目前沒有開放的研究項目。",
 	"widget.home.research_projects.message.offline":"研究項目在離線時不可用。",
-	"widget.home.research_projects.message.logged_out":"您需要登入才能訪問研究項目。",
 	"widget.home.research_projects.button.all.title": "查看全部",
 	"widget.home.research_projects.button.all.hint": "點擊查看所有研究項目",
 
@@ -3429,7 +3426,6 @@
 	"widget.home_create_poll.button.close.label":"关闭",
 	"widget.home_create_poll.text.title":"快速创建和共享投票.",
 	"widget.home_create_poll.text.description":"您的群组成员可以透过{{app_title}}应用程序收到投票通知。您也可以提供使用者四码投票编号。",
-	"widget.home_create_poll.text.description.login":"您需要登入才能創建並與您附近的人共享民意調查。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登入提示。",
 	"widget.home_create_poll.button.create_poll.label":"创建投票",
 	"widget.home_create_poll.button.login.label":"登入",
 

@@ -65,6 +65,9 @@ class AppAlert {
     return alertDismissed;
   }
 
+  static Future<void> showLoggedOutFeatureNAMessage(BuildContext context, String featureName, { bool verbose = true }) async =>
+    showMessage(context, AppTextUtils.loggedOutFeatureNA(featureName, verbose: verbose));
+
   static Future<bool?> showOfflineMessage(BuildContext context, String? message) async {
     return showDialog(context: context, builder: (context) {
       return AlertDialog(
@@ -442,4 +445,16 @@ extension StateExt on State {
       }
     });
   }
+}
+
+class AppTextUtils {
+  static const String _featureMacro = '{{feature}}';
+
+  static loggedOutFeatureNA(String featureName, { bool verbose = false }) {
+    String message = verbose ?
+      Localization().getStringEx('auth.logged_out.feature.not_available.message.verbose', 'To access {{feature}}, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.') :
+      Localization().getStringEx('auth.logged_out.feature.not_available.message.short', 'To access {{feature}}, you need to sign in with your NetID.');
+    return message.replaceAll(_featureMacro, featureName);
+  }
+
 }

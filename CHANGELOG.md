@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Updated need to login message, reuse it across different app features [#4079](https://github.com/rokwire/illinois-app/issues/4079).
+
 ## [6.0.2] - 2024-06-04
 ### Changed
 - Prompt to star event after creation [#3655](https://github.com/rokwire/illinois-app/issues/3655).
