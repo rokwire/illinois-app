@@ -151,29 +151,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Widget _buildChatBubble(Message message) {
     EdgeInsets bubblePadding = message.user ? EdgeInsets.only(left: 100.0) : EdgeInsets.only(right: 100);
 
-    List<Link>? deepLinks = message.links;
-
-    List<Widget> sourceLinks = [];
-    for (String source in message.sources) {
-      Uri? uri = Uri.tryParse(source);
-      if (uri != null && uri.host.isNotEmpty) {
-        sourceLinks.add(Material(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(22), side: BorderSide(color: Styles().colors.fillColorSecondary, width: 1)),
-            color: Styles().colors.white,
-            child: InkWell(
-                onTap: () => _onTapSourceLink(source),
-                borderRadius: BorderRadius.circular(22),
-                child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
-                    child: Row(mainAxisSize: MainAxisSize.min, children: [
-                      Styles().images.getImage('external-link') ?? Container(),
-                      Padding(padding: EdgeInsets.only(left: 8), child: Text(uri.host, style: Styles().textStyles.getTextStyle('widget.button.link.source.title.semi_fat')))
-
-                    ])))));
-      }
-    }
-
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(
           padding: bubblePadding,
@@ -218,75 +195,84 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                                   style: message.user
                                                       ? Styles().textStyles.getTextStyle('widget.dialog.message.medium.thin')
                                                       : Styles().textStyles.getTextStyle('widget.message.regular')),
-                                          Visibility(
-                                              visible: sourceLinks.isNotEmpty,
-                                              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                                Padding(
-                                                    padding: const EdgeInsets.only(top: 16.0),
-                                                    child: Wrap(
-                                                        alignment: WrapAlignment.start,
-                                                        crossAxisAlignment: WrapCrossAlignment.center,
-                                                        spacing: 8.0,
-                                                        runSpacing: 8.0,
-                                                        children: [
-                                                          Text(
-                                                              Localization().getStringEx(
-                                                                  'panel.assistant.label.sources.title', 'More from the web: '),
-                                                              style: Styles().textStyles.getTextStyle('widget.title.light.small.fat')),
-                                                          ...sourceLinks
-                                                        ]))
-                                              ]))
                                         ])))))))
               ])),
-      Visibility(
-          visible: CollectionUtils.isNotEmpty(deepLinks),
-          child: Padding(padding: const EdgeInsets.only(top: 8.0, left: 24.0, right: 32.0), child: _buildLinkWidgets(deepLinks))),
-      Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        _buildMessageFeedbackWidget(message),
-        _buildSourceAndLinksLabelWidget(message)
-      ])
+      _buildFeedbackAndSourcesExpandedWidget(message)
     ]);
   }
 
-  Widget _buildMessageFeedbackWidget(Message message) {
-    final double iconSize = 24;
-    return Visibility(
-        visible: message.acceptsFeedback,
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          IconButton(
-              onPressed: message.feedbackExplanation == null
-                  ? () {
-                      _sendFeedback(message, true);
-                    }
-                  : null,
-              icon: Icon(message.feedback == MessageFeedback.good ? Icons.thumb_up : Icons.thumb_up_outlined,
-                  size: iconSize,
-                  color: message.feedbackExplanation == null ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor),
-              iconSize: iconSize,
-              splashRadius: iconSize),
-          IconButton(
-              onPressed: message.feedbackExplanation == null
-                  ? () {
-                      _sendFeedback(message, false);
-                    }
-                  : null,
-              icon: Icon(message.feedback == MessageFeedback.bad ? Icons.thumb_down : Icons.thumb_down_outlined,
-                  size: iconSize, color: Styles().colors.fillColorPrimary),
-              iconSize: iconSize,
-              splashRadius: iconSize)
-        ]));
-  }
+  Widget _buildFeedbackAndSourcesExpandedWidget(Message message) {
+    final double feedbackIconSize = 24;
+    bool additionalControlsVisible = !message.user && (_messages.indexOf(message) != 0);
+    bool areSourcesValuesVisible = (additionalControlsVisible && true); //TBD: DD - implement
+    List<Link>? deepLinks = message.links;
+    List<Widget> webLinkWidgets = _buildWebLinkWidgets(message.sources);
 
-  Widget _buildSourceAndLinksLabelWidget(Message message) {
-    bool isVisible = !message.user && (_messages.indexOf(message) != 0);
-    return Visibility(visible: isVisible, child: Padding(padding: EdgeInsets.only(top: 5), child: InkWell(
-        onTap: _onTapSourcesAndLinksLabel,
-        splashColor: Colors.transparent,
-        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Text(Localization().getStringEx('panel.assistant.sources_links.label', 'Sources and Links'),
-              style: Styles().textStyles.getTextStyle('widget.message.small')),
-          Padding(padding: EdgeInsets.only(left: 10), child: Styles().images.getImage('chevron-up-dark-blue') ?? Container())
-        ]))));
+    return Visibility(
+        visible: additionalControlsVisible,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Visibility(
+                visible: message.acceptsFeedback,
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  IconButton(
+                      onPressed: message.feedbackExplanation == null
+                          ? () {
+                              _sendFeedback(message, true);
+                            }
+                          : null,
+                      icon: Icon(message.feedback == MessageFeedback.good ? Icons.thumb_up : Icons.thumb_up_outlined,
+                          size: feedbackIconSize,
+                          color:
+                              message.feedbackExplanation == null ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor),
+                      iconSize: feedbackIconSize,
+                      splashRadius: feedbackIconSize),
+                  IconButton(
+                      onPressed: message.feedbackExplanation == null
+                          ? () {
+                              _sendFeedback(message, false);
+                            }
+                          : null,
+                      icon: Icon(message.feedback == MessageFeedback.bad ? Icons.thumb_down : Icons.thumb_down_outlined,
+                          size: feedbackIconSize, color: Styles().colors.fillColorPrimary),
+                      iconSize: feedbackIconSize,
+                      splashRadius: feedbackIconSize)
+                ])),
+            Visibility(
+                visible: additionalControlsVisible,
+                child: InkWell(
+                    onTap: _onTapSourcesAndLinksLabel,
+                    splashColor: Colors.transparent,
+                    child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                      Text(Localization().getStringEx('panel.assistant.sources_links.label', 'Sources and Links'),
+                          style: Styles().textStyles.getTextStyle('widget.message.small')),
+                      Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Styles().images.getImage(areSourcesValuesVisible ? 'chevron-up-dark-blue' : 'chevron-down-dark-blue') ??
+                              Container())
+                    ])))
+          ]),
+          Visibility(
+              visible: areSourcesValuesVisible,
+              child: Padding(
+                  padding: EdgeInsets.only(top: 5),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Visibility(
+                        visible: CollectionUtils.isNotEmpty(webLinkWidgets),
+                        child: Padding(
+                            padding: EdgeInsets.only(top: 15),
+                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: webLinkWidgets))),
+                    Visibility(
+                        visible: CollectionUtils.isNotEmpty(deepLinks),
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Padding(
+                              padding: EdgeInsets.only(top: 15, bottom: 5),
+                              child: Text(Localization().getStringEx('panel.assistant.related.label', 'Related:'),
+                                  style: Styles().textStyles.getTextStyle('widget.title.small.semi_fat'))),
+                          _buildDeepLinkWidgets(deepLinks)
+                        ]))
+                  ])))
+        ]));
   }
 
   void _onTapSourcesAndLinksLabel() {
@@ -334,67 +320,90 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   Widget _buildTypingChatBubble() {
     return Align(
-      alignment: AlignmentDirectional.centerStart,
-      child: SizedBox(
-        width: 100,
-        height: 50,
-        child: Material(
-          color: Styles().colors.blueAccent,
-          borderRadius: BorderRadius.circular(16.0),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TypingIndicator(
-                flashingCircleBrightColor: Styles().colors.surface, flashingCircleDarkColor: Styles().colors.blueAccent),
-          ),
-        ),
-      ),
-    );
+        alignment: AlignmentDirectional.centerStart,
+        child: SizedBox(
+            width: 100,
+            height: 50,
+            child: Material(
+                color: Styles().colors.blueAccent,
+                borderRadius: BorderRadius.circular(16.0),
+                child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: TypingIndicator(
+                        flashingCircleBrightColor: Styles().colors.surface, flashingCircleDarkColor: Styles().colors.blueAccent)))));
   }
 
-  Widget _buildLinkWidgets(List<Link>? links) {
+  List<Widget> _buildWebLinkWidgets(List<String> sources) {
+    List<Widget> sourceLinks = [];
+    for (String source in sources) {
+      Uri? uri = Uri.tryParse(source);
+      if ((uri != null) && uri.host.isNotEmpty) {
+        sourceLinks.add(_buildWebLinkWidget(source));
+      }
+    }
+    return sourceLinks;
+  }
+
+  Widget _buildWebLinkWidget(String source) {
+    Uri? uri = Uri.tryParse(source);
+    return Padding(
+        padding: EdgeInsets.only(bottom: 8, right: 140),
+        child: Material(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(22), side: BorderSide(color: Styles().colors.fillColorSecondary, width: 1)),
+            color: Styles().colors.white,
+            child: InkWell(
+                onTap: () => _onTapSourceLink(source),
+                borderRadius: BorderRadius.circular(22),
+                child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      Padding(padding: EdgeInsets.only(right: 8), child: Styles().images.getImage('external-link')) ?? Container(),
+                      Expanded(
+                          child: Text(StringUtils.ensureNotEmpty(uri?.host),
+                              overflow: TextOverflow.ellipsis,
+                              style: Styles().textStyles.getTextStyle('widget.button.link.source.title.semi_fat')))
+                    ])))));
+  }
+
+  Widget _buildDeepLinkWidgets(List<Link>? links) {
     List<Widget> linkWidgets = [];
     for (Link link in links ?? []) {
       if (linkWidgets.isNotEmpty) {
         linkWidgets.add(SizedBox(height: 8.0));
       }
-      linkWidgets.add(_buildLinkWidget(link));
+      linkWidgets.add(_buildDeepLinkWidget(link));
     }
     return Column(children: linkWidgets);
   }
 
-  Widget _buildLinkWidget(Link? link) {
+  Widget _buildDeepLinkWidget(Link? link) {
     if (link == null) {
       return Container();
     }
-    EdgeInsets padding = const EdgeInsets.only(right: 32.0);
+    EdgeInsets padding = const EdgeInsets.only(right: 160.0);
     return Padding(
-      padding: padding,
-      child: Material(
-        color: Styles().colors.fillColorPrimary,
-        borderRadius: BorderRadius.circular(8.0),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(8.0),
-          onTap: () {
-            NotificationService().notify('${FirebaseMessaging.notifyBase}.${link.link}', link.params);
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Visibility(
-                    visible: link.iconKey != null,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: Styles().images.getImage(link.iconKey ?? '') ?? Container(),
-                    )),
-                Expanded(child: Text(link.name, style: Styles().textStyles.getTextStyle('widget.title.light.regular'))),
-                Styles().images.getImage('chevron-right-white') ?? Container(),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+        padding: padding,
+        child: Material(
+            color: Styles().colors.white,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10), side: BorderSide(color: Styles().colors.mediumGray2, width: 1)),
+            child: InkWell(
+                borderRadius: BorderRadius.circular(10.0),
+                onTap: () {
+                  NotificationService().notify('${FirebaseMessaging.notifyBase}.${link.link}', link.params);
+                },
+                child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Row(children: [
+                      Visibility(
+                          visible: (link.iconKey != null),
+                          child: Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: Styles().images.getImage(link.iconKey ?? '') ?? Container())),
+                      Expanded(child: Text(link.name, style: Styles().textStyles.getTextStyle('widget.message.small.semi_fat'))),
+                      Styles().images.getImage('chevron-right') ?? Container()
+                    ])))));
   }
 
   Widget _buildChatBar() {

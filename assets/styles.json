@@ -858,6 +858,7 @@
     "chevron-left-white": {"src": "images/chevron-left-white.png", "type": "flutter.asset", "color": "surface", "size": 14, "todo": "size issue?"},
     "chevron-right-white": {"src": "images/chevron-right-white.png", "type": "flutter.asset", "color": "surface", "size": 14, "todo": "size issue?"},
     "chevron-up-white": {"src": "images/arrow-up-orange.png", "type": "flutter.asset", "color": "surface", "size": 10, "todo": "size issue?"},
+    "chevron-down-dark-blue": {"src": "images/arrow-down-orange.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 10, "todo": "size issue?"},
     "chevron-up-dark-blue": {"src": "images/arrow-up-orange.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 10, "todo": "size issue?"},
     "chevron-down-white": {"src": "images/arrow-down-orange.png", "type": "flutter.asset", "color": "surface", "size": 10, "todo": "size issue?"},
     "edit-white": {"src": "0xf044", "type": "fa.icon", "weight": "solid", "color": "surface", "size": 20, "todo": "remove if not neefed"},
