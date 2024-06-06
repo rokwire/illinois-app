@@ -174,7 +174,10 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   Widget _buildChatBubble(Message message) {
     EdgeInsets bubblePadding = message.user ? EdgeInsets.only(left: 100.0) : EdgeInsets.only(right: 100);
-
+    String answer = message.isAnswerUnknown
+        ? Localization()
+            .getStringEx('panel.assistant.unknown.answer.value', "I wasn’t able to find an answer from an official university source.")
+        : message.content;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(
           padding: bubblePadding,
@@ -215,7 +218,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                                   style: message.user
                                                       ? Styles().textStyles.getTextStyle('widget.title.regular')
                                                       : Styles().textStyles.getTextStyle('widget.title.light.regular'))
-                                              : SelectableText(message.content,
+                                              : SelectableText(answer,
                                                   style: message.user
                                                       ? Styles().textStyles.getTextStyle('widget.dialog.message.medium.thin')
                                                       : Styles().textStyles.getTextStyle('widget.message.regular')),
@@ -227,8 +230,10 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   Widget _buildFeedbackAndSourcesExpandedWidget(Message message) {
     final double feedbackIconSize = 24;
+    bool feedbackControlsVisible = (message.acceptsFeedback && !message.isAnswerUnknown);
     bool additionalControlsVisible = !message.user && (_messages.indexOf(message) != 0);
-    bool areSourcesValuesVisible = (additionalControlsVisible && (message.sourcesExpanded == true));
+    bool areSourcesLabelsVisible = additionalControlsVisible && ((CollectionUtils.isNotEmpty(message.sources) || CollectionUtils.isNotEmpty(message.links)));
+    bool areSourcesValuesVisible = (additionalControlsVisible && areSourcesLabelsVisible && (message.sourcesExpanded == true));
     List<Link>? deepLinks = message.links;
     List<Widget> webLinkWidgets = _buildWebLinkWidgets(message.sources);
 
@@ -237,7 +242,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Visibility(
-                visible: message.acceptsFeedback,
+                visible: feedbackControlsVisible,
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
                   IconButton(
                       onPressed: message.feedbackExplanation == null
@@ -263,7 +268,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                       splashRadius: feedbackIconSize)
                 ])),
             Visibility(
-                visible: additionalControlsVisible,
+                visible: areSourcesLabelsVisible,
                 child: Padding(padding: EdgeInsets.only(top: (!message.acceptsFeedback ? 10 : 0), left: (!message.acceptsFeedback ? 5 : 0)), child: InkWell(
                     onTap: () => _onTapSourcesAndLinksLabel(message),
                     splashColor: Colors.transparent,

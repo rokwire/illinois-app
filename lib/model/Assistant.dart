@@ -60,6 +60,8 @@ Map<String, String> deeplinkNameMap = {
 };
 
 class Message {
+  static final String _unknownAnswerValue = "I don't know";
+
   final String id;
   final String content;
   final bool user;
@@ -80,8 +82,8 @@ class Message {
     List<String>? sources = JsonUtils.stringListValue(json['sources']);
     if (sources == null) {
       String? source = JsonUtils.stringValue(json['sources']);
-      if (source != null) {
-        sources = source.split((RegExp(r'[,\n]')));
+      if (StringUtils.isNotEmpty(source)) {
+        sources = source!.split((RegExp(r'[,\n]')));
         sources = sources.map((e) => e.trim()).toList();
       }
     }
@@ -115,8 +117,8 @@ class Message {
     List<String>? sources = JsonUtils.stringListValue(answerJson?['sources']);
     if (sources == null) {
       String? source = JsonUtils.stringValue(answerJson?['sources']);
-      if (source != null) {
-        sources = source.split((RegExp(r'[,\n]')));
+      if (StringUtils.isNotEmpty(source)) {
+        sources = source!.split((RegExp(r'[,\n]')));
         sources = sources.map((e) => e.trim()).toList();
       }
     }
@@ -143,6 +145,8 @@ class Message {
       feedbackExplanation: null,
     );
   }
+
+  bool get isAnswerUnknown => (content.toLowerCase() == _unknownAnswerValue.toLowerCase());
 }
 
 class Link {
