@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Assistant.dart';
@@ -32,7 +34,8 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class AssistantConversationContentWidget extends StatefulWidget {
-  AssistantConversationContentWidget();
+  final Stream shouldClearAllMessages;
+  AssistantConversationContentWidget({required this.shouldClearAllMessages});
 
   @override
   State<AssistantConversationContentWidget> createState() => _AssistantConversationContentWidgetState();
@@ -59,6 +62,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   Map<String, String>? _userContext;
 
+  late StreamSubscription _streamSubscription;
+
   @override
   void initState() {
     super.initState();
@@ -70,11 +75,11 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       SpeechToText.notifyError,
     ]);
 
-    _messages.add(Message(
-        content: Localization().getStringEx('panel.assistant.label.welcome_message.title',
-            'The Illinois Assistant is a search feature that brings official university resources to your fingertips. Ask a question below to get started.'),
-        // sources: ["https://google.com", "https://illinois.edu", "https://grad.illinois.edu", "https://uillinois.edu"],
-        user: false));
+    _streamSubscription = widget.shouldClearAllMessages.listen((event) {
+      _clearAllMessages();
+    });
+
+    _initDefaultMessages();
 
     _contentCodes = buildContentCodes();
 
@@ -88,7 +93,18 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   void dispose() {
     NotificationService().unsubscribe(this);
     _inputController.dispose();
+    _streamSubscription.cancel();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(AssistantConversationContentWidget old) {
+    super.didUpdateWidget(old);
+    // in case the stream instance changed, subscribe to the new one
+    if (widget.shouldClearAllMessages != old.shouldClearAllMessages) {
+      _streamSubscription.cancel();
+      _streamSubscription = widget.shouldClearAllMessages.listen((_) => _clearAllMessages);
+    }
   }
 
   // AutomaticKeepAliveClientMixin
@@ -110,6 +126,14 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         _listening = false;
       });
     }
+  }
+
+  // Public APIs
+
+  void _clearAllMessages() {
+    setStateIfMounted(() {
+      _initDefaultMessages();
+    });
   }
 
   @override
@@ -240,7 +264,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                 ])),
             Visibility(
                 visible: additionalControlsVisible,
-                child: InkWell(
+                child: Padding(padding: EdgeInsets.only(top: (!message.acceptsFeedback ? 10 : 0), left: (!message.acceptsFeedback ? 5 : 0)), child: InkWell(
                     onTap: () => _onTapSourcesAndLinksLabel(message),
                     splashColor: Colors.transparent,
                     child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -250,7 +274,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                           padding: EdgeInsets.only(left: 10),
                           child: Styles().images.getImage(areSourcesValuesVisible ? 'chevron-up-dark-blue' : 'chevron-down-dark-blue') ??
                               Container())
-                    ])))
+                    ]))))
           ]),
           Visibility(
               visible: areSourcesValuesVisible,
@@ -360,7 +384,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                 child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
-                      Padding(padding: EdgeInsets.only(right: 8), child: Styles().images.getImage('external-link')) ?? Container(),
+                      Padding(padding: EdgeInsets.only(right: 8), child: Styles().images.getImage('external-link')),
                       Expanded(
                           child: Text(StringUtils.ensureNotEmpty(uri?.host),
                               overflow: TextOverflow.ellipsis,
@@ -813,6 +837,16 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         });
       }
     });
+  }
+
+  void _initDefaultMessages() {
+    if (CollectionUtils.isNotEmpty(_messages)) {
+      _messages.clear();
+    }
+    _messages.add(Message(
+        content: Localization().getStringEx('panel.assistant.label.welcome_message.title',
+            'The Illinois Assistant is a search feature that brings official university resources to your fingertips. Ask a question below to get started.'),
+        user: false));
   }
 
   double get _chatBarHeight {

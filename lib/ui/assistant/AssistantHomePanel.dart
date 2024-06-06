@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -74,6 +76,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
 
   final GlobalKey _pageKey = GlobalKey();
   final GlobalKey _pageHeadingKey = GlobalKey();
+  final _clearMessagesNotifier = new StreamController.broadcast();
 
   @override
   void initState() {
@@ -99,6 +102,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _clearMessagesNotifier.close();
     super.dispose();
   }
 
@@ -210,8 +214,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
 
   void _onTapClearAll() {
     Analytics().logSelect(target: 'Clear All', source: widget.runtimeType.toString());
-    //TBD: DD - implement
-    AppAlert.showMessage(context, 'Not Implemented');
+    _clearMessagesNotifier.sink.add(1);
   }
 
   void _onTapClose() {
@@ -246,7 +249,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
   Widget? get _contentWidget {
     switch (_selectedContent) {
       case AssistantContent.conversation:
-        return AssistantConversationContentWidget();
+        return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream);
       case AssistantContent.faqs:
         return AssistantFaqsContentWidget();
       default:
