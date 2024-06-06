@@ -425,6 +425,7 @@
     "panel.assistant.label.feedback.negative.prompt.title": "Thank you for providing feedback! Could you please explain the issue with my response?",
     "panel.assistant.label.feedback.thank_you.title": "Thank you for the explanation! Your response has been recorded and will be used to improve results in the future.",
     "panel.assistant.label.queries.remaining.title": "{{query_limit}} questions remaining today",
+    "panel.assistant.inaccurate.description.disclaimer": "The Illinois Assistant may display inaccurate information.\nPlease double-check its responses.",
     "panel.assistant.label.queries.limit.title": "Sorry, you are out of questions for today. Please check back tomorrow to ask more questions!",
     "panel.assistant.label.error.title": "Sorry, something went wrong. For the best results, please restart the app and try your question again.",
     "panel.assistant.field.feedback.title": "Type your feedback here...",

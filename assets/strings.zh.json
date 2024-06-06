@@ -424,6 +424,7 @@
 	"panel.assistant.label.feedback.negative.prompt.title": "谢谢您提供的反馈！可以请您说明我的回答中不清楚的地方吗？",
 	"panel.assistant.label.feedback.thank_you.title": "谢谢您提供的说明！您的回复已纪录，并且将用于改善未来我的回答。",
 	"panel.assistant.label.queries.remaining.title": "今日问题余额 {{query_limit}} 个",
+	"panel.assistant.inaccurate.description.disclaimer": "伊利諾伊州助理可能會顯示不準確的資訊。\n請仔細檢查其答案。",
 	"panel.assistant.label.queries.limit.title": "抱歉，您今天的提问次数已用完。请明天再回来提问！",
 	"panel.assistant.label.error.title": "抱歉，出了一些問題。為了獲得最佳結果，請重新啟動應用程式並再次嘗試您的問題。",
 	"panel.assistant.field.feedback.title": "在此键入您的意見...",

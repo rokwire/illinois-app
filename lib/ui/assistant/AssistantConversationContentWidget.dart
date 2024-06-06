@@ -486,25 +486,34 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       return Container();
     }
     return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: Row(mainAxisSize: MainAxisSize.min, children: [
-        Container(
-          height: 10,
-          width: 10,
-          decoration: BoxDecoration(
-              color:
-                  (_queryLimit ?? 0) > 0 ? Styles().colors.saferLocationWaitTimeColorGreen : Styles().colors.saferLocationWaitTimeColorRed,
-              shape: BoxShape.circle),
-        ),
-        SizedBox(width: 8),
-        Text(
-          Localization()
-              .getStringEx('panel.assistant.label.queries.remaining.title', "{{query_limit}} questions remaining today")
-              .replaceAll('{{query_limit}}', _queryLimit.toString()),
-          style: Styles().textStyles.getTextStyle('widget.title.small'),
-        ),
-      ]),
-    );
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Row(mainAxisSize: MainAxisSize.min, children: [
+            Container(
+                height: 10,
+                width: 10,
+                decoration: BoxDecoration(
+                    color: (_queryLimit ?? 0) > 0
+                        ? Styles().colors.saferLocationWaitTimeColorGreen
+                        : Styles().colors.saferLocationWaitTimeColorRed,
+                    shape: BoxShape.circle)),
+            SizedBox(width: 8),
+            Text(
+                Localization()
+                    .getStringEx('panel.assistant.label.queries.remaining.title', "{{query_limit}} questions remaining today")
+                    .replaceAll('{{query_limit}}', _queryLimit.toString()),
+                style: Styles().textStyles.getTextStyle('widget.title.small'))
+          ]),
+          Padding(
+              padding: EdgeInsets.only(top: 5),
+              child: Text(
+                  Localization().getStringEx('panel.assistant.inaccurate.description.disclaimer',
+                      'The Illinois Assistant may display inaccurate information.\nPlease double-check its responses.'),
+                  style: Styles().textStyles.getTextStyle('widget.info.tiny'),
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 5))
+        ]));
   }
 
   Widget _buildContextButton() {

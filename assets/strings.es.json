@@ -424,6 +424,7 @@
     "panel.assistant.label.feedback.negative.prompt.title": "¡Gracias por tus comentarios! ¿Puedes explicar el problema con mi respuesta, por favor?",
     "panel.assistant.label.feedback.thank_you.title": "¡Gracias por la explicación! Tu respuesta ha sido registrada y se utilizará para mejorar los resultados en el futuro.",
     "panel.assistant.label.queries.remaining.title": "{{query_limit}} preguntas quedan hoy",
+    "panel.assistant.inaccurate.description.disclaimer": "El Asistente de Illinois puede mostrar información inexacta.\nPor favor, vuelva a verificar sus respuestas.",
     "panel.assistant.label.queries.limit.title": "Perdón. Has agotado tus preguntas para hoy. Vuelve mañana para ¡hacer más preguntas!",
     "panel.assistant.label.error.title": "Perdón, algo salió mal. Para obtener mejores resultados, reinicie la aplicación y vuelva a intentar responder su pregunta.",
     "panel.assistant.field.feedback.title": "Escribe tus comentarios aquí...",
