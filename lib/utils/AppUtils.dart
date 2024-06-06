@@ -68,26 +68,8 @@ class AppAlert {
   static Future<void> showLoggedOutFeatureNAMessage(BuildContext context, String featureName, { bool verbose = true }) async =>
     showMessage(context, AppTextUtils.loggedOutFeatureNA(featureName, verbose: verbose));
 
-  static Future<bool?> showOfflineMessage(BuildContext context, String? message) async {
-    return showDialog(context: context, builder: (context) {
-      return AlertDialog(
-        content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.medium")),
-          Container(height:16),
-          Text(message!, textAlign: TextAlign.center,),
-        ],),
-        actions: <Widget>[
-          TextButton(
-              child: Text(Localization().getStringEx("dialog.ok.title", "OK")),
-              onPressed: (){
-                Analytics().logAlert(text: message, selection: "OK");
-                  Navigator.pop(context, true);
-              }
-          ) //return dismissed 'true'
-        ],
-      );
-    },);
-  }
+  static Future<void> showOfflineMessage(BuildContext context, String? message) async =>
+    showMessage(context, Localization().getStringEx("common.message.offline", "You appear to be offline"));
 
   static Future<void> showMessage(BuildContext context, String? message) async {
     return showDialog(context: context, builder: (context) {
