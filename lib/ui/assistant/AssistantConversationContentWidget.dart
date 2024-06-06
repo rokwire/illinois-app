@@ -204,7 +204,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Widget _buildFeedbackAndSourcesExpandedWidget(Message message) {
     final double feedbackIconSize = 24;
     bool additionalControlsVisible = !message.user && (_messages.indexOf(message) != 0);
-    bool areSourcesValuesVisible = (additionalControlsVisible && true); //TBD: DD - implement
+    bool areSourcesValuesVisible = (additionalControlsVisible && (message.sourcesExpanded == true));
     List<Link>? deepLinks = message.links;
     List<Widget> webLinkWidgets = _buildWebLinkWidgets(message.sources);
 
@@ -241,7 +241,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
             Visibility(
                 visible: additionalControlsVisible,
                 child: InkWell(
-                    onTap: _onTapSourcesAndLinksLabel,
+                    onTap: () => _onTapSourcesAndLinksLabel(message),
                     splashColor: Colors.transparent,
                     child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                       Text(Localization().getStringEx('panel.assistant.sources_links.label', 'Sources and Links'),
@@ -275,8 +275,10 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         ]));
   }
 
-  void _onTapSourcesAndLinksLabel() {
-    //TBD: DD - implement
+  void _onTapSourcesAndLinksLabel(Message message) {
+    setStateIfMounted(() {
+      message.sourcesExpanded = !(message.sourcesExpanded ?? false);
+    });
   }
 
   void _sendFeedback(Message message, bool good) {
@@ -422,7 +424,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                         child: Padding(
                             padding: const EdgeInsets.only(left: 16.0),
                             child: Stack(children: [
-                              TextField(
+                              Padding(padding: EdgeInsets.only(right: 28), child: TextField(
                                   enabled: enabled,
                                   controller: _inputController,
                                   minLines: 1,
@@ -440,7 +442,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                           'Sorry you are out of questions for today. Please check back tomorrow to ask more questions!')
                                           : Localization()
                                           .getStringEx('panel.assistant.field.feedback.title', 'Type your feedback here...')),
-                                  style: Styles().textStyles.getTextStyle('widget.title.regular')),
+                                  style: Styles().textStyles.getTextStyle('widget.title.regular'))),
                               Align(
                                   alignment: Alignment.centerRight,
                                   child: Padding(padding: EdgeInsets.only(right: 0), child: _buildSendImage(enabled)))
