@@ -38,40 +38,32 @@ class WalletICardHomeContentPanel extends StatefulWidget {
 
   static void present(BuildContext context, {WalletICardContent? content}) {
     if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showMessage(
-          context,
-          Localization().getStringEx('panel.browse.label.logged_out.illini_id',
-              'You need to be logged in with your NetID to access Illini ID. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
-    } else {
-      if (StringUtils.isEmpty(Auth2().authCard?.cardNumber)) {
-        AppAlert.showMessage(
-            context,
-            Localization().getStringEx('panel.browse.label.no_card.illini_id',
-                'No Illini ID information. You do not have an active Illini ID. Please visit the ID Center.'));
-      } else {
-        String? warning;
-        int? expirationDays = Auth2().authCard?.expirationIntervalInDays;
-        if (expirationDays != null) {
-          if (expirationDays <= 0) {
-            warning = sprintf(
-                Localization().getStringEx('panel.browse.label.expired_card.illini_id',
-                    'No Illini ID information. Your Illini ID expired on %s. Please visit the ID Center.'),
-                [Auth2().authCard?.expirationDate ?? '']);
-          } else if ((0 < expirationDays) && (expirationDays < 30)) {
-            warning = sprintf(
-                Localization()
-                    .getStringEx('panel.browse.label.expiring_card.illini_id', 'Your ID will expire on %s. Please visit the ID Center.'),
-                [Auth2().authCard?.expirationDate ?? '']);
-          }
+      AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.illini_id', 'Illini ID'));
+    }
+    else if (StringUtils.isEmpty(Auth2().authCard?.cardNumber)) {
+      AppAlert.showMessage( context, Localization().getStringEx('panel.browse.label.no_card.illini_id', 'No Illini ID information. You do not have an active Illini ID. Please visit the ID Center.'));
+    }
+    else {
+      String? warning;
+      int? expirationDays = Auth2().authCard?.expirationIntervalInDays;
+      if (expirationDays != null) {
+        if (expirationDays <= 0) {
+          warning = sprintf(Localization().getStringEx('panel.browse.label.expired_card.illini_id', 'No Illini ID information. Your Illini ID expired on %s. Please visit the ID Center.'),
+            [Auth2().authCard?.expirationDate ?? '']
+          );
+        } else if ((0 < expirationDays) && (expirationDays < 30)) {
+          warning = sprintf(Localization().getStringEx('panel.browse.label.expiring_card.illini_id', 'Your ID will expire on %s. Please visit the ID Center.'),
+            [Auth2().authCard?.expirationDate ?? '']
+          );
         }
+      }
 
-        if (warning != null) {
-          AppAlert.showMessage(context, warning).then((_) {
-            _present(context, content: content);
-          });
-        } else {
+      if (warning != null) {
+        AppAlert.showMessage(context, warning).then((_) {
           _present(context, content: content);
-        }
+        });
+      } else {
+        _present(context, content: content);
       }
     }
   }

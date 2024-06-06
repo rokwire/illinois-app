@@ -3,12 +3,6 @@
     "app.team_name":"Illinois",
     "app.univerity_name":"Universidad de Illinois",
 
-    "generic.minutes": "minutos",
-    "generic.hours": "horas",
-    "generic.days": "días",
-    "generic.months": "meses",
-    "generic.years": "añoss",
-
     "dialog.yes.title":"Sí",
     "dialog.yes.hint":"",
     "dialog.no.title":"No",
@@ -108,6 +102,32 @@
     "payment_type.text.cash":"Efectivo",
     "payment_type.text.google_pay":"Google Pay",
     "payment_type.text.apple_pay":"Apple Pay",
+
+    "auth.logged_out.feature.not_available.message.verbose": "To access {{feature}}, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.",
+    "auth.logged_out.feature.not_available.message.short": "To access {{feature}}, you need to sign in with your NetID.",
+
+    "generic.app.feature.illini_cash": "Illini Cash",
+    "generic.app.feature.meal_plan": "University Housing Meal Plan",
+    "generic.app.feature.bus_pass": "MTD Bus Pass",
+    "generic.app.feature.illini_id": "Illini ID",
+    "generic.app.feature.library_card": "Library Card",
+    "generic.app.feature.stadium_polls": "Stadium Polls",
+    "generic.app.feature.polls": "Polls",
+    "generic.app.feature.notifications": "Notifications",
+    "generic.app.feature.research_projects": "Research Projects",
+    "generic.app.feature.student_courses": "My Courses",
+    "generic.app.feature.canvas_courses.uiuc": "My Canvas Courses",
+    "generic.app.feature.canvas_courses.gies": "My Gies Canvas Courses",
+    "generic.app.feature.medicine_courses": "My College of Medicine Compliance",
+    "generic.app.feature.skills_self_evaluation": "Assessments",
+    "generic.app.feature.checklist.uiuc": "New Student Checklist",
+    "generic.app.feature.checklist.gies": "iDegrees New Student Checklist",
+
+    "generic.time.minutes": "minutos",
+    "generic.time.hours": "horas",
+    "generic.time.days": "días",
+    "generic.time.months": "meses",
+    "generic.time.years": "añoss",
 
     "panel.menu.button.events.title":"Eventos",
     "panel.menu.button.events.hint":"",
@@ -236,19 +256,6 @@
     "panel.browse.label.offline.date_cat": "El catálogo de fecha de vencimiento no está disponible sin conexión.",
     "panel.browse.label.offline.video_tutorial": "Video tutorial no disponible sin conexión.",
     "panel.browse.label.offline.inbox": "Las notificaciones no están disponibles sin conexión.",
-
-    "panel.browse.label.logged_out.illini_cash": "Debe iniciar sesión con su NetID para acceder a Illini Cash. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
-    "panel.browse.label.logged_out.illini_cash.short": "Debe iniciar sesión con su NetID para acceder a Illini Cash.",
-    "panel.browse.label.logged_out.meal_plan": "Debe iniciar sesión con su NetID para acceder al Plan de comidas de alojamiento universitario. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
-    "panel.browse.label.logged_out.meal_plan.short": "Debe iniciar sesión con su NetID para acceder al Plan de comidas de alojamiento universitario.",
-    "panel.browse.label.logged_out.bus_pass": "Debe iniciar sesión con su NetID para acceder al pase de autobús MTD. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
-    "panel.browse.label.logged_out.bus_pass.short": "Debe iniciar sesión con su NetID para acceder al pase de autobús MTD.",
-    "panel.browse.label.logged_out.illini_id": "Debe iniciar sesión con su NetID para acceder a Illini ID. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
-    "panel.browse.label.logged_out.illini_id.short": "Debe iniciar sesión con su NetID para acceder a Illini ID.",
-    "panel.browse.label.logged_out.library_card": "Debe iniciar sesión con su NetID para acceder a la tarjeta de la biblioteca. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
-    "panel.browse.label.logged_out.library_card.short": "Debe iniciar sesión con su NetID para acceder a la tarjeta de la biblioteca.",
-    "panel.browse.label.logged_out.create_stadium_poll": "Debe iniciar sesión con su NetID para crear una encuesta de estadio. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
-    "panel.browse.label.logged_out.inbox": "Debe iniciar sesión con su NetID para acceder a las notificaciones. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
 
     "panel.browse.label.no_card.bus_pass": "Necesita una tarjeta de identidad Illini válida para acceder al pase de autobús MTD.",
     "panel.browse.label.no_card.library_card": "Necesita una tarjeta de identidad Illini válida para acceder a la tarjeta de la biblioteca.",
@@ -2149,7 +2156,6 @@
     "panel.create_poll_panel.counter.hint": "máximo,% s, caracteres",
     "panel.create_poll.message.error.default": "No se pudo crear la encuesta. Complete todos los campos e intente nuevamente.",
     "panel.create_poll.description.non_editable.text": "Una vez iniciada, ya no podrá editar la encuesta.",
-    "panel.create_poll.message.logged_out.text": "Debe iniciar sesión con su NetID para crear una encuesta. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
 
     "panel.create_stadium_poll.header.title": "Crear una encuesta de estadio",
     "panel.create_stadium_poll.text.wants_to_know": "quiere saber…",
@@ -2178,7 +2184,6 @@
     "panel.polls_home.text.header.title":"Encuestas",
     "panel.polls_home.text.loading":"Cargando. Por favor espera...",
     "panel.polls_home.text.pin_description":"Pregunta al creador de la encuesta por su número de cuatro dígitos.",
-    "panel.polls_home.text.login_description":"Debe iniciar sesión para crear y compartir encuestas con personas cercanas a usted.",
     "panel.polls_home.button.find_poll.title":"Encontrar encuesta",
     "panel.polls_home.text.error":"Error",
     "panel.polls_home.tab.title.recent_polls":"Encuestas recientes",
@@ -3050,16 +3055,13 @@
     "panel.canvas_courses.load.empty.error.msg": "No parece estar inscrito en ningún curso de Canvas.",
     "panel.canvas_courses.load.failed.error.msg": "No se pueden cargar cursos.",
     "panel.canvas_courses.load.offline.error.msg": "Mis cursos Canvas no están disponibles sin conexión.",
-    "panel.canvas_courses.load.logged_out.error.msg": "Debe iniciar sesión con su NetID para acceder a Mis cursos de Canvas. Establece tu nivel de privacidad en 4 o 5 en tu perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
 
     "panel.gies_canvas_courses.header.title": "Mis cursos Gies Canvas",
     "panel.gies_canvas_courses.load.empty.error.msg": "No parece que estás inscrito/a en ningún curso de Canvas de Gies.",
     "panel.gies_canvas_courses.load.failed.error.msg": "No se pueden cargar los cursos.",
     "panel.gies_canvas_courses.load.offline.error.msg": "Mis cursos de Canvas de Gies no están disponibles sin conexión.",
-    "panel.gies_canvas_courses.load.logged_out.error.msg": "Debes iniciar sesión con tu NetID para acceder a Mis Cursos de Canvas de Gies. Configura tu nivel de privacidad en 4 o 5 en tu Perfil. Luego, busca la opción de inicio de sesión en Configuración.",
 
     "panel.medicine_courses.load.offline.error.msg": "Mi Cumplimiento de la Facultad de Medicina no está disponible sin conexión.",
-    "panel.medicine_courses.load.logged_out.error.msg": "Debes iniciar sesión con tu NetID para acceder a Mi Cumplimiento de la Facultad de Medicina. Configura tu nivel de privacidad en 4 o 5 en tu Perfil. Luego, busca la opción de inicio de sesión en Configuración.",
     "panel.medicine_courses.load.failed.error.msg": "No se pueden cargar los cursos.",
     "panel.medicine_courses.load.empty.error.msg": "No parece que estás inscrito/a en ningún curso de Medicina.",
 
@@ -3068,7 +3070,6 @@
     "panel.student_courses.empty.content.msg": "No parece estar inscrito en ningún curso para el término seleccionado.",
     "panel.student_courses.load.failed.error.msg": "Parece que no tiene cursos registrados para el término seleccionado.",
     "panel.student_courses.load.offline.error.msg": "Mis Cursos no está disponible sin conexión.",
-    "panel.student_courses.load.logged_out.error.msg": "Debes iniciar sesión con tu NetID para acceder a Mis Cursos. Configura tu nivel de privacidad en 4 o 5 en tu Perfil. Luego, busca la opción de inicio de sesión en Configuración.",
 
     "panel.skills_self_evaluation.get_started.section.title": "Autoevaluación de habilidades",
     "panel.skills_self_evaluation.button.more.hint": "Mostrar más",
@@ -3121,9 +3122,6 @@
     "panel.skills_self_evaluation.occupation_details.importance.title": "IMPORTANCIA",
     "panel.skills_self_evaluation.occupation_details.offline.error.msg": "Los resultados no están disponibles sin conexión.",
     "panel.skills_self_evaluation.occupation_details.unavailable.message": "No se pudieron obtener los datos de ocupación. Por favor, intenta de nuevo.",
-    "panel.skills_self_evaluation.auth_dialog.prefix": "Debe iniciar sesión con su NetID para acceder a las evaluaciones.\n",
-    "panel.skills_self_evaluation.auth_dialog.privacy": "Establezca su nivel de privacidad en 4 o 5.",
-    "panel.skills_self_evaluation.auth_dialog.suffix": " Luego, inicie sesión con su NetID en Configuración.",
 
     "panel.essential_skills_coach.get_started.header.title": "Take the Self-Evaluation",
     "panel.essential_skills_coach.get_started.take_evaluation_header": "Take the Essential Skills Self-Evaluation",
@@ -3441,7 +3439,6 @@
     "widget.home.research_projects.my.html.empty.user.description": "Actualmente no participa en ningún proyecto de investigación. <a href='{{open_projects_url}}'>Consulte los estudios actuales</a> que coincidan con su <a href='{{questionnaire_url}}'>Formulario de interés de investigación</a> para participar y formar parte del estudio bolsa de reclutamiento.",
     "widget.home.research_projects.all.text.empty.description": "No hay proyectos de investigación abiertos en este momento.",
     "widget.home.research_projects.message.offline":"Los proyectos de investigación no están disponibles sin conexión.",
-    "widget.home.research_projects.message.logged_out":"Debe iniciar sesión para acceder a Proyectos de Investigación.",
     "widget.home.research_projects.button.all.title": "Ver todo",
     "widget.home.research_projects.button.all.hint": "Toque para ver todos los proyectos de investigación",
 
@@ -3449,7 +3446,6 @@
     "widget.home_create_poll.button.close.label":"Cerrar",
     "widget.home_create_poll.text.title":"Crea y comparte encuestas rápidamente.",
     "widget.home_create_poll.text.description":"Las personas de tu grupo pueden recibir notificaciones para votar por la aplicación {{app_title}}. O puedes dar a los votantes el número de votación de cuatro dígitos.",
-    "widget.home_create_poll.text.description.login":"Debe iniciar sesión para crear y compartir encuestas con personas cercanas a usted. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
     "widget.home_create_poll.button.create_poll.label":"Crea una encuesta",
     "widget.home_create_poll.button.login.label":"Iniciar sesión",
 
