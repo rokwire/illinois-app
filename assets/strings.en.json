@@ -3,12 +3,6 @@
     "app.team_name":"Illinois",
     "app.univerity_name":"University of Illinois",
 
-    "generic.minutes": "minutes",
-    "generic.hours": "hours",
-    "generic.days": "days",
-    "generic.months": "months",
-    "generic.years": "years",
-
     "dialog.yes.title":"Yes",
     "dialog.yes.hint":"",
     "dialog.no.title":"No",
@@ -94,6 +88,12 @@
     "headerbar.debug.hint":"",
     "headerbar.radio.title":"WPGU 107.1 FM",
     "headerbar.radio.hint":"",
+
+    "generic.time.minutes": "minutes",
+    "generic.time.hours": "hours",
+    "generic.time.days": "days",
+    "generic.time.months": "months",
+    "generic.time.years": "years",
 
     "toggle_button.status.checked": "checked",
     "toggle_button.status.unchecked": "unchecked",

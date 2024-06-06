@@ -3,12 +3,6 @@
 	"app.team_name":"Illinois",
 	"app.univerity_name":"伊利諾伊大學",
 
-	"generic.minutes": "分",
-	"generic.hours": "时",
-	"generic.days": "日",
-	"generic.months": "月",
-	"generic.years": "年",
-
 	"dialog.yes.title":"确认退出",
 	"dialog.yes.hint":"",
 	"dialog.no.title":"取消",
@@ -94,6 +88,12 @@
 	"headerbar.debug.hint":"",
 	"headerbar.radio.title":"WPGU 107.1 調頻",
 	"headerbar.radio.hint":"",
+
+	"generic.time.minutes": "分",
+	"generic.time.hours": "时",
+	"generic.time.days": "日",
+	"generic.time.months": "月",
+	"generic.time.years": "年",
 
 	"toggle_button.status.checked":"选中",
 	"toggle_button.status.unchecked":"未选中",
