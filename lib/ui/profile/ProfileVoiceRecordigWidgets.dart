@@ -2,6 +2,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -17,7 +18,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'dart:io';
 
-import '../../service/Analytics.dart';
 
 class ProfileNamePronouncementWidget extends StatefulWidget {
 
@@ -144,11 +144,15 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
   }
 
   void _onDeleteNamePronouncement(){
-    setStateIfMounted(() => _loading = true);
-    Content().deleteVoiceRecord().then((result) {
-      setStateIfMounted(() => _loading = false);
-      if(result?.resultType != AudioResultType.succeeded){
-        AppAlert.showMessage(context, Localization().getStringEx("", "Unable to delete. Please try again."));
+    _ProfileNamePronouncementConfirmDeleteDialog.show(context).then((bool? result) {
+      if (mounted && (result == true)) {
+        setStateIfMounted(() => _loading = true);
+        Content().deleteVoiceRecord().then((result) {
+          setStateIfMounted(() => _loading = false);
+          if(result?.resultType != AudioResultType.succeeded){
+            AppAlert.showMessage(context, Localization().getStringEx("", "Unable to delete. Please try again."));
+          }
+        });
       }
     });
   }
@@ -582,6 +586,66 @@ class _ProfileSoundRecorderController {
     return null;
   }
 }
+
+class _ProfileNamePronouncementConfirmDeleteDialog extends StatelessWidget {
+  // ignore: unused_element
+  static Future<bool?> show(BuildContext context) => showDialog<bool?>(context: context, builder: (_) => _ProfileNamePronouncementConfirmDeleteDialog());
+
+  @override
+  Widget build(BuildContext context) => Material(type: MaterialType.transparency, borderRadius: BorderRadius.all(Radius.circular(5)), child:
+    SafeArea(child:
+      Container(alignment: Alignment.center, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 22), child:
+        Container(padding: EdgeInsets.all(5), decoration: BoxDecoration(color: Styles().colors.background, borderRadius: BorderRadius.all(Radius.circular(5)),), child:
+          Stack( alignment: Alignment.topRight, children:[
+            Row(mainAxisSize: MainAxisSize.min, children: [
+              Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Container(padding: EdgeInsets.symmetric(horizontal: 18, vertical: 16), child:
+                  Column(children: [
+                    Container(height: 8,),
+                    Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0), child:
+                      Text(Localization().getStringEx("", "Delete"), style:
+                        Styles().textStyles.getTextStyle("widget.detail.regular.fat"),
+                      ),
+                    ),
+                    Container(height: 4,),
+                    Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0), child:
+                      Text(Localization().getStringEx("", "Delete current recording?"), style:
+                        Styles().textStyles.getTextStyle("widget.detail.regular"),)
+                      ),
+                      Container(height: 16,),
+                      Container(padding: EdgeInsets.symmetric(horizontal: 24), child:
+                        Row(children: [
+                          SmallRoundedButton( rightIcon: Container(),
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                            label: Localization().getStringEx("", "Yes"),
+                            onTap: () => Navigator.pop(context, true),
+                          ),
+                          Container(width: 16,),
+                          SmallRoundedButton( rightIcon: Container(),
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                            label: Localization().getStringEx("", "No"),
+                            onTap: () => Navigator.pop(context, false),
+                          ),
+                        ],),
+                      ),
+                    ],)
+                  )
+                ]),
+              ]),
+              Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
+                InkWell(onTap: () => Navigator.pop(context, null), child:
+                  Container(padding: EdgeInsets.all(16), child:
+                    Styles().images.getImage('close-circle', excludeFromSemantics: true)
+                  )
+                )
+              ),
+            ])
+          )
+        )
+      )
+    );
+}
+
 
 class _BytesAudioSource extends StreamAudioSource{
   final Uint8List _data;
