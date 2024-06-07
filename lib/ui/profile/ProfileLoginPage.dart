@@ -28,9 +28,9 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileLoginPage extends StatefulWidget {
-  final EdgeInsetsGeometry gutter;
+  final EdgeInsetsGeometry margin;
 
-  ProfileLoginPage({super.key, this.gutter = const EdgeInsets.all(16) });
+  ProfileLoginPage({super.key, this.margin = const EdgeInsets.all(16) });
 
   @override
   State<StatefulWidget> createState() => _ProfileLoginPageState();
@@ -110,7 +110,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
 
     contentList.add(_buildAppInfo());
 
-    return Padding(padding: widget.gutter, child:
+    return Padding(padding: widget.margin, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList)
     );
   }

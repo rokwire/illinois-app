@@ -37,15 +37,15 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileDetailsPage extends StatefulWidget {
   final String? parentRouteName;
-  final EdgeInsets gutter;
+  final EdgeInsets margin;
 
-  ProfileDetailsPage({Key? key, this.parentRouteName, this.gutter = const EdgeInsets.all(16) }) : super(key: key);
+  ProfileDetailsPage({Key? key, this.parentRouteName, this.margin = const EdgeInsets.all(16) }) : super(key: key);
 
   @override
   _ProfileDetailsPageState createState() => _ProfileDetailsPageState();
 
-  EdgeInsetsGeometry get horzGutter => EdgeInsets.only(left: gutter.left, right: gutter.right);
-  EdgeInsetsGeometry get vertGutter => EdgeInsets.only(top: gutter.top, bottom: gutter.bottom);
+  EdgeInsetsGeometry get horzGutter => EdgeInsets.only(left: margin.left, right: margin.right);
+  EdgeInsetsGeometry get vertGutter => EdgeInsets.only(top: margin.top, bottom: margin.bottom);
 }
 
 class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements NotificationsListener {
@@ -133,28 +133,28 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
       _PersonalInfoEntry(
           title: Localization().getStringEx('panel.profile_info.net_id.title', 'UIN'),
           value: Auth2().account?.authType?.uiucUser?.identifier ?? "",
-          margin: EdgeInsets.only(left: widget.gutter.left, right: widget.gutter.right),),
+          margin: EdgeInsets.only(left: widget.margin.left, right: widget.margin.right),),
       _PersonalInfoEntry(
           title: Localization().getStringEx('panel.profile_info.full_name.title', 'Full Name'),
           value: Auth2().account?.authType?.uiucUser?.fullName ?? "",
-          margin: EdgeInsets.only(top: 12, left: widget.gutter.left, right: widget.gutter.right),),
+          margin: EdgeInsets.only(top: 12, left: widget.margin.left, right: widget.margin.right),),
       ProfileNamePronouncementWidget(),
       _PersonalInfoEntry(
           title: Localization().getStringEx('panel.profile_info.middle_name.title', 'Middle Name'),
           value: Auth2().account?.authType?.uiucUser?.middleName ?? "",
-          margin: EdgeInsets.only(top: 12, left: widget.gutter.left, right: widget.gutter.right),),
+          margin: EdgeInsets.only(top: 12, left: widget.margin.left, right: widget.margin.right),),
       _PersonalInfoEntry(
           title: Localization().getStringEx('panel.profile_info.last_name.title', 'Last Name'),
           value:  Auth2().account?.authType?.uiucUser?.lastName ?? "",
-          margin: EdgeInsets.only(top: 12, left: widget.gutter.left, right: widget.gutter.right),),
+          margin: EdgeInsets.only(top: 12, left: widget.margin.left, right: widget.margin.right),),
       _PersonalInfoEntry(
           title: Localization().getStringEx('panel.profile_info.email_address.title', 'Email Address'),
           value: Auth2().account?.authType?.uiucUser?.email ?? "",
-          margin: EdgeInsets.only(top: 12, left: widget.gutter.left, right: widget.gutter.right),),
+          margin: EdgeInsets.only(top: 12, left: widget.margin.left, right: widget.margin.right),),
       _PersonalInfoEntry(
           title: Localization().getStringEx('panel.profile_info.college.title', 'College'),
           value: IlliniCash().studentClassification?.collegeName ?? "",
-          margin: EdgeInsets.only(top: 12, left: widget.gutter.left, right: widget.gutter.right),),
+          margin: EdgeInsets.only(top: 12, left: widget.margin.left, right: widget.margin.right),),
     ],);
   }
 
@@ -289,7 +289,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
       contentWidget = _buildPhoneOrEmailAccountManagementOptions();
     }
     
-    return (contentWidget != null) ? Padding(padding: EdgeInsets.only(top: 25, left: widget.gutter.left, right: widget.gutter.right), child: contentWidget) : Container();
+    return (contentWidget != null) ? Padding(padding: EdgeInsets.only(top: 25, left: widget.margin.left, right: widget.margin.right), child: contentWidget) : Container();
   }
 
   Widget _buildShibbolethAccountManagementOptions() {
@@ -411,7 +411,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
       ]);
     }
 
-    return Padding(padding: EdgeInsets.only(top: 25, left: widget.gutter.left, right: widget.gutter.right), child: contentWidget);
+    return Padding(padding: EdgeInsets.only(top: 25, left: widget.margin.left, right: widget.margin.right), child: contentWidget);
   }
 
   Widget _buildProfileImageButton(String title, String hint, GestureTapCallback? onTap) {
@@ -612,7 +612,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
   }
 
   Widget _buildDeleteMyAccount() {
-    return Padding(padding: EdgeInsets.only(top: 24, bottom: 12, left: widget.gutter.left, right: widget.gutter.right), child:
+    return Padding(padding: EdgeInsets.only(top: 24, bottom: 12, left: widget.margin.left, right: widget.margin.right), child:
       RoundedButton(
         backgroundColor: Styles().colors.white,
         borderColor: Styles().colors.white,

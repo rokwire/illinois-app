@@ -27,9 +27,9 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class ProfileRolesPage extends StatefulWidget {
-  final EdgeInsetsGeometry gutter;
+  final EdgeInsetsGeometry margin;
 
-  ProfileRolesPage({super.key, this.gutter = const EdgeInsets.all(16) });
+  ProfileRolesPage({super.key, this.margin = const EdgeInsets.all(16) });
 
   @override
   _ProfileRolesPageState createState() => _ProfileRolesPageState();
@@ -59,7 +59,7 @@ class _ProfileRolesPageState extends State<ProfileRolesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(color: Styles().colors.background, padding: widget.gutter,  child:
+    return Container(color: Styles().colors.background, padding: widget.margin,  child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.only(top: 16, left: 4, right: 4), child:
           Text(Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
