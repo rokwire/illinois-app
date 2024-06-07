@@ -429,6 +429,7 @@
     "panel.assistant.label.example.eg.title": "p.ej. ",
     "panel.assistant.label.example.question.title": "¿Cuántos estudiantes asisten a UIUC?",
     "panel.assistant.unknown.answer.value": "No pude encontrar una respuesta de una fuente universitaria oficial.",
+    "panel.assistant.label.feedback.disclaimer.prompt.title": "¡Gracias por brindarnos comentarios!",
     "panel.assistant.label.feedback.negative.prompt.title": "¡Gracias por tus comentarios! ¿Puedes explicar el problema con mi respuesta, por favor?",
     "panel.assistant.label.feedback.thank_you.title": "¡Gracias por la explicación! Tu respuesta ha sido registrada y se utilizará para mejorar los resultados en el futuro.",
     "panel.assistant.label.queries.remaining.title": "{{query_limit}} preguntas quedan hoy",

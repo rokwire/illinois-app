@@ -222,6 +222,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                                   style: message.user
                                                       ? Styles().textStyles.getTextStyle('widget.dialog.message.medium.thin')
                                                       : Styles().textStyles.getTextStyle('widget.message.regular')),
+                                          _buildNegativeFeedbackFormWidget(message),
+                                          _buildFeedbackDisclaimer(message)
                                         ])))))))
               ])),
       _buildFeedbackAndSourcesExpandedWidget(message)
@@ -310,6 +312,21 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     });
   }
 
+  Widget _buildNegativeFeedbackFormWidget(Message message) {
+    bool isNegativeFeedbackForm = (message.feedbackDisclaimerType == FeedbackDisclaimerType.request);
+    return Visibility(visible: isNegativeFeedbackForm, child: Text('Request submit negative feedback'));
+  }
+
+  Widget _buildFeedbackDisclaimer(Message message) {
+    bool isSystemFeedbackMessage = (message.feedbackDisclaimerType != null);
+    return Visibility(
+        visible: isSystemFeedbackMessage,
+        child: Padding(padding: EdgeInsets.only(top: 10), child: Text(
+            Localization().getStringEx('panel.assistant.feedback.disclaimer.description',
+                'Your input on this response is anonymous and will be reviewed to improve the quality of the Illinois Assistant.'),
+            style: Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.description.thin'))));
+  }
+
   void _sendFeedback(Message message, bool good) {
     if (message.feedbackExplanation != null) {
       return;
@@ -323,6 +340,11 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
           message.feedback = null;
         } else {
           message.feedback = MessageFeedback.good;
+          _messages.add(Message(
+              content: Localization().getStringEx(
+                  'panel.assistant.label.feedback.disclaimer.prompt.title',
+                  'Thank you for providing feedback!'),
+              user: false, feedbackDisclaimerType: FeedbackDisclaimerType.response));
         }
       } else {
         if (message.feedback == MessageFeedback.bad) {

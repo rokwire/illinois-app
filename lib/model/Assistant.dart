@@ -74,9 +74,11 @@ class Message {
   String? feedbackExplanation;
 
   bool? sourcesExpanded;
+  FeedbackDisclaimerType? feedbackDisclaimerType;
 
   Message({this.id = '', required this.content, required this.user, this.example = false, this.acceptsFeedback = false,
-    this.links, this.sources = const [], this.queryLimit, this.feedback,  this.feedbackExplanation, this.sourcesExpanded});
+    this.links, this.sources = const [], this.queryLimit, this.feedback,  this.feedbackExplanation,
+    this.sourcesExpanded, this.feedbackDisclaimerType});
 
   factory Message.fromAnswerJson(Map<String, dynamic> json) {
     List<String>? sources = JsonUtils.stringListValue(json['sources']);
@@ -148,6 +150,8 @@ class Message {
 
   bool get isAnswerUnknown => (content.toLowerCase() == _unknownAnswerValue.toLowerCase());
 }
+
+enum FeedbackDisclaimerType { response, request }
 
 class Link {
   final String name;
