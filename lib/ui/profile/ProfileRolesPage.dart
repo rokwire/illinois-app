@@ -27,6 +27,11 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class ProfileRolesPage extends StatefulWidget {
+  final EdgeInsetsGeometry gutter;
+
+  ProfileRolesPage({super.key, this.gutter = const EdgeInsets.all(16) });
+
+  @override
   _ProfileRolesPageState createState() => _ProfileRolesPageState();
 }
 
@@ -54,34 +59,23 @@ class _ProfileRolesPageState extends State<ProfileRolesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-          color: Styles().colors.background,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                child: Padding(
-                  padding: EdgeInsets.only(top: 16, left: 4, right: 4),
-                  child: Text(
-                    Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
-                    style: Styles().textStyles.getTextStyle("widget.item.small.thin")
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 10,  left: 4, right: 4),
-                child: Text(
-                    Localization().getStringEx('panel.onboarding.roles.label.description2', 'I am a...'),
-                    style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat")
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 0, top: 8, right: 8, bottom: 0),
-                child: RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton, textScaler: MediaQuery.of(context).textScaler,),
-              ),
-            ],
+    return Container(color: Styles().colors.background, padding: widget.gutter,  child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Padding(padding: EdgeInsets.only(top: 16, left: 4, right: 4), child:
+          Text(Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
+            style: Styles().textStyles.getTextStyle("widget.item.small.thin")
           ),
-        );
+        ),
+        Padding(padding: EdgeInsets.only(top: 10,  left: 4, right: 4), child:
+          Text(Localization().getStringEx('panel.onboarding.roles.label.description2', 'I am a...'),
+            style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat")
+          ),
+        ),
+        Padding(padding: EdgeInsets.only(left: 0, top: 8, right: 8, bottom: 0), child:
+          RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton, textScaler: MediaQuery.of(context).textScaler,),
+        ),
+      ],),
+    );
   }
 
   /*Widget _buildSaveButton(){
