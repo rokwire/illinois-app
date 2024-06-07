@@ -64,6 +64,7 @@
 
     "mango"                                 :"#f29835",
     "greenAccent"                           :"#69F0AE",
+    "blueAccent"                            :"#0058A7",
 
     "saferLocationWaitTimeColorRed"        :"#ff0000",
     "saferLocationWaitTimeColorYellow"     :"#ffff00",
@@ -361,6 +362,8 @@
     "widget.link.button.title.regular": { "font_family": "regular", "size": 16.0, "color": "fillColorSecondary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.link.button.title.small": { "font_family": "regular", "size": 14.0, "color": "fillColorSecondary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
 
+    "widget.button.link.source.title.semi_fat": {"font_family": "medium", "size": 14.0, "color": "fillColorPrimaryVariant"},
+
     "widget.button.light.title.medium": { "font_family": "medium", "size": 16.0, "color": "textBackground"},
     "widget.button.light.title.medium.fat": { "font_family": "bold", "size": 16.0, "color": "textBackground"},
     "widget.button.light.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground"},
@@ -502,6 +505,8 @@
 
     "widget.tab_bar.title.selected": {"font_family": "bold", "size": 12.0, "color": "fillColorSecondary"},
     "widget.tab_bar.title.not_selected": {"font_family": "bold", "size": 12.0, "color": "mediumGray"},
+
+    "widget.assistant.bubble.feedback.disclaimer.description.thin": {"font_family": "regular", "size": 12.0, "color": "fillColorPrimary"},
 
     "panel.event_schedule.title": {"extends": "widget.title.large.extra_fat"},
     "panel.event_schedule.category": {"extends": "widget.detail.regular.extra_fat"},
@@ -825,6 +830,7 @@
     "campus-tools-outline-gray": {"src": "images/tab-browse.png", "type": "flutter.asset", "color": "mediumGray", "size": 18, "todo": "remove if not used"},
     "browse-outline-gray": {"src": "0xf0c9", "type": "fa.icon", "weight": "solid", "color": "mediumGray", "size": 18},
     "search-outline-gray": {"src": "images/icon-search.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
+    "assistant-outline-gray": {"src": "images/tab-assistant.png", "type": "flutter.asset", "size": 18},
 
     "box-inside-gray": {"src": "images/disabled-checkbox.png", "type": "flutter.asset", "color": "mediumGray2", "size": 24},
     "box-inside-light-gray": {"src": "images/partial-selected-checkbox.png", "type": "flutter.asset", "color": "mediumGray2", "size": 24},
@@ -855,6 +861,8 @@
     "chevron-left-white": {"src": "images/chevron-left-white.png", "type": "flutter.asset", "color": "surface", "size": 14, "todo": "size issue?"},
     "chevron-right-white": {"src": "images/chevron-right-white.png", "type": "flutter.asset", "color": "surface", "size": 14, "todo": "size issue?"},
     "chevron-up-white": {"src": "images/arrow-up-orange.png", "type": "flutter.asset", "color": "surface", "size": 10, "todo": "size issue?"},
+    "chevron-down-dark-blue": {"src": "images/arrow-down-orange.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 10, "todo": "size issue?"},
+    "chevron-up-dark-blue": {"src": "images/arrow-up-orange.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 10, "todo": "size issue?"},
     "chevron-down-white": {"src": "images/arrow-down-orange.png", "type": "flutter.asset", "color": "surface", "size": 10, "todo": "size issue?"},
     "edit-white": {"src": "0xf044", "type": "fa.icon", "weight": "solid", "color": "surface", "size": 20, "todo": "remove if not neefed"},
     "star-white": {"src": "images/icon-star-white.png", "type": "flutter.asset", "color-todo": "surface", "size": 18, "todo": "color issue?"},

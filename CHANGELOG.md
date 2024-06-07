@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated need to login message, reuse it across different app features [#4079](https://github.com/rokwire/illinois-app/issues/4079).
 - Cleaned up pronunciation control in Profile, prompt before delete [#4083](https://github.com/rokwire/illinois-app/issues/4083).
+### Added
+- New Assistant UI - in progress [#4089](https://github.com/rokwire/illinois-app/issues/4089).
 
 ## [6.0.2] - 2024-06-04
 ### Changed
