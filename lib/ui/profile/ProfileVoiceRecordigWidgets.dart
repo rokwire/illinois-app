@@ -1,4 +1,5 @@
 
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -21,8 +22,15 @@ import '../../service/Analytics.dart';
 
 class ProfileNamePronouncementWidget extends StatefulWidget {
 
+  final EdgeInsets margin;
+
+  ProfileNamePronouncementWidget({super.key, this.margin = const EdgeInsets.symmetric(horizontal: 16)});
+
   @override
   State<StatefulWidget> createState() => _ProfileNamePronouncementState();
+
+  EdgeInsetsGeometry get horzGutter => EdgeInsets.only(left: margin.left, right: margin.right);
+  EdgeInsetsGeometry get vertGutter => EdgeInsets.only(top: margin.top, bottom: margin.bottom);
 }
 
 class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidget> implements NotificationsListener {
@@ -43,49 +51,49 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container( padding: EdgeInsets.only(right: 8, top: 4),
-                child:  _loading ? _progressIndicator :
-                Styles().images.getImage(_hasStoredPronouncement ? 'icon-soundbyte' : 'plus-circle', excludeFromSemantics: true)
-            ),
-            Visibility(visible: !_hasStoredPronouncement, child:
-            Expanded(
-                child: GestureDetector(onTap:  _onRecordNamePronouncement, child:
-                Text( Localization().getStringEx("", "Add name pronunciation and how you prefer to be addressed (Ex: Please call me Dr. Last Name, First Name, or Nickname. )"),
-                  style: Styles().textStyles.getTextStyle("widget.info.medium.underline"),
-                ),
-                )
-            ),
-            ),
-            Visibility(visible: _hasStoredPronouncement, child:
-            GestureDetector(onTap:  _onPlayNamePronouncement, child:
-            Text( Localization().getStringEx("", "Your name pronunciation recording"),
-              style: Styles().textStyles.getTextStyle("widget.info.medium.underline"),
-            ),
-            )
-            ),
-            Visibility(visible: _hasStoredPronouncement, child:
-            InkWell(onTap: _onEditRecord, child:
-            Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 4), child:
-            Styles().images.getImage('edit', excludeFromSemantics: true)
-            )
-            )
-            ),
-            Visibility(visible: _hasStoredPronouncement, child:
-            InkWell(onTap: _onDeleteNamePronouncement, child:
-            Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 4), child:
-            Styles().images.getImage('icon-delete-record', excludeFromSemantics: true)
-            )
-            )
-            )
-          ],
-        )
-    );
-  }
+  Widget build(BuildContext context) => Padding(padding: widget.vertGutter, child:
+    _hasStoredPronouncement ? _pronouncementContent : _addPronouncementContent,
+  );
+
+  Widget get _pronouncementContent => Row(children: [
+    _loading ? _progressIndicator : _pronouncementIcon,
+
+    Expanded(child:
+      InkWell(onTap:  _onPlayNamePronouncement, child:
+        Text( Localization().getStringEx("", "Your name pronunciation recording"),
+          style: Styles().textStyles.getTextStyle("widget.info.regular.thin.underline"),
+        ),
+      ),
+    ),
+
+    InkWell(onTap: _onEditRecord, child:
+      Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 8), child:
+        Styles().images.getImage('edit', size: 16, excludeFromSemantics: true)
+      )
+    ),
+
+    InkWell(onTap: _onDeleteNamePronouncement, child:
+      Padding(padding: EdgeInsets.only(left: 8, right: widget.margin.right, top: 8, bottom: 8), child:
+        Styles().images.getImage('trash', size: 16, excludeFromSemantics: true)
+      )
+    ),
+
+  ],);
+
+  Widget get _addPronouncementContent => Row(children: [
+    _loading ? _progressIndicator : _addPronouncementIcon,
+
+    Expanded(child:
+      Padding(padding: EdgeInsets.only(right: widget.margin.right), child:
+        InkWell(onTap:  _onRecordNamePronouncement, child:
+          Text(Localization().getStringEx("", "Add name pronunciation and how you prefer to be addressed (Ex: Please call me Dr. Last Name, First Name, or Nickname. )"),
+            style: Styles().textStyles.getTextStyle("widget.info.regular.thin.underline"),
+          ),
+        ),
+      ),
+    ),
+  ]);
+
 
   @override
   void onNotification(String name, param) {
@@ -94,8 +102,19 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
     }
   }
 
-  Widget get _progressIndicator => SizedBox(width: 16, height: 16, child:
-  CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,));
+  Widget get _progressIndicator => Padding(padding: EdgeInsets.only(left: widget.margin.left, right: 8), child:
+    SizedBox(width: 16, height: 16, child:
+      CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
+    )
+  );
+
+  Widget get _pronouncementIcon => Padding(padding: EdgeInsets.only(left: widget.margin.left, right: 8), child:
+    Styles().images.getImage('icon-soundbyte', excludeFromSemantics: true),
+  );
+
+  Widget get _addPronouncementIcon => Padding(padding: EdgeInsets.only(left: widget.margin.left, right: 8), child:
+    Styles().images.getImage('plus-circle', excludeFromSemantics: true)
+  );
 
   void _onPlayNamePronouncement() async {
     try {
