@@ -223,7 +223,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                                       ? Styles().textStyles.getTextStyle('widget.dialog.message.medium.thin')
                                                       : Styles().textStyles.getTextStyle('widget.message.regular')),
                                           _buildNegativeFeedbackFormWidget(message),
-                                          _buildFeedbackDisclaimer(message)
+                                          _buildFeedbackResponseDisclaimer(message)
                                         ])))))))
               ])),
       _buildFeedbackAndSourcesExpandedWidget(message)
@@ -313,12 +313,12 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   Widget _buildNegativeFeedbackFormWidget(Message message) {
-    bool isNegativeFeedbackForm = (message.feedbackDisclaimerType == FeedbackDisclaimerType.request);
+    bool isNegativeFeedbackForm = (message.feedbackResponseType == FeedbackResponseType.negative);
     return Visibility(visible: isNegativeFeedbackForm, child: Text('Request submit negative feedback'));
   }
 
-  Widget _buildFeedbackDisclaimer(Message message) {
-    bool isSystemFeedbackMessage = (message.feedbackDisclaimerType != null);
+  Widget _buildFeedbackResponseDisclaimer(Message message) {
+    bool isSystemFeedbackMessage = (message.feedbackResponseType != null);
     return Visibility(
         visible: isSystemFeedbackMessage,
         child: Padding(padding: EdgeInsets.only(top: 10), child: Text(
@@ -344,7 +344,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
               content: Localization().getStringEx(
                   'panel.assistant.label.feedback.disclaimer.prompt.title',
                   'Thank you for providing feedback!'),
-              user: false, feedbackDisclaimerType: FeedbackDisclaimerType.response));
+              user: false, feedbackResponseType: FeedbackResponseType.positive));
         }
       } else {
         if (message.feedback == MessageFeedback.bad) {
