@@ -1,5 +1,4 @@
 
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -29,8 +28,8 @@ class ProfileNamePronouncementWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _ProfileNamePronouncementState();
 
-  EdgeInsetsGeometry get horzGutter => EdgeInsets.only(left: margin.left, right: margin.right);
-  EdgeInsetsGeometry get vertGutter => EdgeInsets.only(top: margin.top, bottom: margin.bottom);
+  EdgeInsetsGeometry get horzMargin => EdgeInsets.only(left: margin.left, right: margin.right);
+  EdgeInsetsGeometry get vertMargin => EdgeInsets.only(top: margin.top, bottom: margin.bottom);
 }
 
 class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidget> implements NotificationsListener {
@@ -51,7 +50,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
   }
 
   @override
-  Widget build(BuildContext context) => Padding(padding: widget.vertGutter, child:
+  Widget build(BuildContext context) => Padding(padding: widget.vertMargin, child:
     _hasStoredPronouncement ? _pronouncementContent : _addPronouncementContent,
   );
 
