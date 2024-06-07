@@ -24,8 +24,6 @@ class AssistantFaqsContentWidget extends StatefulWidget {
 class _AssistantFaqsContentWidgetState extends State<AssistantFaqsContentWidget> {
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('//TBD: DD - implement'),
-    );
+    return const Center(child: Padding(padding: EdgeInsets.symmetric(vertical: 30), child: Text('Not Implemented, yet')));
   }
 }
