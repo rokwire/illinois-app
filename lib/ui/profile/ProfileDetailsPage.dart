@@ -44,8 +44,8 @@ class ProfileDetailsPage extends StatefulWidget {
   @override
   _ProfileDetailsPageState createState() => _ProfileDetailsPageState();
 
-  EdgeInsetsGeometry get horzGutter => EdgeInsets.only(left: margin.left, right: margin.right);
-  EdgeInsetsGeometry get vertGutter => EdgeInsets.only(top: margin.top, bottom: margin.bottom);
+  EdgeInsetsGeometry get horzMargin => EdgeInsets.only(left: margin.left, right: margin.right);
+  EdgeInsetsGeometry get vertMargin => EdgeInsets.only(top: margin.top, bottom: margin.bottom);
 }
 
 class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements NotificationsListener {
@@ -103,7 +103,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
 
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: widget.vertGutter, child:
+    return Padding(padding: widget.vertMargin, child:
       Column(children: <Widget>[
         _buildProfilePicture(),
         _buildInfoContent(),
@@ -159,7 +159,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
   }
 
   Widget _buildPhoneVerifiedInfoContent(){
-    return Padding(padding: widget.horzGutter, child:
+    return Padding(padding: widget.horzMargin, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Semantics(label: Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), header: true, excludeSemantics: true, child:
           Padding(padding: EdgeInsets.only(bottom: 8), child:
@@ -218,7 +218,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
   }
 
   Widget _buildEmailLoginInfoContent(){
-    return Padding(padding: widget.horzGutter, child:
+    return Padding(padding: widget.horzMargin, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Semantics(label: Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), header: true, excludeSemantics: true, child:
           Padding(padding: EdgeInsets.only(bottom: 8), child:
