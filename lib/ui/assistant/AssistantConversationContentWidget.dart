@@ -63,6 +63,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Map<String, String>? _userContext;
 
   late StreamSubscription _streamSubscription;
+  TextEditingController _negativeFeedbackController = TextEditingController();
+  FocusNode _negativeFeedbackFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -93,6 +95,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   void dispose() {
     NotificationService().unsubscribe(this);
     _inputController.dispose();
+    _negativeFeedbackController.dispose();
     _streamSubscription.cancel();
     super.dispose();
   }
@@ -128,14 +131,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     }
   }
 
-  // Public APIs
-
-  void _clearAllMessages() {
-    setStateIfMounted(() {
-      _initDefaultMessages();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -152,7 +147,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                     physics: AlwaysScrollableScrollPhysics(),
                     controller: _scrollController,
                     child: Padding(padding: EdgeInsets.all(16), child: Column(children: _buildContentList()))))),
-            Positioned(bottom: MediaQuery.of(context).viewInsets.bottom, left: 0, right: 0, child: _buildChatBar())
+            Positioned(bottom: _chatBarPaddingBottom, left: 0, right: 0, child: _buildChatBar())
           ]));
   }
 
@@ -218,12 +213,25 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                                   style: message.user
                                                       ? Styles().textStyles.getTextStyle('widget.title.regular')
                                                       : Styles().textStyles.getTextStyle('widget.title.light.regular'))
-                                              : SelectableText(answer,
-                                                  style: message.user
-                                                      ? Styles().textStyles.getTextStyle('widget.dialog.message.medium.thin')
-                                                      : Styles().textStyles.getTextStyle('widget.message.regular')),
+                                              : RichText(
+                                                  textAlign: TextAlign.start,
+                                                  text: TextSpan(children: [
+                                                    WidgetSpan(
+                                                        child: Visibility(
+                                                            visible: (message.isNegativeFeedbackMessage == true),
+                                                            child: Padding(
+                                                                padding: EdgeInsets.only(right: 6),
+                                                                child: Icon(Icons.thumb_down, size: 18, color: Styles().colors.white)))),
+                                                    TextSpan(
+                                                        text: answer,
+                                                        style: message.user
+                                                            ? Styles().textStyles.getTextStyle('widget.dialog.message.medium.thin')
+                                                            : Styles().textStyles.getTextStyle('widget.message.regular'))
+                                                  ])),
                                           _buildNegativeFeedbackFormWidget(message),
-                                          _buildFeedbackResponseDisclaimer(message)
+                                          Visibility(
+                                              visible: (message.feedbackResponseType == FeedbackResponseType.positive),
+                                              child: _buildFeedbackResponseDisclaimer())
                                         ])))))))
               ])),
       _buildFeedbackAndSourcesExpandedWidget(message)
@@ -314,17 +322,45 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   Widget _buildNegativeFeedbackFormWidget(Message message) {
     bool isNegativeFeedbackForm = (message.feedbackResponseType == FeedbackResponseType.negative);
-    return Visibility(visible: isNegativeFeedbackForm, child: Text('Request submit negative feedback'));
+    return Visibility(
+        visible: isNegativeFeedbackForm,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(
+              Localization().getStringEx(
+                  'panel.assistant.label.feedback.negative.prompt.title', 'Can you briefly explain the issue(s) with the response?'),
+              style: Styles().textStyles.getTextStyle('widget.message.regular.fat')),
+          Padding(
+              padding: EdgeInsets.only(top: 10),
+              child: Container(
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Styles().colors.surfaceAccent), borderRadius: BorderRadius.circular(12.0)),
+                  child: Padding(
+                      padding: EdgeInsets.only(left: 16.0),
+                      child: TextField(
+                          controller: _negativeFeedbackController,
+                          focusNode: _negativeFeedbackFocusNode,
+                          maxLines: 5,
+                          textCapitalization: TextCapitalization.sentences,
+                          decoration: InputDecoration(border: InputBorder.none),
+                          style: Styles().textStyles.getTextStyle('widget.title.regular'))))),
+          Padding(
+              padding: EdgeInsets.only(top: 15),
+              child: RoundedButton(
+                  label: Localization().getStringEx('panel.assistant.button.submit.title', 'Submit'),
+                  contentWeight: 0.4,
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  fontSize: 16,
+                  onTap: () => _submitNegativeFeedbackMessage(
+                      systemMessage: message, negativeFeedbackExplanation: _negativeFeedbackController.text))),
+          _buildFeedbackResponseDisclaimer()
+        ]));
   }
 
-  Widget _buildFeedbackResponseDisclaimer(Message message) {
-    bool isSystemFeedbackMessage = (message.feedbackResponseType != null);
-    return Visibility(
-        visible: isSystemFeedbackMessage,
-        child: Padding(padding: EdgeInsets.only(top: 10), child: Text(
-            Localization().getStringEx('panel.assistant.feedback.disclaimer.description',
-                'Your input on this response is anonymous and will be reviewed to improve the quality of the Illinois Assistant.'),
-            style: Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.description.thin'))));
+  Widget _buildFeedbackResponseDisclaimer() {
+    return Padding(padding: EdgeInsets.only(top: 10), child: Text(
+        Localization().getStringEx('panel.assistant.feedback.disclaimer.description',
+            'Your input on this response is anonymous and will be reviewed to improve the quality of the Illinois Assistant.'),
+        style: Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.description.thin')));
   }
 
   void _sendFeedback(Message message, bool good) {
@@ -353,10 +389,9 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
           message.feedback = MessageFeedback.bad;
           _messages.add(Message(
               content: Localization().getStringEx(
-                  'panel.assistant.label.feedback.negative.prompt.title',
-                  "Thank you for providing feedback! Could you please explain "
-                      "the issue with my response?"),
-              user: false));
+                  'panel.assistant.label.feedback.disclaimer.prompt.title',
+                  'Thank you for providing feedback!'),
+              user: false, feedbackResponseType: FeedbackResponseType.negative));
           _feedbackMessage = message;
           bad = true;
         }
@@ -460,7 +495,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   Widget _buildChatBar() {
-    bool enabled = _feedbackMessage != null || _queryLimit == null || _queryLimit! > 0;
+    bool enabled = (_queryLimit == null) || (_queryLimit! > 0);
     return Material(
       key: _chatBarKey,
         color: Styles().colors.surface,
@@ -486,13 +521,10 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                   onChanged: (_) => setStateIfMounted((){}),
                                   decoration: InputDecoration(
                                       border: InputBorder.none,
-                                      hintText: _feedbackMessage == null
-                                          ? enabled
+                                      hintText: enabled
                                           ? null
                                           : Localization().getStringEx('panel.assistant.label.queries.limit.title',
-                                          'Sorry you are out of questions for today. Please check back tomorrow to ask more questions!')
-                                          : Localization()
-                                          .getStringEx('panel.assistant.field.feedback.title', 'Type your feedback here...')),
+                                          'Sorry you are out of questions for today. Please check back tomorrow to ask more questions!')),
                                   style: Styles().textStyles.getTextStyle('widget.title.regular'))),
                               Align(
                                   alignment: Alignment.centerRight,
@@ -733,26 +765,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       _loadingResponse = true;
     });
 
-    if (_feedbackMessage != null) {
-      _feedbackMessage?.feedbackExplanation = message;
-      Message? response = await Assistant().sendFeedback(_feedbackMessage!);
-      setState(() {
-        if (response != null) {
-          _messages.add(response);
-        } else {
-          _messages.add(Message(
-              content: Localization().getStringEx(
-                  'panel.assistant.label.feedback.thank_you.title',
-                  'Thank you for the explanation! '
-                      'Your response has been recorded and will be used to improve results in the future.'),
-              user: false));
-        }
-        _loadingResponse = false;
-      });
-      _feedbackMessage = null;
-      return;
-    }
-
     int? limit = _queryLimit;
     if (limit != null && limit <= 0) {
       setState(() {
@@ -796,6 +808,24 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         _loadingResponse = false;
       });
     }
+  }
+
+  Future<void> _submitNegativeFeedbackMessage({required Message systemMessage, required String negativeFeedbackExplanation}) async {
+    if ((_feedbackMessage == null) || StringUtils.isEmpty(negativeFeedbackExplanation) || _loadingResponse) {
+      return;
+    }
+    FocusScope.of(context).requestFocus(FocusNode());
+    setStateIfMounted(() {
+      _messages.add(Message(content: negativeFeedbackExplanation, user: true, isNegativeFeedbackMessage: true));
+      _negativeFeedbackController.text = '';
+    });
+    _feedbackMessage?.feedbackExplanation = negativeFeedbackExplanation;
+    systemMessage.feedbackResponseType = FeedbackResponseType.positive;
+    Message? responseMessage = await Assistant().sendFeedback(_feedbackMessage!);
+    debugPrint((responseMessage != null ? 'Succeeded' : 'Failed') + ' to submit negative feedback message.');
+    setStateIfMounted(() {
+      _feedbackMessage = null;
+    });
   }
 
   Map<String, String>? _getUserContext({String? name, String? netID, String? college, String? department, String? studentLevel}) {
@@ -874,6 +904,16 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         content: Localization().getStringEx('panel.assistant.label.welcome_message.title',
             'The Illinois Assistant is a search feature that brings official university resources to your fingertips. Ask a question below to get started.'),
         user: false));
+  }
+
+  void _clearAllMessages() {
+    setStateIfMounted(() {
+      _initDefaultMessages();
+    });
+  }
+
+  double get _chatBarPaddingBottom {
+    return _negativeFeedbackFocusNode.hasFocus ? 0 : MediaQuery.of(context).viewInsets.bottom;
   }
 
   double get _chatBarHeight {

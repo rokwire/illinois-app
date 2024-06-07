@@ -75,10 +75,11 @@ class Message {
 
   bool? sourcesExpanded;
   FeedbackResponseType? feedbackResponseType;
+  bool? isNegativeFeedbackMessage;
 
   Message({this.id = '', required this.content, required this.user, this.example = false, this.acceptsFeedback = false,
     this.links, this.sources = const [], this.queryLimit, this.feedback,  this.feedbackExplanation,
-    this.sourcesExpanded, this.feedbackResponseType});
+    this.sourcesExpanded, this.feedbackResponseType, this.isNegativeFeedbackMessage});
 
   factory Message.fromAnswerJson(Map<String, dynamic> json) {
     List<String>? sources = JsonUtils.stringListValue(json['sources']);
