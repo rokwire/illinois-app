@@ -520,16 +520,16 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       if (hasAttendance) {
         if (showSurvey) {
           if (_isAdmin) {
-            description = Localization().getStringEx('panel.event2.detail.survey.description.reg_opt.att.svy.admin', 'This event provides registration. Attendance will be taken and a follow-up survey will be sent.');
+            description = Localization().getStringEx('panel.event2.detail.survey.description.reg_opt.att.svy.admin', 'This event has registration. Attendance will be taken and a follow-up survey will be sent.');
           }
           else switch (surveyHours) {
-            case 0:  description = Localization().getStringEx('panel.event2.detail.survey.description.reg_opt.att.svy.none', 'This event provides registration. Attendance will be taken and you will receive a notification with a follow-up survey after this event.'); break;
-            case 1:  description = Localization().getStringEx('panel.event2.detail.survey.description.reg_opt.att.svy.single', 'This event provides registration. Attendance will be taken and you will receive a notification with a follow-up survey 1 hour after the event.'); break;
-            default: description = Localization().getStringEx('panel.event2.detail.survey.description.reg_opt.att.svy.multi', 'This event provides registration. Attendance will be taken and you will receive a notification with a follow-up survey {{hours}} hours after the event.'); break;
+            case 0:  description = Localization().getStringEx('panel.event2.detail.survey.description.reg_opt.att.svy.none', 'This event has registration. Attendance will be taken and you will receive a notification with a follow-up survey after this event.'); break;
+            case 1:  description = Localization().getStringEx('panel.event2.detail.survey.description.reg_opt.att.svy.single', 'This event has registration. Attendance will be taken and you will receive a notification with a follow-up survey 1 hour after the event.'); break;
+            default: description = Localization().getStringEx('panel.event2.detail.survey.description.reg_opt.att.svy.multi', 'This event has registration. Attendance will be taken and you will receive a notification with a follow-up survey {{hours}} hours after the event.'); break;
           }
         }
         else {
-          description = Localization().getStringEx('panel.event2.detail.survey.description.reg_opt.att', 'This event provides registration, and attendance will be taken.');
+          description = Localization().getStringEx('panel.event2.detail.survey.description.reg_opt.att', 'This event has registration, and attendance will be taken.');
         }
       }
       else {
