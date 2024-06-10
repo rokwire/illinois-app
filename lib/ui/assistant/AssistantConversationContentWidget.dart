@@ -48,8 +48,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   List<String>? _contentCodes;
   TextEditingController _inputController = TextEditingController();
-  ScrollController _scrollController = ScrollController();
   final GlobalKey _chatBarKey = GlobalKey();
+  final GlobalKey _lastContentItemKey = GlobalKey();
 
   bool _listening = false;
 
@@ -88,7 +88,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     _onPullToRefresh();
 
     _userContext = _getUserContext();
-
   }
 
   @override
@@ -136,6 +135,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     super.build(context);
 
     Widget? accessWidget = AccessCard.builder(resource: resourceName);
+    _scrollToBottom();
 
     return accessWidget != null
         ? Column(children: [Padding(padding: EdgeInsets.only(top: 16.0), child: accessWidget)])
@@ -145,7 +145,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                 onRefresh: _onPullToRefresh,
                 child: SingleChildScrollView(
                     physics: AlwaysScrollableScrollPhysics(),
-                    controller: _scrollController,
                     child: Padding(padding: EdgeInsets.all(16), child: Column(children: _buildContentList()))))),
             Positioned(bottom: _chatBarPaddingBottom, left: 0, right: 0, child: _buildChatBar())
           ]));
@@ -163,7 +162,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       contentList.add(_buildTypingChatBubble());
       contentList.add(SizedBox(height: 16.0));
     }
-
+    contentList.add(Container(key: _lastContentItemKey, height: 0));
     return contentList;
   }
 
@@ -778,12 +777,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       return;
     }
 
-    _scrollController.animateTo(
-      _scrollController.position.minScrollExtent,
-      duration: Duration(seconds: 1),
-      curve: Curves.fastOutSlowIn,
-    );
-
     Map<String, String>? userContext = FlexUI().hasFeature('assistant_personalization') ? _userContext : null;
 
     Message? response = await Assistant().sendQuery(message, context: userContext);
@@ -910,6 +903,15 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     setStateIfMounted(() {
       _initDefaultMessages();
     });
+  }
+
+  void _scrollToBottom() {
+    BuildContext? handleContext = _lastContentItemKey.currentContext;
+    if (handleContext != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Scrollable.ensureVisible(handleContext, duration: Duration(milliseconds: 500)).then((_) {});
+      });
+    }
   }
 
   double get _chatBarPaddingBottom {
