@@ -515,6 +515,17 @@ extension ExploreMap on Explore {
     return sameExplore;
   }
 
+  static List<Explore> validFromList(List<Explore> explores) {
+    List<Explore> validExplores = <Explore>[];
+    for (Explore explore in explores) {
+      ExploreLocation? exploreLocation = explore.exploreLocation;
+      if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
+        validExplores.add(explore);
+      }
+    }
+    return validExplores;
+  }
+
   static LatLngBounds? boundsOfList(List<Explore>? explores) {
     double? minLat, minLng, maxLat, maxLng;
     if (explores != null) {
@@ -579,6 +590,7 @@ extension ExploreMap on Explore {
     }
     return null;
   }
+
 }
 
 extension ExploreLocationExp on ExploreLocation {
