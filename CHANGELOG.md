@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - New Assistant UI - FAQs [#4089](https://github.com/rokwire/illinois-app/issues/4089).
+### Changed
+- Updated status texts for in-app event registration [#4086](https://github.com/rokwire/illinois-app/issues/4086).
 
 ## [6.0.4] - 2024-06-10
 ### Fixed

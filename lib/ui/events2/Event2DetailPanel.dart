@@ -489,31 +489,31 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         if (showSurvey) {
           if (_isAdmin) {
             description = registrationAvailable ?
-              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.att.svy.admin', 'This event requires registration. Attendance will be taken and a follow-up survey will be sent.') :
-              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full.att.svy.admin', 'This event requires registration and its capacity is reached. Attendance will be taken and a follow-up survey will be sent.');
+              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.att.svy.admin', 'This event has registration. Attendance will be taken and a follow-up survey will be sent.') :
+              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full.att.svy.admin', 'This event has registration and its capacity is reached. Attendance will be taken and a follow-up survey will be sent.');
           }
           else switch (surveyHours) {
             case 0:  description = registrationAvailable ?
-              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.att.svy.none', 'This event requires registration. Attendance will be taken and you will receive a notification with a follow-up survey after this event.') :
-              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full.att.svy.none', 'This event requires registration and its capacity is reached. Attendance will be taken and you will receive a notification with a follow-up survey after this event.'); break;
+              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.att.svy.none', 'This event has registration. Attendance will be taken and you will receive a notification with a follow-up survey after this event.') :
+              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full.att.svy.none', 'This event has registration and its capacity is reached. Attendance will be taken and you will receive a notification with a follow-up survey after this event.'); break;
             case 1:  description = registrationAvailable ?
-              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.att.svy.single', 'This event requires registration. Attendance will be taken and you will receive a notification with a follow-up survey 1 hour after the event.') :
-              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full.att.svy.single', 'This event requires registration and its capacity is reached. Attendance will be taken and you will receive a notification with a follow-up survey 1 hour after the event.'); break;
+              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.att.svy.single', 'This event has registration. Attendance will be taken and you will receive a notification with a follow-up survey 1 hour after the event.') :
+              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full.att.svy.single', 'This event has registration and its capacity is reached. Attendance will be taken and you will receive a notification with a follow-up survey 1 hour after the event.'); break;
             default: description = (registrationAvailable ?
-              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.att.svy.multi', 'This event requires registration. Attendance will be taken and you will receive a notification with a follow-up survey {{hours}} hours after the event.') :
-              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full.att.svy.multi', 'This event requires registration and its capacity is reached. Attendance will be taken and you will receive a notification with a follow-up survey {{hours}} hours after the event.')).replaceAll('{{hours}}', surveyHours.toString()); break;
+              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.att.svy.multi', 'This event has registration. Attendance will be taken and you will receive a notification with a follow-up survey {{hours}} hours after the event.') :
+              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full.att.svy.multi', 'This event has registration and its capacity is reached. Attendance will be taken and you will receive a notification with a follow-up survey {{hours}} hours after the event.')).replaceAll('{{hours}}', surveyHours.toString()); break;
           }
         }
         else {
           description = registrationAvailable ?
-            Localization().getStringEx('panel.event2.detail.survey.description.reg_req.att', 'This event requires registration, and attendance will be taken.') :
-            Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full.att', 'This event requires registration, its capacity is reached, and attendance will be taken.');
+            Localization().getStringEx('panel.event2.detail.survey.description.reg_req.att', 'This event has registration, and attendance will be taken.') :
+            Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full.att', 'This event has registration, its capacity is reached, and attendance will be taken.');
         }
       }
       else {
         description = registrationAvailable ?
-          Localization().getStringEx('panel.event2.detail.survey.description.reg_req', 'Registration is required for this event.') :
-          Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full', 'Registration is required for this event and its capacity is reached.');
+          Localization().getStringEx('panel.event2.detail.survey.description.reg_req', 'Registration is available for this event.') :
+          Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full', 'Registration is available for this event and its capacity is reached.');
       }
     }
     else if (hasRegistration) {
