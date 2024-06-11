@@ -443,6 +443,7 @@
     "panel.assistant.dialog.context.button.profile1.title": "Perfil 1",
     "panel.assistant.dialog.context.button.profile2.title": "Perfil 2",
     "panel.assistant.dialog.context.button.save.title": "Guardar",
+    "panel.assistant.faqs.missing.msg": "No hay preguntas frecuentes disponibles.",
 
     "panel.search.header.title":"Buscar",
     "panel.search.label.search_for":"Buscar por Título del Evento",
