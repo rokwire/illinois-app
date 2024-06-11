@@ -487,7 +487,7 @@ class _WalletAddIlliniCashPanelState
                                               controller: _amountController,
                                               keyboardType: TextInputType.numberWithOptions(decimal: true),
                                               textInputAction: TextInputAction.done,
-                                              inputFormatters: [CurrencyTextInputFormatter(locale: 'en', symbol: '\$', decimalDigits: 2)],
+                                              inputFormatters: [CurrencyTextInputFormatter.currency(locale: 'en', symbol: '\$', decimalDigits: 2)],
                                               onFieldSubmitted: (_){ _unfocus(); },
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(

@@ -14,7 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed Explore Map markers build when all explores fall into the same position [#4098](https://github.com/rokwire/illinois-app/issues/4098).
 ### Changed
--Updated optional registration texts [#4043](https://github.com/rokwire/illinois-app/issues/4043).
+- Updated optional registration texts [#4043](https://github.com/rokwire/illinois-app/issues/4043).
+- Upgrade to Flutter 3.22.2.
 
 ## [6.0.3] - 2024-06-07
 ### Changed
