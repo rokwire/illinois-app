@@ -1,13 +1,20 @@
-
 import 'package:http/http.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/content.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Assistant /* with Service */ {
+class Assistant with Service implements NotificationsListener, ContentItemCategoryClient {
+
+  static const String notifyFaqsContentChanged = "edu.illinois.rokwire.assistant.content.faqs.changed";
+  static const String _faqContentCategory = "assistant_faqs";
+  Map<String, dynamic>? _faqsContent;
 
   // Singleton Factory
   
@@ -20,6 +27,64 @@ class Assistant /* with Service */ {
 
   Assistant get instance {
     return _instance;
+  }
+
+  // Service
+
+  @override
+  void createService() {
+    NotificationService().subscribe(this, [
+      Content.notifyContentItemsChanged,
+    ]);
+  }
+
+  @override
+  Future<void> initService() async {
+    _faqsContent = Content().contentItem(_faqContentCategory);
+  }
+
+  @override
+  void destroyService() {
+    NotificationService().unsubscribe(this);
+    super.destroyService();
+  }
+
+  @override
+  Set<Service> get serviceDependsOn {
+    return Set.from([Content()]);
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Content.notifyContentItemsChanged) {
+      _onContentItemsChanged(param);
+    }
+  }
+
+  void _onContentItemsChanged(Set<String>? categoriesDiff) {
+    if (categoriesDiff?.contains(_faqContentCategory) == true) {
+      _faqsContent = Content().contentItem(_faqContentCategory);
+      NotificationService().notify(notifyFaqsContentChanged);
+    }
+  }
+
+  // ContentItemCategoryClient
+
+  @override
+  List<String> get contentItemCategory => <String>[_faqContentCategory];
+
+  // FAQs
+
+  String? get faqs {
+    if (_faqsContent == null) {
+      return null;
+    }
+    String defaultLocaleCode = Localization().defaultLocale?.languageCode ?? 'en';
+    String? selectedLocaleCode = Localization().currentLocale?.languageCode;
+    String? defaultFaqs = JsonUtils.stringValue(_faqsContent![defaultLocaleCode]);
+    return JsonUtils.stringValue(_faqsContent![selectedLocaleCode]) ?? defaultFaqs;
   }
 
   // Implementation
