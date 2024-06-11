@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.0.5] - 2024-06-11
 ### Added
 - New Assistant UI - FAQs [#4089](https://github.com/rokwire/illinois-app/issues/4089).
 ### Changed
