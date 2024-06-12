@@ -156,7 +156,8 @@
     "panel.menu.label.connected_netid":"NetID conectado",
     "panel.menu.label.confirm_sign_out":"¿Está seguro de que desea cerrar sesión?",
 
-    "panel.home.header.title": "Favoritas",
+    "panel.home.header.title": "Home",
+    "panel.home.header.favorites.title": "Favoritas",
     "panel.home.header.editing.title": "Personalizar",
     "panel.home.connect.not_logged_in.title": "Connect to Illinois",
     "panel.home.connect.not_logged_in.netid.description.part_1": "¿Eres un/a ",

@@ -156,7 +156,8 @@
 	"panel.menu.label.connected_netid":"连接NetID",
 	"panel.menu.label.confirm_sign_out":"您确定要退出吗?",
 
-	"panel.home.header.title": "收藏夾",
+	"panel.home.header.title": "Home",
+ "panel.home.header.favorites.title": "收藏夾",
 	"panel.home.header.editing.title": "定制",
 	"panel.home.connect.not_logged_in.title": "Connect to Illinois",
 	"panel.home.connect.not_logged_in.netid.description.part_1": "您是 ",

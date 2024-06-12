@@ -42,6 +42,7 @@ import 'package:illinois/ui/polls/PollDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
+import 'package:illinois/ui/wallet/WalletHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
@@ -69,6 +70,7 @@ import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeFavoritesPanel.dart';
 import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
@@ -81,7 +83,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/local_notifications.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum RootTab { Favorites, Browse, Maps, Assistant, Academics, Wellness }
+enum RootTab { Home, Favorites, Browse, Maps, Academics, Wellness, Wallet, Assistant }
 
 class RootPanel extends StatefulWidget {
   static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
@@ -196,12 +198,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Polls.notifyPresentResult,
       uiuc.TabBar.notifySelectionChanged,
       HomePanel.notifySelect,
+      HomeFavoritesPanel.notifySelect,
       BrowsePanel.notifySelect,
       ExploreMapPanel.notifySelect,
     ]);
 
     _tabs = _getTabs();
-    _currentTabIndex = _defaultTabIndex ?? _getIndexByRootTab(RootTab.Favorites) ?? 0;
+    _currentTabIndex = _defaultTabIndex ?? _getIndexByRootTab(RootTab.Home) ?? 0;
     _tabBarController = TabController(initialIndex: _currentTabIndex, length: _tabs.length, vsync: this);
     _updatePanels(_tabs);
 
@@ -490,6 +493,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onFirebaseGuideArticleNotification(param);
     }
     else if (name == HomePanel.notifySelect) {
+      _onSelectTab(RootTab.Home);
+    }
+    else if (name == HomeFavoritesPanel.notifySelect) {
       _onSelectTab(RootTab.Favorites);
     }
     else if (name == BrowsePanel.notifySelect) {
@@ -562,10 +568,14 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   
   void _selectTab(int tabIndex) {
 
+    RootTab? rootTab = getRootTabByIndex(tabIndex);
+
     //Treat Assistant tab differently because it is modal bottom sheet
-    if (getRootTabByIndex(tabIndex) == RootTab.Assistant) {
-        Analytics().logPage(name: AssistantHomePanel.pageRuntimeTypeName);
+    if (rootTab == RootTab.Assistant) {
         AssistantHomePanel.present(context);
+    }
+    else if (rootTab == RootTab.Wallet) {
+        WalletHomePanel.present(context);
     }
     else if ((0 <= tabIndex) && (tabIndex < _tabs.length) && (tabIndex != _currentTabIndex)) {
       _tabBarController!.animateTo(tabIndex);
@@ -590,7 +600,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         Analytics().logMapShow();
       }
 
-      RootTab? rootTab = getRootTabByIndex(tabIndex);
       NotificationService().notify(RootPanel.notifyTabChanged, rootTab);
     }
   }
@@ -957,8 +966,11 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   static Widget? _createPanelForTab(RootTab? rootTab) {
-    if (rootTab == RootTab.Favorites) {
+    if (rootTab == RootTab.Home) {
       return HomePanel();
+    }
+    else if (rootTab == RootTab.Favorites) {
+      return HomeFavoritesPanel();
     }
     else if (rootTab == RootTab.Browse) {
       return BrowsePanel();
@@ -966,14 +978,17 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (rootTab == RootTab.Maps) {
       return ExploreMapPanel();
     }
-    else if (rootTab == RootTab.Assistant) {
-      return null;
-    }
     else if (rootTab == RootTab.Academics) {
       return AcademicsHomePanel(rootTabDisplay: true,);
     }
     else if (rootTab == RootTab.Wellness) {
       return WellnessHomePanel(rootTabDisplay: true,);
+    }
+    else if (rootTab == RootTab.Wallet) {
+      return null;
+    }
+    else if (rootTab == RootTab.Assistant) {
+      return null;
     }
     else {
       return null;
@@ -1139,7 +1154,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
 RootTab? rootTabFromString(String? value) {
   if (value != null) {
-    if (value == 'favorites') {
+    if (value == 'home') {
+      return RootTab.Home;
+    }
+    else if (value == 'favorites') {
       return RootTab.Favorites;
     }
     else if (value == 'browse') {
@@ -1148,14 +1166,17 @@ RootTab? rootTabFromString(String? value) {
     else if (value == 'maps') {
       return RootTab.Maps;
     }
-    else if (value == 'assistant') {
-      return RootTab.Assistant;
-    }
     else if (value == 'academics') {
       return RootTab.Academics;
     }
     else if (value == 'wellness') {
       return RootTab.Wellness;
+    }
+    else if (value == 'wallet') {
+      return RootTab.Wallet;
+    }
+    else if (value == 'assistant') {
+      return RootTab.Assistant;
     }
   }
   return null;
