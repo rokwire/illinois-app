@@ -141,7 +141,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
 // BrowseContentWidget
 
 class BrowseContentWidget extends StatefulWidget {
-  BrowseContentWidget();
+  BrowseContentWidget({super.key});
 
   @override
   State<StatefulWidget> createState() => _BrowseContentWidgetState();

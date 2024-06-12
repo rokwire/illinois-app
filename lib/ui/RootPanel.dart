@@ -69,6 +69,7 @@ import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeFavoritesPanel.dart';
 import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
@@ -81,7 +82,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/local_notifications.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum RootTab { Favorites, Browse, Maps, Assistant, Academics, Wellness }
+enum RootTab { Home, Favorites, Browse, Maps, Assistant, Academics, Wellness }
 
 class RootPanel extends StatefulWidget {
   static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
@@ -196,6 +197,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Polls.notifyPresentResult,
       uiuc.TabBar.notifySelectionChanged,
       HomePanel.notifySelect,
+      HomeFavoritesPanel.notifySelect,
       BrowsePanel.notifySelect,
       ExploreMapPanel.notifySelect,
     ]);
@@ -490,6 +492,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onFirebaseGuideArticleNotification(param);
     }
     else if (name == HomePanel.notifySelect) {
+      _onSelectTab(RootTab.Home);
+    }
+    else if (name == HomeFavoritesPanel.notifySelect) {
       _onSelectTab(RootTab.Favorites);
     }
     else if (name == BrowsePanel.notifySelect) {
@@ -957,8 +962,11 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   static Widget? _createPanelForTab(RootTab? rootTab) {
-    if (rootTab == RootTab.Favorites) {
+    if (rootTab == RootTab.Home) {
       return HomePanel();
+    }
+    else if (rootTab == RootTab.Favorites) {
+      return HomeFavoritesPanel();
     }
     else if (rootTab == RootTab.Browse) {
       return BrowsePanel();
@@ -1139,7 +1147,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
 RootTab? rootTabFromString(String? value) {
   if (value != null) {
-    if (value == 'favorites') {
+    if (value == 'home') {
+      return RootTab.Home;
+    }
+    else if (value == 'favorites') {
       return RootTab.Favorites;
     }
     else if (value == 'browse') {

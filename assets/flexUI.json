@@ -217,7 +217,6 @@
 				"state_farm_wayfinding"         : false,
 				"all_notifications"             : false,
 				"unread_notifications"          : false,
-				"home.system.tout"              : false,
 				"student_courses"               : "${config.settings.studentCoursesEnabled}"
 			}
 		}
