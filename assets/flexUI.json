@@ -1,7 +1,7 @@
 {
 	"": {
 		"content": {
-			"tabbar": ["favorites", "browse", "maps", "academics", "wellness", "assistant"],
+			"tabbar": ["home", "maps", "wallet", "assistant"],
 			"tabbar.default": "favorites",
 
 			"home": ["wallet", "my_dining", "dinings", "my_laundry", "laundry",

@@ -745,7 +745,8 @@
     "research": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "pick better icon"},
     "resources": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "pick better icon"},
     "highlights": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "pick better icon"},
-    "wallet": {"src": "0xf2bb", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
+    "wallet-0": {"src": "0xf2bb", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
+    "wallet": {"src": "images/address-card.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "help": {"src": "images/icon-info-orange.png", "type": "flutter.asset", "weight": "solid", "color": "fillColorSecondary", "size": 20},
     "radio":  {"src": "0xf58f", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 20},
     "info": {"src": "images/icon-info-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
@@ -894,6 +895,7 @@
     "academics-gray": {"src": "images/tab-academics-universal.png", "type": "flutter.asset", "size": 18, "color": "mediumGray"},
     "compass-gray": {"src": "images/tab-explore.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
     "home-gray": {"src": "images/tab-home.png", "type": "flutter.asset", "color": "mediumGray", "size": 24, "todo": "size issue, unused?"},
+    "wallet-gray": {"src": "images/address-card.png", "type": "flutter.asset", "size": 18, "color": "mediumGray"},
     "add-gray": {"src": "images/icons-control-add-blue.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
 
     "check-green": {"src": "images/green-check-mark.png", "type": "flutter.asset", "size": 18},
