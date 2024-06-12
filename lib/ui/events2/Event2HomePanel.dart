@@ -236,7 +236,6 @@ class Event2HomePanel extends StatefulWidget {
     return contentAttributes;
   }
 
-  static const String internalContentAttributesScope = 'internal';
   static const String eventTypeContentAttributeId = 'event-type';
   static const String eventTimeContentAttributeId = 'event-time';
 
@@ -259,7 +258,7 @@ class Event2HomePanel extends StatefulWidget {
       emptyHint: Localization().getStringEx('panel.events2.home.attributes.event_type.hint.empty', 'Select an event type'),
       semanticsHint: Localization().getStringEx('panel.events2.home.attributes.event_type.hint.semantics', 'Double type to show event options.'),
       widget: ContentAttributeWidget.dropdown,
-      scope: <String>{ internalContentAttributesScope },
+      scope: <String>{ Events2.contentAttributesScope },
       requirements: ContentAttributeRequirements(maxSelectedCount: 1, functionalScope: contentAttributeRequirementsFunctionalScopeFilter),
       values: values
     );
@@ -294,7 +293,7 @@ class Event2HomePanel extends StatefulWidget {
       emptyHint: Localization().getStringEx('panel.events2.home.attributes.event_time.hint.empty', 'Select an date & time'),
       semanticsHint: Localization().getStringEx('panel.events2.home.attributes.event_time.hint.semantics', 'Double type to show date & time options.'),
       widget: ContentAttributeWidget.dropdown,
-      scope: <String>{ internalContentAttributesScope },
+      scope: <String>{ Events2.contentAttributesScope },
       requirements: ContentAttributeRequirements(minSelectedCount: 1, maxSelectedCount: 1, functionalScope: contentAttributeRequirementsFunctionalScopeFilter),
       values: values,
     );
@@ -672,18 +671,18 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
               ),
             ),
             Visibility(visible: _canShareFilters, child:
-              Event2ImageCommandButton(Styles().images.getImage('qr', weight: 'regular', size: 18),
-                label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
-                hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
-                contentPadding: EdgeInsets.only(left: 16, right: _canClearFilters ? 8 : 16, top: 12, bottom: 12),
+              Event2ImageCommandButton(Styles().images.getImage('share'),
+                label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
+                hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
+                contentPadding: EdgeInsets.only(left: 16, right: _canClearFilters ? (8 + 2) : 16, top: 12, bottom: 12),
                 onTap: _onShareFilters
               ),
             ),
             Visibility(visible: _canClearFilters, child:
-              Event2ImageCommandButton(Styles().images.getImage('close'),
-                label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
-                hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
-                contentPadding: EdgeInsets.only(left: 8, right: 16, top: 12, bottom: 12),
+              Event2ImageCommandButton(Styles().images.getImage('close'), // size: 14
+                label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
+                hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
+                contentPadding: EdgeInsets.only(left: 8 + 2, right: 16 + 2, top: 12, bottom: 12),
                 onTap: _onClearFilters
               ),
             ),

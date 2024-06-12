@@ -19,6 +19,7 @@ import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
@@ -36,7 +37,7 @@ import 'package:illinois/ui/home/HomeAppHelpWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsEventsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsNewsWidget.dart';
 import 'package:illinois/ui/home/HomeCampusSafetyResourcesWidget.dart';
-import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
+import 'package:illinois/ui/home/HomeGiesCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeCheckListWidget.dart';
 import 'package:illinois/ui/home/HomeDailyIlliniWidget.dart';
 import 'package:illinois/ui/home/HomeDiningWidget.dart';
@@ -85,12 +86,15 @@ enum HomeContentType { browse, favorites }
 ////////////////////////
 // HomePanel
 
-class HomePanel extends StatefulWidget {
+class HomePanel extends StatefulWidget with AnalyticsInfo {
   static const String notifyRefresh      = "edu.illinois.rokwire.home.refresh";
   static const String notifySelect       = "edu.illinois.rokwire.home.select";
 
   @override
   _HomePanelState createState() => _HomePanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Favorites;
 
   static dynamic dataFromCode(String code, {
     bool title = false,
@@ -227,13 +231,13 @@ class HomePanel extends StatefulWidget {
         return HomeCheckListWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, contentKey: CheckList.uiucOnboarding, );
       }
     }
-    else if (code == 'canvas_courses') {
+    else if (code == 'gies_canvas_courses') {
       if (title) {
-        return HomeCanvasCoursesWidget.title;
+        return HomeGiesCanvasCoursesWidget.title;
       } else if (handle) {
-        return HomeCanvasCoursesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+        return HomeGiesCanvasCoursesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
-        return HomeCanvasCoursesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+        return HomeGiesCanvasCoursesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'student_courses') {

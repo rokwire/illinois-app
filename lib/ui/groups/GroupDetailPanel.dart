@@ -17,6 +17,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
@@ -67,7 +68,7 @@ import 'GroupSettingsPanel.dart';
 
 enum _DetailTab { Events, Posts, Messages, Polls, About }
 
-class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'group_detail_content_panel';
 
   final Group? group;
@@ -78,6 +79,9 @@ class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes
 
   @override
  _GroupDetailPanelState createState() => _GroupDetailPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes {
@@ -946,7 +950,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             RibbonButton(
             label: Localization().getStringEx("panel.group_detail.button.take_attendance.title", "Take Attendance"),
             hint: Localization().getStringEx("panel.group_detail.button.take_attendance.hint", ""),
-            leftIconKey: 'qr',
+            leftIconKey: 'share',
             padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
             onTap: _onTapTakeAttendance,
           ),
@@ -1410,7 +1414,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return RibbonButton(
       label: Localization().getStringEx("panel.group_detail.button.group_promote.title", "Share this group"),
       hint: Localization().getStringEx("panel.group_detail.button.group_promote.hint", ""),
-      leftIconKey: 'qr',
+      leftIconKey: 'share',
       padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
       onTap: _onTapPromote,
     );

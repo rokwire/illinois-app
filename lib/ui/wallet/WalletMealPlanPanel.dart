@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
+import 'package:illinois/ui/wallet/WalletIlliniCashPanel.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/IlliniCash.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -34,29 +34,29 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class SettingsMealPlanPanel extends StatefulWidget {
+class WalletMealPlanPanel extends StatefulWidget {
 
   final ScrollController? scrollController;
 
-  SettingsMealPlanPanel({this.scrollController});
+  WalletMealPlanPanel({this.scrollController});
 
   @override
-  _SettingsMealPlanPanelState createState() => _SettingsMealPlanPanelState();
+  _WalletMealPlanPanelState createState() => _WalletMealPlanPanelState();
 
   static void present(BuildContext context) {
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.meal_plan', 'University Housing Meal Plan is not available while offline.'));
     }
     else if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.meal_plan', 'You need to be logged in with your NetID to access University Housing Meal Plan. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
+      AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.meal_plan', 'University Housing Meal Plan'));
     }
     else {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: SettingsIlliniCashPanel.routeName), builder: (context) => SettingsMealPlanPanel()));
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: WalletIlliniCashPanel.routeName), builder: (context) => WalletMealPlanPanel()));
     }
   }
 }
 
-class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implements NotificationsListener {
+class _WalletMealPlanPanelState extends State<WalletMealPlanPanel> implements NotificationsListener {
   bool _authLoading = false;
 
   bool _illiniCashLoading = false;
@@ -68,7 +68,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   List<BaseTransaction>? _mealPlanTransactions;
   List<BaseTransaction>? _cafeCreditTransactions;
 
-  _SettingsMealPlanPanelState();
+  _WalletMealPlanPanelState();
 
   @override
   void initState() {

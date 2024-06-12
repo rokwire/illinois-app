@@ -32,6 +32,7 @@ import 'package:illinois/ui/academics/MedicineCoursesContentWidget.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesContentWidget.dart';
+import 'package:illinois/ui/canvas/GiesCanvasCoursesContentWidget.dart';
 import 'package:illinois/ui/gies/CheckListContentWidget.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
@@ -46,7 +47,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 enum AcademicsContent { events,
   gies_checklist, uiuc_checklist,
-  canvas_courses, medicine_courses, student_courses,
+  canvas_courses, gies_canvas_courses, medicine_courses, student_courses,
   skills_self_evaluation, essential_skills_coach,
   todo_list, due_date_catalog, my_illini, appointments
 }
@@ -257,8 +258,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     if (initialContent == null) {
       if (_contentValues.contains(AcademicsContent.gies_checklist) && !_isCheckListCompleted(CheckList.giesOnboarding)) {
         initialContent = AcademicsContent.gies_checklist;
-      } else if (_contentValues.contains(AcademicsContent.canvas_courses)) {
-        initialContent = AcademicsContent.canvas_courses;
+      } else if (_contentValues.contains(AcademicsContent.gies_canvas_courses)) {
+        initialContent = AcademicsContent.gies_canvas_courses;
       } else if (_contentValues.contains(AcademicsContent.student_courses)) {
         initialContent = AcademicsContent.student_courses;
       }
@@ -273,6 +274,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       return AcademicsContent.uiuc_checklist;
     } else if (code == 'canvas_courses') {
       return AcademicsContent.canvas_courses;
+    } else if (code == 'gies_canvas_courses') {
+      return AcademicsContent.gies_canvas_courses;
     } else if (code == 'medicine_courses') {
       return AcademicsContent.medicine_courses;
     } else if (code == 'student_courses') {
@@ -422,6 +425,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return CheckListContentWidget(contentKey: CheckList.uiucOnboarding);
       case AcademicsContent.canvas_courses:
         return CanvasCoursesContentWidget();
+      case AcademicsContent.gies_canvas_courses:
+        return GiesCanvasCoursesContentWidget();
       case AcademicsContent.medicine_courses:
         return MedicineCoursesContentWidget();
       case AcademicsContent.student_courses:
@@ -462,7 +467,9 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       case AcademicsContent.uiuc_checklist:
         return Localization().getStringEx('panel.academics.section.uiuc_checklist.label', 'New Student Checklist');
       case AcademicsContent.canvas_courses:
-        return Localization().getStringEx('panel.academics.section.canvas_courses.label', 'My Gies Canvas Courses');
+        return Localization().getStringEx('panel.academics.section.canvas_courses.label', 'My Canvas Courses');
+      case AcademicsContent.gies_canvas_courses:
+        return Localization().getStringEx('panel.academics.section.gies_canvas_courses.label', 'My Gies Canvas Courses');
       case AcademicsContent.medicine_courses:
         return Localization().getStringEx('panel.academics.section.medicine_courses.label', 'My College of Medicine Compliance');
       case AcademicsContent.student_courses:

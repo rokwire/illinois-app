@@ -12,6 +12,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
@@ -619,7 +620,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   void _onTapMapExploreDirections() async {
-    Analytics().logSelect(target: 'Directions');
+    Analytics().logSelect(
+      target: 'Directions',
+      feature: ExploreExt.getExploreAnalyticsFeature(_selectedMapExplore),
+    );
     
     dynamic explore = _selectedMapExplore;
     _selectMapExplore(null);
@@ -639,7 +643,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
   
   void _onTapMapExploreDetail() {
-    Analytics().logSelect(target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details');
+    Analytics().logSelect(
+      target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details',
+      feature: ExploreExt.getExploreAnalyticsFeature(_selectedMapExplore),
+    );
     if (_selectedMapExplore is Explore) {
         (_selectedMapExplore as Explore).exploreLaunchDetail(context);
     }
@@ -650,7 +657,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   void _onTapMapClear() {
-    Analytics().logSelect(target: 'Clear');
+    Analytics().logSelect(
+      target: 'Clear',
+      feature: ExploreExt.getExploreAnalyticsFeature(_selectedMapExplore),
+    );
     dynamic selectedMapExplore = _selectedMapExplore;
     _selectMapExplore(null);
     if (selectedMapExplore is Favorite) {
@@ -710,13 +720,19 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   void _logAnalyticsSelect(dynamic explore) {
     String? exploreTarget;
+    AnalyticsFeature? exploreFeature;
     if (explore is Explore) {
       exploreTarget = explore.exploreTitle ?? explore.exploreLocation?.name ?? explore.exploreLocation?.displayAddress ?? explore.exploreLocation?.displayCoordinates;
+      exploreFeature = explore.analyticsFeature;
     }
     else if (explore is List<Explore>) {
       exploreTarget = '${explore.length} ${ExploreExt.getExploresListDisplayTitle(explore, language: 'en')}';
+      exploreFeature = ExploreExt.getExploresListAnalyticsFeature(explore);
     }
-    Analytics().logMapSelect(target: exploreTarget);
+    Analytics().logMapSelect(
+      target: exploreTarget,
+      feature: exploreFeature,
+    );
   }
 
   Widget? _buildExploreBarStopDescription() {
@@ -2021,7 +2037,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       }
       else {
         thresoldDistance = 0;
-        exploreMarkerGroups = (explores != null) ? Set<dynamic>.from(explores) : null;
+        exploreMarkerGroups =  (explores != null) ? <dynamic>{ ExploreMap.validFromList(explores) } : null;
       }
       
       if (!DeepCollectionEquality().equals(_exploreMarkerGroups, exploreMarkerGroups)) {

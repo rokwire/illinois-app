@@ -92,8 +92,7 @@ class TabBar extends rokwire.TabBar {
       return rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.assistant.title', 'Assistant'),
         hint: Localization().getStringEx('tabbar.assistant.hint', 'Illinois Assistant Page'),
-        iconKey: 'search-outline-gray',
-        selectedIconKey: 'search',
+        iconKey: 'assistant-outline-gray',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );

@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -34,8 +35,9 @@ import 'package:sprintf/sprintf.dart';
 
 class ExploreSearchPanel extends StatefulWidget {
   final Group? browseGroup;
+  final AnalyticsFeature? analyticsFeature;
 
-  const ExploreSearchPanel({Key? key, this.browseGroup}) : super(key: key);
+  const ExploreSearchPanel({Key? key, this.browseGroup, this.analyticsFeature}) : super(key: key);
 
   @override
   _ExploreSearchPanelState createState() => _ExploreSearchPanelState();

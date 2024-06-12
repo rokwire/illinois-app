@@ -19,6 +19,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -44,7 +45,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
-class ExploreEventDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class ExploreEventDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Event? event;
   final bool previewMode;
   final Core.Position? initialLocationData;

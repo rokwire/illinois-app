@@ -43,7 +43,7 @@ class NotificationsHomePanel extends StatefulWidget {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.inbox', 'Notifications are not available while offline.'));
     }
     else if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showMessage(context,Localization().getStringEx('panel.browse.label.logged_out.inbox', 'You need to be logged in with your NetID to access Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
+      AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.notifications', 'Notifications'));
     }
     else if (ModalRoute.of(context)?.settings.name != routeName) {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
@@ -91,7 +91,7 @@ class NotificationsHomePanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeMapStateFarmWayfinding,
       FirebaseMessaging.payloadTypeAcademics,
       FirebaseMessaging.payloadTypeAcademicsAppointments,
-      FirebaseMessaging.payloadTypeAcademicsCanvasCourses,
+      FirebaseMessaging.payloadTypeAcademicsGiesCanvasCourses,
       FirebaseMessaging.payloadTypeAcademicsDueDateCatalog,
       FirebaseMessaging.payloadTypeAcademicsEvents,
       FirebaseMessaging.payloadTypeAcademicsGiesCheckilst,
