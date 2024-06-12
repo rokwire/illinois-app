@@ -74,6 +74,9 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+///////////////////////////
+// BrowsePanel
+
 class BrowsePanel extends StatefulWidget {
   static const String notifyRefresh      = "edu.illinois.rokwire.browse.refresh";
   static const String notifySelect       = "edu.illinois.rokwire.browse.select";
@@ -84,11 +87,71 @@ class BrowsePanel extends StatefulWidget {
   _BrowsePanelState createState() => _BrowsePanelState();
 }
 
-class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClientMixin<BrowsePanel> implements NotificationsListener {
+class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClientMixin<BrowsePanel> {
+  StreamController<String> _updateController = StreamController.broadcast();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _updateController.close();
+    super.dispose();
+  }
+
+  // AutomaticKeepAliveClientMixin
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+
+    return Scaffold(
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.browse.label.title', 'Browse')),
+      body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
+        Column(children: <Widget>[
+          Expanded(child:
+            SingleChildScrollView(child:
+              Column(children: <Widget>[
+                _BrowseToutWidget(updateController: _updateController,),
+                BrowseContentWidget(),
+              ],)
+            )
+          ),
+        ]),
+      ),
+      backgroundColor: Styles().colors.background,
+      bottomNavigationBar: null,
+    );
+  }
+
+  Future<void> _onPullToRefresh() async {
+    _updateController.add(BrowsePanel.notifyRefresh);
+    if (mounted) {
+      setState(() {});
+    }
+  }
+}
+
+
+///////////////////////////
+// BrowseContentWidget
+
+class BrowseContentWidget extends StatefulWidget {
+  BrowseContentWidget({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _BrowseContentWidgetState();
+
+}
+
+class _BrowseContentWidgetState extends State<BrowseContentWidget> implements NotificationsListener {
 
   List<String>? _contentCodes;
   Set<String> _expandedCodes = <String>{};
-  StreamController<String> _updateController = StreamController.broadcast();
 
   @override
   void initState() {
@@ -98,7 +161,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
       Localization.notifyStringsUpdated,
       Styles.notifyChanged,
     ]);
-    
+
     _contentCodes = buildContentCodes();
     super.initState();
   }
@@ -106,14 +169,8 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
-    _updateController.close();
     super.dispose();
   }
-
-  // AutomaticKeepAliveClientMixin
-  @override
-  bool get wantKeepAlive => true;
-
 
   // NotificationsListener
   @override
@@ -123,7 +180,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
       if (mounted) {
         setState(() { });
       }
-    } 
+    }
     else if((name == Auth2UserPrefs.notifyFavoritesChanged) ||
       (name == Localization.notifyStringsUpdated) ||
       (name == Styles.notifyChanged))
@@ -136,28 +193,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
-    return Scaffold(
-      appBar: RootHeaderBar(title: Localization().getStringEx('panel.browse.label.title', 'Browse')),
-      body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
-        Column(children: <Widget>[
-          Expanded(child:
-            SingleChildScrollView(child:
-              Column(children: _buildContentList(),)
-            )
-          ),
-        ]),
-      ),
-      backgroundColor: Styles().colors.background,
-      bottomNavigationBar: null,
-    );
-  }
-
-  List<Widget> _buildContentList() {
     List<Widget> contentList = <Widget>[];
-
-    contentList.add(_BrowseToutWidget(updateController: _updateController,));
 
     List<Widget> sectionsList = <Widget>[];
     if (_contentCodes != null) {
@@ -181,11 +217,11 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
           titleIconKey: 'browse',
           childPadding: HomeSlantWidget.defaultChildPadding,
           child: Column(children: sectionsList,),
-        )    
+        )
       );
     }
-    
-    return contentList;
+
+    return Column(children: contentList,);
   }
 
   void _updateContentCodes() {
@@ -205,7 +241,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
   bool _isExpanded(String sectionId) => _expandedCodes.contains(sectionId);
 
   void _toggleExpanded(String sectionId) {
-    
+
     String action = _expandedCodes.contains(sectionId) ? 'Collapse' : 'Expand';
     Analytics().logSelect(target: "$action: '$sectionId'");
 
@@ -220,13 +256,6 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
       });
     }
   }
-  
-  Future<void> _onPullToRefresh() async {
-    _updateController.add(BrowsePanel.notifyRefresh);
-    if (mounted) {
-      setState(() {});
-    }
-  }
 
   static List<String>? buildContentCodes() {
     List<String>? codes = JsonUtils.listStringsValue(FlexUI()['browse']);
@@ -239,6 +268,9 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
   }
 
 }
+
+///////////////////////////
+// BrowseSection
 
 class _BrowseSection extends StatelessWidget {
 
@@ -264,7 +296,7 @@ class _BrowseSection extends StatelessWidget {
     });
     return codes;
   }
-  
+
   HomeFavorite? _favorite(String code) {
     if (_homeSectionEntriesCodes?.contains(code) ?? false) {
       return HomeFavorite(code, category: sectionId);
@@ -355,7 +387,7 @@ class _BrowseSection extends StatelessWidget {
   String get _description => description(sectionId: sectionId);
 
   static String get appTitle => Localization().getStringEx('app.title', 'Illinois');
-  
+
   static String title({required String sectionId}) {
     return Localization().getString('panel.browse.section.$sectionId.title') ?? StringUtils.capitalize(sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
   }
@@ -413,7 +445,7 @@ class _BrowseSection extends StatelessWidget {
 
   void _onTapSectionFavorite(BuildContext context) {
     Analytics().logSelect(target: "Favorite: {${HomeFavorite.favoriteKeyName(category: sectionId)}}");
-    
+
     bool? isSectionFavorite = _isSectionFavorite;
     if (kReleaseMode) {
       promptSectionFavorite(context, isSectionFavorite: isSectionFavorite).then((bool? result) {
@@ -476,6 +508,9 @@ class _BrowseSection extends StatelessWidget {
   }
 }
 
+///////////////////////////
+// BrowseEntry
+
 class _BrowseEntry extends StatelessWidget {
 
   final String sectionId;
@@ -491,7 +526,7 @@ class _BrowseEntry extends StatelessWidget {
         Container(
           decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
           padding: EdgeInsets.zero,
-          child: 
+          child:
             Row(children: [
               Opacity(opacity: (favorite != null) ? 1 : 0, child:
                 HomeFavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, prompt: true,),
@@ -765,7 +800,7 @@ class _BrowseEntry extends StatelessWidget {
     Analytics().logSelect(target: 'Building Access');
     WalletICardHomeContentPanel.present(context, content: WalletICardContent.i_card);
   }
-  
+
   void _onTapTestLocations(BuildContext context) {
     Analytics().logSelect(target: 'Locations');
     Navigator.push(context, CupertinoPageRoute(
@@ -815,7 +850,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapDueDateCatalog(BuildContext context) {
     Analytics().logSelect(target: "Due Date Catalog");
-    
+
     if (_canDueDateCatalog) {
       String? dateCatalogUrl = Config().dateCatalogUrl;
       if (StringUtils.isNotEmpty(dateCatalogUrl)) {
@@ -1071,6 +1106,9 @@ class _BrowseEntry extends StatelessWidget {
 
 }
 
+///////////////////////////
+// BrowseToutWidget
+
 class _BrowseToutWidget extends StatefulWidget {
 
   final StreamController<String>? updateController;
@@ -1104,7 +1142,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
     if (_shouldUpdateImage) {
       _updateImage();
     }
- 
+
     super.initState();
   }
 
@@ -1126,7 +1164,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
               CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white), )
             ),
           ) :
-          AspectRatio(aspectRatio: (1080.0 / 810.0), child: 
+          AspectRatio(aspectRatio: (1080.0 / 810.0), child:
             Container(color: Styles().colors.fillColorPrimary, child: child)
           );
       })),

@@ -78,15 +78,6 @@ class TabBar extends rokwire.TabBar {
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
     }
-    else if (code == 'assistant') {
-      return rokwire.TabWidget(
-        label: Localization().getStringEx('tabbar.assistant.title', 'Assistant'),
-        hint: Localization().getStringEx('tabbar.assistant.hint', 'Illinois Assistant Page'),
-        iconKey: 'assistant-outline-gray',
-        selected: (tabController?.index == index),
-        onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
-      );
-    }
     else if (code == 'academics') {
       return rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.academics.title', 'Academics'),
@@ -103,6 +94,24 @@ class TabBar extends rokwire.TabBar {
         hint: Localization().getStringEx('tabbar.wellness.hint', ''),
         iconKey: 'wellness-gray',
         selectedIconKey: 'wellness',
+        selected: (tabController?.index == index),
+        onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
+      );
+    }
+    else if (code == 'wallet') {
+      return rokwire.TabWidget(
+        label: Localization().getStringEx('tabbar.wallet.title', 'Wallet'),
+        hint: Localization().getStringEx('tabbar.wallet.hint', 'Wallet Page'),
+        iconKey: 'wallet-gray',
+        selected: (tabController?.index == index),
+        onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
+      );
+    }
+    else if (code == 'assistant') {
+      return rokwire.TabWidget(
+        label: Localization().getStringEx('tabbar.assistant.title', 'Assistant'),
+        hint: Localization().getStringEx('tabbar.assistant.hint', 'Illinois Assistant Page'),
+        iconKey: 'assistant-outline-gray',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );

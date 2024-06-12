@@ -35,7 +35,7 @@ class HomeEmptyContentWidget extends StatelessWidget {
         .replaceAll(_privacySettingsLocalUrlMacro, '$_localScheme://$_privacySettingsLocalUrl');
 
     return HomeSlantWidget(favoriteId: null /*widget.favoriteId*/,
-      title: Localization().getStringEx("panel.home.header.title", "Favorites"),
+      title: Localization().getStringEx("panel.home.header.favorites.title", "Favorites"),
       childPadding: HomeSlantWidget.defaultChildPadding,
       child: Column(children: <Widget>[
         HomeMessageHtmlCard(
