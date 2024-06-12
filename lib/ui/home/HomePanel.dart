@@ -549,9 +549,7 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
 
 class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixin<HomePanel> implements NotificationsListener {
 
-  List<String>? _systemCodes;
   late HomeContentType _contentType;
-  Map<String, GlobalKey> _widgetKeys = <String, GlobalKey>{};
   StreamController<String> _updateController = StreamController.broadcast();
   GlobalKey _contentWrapperKey = GlobalKey();
   ScrollController _scrollController = ScrollController();
@@ -559,15 +557,12 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   @override
   void initState() {
 
-    // Build Favorite codes before start listening for Auth2UserPrefs.notifyFavoritesChanged
-    // because _buildFavoriteCodes may fire such.
-    _systemCodes = JsonUtils.listStringsValue(FlexUI()['home.system']);
-    _contentType = _homeContentTypeFromString(Storage().homeContentType) ?? HomeContentType.browse;
-
     NotificationService().subscribe(this, [
-      FlexUI.notifyChanged,
       _HomeContentTab.notifySelect,
     ]);
+
+    _contentType = _homeContentTypeFromString(Storage().homeContentType) ?? HomeContentType.browse;
+
     super.initState();
   }
 
@@ -588,10 +583,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == FlexUI.notifyChanged) {
-      _updateSystemCodes();
-    }
-    else if (name == _HomeContentTab.notifySelect) {
+    if (name == _HomeContentTab.notifySelect) {
       _updateContentType(param);
     }
   }
@@ -606,8 +598,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         _buildContentTabs(),
         Expanded(child:
           RefreshIndicator(onRefresh: _onPullToRefresh, child:
-            SingleChildScrollView(controller: _scrollController, child:
-              Column(children: _buildContentList(),)
+            SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
+              _buildContentWidget(),
             ),
           ),
         ),
@@ -622,54 +614,10 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     Expanded(child: _HomeContentTab(HomeContentType.browse, selected: _contentType == HomeContentType.browse,)),
   ],);
 
-  List<Widget> _buildContentList() {
-    List<Widget> widgets = [];
-
-    if (_systemCodes != null) {
-      for (String code in _systemCodes!) {
-        Widget? widget = _widgetFromCode(code);
-        if (widget is Widget) {
-          widgets.add(widget);
-        }
-      }
-    }
-
+  Widget _buildContentWidget() {
     switch(_contentType) {
-      case HomeContentType.favorites: widgets.add(FavoritesContentWidget(updateController: _updateController,)); break;
-      case HomeContentType.browse: widgets.add(BrowseContentWidget()); break;
-    }
-    return widgets;
-  }
-
-  Widget? _widgetFromCode(String code,) {
-    if (code == 'tout') {
-      return HomeToutWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController);
-    }
-    else if (code == 'emergency') {
-      return FlexContent(contentKey: code, key: _widgetKey(code), favoriteId: code, updateController: _updateController);
-    }
-    else if (code == 'voter_registration') {
-      return HomeVoterRegistrationWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
-    }
-    else if (code == 'connect') {
-      return HomeLoginWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
-    }
-    else if (code == 'welcome') {
-      return HomeWelcomeWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
-    }
-    else {
-      return null;
-    }
-  }
-
-  GlobalKey _widgetKey(String code) => _widgetKeys[code] ??= GlobalKey();
-
-  void _updateSystemCodes() {
-    List<String>? systemCodes = JsonUtils.listStringsValue(FlexUI()['home.system']);
-    if (mounted && (systemCodes != null) && !DeepCollectionEquality().equals(_systemCodes, systemCodes)) {
-      setState(() {
-        _systemCodes = systemCodes;
-      });
+      case HomeContentType.favorites: return FavoritesContentWidget(updateController: _updateController,);
+      case HomeContentType.browse: return BrowseContentWidget();
     }
   }
 
@@ -701,6 +649,7 @@ class FavoritesContentWidget extends StatefulWidget {
 
 class _FavoritesContentWidgetState extends State<FavoritesContentWidget> implements NotificationsListener {
 
+  List<String>? _systemCodes;
   List<String>? _favoriteCodes;
   Set<String>? _availableCodes;
   Map<String, GlobalKey> _widgetKeys = <String, GlobalKey>{};
@@ -708,15 +657,17 @@ class _FavoritesContentWidgetState extends State<FavoritesContentWidget> impleme
   @override
   void initState() {
 
-    // Build Favorite codes before start listening for Auth2UserPrefs.notifyFavoritesChanged
-    // because _buildFavoriteCodes may fire such.
-    _favoriteCodes = _buildFavoriteCodes();
-    _availableCodes = JsonUtils.setStringsValue(FlexUI()['home']) ?? <String>{};
-
     NotificationService().subscribe(this, [
       FlexUI.notifyChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
     ]);
+
+    // Build Favorite codes before start listening for Auth2UserPrefs.notifyFavoritesChanged
+    // because _buildFavoriteCodes may fire such.
+    _systemCodes = JsonUtils.listStringsValue(FlexUI()['home.system']);
+    _favoriteCodes = _buildFavoriteCodes();
+    _availableCodes = JsonUtils.setStringsValue(FlexUI()['home']) ?? <String>{};
+
     super.initState();
   }
 
@@ -731,7 +682,7 @@ class _FavoritesContentWidgetState extends State<FavoritesContentWidget> impleme
   @override
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
-      _updateAvailableCodes();
+      _updateContentCodes();
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       _updateFavoriteCodes();
@@ -740,11 +691,14 @@ class _FavoritesContentWidgetState extends State<FavoritesContentWidget> impleme
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> widgets = [];
+    widgets.addAll(_buildWidgetsFromCodes(_systemCodes));
     List<Widget> favWidgets = _buildWidgetsFromCodes(_favoriteCodes?.reversed, availableCodes: _availableCodes);
     if (favWidgets.isEmpty) {
       favWidgets.add(HomeEmptyContentWidget());
     }
-    return Column(children: favWidgets,);
+    widgets.addAll(favWidgets);
+    return Column(children: widgets,);
   }
 
   List<Widget> _buildWidgetsFromCodes(Iterable<String>? codes, { Set<String>? availableCodes }) {
@@ -763,22 +717,49 @@ class _FavoritesContentWidgetState extends State<FavoritesContentWidget> impleme
   }
 
   Widget? _widgetFromCode(String code,) {
-    dynamic data = HomePanel.dataFromCode(code,
-      title: false, handle: false, position: 0,
-      globalKeys: _widgetKeys,
-      updateController: widget.updateController,
-    );
+    if (code == 'tout') {
+      return HomeToutWidget(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController);
+    }
+    else if (code == 'emergency') {
+      return FlexContent(contentKey: code, key: _widgetKey(code), favoriteId: code, updateController: widget.updateController);
+    }
+    else if (code == 'voter_registration') {
+      return HomeVoterRegistrationWidget(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController,);
+    }
+    else if (code == 'connect') {
+      return HomeLoginWidget(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController,);
+    }
+    else if (code == 'welcome') {
+      return HomeWelcomeWidget(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController,);
+    }
+    else {
+      dynamic data = HomePanel.dataFromCode(code,
+        title: false, handle: false, position: 0,
+        globalKeys: _widgetKeys,
+        updateController: widget.updateController,
+      );
 
-    return (data is Widget) ? data : FlexContent(contentKey: code, key: _widgetKey(code), favoriteId: code, updateController: widget.updateController);
+      return (data is Widget) ? data : FlexContent(contentKey: code, key: _widgetKey(code), favoriteId: code, updateController: widget.updateController);
+    }
   }
 
   GlobalKey _widgetKey(String code) => _widgetKeys[code] ??= GlobalKey();
 
-  void _updateAvailableCodes() {
+  void _updateContentCodes() {
     Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home']);
-    if (mounted && (availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes)) {
+    bool availableCodesChanged = (availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes);
+
+    List<String>? systemCodes = JsonUtils.listStringsValue(FlexUI()['home.system']);
+    bool systemCodesChanged = (systemCodes != null) && !DeepCollectionEquality().equals(_systemCodes, systemCodes);
+
+    if (mounted && (availableCodesChanged || systemCodesChanged)) {
       setState(() {
-        _availableCodes = availableCodes;
+        if (availableCodesChanged) {
+          _availableCodes = availableCodes;
+        }
+        if (systemCodesChanged) {
+          _systemCodes = systemCodes;
+        }
       });
     }
   }
