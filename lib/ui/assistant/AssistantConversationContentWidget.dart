@@ -50,10 +50,11 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   TextEditingController _inputController = TextEditingController();
   final GlobalKey _chatBarKey = GlobalKey();
   final GlobalKey _lastContentItemKey = GlobalKey();
+  late ScrollController _scrollController;
+  static double? _scrollPosition;
+  bool _shouldScrollToBottom = false;
 
   bool _listening = false;
-
-  List<Message> _messages = [];
 
   bool _loadingResponse = false;
   Message? _feedbackMessage;
@@ -76,12 +77,11 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       Styles.notifyChanged,
       SpeechToText.notifyError,
     ]);
-
+    _scrollController = ScrollController(initialScrollOffset: _scrollPosition ?? 0);
+    _scrollController.addListener(_scrollListener);
     _streamSubscription = widget.shouldClearAllMessages.listen((event) {
       _clearAllMessages();
     });
-
-    _initDefaultMessages();
 
     _contentCodes = buildContentCodes();
 
@@ -93,6 +93,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
     _inputController.dispose();
     _negativeFeedbackController.dispose();
     _streamSubscription.cancel();
@@ -135,7 +137,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     super.build(context);
 
     Widget? accessWidget = AccessCard.builder(resource: resourceName);
-    _scrollToBottom();
+    _scrollToBottomIfNeeded();
 
     return accessWidget != null
         ? Column(children: [Padding(padding: EdgeInsets.only(top: 16.0), child: accessWidget)])
@@ -144,23 +146,22 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
             Padding(padding: EdgeInsets.only(bottom: _chatBarHeight), child: RefreshIndicator(
                 onRefresh: _onPullToRefresh,
                 child: SingleChildScrollView(
+                  controller: _scrollController,
                     physics: AlwaysScrollableScrollPhysics(),
                     child: Padding(padding: EdgeInsets.all(16), child: Column(children: _buildContentList()))))),
-            Positioned(bottom: _chatBarPaddingBottom, left: 0, right: 0, child: _buildChatBar())
+            Positioned(bottom: _chatBarPaddingBottom, left: 0, right: 0, child: Container(key: _chatBarKey, color: Styles().colors.surface, child: SafeArea(child: _buildChatBar())))
           ]));
   }
 
   List<Widget> _buildContentList() {
     List<Widget> contentList = <Widget>[];
 
-    for (Message message in _messages) {
-      contentList.add(_buildChatBubble(message));
-      contentList.add(SizedBox(height: 16.0));
+    for (Message message in Assistant().messages) {
+      contentList.add(Padding(padding: EdgeInsets.only(bottom: 16), child: _buildChatBubble(message)));
     }
 
     if (_loadingResponse) {
       contentList.add(_buildTypingChatBubble());
-      contentList.add(SizedBox(height: 16.0));
     }
     contentList.add(Container(key: _lastContentItemKey, height: 0));
     return contentList;
@@ -192,7 +193,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                             child: InkWell(
                                 onTap: message.example
                                     ? () {
-                                        _messages.remove(message);
+                                        Assistant().removeMessage(message);
                                         _submitMessage(message.content);
                                       }
                                     : null,
@@ -240,7 +241,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Widget _buildFeedbackAndSourcesExpandedWidget(Message message) {
     final double feedbackIconSize = 24;
     bool feedbackControlsVisible = (message.acceptsFeedback && !message.isAnswerUnknown);
-    bool additionalControlsVisible = !message.user && (_messages.indexOf(message) != 0);
+    bool additionalControlsVisible = !message.user && (Assistant().messages.indexOf(message) != 0);
     bool areSourcesLabelsVisible = additionalControlsVisible && ((CollectionUtils.isNotEmpty(message.sources) || CollectionUtils.isNotEmpty(message.links)));
     bool areSourcesValuesVisible = (additionalControlsVisible && areSourcesLabelsVisible && (message.sourcesExpanded == true));
     List<Link>? deepLinks = message.links;
@@ -316,6 +317,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   void _onTapSourcesAndLinksLabel(Message message) {
     setStateIfMounted(() {
       message.sourcesExpanded = !(message.sourcesExpanded ?? false);
+      _shouldScrollToBottom = true;
     });
   }
 
@@ -375,31 +377,34 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
           message.feedback = null;
         } else {
           message.feedback = MessageFeedback.good;
-          _messages.add(Message(
+          Assistant().addMessage(Message(
               content: Localization().getStringEx(
                   'panel.assistant.label.feedback.disclaimer.prompt.title',
                   'Thank you for providing feedback!'),
               user: false, feedbackResponseType: FeedbackResponseType.positive));
+          _shouldScrollToBottom = true;
         }
       } else {
         if (message.feedback == MessageFeedback.bad) {
           message.feedback = null;
         } else {
           message.feedback = MessageFeedback.bad;
-          _messages.add(Message(
+          Assistant().addMessage(Message(
               content: Localization().getStringEx(
                   'panel.assistant.label.feedback.disclaimer.prompt.title',
                   'Thank you for providing feedback!'),
               user: false, feedbackResponseType: FeedbackResponseType.negative));
           _feedbackMessage = message;
           bad = true;
+          _shouldScrollToBottom = true;
         }
       }
     });
 
     if (!bad && _feedbackMessage != null) {
-      _messages.removeLast();
+      Assistant().removeLastMessage();
       _feedbackMessage = null;
+      _shouldScrollToBottom = true;
     }
 
     Assistant().sendFeedback(message);
@@ -496,7 +501,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Widget _buildChatBar() {
     bool enabled = (_queryLimit == null) || (_queryLimit! > 0);
     return Material(
-      key: _chatBarKey,
         color: Styles().colors.surface,
         child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
@@ -538,7 +542,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Widget _buildSendImage(bool enabled) {
     if (StringUtils.isNotEmpty(_inputController.text)) {
       return IconButton(
-        //TODO: Enable support for material icons in styles images
           splashRadius: 24,
           icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor),
           onPressed: enabled
@@ -550,7 +553,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       return Visibility(
           visible: enabled && SpeechToText().isEnabled,
           child: IconButton(
-            //TODO: Enable support for material icons in styles images
               splashRadius: 24,
               icon: Icon(_listening ? Icons.stop_circle_outlined : Icons.mic, color: Styles().colors.fillColorSecondary),
               onPressed: enabled
@@ -758,21 +760,23 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
     setState(() {
       if (message.isNotEmpty) {
-        _messages.add(Message(content: message, user: true));
+        Assistant().addMessage(Message(content: message, user: true));
       }
       _inputController.text = '';
       _loadingResponse = true;
+      _shouldScrollToBottom = true;
     });
 
     int? limit = _queryLimit;
     if (limit != null && limit <= 0) {
       setState(() {
-        _messages.add(Message(
+        Assistant().addMessage(Message(
             content: Localization().getStringEx(
                 'panel.assistant.label.queries.limit.title',
                 'Sorry you are out of questions for today. '
                     'Please check back tomorrow to ask more questions!'),
             user: false));
+        _shouldScrollToBottom = true;
       });
       return;
     }
@@ -783,7 +787,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     if (mounted) {
       setState(() {
         if (response != null) {
-          _messages.add(response);
+          Assistant().addMessage(response);
           if (_queryLimit != null) {
             if (response.queryLimit != null) {
               _queryLimit = response.queryLimit;
@@ -792,13 +796,14 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
             }
           }
         } else {
-          _messages.add(Message(
+          Assistant().addMessage(Message(
               content: Localization()
                   .getStringEx('panel.assistant.label.error.title', 'Sorry, something went wrong. For the best results, please restart the app and try your question again.'),
               user: false));
           _inputController.text = message;
         }
         _loadingResponse = false;
+        _shouldScrollToBottom = true;
       });
     }
   }
@@ -809,8 +814,9 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     }
     FocusScope.of(context).requestFocus(FocusNode());
     setStateIfMounted(() {
-      _messages.add(Message(content: negativeFeedbackExplanation, user: true, isNegativeFeedbackMessage: true));
+      Assistant().addMessage(Message(content: negativeFeedbackExplanation, user: true, isNegativeFeedbackMessage: true));
       _negativeFeedbackController.text = '';
+      _shouldScrollToBottom = true;
     });
     _feedbackMessage?.feedbackExplanation = negativeFeedbackExplanation;
     systemMessage.feedbackResponseType = FeedbackResponseType.positive;
@@ -889,29 +895,27 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     });
   }
 
-  void _initDefaultMessages() {
-    if (CollectionUtils.isNotEmpty(_messages)) {
-      _messages.clear();
-    }
-    _messages.add(Message(
-        content: Localization().getStringEx('panel.assistant.label.welcome_message.title',
-            'The Illinois Assistant is a search feature that brings official university resources to your fingertips. Ask a question below to get started.'),
-        user: false));
-  }
-
   void _clearAllMessages() {
     setStateIfMounted(() {
-      _initDefaultMessages();
+      Assistant().clearMessages();
+      _shouldScrollToBottom = true;
     });
   }
 
-  void _scrollToBottom() {
+  void _scrollToBottomIfNeeded() {
     BuildContext? handleContext = _lastContentItemKey.currentContext;
     if (handleContext != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        Scrollable.ensureVisible(handleContext, duration: Duration(milliseconds: 500)).then((_) {});
+        if (_shouldScrollToBottom) {
+          Scrollable.ensureVisible(handleContext, duration: Duration(milliseconds: 500)).then((_) {});
+          _shouldScrollToBottom = false;
+        }
       });
     }
+  }
+
+  void _scrollListener() {
+    _scrollPosition = _scrollController.position.pixels;
   }
 
   double get _chatBarPaddingBottom {

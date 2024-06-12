@@ -16,6 +16,8 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
   static const String _faqContentCategory = "assistant_faqs";
   Map<String, dynamic>? _faqsContent;
 
+  List<Message> _userMessages = <Message>[];
+
   // Singleton Factory
   
   Assistant._internal();
@@ -35,12 +37,14 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
   void createService() {
     NotificationService().subscribe(this, [
       Content.notifyContentItemsChanged,
+      Auth2.notifyLoginChanged,
     ]);
   }
 
   @override
   Future<void> initService() async {
-    _faqsContent = Content().contentItem(_faqContentCategory);
+    _initMessages();
+    _initFaqs();
   }
 
   @override
@@ -60,12 +64,14 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
   void onNotification(String name, dynamic param) {
     if (name == Content.notifyContentItemsChanged) {
       _onContentItemsChanged(param);
+    } else if (name == Auth2.notifyLoginChanged) {
+      _initMessages();
     }
   }
 
   void _onContentItemsChanged(Set<String>? categoriesDiff) {
     if (categoriesDiff?.contains(_faqContentCategory) == true) {
-      _faqsContent = Content().contentItem(_faqContentCategory);
+      _initFaqs();
       NotificationService().notify(notifyFaqsContentChanged);
     }
   }
@@ -77,6 +83,10 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
 
   // FAQs
 
+  void _initFaqs() {
+    _faqsContent = Content().contentItem(_faqContentCategory);
+  }
+
   String? get faqs {
     if (_faqsContent == null) {
       return null;
@@ -85,6 +95,38 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
     String? selectedLocaleCode = Localization().currentLocale?.languageCode;
     String? defaultFaqs = JsonUtils.stringValue(_faqsContent![defaultLocaleCode]);
     return JsonUtils.stringValue(_faqsContent![selectedLocaleCode]) ?? defaultFaqs;
+  }
+
+  // Messages
+
+  List<Message> get messages => _userMessages;
+
+  void _initMessages() {
+    if (CollectionUtils.isNotEmpty(_userMessages)) {
+      _userMessages.clear();
+    }
+    addMessage(Message(
+        content: Localization().getStringEx('panel.assistant.label.welcome_message.title',
+            'The Illinois Assistant is a search feature that brings official university resources to your fingertips. Ask a question below to get started.'),
+        user: false));
+  }
+
+  void addMessage(Message message) {
+    _userMessages.add(message);
+  }
+
+  void removeMessage(Message message) {
+    _userMessages.remove(message);
+  }
+
+  void removeLastMessage() {
+    if (CollectionUtils.isNotEmpty(_userMessages)) {
+      _userMessages.removeLast();
+    }
+  }
+
+  void clearMessages() {
+    _initMessages();
   }
 
   // Implementation
