@@ -6,6 +6,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -21,9 +22,8 @@ import 'package:url_launcher/url_launcher.dart';
 class HomeToutWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final void Function() onEdit;
-  
-  HomeToutWidget({Key? key, this.favoriteId, this.updateController, required this.onEdit});
+
+  HomeToutWidget({Key? key, this.favoriteId, this.updateController});
 
   @override
   _HomeToutWidgetState createState() => _HomeToutWidgetState();
@@ -198,7 +198,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
 
   void _onCustomize() {
     Analytics().logSelect(target: 'Customize', source: widget.runtimeType.toString());
-    widget.onEdit();
+    HomeCustomizeFavoritesPanel.present(context);
   }
 
   // NotificationsListener
