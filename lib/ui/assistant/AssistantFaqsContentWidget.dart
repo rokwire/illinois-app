@@ -50,7 +50,7 @@ class _AssistantFaqsContentWidgetState extends State<AssistantFaqsContentWidget>
     return Positioned.fill(
         child: Padding(
             padding: EdgeInsets.all(20),
-            child: SingleChildScrollView(
+            child: SafeArea(child: SingleChildScrollView(
                 child: HtmlWidget(_faqsContent,
                     onTapUrl: (url) {
                       _launchUrl(url);
@@ -65,7 +65,7 @@ class _AssistantFaqsContentWidgetState extends State<AssistantFaqsContentWidget>
                       } else {
                         return null;
                       }
-                    }))));
+                    })))));
   }
 
   void _launchUrl(String? url) async {

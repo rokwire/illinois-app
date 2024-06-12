@@ -146,7 +146,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                 child: SingleChildScrollView(
                     physics: AlwaysScrollableScrollPhysics(),
                     child: Padding(padding: EdgeInsets.all(16), child: Column(children: _buildContentList()))))),
-            Positioned(bottom: _chatBarPaddingBottom, left: 0, right: 0, child: _buildChatBar())
+            Positioned(bottom: _chatBarPaddingBottom, left: 0, right: 0, child: Container(key: _chatBarKey, color: Styles().colors.surface, child: SafeArea(child: _buildChatBar())))
           ]));
   }
 
@@ -154,13 +154,11 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     List<Widget> contentList = <Widget>[];
 
     for (Message message in _messages) {
-      contentList.add(_buildChatBubble(message));
-      contentList.add(SizedBox(height: 16.0));
+      contentList.add(Padding(padding: EdgeInsets.only(bottom: 16), child: _buildChatBubble(message)));
     }
 
     if (_loadingResponse) {
       contentList.add(_buildTypingChatBubble());
-      contentList.add(SizedBox(height: 16.0));
     }
     contentList.add(Container(key: _lastContentItemKey, height: 0));
     return contentList;
@@ -496,7 +494,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Widget _buildChatBar() {
     bool enabled = (_queryLimit == null) || (_queryLimit! > 0);
     return Material(
-      key: _chatBarKey,
         color: Styles().colors.surface,
         child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
