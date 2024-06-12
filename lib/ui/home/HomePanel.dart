@@ -552,6 +552,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   late HomeContentType _contentType;
   StreamController<String> _updateController = StreamController.broadcast();
   GlobalKey _contentWrapperKey = GlobalKey();
+  GlobalKey _toutKey = GlobalKey();
   ScrollController _scrollController = ScrollController();
 
   @override
@@ -599,7 +600,10 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         Expanded(child:
           RefreshIndicator(onRefresh: _onPullToRefresh, child:
             SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
-              _buildContentWidget(),
+              Column(children: [
+                _buildToutWidget(),
+                _buildContentWidget(),
+              ],)
             ),
           ),
         ),
@@ -613,6 +617,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     Expanded(child: _HomeContentTab(HomeContentType.favorites, selected: _contentType == HomeContentType.favorites,)),
     Expanded(child: _HomeContentTab(HomeContentType.browse, selected: _contentType == HomeContentType.browse,)),
   ],);
+
+  Widget _buildToutWidget() => HomeToutWidget(key: _toutKey, contentType: _contentType, updateController: _updateController,);
 
   Widget _buildContentWidget() {
     switch(_contentType) {

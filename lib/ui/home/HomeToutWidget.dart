@@ -21,9 +21,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 class HomeToutWidget extends StatefulWidget {
   final String? favoriteId;
+  final HomeContentType? contentType;
   final StreamController<String>? updateController;
 
-  HomeToutWidget({Key? key, this.favoriteId, this.updateController});
+  HomeToutWidget({Key? key, this.favoriteId, this.contentType, this.updateController});
 
   @override
   _HomeToutWidgetState createState() => _HomeToutWidgetState();
@@ -71,33 +72,35 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
     String? title2 = _firstName;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       (imageUrl != null) ? _buildImageWidget(imageUrl) : Container(),
-      Container(padding: EdgeInsets.only(bottom: 16,), color: Styles().colors.fillColorPrimary, child:
-        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Expanded(child:
-            Padding(padding: EdgeInsets.only(left: 16, top: 16), child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(_title1 ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.medium.fat")),
-                Visibility(visible: StringUtils.isNotEmpty(title2), child:
-                  Row(children: [
-                    Text(title2 ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat")),
-                    Semantics(label: Localization().getStringEx("widget.home.tout.button.info.label", "Info"), hint: Localization().getStringEx("widget.home.tout.button.info.hint", "Tap for more info"), child:
-                      InkWell(onTap: _onInfo, child:
-                        Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 8), child:
-                          Styles().images.getImage('info', excludeFromSemantics: true),
-                        )
+      Visibility(visible: (widget.contentType == HomeContentType.favorites), child:
+        Container(padding: EdgeInsets.only(bottom: 16,), color: Styles().colors.fillColorPrimary, child:
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(child:
+              Padding(padding: EdgeInsets.only(left: 16, top: 16), child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(_title1 ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.medium.fat")),
+                  Visibility(visible: StringUtils.isNotEmpty(title2), child:
+                    Row(children: [
+                      Text(title2 ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat")),
+                      Semantics(label: Localization().getStringEx("widget.home.tout.button.info.label", "Info"), hint: Localization().getStringEx("widget.home.tout.button.info.hint", "Tap for more info"), child:
+                        InkWell(onTap: _onInfo, child:
+                          Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 8), child:
+                            Styles().images.getImage('info', excludeFromSemantics: true),
+                          )
+                        ),
                       ),
-                    ),
-                  ],)
-                ),
-              ],),
-            )
-          ),
-          GestureDetector(onTap: _onCustomize, child:
-            Padding(padding: EdgeInsets.only(top: 16, right: 16), child:
-              Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
-                style: Styles().textStyles.getTextStyle("widget.home_tout.button.underline.title")))
-          ),
-        ],)
+                    ],)
+                  ),
+                ],),
+              )
+            ),
+            GestureDetector(onTap: _onCustomize, child:
+              Padding(padding: EdgeInsets.only(top: 16, right: 16), child:
+                Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
+                  style: Styles().textStyles.getTextStyle("widget.home_tout.button.underline.title")))
+            ),
+          ],)
+        )
       )
 
     ],);
