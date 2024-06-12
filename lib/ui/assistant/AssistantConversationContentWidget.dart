@@ -538,7 +538,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Widget _buildSendImage(bool enabled) {
     if (StringUtils.isNotEmpty(_inputController.text)) {
       return IconButton(
-        //TODO: Enable support for material icons in styles images
           splashRadius: 24,
           icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor),
           onPressed: enabled
@@ -550,7 +549,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       return Visibility(
           visible: enabled && SpeechToText().isEnabled,
           child: IconButton(
-            //TODO: Enable support for material icons in styles images
               splashRadius: 24,
               icon: Icon(_listening ? Icons.stop_circle_outlined : Icons.mic, color: Styles().colors.fillColorSecondary),
               onPressed: enabled
