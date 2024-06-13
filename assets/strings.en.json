@@ -332,6 +332,7 @@
     "panel.browse.entry.academics.skills_self_evaluation.title": "Skills Self-Evaluation",
     "panel.browse.entry.academics.essential_skills_coach.title": "Essential Skills Coach",
     "panel.browse.entry.academics.gies_canvas_courses.title": "My Gies Canvas Courses",
+    "panel.browse.entry.academics.canvas_courses.title": "My Canvas Courses",
     "panel.browse.entry.academics.student_courses.title": "My Courses",
     "panel.browse.entry.academics.my_illini.title": "My Illini",
     "panel.browse.entry.academics.campus_reminders.title": "Campus Reminders",
@@ -3059,6 +3060,7 @@
     "panel.home.safer.test_locations.wait_time.status.label.yellow": "Medium wait time",
     "panel.home.safer.test_locations.wait_time.status.label.green": "Short wait time",
 
+    "panel.canvas_courses.header.title": "My Canvas Courses",
     "panel.canvas_courses.load.empty.error.msg": "You do not appear to be enrolled in any Canvas courses.",
     "panel.canvas_courses.load.failed.error.msg": "Unable to load courses.",
     "panel.canvas_courses.load.offline.error.msg": "My Canvas Courses not available while offline.",
@@ -3654,6 +3656,7 @@
     "widget.home_recent_item_card.label.date":"Date",
     "widget.generic_cart.label.date":"Date",
 
+    "widget.home.canvas_courses.header.label": "My Canvas Courses",
     "widget.home.gies_canvas_courses.header.label": "My Gies Canvas Courses",
     "widget.home.gies_canvas_courses.text.empty.description": "You do not appear to be enrolled in any Gies Canvas courses.",
     "widget.home.gies_canvas_courses.button.all.title": "View All",

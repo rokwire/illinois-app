@@ -331,6 +331,7 @@
     "panel.browse.entry.academics.skills_self_evaluation.title": "Autoevaluación de habilidades",
     "panel.browse.entry.academics.essential_skills_coach.title": "Essential Skills Coach",
     "panel.browse.entry.academics.gies_canvas_courses.title": "Mis cursos Gies Canvas",
+    "panel.browse.entry.academics.canvas_courses.title": "Mis cursos de lienzo",
     "panel.browse.entry.academics.student_courses.title": "Mis cursos",
     "panel.browse.entry.academics.my_illini.title": "myIllini",
     "panel.browse.entry.academics.campus_reminders.title": "Recordatorios del campus",
@@ -3054,6 +3055,7 @@
     "panel.home.safer.test_locations.wait_time.status.label.yellow": "Tiempo de Espera Medio",
     "panel.home.safer.test_locations.wait_time.status.label.green": "Tiempo de Espera Corto",
 
+    "panel.canvas_courses.header.title": "Mis cursos de lienzo",
     "panel.canvas_courses.load.empty.error.msg": "No parece estar inscrito en ningún curso de Canvas.",
     "panel.canvas_courses.load.failed.error.msg": "No se pueden cargar cursos.",
     "panel.canvas_courses.load.offline.error.msg": "Mis cursos Canvas no están disponibles sin conexión.",
@@ -3647,6 +3649,7 @@
     "widget.home_recent_item_card.label.date":"Fecha",
     "widget.generic_cart.label.date":"Fecha",
 
+    "widget.home.canvas_courses.header.label": "Mis cursos de lienzo",
     "widget.home.gies_canvas_courses.header.label": "Mis cursos Gies Canvas",
     "widget.home.gies_canvas_courses.text.empty.description": "No parece estar inscrito en ningún curso de Gies Canvas.",
     "widget.home.gies_canvas_courses.button.all.title": "Ver todo",
