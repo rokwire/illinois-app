@@ -90,7 +90,7 @@ class _HomeFavoritesPanelState extends State<HomeFavoritesPanel> with AutomaticK
         Expanded(child:
           RefreshIndicator(onRefresh: _onPullToRefresh, child:
             SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
-            HomeFavoritesContentWidget(key: _favoritesKey, updateController: _updateController,),
+              HomeFavoritesContentWidget(key: _favoritesKey, updateController: _updateController,),
             ),
           ),
         ),
@@ -162,6 +162,7 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
 
   @override
   Widget build(BuildContext context) {
+
     List<Widget> widgets = [];
     widgets.addAll(_buildWidgetsFromCodes(_systemCodes, availableCodes: widget.availableSystemCodes));
     List<Widget> favWidgets = _buildWidgetsFromCodes(_favoriteCodes?.reversed, availableCodes: _availableCodes);
