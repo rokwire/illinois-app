@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
@@ -24,8 +25,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
-import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 
 class SettingsAssessmentsContentWidget extends StatefulWidget {
@@ -134,7 +133,8 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
         Storage().assessmentsSaveResultsMap = assessmentsSaveResultsMap;
       });
     } else {
-      Widget infoTextWidget = RichText(
+      AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.skills_self_evaluation', 'Assessments'));
+      /*Widget infoTextWidget = RichText(
         text: TextSpan(
           children: [
             TextSpan(
@@ -160,11 +160,11 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
         alignment: Alignment.center,
         infoTextWidget: infoTextWidget,
         closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
-      ),);
+      ),);*/
     }
   }
 
-  void _onTapPrivacyLevel() {
+  /*void _onTapPrivacyLevel() {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
-  }
+  }*/
 }

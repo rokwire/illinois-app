@@ -36,11 +36,11 @@ import 'package:roundcheckbox/roundcheckbox.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
-class SettingsAddIlliniCashPanel extends StatefulWidget {
+class WalletAddIlliniCashPanel extends StatefulWidget {
 
   final ScrollController? scrollController;
 
-  SettingsAddIlliniCashPanel({this.scrollController});
+  WalletAddIlliniCashPanel({this.scrollController});
 
   static bool get canPresent => Connectivity().isNotOffline /*&& Auth2().isOidcLoggedIn*/;
 
@@ -49,17 +49,17 @@ class SettingsAddIlliniCashPanel extends StatefulWidget {
       AppAlert.showOfflineMessage(context, Localization().getStringEx("panel.settings.add_illini_cash.message.offline.text", "Add Illini Cash is are not available while offline."));
     }
     else {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsAddIlliniCashPanel()));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WalletAddIlliniCashPanel()));
     }
   }
 
   @override
-  _SettingsAddIlliniCashPanelState createState() =>
-      _SettingsAddIlliniCashPanelState();
+  _WalletAddIlliniCashPanelState createState() =>
+      _WalletAddIlliniCashPanelState();
 }
 
-class _SettingsAddIlliniCashPanelState
-    extends State<SettingsAddIlliniCashPanel> {
+class _WalletAddIlliniCashPanelState
+    extends State<WalletAddIlliniCashPanel> {
 
   bool _agreePrivacy = false;
   bool __isLoading = false;
@@ -487,7 +487,7 @@ class _SettingsAddIlliniCashPanelState
                                               controller: _amountController,
                                               keyboardType: TextInputType.numberWithOptions(decimal: true),
                                               textInputAction: TextInputAction.done,
-                                              inputFormatters: [CurrencyTextInputFormatter(locale: 'en', symbol: '\$', decimalDigits: 2)],
+                                              inputFormatters: [CurrencyTextInputFormatter.currency(locale: 'en', symbol: '\$', decimalDigits: 2)],
                                               onFieldSubmitted: (_){ _unfocus(); },
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(

@@ -15,7 +15,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/RadioPlayer.dart';
@@ -33,8 +32,8 @@ class HeaderBar extends rokwire.HeaderBar {
 
   static const String defaultLeadingIconKey = 'chevron-left-white';
 
-  HeaderBar({Key? key,
-    SemanticsSortKey? sortKey,
+  HeaderBar({super.key,
+    super.sortKey,
 
     Widget? leadingWidget,
     String? leadingLabel,
@@ -54,8 +53,7 @@ class HeaderBar extends rokwire.HeaderBar {
     bool? centerTitle = false,
 
     List<Widget>? actions,
-  }) : super(key: key,
-    sortKey: sortKey,
+  }) : super(
     
     leadingWidget: leadingWidget,
     leadingLabel: leadingLabel ?? Localization().getStringEx('headerbar.back.title', 'Back'),
@@ -89,6 +87,8 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
   static const String defaultLeadingIconKey = 'chevron-left-white';
 
   SliverToutHeaderBar({
+    super.key,
+
     bool pinned = true,
     bool floating = false,
     double? expandedHeight = 200,
@@ -168,7 +168,9 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
 class SliverHeaderBar extends rokwire.SliverHeaderBar  {
   static const String defaultLeadingIconKey = 'close-circle-white';
 
-  SliverHeaderBar({Key? key,
+  SliverHeaderBar({
+    super.key,
+
     bool pinned = true,
     bool floating = false,
     double? elevation = 0,
@@ -191,7 +193,7 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     TextAlign? textAlign,
 
     List<Widget>? actions,
-  }) : super(key: key,
+  }) : super(
     
     pinned: pinned,
     floating: floating,
@@ -223,42 +225,6 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     Navigator.pop(context);
   }
 }
-
-/*class SliverHeaderBar extends SliverAppBar {
-  final BuildContext context;
-  final Widget? titleWidget;
-  final bool backVisible;
-  final Color? backgroundColor;
-  final String backIconRes;
-  final Function? onBackPressed;
-  final List<Widget>? actions;
-
-  SliverHeaderBar({required this.context, this.titleWidget, this.backVisible = true, this.onBackPressed, this.backgroundColor, this.backIconRes = 'images/chevron-left-white.png', this.actions}):
-        super(
-        pinned: true,
-        floating: false,
-        backgroundColor: backgroundColor ?? Styles().colors.fillColorPrimaryVariant,
-        elevation: 0,
-        leading: Visibility(visible: backVisible, child: Semantics(
-            label: Localization().getStringEx('headerbar.back.title', 'Back'),
-            hint: Localization().getStringEx('headerbar.back.hint', ''),
-            button: true,
-            excludeSemantics: true,
-            child: IconButton(
-                icon: Image.asset(backIconRes, excludeFromSemantics: true),
-                onPressed: (){
-                    Analytics().logSelect(target: "Back");
-                    if (onBackPressed != null) {
-                      onBackPressed();
-                    } else {
-                      Navigator.pop(context);
-                    }
-                })),),
-        title: titleWidget,
-        centerTitle: false,
-        actions: actions,
-      );
-}*/
 
 enum RootHeaderBarLeading { Home, Back }
 

@@ -15,10 +15,10 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
-import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
@@ -29,13 +29,16 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Polls.dart' as illinois;
 
-class GroupPollListPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GroupPollListPanel extends StatefulWidget with AnalyticsInfo {
   final Group group;
 
   GroupPollListPanel({required this.group});
 
   @override
   _GroupPollListPanelState createState() => _GroupPollListPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => (group.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes => group.analyticsAttributes;

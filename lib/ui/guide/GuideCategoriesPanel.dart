@@ -3,6 +3,7 @@ import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -13,12 +14,16 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class GuideCategoriesPanel extends StatefulWidget {
+class GuideCategoriesPanel extends StatefulWidget with AnalyticsInfo {
   final String? guide;
 
   GuideCategoriesPanel({Key? key, this.guide}) : super(key: key);
 
+  @override
   _GuideCategoriesPanelState createState() => _GuideCategoriesPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.fromName(guide);
 }
 
 class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements NotificationsListener {

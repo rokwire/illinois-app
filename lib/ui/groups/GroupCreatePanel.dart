@@ -21,6 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/ext/ImagesResult.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
@@ -46,10 +47,16 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class GroupCreatePanel extends StatefulWidget {
+class GroupCreatePanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
+
   GroupCreatePanel({Key? key, this.group}) : super(key: key);
+
+  @override
   _GroupCreatePanelState createState() => _GroupCreatePanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 }
 
 class _GroupCreatePanelState extends State<GroupCreatePanel> {

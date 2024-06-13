@@ -17,8 +17,8 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/ui/wallet/ICardFaqsContentWidget.dart';
-import 'package:illinois/ui/wallet/IDCardContentWidget.dart';
+import 'package:illinois/ui/wallet/WalletICardFaqsContentWidget.dart';
+import 'package:illinois/ui/wallet/WalletICardContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -26,57 +26,49 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
-enum ICardContent { i_card, faqs }
+enum WalletICardContent { i_card, faqs }
 
-class ICardHomeContentPanel extends StatefulWidget {
-  final ICardContent? content;
+class WalletICardHomeContentPanel extends StatefulWidget {
+  final WalletICardContent? content;
 
-  ICardHomeContentPanel._({this.content});
+  WalletICardHomeContentPanel._({this.content});
 
   @override
-  _ICardHomeContentPanelState createState() => _ICardHomeContentPanelState();
+  _WalletICardHomePanelState createState() => _WalletICardHomePanelState();
 
-  static void present(BuildContext context, {ICardContent? content}) {
+  static void present(BuildContext context, {WalletICardContent? content}) {
     if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showMessage(
-          context,
-          Localization().getStringEx('panel.browse.label.logged_out.illini_id',
-              'You need to be logged in with your NetID to access Illini ID. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
-    } else {
-      if (StringUtils.isEmpty(Auth2().authCard?.cardNumber)) {
-        AppAlert.showMessage(
-            context,
-            Localization().getStringEx('panel.browse.label.no_card.illini_id',
-                'No Illini ID information. You do not have an active Illini ID. Please visit the ID Center.'));
-      } else {
-        String? warning;
-        int? expirationDays = Auth2().authCard?.expirationIntervalInDays;
-        if (expirationDays != null) {
-          if (expirationDays <= 0) {
-            warning = sprintf(
-                Localization().getStringEx('panel.browse.label.expired_card.illini_id',
-                    'No Illini ID information. Your Illini ID expired on %s. Please visit the ID Center.'),
-                [Auth2().authCard?.expirationDate ?? '']);
-          } else if ((0 < expirationDays) && (expirationDays < 30)) {
-            warning = sprintf(
-                Localization()
-                    .getStringEx('panel.browse.label.expiring_card.illini_id', 'Your ID will expire on %s. Please visit the ID Center.'),
-                [Auth2().authCard?.expirationDate ?? '']);
-          }
+      AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.illini_id', 'Illini ID'));
+    }
+    else if (StringUtils.isEmpty(Auth2().authCard?.cardNumber)) {
+      AppAlert.showMessage( context, Localization().getStringEx('panel.browse.label.no_card.illini_id', 'No Illini ID information. You do not have an active Illini ID. Please visit the ID Center.'));
+    }
+    else {
+      String? warning;
+      int? expirationDays = Auth2().authCard?.expirationIntervalInDays;
+      if (expirationDays != null) {
+        if (expirationDays <= 0) {
+          warning = sprintf(Localization().getStringEx('panel.browse.label.expired_card.illini_id', 'No Illini ID information. Your Illini ID expired on %s. Please visit the ID Center.'),
+            [Auth2().authCard?.expirationDate ?? '']
+          );
+        } else if ((0 < expirationDays) && (expirationDays < 30)) {
+          warning = sprintf(Localization().getStringEx('panel.browse.label.expiring_card.illini_id', 'Your ID will expire on %s. Please visit the ID Center.'),
+            [Auth2().authCard?.expirationDate ?? '']
+          );
         }
+      }
 
-        if (warning != null) {
-          AppAlert.showMessage(context, warning).then((_) {
-            _present(context, content: content);
-          });
-        } else {
+      if (warning != null) {
+        AppAlert.showMessage(context, warning).then((_) {
           _present(context, content: content);
-        }
+        });
+      } else {
+        _present(context, content: content);
       }
     }
   }
 
-  static void _present(BuildContext context, {ICardContent? content}) {
+  static void _present(BuildContext context, {WalletICardContent? content}) {
     MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
     double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
     showModalBottomSheet(
@@ -87,20 +79,20 @@ class ICardHomeContentPanel extends StatefulWidget {
         backgroundColor: Styles().colors.background,
         constraints: BoxConstraints(maxHeight: height, minHeight: height),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
-        builder: (context) => ICardHomeContentPanel._(content: content));
+        builder: (context) => WalletICardHomeContentPanel._(content: content));
   }
 }
 
-class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
-  static ICardContent? _lastSelectedContent;
-  late ICardContent _selectedContent;
+class _WalletICardHomePanelState extends State<WalletICardHomeContentPanel> {
+  static WalletICardContent? _lastSelectedContent;
+  late WalletICardContent _selectedContent;
   bool _contentValuesVisible = false;
-  late List<ICardContent> _contentValues;
+  late List<WalletICardContent> _contentValues;
 
   @override
   void initState() {
     super.initState();
-    _selectedContent = widget.content ?? (_lastSelectedContent ?? ICardContent.i_card);
+    _selectedContent = widget.content ?? (_lastSelectedContent ?? WalletICardContent.i_card);
     _loadContentValues();
   }
 
@@ -178,7 +170,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
   Widget _buildContentValuesWidget() {
     List<Widget> sectionList = <Widget>[];
     sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (ICardContent currentContent in _contentValues) {
+    for (WalletICardContent currentContent in _contentValues) {
       if ((_selectedContent != currentContent)) {
         sectionList.add(_buildContentItem(currentContent));
       }
@@ -186,7 +178,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: sectionList)));
   }
 
-  Widget _buildContentItem(ICardContent contentItem) {
+  Widget _buildContentItem(WalletICardContent contentItem) {
     return RibbonButton(
         backgroundColor: Styles().colors.white,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
@@ -196,10 +188,10 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
   }
 
   void _loadContentValues() {
-    _contentValues = <ICardContent>[];
-    for (ICardContent iCardContent in ICardContent.values) {
+    _contentValues = <WalletICardContent>[];
+    for (WalletICardContent iCardContent in WalletICardContent.values) {
       // Hide FAQs for all
-      if (iCardContent != ICardContent.faqs) {
+      if (iCardContent != WalletICardContent.faqs) {
         _contentValues.add(iCardContent);
       }
     }
@@ -212,7 +204,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
     }
   }
 
-  void _onTapContentItem(ICardContent contentItem) {
+  void _onTapContentItem(WalletICardContent contentItem) {
     Analytics().logSelect(target: "Content Item: ${contentItem.toString()}");
     _selectedContent = _lastSelectedContent = contentItem;
     _changeContentValuesVisibility();
@@ -226,10 +218,10 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
 
   Widget get _contentWidget {
     switch (_selectedContent) {
-      case ICardContent.i_card:
-        return IDCardContentWidget();
-      case ICardContent.faqs:
-        return ICardFaqsContentWidget();
+      case WalletICardContent.i_card:
+        return WalletICardContentWidget();
+      case WalletICardContent.faqs:
+        return WalletICardFaqsContentWidget();
     }
   }
 
@@ -240,11 +232,11 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
 
   // Utilities
 
-  String _getContentLabel(ICardContent content) {
+  String _getContentLabel(WalletICardContent content) {
     switch (content) {
-      case ICardContent.i_card:
+      case WalletICardContent.i_card:
         return Localization().getStringEx('panel.icard.home.content.icard.label', 'Illini ID');
-      case ICardContent.faqs:
+      case WalletICardContent.faqs:
         return Localization().getStringEx('panel.icard.home.content.faqs.label', 'FAQs');
     }
   }

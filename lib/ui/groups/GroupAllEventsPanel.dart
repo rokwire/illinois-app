@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
@@ -17,13 +18,16 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
-class GroupAllEventsPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GroupAllEventsPanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
 
   const GroupAllEventsPanel({Key? key, this.group}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GroupAllEventsState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
