@@ -331,6 +331,7 @@
 	"panel.browse.entry.academics.skills_self_evaluation.title": "技能自我評估",
 	"panel.browse.entry.academics.essential_skills_coach.title": "Essential Skills Coach",
 	"panel.browse.entry.academics.gies_canvas_courses.title": "我的 Gies 帆布課程",
+	"panel.browse.entry.academics.canvas_courses.title": "我的畫布課程",
 	"panel.browse.entry.academics.student_courses.title": "我的課程",
 	"panel.browse.entry.academics.my_illini.title": "MyIllini",
 	"panel.browse.entry.academics.campus_reminders.title": "校園提醒",
@@ -3039,6 +3040,7 @@
 	"panel.home.safer.test_locations.wait_time.status.label.yellow": "Medium wait time",
 	"panel.home.safer.test_locations.wait_time.status.label.green": "Short wait time",
 
+	"panel.canvas_courses.header.title": "我的畫布課程",
 	"panel.canvas_courses.load.empty.error.msg": "您似乎沒有註冊任何 Canvas 課程。",
 	"panel.canvas_courses.load.failed.error.msg": "無法載入課程。",
 	"panel.canvas_courses.load.offline.error.msg": "我的 Canvas 課程在離線時不可用。",
@@ -3632,6 +3634,7 @@
 	"widget.home_recent_item_card.label.date":"日期",
 	"widget.generic_cart.label.date":"日期",
 
+	"widget.home.canvas_courses.header.label": "我的畫布課程",
 	"widget.home.gies_canvas_courses.header.label": "我的 Gies 帆布課程",
 	"widget.home.gies_canvas_courses.text.empty.description": "您似乎沒有註冊任何 Gies Canvas 課程。",
 	"widget.home.gies_canvas_courses.button.all.title": "查看全部",

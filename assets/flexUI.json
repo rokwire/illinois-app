@@ -12,7 +12,7 @@
 				"event_feed", "my_events", "sport_events", "sport_news", "my_athletics", "my_game_day",
 				"my_campus_guide", "campus_reminders", "all_notifications", "unread_notifications",
 				"state_farm_center", "app_help", "video_tutorials",
-				"gies_checklist", "new_student_checklist", "safer", "student_courses", "gies_canvas_courses",
+				"gies_checklist", "new_student_checklist", "safer", "student_courses", "canvas_courses", "gies_canvas_courses",
 				"campus_highlights", "campus_safety_resources",
 				"recent_items", "my_news", "my_appointments", "my_mtd_stops", "my_mtd_destinations"
 			],
@@ -27,7 +27,7 @@
 			"home.twitter.account": ["gies", "rokwire", "", "news", "canvas"],
 			
 			"browse": ["academics", "app_help", "appointments", "athletics", "safer", "campus_guide", "dinings", "events", "feeds", "laundry", "groups", "mtd", "my", "inbox", "polls", "radio_stations", "recent", "research_projects", "state_farm_center", "wallet", "wellness"],
-			"browse.academics": ["gies_checklist", "new_student_checklist", "skills_self_evaluation", "essential_skills_coach", "student_courses", "gies_canvas_courses", "campus_reminders", "wellness_todo", "due_date_catalog", "appointments"],
+			"browse.academics": ["gies_checklist", "new_student_checklist", "skills_self_evaluation", "essential_skills_coach", "student_courses", "canvas_courses", "gies_canvas_courses", "campus_reminders", "wellness_todo", "due_date_catalog", "appointments"],
 			"browse.appointments": ["appointments"],
 			"browse.app_help": ["faqs", "feedback", "review", "video_tutorials"],
 			"browse.athletics": ["my_athletics", "my_game_day", "my_news", "sport_events", "sport_news", "sport_teams"],

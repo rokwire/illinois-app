@@ -36,8 +36,8 @@ import 'package:illinois/ui/home/HomeAppHelpWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsEventsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsNewsWidget.dart';
 import 'package:illinois/ui/home/HomeCampusSafetyResourcesWidget.dart';
+import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesPanel.dart';
-import 'package:illinois/ui/home/HomeGiesCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeCheckListWidget.dart';
 import 'package:illinois/ui/home/HomeDailyIlliniWidget.dart';
 import 'package:illinois/ui/home/HomeDiningWidget.dart';
@@ -229,11 +229,20 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
     }
     else if (code == 'gies_canvas_courses') {
       if (title) {
-        return HomeGiesCanvasCoursesWidget.title;
+        return HomeCanvasCoursesWidget.giesTitle;
       } else if (handle) {
-        return HomeGiesCanvasCoursesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+        return HomeCanvasCoursesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position, isGies: true);
       } else {
-        return HomeGiesCanvasCoursesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+        return HomeCanvasCoursesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, isGies: true,);
+      }
+    }
+    else if (code == 'canvas_courses') {
+      if (title) {
+        return HomeCanvasCoursesWidget.canvasTitle;
+      } else if (handle) {
+        return HomeCanvasCoursesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeCanvasCoursesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'student_courses') {
