@@ -17,6 +17,8 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/wallet/WalletICardContentWidget.dart';
+import 'package:illinois/ui/wallet/WalletICardFaqsContentWidget.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -64,6 +66,7 @@ class WalletHomePanel extends StatefulWidget {
 class _WalletHomePanelState extends State<WalletHomePanel> implements NotificationsListener {
   late WalletContentType _selectedContent;
   bool _contentValuesVisible = false;
+  Map<WalletContentType, GlobalKey> _pageKeys = <WalletContentType, GlobalKey>{};
 
   @override
   void initState() {
@@ -78,11 +81,6 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
     else {
       _selectedContent = Storage()._contentType ?? WalletContentType.values.first;
     }
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Force to calculate correct content height
-      setStateIfMounted((){});
-    });
   }
 
   @override
@@ -98,20 +96,21 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Column(children: [
-      Container(color: Styles().colors.white, child:
+  Widget build(BuildContext context) =>
+    Scaffold(backgroundColor: Styles().colors.white, body:
+      Column(children: [
         Row(children: [
           Expanded(child:
-            Padding(padding: EdgeInsets.only(left: 16), child: _headerTitle)
+            Padding(padding: EdgeInsets.only(left: 16), child:
+              _headerTitle
+            )
           ),
           _headerCloseButton,
-        ])
-      ),
-      Container(color: Styles().colors.surfaceAccent, height: 1),
-      Expanded(child: _panelContent)
-    ]);
-  }
+        ]),
+        Container(color: Styles().colors.surfaceAccent, height: 1),
+        Expanded(child: _panelContent)
+      ]),
+    );
 
   Widget get _headerTitle =>
     Text(Localization().getStringEx('panel.wallet.header.title', 'Wallet'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"));
@@ -128,29 +127,47 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
       )
     );
 
-  Widget get _panelContent => Stack(children: [
-    Positioned.fill(child: _contentWidget),
-    Positioned.fill(child: _dropdownDismissLayer),
-    Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
-      Column(children: [
-        RibbonButton(
-          textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-          backgroundColor: Styles().colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-          rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-          label: _walletContentTypeToDisplayString(_selectedContent) ?? '',
-          onTap: _onTapContentSwitch
-        ),
-        Expanded(child: _dropdownList)
-     ],)
-    ),
-  ],);
-
-  Widget get _dropdownDismissLayer => Visibility(visible: _contentValuesVisible, child:
-      InkWell(onTap: _onTapDismissLayer, child:
-        Container(color: Styles().colors.whiteTransparent01)
+  Widget get _panelContent => Column(children: <Widget>[
+    Expanded(child:
+      SingleChildScrollView(physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null), child:
+        Container(color: Styles().colors.white, child:
+          Stack(children: [
+            _contentWidget,
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
+                RibbonButton(
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+                  backgroundColor: Styles().colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                  rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
+                  label: _walletContentTypeToDisplayString(_selectedContent) ?? '',
+                  onTap: _onTapContentSwitch
+                )
+              ),
+              _dropdownContainer,
+            ])
+          ])
+        )
       )
+    )
+  ]);
+
+  Widget get _dropdownContainer => Visibility(visible: _contentValuesVisible, child:
+    Container(child:
+      Stack(children: <Widget>[
+        _dropdownDismissLayer,
+        _dropdownList,
+      ])
+    )
+  );
+
+  Widget get _dropdownDismissLayer => Container(child:
+    BlockSemantics(child:
+      GestureDetector(onTap: _onTapDismissLayer, child:
+        Container(color: Styles().colors.blackTransparent06, height: MediaQuery.of(context).size.height)
+      )
+    )
   );
 
   Widget get _dropdownList {
@@ -168,22 +185,30 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
       }
     }
 
-    return Visibility(visible: _contentValuesVisible, child:
-      //SingleChildScrollView(child:
-        Column(mainAxisSize: MainAxisSize.min, children: contentList)
-      //)
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      SingleChildScrollView(child:
+        Column(children: contentList)
+      )
     );
   }
 
-  Widget get _contentWidget {
-    switch (_selectedContent) {
-      case WalletContentType.illiniId: return Container(color: Colors.redAccent, height: 200,);
-      case WalletContentType.illiniIdFaqs: return Container(color: Colors.greenAccent, height: 800,);
-      case WalletContentType.busPass: return Container(color: Colors.blueAccent, height: 1600,);
-      case WalletContentType.mealPlan: return Container(color: Colors.yellowAccent, height: 3200,);
-      case WalletContentType.addIlliniCash: return Container(color: Colors.orangeAccent, height: 6400,);
-    }
-  }
+  Widget get _contentWidget => Column(children:[
+    Visibility(visible: _selectedContent == WalletContentType.illiniId, maintainState: true, child:
+      WalletICardContentWidget(key: _pageKeys[WalletContentType.illiniId] ??= GlobalKey())
+    ),
+    Visibility(visible: _selectedContent == WalletContentType.illiniIdFaqs, maintainState: true, child:
+      WalletICardFaqsContentWidget(key: _pageKeys[WalletContentType.illiniIdFaqs] ??= GlobalKey())
+    ),
+    Visibility(visible: _selectedContent == WalletContentType.busPass, maintainState: true, child:
+      Container(key: _pageKeys[WalletContentType.busPass] ??= GlobalKey(), color: Colors.white,)
+    ),
+    Visibility(visible: _selectedContent == WalletContentType.mealPlan, maintainState: true, child:
+      Container(key: _pageKeys[WalletContentType.mealPlan] ??= GlobalKey(), color: Colors.white,)
+    ),
+    Visibility(visible: _selectedContent == WalletContentType.addIlliniCash, maintainState: true, child:
+      Container(key: _pageKeys[WalletContentType.addIlliniCash] ??= GlobalKey(), color: Colors.white,)
+    ),
+  ]);
 
   void _onTapDropdownItem(WalletContentType contentType) {
     Analytics().logSelect(target: _walletContentTypeToDisplayString(contentType), source: widget.runtimeType.toString());

@@ -21,6 +21,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 //TBD: DD - populate the faqs from a resource
 class WalletICardFaqsContentWidget extends StatefulWidget {
+  WalletICardFaqsContentWidget({super.key});
   @override
   State<StatefulWidget> createState() => _WalletICardFaqsContentWidgetState();
 }
