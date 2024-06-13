@@ -597,13 +597,23 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx('panel.home.header.title', 'Home')),
       body: Column(key: _contentWrapperKey, children: <Widget>[
-        _buildContentTabs(),
+        Row(children: [
+          Expanded(child: _HomeContentTab(HomeContentType.favorites, selected: _contentType == HomeContentType.favorites,)),
+          Expanded(child: _HomeContentTab(HomeContentType.browse, selected: _contentType == HomeContentType.browse,)),
+        ],),
         Expanded(child:
           RefreshIndicator(onRefresh: _onPullToRefresh, child:
             SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
               Column(children: [
-                _buildToutWidget(),
-                _buildContentWidget(),
+                HomeToutWidget(key: _toutKey, contentType: _contentType, updateController: _updateController,),
+
+                Visibility(visible: (_contentType == HomeContentType.favorites), maintainState: true, child:
+                  HomeFavoritesContentWidget(key: _favoritesKey, availableSystemCodes: _availableSystemCodes, updateController: _updateController,),
+                ),
+
+                Visibility(visible: (_contentType == HomeContentType.browse), maintainState: true, child:
+                  BrowseContentWidget(key: _browseKey),
+                ),
               ],)
             ),
           ),
@@ -612,20 +622,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: null,
     );
-  }
-
-  Widget _buildContentTabs() => Row(children: [
-    Expanded(child: _HomeContentTab(HomeContentType.favorites, selected: _contentType == HomeContentType.favorites,)),
-    Expanded(child: _HomeContentTab(HomeContentType.browse, selected: _contentType == HomeContentType.browse,)),
-  ],);
-
-  Widget _buildToutWidget() => HomeToutWidget(key: _toutKey, contentType: _contentType, updateController: _updateController,);
-
-  Widget _buildContentWidget() {
-    switch(_contentType) {
-      case HomeContentType.favorites: return HomeFavoritesContentWidget(key: _favoritesKey, availableSystemCodes: _availableSystemCodes, updateController: _updateController,);
-      case HomeContentType.browse: return BrowseContentWidget(key: _browseKey);
-    }
   }
 
   Future<void> _onPullToRefresh() async {
