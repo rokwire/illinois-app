@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [6.0.7] - 2024-06-14
 ### Changed
 - Preserve content tab states in Home Panel [#4108](https://github.com/rokwire/illinois-app/issues/4108).
 - Show "My Canvas Courses" for all signed in users [#4115](https://github.com/rokwire/illinois-app/issues/4115).
