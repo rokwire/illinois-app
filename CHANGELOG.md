@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show "My Canvas Courses" for all signed in users [#4115](https://github.com/rokwire/illinois-app/issues/4115).
 - Updated share icon style [#4041](https://github.com/rokwire/illinois-app/issues/4041).
 - Updated logged out prompt text [#4079](https://github.com/rokwire/illinois-app/issues/4079).
+- GroupPostDetailPanel change replies order so the newest reply goes at the bottom [4081](https://github.com/rokwire/illinois-app/issues/4081)
 
 ## [6.0.6] - 2024-06-12
 ### Changed
