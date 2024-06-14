@@ -19,6 +19,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/wallet/WalletICardContentWidget.dart';
 import 'package:illinois/ui/wallet/WalletICardFaqsContentWidget.dart';
+import 'package:illinois/ui/wallet/WalletMTDBusPassPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -192,7 +193,17 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
     );
   }
 
-  Widget get _contentWidget => Column(children:[
+  Widget get _contentWidget {
+    GlobalKey pageKey = _pageKeys[_selectedContent] ??= GlobalKey();
+    switch(_selectedContent) {
+      case WalletContentType.illiniId: return WalletICardContentWidget(key: pageKey);
+      case WalletContentType.illiniIdFaqs: return WalletICardFaqsContentWidget(key: pageKey);
+      case WalletContentType.busPass: return WalletMTDBusPassContentWidget(key: pageKey);
+      case WalletContentType.mealPlan: return Container(key: pageKey, color: Colors.white,);
+      case WalletContentType.addIlliniCash: return Container(key: pageKey, color: Colors.white,);
+    }
+  }
+  /*Column(children:[
     Visibility(visible: _selectedContent == WalletContentType.illiniId, maintainState: true, child:
       WalletICardContentWidget(key: _pageKeys[WalletContentType.illiniId] ??= GlobalKey())
     ),
@@ -201,6 +212,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
     ),
     Visibility(visible: _selectedContent == WalletContentType.busPass, maintainState: true, child:
       Container(key: _pageKeys[WalletContentType.busPass] ??= GlobalKey(), color: Colors.white,)
+      //WalletMTDBusPassContentWidget(key: _pageKeys[WalletContentType.busPass] ??= GlobalKey())
     ),
     Visibility(visible: _selectedContent == WalletContentType.mealPlan, maintainState: true, child:
       Container(key: _pageKeys[WalletContentType.mealPlan] ??= GlobalKey(), color: Colors.white,)
@@ -208,7 +220,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
     Visibility(visible: _selectedContent == WalletContentType.addIlliniCash, maintainState: true, child:
       Container(key: _pageKeys[WalletContentType.addIlliniCash] ??= GlobalKey(), color: Colors.white,)
     ),
-  ]);
+  ]);*/
 
   void _onTapDropdownItem(WalletContentType contentType) {
     Analytics().logSelect(target: _walletContentTypeToDisplayString(contentType), source: widget.runtimeType.toString());

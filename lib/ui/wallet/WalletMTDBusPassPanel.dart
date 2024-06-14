@@ -32,9 +32,7 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class WalletMTDBusPassPanel extends StatefulWidget {
-  _WalletMTDBusPassPanelState createState() => _WalletMTDBusPassPanelState();
-
+class WalletMTDBusPassPanel extends StatelessWidget {
   static void present(BuildContext context) {
     if (!Auth2().isOidcLoggedIn) {
       AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.bus_pass', 'MTD Bus Pass'));
@@ -50,9 +48,52 @@ class WalletMTDBusPassPanel extends StatefulWidget {
         builder: (context) => WalletMTDBusPassPanel());
     }
   }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(body:
+    Stack(children: [
+      Positioned.fill(child: WalletMTDBusPassContentWidget()),
+      Positioned.fill(child:
+        Align(alignment: Alignment.topCenter, child:
+          Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top ), child: // AppBar().preferredSize.height, MediaQuery.of(context).viewPadding.top, View.of(context).padding.top
+            Row(children: [
+              Expanded(child:
+                Padding(padding: EdgeInsets.only(left: 16), child:
+                  Semantics(header: true, child:
+                    Text(Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass"), style: Styles().textStyles.getTextStyle("panel.mtd_bus.heading.title")),
+                  )
+                )
+              ),
+              Semantics(
+                label: Localization().getStringEx('dialog.close.title', 'Close'),
+                hint: Localization().getStringEx('dialog.close.hint', ''),
+                inMutuallyExclusiveGroup: true,
+                button: true,
+                child: InkWell(onTap: () => _onClose(context), child:
+                  Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
+                    Styles().images.getImage('close-circle', excludeFromSemantics: true)
+                  )
+                )
+              )
+            ]),
+          ),
+        )
+      )
+    ],),
+  );
+
+  void _onClose(BuildContext context) {
+    Analytics().logSelect(target: 'Close');
+    Navigator.of(context).pop();
+  }
 }
 
-class _WalletMTDBusPassPanelState extends State<WalletMTDBusPassPanel> implements NotificationsListener {
+class WalletMTDBusPassContentWidget extends StatefulWidget {
+  WalletMTDBusPassContentWidget({super.key});
+  State<StatefulWidget> createState() => _WalletMTDBusPassContentWidgetState();
+}
+
+class _WalletMTDBusPassContentWidgetState extends State<WalletMTDBusPassContentWidget> implements NotificationsListener {
   final double _headingH1 = 180;
   final double _headingH2 = 80;
   final double _photoSize = 240;
@@ -124,49 +165,46 @@ class _WalletMTDBusPassPanelState extends State<WalletMTDBusPassPanel> implement
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body:
-      Stack(children: <Widget>[
-        Column(children: <Widget>[
-          Container(height: _headingH1, color: _activeColor,),
-          Container(height: _headingH2, color: _activeColor, child:
-            CustomPaint(painter: TrianglePainter(painterColor: _backgroundColor), child: Container(),),
-          ),
-          Expanded(child:
-            Container(color: _backgroundColor,),
-          )
-        ],),
-        Column(children: <Widget>[
-          Expanded(child: _buildBusContent()),
-          SafeArea(child:
-            Align(alignment: Alignment.bottomCenter, child:
-              Padding(padding: EdgeInsets.only(bottom: 10), child:
-                Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
-                  InkWell(onTap: _onClose, child: Styles().images.getImage('close-circle-white-large', excludeFromSemantics: true)),
-                ),
-              ),
-            ),
-          ),
-        ]),
+    return Stack(children: <Widget>[
+      Column(children: <Widget>[
+        Container(height: _headingH1, color: _activeColor,),
+        Container(height: _headingH2, color: _activeColor, child:
+          CustomPaint(painter: TrianglePainter(painterColor: _backgroundColor), child: Container(),),
+        ),
+        Expanded(child:
+          Container(color: _backgroundColor,),
+        )
+      ],),
+      Column(children: <Widget>[
+        Expanded(child: _buildBusContent()),
         SafeArea(child:
-          Stack(children: <Widget>[
-            Padding( padding: EdgeInsets.all(16), child:
-              Semantics(header: true, child:
-                Text(Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass"), style: Styles().textStyles.getTextStyle("panel.mtd_bus.heading.title")),
+          Align(alignment: Alignment.bottomCenter, child:
+            Padding(padding: EdgeInsets.only(bottom: 10), child:
+              Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
+                InkWell(onTap: _onClose, child: Styles().images.getImage('close-circle-white-large', excludeFromSemantics: true)),
               ),
             ),
-            Align(alignment: Alignment.topRight, child:
-              Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
-                InkWell(onTap: _onClose, child:
-                  Container(width: 48, height: 48, alignment: Alignment.center,
-                      child: Styles().images.getImage('close-dark', excludeFromSemantics: true)),
-                ),
-              )
-            ),
-          ],),
           ),
-        ],
-      ),
-    );
+        ),
+      ]),
+      /*SafeArea(child:
+        Stack(children: <Widget>[
+          Padding( padding: EdgeInsets.all(16), child:
+            Semantics(header: true, child:
+              Text(Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass"), style: Styles().textStyles.getTextStyle("panel.mtd_bus.heading.title")),
+            ),
+          ),
+          Align(alignment: Alignment.topRight, child:
+            Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
+              InkWell(onTap: _onClose, child:
+                Container(width: 48, height: 48, alignment: Alignment.center,
+                    child: Styles().images.getImage('close-dark', excludeFromSemantics: true)),
+              ),
+            )
+          ),
+        ],),
+      ),*/
+    ],);
   }
 
   Widget _buildBusContent() {
