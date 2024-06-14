@@ -70,6 +70,10 @@ class NativeCommunicator with Service {
   }
 
   Future<void> dismissLaunchScreen() async {
+    if (kIsWeb) {
+      debugPrint('WEB: dismissLaunchScreen - not implemented.');
+      return;
+    }
     try {
       await _platformChannel.invokeMethod('dismissLaunchScreen');
     } on PlatformException catch (e) {
