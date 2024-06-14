@@ -103,7 +103,7 @@
 	"payment_type.text.google_pay":"GooglePay",
 	"payment_type.text.apple_pay":"ApplePay",
 
-	"auth.logged_out.feature.not_available.message.verbose": "To access {{feature}}, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.",
+	"auth.logged_out.feature.not_available.message.verbose": "To access {{feature}}, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
 	"auth.logged_out.feature.not_available.message.short": "To access {{feature}}, you need to sign in with your NetID.",
 
 	"generic.app.feature.illini_cash": "Illini Cash",
@@ -422,7 +422,7 @@
 	"panel.assistant.header.title": "伊利諾伊州助理",
 	"panel.assistant.offline.label": "離線時，伊利諾伊州助手不可用。",
 	"panel.assistant.clear_all.label": "全部清除",
-	"panel.assistant.logged_out.label": "要存取伊利諾伊州助手，您需要使用 NetID 登錄，並在個人資料下將您的隱私等級設定為 4 或 5。",
+	"panel.assistant.logged_out.label": "To access the Illinois Assistant, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
 	"panel.assistant.content.conversation.label": "詢問伊利諾伊州助理",
 	"panel.assistant.content.faqs.label": "伊利諾伊州助理常見問題解答",
 	"panel.assistant.sources_links.label": "來源和連結",

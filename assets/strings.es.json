@@ -103,7 +103,7 @@
     "payment_type.text.google_pay":"Google Pay",
     "payment_type.text.apple_pay":"Apple Pay",
 
-    "auth.logged_out.feature.not_available.message.verbose": "To access {{feature}}, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.",
+    "auth.logged_out.feature.not_available.message.verbose": "To access {{feature}}, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
     "auth.logged_out.feature.not_available.message.short": "To access {{feature}}, you need to sign in with your NetID.",
 
     "generic.app.feature.illini_cash": "Illini Cash",
@@ -422,7 +422,7 @@
     "panel.assistant.header.title": "Asistente de Illinois",
     "panel.assistant.offline.label": "El Asistente de Illinois no está disponible sin conexión.",
     "panel.assistant.clear_all.label": "Limpiar todo",
-    "panel.assistant.logged_out.label": "Para acceder al Asistente de Illinois, debe iniciar sesión con su NetID y configurar su nivel de privacidad en 4 o 5 en Perfil.",
+    "panel.assistant.logged_out.label": "To access the Illinois Assistant, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
     "panel.assistant.content.conversation.label": "Pregunta al asistente de Illinois",
     "panel.assistant.content.faqs.label": "Preguntas frecuentes sobre el asistente de Illinois",
     "panel.assistant.sources_links.label": "Fuentes y enlaces",
