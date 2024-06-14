@@ -17,6 +17,7 @@
 import 'dart:core';
 import 'dart:io';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Storage.dart';
@@ -709,10 +710,10 @@ class Canvas with Service implements NotificationsListener {
     return ((_cacheFile != null) && await _cacheFile!.exists()) ? await _cacheFile!.readAsString() : null;
   }
 
-  Future<File> _getCacheFile() async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String cacheFilePath = join(appDocDir.path, _canvasCoursesCacheFileName);
-    return File(cacheFilePath);
+  Future<File?> _getCacheFile() async {
+    Directory? appDocDir = kIsWeb ? null : await getApplicationDocumentsDirectory();
+    String? cacheFilePath = (appDocDir != null) ? join(appDocDir.path, _canvasCoursesCacheFileName) : null;
+    return (cacheFilePath != null) ? File(cacheFilePath) : null;
   }
 
   List<CanvasCourse>? _loadCoursesFromString(String? coursesString) {

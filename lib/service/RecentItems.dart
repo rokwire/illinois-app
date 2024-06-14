@@ -16,6 +16,7 @@
 
 import 'dart:collection';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -85,16 +86,16 @@ class RecentItems with Service implements NotificationsListener {
     }
   }
 
-  static Future<File> get _recentItemsFile async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String cacheFilePath = join(appDocDir.path, _cacheFileName);
-    return File(cacheFilePath);
+  static Future<File?> get _recentItemsFile async {
+    Directory? appDocDir = kIsWeb ? null : await getApplicationDocumentsDirectory();
+    String? cacheFilePath = (appDocDir != null) ? join(appDocDir.path, _cacheFileName) : null;
+    return (cacheFilePath != null) ? File(cacheFilePath) : null;
   }
 
   static Future<Queue<RecentItem>?> _loadRecentItems() async {
-    File cacheFile = await _recentItemsFile;
-    if (await cacheFile.exists()) {
-      String jsonString = await cacheFile.readAsString();
+    File? cacheFile = await _recentItemsFile;
+    if (await cacheFile?.exists() == true) {
+      String jsonString = await cacheFile!.readAsString();
       return RecentItem.queueFromJson(JsonUtils.decodeList(jsonString));
     }
     // backward compatability
@@ -102,9 +103,9 @@ class RecentItems with Service implements NotificationsListener {
   }
 
   static Future<void> _saveRecentItems(Queue<RecentItem>? recentItems) async {
-    File cacheFile = await _recentItemsFile;
+    File? cacheFile = await _recentItemsFile;
     String? jsonString = JsonUtils.encode(RecentItem.queueToJson(recentItems));
-    await cacheFile.writeAsString(jsonString ?? '', flush: true);
+    await cacheFile?.writeAsString(jsonString ?? '', flush: true);
 
   }
 

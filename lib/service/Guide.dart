@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -150,10 +151,10 @@ class Guide with Service implements NotificationsListener {
 
   // Implementation
 
-  Future<File> _getCacheFile() async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String cacheFilePath = join(appDocDir.path, _cacheFileName);
-    return File(cacheFilePath);
+  Future<File?> _getCacheFile() async {
+    Directory? appDocDir = kIsWeb ? null : await getApplicationDocumentsDirectory();
+    String? cacheFilePath = (appDocDir != null) ? join(appDocDir.path, _cacheFileName) : null;
+    return (cacheFilePath != null) ? File(cacheFilePath) : null;
   }
 
   Future<String?> _loadContentStringFromCache() async {
@@ -675,11 +676,11 @@ class Guide with Service implements NotificationsListener {
 
 
   /*static Future<void> _convertFile(String contentFileName, String sourceFileName) async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
+    Directory? appDocDir = kIsWeb ? null : await getApplicationDocumentsDirectory();
 
-    String sourceFilePath = join(appDocDir.path, sourceFileName);
-    File sourceFile = File(sourceFilePath);
-    String sourceString = await sourceFile.exists() ? await sourceFile.readAsString() : null;
+    String? sourceFilePath = (appDocDir != null) ? join(appDocDir.path, sourceFileName) : null;
+    File? sourceFile = (sourceFilePath != null) ? File(sourceFilePath) : null;
+    String? sourceString = await sourceFile?.exists() ? await sourceFile.readAsString() : null;
     List<dynamic> sourceList = JsonUtils.decodeList(sourceString);
     
     List<dynamic> contentList = _convertContent(sourceList);

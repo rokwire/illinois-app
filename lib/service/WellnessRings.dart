@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/WellnessRing.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -546,11 +547,11 @@ class WellnessRings with Service implements NotificationsListener{
     return status == WellnessRingsStatus.initialized;
   }
 
-  //Cashe
-  Future<File> _getCacheFile() async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String cacheFilePath = join(appDocDir.path, _cacheFileName);
-    return File(cacheFilePath);
+  // Cache
+  Future<File?> _getCacheFile() async {
+    Directory? appDocDir = kIsWeb ? null : await getApplicationDocumentsDirectory();
+    String? cacheFilePath = (appDocDir != null) ? join(appDocDir.path, _cacheFileName) : null;
+    return (cacheFilePath != null) ? File(cacheFilePath) : null;
   }
 
   Future<String?> _loadContentStringFromCache() async {
