@@ -128,31 +128,38 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
       )
     );
 
-  Widget get _panelContent => Column(children: <Widget>[
-    Expanded(child:
-      SingleChildScrollView(physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null), child:
-        Container(color: Styles().colors.white, child:
-          Stack(children: [
-            _contentWidget,
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
-                RibbonButton(
-                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-                  backgroundColor: Styles().colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-                  rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-                  label: _walletContentTypeToDisplayString(_selectedContent) ?? '',
-                  onTap: _onTapContentSwitch
-                )
-              ),
-              _dropdownContainer,
-            ])
-          ])
-        )
+
+  Widget get _panelContent {
+
+    Widget innerContent2 = Container(color: Styles().colors.white, child:
+      Stack(children: [
+        _contentWidget,
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
+            RibbonButton(
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+              backgroundColor: Styles().colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+              rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
+              label: _walletContentTypeToDisplayString(_selectedContent) ?? '',
+              onTap: _onTapContentSwitch
+            )
+          ),
+          _dropdownContainer,
+        ]),
+      ]),
+    );
+    Widget innerContent = ((_selectedContent != WalletContentType.busPass) || _contentValuesVisible) ?
+      SingleChildScrollView(physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null), child: innerContent2) :
+      innerContent2;
+
+    return Column(children: <Widget>[
+      Expanded(child:
+        innerContent,
       )
-    )
-  ]);
+    ]);
+  }
 
   Widget get _dropdownContainer => Visibility(visible: _contentValuesVisible, child:
     Container(child:

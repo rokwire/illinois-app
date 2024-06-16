@@ -55,31 +55,44 @@ class WalletMTDBusPassPanel extends StatelessWidget {
       Stack(children: [
         Positioned.fill(child: WalletMTDBusPassContentWidget()),
         Positioned.fill(child:
-          Align(alignment: Alignment.topCenter, child:
-            Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).viewPadding.bottom), child:
-              Row(children: [
-                Expanded(child:
-                  Padding(padding: EdgeInsets.only(left: 16), child:
-                    Semantics(header: true, child:
-                      Text(Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass"), style: Styles().textStyles.getTextStyle("panel.mtd_bus.heading.title")),
+          SafeArea(child:
+            Align(alignment: Alignment.topCenter, child:
+              Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).viewPadding.bottom), child:
+                Row(children: [
+                  Expanded(child:
+                    Padding(padding: EdgeInsets.only(left: 16), child:
+                      Semantics(header: true, child:
+                        Text(Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass"), style: Styles().textStyles.getTextStyle("panel.mtd_bus.heading.title")),
+                      )
+                    )
+                  ),
+                  Semantics(
+                    label: Localization().getStringEx('dialog.close.title', 'Close'),
+                    hint: Localization().getStringEx('dialog.close.hint', ''),
+                    inMutuallyExclusiveGroup: true,
+                    button: true,
+                    child: InkWell(onTap: () => _onClose(context), child:
+                      Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
+                        Styles().images.getImage('close-circle', excludeFromSemantics: true)
+                      )
                     )
                   )
-                ),
-                Semantics(
-                  label: Localization().getStringEx('dialog.close.title', 'Close'),
-                  hint: Localization().getStringEx('dialog.close.hint', ''),
-                  inMutuallyExclusiveGroup: true,
-                  button: true,
-                  child: InkWell(onTap: () => _onClose(context), child:
-                    Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-                      Styles().images.getImage('close-circle', excludeFromSemantics: true)
-                    )
-                  )
-                )
-              ]),
+                ]),
+              ),
             ),
-          )
-        )
+          ),
+        ),
+        Positioned.fill(child:
+          SafeArea(child:
+            Align(alignment: Alignment.bottomCenter, child:
+              Padding(padding: EdgeInsets.only(bottom: 10), child:
+                Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
+                  InkWell(onTap: () => _onClose(context), child: Styles().images.getImage('close-circle-white-large', excludeFromSemantics: true)),
+                ),
+              ),
+            ),
+          ),
+        ),
       ],),
     );
 
@@ -166,17 +179,8 @@ class _WalletMTDBusPassContentWidgetState extends State<WalletMTDBusPassContentW
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: <Widget>[
-      Column(children: <Widget>[
-        Container(height: _headingH1, color: _activeColor,),
-        Container(height: _headingH2, color: _activeColor, child:
-          CustomPaint(painter: TrianglePainter(painterColor: _backgroundColor), child: Container(),),
-        ),
-        //Expanded(child:
-          Container(height: 1200, color: _backgroundColor,),
-        //)
-      ],),
-    ]);
+    //return Column(children: <Widget>[Expanded(child: )]);
+    //return Container();
     return Stack(children: <Widget>[
       Column(children: <Widget>[
         Container(height: _headingH1, color: _activeColor,),
@@ -189,15 +193,6 @@ class _WalletMTDBusPassContentWidgetState extends State<WalletMTDBusPassContentW
       ],),
       Column(children: <Widget>[
         Expanded(child: _buildBusContent()),
-        SafeArea(child:
-          Align(alignment: Alignment.bottomCenter, child:
-            Padding(padding: EdgeInsets.only(bottom: 10), child:
-              Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
-                InkWell(onTap: _onClose, child: Styles().images.getImage('close-circle-white-large', excludeFromSemantics: true)),
-              ),
-            ),
-          ),
-        ),
       ]),
     ],);
   }
@@ -398,11 +393,11 @@ class _WalletMTDBusPassContentWidgetState extends State<WalletMTDBusPassContentW
     Navigator.of(context).pop();
   }
 
-  Color? get _activeColor {
-    return _activeBusColor??Styles().colors.fillColorSecondary;
+  Color get _activeColor {
+    return _activeBusColor ?? Styles().colors.fillColorSecondary;
   }
 
-  Color? get _backgroundColor {
+  Color get _backgroundColor {
     return Styles().colors.fillColorPrimaryVariant;
   }
 
