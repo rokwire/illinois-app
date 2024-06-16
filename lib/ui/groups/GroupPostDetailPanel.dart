@@ -951,7 +951,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if(CollectionUtils.isNotEmpty(replies)) {
       try {
         replies!.sort((post1, post2) =>
-            post2.dateCreatedUtc!.compareTo(post1.dateCreatedUtc!));
+            post1.dateCreatedUtc!.compareTo(post2.dateCreatedUtc!));
       } catch (e) {}
     }
   }
