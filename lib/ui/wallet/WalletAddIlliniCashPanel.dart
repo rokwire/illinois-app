@@ -36,7 +36,7 @@ import 'package:roundcheckbox/roundcheckbox.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
-class WalletAddIlliniCashPanel extends StatefulWidget {
+class WalletAddIlliniCashPanel extends StatelessWidget {
 
   WalletAddIlliniCashPanel({super.key});
 
@@ -52,12 +52,37 @@ class WalletAddIlliniCashPanel extends StatefulWidget {
   }
 
   @override
-  _WalletAddIlliniCashPanelState createState() =>
-      _WalletAddIlliniCashPanelState();
+  Widget build(BuildContext context) {
+    return Scaffold(body:
+      Column(children: <Widget>[
+        Expanded(child:
+          CustomScrollView(slivers: <Widget>[
+            SliverHeaderBar(
+              leadingIconKey: 'chevron-left-white',
+              title: Localization().getStringEx("panel.settings.add_illini_cash.header.title", "Add Illini Cash"),
+              textStyle: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),
+            ),
+            SliverList(delegate: SliverChildListDelegate([
+              WalletAddIlliniCashContentWidget(),
+            ]),),
+          ],),
+       ),
+      ],),
+      backgroundColor: Styles().colors.background,
+      bottomNavigationBar: uiuc.TabBar(),
+    );
+  }
 }
 
-class _WalletAddIlliniCashPanelState
-    extends State<WalletAddIlliniCashPanel> {
+class WalletAddIlliniCashContentWidget extends StatefulWidget {
+
+  WalletAddIlliniCashContentWidget({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _WalletAddIlliniCashContentWidgetState();
+}
+
+class _WalletAddIlliniCashContentWidgetState extends State<WalletAddIlliniCashContentWidget> {
 
   bool _agreePrivacy = false;
   bool __isLoading = false;
@@ -111,519 +136,279 @@ class _WalletAddIlliniCashPanelState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: <Widget>[
-          Expanded(
-              child: Stack(
-                children: <Widget>[
-                  CustomScrollView(
-                    slivers: <Widget>[
-                      SliverHeaderBar(
-                        leadingIconKey: 'chevron-left-white',
-                        title: Localization().getStringEx("panel.settings.add_illini_cash.header.title", "Add Illini Cash"),
-                        textStyle: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),
-                      ),
-                      SliverList(
-                        delegate: SliverChildListDelegate([
-                          GestureDetector(
-                            behavior: HitTestBehavior.translucent,
-                            onTap: (){FocusScope.of(context).requestFocus(new FocusNode());},
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Container(
-                                    height: 10,
-                                  ),
-                                  Semantics(
-                                      label: Localization().getStringEx(
-                                          "panel.settings.add_illini_cash.label.recipient_uin.text",
-                                          "RECIPIENT'S UIN"),
-                                      hint: Localization().getStringEx(
-                                          "panel.settings.add_illini_cash.label.recipient_uin.hint",
-                                          ""),
-                                      textField: true,
-                                      excludeSemantics: true,
-                                      child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              Localization().getStringEx(
-                                                  "panel.settings.add_illini_cash.label.recipient_uin.text",
-                                                  "RECIPIENT'S UIN"),
-                                              style: Styles().textStyles.getTextStyle("panel.settings.detail.title.medium")
-                                            ),
-                                            TextFormField(
-                                              controller: _uinController,
-                                              focusNode: _uinFocusNode,
-                                              keyboardType: TextInputType.number,
-                                              onFieldSubmitted: (_){ FocusScope.of(context).requestFocus(_firstNameFocusNode); },
-                                              decoration: new InputDecoration(
-                                                focusedBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary,
-                                                      width: 1.0),
-                                                ),
-                                                enabledBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
-                                                      width: 1.0),
-                                                ),
-                                                disabledBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
-                                                      width: 1.0),
-                                                ),
-                                              ),
-                                              style:  Styles().textStyles.getTextStyle("widget.detail.large.fat")
-                                            ),
-                                          ])),
-                                  Container(
-                                    height: 20,
-                                  ),
-                                  Semantics(
-                                      label: Localization().getStringEx(
-                                          "panel.settings.add_illini_cash.label.first_name.text",
-                                          "RECIPIENT'S FIRST NAME"),
-                                      hint: Localization().getStringEx(
-                                          "panel.settings.add_illini_cash.label.first_name.hint",
-                                          ""),
-                                      textField: true,
-                                      excludeSemantics: true,
-                                      child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              Localization().getStringEx(
-                                                  "panel.settings.add_illini_cash.label.first_name.text",
-                                                  "RECIPIENT'S FIRST NAME"),
-                                              style: Styles().textStyles.getTextStyle("panel.settings.detail.title.medium"),
-                                            ),
-                                            TextFormField(
-                                              controller: _firstNameController,
-                                              keyboardType: TextInputType.text,
-                                              textCapitalization: TextCapitalization.words,
-                                              focusNode: _firstNameFocusNode,
-                                              onFieldSubmitted: (_){ FocusScope.of(context).requestFocus(_lastNameFocusNode); },
-                                              decoration: new InputDecoration(
-                                                focusedBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary,
-                                                      width: 1.0),
-                                                ),
-                                                enabledBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
-                                                      width: 1.0),
-                                                ),
-                                                disabledBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
-                                                      width: 1.0),
-                                                ),
-                                              ),
-                                              style:  Styles().textStyles.getTextStyle("widget.detail.large.fat")
-                                            ),
-                                          ])),
-                                  Container(
-                                    height: 20,
-                                  ),
-                                  Semantics(
-                                      label: Localization().getStringEx(
-                                          "panel.settings.add_illini_cash.label.last_name.text",
-                                          "RECIPIENT'S LAST NAME"),
-                                      hint: Localization().getStringEx(
-                                          "panel.settings.add_illini_cash.label.last_name.hint",
-                                          ""),
-                                      textField: true,
-                                      excludeSemantics: true,
-                                      child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              Localization().getStringEx(
-                                                  "panel.settings.add_illini_cash.label.last_name.text",
-                                                  "RECIPIENT'S LAST NAME"),
-                                              style:  Styles().textStyles.getTextStyle("panel.settings.detail.title.medium")
-                                            ),
-                                            TextFormField(
-                                              controller: _lastNameController,
-                                              keyboardType: TextInputType.text,
-                                              textCapitalization: TextCapitalization.words,
-                                              focusNode: _lastNameFocusNode,
-                                              onFieldSubmitted: (_){ FocusScope.of(context).requestFocus(_emailFocusNode); },
-                                              decoration: new InputDecoration(
-                                                focusedBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary,
-                                                      width: 1.0),
-                                                ),
-                                                enabledBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
-                                                      width: 1.0),
-                                                ),
-                                                disabledBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
-                                                      width: 1.0),
-                                                ),
-                                              ),
-                                              style: Styles().textStyles.getTextStyle("widget.detail.large.fat")
-                                            ),
-                                          ])),
-                                  Container(
-                                    height: 20,
-                                  ),
-                                  Semantics(
-                                      label: Localization().getStringEx(
-                                          "panel.settings.add_illini_cash.label.email_address.text",
-                                          "EMAIL RECEIPT TO"),
-                                      hint: Localization().getStringEx(
-                                          "panel.settings.add_illini_cash.label.email_address.hint",
-                                          ""),
-                                      textField: true,
-                                      excludeSemantics: true,
-                                      child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              Localization().getStringEx(
-                                                  "panel.settings.add_illini_cash.label.email_address.text",
-                                                  "EMAIL RECEIPT TO"),
-                                              style: Styles().textStyles.getTextStyle("panel.settings.detail.title.medium"),
-                                            ),
-                                            TextFormField(
-                                              controller: _emailController,
-                                              keyboardType: TextInputType.emailAddress,
-                                              focusNode: _emailFocusNode,
-                                              onFieldSubmitted: (_){ FocusScope.of(context).requestFocus(_ccFocusNode); },
-                                              decoration: new InputDecoration(
-                                                focusedBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary,
-                                                      width: 1.0),
-                                                ),
-                                                enabledBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
-                                                      width: 1.0),
-                                                ),
-                                                disabledBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
-                                                      width: 1.0),
-                                                ),
-                                              ),
-                                              style: Styles().textStyles.getTextStyle("widget.detail.large.fat")
-                                            ),
-                                          ])),
-                                  Container(
-                                    height: 20,
-                                  ),
-                                  Semantics(
-                                      label: Localization().getStringEx(
-                                          "panel.settings.add_illini_cash.label.credit_card.text", "CREDIT CARD"),
-                                      hint: Localization().getStringEx(
-                                          "panel.settings.add_illini_cash.label.credit_card.hint",
-                                          ""),
-                                      textField: true,
-                                      excludeSemantics: true,
-                                      child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              Localization().getStringEx(
-                                                  "panel.settings.add_illini_cash.label.credit_card.text", "CREDIT CARD"),
-                                              style: Styles().textStyles.getTextStyle("panel.settings.detail.title.medium")
-                                            ),
-                                            TextFormField(
-                                              focusNode: _ccFocusNode,
-                                              controller: _ccController,
-                                              keyboardType: TextInputType.number,
-                                              textInputAction: TextInputAction.next,
-                                              decoration: new InputDecoration(
-                                                focusedBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary,
-                                                      width: 1.0),
-                                                ),
-                                                enabledBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
-                                                      width: 1.0),
-                                                ),
-                                                disabledBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
-                                                      width: 1.0),
-                                                ),
-                                              ),
-                                              inputFormatters: [CreditCardNumberInputFormatter()],
-                                              onFieldSubmitted: (_){ FocusScope.of(context).requestFocus(_expiryFocusNode); },
-                                              style: Styles().textStyles.getTextStyle("widget.detail.large.fat")
-                                            ),
-                                          ])),
-                                  Container(
-                                    height: 20,
-                                  ),
-                                  Semantics(
-                                      label: Localization().getStringEx(
-                                          "panel.settings.add_illini_cash.label.expiration_date.text", "EXPIRATION DATE"),
-                                      hint: Localization().getStringEx(
-                                          "panel.settings.add_illini_cash.label.expiration_date.hint",
-                                          ""),
-                                      textField: true,
-                                      excludeSemantics: true,
-                                      child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              Localization().getStringEx(
-                                                  "panel.settings.add_illini_cash.label.expiration_date.text", "EXPIRATION DATE: (MMYY)"),
-                                              style: Styles().textStyles.getTextStyle("panel.settings.detail.title.medium")
-                                            ),
-                                            TextFormField(
-                                              focusNode: _expiryFocusNode,
-                                              controller: _expiryController,
-                                              keyboardType: TextInputType.number,
-                                              textInputAction: TextInputAction.next,
-                                              inputFormatters: [CreditCardExpirationDateFormatter()],
-                                              onFieldSubmitted: (_){ FocusScope.of(context).requestFocus(_cvvFocusNode); },
-                                              decoration: new InputDecoration(
-                                                focusedBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary,
-                                                      width: 1.0),
-                                                ),
-                                                enabledBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
-                                                      width: 1.0),
-                                                ),
-                                                disabledBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
-                                                      width: 1.0),
-                                                ),
-                                              ),
-                                              style: Styles().textStyles.getTextStyle("widget.detail.large.fat")
-                                            ),
-                                          ])),
-                                  Container(
-                                    height: 20,
-                                  ),
-                                  Semantics(
-                                      label: Localization().getStringEx(
-                                          "panel.settings.add_illini_cash.label.cvv.text", "CVV"),
-                                      hint: Localization().getStringEx(
-                                          "panel.settings.add_illini_cash.label.cvv.hint",
-                                          ""),
-                                      textField: true,
-                                      excludeSemantics: true,
-                                      child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              Localization().getStringEx(
-                                                  "panel.settings.add_illini_cash.label.cvv.text", "CVV"),
-                                              style:Styles().textStyles.getTextStyle("panel.settings.detail.title.medium")
-                                            ),
-                                            TextFormField(
-                                              focusNode: _cvvFocusNode,
-                                              controller: _cvvController,
-                                              keyboardType: TextInputType.number,
-                                              textInputAction: TextInputAction.next,
-                                              inputFormatters: [CreditCardCvcInputFormatter()],
-                                              onFieldSubmitted: (_){ FocusScope.of(context).requestFocus(_amountFocusNode); },
-                                              decoration: new InputDecoration(
-                                                focusedBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary,
-                                                      width: 1.0),
-                                                ),
-                                                enabledBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
-                                                      width: 1.0),
-                                                ),
-                                                disabledBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
-                                                      width: 1.0),
-                                                ),
-                                              ),
-                                              style: Styles().textStyles.getTextStyle("widget.detail.large.fat")
-                                            ),
-                                          ])),
-                                  Container(
-                                    height: 20,
-                                  ),
-                                  Semantics(
-                                      label: Localization().getStringEx(
-                                          "panel.settings.add_illini_cash.label.dollar_amount.text",
-                                          "DOLLAR AMOUNT"),
-                                      hint: Localization().getStringEx(
-                                          "panel.settings.add_illini_cash.label.dollar_amount.hint",
-                                          "5 dollars minimum purchase"),
-                                      textField: true,
-                                      excludeSemantics: true,
-                                      child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              Localization().getStringEx(
-                                                  "panel.settings.add_illini_cash.label.dollar_amount.text",
-                                                  "DOLLAR AMOUNT"),
-                                              style: Styles().textStyles.getTextStyle("panel.settings.detail.title.medium")
-                                            ),
-                                            TextFormField(
-                                              focusNode: _amountFocusNode,
-                                              controller: _amountController,
-                                              keyboardType: TextInputType.numberWithOptions(decimal: true),
-                                              textInputAction: TextInputAction.done,
-                                              inputFormatters: [CurrencyTextInputFormatter.currency(locale: 'en', symbol: '\$', decimalDigits: 2)],
-                                              onFieldSubmitted: (_){ _unfocus(); },
-                                              decoration: new InputDecoration(
-                                                focusedBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary,
-                                                      width: 1.0),
-                                                ),
-                                                enabledBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
-                                                      width: 1.0),
-                                                ),
-                                              ),
-                                              style: Styles().textStyles.getTextStyle("widget.detail.large.fat")
-                                            ),
-                                            Text(
-                                              Localization().getStringEx(
-                                                  "panel.settings.add_illini_cash.label.minimum_amount.text",
-                                                  "(\$5.00 minimum purchase)"),
-                                              style: Styles().textStyles.getTextStyle("panel.settings.detail.title.medium")
-                                            ),
-                                          ])),
-                                  Container(
-                                    height: 20,
-                                  ),
-                                  Row(
-                                    children: <Widget>[
-                                      Semantics(
-                                        label: Localization().getStringEx(
-                                            "panel.settings.add_illini_cash.label.agree",
-                                            "I agree to the") +
-                                            Localization().getStringEx(
-                                                "panel.settings.add_illini_cash.label.agree",
-                                                "terms & conditions"),
-                                        hint: Localization().getStringEx(
-                                            "panel.settings.add_illini_cash.label.agree.hint",
-                                            ""),
-                                        checked: _agreePrivacy,
-                                        excludeSemantics: true,
-                                        child: RoundCheckBox(
-                                          isChecked: _agreePrivacy,
-                                          checkedColor: Styles().colors.fillColorSecondary, 
-                                          size: 28,
-                                          onTap: (bool? value) {
-                                            Analytics().logSelect(target: "Agree");
-                                            _agreePrivacy = !_agreePrivacy;
-                                            setState(() {});
-                                          },
-                                        ),
-                                      ),
-                                      Container(width: 12,),
-                                      Semantics(
-                                        excludeSemantics: true,
-                                        child: Text(
-                                          Localization().getStringEx(
-                                              "panel.settings.add_illini_cash.label.agree",
-                                              "I agree to the"),
-                                          style: Styles().textStyles.getTextStyle("panel.settings.detail.title.regular")
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 4,
-                                      ),
-                                      Semantics(
-                                          excludeSemantics: true,
-                                          child: Container(
-                                              decoration: new BoxDecoration(
-                                                  border: new Border(
-                                                      bottom: BorderSide(
-                                                          color: Styles().colors.fillColorSecondary))),
-                                              child: GestureDetector(
-                                                onTap: _onTermsAndConditionsTapped,
-                                                child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                                                  Text(Localization().getStringEx("panel.settings.add_illini_cash.label.agree", "terms & conditions"),
-                                                   style: Styles().textStyles.getTextStyle("widget.detail.regular") ),
-                                                  Padding(padding: EdgeInsets.only(left: 3), child: Styles().images.getImage('external-link', excludeFromSemantics: true))
-                                                ]),
-                                              ))),
-                                    ],
-                                  ),
-                                  Container(
-                                    height: 20,
-                                  ),
-                                  Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: RoundedButton(
-                                          label: Localization().getStringEx(
-                                              'panel.settings.add_illini_cash.button.cancel.text',
-                                              'Cancel'),
-                                          hint: Localization().getStringEx(
-                                              'panel.settings.add_illini_cash.button.cancel.hint',
-                                              ''),
-                                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-                                          backgroundColor: Styles().colors.white,
-                                          borderColor: Styles().colors.fillColorPrimary,
-                                          onTap: () {
-                                            Analytics().logSelect(target: "Cancel");
-                                            Navigator.pop(context,);
-                                          },
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 10,
-                                      ),
-                                      Expanded(
-                                        child: RoundedButton(
-                                          label: Localization().getStringEx(
-                                              'panel.settings.add_illini_cash.button.submit.text',
-                                              'Submit'),
-                                          hint: Localization().getStringEx(
-                                              'panel.settings.add_illini_cash.button.submit.hint',
-                                              ''),
-                                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-                                          backgroundColor: Styles().colors.white,
-                                          borderColor: Styles().colors.fillColorSecondary,
-                                          onTap: _onSubmitIlliniCash,
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ]),
-                      )
-                    ],
-                  ),
-                  _isLoading ? Center(child: CircularProgressIndicator() ,) : Container(),
-                ],
-              )
-          ),
-        ],
-      ),
-      backgroundColor: Styles().colors.background,
-      bottomNavigationBar: uiuc.TabBar(),
-    );
+    return _isLoading ? _loadingWidget : _panelBody;
   }
+
+  Widget get _panelBody =>
+    GestureDetector(behavior: HitTestBehavior.translucent, onTap: _removeFocus, child:
+      Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Container(height: 10,),
+            Semantics(
+              label: Localization().getStringEx("panel.settings.add_illini_cash.label.recipient_uin.text", "RECIPIENT'S UIN"),
+              hint: Localization().getStringEx("panel.settings.add_illini_cash.label.recipient_uin.hint",""),
+              textField: true,
+              excludeSemantics: true,
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Text(Localization().getStringEx("panel.settings.add_illini_cash.label.recipient_uin.text", "RECIPIENT'S UIN"), style:
+                  Styles().textStyles.getTextStyle("panel.settings.detail.title.medium")
+                ),
+                TextFormField(
+                  controller: _uinController,
+                  focusNode: _uinFocusNode,
+                  keyboardType: TextInputType.number,
+                  onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_uinFocusNode),
+                  decoration: _textInputDecoration,
+                  style:  Styles().textStyles.getTextStyle("widget.detail.large.fat")
+                ),
+              ]),
+            ),
+
+            Container(height: 20,),
+
+            Semantics(
+              label: Localization().getStringEx("panel.settings.add_illini_cash.label.first_name.text", "RECIPIENT'S FIRST NAME"),
+              hint: Localization().getStringEx("panel.settings.add_illini_cash.label.first_name.hint", ""),
+              textField: true,
+              excludeSemantics: true,
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Text(Localization().getStringEx("panel.settings.add_illini_cash.label.first_name.text", "RECIPIENT'S FIRST NAME"), style:
+                  Styles().textStyles.getTextStyle("panel.settings.detail.title.medium"),
+                ),
+                TextFormField(
+                  controller: _firstNameController,
+                  keyboardType: TextInputType.text,
+                  textCapitalization: TextCapitalization.words,
+                  focusNode: _firstNameFocusNode,
+                  onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_lastNameFocusNode),
+                  decoration: _textInputDecoration,
+                  style:  Styles().textStyles.getTextStyle("widget.detail.large.fat")
+                ),
+              ]),
+            ),
+
+          Container(height: 20,),
+
+          Semantics(
+            label: Localization().getStringEx("panel.settings.add_illini_cash.label.last_name.text","RECIPIENT'S LAST NAME"),
+            hint: Localization().getStringEx("panel.settings.add_illini_cash.label.last_name.hint",""),
+            textField: true,
+            excludeSemantics: true,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Text(Localization().getStringEx("panel.settings.add_illini_cash.label.last_name.text", "RECIPIENT'S LAST NAME"), style:
+                Styles().textStyles.getTextStyle("panel.settings.detail.title.medium")
+              ),
+              TextFormField(
+                controller: _lastNameController,
+                keyboardType: TextInputType.text,
+                textCapitalization: TextCapitalization.words,
+                focusNode: _lastNameFocusNode,
+                onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_emailFocusNode),
+                decoration: _textInputDecoration,
+                style: Styles().textStyles.getTextStyle("widget.detail.large.fat")
+              ),
+            ]),
+          ),
+
+          Container(height: 20,),
+
+          Semantics(
+            label: Localization().getStringEx("panel.settings.add_illini_cash.label.email_address.text", "EMAIL RECEIPT TO"),
+            hint: Localization().getStringEx("panel.settings.add_illini_cash.label.email_address.hint", ""),
+            textField: true,
+            excludeSemantics: true,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Text(Localization().getStringEx("panel.settings.add_illini_cash.label.email_address.text", "EMAIL RECEIPT TO"), style:
+                Styles().textStyles.getTextStyle("panel.settings.detail.title.medium"),
+              ),
+              TextFormField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                focusNode: _emailFocusNode,
+                onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_ccFocusNode),
+                decoration: _textInputDecoration,
+                style: Styles().textStyles.getTextStyle("widget.detail.large.fat")
+              ),
+            ]),
+          ),
+
+          Container(height: 20,),
+
+          Semantics(
+            label: Localization().getStringEx("panel.settings.add_illini_cash.label.credit_card.text", "CREDIT CARD"),
+            hint: Localization().getStringEx("panel.settings.add_illini_cash.label.credit_card.hint", ""),
+            textField: true,
+            excludeSemantics: true,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Text(Localization().getStringEx("panel.settings.add_illini_cash.label.credit_card.text", "CREDIT CARD"), style:
+                Styles().textStyles.getTextStyle("panel.settings.detail.title.medium")
+              ),
+              TextFormField(
+                focusNode: _ccFocusNode,
+                controller: _ccController,
+                keyboardType: TextInputType.number,
+                textInputAction: TextInputAction.next,
+                decoration: _textInputDecoration,
+                inputFormatters: [ CreditCardNumberInputFormatter() ],
+                onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_expiryFocusNode),
+                style: Styles().textStyles.getTextStyle("widget.detail.large.fat")
+              ),
+            ])
+          ),
+
+          Container(height: 20,),
+
+          Semantics(
+              label: Localization().getStringEx("panel.settings.add_illini_cash.label.expiration_date.text", "EXPIRATION DATE"),
+              hint: Localization().getStringEx("panel.settings.add_illini_cash.label.expiration_date.hint",""),
+              textField: true,
+              excludeSemantics: true,
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Text(Localization().getStringEx("panel.settings.add_illini_cash.label.expiration_date.text", "EXPIRATION DATE: (MMYY)"), style:
+                  Styles().textStyles.getTextStyle("panel.settings.detail.title.medium")
+                ),
+                TextFormField(
+                  focusNode: _expiryFocusNode,
+                  controller: _expiryController,
+                  keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.next,
+                  inputFormatters: [ CreditCardExpirationDateFormatter() ],
+                  onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_cvvFocusNode),
+                  decoration: _textInputDecoration,
+                  style: Styles().textStyles.getTextStyle("widget.detail.large.fat")
+                ),
+              ])
+          ),
+
+          Container(height: 20,),
+
+          Semantics(
+            label: Localization().getStringEx("panel.settings.add_illini_cash.label.cvv.text", "CVV"),
+            hint: Localization().getStringEx("panel.settings.add_illini_cash.label.cvv.hint",""),
+            textField: true,
+            excludeSemantics: true,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Text(Localization().getStringEx("panel.settings.add_illini_cash.label.cvv.text", "CVV"), style:
+                Styles().textStyles.getTextStyle("panel.settings.detail.title.medium")
+              ),
+              TextFormField(
+                focusNode: _cvvFocusNode,
+                controller: _cvvController,
+                keyboardType: TextInputType.number,
+                textInputAction: TextInputAction.next,
+                inputFormatters: [ CreditCardCvcInputFormatter() ],
+                onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_cvvFocusNode),
+                decoration: _textInputDecoration,
+                style: Styles().textStyles.getTextStyle("widget.detail.large.fat")
+              ),
+            ]),
+          ),
+
+          Container(height: 20,),
+
+          Semantics(
+            label: Localization().getStringEx("panel.settings.add_illini_cash.label.dollar_amount.text", "DOLLAR AMOUNT"),
+            hint: Localization().getStringEx("panel.settings.add_illini_cash.label.dollar_amount.hint", "5 dollars minimum purchase"),
+            textField: true,
+            excludeSemantics: true,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Text(Localization().getStringEx("panel.settings.add_illini_cash.label.dollar_amount.text", "DOLLAR AMOUNT"), style:
+                Styles().textStyles.getTextStyle("panel.settings.detail.title.medium")
+              ),
+              TextFormField(
+                focusNode: _amountFocusNode,
+                controller: _amountController,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                textInputAction: TextInputAction.done,
+                inputFormatters: [CurrencyTextInputFormatter.currency(locale: 'en', symbol: '\$', decimalDigits: 2)],
+                onFieldSubmitted: (_) => _unfocus(),
+                decoration: _textInputDecoration,
+                style: Styles().textStyles.getTextStyle("widget.detail.large.fat")
+              ),
+              Text(Localization().getStringEx("panel.settings.add_illini_cash.label.minimum_amount.text", "(\$5.00 minimum purchase)"), style:
+                Styles().textStyles.getTextStyle("panel.settings.detail.title.medium")
+              ),
+            ]),
+          ),
+
+          Container(height: 20,),
+
+          Row(children: <Widget>[
+            Semantics(
+              label: Localization().getStringEx("panel.settings.add_illini_cash.label.agree", "I agree to the") + Localization().getStringEx( "panel.settings.add_illini_cash.label.agree", "terms & conditions"),
+              hint: Localization().getStringEx("panel.settings.add_illini_cash.label.agree.hint", ""),
+              checked: _agreePrivacy,
+              excludeSemantics: true,
+              child: RoundCheckBox(
+                isChecked: _agreePrivacy,
+                checkedColor: Styles().colors.fillColorSecondary,
+                size: 28,
+                onTap: (bool? value) => _onAgreeTOC(),
+              ),
+            ),
+
+            Container(width: 12,),
+
+            Semantics(excludeSemantics: true, child:
+              Text(Localization().getStringEx("panel.settings.add_illini_cash.label.agree", "I agree to the"), style:
+                Styles().textStyles.getTextStyle("panel.settings.detail.title.regular")
+              ),
+            ),
+
+            Container(width: 4,),
+
+            Semantics(excludeSemantics: true, child:
+              Container(decoration: _underlineDecoration, child:
+                GestureDetector(onTap: _onTermsAndConditionsTapped, child:
+                  Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                    Text(Localization().getStringEx("panel.settings.add_illini_cash.label.agree", "terms & conditions"), style:
+                      Styles().textStyles.getTextStyle("widget.detail.regular")
+                    ),
+                    Padding(padding: EdgeInsets.only(left: 3), child:
+                      Styles().images.getImage('external-link', excludeFromSemantics: true)
+                    ),
+                  ]),
+                )
+              )
+            ),
+          ],),
+
+          Container(height: 20,),
+
+          Row(children: <Widget>[
+            Expanded(child:
+              RoundedButton(
+                label: Localization().getStringEx('panel.settings.add_illini_cash.button.cancel.text', 'Cancel'),
+                hint: Localization().getStringEx('panel.settings.add_illini_cash.button.cancel.hint',''),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+                backgroundColor: Styles().colors.white,
+                borderColor: Styles().colors.fillColorPrimary,
+                onTap: _onCancel,
+              ),
+            ),
+
+            Container(width: 10,),
+
+            Expanded(child:
+              RoundedButton(
+                label: Localization().getStringEx('panel.settings.add_illini_cash.button.submit.text', 'Submit'),
+                hint: Localization().getStringEx('panel.settings.add_illini_cash.button.submit.hint',''),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+                backgroundColor: Styles().colors.white,
+                borderColor: Styles().colors.fillColorSecondary,
+                onTap: _onSubmitIlliniCash,
+              ),
+            ),
+          ],)
+        ],),
+      ),
+    );
+
+  Widget get _loadingWidget => Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 72), child:
+      Center(child:
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary,),
+      )
+  );
 
   bool get _isLoading{
     return __isLoading;
@@ -836,9 +621,34 @@ class _WalletAddIlliniCashPanelState
     }
   }
 
+  InputDecoration get _textInputDecoration => InputDecoration(
+    focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.fillColorSecondary, width: 1.0),),
+    enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.fillColorPrimary, width: 1.0),),
+    disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.fillColorPrimary, width: 1.0),),
+  );
+
+  Decoration get _underlineDecoration =>
+    BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary)));
+
+  void _removeFocus() =>
+    FocusScope.of(context).requestFocus(FocusNode());
+
+  void _onAgreeTOC() {
+    Analytics().logSelect(target: "Agree");
+    setStateIfMounted(() {
+      _agreePrivacy = !_agreePrivacy;
+    });
+  }
+
+  void _onCancel() {
+    Analytics().logSelect(target: "Cancel");
+    if (mounted) {
+      Navigator.pop(context,);
+    }
+  }
+
   void _onDismissAlert() {
-    Analytics().logAlert(
-        text: "Transaction successfully processed.", selection: "Ok");
+    Analytics().logAlert(text: "Transaction successfully processed.", selection: "Ok");
     Navigator.of(context).pop();
   }
 
