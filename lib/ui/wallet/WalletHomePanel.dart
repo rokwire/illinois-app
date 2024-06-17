@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/wallet/WalletAddIlliniCashPanel.dart';
 import 'package:illinois/ui/wallet/WalletICardContentWidget.dart';
 import 'package:illinois/ui/wallet/WalletICardFaqsContentWidget.dart';
 import 'package:illinois/ui/wallet/WalletMTDBusPassPanel.dart';
@@ -139,7 +140,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
       case WalletContentType.illiniIdFaqs:  pagetWidget = WalletICardFaqsContentWidget(key: pageKey); break;
       case WalletContentType.busPass:       pagetWidget = WalletMTDBusPassContentWidget(key: pageKey, expandHeight: false,); break;
       case WalletContentType.mealPlan:      pagetWidget = WalletMealPlanContentWidget(key: pageKey, headerHeight: 82,); break;
-      case WalletContentType.addIlliniCash: pagetWidget = Container(key: pageKey, color: Colors.white,); break;
+      case WalletContentType.addIlliniCash: pagetWidget = WalletAddIlliniCashContentWidget(key: pageKey, topOffset: 82, hasCancel: false,); break;
     }
 
     Color backColor = (pagetWidget is WalletHomeContentWidget) ? (pagetWidget as WalletHomeContentWidget).backgroundColor  : Styles().colors.white;
@@ -149,7 +150,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
         Container(color: backColor, child:
           SingleChildScrollView(physics: _contentValuesVisible ? NeverScrollableScrollPhysics() : null, child:
             Stack(children: [
-              pagetWidget,
+              SafeArea(child: pagetWidget),
               Column(mainAxisSize: MainAxisSize.min, children: [
                 Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
                   RibbonButton(

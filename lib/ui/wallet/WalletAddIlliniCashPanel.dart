@@ -76,7 +76,9 @@ class WalletAddIlliniCashPanel extends StatelessWidget {
 
 class WalletAddIlliniCashContentWidget extends StatefulWidget {
 
-  WalletAddIlliniCashContentWidget({super.key});
+  final double topOffset;
+  final bool hasCancel;
+  WalletAddIlliniCashContentWidget({super.key, this.topOffset = 10, this.hasCancel = true});
 
   @override
   State<StatefulWidget> createState() => _WalletAddIlliniCashContentWidgetState();
@@ -143,49 +145,51 @@ class _WalletAddIlliniCashContentWidgetState extends State<WalletAddIlliniCashCo
     GestureDetector(behavior: HitTestBehavior.translucent, onTap: _removeFocus, child:
       Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Container(height: 10,),
-            Semantics(
-              label: Localization().getStringEx("panel.settings.add_illini_cash.label.recipient_uin.text", "RECIPIENT'S UIN"),
-              hint: Localization().getStringEx("panel.settings.add_illini_cash.label.recipient_uin.hint",""),
-              textField: true,
-              excludeSemantics: true,
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Text(Localization().getStringEx("panel.settings.add_illini_cash.label.recipient_uin.text", "RECIPIENT'S UIN"), style:
-                  Styles().textStyles.getTextStyle("panel.settings.detail.title.medium")
-                ),
-                TextFormField(
-                  controller: _uinController,
-                  focusNode: _uinFocusNode,
-                  keyboardType: TextInputType.number,
-                  onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_uinFocusNode),
-                  decoration: _textInputDecoration,
-                  style:  Styles().textStyles.getTextStyle("widget.detail.large.fat")
-                ),
-              ]),
-            ),
 
-            Container(height: 20,),
+          Container(height: widget.topOffset,),
 
-            Semantics(
-              label: Localization().getStringEx("panel.settings.add_illini_cash.label.first_name.text", "RECIPIENT'S FIRST NAME"),
-              hint: Localization().getStringEx("panel.settings.add_illini_cash.label.first_name.hint", ""),
-              textField: true,
-              excludeSemantics: true,
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Text(Localization().getStringEx("panel.settings.add_illini_cash.label.first_name.text", "RECIPIENT'S FIRST NAME"), style:
-                  Styles().textStyles.getTextStyle("panel.settings.detail.title.medium"),
-                ),
-                TextFormField(
-                  controller: _firstNameController,
-                  keyboardType: TextInputType.text,
-                  textCapitalization: TextCapitalization.words,
-                  focusNode: _firstNameFocusNode,
-                  onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_lastNameFocusNode),
-                  decoration: _textInputDecoration,
-                  style:  Styles().textStyles.getTextStyle("widget.detail.large.fat")
-                ),
-              ]),
-            ),
+          Semantics(
+            label: Localization().getStringEx("panel.settings.add_illini_cash.label.recipient_uin.text", "RECIPIENT'S UIN"),
+            hint: Localization().getStringEx("panel.settings.add_illini_cash.label.recipient_uin.hint",""),
+            textField: true,
+            excludeSemantics: true,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Text(Localization().getStringEx("panel.settings.add_illini_cash.label.recipient_uin.text", "RECIPIENT'S UIN"), style:
+                Styles().textStyles.getTextStyle("panel.settings.detail.title.medium")
+              ),
+              TextFormField(
+                controller: _uinController,
+                focusNode: _uinFocusNode,
+                keyboardType: TextInputType.number,
+                onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_uinFocusNode),
+                decoration: _textInputDecoration,
+                style:  Styles().textStyles.getTextStyle("widget.detail.large.fat")
+              ),
+            ]),
+          ),
+
+          Container(height: 20,),
+
+          Semantics(
+            label: Localization().getStringEx("panel.settings.add_illini_cash.label.first_name.text", "RECIPIENT'S FIRST NAME"),
+            hint: Localization().getStringEx("panel.settings.add_illini_cash.label.first_name.hint", ""),
+            textField: true,
+            excludeSemantics: true,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Text(Localization().getStringEx("panel.settings.add_illini_cash.label.first_name.text", "RECIPIENT'S FIRST NAME"), style:
+                Styles().textStyles.getTextStyle("panel.settings.detail.title.medium"),
+              ),
+              TextFormField(
+                controller: _firstNameController,
+                keyboardType: TextInputType.text,
+                textCapitalization: TextCapitalization.words,
+                focusNode: _firstNameFocusNode,
+                onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_lastNameFocusNode),
+                decoration: _textInputDecoration,
+                style:  Styles().textStyles.getTextStyle("widget.detail.large.fat")
+              ),
+            ]),
+          ),
 
           Container(height: 20,),
 
@@ -376,18 +380,20 @@ class _WalletAddIlliniCashContentWidgetState extends State<WalletAddIlliniCashCo
           Container(height: 20,),
 
           Row(children: <Widget>[
-            Expanded(child:
-              RoundedButton(
-                label: Localization().getStringEx('panel.settings.add_illini_cash.button.cancel.text', 'Cancel'),
-                hint: Localization().getStringEx('panel.settings.add_illini_cash.button.cancel.hint',''),
-                textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-                backgroundColor: Styles().colors.white,
-                borderColor: Styles().colors.fillColorPrimary,
-                onTap: _onCancel,
+            if (widget.hasCancel)
+              Expanded(child:
+                RoundedButton(
+                  label: Localization().getStringEx('panel.settings.add_illini_cash.button.cancel.text', 'Cancel'),
+                  hint: Localization().getStringEx('panel.settings.add_illini_cash.button.cancel.hint',''),
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+                  backgroundColor: Styles().colors.white,
+                  borderColor: Styles().colors.fillColorPrimary,
+                  onTap: _onCancel,
+                ),
               ),
-            ),
 
-            Container(width: 10,),
+            if (widget.hasCancel)
+              Container(width: 10,),
 
             Expanded(child:
               RoundedButton(
@@ -399,7 +405,9 @@ class _WalletAddIlliniCashContentWidgetState extends State<WalletAddIlliniCashCo
                 onTap: _onSubmitIlliniCash,
               ),
             ),
-          ],)
+          ],),
+
+          Container(height: 10,),
         ],),
       ),
     );
@@ -548,24 +556,31 @@ class _WalletAddIlliniCashContentWidgetState extends State<WalletAddIlliniCashCo
 
   void _finish(){
     if(mounted ) {
-      AppAlert.showCustomDialog(
-          context: context,
-          contentWidget: Text(
-              Localization().getStringEx("panel.settings.add_illini_cash.message.buy_illini_cash_success.text", "Transaction successfully processed.")),
-          actions: <Widget>[
-            TextButton(
-                child: Text(Localization().getStringEx("dialog.ok.title", "Ok")),
-                onPressed: _onDismissAlert)
-          ]
-      ).then((value) {
-        Navigator.pop(context);
+      AppAlert.showCustomDialog(context: context,
+        contentWidget: Text(Localization().getStringEx("panel.settings.add_illini_cash.message.buy_illini_cash_success.text", "Transaction successfully processed.")),
+        actions: <Widget>[
+          TextButton(child: Text(Localization().getStringEx("dialog.ok.title", "Ok")), onPressed: _onDismissAlert)
+      ]).then((value) {
+        if (mounted) {
+          if (widget.hasCancel) {
+            Navigator.pop(context);
+          }
+          else {
+            _amountController.text = '';
+            setState(() {
+              _agreePrivacy = __isLoading = false;
+            });
+          }
+        }
       });
     }
   }
 
   void _onSubmitIlliniCash(){
-    if(!_isLoading) {
-      _isLoading = true;
+    if(!_isLoading && mounted) {
+      setState(() {
+        _isLoading = true;
+      });
 
       Analytics().logSelect(target: "Submit Illini Cash");
       try {
