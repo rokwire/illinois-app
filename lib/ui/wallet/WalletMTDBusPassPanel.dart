@@ -103,7 +103,8 @@ class WalletMTDBusPassPanel extends StatelessWidget {
 }
 
 class WalletMTDBusPassContentWidget extends StatefulWidget {
-  WalletMTDBusPassContentWidget({super.key});
+  final bool expandHeight;
+  WalletMTDBusPassContentWidget({super.key, this.expandHeight = true});
   State<StatefulWidget> createState() => _WalletMTDBusPassContentWidgetState();
 }
 
@@ -187,12 +188,12 @@ class _WalletMTDBusPassContentWidgetState extends State<WalletMTDBusPassContentW
         Container(height: _headingH2, color: _activeColor, child:
           CustomPaint(painter: TrianglePainter(painterColor: _backgroundColor), child: Container(),),
         ),
-        Expanded(child:
+        widget.expandHeight ? Expanded(child:
           Container(color: _backgroundColor,),
-        )
+        ) : Container(color: _backgroundColor,)
       ],),
       Column(children: <Widget>[
-        Expanded(child: _buildBusContent()),
+        widget.expandHeight ? Expanded(child: _buildBusContent()) : _buildBusContent(),
       ]),
     ],);
   }
@@ -386,11 +387,6 @@ class _WalletMTDBusPassContentWidgetState extends State<WalletMTDBusPassContentW
       GeoFence().stopRangingBeaconsInRegion(regionId);
     }
     _rangingRegionIds.clear();
-  }
-
-  void _onClose() {
-    Analytics().logSelect(target: 'Close');
-    Navigator.of(context).pop();
   }
 
   Color get _activeColor {
