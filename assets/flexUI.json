@@ -24,7 +24,7 @@
 			"home.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
 			"home.wallet": ["illini_id_card", "illini_cash_card", "meal_plan_card", "bus_pass_card", "library_card"],
 
-			"home.twitter.account": ["gies", "rokwire", "", "news", "canvas"],
+			"home.twitter.account": ["gies", "", "news", "canvas"],
 			
 			"browse": ["academics", "app_help", "appointments", "athletics", "safer", "campus_guide", "dinings", "events", "feeds", "laundry", "groups", "mtd", "my", "inbox", "polls", "radio_stations", "recent", "research_projects", "state_farm_center", "wallet", "wellness"],
 			"browse.academics": ["gies_checklist", "new_student_checklist", "skills_self_evaluation", "essential_skills_coach", "student_courses", "canvas_courses", "gies_canvas_courses", "campus_reminders", "wellness_todo", "due_date_catalog", "appointments"],
