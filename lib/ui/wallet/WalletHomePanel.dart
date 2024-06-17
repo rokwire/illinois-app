@@ -131,15 +131,24 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
 
   Widget get _panelContent {
 
+    GlobalKey pageKey = _pageKeys[_selectedContent] ??= GlobalKey();
+    Widget pagetWidget;
+    switch(_selectedContent) {
+      case WalletContentType.illiniId:      pagetWidget = WalletICardContentWidget(key: pageKey); break;
+      case WalletContentType.illiniIdFaqs:  pagetWidget = WalletICardFaqsContentWidget(key: pageKey); break;
+      case WalletContentType.busPass:       pagetWidget = WalletMTDBusPassContentWidget(key: pageKey, expandHeight: false,); break;
+      case WalletContentType.mealPlan:      pagetWidget = Container(key: pageKey, color: Colors.white,); break;
+      case WalletContentType.addIlliniCash: pagetWidget = Container(key: pageKey, color: Colors.white,); break;
+    }
 
-    Color backColor = (_selectedContent != WalletContentType.busPass) ? Styles().colors.white : Styles().colors.fillColorPrimaryVariant;
+    Color backColor = (pagetWidget is WalletHomeContentWidget) ? (pagetWidget as WalletHomeContentWidget).backgroundColor  : Styles().colors.white;
 
     return Column(children: <Widget>[
       Expanded(child:
         Container(color: backColor, child:
           SingleChildScrollView(physics: _contentValuesVisible ? NeverScrollableScrollPhysics() : null, child:
             Stack(children: [
-              _contentWidget,
+              pagetWidget,
               Column(mainAxisSize: MainAxisSize.min, children: [
                 Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
                   RibbonButton(
@@ -159,17 +168,6 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
         ),
       )
     ]);
-  }
-
-  Widget get _contentWidget {
-    GlobalKey pageKey = _pageKeys[_selectedContent] ??= GlobalKey();
-    switch(_selectedContent) {
-      case WalletContentType.illiniId: return WalletICardContentWidget(key: pageKey);
-      case WalletContentType.illiniIdFaqs: return WalletICardFaqsContentWidget(key: pageKey);
-      case WalletContentType.busPass: return WalletMTDBusPassContentWidget(key: pageKey, expandHeight: false,);
-      case WalletContentType.mealPlan: return Container(key: pageKey, color: Colors.white,);
-      case WalletContentType.addIlliniCash: return Container(key: pageKey, color: Colors.white,);
-    }
   }
 
   Widget get _dropdownContainer => Visibility(visible: _contentValuesVisible, child:
@@ -273,8 +271,11 @@ String? _walletContentTypeToDisplayString(WalletContentType? contentType) {
   }
 }
 
-
 extension _StorageWalletExt on Storage {
   WalletContentType? get _contentType => _walletContentTypeFromString(walletContentType);
   set _contentType(WalletContentType? value) => walletContentType = _walletContentTypeToString(value);
+}
+
+class WalletHomeContentWidget {
+  Color get backgroundColor => Styles().colors.white;
 }

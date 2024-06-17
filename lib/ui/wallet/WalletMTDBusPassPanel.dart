@@ -18,6 +18,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/wallet/WalletHomePanel.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -102,10 +103,15 @@ class WalletMTDBusPassPanel extends StatelessWidget {
   }
 }
 
-class WalletMTDBusPassContentWidget extends StatefulWidget {
+class WalletMTDBusPassContentWidget extends StatefulWidget with WalletHomeContentWidget {
   final bool expandHeight;
   WalletMTDBusPassContentWidget({super.key, this.expandHeight = true});
+
+  @override
   State<StatefulWidget> createState() => _WalletMTDBusPassContentWidgetState();
+
+  @override
+  Color get backgroundColor => Styles().colors.fillColorPrimaryVariant;
 }
 
 class _WalletMTDBusPassContentWidgetState extends State<WalletMTDBusPassContentWidget> implements NotificationsListener {
@@ -116,6 +122,7 @@ class _WalletMTDBusPassContentWidgetState extends State<WalletMTDBusPassContentW
 
   Color? _activeBusColor;
   String? _activeBusNumber;
+  bool _loadingActiveBusDetails = false;
   Set<String> _rangingRegionIds = Set();
   GeoFenceBeacon? _currentBeacon;
 
@@ -308,7 +315,11 @@ class _WalletMTDBusPassContentWidgetState extends State<WalletMTDBusPassContentW
     );
   }
 
-  void _loadBusPass() async {
+  void _loadBusPass() {
+    setStateIfMounted(() {
+      _loadingActiveBusDetails = true;
+    });
+
     String? deviceId = Auth2().deviceId; //TMP: '1234'
     Map<String, dynamic>? beaconData = (_currentBeacon != null) ? {
       'uuid': _currentBeacon!.uuid,
@@ -316,20 +327,25 @@ class _WalletMTDBusPassContentWidgetState extends State<WalletMTDBusPassContentW
       'minor': _currentBeacon!.minor.toString(),
     } : null;
     Transportation().loadBusPass(deviceId: deviceId, userId: Auth2().accountId, iBeaconData: beaconData).then((dynamic result){
-
-      if (result is Map) {
-        setState(() {
-            _activeBusColor = UiColors.fromHex(result["color"]);
-            _activeBusNumber = result["bus_number"];
+      if (mounted) {
+        if (result is Map) {
+          setState(() {
+              _activeBusColor = UiColors.fromHex(JsonUtils.stringValue(result['color']));
+              _activeBusNumber = JsonUtils.stringValue(result['bus_number']);
+              _loadingActiveBusDetails = false;
+            });
+        }
+        else {
+          setState(() {
+            _loadingActiveBusDetails = false;
           });
-      }
-      else {
-        String? message = ((result is int) && (result == 403)) ?
-          Localization().getStringEx("panel.bus_pass.error.duplicate.text", "This MTD bus pass has already been displayed on another device.\n\nOnly one device can display the MTD bus pass per Illini ID.") :
-          Localization().getStringEx("panel.bus_pass.error.default.text", "Unable to load bus pass");
-        AppAlert.showDialogResult(context, message,).then((result){
-          Navigator.pop(context);
-        });
+          String? message = ((result is int) && (result == 403)) ?
+            Localization().getStringEx("panel.bus_pass.error.duplicate.text", "This MTD bus pass has already been displayed on another device.\n\nOnly one device can display the MTD bus pass per Illini ID.") :
+            Localization().getStringEx("panel.bus_pass.error.default.text", "Unable to load bus pass");
+          AppAlert.showDialogResult(context, message,).then((result){
+            Navigator.pop(context);
+          });
+        }
       }
     });
   }
@@ -389,13 +405,11 @@ class _WalletMTDBusPassContentWidgetState extends State<WalletMTDBusPassContentW
     _rangingRegionIds.clear();
   }
 
-  Color get _activeColor {
-    return _activeBusColor ?? Styles().colors.fillColorSecondary;
-  }
+  Color get _backgroundColor =>
+    widget.backgroundColor;
 
-  Color get _backgroundColor {
-    return Styles().colors.fillColorPrimaryVariant;
-  }
+  Color get _activeColor =>
+    _loadingActiveBusDetails ? Styles().colors.white : (_activeBusColor ?? Styles().colors.fillColorSecondary);
 
   String? get _busNumber {
     return StringUtils.ensureNotEmpty(_activeBusNumber, defaultValue: '');
