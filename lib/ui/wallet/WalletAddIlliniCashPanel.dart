@@ -38,9 +38,7 @@ import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
 class WalletAddIlliniCashPanel extends StatefulWidget {
 
-  final ScrollController? scrollController;
-
-  WalletAddIlliniCashPanel({this.scrollController});
+  WalletAddIlliniCashPanel({super.key});
 
   static bool get canPresent => Connectivity().isNotOffline /*&& Auth2().isOidcLoggedIn*/;
 
@@ -120,12 +118,11 @@ class _WalletAddIlliniCashPanelState
               child: Stack(
                 children: <Widget>[
                   CustomScrollView(
-                    controller: widget.scrollController,
                     slivers: <Widget>[
                       SliverHeaderBar(
-                        leadingIconKey: widget.scrollController == null ? 'chevron-left-white' : 'chevron-left-bold',
+                        leadingIconKey: 'chevron-left-white',
                         title: Localization().getStringEx("panel.settings.add_illini_cash.header.title", "Add Illini Cash"),
-                        textStyle:  widget.scrollController == null ? Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat") : Styles().textStyles.getTextStyle("widget.title.regular.extra_fat"),
+                        textStyle: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),
                       ),
                       SliverList(
                         delegate: SliverChildListDelegate([
@@ -624,9 +621,7 @@ class _WalletAddIlliniCashPanelState
         ],
       ),
       backgroundColor: Styles().colors.background,
-      bottomNavigationBar: widget.scrollController == null
-          ? uiuc.TabBar()
-          : Container(height: 0,),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
