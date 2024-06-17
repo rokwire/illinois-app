@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
--Remove rokwire from twitter account [#4112](https://github.com/rokwire/illinois-app/issues/4112).
+-Remove rokwire from twitter accounts [#4112](https://github.com/rokwire/illinois-app/issues/4112).
 
 ## [6.0.7] - 2024-06-14
 ### Changed
