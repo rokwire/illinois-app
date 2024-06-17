@@ -20,6 +20,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/wallet/WalletICardContentWidget.dart';
 import 'package:illinois/ui/wallet/WalletICardFaqsContentWidget.dart';
 import 'package:illinois/ui/wallet/WalletMTDBusPassPanel.dart';
+import 'package:illinois/ui/wallet/WalletMealPlanPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -137,7 +138,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
       case WalletContentType.illiniId:      pagetWidget = WalletICardContentWidget(key: pageKey); break;
       case WalletContentType.illiniIdFaqs:  pagetWidget = WalletICardFaqsContentWidget(key: pageKey); break;
       case WalletContentType.busPass:       pagetWidget = WalletMTDBusPassContentWidget(key: pageKey, expandHeight: false,); break;
-      case WalletContentType.mealPlan:      pagetWidget = Container(key: pageKey, color: Colors.white,); break;
+      case WalletContentType.mealPlan:      pagetWidget = WalletMealPlanContentWidget(key: pageKey, headerHeight: 82,); break;
       case WalletContentType.addIlliniCash: pagetWidget = Container(key: pageKey, color: Colors.white,); break;
     }
 
