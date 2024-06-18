@@ -95,6 +95,9 @@
 			
 			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
 				"gies", "new_student", "canvas", "safer", "mtd_bus_pass", "student", "netid_login", "assistant", "assistant_personalization"],
+
+			"attributes": ["groups", "events"],
+			"attributes.groups": ["rso"],
 			
 			"launch":["emergency"]
 			
@@ -195,7 +198,9 @@
 
 				"onboarding.research_questionnaire"       : { "shibbolethLoggedIn": true },
 
-				"features.netid_login"                    : { "shibbolethLoggedIn": true }
+				"features.netid_login"                    : { "shibbolethLoggedIn": true },
+
+				"attributes.groups.rso"                   : { }
 			},
 			"platform":{
 			},
