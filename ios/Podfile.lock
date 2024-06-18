@@ -84,6 +84,8 @@ PODS:
     - Flutter
   - flutter_pdfview (1.0.2):
     - Flutter
+  - flutter_secure_storage (6.0.0):
+    - Flutter
   - fluttertoast (0.0.2):
     - Flutter
     - Toast
@@ -143,13 +145,13 @@ PODS:
     - CocoaLumberjack
     - JSONModel
     - Mixpanel (~> 5.0.2)
-  - package_info (0.0.1):
-    - Flutter
   - package_info_plus (0.4.5):
     - Flutter
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - permission_handler_apple (9.3.0):
+    - Flutter
   - PromisesObjC (2.3.1)
   - PromisesSwift (2.3.1):
     - PromisesObjC (= 2.3.1)
@@ -212,6 +214,7 @@ DEPENDENCIES:
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_native_timezone (from `.symlinks/plugins/flutter_native_timezone/ios`)
   - flutter_pdfview (from `.symlinks/plugins/flutter_pdfview/ios`)
+  - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - gallery_saver (from `.symlinks/plugins/gallery_saver/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
@@ -222,9 +225,9 @@ DEPENDENCIES:
   - just_audio (from `.symlinks/plugins/just_audio/ios`)
   - OrigoSDK-Debug (from `../libs/hid-origo/ios/Debug/OrigoSDK-Debug.podspec`)
   - OrigoSDK-Release (from `../libs/hid-origo/ios/Release/OrigoSDK-Release.podspec`)
-  - package_info (from `.symlinks/plugins/package_info/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - record (from `.symlinks/plugins/record/ios`)
   - rokwire_plugin (from `.symlinks/plugins/rokwire_plugin/ios`)
   - SeosMobileKeysSDK-Debug (from `../libs/hid-origo/ios/Debug/SeosMobileKeysSDK-Debug.podspec`)
@@ -296,6 +299,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_native_timezone/ios"
   flutter_pdfview:
     :path: ".symlinks/plugins/flutter_pdfview/ios"
+  flutter_secure_storage:
+    :path: ".symlinks/plugins/flutter_secure_storage/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
   gallery_saver:
@@ -314,12 +319,12 @@ EXTERNAL SOURCES:
     :path: "../libs/hid-origo/ios/Debug/OrigoSDK-Debug.podspec"
   OrigoSDK-Release:
     :path: "../libs/hid-origo/ios/Release/OrigoSDK-Release.podspec"
-  package_info:
-    :path: ".symlinks/plugins/package_info/ios"
   package_info_plus:
     :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
   record:
     :path: ".symlinks/plugins/record/ios"
   rokwire_plugin:
@@ -373,7 +378,8 @@ SPEC CHECKSUMS:
   flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
   flutter_native_timezone: 5f05b2de06c9776b4cc70e1839f03de178394d22
   flutter_pdfview: 25f53dd6097661e6395b17de506e6060585946bd
-  fluttertoast: 31b00dabfa7fb7bacd9e7dbee580d7a2ff4bf265
+  flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
+  fluttertoast: e9a18c7be5413da53898f660530c56f35edfba9c
   gallery_saver: 9fc173c9f4fcc48af53b2a9ebea1b643255be542
   geolocator_apple: 9157311f654584b9bb72686c55fc02a97b73f461
   google_maps_flutter_ios: 3e0b99383a8003b8169d06e7e324170bd0424105
@@ -388,9 +394,9 @@ SPEC CHECKSUMS:
   nanopb: d4d75c12cd1316f4a64e3c6963f879ecd4b5e0d5
   OrigoSDK-Debug: 425bf16ad0796cb41a1b9239031b09ba33946376
   OrigoSDK-Release: 5e57c26ed74121d287ad820d3b7001e018561fb9
-  package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
-  package_info_plus: 115f4ad11e0698c8c1c5d8a689390df880f47e85
+  package_info_plus: 58f0028419748fad15bf008b270aaa8e54380b1c
   path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
+  permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
   PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
   PromisesSwift: 28dca69a9c40779916ac2d6985a0192a5cb4a265
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
@@ -407,10 +413,10 @@ SPEC CHECKSUMS:
   uni_links: d97da20c7701486ba192624d99bffaaffcfc298a
   url_launcher_ios: bbd758c6e7f9fd7b5b1d4cde34d2b95fcce5e812
   video_player_avfoundation: 02011213dab73ae3687df27ce441fbbcc82b5579
-  wakelock_plus: 8b09852c8876491e4b6d179e17dfe2a0b5f60d47
+  wakelock_plus: 78ec7c5b202cab7761af8e2b2b3d0671be6c4ae1
   webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f
   ZXingObjC: 512b34b9b6920e8ef0461a4159d0814c5e48c28a
 
 PODFILE CHECKSUM: e4dceef7a484caba641d3b508b2df500c714aa77
 
-COCOAPODS: 1.15.0
+COCOAPODS: 1.15.2
