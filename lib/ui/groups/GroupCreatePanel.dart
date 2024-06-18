@@ -626,6 +626,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       description: (_group?.researchProject == true) ?
         Localization().getStringEx('panel.project.attributes.attributes.header.description', 'Choose one or more attributes that help describe this project.') :
         Localization().getStringEx('panel.group.attributes.attributes.header.description', 'Choose one or more attributes that help describe this group.'),
+      scope: Groups.contentAttributesScope,
       contentAttributes: Groups().contentAttributes,
       selection: _group?.attributes,
       sortType: ContentAttributesSortType.alphabetical,
