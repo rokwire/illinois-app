@@ -15,7 +15,6 @@
  */
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +52,7 @@ import 'package:uuid/uuid.dart';
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
+import 'package:universal_io/io.dart';
 
 class Analytics extends rokwire.Analytics implements NotificationsListener {
 

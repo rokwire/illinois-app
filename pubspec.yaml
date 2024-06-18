@@ -67,6 +67,9 @@ dependencies:
   font_awesome_flutter: '>= 4.7.0' # comment if published plugin is used
   record: ^4.4.4
 
+  # Below are the plugins imported alongside web integration
+  universal_io: ^2.2.2
+
   rokwire_plugin:
     # When depending on this package from a real application you should use:
     #   rokwire_plugin: ^x.y.z
