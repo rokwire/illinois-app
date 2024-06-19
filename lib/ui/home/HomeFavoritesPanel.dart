@@ -40,7 +40,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 // HomeFavoritesPanel
 
 class HomeFavoritesPanel extends StatefulWidget with AnalyticsInfo {
-  static const String notifySelect       = "edu.illinois.rokwire.home.select";
+  static const String notifySelect       = "edu.illinois.rokwire.favorites.select";
 
   @override
   State<StatefulWidget> createState() => _HomeFavoritesPanelState();

@@ -59,6 +59,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifySettingUpdated                             = "$notifyBase.setting.updated";
   static const String notifyGroupPostNotification                      = "$notifyBase.group.posts.updated";
   static const String notifyHomeNotification                           = "$notifyBase.home";
+  static const String notifyHomeFavoritesNotification                  = "$notifyBase.home.favorites";
+  static const String notifyHomeBrowseNotification                     = "$notifyBase.home.browse";
+  static const String notifyFavoritesNotification                      = "$notifyBase.favorites";
   static const String notifyBrowseNotification                         = "$notifyBase.browse";
   static const String notifyMapNotification                            = "$notifyBase.map";
   static const String notifyMapEventsNotification                      = '$notifyBase.map.events';
@@ -198,6 +201,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeAthleticsTeamRoster = 'athletics.team.roster';
   static const String payloadTypeGroup = 'group';
   static const String payloadTypeHome = 'home';
+  static const String payloadTypeHomeFavorites = 'home.favorites';
+  static const String payloadTypeHomeBrowse = 'home.browse';
+  static const String payloadTypeFavorites = 'favorites';
   static const String payloadTypeBrowse = 'browse';
   static const String payloadTypeMap = 'map';
   static const String payloadTypeMapEvents = 'map.events';
@@ -413,6 +419,15 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
     else if (type == payloadTypeHome) {
       NotificationService().notify(notifyHomeNotification, data);
+    }
+    else if (type == payloadTypeHomeFavorites) {
+      NotificationService().notify(notifyHomeFavoritesNotification, data);
+    }
+    else if (type == payloadTypeHomeBrowse) {
+      NotificationService().notify(notifyHomeBrowseNotification, data);
+    }
+    else if (type == payloadTypeFavorites) {
+      NotificationService().notify(notifyFavoritesNotification, data);
     }
     else if (type == payloadTypeBrowse) {
       NotificationService().notify(notifyBrowseNotification, data);
