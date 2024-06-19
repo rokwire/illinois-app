@@ -26,6 +26,7 @@ import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
+import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
@@ -181,6 +182,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return _isAdmin;
   }
 
+  bool get _canReportAbuse => true;  //Even non members car report the group
+
+
   bool get _canDeleteGroup {
     if (_isAdmin) {
       if (_group?.authManEnabled ?? false) {
@@ -216,6 +220,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool get _canViewMembers {
     return _isAdmin || (_isMember && (_group?.isMemberAllowedToViewMembersInfo == true));
   }
+
+  bool get _hasOptions => _canLeaveGroup || _canDeleteGroup || _canCreatePost || _canReportAbuse;
 
   @override
   void initState() {
@@ -693,7 +699,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     String? barTitle = (_isResearchProject && !_isMemberOrAdmin) ? 'Your Invitation To Participate' : null;
-    List<Widget>? barActions = (_canLeaveGroup || _canDeleteGroup || _canCreatePost) ? <Widget>[
+    List<Widget>? barActions = (_hasOptions) ? <Widget>[
       Semantics(label: Localization().getStringEx("panel.group_detail.label.options", 'Options'), button: true, excludeSemantics: true, child:
         IconButton(icon: Styles().images.getImage('more-white',) ?? Container(), onPressed: _onGroupOptionsTap,)
       )
@@ -1729,6 +1735,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                           Navigator.of(context).pop();
                           _onTapCreatePost();
                         })),
+                Visibility(visible: _canReportAbuse, child: RibbonButton(
+                  leftIconKey: "report",
+                  label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
+                  onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true)   ),
+                )),
                 Visibility(
                     visible: _canLeaveGroup,
                     child: RibbonButton(
@@ -1928,6 +1939,22 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void _onTapNotifications() {
     Analytics().logSelect(target: "Notifications", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMemberNotificationsPanel(groupId: _group?.id, memberId: _group?.currentMember?.id)));
+  }
+
+  void _onTapReportAbuse({required GroupPostReportAbuseOptions options}) {
+    String? analyticsTarget;
+    if (options.reportToDeanOfStudents && !options.reportToGroupAdmins) {
+      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.students_dean.description.text', 'Report violation of Student Code to Dean of Students');
+    }
+    else if (!options.reportToDeanOfStudents && options.reportToGroupAdmins) {
+      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.group_admins.description.text', 'Report obscene, threatening, or harassing content to Group Administrators');
+    }
+    else if (options.reportToDeanOfStudents && options.reportToGroupAdmins) {
+      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.both.description.text', 'Report violation of Student Code to Dean of Students and obscene, threatening, or harassing content to Group Administrators');
+    }
+    Analytics().logSelect(target: analyticsTarget);
+
+    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbuse(options: options, groupId: widget.group?.id)));
   }
 
   /*void _onTapTakeAttendance() {
