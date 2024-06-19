@@ -62,6 +62,10 @@ class NativeCommunicator with Service {
 
 
   Future<void> _nativeInit() async {
+    if (kIsWeb) {
+      debugPrint('WEB: init - not implemented.');
+      return;
+    }
     try {
       await _platformChannel.invokeMethod('init', { "config": Config().content });
     } on PlatformException catch (e) {
@@ -118,6 +122,10 @@ class NativeCommunicator with Service {
   }
 
   Future<String?> getDeepLinkScheme() async {
+    if (kIsWeb) {
+      debugPrint('WEB: deepLinkScheme - not implemented.');
+      return null;
+    }
     String? result;
     try {
       result = await _platformChannel.invokeMethod('deepLinkScheme');
