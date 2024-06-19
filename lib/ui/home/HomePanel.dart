@@ -83,14 +83,32 @@ enum HomeContentType { favorites, browse }
 // HomePanel
 
 class HomePanel extends StatefulWidget with AnalyticsInfo {
-  static const String notifyRefresh      = "edu.illinois.rokwire.home.refresh";
-  static const String notifySelect       = "edu.illinois.rokwire.home.select";
+  static const String notifyRefresh  = "edu.illinois.rokwire.home.refresh";
+  static const String notifySelect   = "edu.illinois.rokwire.home.select";
+  static const String selectParamKey = "select-param";
+
+  final Map<String, dynamic> params = <String, dynamic>{};
+
+  HomeContentType? get initialContentType => params[selectParamKey];
+  set initialContentType(HomeContentType? value) => params[selectParamKey] = value;
 
   @override
   State<StatefulWidget> createState() => _HomePanelState();
 
   @override
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Home;
+
+  static bool get hasState {
+    Set<NotificationsListener>? subscribers = NotificationService().subscribers(notifySelect);
+    if (subscribers != null) {
+      for (NotificationsListener subscriber in subscribers) {
+        if ((subscriber is _HomePanelState) && subscriber.mounted) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 
   static dynamic dataFromCode(String code, {
     bool title = false,
@@ -568,9 +586,18 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
     NotificationService().subscribe(this, [
       _HomeContentTab.notifySelect,
+      HomePanel.notifySelect,
     ]);
 
-    _contentType = _homeContentTypeFromString(Storage().homeContentType) ?? HomeContentType.browse;
+    HomeContentType? initialContentType = widget.initialContentType;
+    if (initialContentType != null) {
+      Storage().homeContentType = _homeContentTypeToString(_contentType = initialContentType);
+      widget.initialContentType = null;
+    }
+    else {
+      _contentType = _homeContentTypeFromString(Storage().homeContentType) ?? HomeContentType.browse;
+    }
+
     _availableSystemCodes = JsonUtils.setStringsValue(FlexUI()['home.system']) ?? <String>{};
     _availableSystemCodes?.remove('tout'); // Tout widget embedded statically here, do not show it as part of favorites
 
@@ -594,7 +621,10 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == _HomeContentTab.notifySelect) {
+    if ((name == _HomeContentTab.notifySelect) && (param is HomeContentType)) {
+      _updateContentType(param);
+    }
+    else if ((name == HomePanel.notifySelect) && (param is HomeContentType)) {
       _updateContentType(param);
     }
   }
@@ -638,7 +668,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 
   void _updateContentType(HomeContentType contentType) {
-    if (mounted && (contentType != _contentType)) {
+    if (mounted && (contentType != null) && (contentType != _contentType)) {
       setState(() {
         Storage().homeContentType = _homeContentTypeToString(_contentType = contentType);
       });

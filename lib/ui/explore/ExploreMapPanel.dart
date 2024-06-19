@@ -78,7 +78,7 @@ class ExploreMapPanel extends StatefulWidget {
   State<StatefulWidget> createState() => _ExploreMapPanelState();
 
   static bool get hasState {
-    Set<NotificationsListener>? subscribers = NotificationService().subscribers(ExploreMapPanel.notifySelect);
+    Set<NotificationsListener>? subscribers = NotificationService().subscribers(notifySelect);
     if (subscribers != null) {
       for (NotificationsListener subscriber in subscribers) {
         if ((subscriber is _ExploreMapPanelState) && subscriber.mounted) {
