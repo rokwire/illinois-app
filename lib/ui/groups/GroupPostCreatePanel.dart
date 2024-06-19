@@ -76,7 +76,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
               key: _postImageHolderKey,
               imageUrl: _postData.imageUrl,
               buttonVisible: true ,
-              onImageChanged: (url) => _postData.imageUrl = url,),
+              onImageChanged: (url) => setStateIfMounted((){_postData.imageUrl = url;})),
             Container(
               padding: EdgeInsets.symmetric(horizontal: _outerPadding),
               child: Column(
