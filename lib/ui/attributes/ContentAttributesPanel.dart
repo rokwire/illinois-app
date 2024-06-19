@@ -145,7 +145,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       }
       for (ContentAttribute attribute in attributes) {
         Widget? attributeWidget;
-        if ((widget.filtersMode != true) || FlexUI().isAttributeEnabled(attribute.id, scope: widget.scope)) {
+        if ((attribute.id != null) && ((widget.filtersMode != true) || FlexUI().isAttributeEnabled(attribute.id, scope: widget.scope))) {
           switch (attribute.widget) {
             case ContentAttributeWidget.dropdown: attributeWidget = _buildAttributeDropDown(attribute); break;
             case ContentAttributeWidget.checkbox: attributeWidget = _buildAttributeCheckbox(attribute); break;
