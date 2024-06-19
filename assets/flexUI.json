@@ -24,10 +24,10 @@
 			"home.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
 			"home.wallet": ["illini_id_card", "illini_cash_card", "meal_plan_card", "bus_pass_card", "library_card"],
 
-			"home.twitter.account": ["gies", "rokwire", "", "news", "canvas"],
+			"home.twitter.account": ["gies", "", "news", "canvas"],
 			
 			"browse": ["academics", "app_help", "appointments", "athletics", "safer", "campus_guide", "dinings", "events", "feeds", "laundry", "groups", "mtd", "my", "inbox", "polls", "radio_stations", "recent", "research_projects", "state_farm_center", "wallet", "wellness"],
-			"browse.academics": ["gies_checklist", "new_student_checklist", "skills_self_evaluation", "essential_skills_coach", "student_courses", "canvas_courses", "gies_canvas_courses", "campus_reminders", "wellness_todo", "due_date_catalog", "appointments"],
+			"browse.academics": ["gies_checklist", "new_student_checklist", "skills_self_evaluation", "essential_skills_coach", "student_courses", "canvas_courses", "gies_canvas_courses", "campus_reminders", "wellness_todo", "appointments"],
 			"browse.appointments": ["appointments"],
 			"browse.app_help": ["faqs", "feedback", "review", "video_tutorials"],
 			"browse.athletics": ["my_athletics", "my_game_day", "my_news", "sport_events", "sport_news", "sport_teams"],
@@ -60,7 +60,7 @@
 			"authenticate.linked.phone": ["info", "remove", "verify"],
 			"authenticate.linked.email": ["info", "remove", "verify"],
 	
-			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "gies_canvas_courses", "medicine_courses", "academics_events", "appointments", "todo_list", "skills_self_evaluation", "essential_skills_coach", "due_date_catalog", "my_illini", "skills_dashboard"],
+			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "gies_canvas_courses", "medicine_courses", "academics_events", "appointments", "todo_list", "skills_self_evaluation", "essential_skills_coach", "my_illini", "skills_dashboard"],
 			"academics.appointments.features": ["authentication", "netid_login"],
 			"academics.skills_self_evaluation.features": ["authentication", "netid_login"],
 			"academics.essential_skills_coach.features": ["authentication", "netid_login"],

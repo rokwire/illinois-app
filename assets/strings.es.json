@@ -447,6 +447,15 @@
     "panel.assistant.dialog.context.button.save.title": "Guardar",
     "panel.assistant.faqs.missing.msg": "No hay preguntas frecuentes disponibles.",
 
+    "panel.wallet.header.title": "Wallet",
+    "panel.wallet.offline.label": "The Wallet is not available while offline.",
+    "panel.wallet.logged_out.label": "To access the Wallet, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.",
+    "panel.wallet.content_type.illini_id.label": "Illini ID",
+    "panel.wallet.content_type.illini_id_faqs.label": "Illini ID FAQs",
+    "panel.wallet.content_type.bus_pass.label": "Bus Pass",
+    "panel.wallet.content_type.meal_plan.label": "Meal Plan",
+    "panel.wallet.content_type.add_illini_cash.label": "Add Illini Cash",
+
     "panel.search.header.title":"Buscar",
     "panel.search.label.search_for":"Buscar por Título del Evento",
     "panel.search.label.results_for":"Resultados para ",
