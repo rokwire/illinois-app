@@ -621,10 +621,10 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == _HomeContentTab.notifySelect) {
+    if ((name == _HomeContentTab.notifySelect) && (param is HomeContentType)) {
       _updateContentType(param);
     }
-    else if (name == HomePanel.notifySelect) {
+    else if ((name == HomePanel.notifySelect) && (param is HomeContentType)) {
       _updateContentType(param);
     }
   }
@@ -668,7 +668,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 
   void _updateContentType(HomeContentType contentType) {
-    if (mounted && (contentType != _contentType)) {
+    if (mounted && (contentType != null) && (contentType != _contentType)) {
       setState(() {
         Storage().homeContentType = _homeContentTypeToString(_contentType = contentType);
       });
