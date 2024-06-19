@@ -96,6 +96,12 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyWellnessResourcesNotification              = "$notifyBase.wellness.resources";
   static const String notifyWellnessStrugglingNotification             = "$notifyBase.wellness.struggling";
   static const String notifyWellnessMentalHealthNotification           = "$notifyBase.wellness.mental_health";
+  static const String notifyWalletNotification                         = "$notifyBase.wallet";
+  static const String notifyWalletIlliniIdNotification                 = "$notifyBase.wallet.illini_id";
+  static const String notifyWalletIlliniIdFaqsNotification             = "$notifyBase.wallet.illini_id.faqs";
+  static const String notifyWalletBusPassNotification                  = "$notifyBase.wallet.bus_pass";
+  static const String notifyWalletMealPlanNotification                 = "$notifyBase.wallet.meal_plan";
+  static const String notifyWalletAddIlliniCashNotification            = "$notifyBase.wallet.add_illini_cash";
   static const String notifyInboxNotification                          = "$notifyBase.inbox";
   static const String notifyCanvasAppDeepLinkNotification              = "$notifyBase.app.canvas.deeplink";
   static const String notifyAppointmentNotification                    = "$notifyBase.appointment";
@@ -238,6 +244,12 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeWellnessResources = 'wellness.resources';
   static const String payloadTypeWellnessStruggling = 'wellness.struggling';
   static const String payloadTypeWellnessMentalHealth = 'wellness.mental_health';
+  static const String payloadTypeWallet = 'wallet';
+  static const String payloadTypeWalletIlliniId = 'wallet.illini_id';
+  static const String payloadTypeWalletIlliniIdFaqs = 'wallet.illini_id';
+  static const String payloadTypeWalletBusPass = 'wallet.bus_pass';
+  static const String payloadTypeWalletMealPlan = 'wallet.meal_plan';
+  static const String payloadTypeWalletAddIlliniCash = 'wallet.add_illini_cash';
   static const String payloadTypeInbox = 'inbox';
   static const String payloadTypeCanvasAppDeepLink = 'canvas_app_deeplink';
   static const String payloadTypeAppointment = 'appointment';
@@ -530,6 +542,24 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
     else if (type == payloadTypeWellnessTodoList) {
       NotificationService().notify(notifyWellnessTodoListNotification, data);
+    }
+    else if (type == payloadTypeWallet) {
+      NotificationService().notify(notifyWalletNotification, data);
+    }
+    else if (type == payloadTypeWalletIlliniId) {
+      NotificationService().notify(notifyWalletIlliniIdNotification, data);
+    }
+    else if (type == payloadTypeWalletIlliniIdFaqs) {
+      NotificationService().notify(notifyWalletIlliniIdFaqsNotification, data);
+    }
+    else if (type == payloadTypeWalletBusPass) {
+      NotificationService().notify(notifyWalletBusPassNotification, data);
+    }
+    else if (type == payloadTypeWalletMealPlan) {
+      NotificationService().notify(notifyWalletMealPlanNotification, data);
+    }
+    else if (type == payloadTypeWalletAddIlliniCash) {
+      NotificationService().notify(notifyWalletAddIlliniCashNotification, data);
     }
     else if (type == payloadTypeInbox) {
       NotificationService().notify(notifyInboxNotification, data);

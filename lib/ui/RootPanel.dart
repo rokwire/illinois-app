@@ -159,6 +159,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyWellnessRingsNotification,
       FirebaseMessaging.notifyWellnessStrugglingNotification,
       FirebaseMessaging.notifyWellnessTodoListNotification,
+      FirebaseMessaging.notifyWalletNotification,
+      FirebaseMessaging.notifyWalletIlliniIdNotification,
+      FirebaseMessaging.notifyWalletIlliniIdFaqsNotification,
+      FirebaseMessaging.notifyWalletBusPassNotification,
+      FirebaseMessaging.notifyWalletMealPlanNotification,
+      FirebaseMessaging.notifyWalletAddIlliniCashNotification,
       FirebaseMessaging.notifyInboxNotification,
       FirebaseMessaging.notifyPollNotification,
       FirebaseMessaging.notifyCanvasAppDeepLinkNotification,
@@ -437,6 +443,25 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyWellnessTodoListNotification) {
       _onFirebaseWellnessNotification(WellnessContent.todo);
+    }
+
+    else if (name == FirebaseMessaging.notifyWalletNotification) {
+      _onFirebaseTabNotification(RootTab.Wallet);
+    }
+    else if (name == FirebaseMessaging.notifyWalletIlliniIdNotification) {
+      _onFirebaseWaletNotification(WalletContentType.illiniId);
+    }
+    else if (name == FirebaseMessaging.notifyWalletIlliniIdFaqsNotification) {
+      _onFirebaseWaletNotification(WalletContentType.illiniIdFaqs);
+    }
+    else if (name == FirebaseMessaging.notifyWalletBusPassNotification) {
+      _onFirebaseWaletNotification(WalletContentType.busPass);
+    }
+    else if (name == FirebaseMessaging.notifyWalletMealPlanNotification) {
+      _onFirebaseWaletNotification(WalletContentType.mealPlan);
+    }
+    else if (name == FirebaseMessaging.notifyWalletAddIlliniCashNotification) {
+      _onFirebaseWaletNotification(WalletContentType.addIlliniCash);
     }
     else if (name == FirebaseMessaging.notifyInboxNotification) {
       _onFirebaseInboxNotification();
@@ -1148,6 +1173,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     } else {
       SettingsHomeContentPanel.present(context, content: settingsContent);
     }
+  }
+
+  void _onFirebaseWaletNotification(WalletContentType contentType) {
+    WalletHomePanel.present(context, contentType: contentType);
   }
 
   void _onFirebaseAcademicsNotification(AcademicsContent content) {
