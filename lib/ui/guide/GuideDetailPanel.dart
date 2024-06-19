@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -26,15 +27,25 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
-class GuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GuideDetailPanel extends StatefulWidget with AnalyticsInfo {
   final String? favoriteKey;
   final String? guideEntryId;
   final Map<String, dynamic>? guideEntry;
+  final AnalyticsFeature? _analyticsFeature;
   final bool showTabBar;
-  GuideDetailPanel({ this.guideEntryId, this.guideEntry, this.favoriteKey = GuideFavorite.favoriteKeyName, this.showTabBar = true });
+  GuideDetailPanel({ this.guideEntryId, this.guideEntry, AnalyticsFeature? analyticsFeature, this.favoriteKey = GuideFavorite.favoriteKeyName, this.showTabBar = true }) :
+    _analyticsFeature = analyticsFeature;
 
   @override
   _GuideDetailPanelState createState() => _GuideDetailPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature =>
+    _analyticsFeature ??
+    AnalyticsFeature.fromName(Guide().entryContentType(theGuideEntry)) ??
+    AnalyticsFeature.fromName(Guide().entryGuide(theGuideEntry));
+
+  Map<String, dynamic>? get theGuideEntry => Guide().entryById(guideEntryId) ?? guideEntry;
 
   @override
   Map<String, dynamic> get analyticsPageAttributes => Guide().entryAnalyticsAttributes(Guide().entryById(guideEntryId)) ?? {};
@@ -46,7 +57,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> {
 
   @override
   void initState() {
-    _guideEntry = Guide().entryById(widget.guideEntryId) ?? widget.guideEntry;
+    _guideEntry = widget.theGuideEntry;
     RecentItems().addRecentItem(RecentItem.fromGuideItem(_guideEntry));
     super.initState();
   }
@@ -64,7 +75,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> {
         Expanded(child:
           SingleChildScrollView(child:
             SafeArea(child:
-              GuideDetailWidget(guideEntryId: widget.guideEntryId, guideEntry: widget.guideEntry, favoriteKey: widget.favoriteKey,)
+              GuideDetailWidget(guideEntryId: widget.guideEntryId, guideEntry: widget.guideEntry, favoriteKey: widget.favoriteKey, analyticsFeature: widget.analyticsFeature,)
             ),
           ),
         ),
@@ -79,8 +90,9 @@ class GuideDetailWidget extends StatefulWidget {
   final String? favoriteKey;
   final String? guideEntryId;
   final Map<String, dynamic>? guideEntry;
+  final AnalyticsFeature? analyticsFeature;
   final Color? headingColor;
-  GuideDetailWidget({Key? key, this.guideEntryId, this.guideEntry, this.favoriteKey, this.headingColor }) : super(key: key);
+  GuideDetailWidget({Key? key, this.guideEntryId, this.guideEntry, this.favoriteKey, this.headingColor, this.analyticsFeature }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GuideDetailWidgetState();

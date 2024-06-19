@@ -17,7 +17,8 @@ Map<String, String> deeplinkNameMap = {
   'academics.gies_checklist': 'iDegrees New Student Checklist',
   'academics.uiuc_checklist': 'New Student Checklist',
   'academics.events': 'Academic Events',
-  'academics.canvas_courses': 'My Gies Canvas Courses',
+  'academics.canvas_courses': 'My Canvas Courses',
+  'academics.gies_canvas_courses': 'My Gies Canvas Courses',
   'academics.medicine_courses': 'My College of Medicine Compliance',
   'academics.student_courses': 'My Courses',
   'academics.skills_self_evaluation': 'Skills Self-Evaluation',
@@ -59,6 +60,8 @@ Map<String, String> deeplinkNameMap = {
 };
 
 class Message {
+  static final String _unknownAnswerValue = "I don't know";
+
   final String id;
   final String content;
   final bool user;
@@ -70,15 +73,20 @@ class Message {
   MessageFeedback? feedback;
   String? feedbackExplanation;
 
+  bool? sourcesExpanded;
+  FeedbackResponseType? feedbackResponseType;
+  bool? isNegativeFeedbackMessage;
+
   Message({this.id = '', required this.content, required this.user, this.example = false, this.acceptsFeedback = false,
-    this.links, this.sources = const [], this.queryLimit, this.feedback,  this.feedbackExplanation});
+    this.links, this.sources = const [], this.queryLimit, this.feedback,  this.feedbackExplanation,
+    this.sourcesExpanded, this.feedbackResponseType, this.isNegativeFeedbackMessage});
 
   factory Message.fromAnswerJson(Map<String, dynamic> json) {
     List<String>? sources = JsonUtils.stringListValue(json['sources']);
     if (sources == null) {
       String? source = JsonUtils.stringValue(json['sources']);
-      if (source != null) {
-        sources = source.split((RegExp(r'[,\n]')));
+      if (StringUtils.isNotEmpty(source)) {
+        sources = source!.split((RegExp(r'[,\n]')));
         sources = sources.map((e) => e.trim()).toList();
       }
     }
@@ -112,8 +120,8 @@ class Message {
     List<String>? sources = JsonUtils.stringListValue(answerJson?['sources']);
     if (sources == null) {
       String? source = JsonUtils.stringValue(answerJson?['sources']);
-      if (source != null) {
-        sources = source.split((RegExp(r'[,\n]')));
+      if (StringUtils.isNotEmpty(source)) {
+        sources = source!.split((RegExp(r'[,\n]')));
         sources = sources.map((e) => e.trim()).toList();
       }
     }
@@ -140,7 +148,11 @@ class Message {
       feedbackExplanation: null,
     );
   }
+
+  bool get isAnswerUnknown => (content.toLowerCase() == _unknownAnswerValue.toLowerCase());
 }
+
+enum FeedbackResponseType { positive, negative }
 
 class Link {
   final String name;

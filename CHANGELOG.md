@@ -5,8 +5,86 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Remove "Due Date Catalog" from Academics [#4106](https://github.com/rokwire/illinois-app/issues/4106).
+
+## [6.0.8] - 2024-06-17
+### Changed
+- Remove rokwire from twitter accounts [#4112](https://github.com/rokwire/illinois-app/issues/4112).
+### Added
+- Created new Wallet panel, round #1 [#4114](https://github.com/rokwire/illinois-app/issues/4114).
+
+## [6.0.7] - 2024-06-14
+### Changed
+- Preserve content tab states in Home Panel [#4108](https://github.com/rokwire/illinois-app/issues/4108).
+- Show "My Canvas Courses" for all signed in users [#4115](https://github.com/rokwire/illinois-app/issues/4115).
+- Updated share icon style [#4041](https://github.com/rokwire/illinois-app/issues/4041).
+- Updated logged out prompt text [#4079](https://github.com/rokwire/illinois-app/issues/4079).
+- GroupPostDetailPanel change replies order so the newest reply goes at the bottom [#4081](https://github.com/rokwire/illinois-app/issues/4081).
+- ProfileNamePronouncementConfirmDeleteDialog enhancements [#4083](https://github.com/rokwire/illinois-app/issues/4083).
+
+## [6.0.6] - 2024-06-12
+### Changed
+- Merge Favorites and Browse tabs, removed Academics and Wellness, added Wallet tab [#4108](https://github.com/rokwire/illinois-app/issues/4108).
+### Fixed
+- Do not clear Assistant messages when switching to another panel [#4089](https://github.com/rokwire/illinois-app/issues/4089).
+
+## [6.0.5] - 2024-06-11
+### Added
+- New Assistant UI - FAQs [#4089](https://github.com/rokwire/illinois-app/issues/4089).
+### Changed
+- Updated status texts for in-app event registration [#4086](https://github.com/rokwire/illinois-app/issues/4086).
+
+## [6.0.4] - 2024-06-10
+### Fixed
+- Fixed Explore Map markers build when all explores fall into the same position [#4098](https://github.com/rokwire/illinois-app/issues/4098).
+### Changed
+- Updated optional registration texts [#4043](https://github.com/rokwire/illinois-app/issues/4043).
+- Upgrade to Flutter 3.22.2.
+
+## [6.0.3] - 2024-06-07
+### Changed
+- Updated need to login message, reuse it across different app features [#4079](https://github.com/rokwire/illinois-app/issues/4079).
+- Cleaned up pronunciation control in Profile, prompt before delete [#4083](https://github.com/rokwire/illinois-app/issues/4083).
+### Added
+- New Assistant UI - in progress [#4089](https://github.com/rokwire/illinois-app/issues/4089).
+
+## [6.0.2] - 2024-06-04
+### Changed
+- Prompt to star event after creation [#3655](https://github.com/rokwire/illinois-app/issues/3655).
+- Cleanup settings directory content, rename and move panels to proper locations [#4029](https://github.com/rokwire/illinois-app/issues/4029).
+### Fixed
+- Fixed unhandled exception in refreshing HomeTwitterWidget.
+### Added
+- Added standard property "feature" in Analytics [#4029](https://github.com/rokwire/illinois-app/issues/4029).
+
+## [6.0.1] - 2024-05-21
+### Changed
+- Cleaned up "share" (ex. "qr") icon, align icon buttons in Event2HomePanel [#4041](https://github.com/rokwire/illinois-app/issues/4041).
+### Added
+- "My Canvas Courses" in the Academics panel [#4071](https://github.com/rokwire/illinois-app/issues/4071).
+
+## [6.0.0] - 2024-05-20
+- Increase version number to 6.0 [#4069](https://github.com/rokwire/illinois-app/issues/4069).
+
+## [5.2.11] - 2024-05-16
+### Changed
+- Updated messaged displayed on Event2DetailPanel Register/Unregister [#4042](https://github.com/rokwire/illinois-app/issues/4042).
+- Sort Academics dropdown items lexicographically [#4018](https://github.com/rokwire/illinois-app/issues/4018).
+
+## [5.2.10] - 2024-05-15
+### Changed
+- Disable sub-reply with option to enable it again [#4049](https://github.com/rokwire/illinois-app/issues/4049).
+- Feeds section in Browse renamed to Illini News [#4060](https://github.com/rokwire/illinois-app/issues/4060).
+- Clean up share panels from Events and Groups [#4039](https://github.com/rokwire/illinois-app/issues/4039).
+### Added
+- Added NewsAtIllinois twitter account [#4060](https://github.com/rokwire/illinois-app/issues/4060).
+
+## [5.2.9] - 2024-05-14
 ### Added
 - Added Clear button to event filter bar [#4041](https://github.com/rokwire/illinois-app/issues/4041).
+- Created share event set functionality [#4041](https://github.com/rokwire/illinois-app/issues/4041).
+- Added more radio stations support [#4059](https://github.com/rokwire/illinois-app/issues/4059).
 
 ## [5.2.8] - 2024-05-10
 ### Changed

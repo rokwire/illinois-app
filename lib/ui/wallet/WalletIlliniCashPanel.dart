@@ -30,7 +30,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
+import 'package:illinois/ui/wallet/WalletAddIlliniCashPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/section.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -40,31 +40,29 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class SettingsIlliniCashPanel extends StatefulWidget {
+class WalletIlliniCashPanel extends StatefulWidget {
 
   static final String routeName = 'settings_illini_cash';
 
-  final ScrollController? scrollController;
-
-  SettingsIlliniCashPanel({this.scrollController});
+  WalletIlliniCashPanel({super.key});
 
   @override
-  _SettingsIlliniCashPanelState createState() => _SettingsIlliniCashPanelState();
+  _WalletIlliniCashPanelState createState() => _WalletIlliniCashPanelState();
 
   static void present(BuildContext context) {
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.illini_cash', 'Illini Cash is not available while offline.'));
     }
     else if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.illini_cash', 'You need to be logged in with your NetID to access Illini Cash. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
+      AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.illini_cash', 'Illini Cash'));
     }
     else {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: SettingsIlliniCashPanel.routeName), builder: (context) => SettingsIlliniCashPanel()));
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: WalletIlliniCashPanel.routeName), builder: (context) => WalletIlliniCashPanel()));
     }
   }
 }
 
-class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> implements NotificationsListener {
+class _WalletIlliniCashPanelState extends State<WalletIlliniCashPanel> implements NotificationsListener {
 
   DateTime? _startDate;
   DateTime? _endDate;
@@ -74,7 +72,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   bool _authLoading = false;
   bool _illiniCashLoading = false;
 
-  _SettingsIlliniCashPanelState();
+  _WalletIlliniCashPanelState();
 
   @override
   void initState() {
@@ -131,9 +129,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
     return Scaffold(
       body: _buildScaffoldBody(),
       backgroundColor: Styles().colors.background,
-      bottomNavigationBar: widget.scrollController == null
-          ? uiuc.TabBar()
-          : Container(height: 0,),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -142,14 +138,11 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
       return Center(child: CircularProgressIndicator(),);
     }
     return CustomScrollView(
-      controller: widget.scrollController,
       slivers: <Widget>[
         SliverHeaderBar(
-          leadingIconKey: widget.scrollController == null
-              ? 'chevron-left-white'
-              : 'chevron-left-bold',
+          leadingIconKey: 'chevron-left-white',
           title: Localization().getStringEx('panel.settings.illini_cash.label.title','Illini Cash'),
-          textStyle:  widget.scrollController == null ? Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat") : Styles().textStyles.getTextStyle("widget.title.regular.extra_fat"),
+          textStyle:  Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),
         ),
         SliverList(
           delegate: SliverChildListDelegate([
@@ -587,7 +580,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
             name:"settings_add_illini_cash"
         ),
         builder: (context){
-          return SettingsAddIlliniCashPanel(scrollController: widget.scrollController,);
+          return WalletAddIlliniCashPanel();
         }
     ));
   }

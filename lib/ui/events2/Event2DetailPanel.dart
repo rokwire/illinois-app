@@ -9,6 +9,7 @@ import 'package:illinois/ext/DeviceCalendar.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Survey.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -17,7 +18,7 @@ import 'package:illinois/ui/SyrveyPanel.dart';
 import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
-import 'package:illinois/ui/events2/Event2QrCodePanel.dart';
+import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupAttendancePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
@@ -44,7 +45,7 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class Event2DetailPanel extends StatefulWidget with AnalyticsInfo {
   final Event2? event;
   final String? eventId;
   final Event2? superEvent;
@@ -488,47 +489,47 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         if (showSurvey) {
           if (_isAdmin) {
             description = registrationAvailable ?
-              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.att.svy.admin', 'This event requires registration. Attendance will be taken and a follow-up survey will be sent.') :
-              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full.att.svy.admin', 'This event requires registration and its capacity is reached. Attendance will be taken and a follow-up survey will be sent.');
+              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.att.svy.admin', 'This event has registration. Attendance will be taken and a follow-up survey will be sent.') :
+              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full.att.svy.admin', 'This event has registration and its capacity is reached. Attendance will be taken and a follow-up survey will be sent.');
           }
           else switch (surveyHours) {
             case 0:  description = registrationAvailable ?
-              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.att.svy.none', 'This event requires registration. Attendance will be taken and you will receive a notification with a follow-up survey after this event.') :
-              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full.att.svy.none', 'This event requires registration and its capacity is reached. Attendance will be taken and you will receive a notification with a follow-up survey after this event.'); break;
+              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.att.svy.none', 'This event has registration. Attendance will be taken and you will receive a notification with a follow-up survey after this event.') :
+              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full.att.svy.none', 'This event has registration and its capacity is reached. Attendance will be taken and you will receive a notification with a follow-up survey after this event.'); break;
             case 1:  description = registrationAvailable ?
-              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.att.svy.single', 'This event requires registration. Attendance will be taken and you will receive a notification with a follow-up survey 1 hour after the event.') :
-              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full.att.svy.single', 'This event requires registration and its capacity is reached. Attendance will be taken and you will receive a notification with a follow-up survey 1 hour after the event.'); break;
+              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.att.svy.single', 'This event has registration. Attendance will be taken and you will receive a notification with a follow-up survey 1 hour after the event.') :
+              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full.att.svy.single', 'This event has registration and its capacity is reached. Attendance will be taken and you will receive a notification with a follow-up survey 1 hour after the event.'); break;
             default: description = (registrationAvailable ?
-              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.att.svy.multi', 'This event requires registration. Attendance will be taken and you will receive a notification with a follow-up survey {{hours}} hours after the event.') :
-              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full.att.svy.multi', 'This event requires registration and its capacity is reached. Attendance will be taken and you will receive a notification with a follow-up survey {{hours}} hours after the event.')).replaceAll('{{hours}}', surveyHours.toString()); break;
+              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.att.svy.multi', 'This event has registration. Attendance will be taken and you will receive a notification with a follow-up survey {{hours}} hours after the event.') :
+              Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full.att.svy.multi', 'This event has registration and its capacity is reached. Attendance will be taken and you will receive a notification with a follow-up survey {{hours}} hours after the event.')).replaceAll('{{hours}}', surveyHours.toString()); break;
           }
         }
         else {
           description = registrationAvailable ?
-            Localization().getStringEx('panel.event2.detail.survey.description.reg_req.att', 'This event requires registration, and attendance will be taken.') :
-            Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full.att', 'This event requires registration, its capacity is reached, and attendance will be taken.');
+            Localization().getStringEx('panel.event2.detail.survey.description.reg_req.att', 'This event has registration, and attendance will be taken.') :
+            Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full.att', 'This event has registration, its capacity is reached, and attendance will be taken.');
         }
       }
       else {
         description = registrationAvailable ?
-          Localization().getStringEx('panel.event2.detail.survey.description.reg_req', 'Registration is required for this event.') :
-          Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full', 'Registration is required for this event and its capacity is reached.');
+          Localization().getStringEx('panel.event2.detail.survey.description.reg_req', 'Registration is available for this event.') :
+          Localization().getStringEx('panel.event2.detail.survey.description.reg_req.full', 'Registration is available for this event and its capacity is reached.');
       }
     }
     else if (hasRegistration) {
       if (hasAttendance) {
         if (showSurvey) {
           if (_isAdmin) {
-            description = Localization().getStringEx('panel.event2.detail.survey.description.reg_opt.att.svy.admin', 'This event provides registration. Attendance will be taken and a follow-up survey will be sent.');
+            description = Localization().getStringEx('panel.event2.detail.survey.description.reg_opt.att.svy.admin', 'This event has registration. Attendance will be taken and a follow-up survey will be sent.');
           }
           else switch (surveyHours) {
-            case 0:  description = Localization().getStringEx('panel.event2.detail.survey.description.reg_opt.att.svy.none', 'This event provides registration. Attendance will be taken and you will receive a notification with a follow-up survey after this event.'); break;
-            case 1:  description = Localization().getStringEx('panel.event2.detail.survey.description.reg_opt.att.svy.single', 'This event provides registration. Attendance will be taken and you will receive a notification with a follow-up survey 1 hour after the event.'); break;
-            default: description = Localization().getStringEx('panel.event2.detail.survey.description.reg_opt.att.svy.multi', 'This event provides registration. Attendance will be taken and you will receive a notification with a follow-up survey {{hours}} hours after the event.'); break;
+            case 0:  description = Localization().getStringEx('panel.event2.detail.survey.description.reg_opt.att.svy.none', 'This event has registration. Attendance will be taken and you will receive a notification with a follow-up survey after this event.'); break;
+            case 1:  description = Localization().getStringEx('panel.event2.detail.survey.description.reg_opt.att.svy.single', 'This event has registration. Attendance will be taken and you will receive a notification with a follow-up survey 1 hour after the event.'); break;
+            default: description = Localization().getStringEx('panel.event2.detail.survey.description.reg_opt.att.svy.multi', 'This event has registration. Attendance will be taken and you will receive a notification with a follow-up survey {{hours}} hours after the event.'); break;
           }
         }
         else {
-          description = Localization().getStringEx('panel.event2.detail.survey.description.reg_opt.att', 'This event provides registration, and attendance will be taken.');
+          description = Localization().getStringEx('panel.event2.detail.survey.description.reg_opt.att', 'This event has registration, and attendance will be taken.');
         }
       }
       else {
@@ -608,7 +609,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   List<Widget>? get _promoteButton => <Widget>[
     InkWell(onTap: _onPromote, child:
-       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.promote.title', 'Share this event'), 'qr', underlined: true)),
+       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.promote.title', 'Share this event'), 'share', underlined: true)),
     _detailSpacerWidget
   ];
 
@@ -956,20 +957,36 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   void _onRegister() {
     Analytics().logSelect(target: 'Register me');
-    _performRegistration(Events2().registerToEvent,
-        onSuccess: (Event2 event) {
-          if(!Auth2().isFavorite(event)){ //Show only if it's not favorite yet
-            AppAlert.showConfirmationDialog(buildContext: context,
-                message: Localization().getStringEx("panel.event2.detail.star_event.dialog.message", "Do you want to also Star this event?"),
-                positiveCallback: ()=> _onFavorite()
-            );
+    _performRegistration(Events2().registerToEvent, onSuccess: (Event2 event) {
+      if (Auth2().isFavorite(event)) {
+        Event2Popup.showMessage(context,
+          title: Localization().getStringEx("dialog.success.title", "Success"),
+          message: Localization().getStringEx("panel.event2.detail.register.succeeded", "You're registered!"),
+        );
+      }
+      else {
+        Event2Popup.showPrompt(context,
+          title: Localization().getStringEx("dialog.success.title", "Success"),
+          messageHtml: Localization().getStringEx("panel.event2.detail.register.succeeded.star.prompt", "You're registered! Would vou like to add this event to <span style='color:{{star_color}};'><b>\u2605</b></span> My Events?").replaceAll('{{star_color}}', ColorUtils.toHex(Styles().colors.fillColorSecondary)),
+          positiveButtonTitle: Localization().getStringEx("dialog.yes.title", "Yes"),
+          negativeButtonTitle: Localization().getStringEx("dialog.no.title", "No"),
+        ).then((bool? result) {
+          if (result == true) {
+            Auth2().prefs?.setFavorite(_event, true);
           }
+        });
+      }
     });
   }
 
   void _onUnregister() {
     Analytics().logSelect(target: 'Unregister me');
-    _performRegistration(Events2().unregisterFromEvent);
+    _performRegistration(Events2().unregisterFromEvent, onSuccess: (Event2 event) {
+      Event2Popup.showMessage(context,
+        title: Localization().getStringEx("dialog.success.title", "Success"),
+        message: Localization().getStringEx("panel.event2.detail.unregister.succeeded", "You are no onder registerec for this event."),
+      );
+    });
   }
 
   void _performRegistration(Future<dynamic> Function(String eventId) registrationApi, {Function(Event2 event)? onSuccess}) {
@@ -1032,7 +1049,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   void _onPromote(){
     Analytics().logSelect(target: "Promote Event", attributes: _event?.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2QrCodePanel(event: _event)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromEvent(_event)));
   }
 
   void _onContactEmail(String? email){
@@ -1140,8 +1157,8 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
     if (_eventId != null) {
       Event2Popup.showPrompt(context,
-        Localization().getStringEx('panel.event2.detail.general.prompt.delete.title', 'Delete'),
-        Localization().getStringEx('panel.event2.detail.general.prompt.delete.message', 'Are you sure you want to delete this event and all data associated with it? This action cannot be undone.'),
+        title: Localization().getStringEx('panel.event2.detail.general.prompt.delete.title', 'Delete'),
+        message: Localization().getStringEx('panel.event2.detail.general.prompt.delete.message', 'Are you sure you want to delete this event and all data associated with it? This action cannot be undone.'),
       ).then((bool? result) {
         if (result == true) {
           setStateIfMounted(() {

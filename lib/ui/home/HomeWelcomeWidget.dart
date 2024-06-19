@@ -6,7 +6,7 @@ import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
+import 'package:illinois/ui/apphelp/AppHelpVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/config.dart';
@@ -150,7 +150,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
   void _onTapVideo() {
     if (_video != null) {
       Analytics().logSelect(target: 'Video Tutorial', source: widget.runtimeType.toString(), attributes: _video!.analyticsAttributes);
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVideoTutorialPanel(videoTutorial: _video!)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AppHelpVideoTutorialPanel(videoTutorial: _video!)));
     }
   }
 

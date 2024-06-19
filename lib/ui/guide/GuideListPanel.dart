@@ -3,10 +3,11 @@ import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
-import 'package:illinois/ui/wallet/ICardHomeContentPanel.dart';
+import 'package:illinois/ui/wallet/WalletICardHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -21,15 +22,15 @@ import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
-import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
-import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
+import 'package:illinois/ui/wallet/WalletIlliniCashPanel.dart';
+import 'package:illinois/ui/wallet/WalletMealPlanPanel.dart';
+import 'package:illinois/ui/wallet/WalletMTDBusPassPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class GuideListPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GuideListPanel extends StatefulWidget with AnalyticsInfo {
   final String? guide;
   final String? category;
   final GuideSection? section;
@@ -42,6 +43,11 @@ class GuideListPanel extends StatefulWidget implements AnalyticsPageAttributes {
 
   @override
   _GuideListPanelState createState() => _GuideListPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature =>
+    AnalyticsFeature.fromName(guide) ??
+    AnalyticsFeature.fromName(Guide().listContentType(contentList));
 
   @override
   Map<String, dynamic> get analyticsPageAttributes {
@@ -336,7 +342,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateBusPass() {
     Analytics().logSelect(target: "Bus Pass");
-    MTDBusPassPanel.present(context);
+    WalletMTDBusPassPanel.present(context);
   }
 
   void _navigateDining() {
@@ -356,12 +362,12 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateIlliniCash() {
     Analytics().logSelect(target: "Illini Cash");
-    SettingsIlliniCashPanel.present(context);
+    WalletIlliniCashPanel.present(context);
   }
 
   void _navigateIlliniId() {
     Analytics().logSelect(target: "Illini ID");
-    ICardHomeContentPanel.present(context, content: ICardContent.i_card);
+    WalletICardHomeContentPanel.present(context, content: WalletICardContent.i_card);
   }
 
   void _navigateLaundry() {
@@ -376,7 +382,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateMealPlan() {
     Analytics().logSelect(target: "Meal Plan");
-    SettingsMealPlanPanel.present(context);
+    WalletMealPlanPanel.present(context);
   }
 
   void _navigateMyIllini() {

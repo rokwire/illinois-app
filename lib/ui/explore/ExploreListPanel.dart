@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
@@ -39,7 +40,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class ExploreListPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class ExploreListPanel extends StatefulWidget with AnalyticsInfo {
   final List<Explore>? explores;
   final ExploreMapType? exploreMapType;
   final Position? initialLocationData;
@@ -51,15 +52,11 @@ class ExploreListPanel extends StatefulWidget implements AnalyticsPageAttributes
       _ExploreListPanelState();
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes {
-    if ((explores != null) && explores!.isNotEmpty) {
-      return { Analytics.LogAttributeLocation : explores!.first.exploreLocation?.description };
-    }
-    else {
-      return null;
-    }
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Map;
 
-  }
+  @override
+  Map<String, dynamic>? get analyticsPageAttributes => ((explores != null) && (explores?.isNotEmpty == true)) ?
+    { Analytics.LogAttributeLocation : explores?.first.exploreLocation?.description } : null;
 }
 
 class _ExploreListPanelState extends State<ExploreListPanel> implements NotificationsListener {

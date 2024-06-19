@@ -22,6 +22,7 @@ import 'package:flutter/foundation.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Appointments.dart';
+import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CustomCourses.dart';
@@ -51,7 +52,7 @@ import 'package:illinois/service/Services.dart' as illinois;
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/WPGUFMRadio.dart';
+import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/service/WellnessRings.dart';
 
@@ -145,13 +146,13 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       OnCampus(),
       Wellness(),
       WellnessRings(),
-      WPGUFMRadio(),
+      RadioPlayer(),
       AppReview(),
       StudentCourses(),
       Appointments(),
       MTD(),
       SpeechToText(),
-    //Assistant(),
+      Assistant(),
       MobileAccess(),
     ]);
 

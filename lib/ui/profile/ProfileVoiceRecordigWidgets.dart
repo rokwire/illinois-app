@@ -2,6 +2,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -17,15 +18,21 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'dart:io';
 
-import '../../service/Analytics.dart';
 
-class NamePronouncementWidget extends StatefulWidget {
+class ProfileNamePronouncementWidget extends StatefulWidget {
+
+  final EdgeInsets margin;
+
+  ProfileNamePronouncementWidget({super.key, this.margin = const EdgeInsets.symmetric(horizontal: 16)});
 
   @override
-  State<StatefulWidget> createState() => _NamePronouncementState();
+  State<StatefulWidget> createState() => _ProfileNamePronouncementState();
+
+  EdgeInsetsGeometry get horzMargin => EdgeInsets.only(left: margin.left, right: margin.right);
+  EdgeInsetsGeometry get vertMargin => EdgeInsets.only(top: margin.top, bottom: margin.bottom);
 }
 
-class _NamePronouncementState extends State<NamePronouncementWidget> implements NotificationsListener {
+class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidget> implements NotificationsListener {
   late AudioPlayer _audioPlayer;
   bool _loading = false;
 
@@ -43,49 +50,49 @@ class _NamePronouncementState extends State<NamePronouncementWidget> implements 
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container( padding: EdgeInsets.only(right: 8, top: 4),
-                child:  _loading ? _progressIndicator :
-                Styles().images.getImage(_hasStoredPronouncement ? 'icon-soundbyte' : 'plus-circle', excludeFromSemantics: true)
-            ),
-            Visibility(visible: !_hasStoredPronouncement, child:
-            Expanded(
-                child: GestureDetector(onTap:  _onRecordNamePronouncement, child:
-                Text( Localization().getStringEx("", "Add name pronunciation and how you prefer to be addressed (Ex: Please call me Dr. Last Name, First Name, or Nickname. )"),
-                  style: Styles().textStyles.getTextStyle("widget.info.medium.underline"),
-                ),
-                )
-            ),
-            ),
-            Visibility(visible: _hasStoredPronouncement, child:
-            GestureDetector(onTap:  _onPlayNamePronouncement, child:
-            Text( Localization().getStringEx("", "Your name pronunciation recording"),
-              style: Styles().textStyles.getTextStyle("widget.info.medium.underline"),
-            ),
-            )
-            ),
-            Visibility(visible: _hasStoredPronouncement, child:
-            InkWell(onTap: _onEditRecord, child:
-            Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 4), child:
-            Styles().images.getImage('edit', excludeFromSemantics: true)
-            )
-            )
-            ),
-            Visibility(visible: _hasStoredPronouncement, child:
-            InkWell(onTap: _onDeleteNamePronouncement, child:
-            Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 4), child:
-            Styles().images.getImage('icon-delete-record', excludeFromSemantics: true)
-            )
-            )
-            )
-          ],
-        )
-    );
-  }
+  Widget build(BuildContext context) => Padding(padding: widget.vertMargin, child:
+    _hasStoredPronouncement ? _pronouncementContent : _addPronouncementContent,
+  );
+
+  Widget get _pronouncementContent => Row(children: [
+    _loading ? _progressIndicator : _pronouncementIcon,
+
+    Expanded(child:
+      InkWell(onTap:  _onPlayNamePronouncement, child:
+        Text( Localization().getStringEx("", "Your name pronunciation recording"),
+          style: Styles().textStyles.getTextStyle("widget.info.regular.thin.underline"),
+        ),
+      ),
+    ),
+
+    InkWell(onTap: _onEditRecord, child:
+      Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 8), child:
+        Styles().images.getImage('edit', size: 16, excludeFromSemantics: true)
+      )
+    ),
+
+    InkWell(onTap: _onDeleteNamePronouncement, child:
+      Padding(padding: EdgeInsets.only(left: 8, right: widget.margin.right, top: 8, bottom: 8), child:
+        Styles().images.getImage('trash', size: 16, excludeFromSemantics: true)
+      )
+    ),
+
+  ],);
+
+  Widget get _addPronouncementContent => Row(children: [
+    _loading ? _progressIndicator : _addPronouncementIcon,
+
+    Expanded(child:
+      Padding(padding: EdgeInsets.only(right: widget.margin.right), child:
+        InkWell(onTap:  _onRecordNamePronouncement, child:
+          Text(Localization().getStringEx("", "Add name pronunciation and how you prefer to be addressed (Ex: Please call me Dr. Last Name, First Name, or Nickname. )"),
+            style: Styles().textStyles.getTextStyle("widget.info.regular.thin.underline"),
+          ),
+        ),
+      ),
+    ),
+  ]);
+
 
   @override
   void onNotification(String name, param) {
@@ -94,8 +101,19 @@ class _NamePronouncementState extends State<NamePronouncementWidget> implements 
     }
   }
 
-  Widget get _progressIndicator => SizedBox(width: 16, height: 16, child:
-  CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,));
+  Widget get _progressIndicator => Padding(padding: EdgeInsets.only(left: widget.margin.left, right: 8), child:
+    SizedBox(width: 16, height: 16, child:
+      CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
+    )
+  );
+
+  Widget get _pronouncementIcon => Padding(padding: EdgeInsets.only(left: widget.margin.left, right: 8), child:
+    Styles().images.getImage('icon-soundbyte', excludeFromSemantics: true),
+  );
+
+  Widget get _addPronouncementIcon => Padding(padding: EdgeInsets.only(left: widget.margin.left, right: 8), child:
+    Styles().images.getImage('plus-circle', excludeFromSemantics: true)
+  );
 
   void _onPlayNamePronouncement() async {
     try {
@@ -113,24 +131,28 @@ class _NamePronouncementState extends State<NamePronouncementWidget> implements 
   void _prepareAudioPlayer() async {
     Log.d("AUDIO PREPARING");
     if(_hasStoredPronouncement) {
-      await _audioPlayer.setAudioSource(BytesAudioSource(_storedAudioPronouncement!));
+      await _audioPlayer.setAudioSource(_BytesAudioSource(_storedAudioPronouncement!));
     }
   }
 
   void _onRecordNamePronouncement(){
-    SoundRecorderDialog.show(context);
+    _ProfileSoundRecorderDialog.show(context);
   }
 
   void _onEditRecord(){
-    SoundRecorderDialog.show(context, initialRecordBytes: _storedAudioPronouncement);
+    _ProfileSoundRecorderDialog.show(context, initialRecordBytes: _storedAudioPronouncement);
   }
 
   void _onDeleteNamePronouncement(){
-    setStateIfMounted(() => _loading = true);
-    Content().deleteVoiceRecord().then((result) {
-      setStateIfMounted(() => _loading = false);
-      if(result?.resultType != AudioResultType.succeeded){
-        AppAlert.showMessage(context, Localization().getStringEx("", "Unable to delete. Please try again."));
+    _ProfileNamePronouncementConfirmDeleteDialog.show(context).then((bool? result) {
+      if (mounted && (result == true)) {
+        setStateIfMounted(() => _loading = true);
+        Content().deleteVoiceRecord().then((result) {
+          setStateIfMounted(() => _loading = false);
+          if(result?.resultType != AudioResultType.succeeded){
+            AppAlert.showMessage(context, Localization().getStringEx("", "Unable to delete. Please try again."));
+          }
+        });
       }
     });
   }
@@ -140,15 +162,18 @@ class _NamePronouncementState extends State<NamePronouncementWidget> implements 
   Uint8List? get _storedAudioPronouncement => Auth2().authVoiceRecord;
 }
 
-enum RecorderMode{record, play}
-class SoundRecorderDialog extends StatefulWidget {
+enum _RecorderMode {record, play}
+
+class _ProfileSoundRecorderDialog extends StatefulWidget {
   final Uint8List? initialRecordBytes;
 
-  const SoundRecorderDialog({super.key, this.initialRecordBytes});
+  // ignore: unused_element
+  const _ProfileSoundRecorderDialog({super.key, this.initialRecordBytes});
 
   @override
-  _SoundRecorderDialogState createState() => _SoundRecorderDialogState();
+  _ProfileSoundRecorderDialogState createState() => _ProfileSoundRecorderDialogState();
 
+  // ignore: unused_element
   static Future show(BuildContext context, {String? initialRecordPath, Uint8List? initialRecordBytes}) {
     return showDialog(
         context: context,
@@ -156,21 +181,21 @@ class SoundRecorderDialog extends StatefulWidget {
             Material(
               type: MaterialType.transparency,
               borderRadius: BorderRadius.all(Radius.circular(5)),
-              child: SoundRecorderDialog(initialRecordBytes: initialRecordBytes),
+              child: _ProfileSoundRecorderDialog(initialRecordBytes: initialRecordBytes),
             )
     );
   }
 }
 
-class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
-  late SoundRecorderController _controller;
+class _ProfileSoundRecorderDialogState extends State<_ProfileSoundRecorderDialog> {
+  late _ProfileSoundRecorderController _controller;
   bool _loading = false;
 
-  RecorderMode get _mode => _controller.canPlay ? RecorderMode.play : RecorderMode.record;
+  _RecorderMode get _mode => _controller.canPlay ? _RecorderMode.play : _RecorderMode.record;
 
   @override
   void initState() {
-    _controller = SoundRecorderController(
+    _controller = _ProfileSoundRecorderController(
       initialAudio: widget.initialRecordBytes,
       notifyChanged: (fn) =>setStateIfMounted(fn)
     );
@@ -206,7 +231,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
                           child: Column(children: [
                             GestureDetector(
                               onTap:(){
-                                  if(_mode == RecorderMode.play){
+                                  if(_mode == _RecorderMode.play){
                                     if(_controller.isPlaying){
                                       _onPausePlay();
                                     }else {
@@ -215,22 +240,16 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
                                   }
                               },
                               onLongPressStart: (_){
-                                if(_mode == RecorderMode.record) {
+                                if(_mode == _RecorderMode.record) {
                                   _onStartRecording();
                                 }
                               },
                               onLongPressEnd:(_){
-                                if(_mode == RecorderMode.record){
+                                if(_mode == _RecorderMode.record){
                                   _onStopRecording();
                                 }
                               } ,
                               child: Container(
-                                // padding: EdgeInsets.all(12),
-                                // height: 48, width: 48,
-                                // decoration: BoxDecoration(
-                                //     color: _playButtonColor,
-                                //     shape: BoxShape.circle,
-                                // ),
                                 child: _playButtonIcon ?? Container()
                               ),
                             ),
@@ -337,7 +356,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
   }
 
   Widget? get _playButtonIcon {
-    if(_mode == RecorderMode.play){
+    if(_mode == _RecorderMode.play){
       return Styles().images.getImage('icon-play', excludeFromSemantics: true,);
         // _controller.isPlaying ?
         // Container(padding: EdgeInsets.all(20), child: Container(width: 20, height: 20, color: Styles().colors.white,)) : //TBD do we need another icon for stop?
@@ -350,7 +369,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
   }
 
   String get _hintText{
-    if(_mode == RecorderMode.record){
+    if(_mode == _RecorderMode.record){
       return _controller.isRecording ?
       Localization().getStringEx("", "Release to stop") :
       Localization().getStringEx("", "Hold to record");
@@ -360,7 +379,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
   }
 
   String get _statusText{
-    if(_mode == RecorderMode.record){
+    if(_mode == _RecorderMode.record){
       return _controller.isRecording ?
         Localization().getStringEx("", "Recording") :
         Localization().getStringEx("", "Record");
@@ -377,7 +396,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
 
   String get _defaultPlayerTime => "0:00";
 
-  bool get _resetEnabled => _mode == RecorderMode.play;
+  bool get _resetEnabled => _mode == _RecorderMode.play;
 
   bool get _saveEnabled => _controller.hasRecord;
 
@@ -393,7 +412,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
   }
 }
 
-class SoundRecorderController {
+class _ProfileSoundRecorderController {
   final Function(void Function()) notifyChanged;
   final Uint8List? initialAudio;
 
@@ -404,7 +423,7 @@ class SoundRecorderController {
   Uint8List? _audio;//The bytes of the recorded audio
   bool _recording = false;
 
-  SoundRecorderController({required this.notifyChanged, this.initialAudio});
+  _ProfileSoundRecorderController({required this.notifyChanged, this.initialAudio});
 
   void init() {
     _audioRecord = Record();
@@ -536,7 +555,7 @@ class SoundRecorderController {
 
   Duration? get playerTime => _playerTimer;
 
-  AudioSource? get _audioSource => _haveAudio ? BytesAudioSource(_audio!) : null;
+  AudioSource? get _audioSource => _haveAudio ? _BytesAudioSource(_audio!) : null;
 
   bool get _haveAudio => CollectionUtils.isNotEmpty(_audio);
 
@@ -562,10 +581,56 @@ class SoundRecorderController {
   }
 }
 
-class BytesAudioSource extends StreamAudioSource{
+class _ProfileNamePronouncementConfirmDeleteDialog extends StatelessWidget {
+  // ignore: unused_element
+  static Future<bool?> show(BuildContext context) => showDialog<bool?>(context: context, builder: (_) => _ProfileNamePronouncementConfirmDeleteDialog());
+
+  @override
+  Widget build(BuildContext context) => Material(type: MaterialType.transparency, borderRadius: BorderRadius.all(Radius.circular(5)), child:
+    SafeArea(child:
+      Container(alignment: Alignment.center, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 22), child:
+        Container(padding: EdgeInsets.all(5), decoration: BoxDecoration(color: Styles().colors.background, borderRadius: BorderRadius.all(Radius.circular(5)),), child:
+          Stack( alignment: Alignment.topRight, children:[
+            Row(mainAxisSize: MainAxisSize.min, children: [
+              Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Container(padding: EdgeInsets.symmetric(horizontal: 18, vertical: 16), child:
+                  Column(children: [
+                    Container(height: 8,),
+                    Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0), child:
+                      Text(Localization().getStringEx("", "Delete current recording?"), style:
+                        Styles().textStyles.getTextStyle("widget.detail.regular"),)
+                      ),
+                      Container(height: 16,),
+                      Container(padding: EdgeInsets.symmetric(horizontal: 24), child:
+                        Row(children: [
+                          SmallRoundedButton( rightIcon: Container(),
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                            label: Localization().getStringEx("", "Yes"),
+                            onTap: () => Navigator.pop(context, true),
+                          ),
+                          Container(width: 16,),
+                          SmallRoundedButton( rightIcon: Container(),
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                            label: Localization().getStringEx("", "No"),
+                            onTap: () => Navigator.pop(context, false),
+                          ),
+                        ],),
+                      ),
+                    ],)
+                  )
+                ]),
+              ]),
+            ])
+          )
+        )
+      )
+    );
+}
+
+class _BytesAudioSource extends StreamAudioSource{
   final Uint8List _data;
 
-  BytesAudioSource(this._data);
+  _BytesAudioSource(this._data);
 
   @override
   Future<StreamAudioResponse> request([int? start, int? end]) async {

@@ -17,6 +17,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
@@ -28,6 +29,7 @@ import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
+import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -49,7 +51,6 @@ import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
 import 'package:illinois/ui/groups/GroupPollListPanel.dart';
 import 'package:illinois/ui/groups/GroupPostCreatePanel.dart';
-import 'package:illinois/ui/groups/GroupQrCodePanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/widgets/ExpandableText.dart';
@@ -68,7 +69,7 @@ import 'GroupSettingsPanel.dart';
 
 enum _DetailTab { Events, Posts, Messages, Polls, About }
 
-class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'group_detail_content_panel';
 
   final Group? group;
@@ -79,6 +80,9 @@ class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes
 
   @override
  _GroupDetailPanelState createState() => _GroupDetailPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes {
@@ -951,7 +955,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             RibbonButton(
             label: Localization().getStringEx("panel.group_detail.button.take_attendance.title", "Take Attendance"),
             hint: Localization().getStringEx("panel.group_detail.button.take_attendance.hint", ""),
-            leftIconKey: 'qr',
+            leftIconKey: 'share',
             padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
             onTap: _onTapTakeAttendance,
           ),
@@ -1415,7 +1419,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return RibbonButton(
       label: Localization().getStringEx("panel.group_detail.button.group_promote.title", "Share this group"),
       hint: Localization().getStringEx("panel.group_detail.button.group_promote.hint", ""),
-      leftIconKey: 'qr',
+      leftIconKey: 'share',
       padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
       onTap: _onTapPromote,
     );
@@ -1928,7 +1932,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapPromote() {
     Analytics().logSelect(target: "Promote Group", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupQrCodePanel(group: _group)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromGroup(_group)));
   }
 
   void _onTapNotifications() {

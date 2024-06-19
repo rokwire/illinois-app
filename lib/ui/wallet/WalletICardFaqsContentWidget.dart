@@ -20,12 +20,13 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 //TBD: DD - populate the faqs from a resource
-class ICardFaqsContentWidget extends StatefulWidget {
+class WalletICardFaqsContentWidget extends StatefulWidget {
+  WalletICardFaqsContentWidget({super.key});
   @override
-  State<StatefulWidget> createState() => _ICardFaqsContentWidgetState();
+  State<StatefulWidget> createState() => _WalletICardFaqsContentWidgetState();
 }
 
-class _ICardFaqsContentWidgetState extends State<ICardFaqsContentWidget> {
+class _WalletICardFaqsContentWidgetState extends State<WalletICardFaqsContentWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(

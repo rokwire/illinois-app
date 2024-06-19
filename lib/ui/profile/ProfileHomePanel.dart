@@ -193,7 +193,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   Widget _buildContent() {
     return Stack(children: [
-      Padding(padding: EdgeInsets.all(16), child: _contentWidget),
+      _contentWidget,
       Container(height: _contentHeight),
       _buildContentValuesContainer()
     ]);
@@ -287,12 +287,12 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     return ((pageHeight != null) && (pageHeaderHeight != null)) ? (pageHeight - pageHeaderHeight) : null;
   }
 
-  Widget? get _contentWidget {
+  Widget get _contentWidget {
     switch (_selectedContent) {
       case ProfileContent.profile: return ProfileDetailsPage(parentRouteName: ProfileHomePanel.routeName,);
       case ProfileContent.who_are_you: return ProfileRolesPage();
       case ProfileContent.login: return ProfileLoginPage();
-      default: return null;
+      default: return Container();
     }
   }
 

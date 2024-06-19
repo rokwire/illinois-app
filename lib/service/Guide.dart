@@ -264,6 +264,10 @@ class Guide with Service implements NotificationsListener {
     return JsonUtils.stringValue(entryValue(entry, 'section'));
   }
 
+  String? entryContentType(Map<String, dynamic>? entry) {
+    return JsonUtils.stringValue(entryValue(entry, 'content_type'));
+  }
+
   String? entryTitle(Map<String, dynamic>? entry, { bool? stripHtmlTags }) {
     String? result = JsonUtils.stringValue(entryValue(entry, 'title')) ?? JsonUtils.stringValue(entryValue(entry, 'list_title')) ?? JsonUtils.stringValue(entryValue(entry, 'detail_title'));
     return ((result != null) && (stripHtmlTags == true)) ? StringUtils.stripHtmlTags(result) : result;
@@ -291,15 +295,15 @@ class Guide with Service implements NotificationsListener {
   } : null;
 
   bool isEntryReminder(Map<String, dynamic>? entry) {
-    return JsonUtils.stringValue(entryValue(entry, 'content_type')) == campusReminderContentType;
+    return entryContentType(entry) == campusReminderContentType;
   }
 
   bool isEntrySafetyResource(Map<String, dynamic>? entry) {
-    return JsonUtils.stringValue(entryValue(entry, 'content_type')) == campusSafetyResourceContentType;
+    return entryContentType(entry) == campusSafetyResourceContentType;
   }
 
   bool isEntryMentalHeatlh(Map<String, dynamic>? entry) {
-    return JsonUtils.stringValue(entryValue(entry, 'content_type')) == wellnessMentalHealthContentType;
+    return entryContentType(entry) == wellnessMentalHealthContentType;
   }
 
   // Returns the date in:
@@ -480,6 +484,28 @@ class Guide with Service implements NotificationsListener {
   }
   
   /////////////////////////
+  // List Content Type
+
+  String? listContentType(List<Map<String, dynamic>>? guideList) {
+    String? listContentType;
+    if (guideList != null) {
+      for (Map<String, dynamic> guideEntry in guideList) {
+        String? guideEntryContentType = entryContentType(guideEntry);
+        if (guideEntryContentType != null) {
+          if (listContentType == null) {
+            listContentType = guideEntryContentType;
+          }
+          else if (listContentType != guideEntryContentType) {
+            listContentType = null;
+            break;
+          }
+        }
+      }
+    }
+    return listContentType;
+  }
+
+  /////////////////////////
   // DefaultFavorites
 
   void _initDefaultFavorites() {
@@ -493,7 +519,7 @@ class Guide with Service implements NotificationsListener {
         if (isFavorite == true) {
           String? guideEntryId = entryId(guideEntry);
           if (guideEntryId != null) {
-            String? guideEntryContentType = JsonUtils.stringValue(entryValue(guideEntry, 'content_type'));
+            String? guideEntryContentType = entryContentType(guideEntry);
             if (guideEntryContentType != null) {
               _processDefaultFavorites(guideEntryId: guideEntryId, guideEntryContentType: guideEntryContentType, favorites: favorites, modifiedFavoriteKeys: modifiedFavoriteKeys);
             }

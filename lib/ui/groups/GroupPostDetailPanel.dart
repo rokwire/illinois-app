@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -38,7 +39,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
-class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GroupPostDetailPanel extends StatefulWidget with AnalyticsInfo {
   final GroupPost? post;
   final GroupPost? focusedReply;
   final List<GroupPost>? replyThread;
@@ -50,6 +51,9 @@ class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttrib
 
   @override
   _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
@@ -506,21 +510,24 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   //Tap Actions
   void _onTapReplyCard(GroupPost? reply){
-    if((reply != null) &&
-        ((reply == _focusedReply) || (widget.replyThread!= null && widget.replyThread!.contains(reply)))){
-      //Already focused reply.
-      // Disabled listener for the focused reply. Prevent duplication. Fix for #2374
-      return;
+    if(_isSubReplySupported){  //Forbid sub reply //TODO if we do not bring back this functionality DELETE all related code.
+      if((reply != null) &&
+          ((reply == _focusedReply) || (widget.replyThread!= null && widget.replyThread!.contains(reply)))){
+        //Already focused reply.
+        // Disabled listener for the focused reply. Prevent duplication. Fix for #2374
+        return;
+      }
+
+      Analytics().logSelect(target: 'Reply Card');
+      List<GroupPost> thread = [];
+      if(CollectionUtils.isNotEmpty(widget.replyThread)){
+        thread.addAll(widget.replyThread!);
+      }
+      if(_focusedReply!=null) {
+        thread.add(_focusedReply!);
+      }
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true, replyThread: thread,)));
     }
-    Analytics().logSelect(target: 'Reply Card');
-    List<GroupPost> thread = [];
-    if(CollectionUtils.isNotEmpty(widget.replyThread)){
-      thread.addAll(widget.replyThread!);
-    }
-    if(_focusedReply!=null) {
-      thread.add(_focusedReply!);
-    }
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true, replyThread: thread,)));
   }
 
   void _onTapDeletePost() {
@@ -604,7 +611,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Visibility(visible: _isReplyVisible, child: RibbonButton(
+              Visibility(visible: _isReplyVisible && _isSubReplySupported, child: RibbonButton(
                 leftIconKey: "reply",
                 label: Localization().getStringEx("panel.group.detail.post.reply.reply.label", "Reply"),
                 onTap: () {
@@ -944,7 +951,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if(CollectionUtils.isNotEmpty(replies)) {
       try {
         replies!.sort((post1, post2) =>
-            post2.dateCreatedUtc!.compareTo(post1.dateCreatedUtc!));
+            post1.dateCreatedUtc!.compareTo(post2.dateCreatedUtc!));
       } catch (e) {}
     }
   }
@@ -995,6 +1002,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   bool get _isEditMainPost {
     return _mainPostUpdateData!=null;
   }
+
+  bool get _isSubReplySupported => false; //Disable sub-reply TBD if we do not return i sub-reply remove all internal logic and UI related to it.
 
   // Notifications Listener
   @override
