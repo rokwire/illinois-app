@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Remove "Due Date Catalog" from Academics [#4106](https://github.com/rokwire/illinois-app/issues/4106).
+### Added
+- Report to dean of students button in GroupDetailPanel [#4038](https://github.com/rokwire/illinois-app/issues/4038).
 
 ## [6.0.8] - 2024-06-17
 ### Changed
