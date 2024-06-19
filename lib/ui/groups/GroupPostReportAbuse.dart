@@ -9,6 +9,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class GroupPostReportAbuseOptions {
   final bool reportToDeanOfStudents;
@@ -210,9 +211,14 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
   }
 
   Future<void> _reportReportAbuse(bool result) {
-    return AppAlert.showMessage(context, result ? 
-      Localization().getStringEx("panel.group.detail.post.report_abuse.succeeded.msg", "Post reported successfully.") :
-      Localization().getStringEx("panel.group.detail.post.report_abuse.failed.msg", "Failed to report post."),
-    );
+    return AppAlert.showMessage(context, result ? _successMsg : _failMsg);
   }
+
+  String get _successMsg =>
+      _isPostReport ? Localization().getStringEx("panel.group.detail.post.report_abuse.succeeded.msg", "Post reported successfully.")  :  Localization().getStringEx("", "Group reported successfully.") ;
+
+  String get _failMsg =>
+      _isPostReport ? Localization().getStringEx("panel.group.detail.post.report_abuse.failed.msg", "Failed to report post.") :  Localization().getStringEx("", "Failed to report group.");
+
+  bool get _isPostReport => StringUtils.isNotEmpty(widget.postId);
 }
