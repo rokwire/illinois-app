@@ -182,9 +182,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return _isAdmin;
   }
 
-  bool get _isReportAbuseVisible {
-    return _isMemberOrAdmin;
-  }
+  bool get _canReportAbuse => true;  //Even non members car report the group
+
 
   bool get _canDeleteGroup {
     if (_isAdmin) {
@@ -221,6 +220,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool get _canViewMembers {
     return _isAdmin || (_isMember && (_group?.isMemberAllowedToViewMembersInfo == true));
   }
+
+  bool get _hasOptions => _canLeaveGroup || _canDeleteGroup || _canCreatePost || _canReportAbuse;
 
   @override
   void initState() {
@@ -698,7 +699,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     String? barTitle = (_isResearchProject && !_isMemberOrAdmin) ? 'Your Invitation To Participate' : null;
-    List<Widget>? barActions = (_canLeaveGroup || _canDeleteGroup || _canCreatePost) ? <Widget>[
+    List<Widget>? barActions = (_hasOptions) ? <Widget>[
       Semantics(label: Localization().getStringEx("panel.group_detail.label.options", 'Options'), button: true, excludeSemantics: true, child:
         IconButton(icon: Styles().images.getImage('more-white',) ?? Container(), onPressed: _onGroupOptionsTap,)
       )
@@ -1734,10 +1735,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                           Navigator.of(context).pop();
                           _onTapCreatePost();
                         })),
-                Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
+                Visibility(visible: _canReportAbuse, child: RibbonButton(
                   leftIconKey: "report",
                   label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
-                  onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true), post: widget.post),
+                  onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true)   ),
                 )),
                 Visibility(
                     visible: _canLeaveGroup,
@@ -1940,7 +1941,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMemberNotificationsPanel(groupId: _group?.id, memberId: _group?.currentMember?.id)));
   }
 
-  void _onTapReportAbuse({required GroupPostReportAbuseOptions options, GroupPost? post}) {
+  void _onTapReportAbuse({required GroupPostReportAbuseOptions options}) {
     String? analyticsTarget;
     if (options.reportToDeanOfStudents && !options.reportToGroupAdmins) {
       analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.students_dean.description.text', 'Report violation of Student Code to Dean of Students');
