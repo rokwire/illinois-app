@@ -2065,9 +2065,9 @@ class _ImageChooserState extends State<ImageChooserWidget>{
 
     if(result?.succeeded == true) {
       widget.onImageChanged?.call(result?.stringData);
-      setStateIfMounted(() {
-        // _imageUrl = result?.stringData;
-      });
+      // setStateIfMounted(() {
+      //   _imageUrl = result?.stringData;
+      // });
       Log.d("Image Url: ${result?.stringData}");
     }
   }
