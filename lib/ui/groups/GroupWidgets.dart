@@ -2010,12 +2010,12 @@ class ImageChooserWidget extends StatefulWidget{ //TBD Localize properly
 }
 
 class _ImageChooserState extends State<ImageChooserWidget>{
-  String? _imageUrl;
+  // String? _imageUrl;
 
   @override
   void initState() {
+    // _imageUrl = widget.imageUrl;
     super.initState();
-    _imageUrl = widget.imageUrl;
   }
 
   @override
@@ -2024,7 +2024,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
     bool wrapContent = widget.wrapContent;
     bool explicitlyShowAddButton = widget.buttonVisible;
     bool showSlant = widget.showSlant;
-    String? imageUrl = _imageUrl ?? widget.imageUrl; // For some reason sometimes the widget url is present but the _imageUrl is null
+    String? imageUrl = widget.imageUrl; // For some reason sometimes the widget url is present but the _imageUrl is null
 
     return Container(
         constraints: BoxConstraints(
@@ -2059,13 +2059,13 @@ class _ImageChooserState extends State<ImageChooserWidget>{
 
   void _onTapAddImage() async {
     Analytics().logSelect(target: "Add Image");
-    ImagesResult? result = await GroupAddImageWidget.show(context: context, url: _imageUrl).then((result) => result);
+    ImagesResult? result = await GroupAddImageWidget.show(context: context, url: widget.imageUrl).then((result) => result);
 
     if(result?.succeeded == true) {
       widget.onImageChanged?.call(result?.stringData);
-      setStateIfMounted(() {
-        _imageUrl = result?.stringData;
-      });
+      // setStateIfMounted(() {
+      //   _imageUrl = result?.stringData;
+      // });
       Log.d("Image Url: ${result?.stringData}");
     }
   }
