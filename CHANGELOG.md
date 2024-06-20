@@ -5,8 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Implemented conditional content attributes [#4134](https://github.com/rokwire/illinois-app/issues/4134).
+
+## [6.0.9] - 2024-06-19
 ### Changed
 - Remove "Due Date Catalog" from Academics [#4106](https://github.com/rokwire/illinois-app/issues/4106).
+- GroupPostDetailPanel after send report stay on the detail panel and refresh the Post data[#4087](https://github.com/rokwire/illinois-app/issues/4087).
+### Added
+- Report to dean of students button in GroupDetailPanel [#4038](https://github.com/rokwire/illinois-app/issues/4038).
+- Handled Firebase notifications for the new Home and Wallet panels [#4138](https://github.com/rokwire/illinois-app/issues/4138).
 
 ## [6.0.8] - 2024-06-17
 ### Changed

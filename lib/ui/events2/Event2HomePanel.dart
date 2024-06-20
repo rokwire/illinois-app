@@ -106,6 +106,7 @@ class Event2HomePanel extends StatefulWidget {
           continueTextStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.underline.highlight'),
           contentAttributes: buildContentAttributesV1(status: status),
           sortType: ContentAttributesSortType.native,
+          scope: Events2.contentAttributesScope,
           filtersMode: true,
         ))).then((result) {
           Map<String, dynamic>? selection = JsonUtils.mapValue(result);
@@ -319,6 +320,7 @@ class Event2HomePanel extends StatefulWidget {
         description: Localization().getStringEx('panel.events2.home.attributes.filters.header.description', 'Choose one or more attributes to filter the events.'),
         contentAttributes: contentAttributes,
         selection: selection,
+        scope: Events2.contentAttributesScope,
         sortType: ContentAttributesSortType.native,
         filtersMode: true,
         handleAttributeValue: handleAttributeValue,
@@ -547,7 +549,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
           padding: EdgeInsets.only(left: 0, right: 8, top: 12, bottom: 12),
           onTap: _onMapView,
         ),
-        Visibility(visible: Auth2().account?.isCalendarAdmin ?? false, child:
+        Visibility(visible: Auth2().isCalendarAdmin, child:
           Event2ImageCommandButton(Styles().images.getImage('plus-circle'),
             label: Localization().getStringEx('panel.events2.home.bar.button.create.title', 'Create'),
             hint: Localization().getStringEx('panel.events2.home.bar.button.create.hint', 'Tap to create event'),
