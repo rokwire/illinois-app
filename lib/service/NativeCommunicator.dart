@@ -98,6 +98,10 @@ class NativeCommunicator with Service {
   }
 
   Future<List<DeviceOrientation>?> enabledOrientations(List<DeviceOrientation> orientationsList) async {
+    if (kIsWeb) {
+      debugPrint('WEB: enabledOrientations - not implemented');
+      return null;
+    }
     List<DeviceOrientation>? result;
     try {
       dynamic inputStringsList = _deviceOrientationListToStringList(orientationsList);
