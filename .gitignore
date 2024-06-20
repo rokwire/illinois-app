@@ -27,6 +27,8 @@
 /build/
 
 # Web related
+/web/sqflite_sw.js
+/web/sqlite3.wasm
 
 # Symbolication related
 app.*.symbols
