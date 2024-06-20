@@ -595,7 +595,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       widget.initialContentType = null;
     }
     else {
-      _contentType = _homeContentTypeFromString(Storage().homeContentType) ?? HomeContentType.browse;
+      _contentType = _homeContentTypeFromString(Storage().homeContentType) ?? HomeContentType.favorites;
     }
 
     _availableSystemCodes = JsonUtils.setStringsValue(FlexUI()['home.system']) ?? <String>{};
