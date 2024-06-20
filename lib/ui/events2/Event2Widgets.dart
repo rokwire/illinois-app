@@ -148,7 +148,7 @@ class Event2Card extends StatefulWidget {
   final List<String>? displayCategories;
   
   Event2Card(this.event, { Key? key, this.group, this.displayMode = Event2CardDisplayMode.list, this.linkType, this.userLocation, this.onTap}) :
-    displayCategories = Events2().contentAttributes?.displaySelectedLabelsFromSelection(event.attributes, usage: ContentAttributeUsage.category),
+    displayCategories = Events2().displaySelectedContentAttributeLabelsFromSelection(event.attributes, usage: ContentAttributeUsage.category),
     super(key: key);
 
   @override

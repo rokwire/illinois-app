@@ -188,7 +188,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool get _canDeleteGroup {
     if (_isAdmin) {
       if (_group?.authManEnabled ?? false) {
-        return Auth2().account?.isManagedGroupAdmin ?? false;
+        return Auth2().isManagedGroupAdmin;
       } else {
         return true;
       }
@@ -1443,18 +1443,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     List<ContentAttribute>? attributes = contentAttributes?.attributes;
     if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
-        if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
-          attributesList.add(Row(children: [
-            Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
-              Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
-            ),
-            Expanded(child:
-              Text(displayAttributeValues.join(', '), maxLines: 1, style:
-                Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
+        if (Groups().isContentAttributeEnabled(attribute)) {
+          List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
+          if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+            attributesList.add(Row(children: [
+              Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
+                Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
               ),
-            ),
-          ],),);
+              Expanded(child:
+                Text(displayAttributeValues.join(', '), maxLines: 1, style:
+                  Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
+                ),
+              ),
+            ],),);
+          }
         }
       }
     }

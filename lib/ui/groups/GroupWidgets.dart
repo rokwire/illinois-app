@@ -746,8 +746,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
       wrapContent.add(_buildHeadingWrapLabel(Localization().getStringEx('widget.group_card.status.hidden', 'Hidden')));
     }
 
-    List<String>? attributesList = Groups().contentAttributes?.displaySelectedLabelsFromSelection(widget.group?.attributes,
-      usage: ContentAttributeUsage.label);
+    List<String>? attributesList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group?.attributes, usage: ContentAttributeUsage.label);
     if ((attributesList != null) && attributesList.isNotEmpty) {
       for (String attribute in attributesList) {
         wrapContent.add(_buildHeadingWrapLabel(attribute));
@@ -824,8 +823,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
   }
 
   Widget _buildCategories() {
-    List<String>? displayList = Groups().contentAttributes?.displaySelectedLabelsFromSelection(widget.group?.attributes,
-      usage: ContentAttributeUsage.category);
+    List<String>? displayList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group?.attributes, usage: ContentAttributeUsage.category);
     return (displayList?.isNotEmpty ?? false) ? Row(children: [
       Expanded(child:
         Text(displayList?.join(', ') ?? '',
@@ -844,7 +842,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
     List<ContentAttribute>? attributes = contentAttributes?.attributes;
     if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        if (attribute.usage == ContentAttributeUsage.property) {
+        if ((attribute.usage == ContentAttributeUsage.property) && Groups().isContentAttributeEnabled(attribute)) {
           List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
             propertiesList.add(_buildProperty("${attribute.displayTitle}: ", displayAttributeValues.join(', ')));

@@ -493,20 +493,22 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     List<ContentAttribute>? attributes = contentAttributes?.attributes;
     if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
-        if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
-          attributesList.add(
-            Semantics(container:true, child:
-              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
-                  Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
-                ),
-                Expanded(child:
-                  Text(displayAttributeValues.join(', '), /*overflow: TextOverflow.ellipsis, maxLines: 1,*/ style:
-                    Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
+        if (Groups().isContentAttributeEnabled(attribute)) {
+          List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
+          if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+            attributesList.add(
+              Semantics(container:true, child:
+                Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
+                    Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
                   ),
-              ),
-          ],)),);
+                  Expanded(child:
+                    Text(displayAttributeValues.join(', '), /*overflow: TextOverflow.ellipsis, maxLines: 1,*/ style:
+                      Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
+                    ),
+                ),
+            ],)),);
+          }
         }
       }
     }
@@ -522,6 +524,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       description: (_group?.researchProject == true) ?
         Localization().getStringEx('panel.project.attributes.attributes.header.description', 'Choose one or more attributes that help describe this project.') :
         Localization().getStringEx('panel.group.attributes.attributes.header.description', 'Choose one or more attributes that help describe this group.'),
+      scope: Groups.contentAttributesScope,
       contentAttributes: Groups().contentAttributes,
       selection: _group?.attributes,
       sortType: ContentAttributesSortType.alphabetical,
@@ -1323,7 +1326,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   bool get _isUserManagedGroupAdmin {
-    return Auth2().account?.isManagedGroupAdmin ?? false;
+    return Auth2().isManagedGroupAdmin;
   }
 
   bool get _isAuthManGroup{

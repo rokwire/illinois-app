@@ -868,7 +868,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
             textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.underline'),
           ),
         ),
-        Visibility(visible: Auth2().account?.isCalendarAdmin ?? false, child:
+        Visibility(visible: Auth2().isCalendarAdmin, child:
           Event2ImageCommandButton(Styles().images.getImage('plus-circle'),
             label: Localization().getStringEx('panel.events2.home.bar.button.create.title', 'Create'),
             hint: Localization().getStringEx('panel.events2.home.bar.button.create.hint', 'Tap to create event'),

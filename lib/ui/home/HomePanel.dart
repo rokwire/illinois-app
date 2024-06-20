@@ -667,7 +667,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     _updateController.add(HomePanel.notifyRefresh);
   }
 
-  void _updateContentType(HomeContentType contentType) {
+  void _updateContentType(HomeContentType? contentType) {
     if (mounted && (contentType != null) && (contentType != _contentType)) {
       setState(() {
         Storage().homeContentType = _homeContentTypeToString(_contentType = contentType);
