@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Implemented conditional content attributes [#4134](https://github.com/rokwire/illinois-app/issues/4134).
+### Fixed
+- Fixed small UI tweaks and inaccuracies in new Home panel [#4108](https://github.com/rokwire/illinois-app/issues/4108).
 
 ## [6.0.9] - 2024-06-19
 ### Changed
