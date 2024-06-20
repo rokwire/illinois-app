@@ -17,6 +17,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/Analytics.dart';
@@ -658,7 +659,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
           analyticsEvent[LogStdAppVersionName] = super.appVersion;
         }
         else if (attributeName == LogStdOSName) {
-          analyticsEvent[LogStdOSName] = Platform.operatingSystem;
+          analyticsEvent[LogStdOSName] = kIsWeb ? 'web' : Platform.operatingSystem;
         }
         else if (attributeName == LogStdOSVersionName) {
           analyticsEvent[LogStdOSVersionName] = super.osVersion; // Platform.operatingSystemVersion;
