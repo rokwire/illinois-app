@@ -753,7 +753,7 @@ class _HomeContentTab extends StatelessWidget {
   Widget build(BuildContext context) => InkWell(onTap: _onTap, child:
     Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: selected ? Styles().colors.surfaceAccent : Styles().colors.white, width: 3))),
+      decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: selected ? Styles().colors.fillColorSecondary : Styles().colors.white, width: 3))),
       child: Center(child:
         Row(mainAxisSize: MainAxisSize.min, children: [
           _iconWidget,
