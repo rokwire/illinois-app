@@ -549,7 +549,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
           padding: EdgeInsets.only(left: 0, right: 8, top: 12, bottom: 12),
           onTap: _onMapView,
         ),
-        Visibility(visible: Auth2().account?.isCalendarAdmin ?? false, child:
+        Visibility(visible: Auth2().isCalendarAdmin, child:
           Event2ImageCommandButton(Styles().images.getImage('plus-circle'),
             label: Localization().getStringEx('panel.events2.home.bar.button.create.title', 'Create'),
             hint: Localization().getStringEx('panel.events2.home.bar.button.create.hint', 'Tap to create event'),

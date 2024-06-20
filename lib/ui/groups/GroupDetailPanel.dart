@@ -188,7 +188,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool get _canDeleteGroup {
     if (_isAdmin) {
       if (_group?.authManEnabled ?? false) {
-        return Auth2().account?.isManagedGroupAdmin ?? false;
+        return Auth2().isManagedGroupAdmin;
       } else {
         return true;
       }

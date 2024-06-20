@@ -1326,7 +1326,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   bool get _isUserManagedGroupAdmin {
-    return Auth2().account?.isManagedGroupAdmin ?? false;
+    return Auth2().isManagedGroupAdmin;
   }
 
   bool get _isAuthManGroup{
