@@ -344,12 +344,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if ((_group?.id != null) && (_postId != null)) {
       _increaseProgress();
       Groups().loadGroupPost(groupId: _group!.id, postId: _postId!).then((post) {
-        // Clear _postId in order not to redirect on the next group load.
-        _postId = null;
+        _postId = null; // Clear _postId in order not to redirect on the next group load.
         if (post != null) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group, post: post)));
+          if(StringUtils.isNotEmpty(post.topParentId)){ // This is reply
+            Groups().loadGroupPost(groupId: _group!.id, postId: post.topParentId).then((mainPost) {
+              _decreaseProgress();
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group, post: mainPost)));
+            });
+          } else { //this is the main Post
+            _decreaseProgress();
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group, post: post)));
+          }
+        } else {
+          _decreaseProgress();
         }
-        _decreaseProgress();
       });
     }
   }

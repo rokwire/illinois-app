@@ -595,7 +595,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       widget.initialContentType = null;
     }
     else {
-      _contentType = _homeContentTypeFromString(Storage().homeContentType) ?? HomeContentType.browse;
+      _contentType = _homeContentTypeFromString(Storage().homeContentType) ?? HomeContentType.favorites;
     }
 
     _availableSystemCodes = JsonUtils.setStringsValue(FlexUI()['home.system']) ?? <String>{};
@@ -752,8 +752,8 @@ class _HomeContentTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) => InkWell(onTap: _onTap, child:
     Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: selected ? Styles().colors.surfaceAccent : Styles().colors.white, width: 3))),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: selected ? Styles().colors.fillColorSecondary : Styles().colors.white, width: 3))),
       child: Center(child:
         Row(mainAxisSize: MainAxisSize.min, children: [
           _iconWidget,

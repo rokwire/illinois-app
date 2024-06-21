@@ -5,8 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [6.0.10] - 2024-06-20
 ### Added
 - Implemented conditional content attributes [#4134](https://github.com/rokwire/illinois-app/issues/4134).
+### Fixed
+- Fixed small UI tweaks and inaccuracies in new Home panel [#4108](https://github.com/rokwire/illinois-app/issues/4108).
+### Changed
+- Increased leading button size in SliverToutHeaderBar [#3827](https://github.com/rokwire/illinois-app/issues/3827).
+- GroupDetailPanel redirects to MainPost of Reply instead to the Reply Panel [#4049](https://github.com/rokwire/illinois-app/issues/4049).
 
 ## [6.0.9] - 2024-06-19
 ### Changed
