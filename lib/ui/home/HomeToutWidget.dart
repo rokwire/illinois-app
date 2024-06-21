@@ -128,7 +128,13 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
             painterColor: Styles().colors.fillColorSecondaryTransparent05,
             horzDir: TriangleHorzDirection.rightToLeft,
             vertDir: TriangleVertDirection.bottomToTop),
-          child: Container(height: triangleHeight, color: Styles().colors.fillColorPrimaryTransparent03,)
+          child: Container(height: triangleHeight, decoration: BoxDecoration(
+            // color: Styles().colors.fillColorPrimaryTransparent03,
+            gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+              Styles().colors.fillColorPrimaryTransparent05,
+              Colors.transparent,
+            ]),
+          ),),
         ),
       ),
       Positioned.fill(child:
