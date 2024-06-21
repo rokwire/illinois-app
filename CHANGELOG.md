@@ -5,9 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Added myIllini entry under Academics section in Sections Home tab [#4143](https://github.com/rokwire/illinois-app/issues/4143).
+- Added Healthy Illini Podcast and "I'm Struggling" entries under Wellness section in Sections Home tab [#4143](https://github.com/rokwire/illinois-app/issues/4143).
 ### Changed
 - Use linear gradient shadow in HomeToutWidget [#4108](https://github.com/rokwire/illinois-app/issues/4108).
-- Hide App Help and Video Tutorials from Favorites and Browse tabs [#4144](https://github.com/rokwire/illinois-app/issues/4144)
+- Hide App Help and Video Tutorials from Favorites and Browse tabs [#4144](https://github.com/rokwire/illinois-app/issues/4144).
+- Rings entry renamed to Daily Rings under Wellness section in Sections Home tab [#4143](https://github.com/rokwire/illinois-app/issues/4143).
 
 ## [6.0.10] - 2024-06-20
 ### Added
