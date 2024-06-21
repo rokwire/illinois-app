@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Use linear gradient shadow in HomeToutWidget [#4108](https://github.com/rokwire/illinois-app/issues/4108).
+- Hide App Help and Video Tutorials from Favorites and Browse tabs [#4144](https://github.com/rokwire/illinois-app/issues/4144)
 
 ## [6.0.10] - 2024-06-20
 ### Added
