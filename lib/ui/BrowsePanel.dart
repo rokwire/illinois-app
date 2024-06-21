@@ -538,7 +538,7 @@ class _BrowseEntry extends StatelessWidget {
                 ),
               ),
               Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-                  child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true)),
+                  child: _iconWidget),
             ],),
         ),
       ),
@@ -550,6 +550,18 @@ class _BrowseEntry extends StatelessWidget {
   static String title({required String sectionId, required String entryId}) {
     return Localization().getString('panel.browse.entry.$sectionId.$entryId.title') ?? StringUtils.capitalize(entryId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
   }
+
+  static Map<String, String> _iconsMap = <String, String>{
+    'academics.my_illini'        : 'external-link',
+    'academics.due_date_catalog' : 'external-link',
+    'feeds.daily_illini'         : 'external-link',
+    'app_help.faqs'              : 'external-link',
+    'app_help.feedback'          : 'external-link',
+    'safer.my_mckinley'          : 'external-link',
+  };
+
+  Widget? get _iconWidget =>
+    Styles().images.getImage(_iconsMap['$sectionId.$entryId'] ?? 'chevron-right-bold', excludeFromSemantics: true);
 
   void _onTap(BuildContext context) {
     switch("$sectionId.$entryId") {
@@ -564,6 +576,7 @@ class _BrowseEntry extends StatelessWidget {
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
       case "academics.due_date_catalog":      _onTapDueDateCatalog(context); break;
       case "academics.appointments":          _onTapAcademicsAppointments(context); break;
+      case "academics.my_illini":             _onTapAcademicsMyIllini(context); break;
 
       case "app_help.video_tutorials":       _onTapVideoTutorials(context); break;
       case "app_help.feedback":              _onTapFeedback(context); break;
@@ -1026,6 +1039,15 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapAcademicsAppointments(BuildContext context) {
     Analytics().logSelect(target: "Appointments");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentsListPanel()));
+  }
+
+  void _onTapAcademicsMyIllini(BuildContext context) {
+    Analytics().logSelect(target: "myIllini");
+    String? myIlliniUrl = Config().myIlliniUrl;
+    Uri? myIlliniUri = (myIlliniUrl != null) ? Uri.tryParse(myIlliniUrl) : null;
+    if (myIlliniUri != null) {
+      launchUrl(myIlliniUri, mode: LaunchMode.externalApplication);
+    }
   }
 
   void _onTapCreatePoll(BuildContext context) {
