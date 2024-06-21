@@ -221,6 +221,8 @@
 				"state_farm_wayfinding"         : false,
 				"all_notifications"             : false,
 				"unread_notifications"          : false,
+				"app_help"                      : false,
+				"home.video_tutorials"          : false,
 				"student_courses"               : "${config.settings.studentCoursesEnabled}"
 			}
 		}
