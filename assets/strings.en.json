@@ -420,6 +420,8 @@
     "panel.browse.entry.wellness.wellness_resources.title": "Resources",
     "panel.browse.entry.wellness.wellness_mental_health.title": "Mental Health Resources",
     "panel.browse.entry.wellness.wellness_success_team.title": "My Success Team",
+    "panel.browse.entry.wellness.wellness_podcast.title": "Healthy Illini Podcast",
+    "panel.browse.entry.wellness.wellness_struggling.title": "I'm Struggling",
 
     "panel.assistant.header.title": "Illinois Assistant",
     "panel.assistant.offline.label": "The Illinois Assistant is not available while offline.",
