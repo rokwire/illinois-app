@@ -642,19 +642,22 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         ],),
         Expanded(child:
           RefreshIndicator(onRefresh: _onPullToRefresh, child:
-            SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
-              Column(children: [
-                HomeToutWidget(key: _toutKey, contentType: _contentType, updateController: _updateController,),
+            Stack(children: [
+              SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
+                Column(children: [
+                  HomeToutWidget(key: _toutKey, contentType: _contentType, updateController: _updateController,),
 
-                Visibility(visible: (_contentType == HomeContentType.favorites), maintainState: true, child:
-                  HomeFavoritesContentWidget(key: _favoritesKey, availableSystemCodes: _availableSystemCodes, updateController: _updateController,),
-                ),
+                  Visibility(visible: (_contentType == HomeContentType.favorites), maintainState: true, child:
+                    HomeFavoritesContentWidget(key: _favoritesKey, availableSystemCodes: _availableSystemCodes, updateController: _updateController,),
+                  ),
 
-                Visibility(visible: (_contentType == HomeContentType.browse), maintainState: true, child:
-                  BrowseContentWidget(key: _browseKey),
-                ),
-              ],)
-            ),
+                  Visibility(visible: (_contentType == HomeContentType.browse), maintainState: true, child:
+                    BrowseContentWidget(key: _browseKey),
+                  ),
+                ],),
+              ),
+              _topShaddow,
+            ],),
           ),
         ),
       ]),
@@ -662,6 +665,14 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       bottomNavigationBar: null,
     );
   }
+
+  Widget get _topShaddow => Container(height: HomeToutWidget.triangleHeight, decoration: BoxDecoration(
+    // color: Styles().colors.fillColorPrimaryTransparent03,
+    gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+      Styles().colors.fillColorPrimaryTransparent03,
+      Colors.transparent,
+    ]),
+  ),);
 
   Future<void> _onPullToRefresh() async {
     _updateController.add(HomePanel.notifyRefresh);
