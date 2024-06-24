@@ -280,6 +280,7 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
         title: Localization().getStringEx('app.title', 'Illinois'),
         theme: ThemeData(
           appBarTheme: AppBarTheme(backgroundColor: Styles().colors.fillColorPrimaryVariant),
+          dialogTheme: DialogTheme(backgroundColor: Styles().colors.surface),
           primaryColor: Styles().colors.fillColorPrimaryVariant,
           fontFamily: Styles().fontFamilies.extraBold),
         home: _homePanel,
