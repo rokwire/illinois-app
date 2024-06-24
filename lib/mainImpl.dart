@@ -286,7 +286,7 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
             titleTextStyle: Styles().textStyles.getTextStyle('widget.message.medium'),
           ),
           textButtonTheme: TextButtonThemeData(
-            style: ButtonStyle(textStyle: WidgetStateProperty.all(Styles().textStyles.getTextStyle('widget.message.medium'))), 
+            style: ButtonStyle(textStyle: WidgetStateProperty.all(Styles().textStyles.getTextStyle('widget.message.medium.thin'))),
           ),
           primaryColor: Styles().colors.fillColorPrimaryVariant,
           fontFamily: Styles().fontFamilies.regular),
