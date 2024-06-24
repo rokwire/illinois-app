@@ -5,6 +5,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [6.0.12] - 2024-06-24
+### Changed
+- Use static and permanently visible gradient shadow in HomePanel top [#4108](https://github.com/rokwire/illinois-app/issues/4108).
+- Fixed target browser type when opening URLs from Browse panel [#4143](https://github.com/rokwire/illinois-app/issues/4143).
+- Set different properies in app's theme data related to modal dilaog styles [#4080](https://github.com/rokwire/illinois-app/issues/4080).
+
+## [6.0.11] - 2024-06-21
+### Added
+- Added myIllini entry under Academics section in Sections Home tab [#4143](https://github.com/rokwire/illinois-app/issues/4143).
+- Added Healthy Illini Podcast and "I'm Struggling" entries under Wellness section in Sections Home tab [#4143](https://github.com/rokwire/illinois-app/issues/4143).
+### Changed
+- Use linear gradient shadow in HomeToutWidget [#4108](https://github.com/rokwire/illinois-app/issues/4108).
+- Hide App Help and Video Tutorials from Favorites and Browse tabs [#4144](https://github.com/rokwire/illinois-app/issues/4144).
+- Rings entry renamed to Daily Rings under Wellness section in Sections Home tab [#4143](https://github.com/rokwire/illinois-app/issues/4143).
+
 ## [6.0.10] - 2024-06-20
 ### Added
 - Implemented conditional content attributes [#4134](https://github.com/rokwire/illinois-app/issues/4134).

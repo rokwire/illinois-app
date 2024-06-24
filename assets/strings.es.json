@@ -338,6 +338,7 @@
     "panel.browse.entry.academics.wellness_todo.title": "Lista de quehaceres",
     "panel.browse.entry.academics.due_date_catalog.title": "Catálogo de fecha de vencimiento",
     "panel.browse.entry.academics.appointments.title": "Citas",
+    "panel.browse.entry.academics.my_illini.title": "myIllini",
 
     "panel.browse.entry.app_help.video_tutorial.title": "Videotutorial",
     "panel.browse.entry.app_help.feedback.title": "Comentarios",
@@ -410,7 +411,7 @@
     "panel.browse.entry.wallet.illini_id_card.title": "Illini ID",
     "panel.browse.entry.wallet.library_card.title": "Tarjeta de biblioteca",
 
-    "panel.browse.entry.wellness.wellness_rings.title": "Anillos",
+    "panel.browse.entry.wellness.wellness_rings.title": "Daily Rings",
     "panel.browse.entry.wellness.wellness_todo.title": "Lista de quehaceres",
     "panel.browse.entry.wellness.my_appointments.title": "Mis citas de MyMcKinley",
     "panel.browse.entry.wellness.wellness_tips.title": "Consejo diario",
@@ -418,6 +419,8 @@
     "panel.browse.entry.wellness.wellness_resources.title": "Recursos",
     "panel.browse.entry.wellness.wellness_mental_health.title": "Recursos de salud mental",
     "panel.browse.entry.wellness.wellness_success_team.title": "My Success Team",
+    "panel.browse.entry.wellness.wellness_podcast.title": "Healthy Illini Podcast",
+    "panel.browse.entry.wellness.wellness_struggling.title": "I'm Struggling",
 
     "panel.assistant.header.title": "Asistente de Illinois",
     "panel.assistant.offline.label": "El Asistente de Illinois no está disponible sin conexión.",

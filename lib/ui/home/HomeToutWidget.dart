@@ -24,6 +24,8 @@ class HomeToutWidget extends StatefulWidget {
   final HomeContentType? contentType;
   final StreamController<String>? updateController;
 
+  static double triangleHeight = 40;
+
   HomeToutWidget({Key? key, this.favoriteId, this.contentType, this.updateController});
 
   @override
@@ -107,7 +109,6 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   }
 
   Widget _buildImageWidget(String imageUrl) {
-    final double triangleHeight = 40;
     return Stack(children: [
       Semantics(label: "tout", image: true, excludeSemantics: true, child:
         ModalImageHolder(child: Image.network(imageUrl, semanticLabel: '', loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
@@ -128,7 +129,13 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
             painterColor: Styles().colors.fillColorSecondaryTransparent05,
             horzDir: TriangleHorzDirection.rightToLeft,
             vertDir: TriangleVertDirection.bottomToTop),
-          child: Container(height: triangleHeight, color: Styles().colors.fillColorPrimaryTransparent03,)
+          child: Container(height: _triangleHeight, decoration: BoxDecoration(
+            // color: Styles().colors.fillColorPrimaryTransparent03,
+            gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+              Styles().colors.fillColorPrimaryTransparent05,
+              Colors.transparent,
+            ]),
+          ),),
         ),
       ),
       Positioned.fill(child:
@@ -137,16 +144,18 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
               painterColor: Styles().colors.fillColorSecondaryTransparent05,
               horzDir: TriangleHorzDirection.leftToRight,
               vertDir: TriangleVertDirection.topToBottom),
-            child: Container(height: triangleHeight)))),
+            child: Container(height: _triangleHeight)))),
       Positioned.fill(child:
         Align(alignment: Alignment.bottomCenter, child:
           CustomPaint(painter: TrianglePainter(
                 painterColor: Styles().colors.fillColorPrimary,
                 horzDir: TriangleHorzDirection.rightToLeft,
                 vertDir: TriangleVertDirection.topToBottom),
-            child: Container(height: triangleHeight))))
+            child: Container(height: _triangleHeight))))
     ]);
   }
+
+  double get _triangleHeight => HomeToutWidget.triangleHeight;
 
   String? get _title1 {
     if (_dayPart != null) {

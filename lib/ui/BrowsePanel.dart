@@ -20,6 +20,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/academics/AcademicsAppointmentsContentWidget.dart';
@@ -538,7 +539,7 @@ class _BrowseEntry extends StatelessWidget {
                 ),
               ),
               Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-                  child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true)),
+                  child: _iconWidget),
             ],),
         ),
       ),
@@ -550,6 +551,18 @@ class _BrowseEntry extends StatelessWidget {
   static String title({required String sectionId, required String entryId}) {
     return Localization().getString('panel.browse.entry.$sectionId.$entryId.title') ?? StringUtils.capitalize(entryId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
   }
+
+  static Map<String, String> _iconsMap = <String, String>{
+    'academics.my_illini'        : 'external-link',
+    'academics.due_date_catalog' : 'external-link',
+    'feeds.daily_illini'         : 'external-link',
+    'app_help.faqs'              : 'external-link',
+    'app_help.feedback'          : 'external-link',
+    'safer.my_mckinley'          : 'external-link',
+  };
+
+  Widget? get _iconWidget =>
+    Styles().images.getImage(_iconsMap['$sectionId.$entryId'] ?? 'chevron-right-bold', excludeFromSemantics: true);
 
   void _onTap(BuildContext context) {
     switch("$sectionId.$entryId") {
@@ -564,6 +577,7 @@ class _BrowseEntry extends StatelessWidget {
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
       case "academics.due_date_catalog":      _onTapDueDateCatalog(context); break;
       case "academics.appointments":          _onTapAcademicsAppointments(context); break;
+      case "academics.my_illini":             _onTapAcademicsMyIllini(context); break;
 
       case "app_help.video_tutorials":       _onTapVideoTutorials(context); break;
       case "app_help.feedback":              _onTapFeedback(context); break;
@@ -644,6 +658,8 @@ class _BrowseEntry extends StatelessWidget {
       case "wellness.wellness_tips":            _onTapWellnessTips(context); break;
       case "wellness.wellness_health_screener": _onTapWellnessHealthScreener(context); break;
       case "wellness.wellness_success_team":    _onTapWellnessSuccessTeam(context); break;
+      case "wellness.wellness_podcast":         _onTapWellnessPodcast(context); break;
+      case "wellness.wellness_struggling":      _onTapWellnessStruggling(context); break;
     }
   }
 
@@ -745,17 +761,7 @@ class _BrowseEntry extends StatelessWidget {
       String name =  Uri.encodeComponent(Auth2().fullName ?? '');
       String phone = Uri.encodeComponent(Auth2().phone ?? '');
       String feedbackUrl = "${Config().feedbackUrl}?email=$email&phone=$phone&name=$name";
-
-      if (Platform.isIOS) {
-        Uri? feedbackUri = Uri.tryParse(feedbackUrl);
-        if (feedbackUri != null) {
-          launchUrl(feedbackUri, mode: LaunchMode.externalApplication);
-        }
-      }
-      else {
-        String? panelTitle = Localization().getStringEx('widget.home.app_help.feedback.panel.title', 'PROVIDE FEEDBACK');
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: feedbackUrl, title: panelTitle,)));
-      }
+      _launchUrl(context, feedbackUrl);
     }
   }
 
@@ -770,21 +776,7 @@ class _BrowseEntry extends StatelessWidget {
     Analytics().logSelect(target: "FAQs");
 
     if (_canFAQs) {
-      String url = Config().faqsUrl!;
-      if (DeepLink().isAppUrl(url)) {
-        DeepLink().launchUrl(url);
-      }
-      else if (UrlUtils.launchInternal(url)){
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
-          url: url, title: Localization().getStringEx('panel.settings.faqs.label.title', 'FAQs'),
-        )));
-      }
-      else {
-        Uri? uri = Uri.tryParse(url);
-        if (uri != null) {
-          launchUrl(uri);
-        }
-      }
+      _launchUrl(context, Config().faqsUrl);
     }
   }
 
@@ -817,13 +809,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapMyMcKinley(BuildContext context) {
     Analytics().logSelect(target: 'MyMcKinley');
-    String? saferMcKinleyUrl = Config().saferMcKinleyUrl;
-    if (StringUtils.isNotEmpty(saferMcKinleyUrl)) {
-      Uri? saferMcKinleyUri = Uri.tryParse(saferMcKinleyUrl!);
-      if (saferMcKinleyUri != null) {
-        launchUrl(saferMcKinleyUri);
-      }
-    }
+    _launchUrl(context, Config().saferMcKinleyUrl);
   }
 
   void _onTapWellnessAnswerCenter(BuildContext context) {
@@ -859,13 +845,7 @@ class _BrowseEntry extends StatelessWidget {
     Analytics().logSelect(target: "Due Date Catalog");
 
     if (_canDueDateCatalog) {
-      String? dateCatalogUrl = Config().dateCatalogUrl;
-      if (StringUtils.isNotEmpty(dateCatalogUrl)) {
-        Uri? dateCatalogUri = Uri.tryParse(dateCatalogUrl!);
-        if (dateCatalogUri != null) {
-          launchUrl(dateCatalogUri);
-        }
-      }
+      _launchUrl(context, Config().dateCatalogUrl);
     }
   }
 
@@ -932,15 +912,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapDailyIllini(BuildContext context) {
     Analytics().logSelect(target: "Daily Illini");
-    String? url = Config().dailyIlliniHomepageUrl;
-    if (StringUtils.isNotEmpty(url)) {
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
-      }
-    } else {
-      debugPrint("Missing Config().dailyIlliniHomepageUrl");
-    }
+    _launchUrl(context, Config().dailyIlliniHomepageUrl);
   }
 
   void _onTapRadioStation(BuildContext context, RadioStation radioStation) {
@@ -1028,6 +1000,11 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentsListPanel()));
   }
 
+  void _onTapAcademicsMyIllini(BuildContext context) {
+    Analytics().logSelect(target: "myIllini");
+    _launchUrl(context, Config().myIlliniUrl);
+  }
+
   void _onTapCreatePoll(BuildContext context) {
     Analytics().logSelect(target: "Create Poll");
     CreatePollPanel.present(context);
@@ -1083,7 +1060,7 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   void _onTapWellnessRings(BuildContext context) {
-    Analytics().logSelect(target: "Wellness Rings");
+    Analytics().logSelect(target: "Wellness Daily Rings");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.rings,)));
   }
 
@@ -1107,8 +1084,35 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.successTeam,)));
   }
 
+  void _onTapWellnessPodcast(BuildContext context) {
+    Analytics().logSelect(target: "Healthy Illini Podcast");
+    _launchUrl(context, Wellness().getResourceUrl(resourceId: 'podcast'));
+  }
+
+  void _onTapWellnessStruggling(BuildContext context) {
+    Analytics().logSelect(target: "I'm Struggling");
+    _launchUrl(context, Wellness().getResourceUrl(resourceId: 'where_to_start'));
+  }
+
   void _notImplemented(BuildContext context) {
     AppAlert.showDialogResult(context, "Not implemented yet.");
+  }
+
+  static void _launchUrl(BuildContext context, String? url, {bool launchInternal = false}) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else if (launchInternal && UrlUtils.launchInternal(url)){
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+      }
+      else {
+        Uri? uri = Uri.tryParse(url!);
+        if (uri != null) {
+          launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
+        }
+      }
+    }
   }
 
 }
