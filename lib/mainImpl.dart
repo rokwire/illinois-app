@@ -22,6 +22,7 @@ import 'package:flutter/foundation.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Appointments.dart';
+import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CustomCourses.dart';
@@ -151,7 +152,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       Appointments(),
       MTD(),
       SpeechToText(),
-    //Assistant(),
+      Assistant(),
       MobileAccess(),
     ]);
 
@@ -279,8 +280,16 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
         title: Localization().getStringEx('app.title', 'Illinois'),
         theme: ThemeData(
           appBarTheme: AppBarTheme(backgroundColor: Styles().colors.fillColorPrimaryVariant),
+          dialogTheme: DialogTheme(
+            backgroundColor: Styles().colors.surface,
+            contentTextStyle: Styles().textStyles.getTextStyle('widget.message.medium.thin'),
+            titleTextStyle: Styles().textStyles.getTextStyle('widget.message.medium'),
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: ButtonStyle(textStyle: WidgetStateProperty.all(Styles().textStyles.getTextStyle('widget.message.medium.thin'))),
+          ),
           primaryColor: Styles().colors.fillColorPrimaryVariant,
-          fontFamily: Styles().fontFamilies.extraBold),
+          fontFamily: Styles().fontFamilies.regular),
         home: _homePanel,
       ),
     );

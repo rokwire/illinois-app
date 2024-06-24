@@ -44,9 +44,7 @@ class WalletIlliniCashPanel extends StatefulWidget {
 
   static final String routeName = 'settings_illini_cash';
 
-  final ScrollController? scrollController;
-
-  WalletIlliniCashPanel({this.scrollController});
+  WalletIlliniCashPanel({super.key});
 
   @override
   _WalletIlliniCashPanelState createState() => _WalletIlliniCashPanelState();
@@ -56,7 +54,7 @@ class WalletIlliniCashPanel extends StatefulWidget {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.illini_cash', 'Illini Cash is not available while offline.'));
     }
     else if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.illini_cash', 'You need to be logged in with your NetID to access Illini Cash. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
+      AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.illini_cash', 'Illini Cash'));
     }
     else {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: WalletIlliniCashPanel.routeName), builder: (context) => WalletIlliniCashPanel()));
@@ -131,9 +129,7 @@ class _WalletIlliniCashPanelState extends State<WalletIlliniCashPanel> implement
     return Scaffold(
       body: _buildScaffoldBody(),
       backgroundColor: Styles().colors.background,
-      bottomNavigationBar: widget.scrollController == null
-          ? uiuc.TabBar()
-          : Container(height: 0,),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -142,14 +138,11 @@ class _WalletIlliniCashPanelState extends State<WalletIlliniCashPanel> implement
       return Center(child: CircularProgressIndicator(),);
     }
     return CustomScrollView(
-      controller: widget.scrollController,
       slivers: <Widget>[
         SliverHeaderBar(
-          leadingIconKey: widget.scrollController == null
-              ? 'chevron-left-white'
-              : 'chevron-left-bold',
+          leadingIconKey: 'chevron-left-white',
           title: Localization().getStringEx('panel.settings.illini_cash.label.title','Illini Cash'),
-          textStyle:  widget.scrollController == null ? Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat") : Styles().textStyles.getTextStyle("widget.title.regular.extra_fat"),
+          textStyle:  Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),
         ),
         SliverList(
           delegate: SliverChildListDelegate([
@@ -587,7 +580,7 @@ class _WalletIlliniCashPanelState extends State<WalletIlliniCashPanel> implement
             name:"settings_add_illini_cash"
         ),
         builder: (context){
-          return WalletAddIlliniCashPanel(scrollController: widget.scrollController,);
+          return WalletAddIlliniCashPanel();
         }
     ));
   }

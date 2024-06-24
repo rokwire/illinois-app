@@ -48,7 +48,7 @@ import 'package:sprintf/sprintf.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
 class WalletICardContentWidget extends StatefulWidget {
-  WalletICardContentWidget();
+  WalletICardContentWidget({super.key});
 
   _WalletICardContentWidgetState createState() => _WalletICardContentWidgetState();
 }
@@ -147,60 +147,6 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
     super.dispose();
   }
 
-  Future<MemoryImage?> _loadAsyncPhotoImage() async{
-    Uint8List? photoBytes = await  Auth2().authCard?.photoBytes;
-    return CollectionUtils.isNotEmpty(photoBytes) ? MemoryImage(photoBytes!) : null;
-  }
-
-  Future<Color?> _loadActiveColor() async{
-    String? deviceId = Auth2().deviceId;
-    return await Transportation().loadBusColor(deviceId: deviceId, userId: Auth2().accountId);
-  }
-
-  Future<bool?> _loadBuildingAccess() async {
-    if (_hasBuildingAccess && StringUtils.isNotEmpty(Config().padaapiUrl) && StringUtils.isNotEmpty(Config().padaapiApiKey) && StringUtils.isNotEmpty(Auth2().authCard?.uin)) {
-      String url = "${Config().padaapiUrl}/access/${Auth2().authCard?.uin}";
-      Map<String, String> headers = {
-        HttpHeaders.acceptHeader : 'application/json',
-        'x-api-key': Config().padaapiApiKey!
-      };
-      Response? response = await Network().get(url, headers: headers);
-      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
-      return (responseJson != null) ? JsonUtils.boolValue(responseJson['allowAccess']) : null;
-    }
-    return null;
-  }
-
-  Future<void> _loadMobileAccessDetails() async {
-    if (_isIcardMobileAvailable) {
-      _increaseMobileAccessLoadingProgress();
-      MobileAccess().loadStudentId().then((studentId) {
-        List<MobileIdCredential>? mobileCredentials = studentId?.mobileCredentials;
-        if (CollectionUtils.isNotEmpty(mobileCredentials)) {
-          _mobileIdCredentials = mobileCredentials;
-          MobileAccess().getAvailableKeys().then((accessKeys) {
-            List<dynamic>? mobileKeys = accessKeys;
-            if (CollectionUtils.isNotEmpty(mobileKeys)) {
-              _mobileAccessKeys = accessKeys;
-            } else if (!_hasDeleteTimeout) {
-              _deleteMobileCredential = true;
-            }
-            _decreaseMobileAccessLoadingProgress();
-          });
-        } else {
-          _mobileIdCredentials = null;
-          _mobileAccessKeys = null;
-          _decreaseMobileAccessLoadingProgress();
-        }
-      });
-    } else {
-      setStateIfMounted(() {
-        _mobileAccessKeys = null;
-        _mobileIdCredentials = null;
-      });
-    }
-  }
-
   // NotificationsListener
   
   @override
@@ -230,18 +176,14 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
 
   @override
   Widget build(BuildContext context) {
-    return Container(child:
-      Stack(children: <Widget>[
-          
-          Column(children: <Widget>[
-            Container(height: _headingH1, color: _activeHeadingColor,),
-            Container(height: _headingH2, color: _activeHeadingColor, child: CustomPaint(painter: TrianglePainter(painterColor: Colors.white), child: Container(),),),
-          ],),
-          
-          (Auth2().authCard != null) ? _buildCardContent() : Container(),
-        ],
-      
-    ),);
+    return Stack(children: <Widget>[
+      Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+        Container(height: _headingH1, color: _activeHeadingColor,),
+        Container(height: _headingH2, color: _activeHeadingColor, child: CustomPaint(painter: TrianglePainter(painterColor: Colors.white), child: Container(),),),
+      ],),
+
+      (Auth2().authCard != null) ? _buildCardContent() : Container(),
+    ],);
   }
 
   Widget _buildCardContent() {
@@ -280,61 +222,17 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
     }
     bool hasBuildingAccess = _hasBuildingAccess && (0 < (Auth2().authCard?.uin?.length ?? 0));
 
-    
     return Column(children: <Widget>[
       Padding(padding: EdgeInsets.only(top: _headingH1 + _headingH2 / 5 - _photoSize / 2 - MediaQuery.of(context).padding.top), child:
-        Stack(children: <Widget>[
-          Align(alignment: Alignment.topCenter, child:
-            Container(width: _photoSize, height: _photoSize, child:
-              Stack(children: <Widget>[
-                Transform.rotate(angle: _animationController.value, child:
-                  Container(width: _photoSize, height: _photoSize,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [ Styles().colors.fillColorSecondary, _activeBorderColor],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        stops: [0.0, 1.0],),
-                      color: Styles().colors.fillColorSecondary,),
-                  ),
-                ),
-                _buildPhotoImage()
-              ],),
-            ),
-            /*
-            Container(width: _photoSize, height: _photoSize,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [Styles().colors.fillColorSecondary, Styles().colors.fillColorSecondary],
-                  begin: Alignment.topCenter,
-                  end:Alignment.bottomCenter,
-                  stops: [0.0, 1.0],),
-                color: Styles().colors.fillColorSecondary,),
-              child: Padding(padding: EdgeInsets.all(16),
-                child: Container(decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                  image: DecorationImage(fit: BoxFit.cover, image: MemoryImage(Auth2().authCard?.photoBytes),),    
-                )),
-              )
-            ),
-            */
-          ),
-          Align(alignment: Alignment.topCenter, child:
-            Padding(padding: EdgeInsets.only(top:_photoSize - _illiniIconSize / 2 - 5, left: 3), child:
-              Styles().images.getImage('university-logo-circle-white', excludeFromSemantics: true, width: _illiniIconSize, height: _illiniIconSize,)
-            ),
-          ),
-        ],),
+        _buildPhotoSection(),
       ),
-      Container(height: 10,),
+
+      Container(height: 8,),
       
       Text(Auth2().authCard?.fullName?.trim() ?? '', style:Styles().textStyles.getTextStyle("panel.id_card.detail.title.large")),
       Text(roleDisplayString, style:  Styles().textStyles.getTextStyle("panel.id_card.detail.title.regular")),
       
-      Container(height: 15,),
+      Container(height: 16,),
 
       Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
         
@@ -347,7 +245,7 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
         ],),),
 
         Visibility(visible: hasQrCode && hasBuildingAccess, child:
-          Container(width: 20),
+          Container(width: 16),
         ),
 
         Visibility(visible: hasBuildingAccess, child: Column(children: [
@@ -358,20 +256,74 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
         ],),),
 
       ],),
-      Container(height: 15),
+
+      Container(height: 16),
+
       Text(buildingAccessTime ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.medium")),
-      Container(height: 15),
-      Semantics( container: true,
-        child: Column(children: <Widget>[
+
+      Container(height: 16),
+
+      Semantics( container: true, child:
+        Column(children: <Widget>[
           // Text((0 < (Auth2().authCard?.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN') : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: Styles().fontFamilies.regular, fontSize: 14)),
           Text(Auth2().authCard?.uin ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.extra_large")),
         ],),
       ),
+
       Text(cardExpiresText, style:  Styles().textStyles.getTextStyle("panel.id_card.detail.title.tiny")),
-      Container(height: 30,),
-      _buildMobileAccessContent()
+
+      Container(height: 32,),
+
+      _buildMobileAccessContent(),
     ]);
   }
+
+  Widget _buildPhotoSection() => Stack(children: <Widget>[
+    Align(alignment: Alignment.topCenter, child:
+      Container(width: _photoSize, height: _photoSize, child:
+        Stack(children: <Widget>[
+          Transform.rotate(angle: _animationController.value, child:
+            Container(width: _photoSize, height: _photoSize,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [ Styles().colors.fillColorSecondary, _activeBorderColor],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: [0.0, 1.0],),
+                color: Styles().colors.fillColorSecondary,),
+            ),
+          ),
+          _buildPhotoImage()
+        ],),
+      ),
+      /*
+      Container(width: _photoSize, height: _photoSize,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: LinearGradient(
+            colors: [Styles().colors.fillColorSecondary, Styles().colors.fillColorSecondary],
+            begin: Alignment.topCenter,
+            end:Alignment.bottomCenter,
+            stops: [0.0, 1.0],),
+          color: Styles().colors.fillColorSecondary,),
+        child: Padding(padding: EdgeInsets.all(16),
+          child: Container(decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+            image: DecorationImage(fit: BoxFit.cover, image: MemoryImage(Auth2().authCard?.photoBytes),),
+          )),
+        )
+      ),
+      */
+    ),
+    Align(alignment: Alignment.topCenter, child:
+      Padding(padding: EdgeInsets.only(top:_photoSize - _illiniIconSize / 2 - 5, left: 3), child:
+        Styles().images.getImage('university-logo-circle-white', excludeFromSemantics: true, width: _illiniIconSize, height: _illiniIconSize,)
+      ),
+    ),
+  ],);
+
 
   Widget _buildPhotoImage(){
     return Container(width: _photoSize, height: _photoSize, child:
@@ -503,6 +455,60 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
               textAlign: TextAlign.center,
               style: Styles().textStyles.getTextStyle('panel.id_card.detail.description.italic')))
     ]);
+  }
+
+  Future<MemoryImage?> _loadAsyncPhotoImage() async{
+    Uint8List? photoBytes = await  Auth2().authCard?.photoBytes;
+    return CollectionUtils.isNotEmpty(photoBytes) ? MemoryImage(photoBytes!) : null;
+  }
+
+  Future<Color?> _loadActiveColor() async{
+    String? deviceId = Auth2().deviceId;
+    return await Transportation().loadBusColor(deviceId: deviceId, userId: Auth2().accountId);
+  }
+
+  Future<bool?> _loadBuildingAccess() async {
+    if (_hasBuildingAccess && StringUtils.isNotEmpty(Config().padaapiUrl) && StringUtils.isNotEmpty(Config().padaapiApiKey) && StringUtils.isNotEmpty(Auth2().authCard?.uin)) {
+      String url = "${Config().padaapiUrl}/access/${Auth2().authCard?.uin}";
+      Map<String, String> headers = {
+        HttpHeaders.acceptHeader : 'application/json',
+        'x-api-key': Config().padaapiApiKey!
+      };
+      Response? response = await Network().get(url, headers: headers);
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
+      return (responseJson != null) ? JsonUtils.boolValue(responseJson['allowAccess']) : null;
+    }
+    return null;
+  }
+
+  Future<void> _loadMobileAccessDetails() async {
+    if (_isIcardMobileAvailable) {
+      _increaseMobileAccessLoadingProgress();
+      MobileAccess().loadStudentId().then((studentId) {
+        List<MobileIdCredential>? mobileCredentials = studentId?.mobileCredentials;
+        if (CollectionUtils.isNotEmpty(mobileCredentials)) {
+          _mobileIdCredentials = mobileCredentials;
+          MobileAccess().getAvailableKeys().then((accessKeys) {
+            List<dynamic>? mobileKeys = accessKeys;
+            if (CollectionUtils.isNotEmpty(mobileKeys)) {
+              _mobileAccessKeys = accessKeys;
+            } else if (!_hasDeleteTimeout) {
+              _deleteMobileCredential = true;
+            }
+            _decreaseMobileAccessLoadingProgress();
+          });
+        } else {
+          _mobileIdCredentials = null;
+          _mobileAccessKeys = null;
+          _decreaseMobileAccessLoadingProgress();
+        }
+      });
+    } else {
+      setStateIfMounted(() {
+        _mobileAccessKeys = null;
+        _mobileIdCredentials = null;
+      });
+    }
   }
 
   Future<bool> _checkNetIdStatus() async {

@@ -129,7 +129,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         Column(children: [
           Container(height: _sliverHeaderHeight ?? 0,),
           _isEditMainPost || StringUtils.isNotEmpty(_post?.imageUrl)
-            ? ImageChooserWidget(key: _postImageHolderKey, imageUrl: _post?.imageUrl, buttonVisible: _isEditMainPost, onImageChanged: (url) => _mainPostUpdateData?.imageUrl = url,)
+            ? ImageChooserWidget(key: _postImageHolderKey, buttonVisible: _isEditMainPost,
+            imageUrl:_isEditMainPost ?  _mainPostUpdateData?.imageUrl : _post?.imageUrl,
+            onImageChanged: (url) => _mainPostUpdateData?.imageUrl = url,)
             : Container(),
           _buildPostContent(),
           _buildRepliesSection(),
@@ -319,7 +321,22 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     });
   }
 
-  _buildRepliesSection(){
+  void _refreshPostData(){
+    if(widget.group != null) {
+      _setLoading(true);
+      Groups().loadGroupPost(groupId: widget.group!.id, postId: _post?.id).then((updatedPost){
+          _setLoading(false);
+          if(updatedPost != null){
+            _sortReplies(updatedPost.replies);
+            setStateIfMounted((){
+              _post = updatedPost;
+            });
+          }
+      });
+    }
+  }
+
+  Widget _buildRepliesSection(){
     List<GroupPost>? replies;
     if (_focusedReply != null) {
       replies = _generateFocusedThreadList();
@@ -863,9 +880,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void _onSendFinished(bool succeeded) {
     _setLoading(false);
     if (succeeded) {
-      _clearSelectedReplyId();
-      _clearBodyControllerContent();
-      Navigator.of(context).pop(true);
+      setStateIfMounted(() {
+        _clearSelectedReplyId();
+        _clearBodyControllerContent();
+        _clearImageSelection();
+      });
+      // Navigator.of(context).pop(true);
+      _refreshPostData();
     } else {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.reply.failed.msg', 'Failed to create new reply.'));
     }
@@ -886,6 +907,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   void _clearBodyControllerContent() {
     _replyEditData?.body = '';
+  }
+
+  void _clearImageSelection(){
+  _replyEditData?.imageUrl = null;
   }
 
   //Scroll
@@ -951,7 +976,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if(CollectionUtils.isNotEmpty(replies)) {
       try {
         replies!.sort((post1, post2) =>
-            post2.dateCreatedUtc!.compareTo(post1.dateCreatedUtc!));
+            post1.dateCreatedUtc!.compareTo(post2.dateCreatedUtc!));
       } catch (e) {}
     }
   }

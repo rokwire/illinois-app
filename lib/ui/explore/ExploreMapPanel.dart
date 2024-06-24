@@ -78,7 +78,7 @@ class ExploreMapPanel extends StatefulWidget {
   State<StatefulWidget> createState() => _ExploreMapPanelState();
 
   static bool get hasState {
-    Set<NotificationsListener>? subscribers = NotificationService().subscribers(ExploreMapPanel.notifySelect);
+    Set<NotificationsListener>? subscribers = NotificationService().subscribers(notifySelect);
     if (subscribers != null) {
       for (NotificationsListener subscriber in subscribers) {
         if ((subscriber is _ExploreMapPanelState) && subscriber.mounted) {
@@ -868,7 +868,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
             textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.underline'),
           ),
         ),
-        Visibility(visible: Auth2().account?.isCalendarAdmin ?? false, child:
+        Visibility(visible: Auth2().isCalendarAdmin, child:
           Event2ImageCommandButton(Styles().images.getImage('plus-circle'),
             label: Localization().getStringEx('panel.events2.home.bar.button.create.title', 'Create'),
             hint: Localization().getStringEx('panel.events2.home.bar.button.create.hint', 'Tap to create event'),
@@ -2037,7 +2037,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       }
       else {
         thresoldDistance = 0;
-        exploreMarkerGroups = (explores != null) ? Set<dynamic>.from(explores) : null;
+        exploreMarkerGroups =  (explores != null) ? <dynamic>{ ExploreMap.validFromList(explores) } : null;
       }
       
       if (!DeepCollectionEquality().equals(_exploreMarkerGroups, exploreMarkerGroups)) {

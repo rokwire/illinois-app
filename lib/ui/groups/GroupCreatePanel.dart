@@ -626,6 +626,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       description: (_group?.researchProject == true) ?
         Localization().getStringEx('panel.project.attributes.attributes.header.description', 'Choose one or more attributes that help describe this project.') :
         Localization().getStringEx('panel.group.attributes.attributes.header.description', 'Choose one or more attributes that help describe this group.'),
+      scope: Groups.contentAttributesScope,
       contentAttributes: Groups().contentAttributes,
       selection: _group?.attributes,
       sortType: ContentAttributesSortType.alphabetical,
@@ -1130,7 +1131,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   bool get _isManagedGroupAdmin {
-    return Auth2().account?.isManagedGroupAdmin ?? false;
+    return Auth2().isManagedGroupAdmin;
   }
 
   bool get _isAuthManGroup{

@@ -343,6 +343,10 @@ class Storage extends rokwire.Storage {
   bool? get homeLoginVisible => getBoolWithName(homeLoginVisibleKey);
   set homeLoginVisible(bool? value) => setBoolWithName(homeLoginVisibleKey, value);
 
+  String get homeContentTypeKey => 'edu.illinois.rokwire.home.content_type';
+  String? get homeContentType => getStringWithName(homeContentTypeKey);
+  set homeContentType(String? value) => setStringWithName(homeContentTypeKey, value);
+
   // Browse Tout
   String get browseToutImageUrlKey => 'edu.illinois.rokwire.browse.tout.image.url';
   String? get browseToutImageUrl => getStringWithName(browseToutImageUrlKey);
@@ -452,4 +456,10 @@ class Storage extends rokwire.Storage {
   static const String essentialSkillsCoachModuleKey = 'essential_skills_coach_module';
   String? get essentialSkillsCoachModule => getStringWithName(essentialSkillsCoachModuleKey);
   set essentialSkillsCoachModule(String? value) => setStringWithName(essentialSkillsCoachModuleKey, value);
+
+  // Wallet
+
+  static const String walletContentTypeKey = 'edu.illinois.rokwire.wallet.content_type';
+  String? get walletContentType => getStringWithName(walletContentTypeKey);
+  set walletContentType(String? value) => setStringWithName(walletContentTypeKey, value);
 }

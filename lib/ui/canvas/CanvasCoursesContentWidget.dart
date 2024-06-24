@@ -72,7 +72,7 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
       return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.offline.error.msg', 'My Canvas Courses not available while offline.'));
     }
     else if (!Auth2().isOidcLoggedIn) {
-      return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.logged_out.error.msg', 'You need to be logged in with your NetID to access My Canvas Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'),);
+      return _buildMessageContent(AppTextUtils.loggedOutFeatureNA(Localization().getStringEx('generic.app.feature.canvas_courses.uiuc', 'My Canvas Courses'), verbose: true));
     }
     else if (_courses == null) {
       return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.failed.error.msg', 'Unable to load courses.'));

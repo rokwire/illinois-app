@@ -91,7 +91,8 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
 
     bool pinned = true,
     bool floating = false,
-    double? expandedHeight = 200,
+    double toolbarHeight = 9 * kToolbarHeight / 7,
+    double? expandedHeight = kToolbarHeight * 4,
     Color? backgroundColor,
 
     Widget? flexWidget,
@@ -104,9 +105,10 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     double? flexLeftToRightTriangleHeight = 53,
 
     Widget? leadingWidget,
+    double? leadingWidth = 9 * kToolbarHeight / 7,
     String? leadingLabel,
     String? leadingHint,
-    EdgeInsetsGeometry? leadingPadding = const EdgeInsets.all(8),
+    EdgeInsetsGeometry leadingPadding = const EdgeInsets.all(8 + kToolbarHeight / 7),
     Size? leadingOvalSize = const Size(32, 32),
     Color? leadingOvalColor,
     String? leadingIconKey = defaultLeadingIconKey,
@@ -124,6 +126,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
   }) : super(
     pinned: pinned,
     floating: floating,
+    toolbarHeight: toolbarHeight,
     expandedHeight: expandedHeight,
     backgroundColor: backgroundColor ?? Styles().colors.fillColorPrimaryVariant,
 
@@ -137,6 +140,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     flexLeftToRightTriangleHeight: flexLeftToRightTriangleHeight,
 
     leadingWidget: leadingWidget,
+    leadingWidth: leadingWidth,
     leadingLabel: leadingLabel ?? Localization().getStringEx('headerbar.back.title', 'Back'),
     leadingHint: leadingHint ?? Localization().getStringEx('headerbar.back.hint', ''),
     leadingPadding: leadingPadding,
@@ -174,9 +178,11 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     bool pinned = true,
     bool floating = false,
     double? elevation = 0,
+    double toolbarHeight = kToolbarHeight,
     Color? backgroundColor,
 
     Widget? leadingWidget,
+    double? leadingWidth,
     String? leadingLabel,
     String? leadingHint,
     String? leadingIconKey = defaultLeadingIconKey,
@@ -198,9 +204,11 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     pinned: pinned,
     floating: floating,
     elevation: elevation,
+    toolbarHeight: toolbarHeight,
     backgroundColor: backgroundColor ?? Styles().colors.fillColorPrimaryVariant,
 
     leadingWidget: leadingWidget,
+    leadingWidth: leadingWidth,
     leadingLabel: leadingLabel ?? Localization().getStringEx('headerbar.back.title', 'Back'),
     leadingHint: leadingHint ?? Localization().getStringEx('headerbar.back.hint', ''),
     leadingIconKey: leadingIconKey,

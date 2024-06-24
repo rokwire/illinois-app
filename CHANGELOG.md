@@ -5,6 +5,79 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [6.0.12] - 2024-06-24
+### Changed
+- Use static and permanently visible gradient shadow in HomePanel top [#4108](https://github.com/rokwire/illinois-app/issues/4108).
+- Fixed target browser type when opening URLs from Browse panel [#4143](https://github.com/rokwire/illinois-app/issues/4143).
+- Set different properies in app's theme data related to modal dilaog styles [#4080](https://github.com/rokwire/illinois-app/issues/4080).
+
+## [6.0.11] - 2024-06-21
+### Added
+- Added myIllini entry under Academics section in Sections Home tab [#4143](https://github.com/rokwire/illinois-app/issues/4143).
+- Added Healthy Illini Podcast and "I'm Struggling" entries under Wellness section in Sections Home tab [#4143](https://github.com/rokwire/illinois-app/issues/4143).
+### Changed
+- Use linear gradient shadow in HomeToutWidget [#4108](https://github.com/rokwire/illinois-app/issues/4108).
+- Hide App Help and Video Tutorials from Favorites and Browse tabs [#4144](https://github.com/rokwire/illinois-app/issues/4144).
+- Rings entry renamed to Daily Rings under Wellness section in Sections Home tab [#4143](https://github.com/rokwire/illinois-app/issues/4143).
+
+## [6.0.10] - 2024-06-20
+### Added
+- Implemented conditional content attributes [#4134](https://github.com/rokwire/illinois-app/issues/4134).
+### Fixed
+- Fixed small UI tweaks and inaccuracies in new Home panel [#4108](https://github.com/rokwire/illinois-app/issues/4108).
+### Changed
+- Increased leading button size in SliverToutHeaderBar [#3827](https://github.com/rokwire/illinois-app/issues/3827).
+- GroupDetailPanel redirects to MainPost of Reply instead to the Reply Panel [#4049](https://github.com/rokwire/illinois-app/issues/4049).
+
+## [6.0.9] - 2024-06-19
+### Changed
+- Remove "Due Date Catalog" from Academics [#4106](https://github.com/rokwire/illinois-app/issues/4106).
+- GroupPostDetailPanel after send report stay on the detail panel and refresh the Post data[#4087](https://github.com/rokwire/illinois-app/issues/4087).
+### Added
+- Report to dean of students button in GroupDetailPanel [#4038](https://github.com/rokwire/illinois-app/issues/4038).
+- Handled Firebase notifications for the new Home and Wallet panels [#4138](https://github.com/rokwire/illinois-app/issues/4138).
+
+## [6.0.8] - 2024-06-17
+### Changed
+- Remove rokwire from twitter accounts [#4112](https://github.com/rokwire/illinois-app/issues/4112).
+### Added
+- Created new Wallet panel, round #1 [#4114](https://github.com/rokwire/illinois-app/issues/4114).
+
+## [6.0.7] - 2024-06-14
+### Changed
+- Preserve content tab states in Home Panel [#4108](https://github.com/rokwire/illinois-app/issues/4108).
+- Show "My Canvas Courses" for all signed in users [#4115](https://github.com/rokwire/illinois-app/issues/4115).
+- Updated share icon style [#4041](https://github.com/rokwire/illinois-app/issues/4041).
+- Updated logged out prompt text [#4079](https://github.com/rokwire/illinois-app/issues/4079).
+- GroupPostDetailPanel change replies order so the newest reply goes at the bottom [#4081](https://github.com/rokwire/illinois-app/issues/4081).
+- ProfileNamePronouncementConfirmDeleteDialog enhancements [#4083](https://github.com/rokwire/illinois-app/issues/4083).
+
+## [6.0.6] - 2024-06-12
+### Changed
+- Merge Favorites and Browse tabs, removed Academics and Wellness, added Wallet tab [#4108](https://github.com/rokwire/illinois-app/issues/4108).
+### Fixed
+- Do not clear Assistant messages when switching to another panel [#4089](https://github.com/rokwire/illinois-app/issues/4089).
+
+## [6.0.5] - 2024-06-11
+### Added
+- New Assistant UI - FAQs [#4089](https://github.com/rokwire/illinois-app/issues/4089).
+### Changed
+- Updated status texts for in-app event registration [#4086](https://github.com/rokwire/illinois-app/issues/4086).
+
+## [6.0.4] - 2024-06-10
+### Fixed
+- Fixed Explore Map markers build when all explores fall into the same position [#4098](https://github.com/rokwire/illinois-app/issues/4098).
+### Changed
+- Updated optional registration texts [#4043](https://github.com/rokwire/illinois-app/issues/4043).
+- Upgrade to Flutter 3.22.2.
+
+## [6.0.3] - 2024-06-07
+### Changed
+- Updated need to login message, reuse it across different app features [#4079](https://github.com/rokwire/illinois-app/issues/4079).
+- Cleaned up pronunciation control in Profile, prompt before delete [#4083](https://github.com/rokwire/illinois-app/issues/4083).
+### Added
+- New Assistant UI - in progress [#4089](https://github.com/rokwire/illinois-app/issues/4089).
+
 ## [6.0.2] - 2024-06-04
 ### Changed
 - Prompt to star event after creation [#3655](https://github.com/rokwire/illinois-app/issues/3655).

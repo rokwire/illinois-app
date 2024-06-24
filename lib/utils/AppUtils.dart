@@ -26,7 +26,6 @@ import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -59,32 +58,17 @@ class AppAlert {
     bool? alertDismissed = await showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(content: contentWidget, actions: actions,contentPadding: contentPadding,);
+        return AlertDialog(content: contentWidget, actions: actions, contentPadding: contentPadding,);
       },
     );
     return alertDismissed;
   }
 
-  static Future<bool?> showOfflineMessage(BuildContext context, String? message) async {
-    return showDialog(context: context, builder: (context) {
-      return AlertDialog(
-        content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.medium")),
-          Container(height:16),
-          Text(message!, textAlign: TextAlign.center,),
-        ],),
-        actions: <Widget>[
-          TextButton(
-              child: Text(Localization().getStringEx("dialog.ok.title", "OK")),
-              onPressed: (){
-                Analytics().logAlert(text: message, selection: "OK");
-                  Navigator.pop(context, true);
-              }
-          ) //return dismissed 'true'
-        ],
-      );
-    },);
-  }
+  static Future<void> showLoggedOutFeatureNAMessage(BuildContext context, String featureName, { bool verbose = true }) async =>
+    showMessage(context, AppTextUtils.loggedOutFeatureNA(featureName, verbose: verbose));
+
+  static Future<void> showOfflineMessage(BuildContext context, String? message) async =>
+    showMessage(context, Localization().getStringEx("common.message.offline", "You appear to be offline"));
 
   static Future<void> showMessage(BuildContext context, String? message) async {
     return showDialog(context: context, builder: (context) {
@@ -105,37 +89,6 @@ class AppAlert {
     },);
   }
 
-  static Future<void> showPopup(BuildContext context, String? message) async {
-    return showDialog(context: context, builder: (context) {
-      return AlertDialog(contentPadding: EdgeInsets.zero, content:
-        Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)), child:
-          Stack(alignment: Alignment.center, children: [
-            Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32), child:
-              Column(mainAxisSize: MainAxisSize.min, children: [
-                Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container(),
-                Padding(padding: EdgeInsets.only(top: 18), child:
-                  Text(message ?? '', textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle("widget.detail.small"))
-                ),
-              ])
-            ),
-            Positioned.fill(child:
-              Align(alignment: Alignment.topRight, child:
-                InkWell(onTap: () {
-                  Analytics().logAlert(text: message, selection: 'Close');
-                  Navigator.of(context).pop();
-                  }, child:
-                  Padding(padding: EdgeInsets.all(16), child:
-                    Styles().images.getImage('close-circle', excludeFromSemantics: true)
-                  )
-                )
-              )
-            ),
-          ])
-      )
-      );
-    },);
-  }
-
   static Future<bool> showConfirmationDialog(
       {required BuildContext buildContext,
       required String message,
@@ -148,25 +101,23 @@ class AppAlert {
         builder: (context) {
           return AlertDialog(content: Text(message), actions: <Widget>[
             TextButton(
-                child: Text(
-                    StringUtils.ensureNotEmpty(positiveButtonLabel, defaultValue: Localization().getStringEx('dialog.yes.title', 'Yes'))),
-                onPressed: () {
-                  Analytics().logAlert(text: message, selection: 'Yes');
-                  Navigator.pop(context, true);
-                  if (positiveCallback != null) {
-                    positiveCallback();
-                  }
-                }),
+            child: Text(StringUtils.ensureNotEmpty(positiveButtonLabel, defaultValue: Localization().getStringEx('dialog.yes.title', 'Yes'))),
+            onPressed: () {
+              Analytics().logAlert(text: message, selection: 'Yes');
+              Navigator.pop(context, true);
+              if (positiveCallback != null) {
+                positiveCallback();
+              }
+            }),
             TextButton(
-                child: Text(
-                    StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx('dialog.no.title', 'No'))),
-                onPressed: () {
-                  Analytics().logAlert(text: message, selection: 'No');
-                  Navigator.pop(context, false);
-                  if (negativeCallback != null) {
-                    negativeCallback();
-                  }
-                })
+              child: Text(StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx('dialog.no.title', 'No'))),
+              onPressed: () {
+                Analytics().logAlert(text: message, selection: 'No');
+                Navigator.pop(context, false);
+                if (negativeCallback != null) {
+                  negativeCallback();
+                }
+              })
           ]);
         });
     return alertDismissed;
@@ -442,4 +393,16 @@ extension StateExt on State {
       }
     });
   }
+}
+
+class AppTextUtils {
+  static const String _featureMacro = '{{feature}}';
+
+  static loggedOutFeatureNA(String featureName, { bool verbose = false }) {
+    String message = verbose ?
+      Localization().getStringEx('auth.logged_out.feature.not_available.message.verbose', 'To access {{feature}}, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.') :
+      Localization().getStringEx('auth.logged_out.feature.not_available.message.short', 'To access {{feature}}, you need to sign in with your NetID.');
+    return message.replaceAll(_featureMacro, featureName);
+  }
+
 }

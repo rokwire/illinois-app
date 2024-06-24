@@ -15,6 +15,7 @@ import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.da
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -141,7 +142,7 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
     else if (!Auth2().isLoggedIn) {
       return HomeMessageCard(
         title: Localization().getStringEx("common.message.logged_out", "You are not logged in"),
-        message: Localization().getStringEx('widget.home.research_projects.message.logged_out', 'You need to be logged in to access Research Projects.'),
+        message: AppTextUtils.loggedOutFeatureNA(Localization().getStringEx('generic.app.feature.research_projects', 'Research Projects'), verbose: true),
       );
     }
     else if (_loadingResearchProjects) {
@@ -220,7 +221,7 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
       return HomeMessageCard(message: Localization().getStringEx('widget.home.research_projects.all.text.empty.description', 'There are no opened research projects at the moment.'));
     }
     else if (widget.contentType == ResearchProjectsContentType.my) {
-      if (Auth2().account?.isResearchProjectAdmin ?? false) {
+      if (Auth2().isResearchProjectAdmin) {
         return HomeMessageCard(message: Localization().getStringEx('widget.home.research_projects.my.text.empty.admin.description', 'You have not created any research projects yet.'));
       }
       else {

@@ -27,8 +27,8 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/ui/AssistantPanel.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
+import 'package:illinois/ui/assistant/AssistantHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
@@ -42,6 +42,7 @@ import 'package:illinois/ui/polls/PollDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
+import 'package:illinois/ui/wallet/WalletHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
@@ -69,6 +70,7 @@ import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeFavoritesPanel.dart';
 import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
@@ -81,7 +83,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/local_notifications.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum RootTab { Favorites, Browse, Maps, Assistant, Academics, Wellness }
+enum RootTab { Home, Favorites, Browse, Maps, Academics, Wellness, Wallet, Assistant }
 
 class RootPanel extends StatefulWidget {
   static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
@@ -97,7 +99,7 @@ class RootPanel extends StatefulWidget {
 class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin implements NotificationsListener {
 
   List<RootTab>  _tabs = [];
-  Map<RootTab, Widget> _panels = {};
+  Map<RootTab, Widget?> _panels = {};
 
   TabController?  _tabBarController;
   int            _currentTabIndex = 0;
@@ -120,6 +122,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyGroupsNotification,
       FirebaseMessaging.notifyGroupPostNotification,
       FirebaseMessaging.notifyHomeNotification,
+      FirebaseMessaging.notifyHomeFavoritesNotification,
+      FirebaseMessaging.notifyHomeBrowseNotification,
+      FirebaseMessaging.notifyFavoritesNotification,
       FirebaseMessaging.notifyBrowseNotification,
       FirebaseMessaging.notifyMapNotification,
       FirebaseMessaging.notifyMapEventsNotification,
@@ -154,6 +159,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyWellnessRingsNotification,
       FirebaseMessaging.notifyWellnessStrugglingNotification,
       FirebaseMessaging.notifyWellnessTodoListNotification,
+      FirebaseMessaging.notifyWalletNotification,
+      FirebaseMessaging.notifyWalletIlliniIdNotification,
+      FirebaseMessaging.notifyWalletIlliniIdFaqsNotification,
+      FirebaseMessaging.notifyWalletBusPassNotification,
+      FirebaseMessaging.notifyWalletMealPlanNotification,
+      FirebaseMessaging.notifyWalletAddIlliniCashNotification,
       FirebaseMessaging.notifyInboxNotification,
       FirebaseMessaging.notifyPollNotification,
       FirebaseMessaging.notifyCanvasAppDeepLinkNotification,
@@ -196,12 +207,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Polls.notifyPresentResult,
       uiuc.TabBar.notifySelectionChanged,
       HomePanel.notifySelect,
+      HomeFavoritesPanel.notifySelect,
       BrowsePanel.notifySelect,
       ExploreMapPanel.notifySelect,
     ]);
 
     _tabs = _getTabs();
-    _currentTabIndex = _defaultTabIndex ?? _getIndexByRootTab(RootTab.Favorites) ?? 0;
+    _currentTabIndex = _defaultTabIndex ?? _getIndexByRootTab(RootTab.Home) ?? 0;
     _tabBarController = TabController(initialIndex: _currentTabIndex, length: _tabs.length, vsync: this);
     _updatePanels(_tabs);
 
@@ -319,7 +331,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onFirebaseAthleticsTeamRosterNotification(param);
     }
     else if (name == FirebaseMessaging.notifyHomeNotification) {
-      _onFirebaseHomeNotification();
+      _onFirebaseTabNotification(RootTab.Home);
+    }
+    else if (name == FirebaseMessaging.notifyHomeFavoritesNotification) {
+      _onFirebaseTabNotification(RootTab.Favorites);
+    }
+    else if (name == FirebaseMessaging.notifyHomeBrowseNotification) {
+      _onFirebaseTabNotification(RootTab.Browse);
+    }
+    else if (name == FirebaseMessaging.notifyFavoritesNotification) {
+      _onFirebaseTabNotification(RootTab.Favorites);
     }
     else if (name == FirebaseMessaging.notifyBrowseNotification) {
       _onFirebaseTabNotification(RootTab.Browse);
@@ -423,6 +444,25 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyWellnessTodoListNotification) {
       _onFirebaseWellnessNotification(WellnessContent.todo);
     }
+
+    else if (name == FirebaseMessaging.notifyWalletNotification) {
+      _onFirebaseTabNotification(RootTab.Wallet);
+    }
+    else if (name == FirebaseMessaging.notifyWalletIlliniIdNotification) {
+      _onFirebaseWaletNotification(WalletContentType.illiniId);
+    }
+    else if (name == FirebaseMessaging.notifyWalletIlliniIdFaqsNotification) {
+      _onFirebaseWaletNotification(WalletContentType.illiniIdFaqs);
+    }
+    else if (name == FirebaseMessaging.notifyWalletBusPassNotification) {
+      _onFirebaseWaletNotification(WalletContentType.busPass);
+    }
+    else if (name == FirebaseMessaging.notifyWalletMealPlanNotification) {
+      _onFirebaseWaletNotification(WalletContentType.mealPlan);
+    }
+    else if (name == FirebaseMessaging.notifyWalletAddIlliniCashNotification) {
+      _onFirebaseWaletNotification(WalletContentType.addIlliniCash);
+    }
     else if (name == FirebaseMessaging.notifyInboxNotification) {
       _onFirebaseInboxNotification();
     }
@@ -490,6 +530,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onFirebaseGuideArticleNotification(param);
     }
     else if (name == HomePanel.notifySelect) {
+      _onSelectHome(param);
+    }
+    else if (name == HomeFavoritesPanel.notifySelect) {
       _onSelectTab(RootTab.Favorites);
     }
     else if (name == BrowsePanel.notifySelect) {
@@ -504,38 +547,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   }
 
-  void _onTabSelectionChanged(int tabIndex) {
-    if (mounted) {
-      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-      _selectTab(tabIndex);
-    }
-  }
-
-  void _onSelectTab(RootTab tab) {
-    int? tabIndex = _getIndexByRootTab(tab);
-    if (mounted && (tabIndex != null)) {
-      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-      _selectTab(tabIndex);
-    }
-  }
-
-  void _onSelectMaps(dynamic param) {
-    int? mapsIndex = _getIndexByRootTab(RootTab.Maps);
-    if (mounted && (mapsIndex != null)) {
-      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-      int lastTabIndex = _currentTabIndex;
-      _selectTab(mapsIndex);
-      if ((lastTabIndex != mapsIndex) && (param != null) && !ExploreMapPanel.hasState) {
-        Widget? mapsWidget = _panels[RootTab.Maps];
-        ExploreMapPanel? mapsPanel = (mapsWidget is ExploreMapPanel) ? mapsWidget : null;
-        mapsPanel?.params[ExploreMapPanel.selectParamKey] = param;
-      }
-    }
-  }
-
-  void _onFirebaseMapNotification(ExploreMapType mapType) {
-    NotificationService().notify(ExploreMapPanel.notifySelect, mapType);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -562,7 +573,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   
   void _selectTab(int tabIndex) {
 
-    if ((0 <= tabIndex) && (tabIndex < _tabs.length) && (tabIndex != _currentTabIndex)) {
+    RootTab? rootTab = getRootTabByIndex(tabIndex);
+
+    //Treat Assistant tab differently because it is modal bottom sheet
+    if (rootTab == RootTab.Assistant) {
+      AssistantHomePanel.present(context);
+    }
+    else if (rootTab == RootTab.Wallet) {
+      WalletHomePanel.present(context);
+    }
+    else if ((0 <= tabIndex) && (tabIndex < _tabs.length) && (tabIndex != _currentTabIndex)) {
       _tabBarController!.animateTo(tabIndex);
 
       if (getRootTabByIndex(_currentTabIndex) == RootTab.Maps) {
@@ -585,7 +605,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         Analytics().logMapShow();
       }
 
-      RootTab? rootTab = getRootTabByIndex(tabIndex);
       NotificationService().notify(RootPanel.notifyTabChanged, rootTab);
     }
   }
@@ -935,9 +954,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     for (RootTab rootTab in tabs) {
       if (_panels[rootTab] == null) {
         Widget? panel = _createPanelForTab(rootTab);
-        if (panel != null) {
-          _panels[rootTab] = panel;
-        }
+        _panels[rootTab] = panel;
       }
     }
   }
@@ -954,8 +971,11 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   static Widget? _createPanelForTab(RootTab? rootTab) {
-    if (rootTab == RootTab.Favorites) {
+    if (rootTab == RootTab.Home) {
       return HomePanel();
+    }
+    else if (rootTab == RootTab.Favorites) {
+      return HomeFavoritesPanel();
     }
     else if (rootTab == RootTab.Browse) {
       return BrowsePanel();
@@ -963,17 +983,27 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (rootTab == RootTab.Maps) {
       return ExploreMapPanel();
     }
-    else if (rootTab == RootTab.Assistant) {
-      return AssistantPanel();
-    }
     else if (rootTab == RootTab.Academics) {
       return AcademicsHomePanel(rootTabDisplay: true,);
     }
     else if (rootTab == RootTab.Wellness) {
       return WellnessHomePanel(rootTabDisplay: true,);
     }
+    else if (rootTab == RootTab.Wallet) {
+      return null;
+    }
+    else if (rootTab == RootTab.Assistant) {
+      return null;
+    }
     else {
       return null;
+    }
+  }
+
+  void _onTabSelectionChanged(int tabIndex) {
+    if (mounted) {
+      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+      _selectTab(tabIndex);
     }
   }
 
@@ -1026,20 +1056,62 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  void _onFirebaseHomeNotification() {
-    // Pop to Home Panel and select the first tab
-    Navigator.of(context).popUntil((route) => route.isFirst);
-    _selectTab(0);
+  void _onSelectTab(RootTab? tab) {
+    if (mounted) {
+      int? tabIndex = _getIndexByRootTab(tab);
+      if ((tabIndex == null) && (tab == RootTab.Home)) {
+        tabIndex = 0;
+      }
+      if (tabIndex != null) {
+        Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+        _selectTab(tabIndex);
+      }
+      else if (tab == RootTab.Favorites) {
+        _onFirebaseHomeNotification(HomeContentType.favorites);
+      }
+      else if (tab == RootTab.Browse) {
+        _onFirebaseHomeNotification(HomeContentType.browse);
+      }
+    }
   }
 
-  void _onFirebaseTabNotification(RootTab? tab) {
-    if (tab != null) {
-      // Pop to Home Panel
-      Navigator.of(context).popUntil((route) => route.isFirst);
-      // Select tab
-      int? tabIndex = _getIndexByRootTab(tab);
-      if (tabIndex != null) {
-        _selectTab(tabIndex);
+  void _onFirebaseTabNotification(RootTab? tab) =>
+    _onSelectTab(tab);
+
+  void _onFirebaseHomeNotification(HomeContentType homeType) {
+    NotificationService().notify(HomePanel.notifySelect, homeType);
+  }
+
+  void _onFirebaseMapNotification(ExploreMapType mapType) {
+    NotificationService().notify(ExploreMapPanel.notifySelect, mapType);
+  }
+
+  void _onSelectHome(dynamic param) {
+    int? homeIndex = _getIndexByRootTab(RootTab.Home);
+    if (mounted && (homeIndex != null)) {
+      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+      if (homeIndex != _currentTabIndex) {
+        _selectTab(homeIndex);
+        if ((param is HomeContentType) && !HomePanel.hasState) {
+          Widget? homeWidget = _panels[RootTab.Home];
+          HomePanel? homePanel = (homeWidget is HomePanel) ? homeWidget : null;
+          homePanel?.initialContentType = param;
+        }
+      }
+    }
+  }
+
+  void _onSelectMaps(dynamic param) {
+    int? mapsIndex = _getIndexByRootTab(RootTab.Maps);
+    if (mounted && (mapsIndex != null)) {
+      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+      if (mapsIndex != _currentTabIndex) {
+        _selectTab(mapsIndex);
+        if ((param is ExploreMapType) && !ExploreMapPanel.hasState) {
+          Widget? mapsWidget = _panels[RootTab.Maps];
+          ExploreMapPanel? mapsPanel = (mapsWidget is ExploreMapPanel) ? mapsWidget : null;
+          mapsPanel?.params[ExploreMapPanel.selectParamKey] = param;
+        }
       }
     }
   }
@@ -1103,6 +1175,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
+  void _onFirebaseWaletNotification(WalletContentType contentType) {
+    WalletHomePanel.present(context, contentType: contentType);
+  }
+
   void _onFirebaseAcademicsNotification(AcademicsContent content) {
     int? academicsIndex = _getIndexByRootTab(RootTab.Academics);
     if (academicsIndex != null) {
@@ -1136,7 +1212,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
 RootTab? rootTabFromString(String? value) {
   if (value != null) {
-    if (value == 'favorites') {
+    if (value == 'home') {
+      return RootTab.Home;
+    }
+    else if (value == 'favorites') {
       return RootTab.Favorites;
     }
     else if (value == 'browse') {
@@ -1145,15 +1224,19 @@ RootTab? rootTabFromString(String? value) {
     else if (value == 'maps') {
       return RootTab.Maps;
     }
-    else if (value == 'assistant') {
-      return RootTab.Assistant;
-    }
     else if (value == 'academics') {
       return RootTab.Academics;
     }
     else if (value == 'wellness') {
       return RootTab.Wellness;
     }
+    else if (value == 'wallet') {
+      return RootTab.Wallet;
+    }
+    else if (value == 'assistant') {
+      return RootTab.Assistant;
+    }
   }
   return null;
 }
+
