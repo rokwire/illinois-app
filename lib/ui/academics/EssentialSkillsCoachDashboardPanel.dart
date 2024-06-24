@@ -16,7 +16,6 @@ import 'package:illinois/ui/academics/courses/EssentialSkillsCoachWidgets.dart';
 import 'package:illinois/ui/academics/courses/ResourcesPanel.dart';
 import 'package:illinois/ui/academics/courses/SkillsHistoryPanel.dart';
 import 'package:illinois/ui/academics/courses/StreakPanel.dart';
-import 'package:illinois/ui/academics/courses/UnitInfoPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -38,6 +37,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   Course? _course;
   UserCourse? _userCourse;
   List<UserUnit>? _userCourseUnits;
+  Map<String, UserUnit> _currentUserUnits = {};
   CourseConfig? _courseConfig;
   bool _loading = false;
   String? _selectedModuleKey;
@@ -281,6 +281,9 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         (userUnit) => (userUnit.unit?.key != null) && (userUnit.unit!.key == unit.key) && (_selectedModuleKey != null) && (userUnit.moduleKey == _selectedModuleKey),
         orElse: () => UserUnit.emptyFromUnit(unit, Config().essentialSkillsCoachKey, _selectedModule?.key, current: i == 0)
       ) ?? UserUnit.emptyFromUnit(unit, Config().essentialSkillsCoachKey, _selectedModule?.key, current: i == 0);
+      if (showUnit.current && _selectedModuleKey != null) {
+        _currentUserUnits[_selectedModuleKey!] = showUnit;
+      }
       moduleUnitWidgets.add(Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
         child: _buildUnitInfoWidget(showUnit, i+1),
@@ -395,8 +398,14 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     bool required = userUnit.unit?.scheduleItems?[scheduleIndex].isRequired ?? false;
     bool isCompleted = userUnit.isCompleted || ((scheduleIndex < userUnit.completed) && userUnit.current);
     bool isCurrent = (scheduleIndex == userUnit.completed) && userUnit.current;
-    bool isNextWithCurrentComplete = (scheduleIndex == userUnit.completed + 1) && userUnit.current && (userUnit.currentUserScheduleItem?.isComplete ?? false); //TODO: add check for first schedule item of next unit
     bool isCompletedOrCurrent = isCompleted || isCurrent;
+
+    bool isNextWithCurrentComplete = (scheduleIndex == userUnit.completed + 1) && userUnit.current && (userUnit.currentUserScheduleItem?.isComplete ?? false);
+    // check for first schedule item of next unit
+    UserUnit? currentUnit = _selectedModuleKey != null ? _currentUserUnits[_selectedModuleKey!] : null;
+    if (currentUnit != null) {
+      isNextWithCurrentComplete |= (userUnit.unit?.key == _selectedModule?.nextUnit(currentUnit)?.key && (currentUnit.lastUserScheduleItem?.isComplete ?? false));
+    }
 
     bool isFirstIncompleteInScheduleItem = userContentReference.contentKey != null && userUnit.currentUserScheduleItem?.firstIncomplete?.contentKey == userContentReference.contentKey;
     bool shouldHighlight = (isCurrent && userContentReference.isNotComplete && isFirstIncompleteInScheduleItem) || isNextWithCurrentComplete;
@@ -476,36 +485,52 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: ElevatedButton(
         onPressed: userUnit.current || userUnit.isCompleted ? () {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => required ? AssignmentPanel(
-              content: content,
-              contentReference: userContentReference,
-              color: _selectedModulePrimaryColor,
-              colorAccent: _selectedModuleAccentColor,
-              helpContent: (_userCourse?.course ?? _course) != null ? content.getLinkedContent(_userCourse?.course ?? _course) : null,
-              preview: !isCompletedOrCurrent,
-              courseDayStart: nextCourseDayStart?.subtract(Duration(days: 1)),
-              moduleIcon: _selectedModuleIcon,
-              moduleName: _selectedModule?.name ?? '',
-              unitNumber: unitNumber,
-              unitName: userUnit.unit?.name ?? '',
-              activityNumber: activityNumber,
-            ) : UnitInfoPanel(
-              content: content,
-              contentReference: userContentReference,
-              color: _selectedModulePrimaryColor,
-              colorAccent: _selectedModuleAccentColor,
-              preview: !isCompletedOrCurrent,
-              moduleIcon: _selectedModuleIcon,
-              moduleName: _selectedModule?.name ?? '',
-            )
-          )).then((result) {
-            if (result is Map<String, dynamic>) {
-              String? moduleKey = _selectedModuleKey;
-              if (moduleKey != null && StringUtils.isNotEmpty(userUnit.unit?.key) && StringUtils.isNotEmpty(userContentReference.contentKey)) {
-                _updateProgress(moduleKey, userUnit.unit!.key!, result, userContentReference, unitNumber, activityNumber);
+          switch (content.reference?.type) {
+            case ReferenceType.none:
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentPanel(
+                content: content,
+                contentReference: userContentReference,
+                color: _selectedModulePrimaryColor,
+                colorAccent: _selectedModuleAccentColor,
+                helpContent: (_userCourse?.course ?? _course) != null ? content.getLinkedContent(_userCourse?.course ?? _course) : null,
+                preview: !isCompletedOrCurrent,
+                courseDayStart: nextCourseDayStart?.subtract(Duration(days: 1)),
+                moduleIcon: _selectedModuleIcon,
+                moduleName: _selectedModule?.name ?? '',
+                unitNumber: unitNumber,
+                unitName: userUnit.unit?.name ?? '',
+                activityNumber: activityNumber,
+              ))).then((result) => _handleProgressUpdate(result, userUnit, unitNumber, userContentReference, activityNumber));
+              break;
+            case ReferenceType.video:
+              EssentialSkillsCoachWidgets.openVideoContent(context, content.reference!.name, content.reference!.referenceKey);
+              break;
+            case ReferenceType.pdf:
+              EssentialSkillsCoachWidgets.openPdfContent(context, content.reference!.name, content.reference!.referenceKey);
+              break;
+            case ReferenceType.powerpoint:
+              EssentialSkillsCoachWidgets.openPdfContent(context, content.reference!.name, content.reference!.referenceKey);
+              break;
+            case ReferenceType.text:
+              EssentialSkillsCoachWidgets.openTextContent(context,
+                content: content,
+                contentReference: userContentReference,
+                color: _selectedModulePrimaryColor,
+                colorAccent: _selectedModuleAccentColor,
+                preview: !isCompletedOrCurrent,
+                moduleIcon: _selectedModuleIcon,
+                moduleName: _selectedModule?.name ?? '',
+                callback: (result) => _handleProgressUpdate(result, userUnit, unitNumber, userContentReference, activityNumber)
+              );
+              break;
+            case ReferenceType.uri:
+              Uri? uri = Uri.tryParse(content.reference!.referenceKey ?? "");
+              if (uri != null) {
+                EssentialSkillsCoachWidgets.openUrlContent(uri);
               }
-            }
-          });
+              break;
+            default: return;
+          }
         } : null,
         child: contentWidget,
         style: ElevatedButton.styleFrom(
@@ -531,10 +556,6 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       }
     }
     return dropDownItems;
-  }
-
-  Unit? _getNextUnit(UserUnit userUnit) {
-    
   }
 
   Future<void> _loadCourseAndUnits() async {
@@ -633,6 +654,15 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         }
         _loading = false;
       });
+    }
+  }
+
+  void _handleProgressUpdate(dynamic result, UserUnit userUnit, int unitNumber, UserContentReference userContentReference, int activityNumber) {
+    if (result is Map<String, dynamic>) {
+      String? moduleKey = _selectedModuleKey;
+      if (moduleKey != null && StringUtils.isNotEmpty(userUnit.unit?.key) && StringUtils.isNotEmpty(userContentReference.contentKey)) {
+        _updateProgress(moduleKey, userUnit.unit!.key!, result, userContentReference, unitNumber, activityNumber);
+      }
     }
   }
 

@@ -301,6 +301,14 @@ class Module{
     }
     return null;
   }
+
+  Unit? nextUnit(UserUnit userUnit) {
+    int? currentUnitIndex = units?.indexWhere((moduleUnit) => moduleUnit.key == userUnit.unit?.key);
+    if (currentUnitIndex != null && currentUnitIndex >= 0 && currentUnitIndex < units!.length - 1) {
+      return units![currentUnitIndex + 1];
+    }
+    return null;
+  }
 }
 
 class Unit{
@@ -476,6 +484,7 @@ class UserUnit {
   }
 
   UserScheduleItem? get currentUserScheduleItem => completed >= 0 && completed < (userSchedule?.length ?? 0) ? (userSchedule?[completed]) : null;
+  UserScheduleItem? get lastUserScheduleItem => CollectionUtils.isNotEmpty(userSchedule) ? userSchedule!.last : null;
 
   bool get isCompleted => completed == (userSchedule?.length ?? -1);
 }
@@ -834,10 +843,12 @@ class CourseConfig {
   final int? pauseProgressReward;
 
   final int? streaksProcessTime;
+  final List<CourseNotification>? notifications;
   final String? timezoneName;
   final int? timezoneOffset;
 
-  CourseConfig({this.id, this.courseKey, this.initialPauses, this.maxPauses, this.pauseProgressReward, this.streaksProcessTime, this.timezoneName, this.timezoneOffset});
+  CourseConfig({this.id, this.courseKey, this.initialPauses, this.maxPauses, this.pauseProgressReward,
+    this.streaksProcessTime, this.notifications, this.timezoneName, this.timezoneOffset});
 
   static const String userTimezone = "user";
 
@@ -845,6 +856,7 @@ class CourseConfig {
     if (json == null) {
       return null;
     }
+
     return CourseConfig(
       id: JsonUtils.stringValue(json['id']),
       courseKey: JsonUtils.stringValue(json['course_key']),
@@ -852,6 +864,7 @@ class CourseConfig {
       maxPauses: JsonUtils.intValue(json['max_pauses']),
       pauseProgressReward: JsonUtils.intValue(json['pause_progress_reward']),
       streaksProcessTime: JsonUtils.intValue(json['streaks_notifications_config']?['streaks_process_time']),
+      notifications: CourseNotification.listFromJson(JsonUtils.listValue(json['streaks_notifications_config']?['notifications'])),
       timezoneName: JsonUtils.stringValue(json['streaks_notifications_config']?['timezone_name']),
       timezoneOffset: JsonUtils.intValue(json['streaks_notifications_config']?['timezone_offset']),
     );
@@ -884,6 +897,35 @@ class CourseConfig {
   }
 
   bool get usesUserTimezone => timezoneName == userTimezone;
+
+  int? get finalNotificationTime => CollectionUtils.isNotEmpty(notifications) ? notifications!.last.processTime : null;
+}
+
+class CourseNotification {
+  final int? processTime;
+
+  CourseNotification({this.processTime});
+
+  static CourseNotification? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+
+    return CourseNotification(
+      processTime: JsonUtils.intValue(json['process_time']),
+    );
+  }
+
+  static List<CourseNotification>? listFromJson(List<dynamic>? jsonList) {
+    List<CourseNotification>? result;
+    if (jsonList != null) {
+      result = <CourseNotification>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CourseNotification.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
 }
 
 // CourseStyles
