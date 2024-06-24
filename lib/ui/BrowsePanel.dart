@@ -1098,12 +1098,12 @@ class _BrowseEntry extends StatelessWidget {
     AppAlert.showDialogResult(context, "Not implemented yet.");
   }
 
-  static void _launchUrl(BuildContext context, String? url) {
+  static void _launchUrl(BuildContext context, String? url, {bool launchInternal = false}) {
     if (StringUtils.isNotEmpty(url)) {
       if (DeepLink().isAppUrl(url)) {
         DeepLink().launchUrl(url);
       }
-      else if (UrlUtils.launchInternal(url)){
+      else if (launchInternal && UrlUtils.launchInternal(url)){
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       }
       else {
