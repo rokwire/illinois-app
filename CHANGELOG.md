@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 - Use static and permanently visible gradient shadow in HomePanel top [#4108](https://github.com/rokwire/illinois-app/issues/4108).
+- Fixed target browser type when opening URLs from Browse panel [#4143](https://github.com/rokwire/illinois-app/issues/4143).
 
 ## [6.0.11] - 2024-06-21
 ### Added
