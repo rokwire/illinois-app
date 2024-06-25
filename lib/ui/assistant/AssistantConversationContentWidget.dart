@@ -317,7 +317,12 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   void _onTapSourcesAndLinksLabel(Message message) {
     setStateIfMounted(() {
       message.sourcesExpanded = !(message.sourcesExpanded ?? false);
-      _shouldScrollToBottom = true;
+      int msgsLength = Assistant().messages.length;
+      int msgIndex = (msgsLength > 0) ? Assistant().messages.indexOf(message) : -1;
+      if ((msgIndex >= 0) && (msgIndex == (msgsLength - 1))) {
+        // Automatically scroll only if the last message "Sources and Links" label is tapped
+        _shouldScrollToBottom = true;
+      }
     });
   }
 
