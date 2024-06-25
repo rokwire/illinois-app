@@ -125,8 +125,8 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
     }
   }
 
-  void clearMessages() {
-    //TBD: DD - implement
+  void removeAllMessages() {
+    //TBD: DD - implement when we have a backend API
   }
 
   Future<void> _loadMessages() async {
