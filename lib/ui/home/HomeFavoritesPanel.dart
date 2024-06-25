@@ -21,9 +21,10 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/ui/home/HomeEmptyContentWidget.dart';
+import 'package:illinois/ui/home/HomeEmptyFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
+import 'package:illinois/ui/home/HomeWelcomeMessageWidget.dart';
 import 'package:illinois/ui/home/HomeWelcomeVideoWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -167,7 +168,7 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
     widgets.addAll(_buildWidgetsFromCodes(_systemCodes, availableCodes: widget.availableSystemCodes));
     List<Widget> favWidgets = _buildWidgetsFromCodes(_favoriteCodes?.reversed, availableCodes: _availableCodes);
     if (favWidgets.isEmpty) {
-      favWidgets.add(HomeEmptyContentWidget());
+      favWidgets.add(HomeEmptyFavoritesWidget());
     }
     widgets.addAll(favWidgets);
     return Column(children: widgets,);
@@ -203,6 +204,9 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
     }
     else if (code == 'welcome_video') {
       return HomeWelcomeVideoWidget(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController,);
+    }
+    else if (code == 'welcome_message') {
+      return HomeWelcomeMessageWidget(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController,);
     }
     else {
       dynamic data = HomePanel.dataFromCode(code,

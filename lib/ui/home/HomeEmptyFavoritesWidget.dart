@@ -10,9 +10,24 @@ import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 
-class HomeEmptyContentWidget extends StatelessWidget {
+class HomeEmptyFavoritesWidget extends StatelessWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
+
+  HomeEmptyFavoritesWidget({ super.key, this.favoriteId, this.updateController});
+
+  @override
+  Widget build(BuildContext context) =>
+    HomeSlantWidget(favoriteId: null /*widget.favoriteId*/,
+      title: Localization().getStringEx("panel.home.header.favorites.title", "Favorites"),
+      childPadding: HomeSlantWidget.defaultChildPadding,
+      child: Column(children: <Widget>[
+        HomeFavoritesInstructionsMessageCard()
+      ],),
+    );
+}
+
+class HomeFavoritesInstructionsMessageCard extends StatelessWidget {
 
   static const String _localScheme = 'local';
 
@@ -25,27 +40,16 @@ class HomeEmptyContentWidget extends StatelessWidget {
   static const String _privacySettingsLocalUrlMacro = '{{privacy_settings_local_url}}';
   static const String _privacySettingsLocalUrl      = 'privacy_settings';
 
-  HomeEmptyContentWidget({ super.key, this.favoriteId, this.updateController});
-
   @override
-  Widget build(BuildContext context) {
-    String htmlContent = Localization().getStringEx("widget.home.empty.content.text", "Tap the \u2606s under <a href='$_browseLocalUrlMacro'>Browse</a> to add shortcuts to Favorites. Note that some features require specific <a href='$_privacySettingsLocalUrlMacro'>privacy settings</a> and <a href='$_signInLocalUrlMacro'>signing in</a> with your NetID, phone number, or email address.")
+  Widget build(BuildContext context) =>
+    HomeMessageHtmlCard(
+      message: Localization().getStringEx("widget.home.favorites.instructions.message.text", "Tap the \u2606s under <a href='$_browseLocalUrlMacro'>Browse</a> to add shortcuts to Favorites. Note that some features require specific <a href='$_privacySettingsLocalUrlMacro'>privacy settings</a> and <a href='$_signInLocalUrlMacro'>signing in</a> with your NetID, phone number, or email address.")
         .replaceAll(_browseLocalUrlMacro, '$_localScheme://$_browseLocalUrl')
         .replaceAll(_signInLocalUrlMacro, '$_localScheme://$_signInLocalUrl')
-        .replaceAll(_privacySettingsLocalUrlMacro, '$_localScheme://$_privacySettingsLocalUrl');
-
-    return HomeSlantWidget(favoriteId: null /*widget.favoriteId*/,
-      title: Localization().getStringEx("panel.home.header.favorites.title", "Favorites"),
-      childPadding: HomeSlantWidget.defaultChildPadding,
-      child: Column(children: <Widget>[
-        HomeMessageHtmlCard(
-          message: htmlContent,
-          margin: EdgeInsets.only(bottom: 16),
-          onTapLink : (url) => _onTapLink(context, url),
-        )
-      ],),
+        .replaceAll(_privacySettingsLocalUrlMacro, '$_localScheme://$_privacySettingsLocalUrl'),
+      margin: EdgeInsets.only(bottom: 16),
+      onTapLink : (url) => _onTapLink(context, url),
     );
-  }
 
   void _onTapLink(BuildContext context, String? url) {
     Uri? uri = (url != null) ? Uri.tryParse(url) : null;
@@ -65,5 +69,3 @@ class HomeEmptyContentWidget extends StatelessWidget {
     }
   }
 }
-
-

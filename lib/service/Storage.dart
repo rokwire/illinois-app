@@ -339,6 +339,10 @@ class Storage extends rokwire.Storage {
   bool? get homeWelcomeVideoVisible => getBoolWithName(homeWelcomeVideoVisibleKey);
   set homeWelcomeVideoVisible(bool? value) => setBoolWithName(homeWelcomeVideoVisibleKey, value);
 
+  String get homeWelcomeMessageVisibleKey => 'edu.illinois.rokwire.home.welcome_message.visible';
+  bool? get homeWelcomeMessageVisible => getBoolWithName(homeWelcomeMessageVisibleKey);
+  set homeWelcomeMessageVisible(bool? value) => setBoolWithName(homeWelcomeMessageVisibleKey, value);
+
   String get homeLoginVisibleKey => 'edu.illinois.rokwire.home.login.visible';
   bool? get homeLoginVisible => getBoolWithName(homeLoginVisibleKey);
   set homeLoginVisible(bool? value) => setBoolWithName(homeLoginVisibleKey, value);

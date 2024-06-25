@@ -3508,8 +3508,8 @@
 	"widget.home.prompt.remove.favorite": "您確定要從收藏夾中刪除此項目嗎？",
 
 	"widget.home.welcome_video.title.text": "“歡迎來到{{app_title}} {{app_version}}",
-
-	"widget.home.empty.content.text": "Tap the \u2606s under <a href='$_browseLocalUrlMacro'>Browse</a> to add shortcuts to Favorites. Note that some features require specific <a href='$_privacySettingsLocalUrlMacro'>privacy settings</a> and <a href='$_signInLocalUrlMacro'>signing in</a> with your NetID, phone number, or email address.",
+	"widget.home.welcome_message.title.text": "Tailor Your App Experience",
+	"widget.home.favorites.instructions.message.text": "Tap the \u2606s under <a href='$_browseLocalUrlMacro'>Browse</a> to add shortcuts to Favorites. Note that some features require specific <a href='$_privacySettingsLocalUrlMacro'>privacy settings</a> and <a href='$_signInLocalUrlMacro'>signing in</a> with your NetID, phone number, or email address.",
 
 	"widget.home.athletics_news.text.title": "十大新聞",
 	"widget.home.athletics_news.text.empty.description": "目前無法查看十大新聞。",

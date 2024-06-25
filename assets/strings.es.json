@@ -3523,8 +3523,8 @@
     "widget.home.prompt.remove.favorite": "¿Estás segura de que deseas ELIMINAR este artículo de tus favoritos?",
 
     "widget.home.welcome_video.title.text": "Bienvenido a {{app_title}} {{app_version}}",
-
-    "widget.home.empty.content.text": "Tap the \u2606s under <a href='$_browseLocalUrlMacro'>Browse</a> to add shortcuts to Favorites. Note that some features require specific <a href='$_privacySettingsLocalUrlMacro'>privacy settings</a> and <a href='$_signInLocalUrlMacro'>signing in</a> with your NetID, phone number, or email address.",
+    "widget.home.welcome_message.title.text": "Tailor Your App Experience",
+    "widget.home.favorites.instructions.message.text": "Tap the \u2606s under <a href='$_browseLocalUrlMacro'>Browse</a> to add shortcuts to Favorites. Note that some features require specific <a href='$_privacySettingsLocalUrlMacro'>privacy settings</a> and <a href='$_signInLocalUrlMacro'>signing in</a> with your NetID, phone number, or email address.",
 
     "widget.home.athletics_news.text.title": "10 grandes noticias",
     "widget.home.athletics_news.text.empty.description": "Las 10 grandes noticias no están disponibles en este momento.",
