@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Focus on "Sources and Links" in Assistant [#4128](https://github.com/rokwire/illinois-app/issues/4128).
 - Keep Illinois Assistant history until user clears it [#4129](https://github.com/rokwire/illinois-app/issues/4129).
 ### Changed
-- Update text styles used for Events card  and Detail Panel[#4158]
+- Update text styles used for Events card and Detail Panel [#4158](https://github.com/rokwire/illinois-app/issues/4158).
+- Update 6.0 welcome message [#4121](https://github.com/rokwire/illinois-app/issues/4121).
 
 ## [6.0.12] - 2024-06-24
 ### Changed
