@@ -448,7 +448,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     ]);
 
   Widget get _categoriesContentWidget =>
-    Text(widget.displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles.getTextStyle("widget.card.title.small.fat"));
+    Text(widget.displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles.getTextStyle("common.title.secondary"));
 
   /*Widget get _groupingBadgeWidget {
     String? badgeLabel;
@@ -507,7 +507,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     ],) : Container();
 
   Widget get _titleContentWidget =>
-    Text(_event.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'), maxLines: 2, overflow: TextOverflow.ellipsis);
+    Text(_event.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.medium.fat'), maxLines: 2, overflow: TextOverflow.ellipsis);
 
   Widget get _detailsWidget {
     List<Widget> detailWidgets = <Widget>[
@@ -581,7 +581,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   }
 
   Widget _buildLocationTextDetailWidget(String text) =>
-    _buildDetailWidget(Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero);
+    _buildDetailWidget(Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle('common.body'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero);
 
   Widget _buildTextDetailWidget(String text, String iconKey, {
     EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),
@@ -589,7 +589,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     bool iconVisible = true, int maxLines = 1,
   }) =>
     _buildDetailWidget(
-      Text(text, style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular'), maxLines: maxLines, overflow: TextOverflow.ellipsis,),
+      Text(text, style: Styles().textStyles.getTextStyle('common.body'), maxLines: maxLines, overflow: TextOverflow.ellipsis,),
       iconKey, contentPadding: contentPadding, iconPadding: iconPadding, iconVisible: iconVisible
     );
 
