@@ -717,7 +717,13 @@
     "panel.canvas.detail.large":  {"font_family": "medium", "size": 22.0, "color": "fillColorSecondaryTransparent05"},
     "panel.canvas.item.large.fat":  {"font_family": "bold", "size": 20.0, "color": "textSurfaceAccent"},
     "panel.canvas.item.regular":  {"font_family": "regular", "size": 16.0, "color": "textSurfaceAccent"},
-    "panel.canvas.item.regular.fat":  {"font_family": "bold", "size": 16.0, "color": "textSurfaceAccent"}
+    "panel.canvas.item.regular.fat":  {"font_family": "bold", "size": 16.0, "color": "textSurfaceAccent"},
+
+    "common.title.secondary": {"font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
+    "common.body": {"font_family": "regular", "size": 14.0, "color": "textSurface"},
+    "common.body.italic": {"extends": "common.body", "font_family": "regular_italic"},
+    "common.body.underline": {"extends": "common.body", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"}
+
   },
   "image": {
     "campus-tools": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
