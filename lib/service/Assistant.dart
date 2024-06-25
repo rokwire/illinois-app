@@ -16,7 +16,7 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
   static const String _faqContentCategory = "assistant_faqs";
   Map<String, dynamic>? _faqsContent;
 
-  List<Message> _userMessages = <Message>[];
+  List<Message> _displayMessages = <Message>[];
 
   // Singleton Factory
   
@@ -43,7 +43,7 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
 
   @override
   Future<void> initService() async {
-    _initMessages();
+    _loadMessages();
     _initFaqs();
   }
 
@@ -65,7 +65,7 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
     if (name == Content.notifyContentItemsChanged) {
       _onContentItemsChanged(param);
     } else if (name == Auth2.notifyLoginChanged) {
-      _initMessages();
+      _loadMessages();
     }
   }
 
@@ -99,11 +99,11 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
 
   // Messages
 
-  List<Message> get messages => _userMessages;
+  List<Message> get messages => _displayMessages;
 
   void _initMessages() {
-    if (CollectionUtils.isNotEmpty(_userMessages)) {
-      _userMessages.clear();
+    if (CollectionUtils.isNotEmpty(_displayMessages)) {
+      _displayMessages.clear();
     }
     addMessage(Message(
         content: Localization().getStringEx('panel.assistant.label.welcome_message.title',
@@ -112,27 +112,60 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
   }
 
   void addMessage(Message message) {
-    _userMessages.add(message);
+    _displayMessages.add(message);
   }
 
   void removeMessage(Message message) {
-    _userMessages.remove(message);
+    _displayMessages.remove(message);
   }
 
   void removeLastMessage() {
-    if (CollectionUtils.isNotEmpty(_userMessages)) {
-      _userMessages.removeLast();
+    if (CollectionUtils.isNotEmpty(_displayMessages)) {
+      _displayMessages.removeLast();
     }
   }
 
-  void clearMessages() {
+  void removeAllMessages() {
+    //TBD: DD - implement when we have a backend API
+  }
+
+  Future<void> _loadMessages() async {
+    List<dynamic>? responseJson;
+    if (_isEnabled) {
+      String url = '${Config().aiProxyUrl}/messages/load';
+      Map<String, String> headers = {'Content-Type': 'application/json'};
+      Map<String, dynamic> bodyJson = {'sort_by': 'date', 'order': 'asc'};
+      String? body = JsonUtils.encode(bodyJson);
+      Response? response = await Network().post(url, auth: Auth2(), headers: headers, body: body);
+      int? responseCode = response?.statusCode;
+      String? responseString = response?.body;
+      if (responseCode == 200) {
+        responseJson = JsonUtils.decodeList(responseString);
+      } else {
+        Log.i('Failed to load assistant messages. Response:\n$responseCode: $responseString');
+      }
+    } else {
+      Log.i('Failed to load assistant messages. Missing assistant url.');
+    }
+    _buildDisplayMessageList(responseJson);
+  }
+
+  void _buildDisplayMessageList(List<dynamic>? messagesJsonList) {
     _initMessages();
+    if ((messagesJsonList != null) && messagesJsonList.isNotEmpty) {
+      for(dynamic messageJsonEntry in messagesJsonList) {
+        Message question = Message.fromQueryJson(messageJsonEntry);
+        Message answer = Message.fromAnswerJson(messageJsonEntry);
+        _displayMessages.add(question);
+        _displayMessages.add(answer);
+      }
+    }
   }
 
   // Implementation
   
   Future<Message?> sendQuery(String? query, {Map<String, String>? context}) async {
-    if (!isEnabled) {
+    if (!_isEnabled) {
       Log.w('Failed to send assistant query. Missing assistant url.');
       return null;
     }
@@ -156,7 +189,7 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
       if (responseCode == 200) {
         Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
         if (responseJson != null) {
-          return Message.fromJson(responseJson);
+          return Message.fromAnswerJson(responseJson);
         }
         return null;
       } else {
@@ -170,7 +203,7 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
   }
 
   Future<Message?> sendFeedback(Message message) async {
-    if (!isEnabled) {
+    if (!_isEnabled) {
       Log.w('Failed to send assistant feedback. Missing assistant url.');
       return null;
     }
@@ -193,7 +226,7 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
       if (responseCode == 200) {
         Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
         if (responseJson != null) {
-          return Message.fromJson(responseJson);
+          return Message.fromAnswerJson(responseJson);
         }
         return null;
       } else {
@@ -208,7 +241,7 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
 
 
   Future<int?> getQueryLimit() async {
-    if (!isEnabled) {
+    if (!_isEnabled) {
       Log.w('Failed to get assistant query limit. Missing assistant url.');
       return null;
     }
@@ -235,5 +268,5 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
   }
 
 
-  bool get isEnabled => StringUtils.isNotEmpty(Config().aiProxyUrl);
+  bool get _isEnabled => StringUtils.isNotEmpty(Config().aiProxyUrl);
 }
