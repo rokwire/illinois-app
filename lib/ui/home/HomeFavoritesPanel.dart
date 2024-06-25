@@ -21,7 +21,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/ui/home/HomeEmptyFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeWelcomeMessageWidget.dart';
@@ -162,17 +161,11 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
   }
 
   @override
-  Widget build(BuildContext context) {
-
-    List<Widget> widgets = [];
-    widgets.addAll(_buildWidgetsFromCodes(_systemCodes, availableCodes: widget.availableSystemCodes));
-    List<Widget> favWidgets = _buildWidgetsFromCodes(_favoriteCodes?.reversed, availableCodes: _availableCodes);
-    if (favWidgets.isEmpty) {
-      favWidgets.add(HomeEmptyFavoritesWidget());
-    }
-    widgets.addAll(favWidgets);
-    return Column(children: widgets,);
-  }
+  Widget build(BuildContext context) =>
+    Column(children: <Widget>[
+      ..._buildWidgetsFromCodes(_systemCodes, availableCodes: widget.availableSystemCodes),
+      ..._buildWidgetsFromCodes(_favoriteCodes?.reversed, availableCodes: _availableCodes),
+    ],);
 
   List<Widget> _buildWidgetsFromCodes(Iterable<String>? codes, { Set<String>? availableCodes }) {
     List<Widget> widgets = [];
