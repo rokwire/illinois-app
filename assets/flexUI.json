@@ -16,7 +16,7 @@
 				"campus_highlights", "campus_safety_resources",
 				"recent_items", "my_news", "my_appointments", "my_mtd_stops", "my_mtd_destinations"
 			],
-			"home.system": ["tout", "welcome", "emergency", "voter_registration", "connect"],
+			"home.system": ["tout", "welcome_video", "emergency", "voter_registration", "connect"],
 			"home.connect": ["netid", "phone_or_email"],
 			"home.app_help": ["faqs", "feedback", "review"],
 			"home.dinings": ["dinings_all", "dinings_open"],
@@ -223,6 +223,7 @@
 				"unread_notifications"          : false,
 				"app_help"                      : false,
 				"home.video_tutorials"          : false,
+				"home.system.welcome_video"     : false,
 				"student_courses"               : "${config.settings.studentCoursesEnabled}"
 			}
 		}

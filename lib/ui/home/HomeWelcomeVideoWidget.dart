@@ -15,17 +15,17 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class HomeWelcomeWidget extends StatefulWidget {
+class HomeWelcomeVideoWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
 
-  HomeWelcomeWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+  HomeWelcomeVideoWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
   @override
-  State<HomeWelcomeWidget> createState() => _HomeWelcomeWidgetState();
+  State<HomeWelcomeVideoWidget> createState() => _HomeWelcomeVideoWidgetState();
 }
 
-class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements NotificationsListener {
+class _HomeWelcomeVideoWidgetState extends State<HomeWelcomeVideoWidget> implements NotificationsListener {
   Video? _video;
   bool? _visible;
 
@@ -35,7 +35,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
       Content.notifyVideoTutorialsChanged,
     ]);
 
-    _visible = Storage().homeWelcomeVisible;
+    _visible = Storage().homeWelcomeVideoVisible;
     _video = _loadVideo();
     super.initState();
   }
@@ -157,7 +157,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
   void _onClose() {
     Analytics().logSelect(target: "Close", source: widget.runtimeType.toString());
     setState(() {
-      Storage().homeWelcomeVisible = _visible = false;
+      Storage().homeWelcomeVideoVisible = _visible = false;
     });
   }
 }

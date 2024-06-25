@@ -24,7 +24,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/home/HomeEmptyContentWidget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
-import 'package:illinois/ui/home/HomeWelcomeWidget.dart';
+import 'package:illinois/ui/home/HomeWelcomeVideoWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -201,8 +201,8 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
     else if (code == 'connect') {
       return HomeLoginWidget(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController,);
     }
-    else if (code == 'welcome') {
-      return HomeWelcomeWidget(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController,);
+    else if (code == 'welcome_video') {
+      return HomeWelcomeVideoWidget(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController,);
     }
     else {
       dynamic data = HomePanel.dataFromCode(code,
