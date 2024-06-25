@@ -88,6 +88,10 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     _onPullToRefresh();
 
     _userContext = _getUserContext();
+
+    if (CollectionUtils.isNotEmpty(Assistant().messages)) {
+      _shouldScrollToBottom = true;
+    }
   }
 
   @override
@@ -901,10 +905,9 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   void _clearAllMessages() {
-    setStateIfMounted(() {
-      Assistant().clearMessages();
-      _shouldScrollToBottom = true;
-    });
+    //TBD: DD - implement when we have a backend API
+    AppAlert.showMessage(context, 'Not implemented, yet.');
+    Assistant().removeAllMessages();
   }
 
   void _scrollToBottomIfNeeded() {
