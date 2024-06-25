@@ -3507,8 +3507,7 @@
 	"widget.home.prompt.add.favorite": "您確定要添加此收藏夾嗎？",
 	"widget.home.prompt.remove.favorite": "您確定要從收藏夾中刪除此項目嗎？",
 
-	"widget.home.welcome.text.title": "“歡迎來到{{app_title}} {{app_version}}",
-	"widget.home.welcome.button.close.label": "關",
+	"widget.home.welcome_video.title.text": "“歡迎來到{{app_title}} {{app_version}}",
 
 	"widget.home.empty.content.text": "Tap the \u2606s under <a href='$_browseLocalUrlMacro'>Browse</a> to add shortcuts to Favorites. Note that some features require specific <a href='$_privacySettingsLocalUrlMacro'>privacy settings</a> and <a href='$_signInLocalUrlMacro'>signing in</a> with your NetID, phone number, or email address.",
 

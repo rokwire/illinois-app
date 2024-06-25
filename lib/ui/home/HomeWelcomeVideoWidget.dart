@@ -93,13 +93,13 @@ class _HomeWelcomeVideoWidgetState extends State<HomeWelcomeVideoWidget> impleme
           Row(children: [
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16), child:
-                Text(Localization().getStringEx("widget.home.welcome.text.title", 'Welcome to {{app_title}} {{app_version}}').
+                Text(Localization().getStringEx("widget.home.welcome_video.title.text", 'Welcome to {{app_title}} {{app_version}}').
                   replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')).
                   replaceAll('{{app_version}}', Config().appMajorVersion ?? ''),
                   style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat")),
               ),
             ),
-            Semantics(label: Localization().getStringEx('widget.home.welcome.button.close.label', 'Close'), button: true, excludeSemantics: true, child:
+            Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
               InkWell(onTap : _onClose, child:
                 Padding(padding: EdgeInsets.all(16), child:
                   Styles().images.getImage('close-circle-white', excludeFromSemantics: true)
