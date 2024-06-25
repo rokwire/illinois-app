@@ -88,6 +88,10 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     _onPullToRefresh();
 
     _userContext = _getUserContext();
+
+    if (CollectionUtils.isNotEmpty(Assistant().messages)) {
+      _shouldScrollToBottom = true;
+    }
   }
 
   @override
