@@ -335,8 +335,6 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
     return widgets;
   }
 
-  double get _screenHeight => MediaQuery.of(context).size.height;
-
   Widget _buildMessageContent(String message) =>
     Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32), child:
       Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.regular'),),
