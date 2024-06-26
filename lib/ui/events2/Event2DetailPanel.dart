@@ -200,7 +200,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     return (label != null) ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
         Semantics(label: event2UserRoleToString(_event?.userRole), excludeSemantics: true, child:
-          Text(event2UserRoleToString(_event?.userRole)?.toUpperCase() ?? 'ADMIN', style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
+          Text(event2UserRoleToString(_event?.userRole)?.toUpperCase() ?? 'ADMIN', style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
     ))) : Container();
   }
 
@@ -236,7 +236,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     return (badgeLabel != null) ? Padding(padding: EdgeInsets.only(top: 16), child:
       Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
         Semantics(label: badgeLabel, excludeSemantics: true, child:
-          Text(badgeLabel, style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
+          Text(badgeLabel, style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
     ))) : Container();
   }
 

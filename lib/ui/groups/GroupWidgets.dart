@@ -802,7 +802,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(color: color, borderRadius: BorderRadius.all(Radius.circular(2))),
         child: Text(text,
-          style: Styles().textStyles.getTextStyle("widget.heading.small"))));
+          style: Styles().textStyles.getTextStyle("widget.heading.extra_small"))));
   }
 
   Widget _buildHeadingWrapLabel(String text) {
@@ -1170,7 +1170,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
         Container(width: 6,),
         Container( padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors.mediumGray1, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
           Semantics(label: "Scheduled for ${widget.post?.displayScheduledTime ?? ""}", excludeSemantics: true, child:
-            Text("Scheduled: ${widget.post?.displayScheduledTime ?? ""}", style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
+            Text("Scheduled: ${widget.post?.displayScheduledTime ?? ""}", style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
         ))
     ]));
 

@@ -282,8 +282,8 @@
     "panel.browse.alert.building_access.privacy_level.4.button.label": "Establecer en 4",
     "panel.browse.alert.building_access.privacy_level.5.button.label": "Establecer en 5",
 
-    "panel.browse.prompt.add.all.favorites": "¿Estás segura de que quieres AÑADIR TODOS los artículos a tus favoritos?",
-    "panel.browse.prompt.remove.all.favorites": "¿Está seguro de que desea ELIMINAR TODOS los elementos de sus favoritos?",
+    "panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD these items to your favorites?",
+    "panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE these items from your favorites?",
 
     "panel.browse.section.academics.title": "Académica",
     "panel.browse.section.academics.description": "Herramientas para administrar su vida académica en {{app_title}}.",
@@ -317,8 +317,8 @@
     "panel.browse.section.polls.description": "Cree, participe y vea los resultados de las encuestas que usted y otros crean.",
     "panel.browse.section.radio_stations.title": "Radio Stations",
     "panel.browse.section.radio_stations.description": "Listen to Illinois Public Media and student-run WPGU.",
-    "panel.browse.section.recent.title": "Reciente",
-    "panel.browse.section.recent.description": "Qué has visto recientemente en la aplicación. Vuelva a verlos fácilmente de nuevo.",
+    "panel.browse.section.recent.title": "Recently Viewed",
+    "panel.browse.section.recent.description": "Revisit your recent app activity.",
     "panel.browse.section.state_farm_center.title": "State Farm Center",
     "panel.browse.section.state_farm_center.description": "Ir a un evento en State Farm Center, obtener ayuda para estacionar y orientarse.",
     "panel.browse.section.wallet.title": "Cartera",
@@ -1766,6 +1766,7 @@
     "panel.settings.home.settings.sections.food_filter.label": "Mi Filtro de Comida",
     "panel.settings.home.settings.sections.sports.label": "Mis Equipos Deportivos",
     "panel.settings.home.settings.sections.calendar.label": "Configuración de Mi Calendario",
+    "panel.settings.home.settings.sections.recent_items.label": "My Browsing History",
     "panel.settings.home.settings.sections.appointments.label": "My Success Team & Appointments",
     "panel.settings.home.settings.sections.favorites.label": "Personalizar Mis Favoritos",
     "panel.settings.home.settings.sections.assessments.label": "Mis Evaluaciones",
@@ -1862,6 +1863,11 @@
     "panel.settings.home.calendar.research.title": "Investigación en Illinois",
     "panel.settings.home.calendar.research.questionnaire.title": "Formulario de interés de investigación",
     "panel.settings.home.calendar.research.prompt.title": "Confirme que ya no desea participar en Investigación en Illinois. Toda la información completada en su cuestionario será eliminada.",
+
+    "panel.settings.home.recent_items.title": "Browsing History",
+    "panel.settings.home.recent_items.enable.toggle.title": "Display recently viewed app content",
+    "panel.settings.home.recent_items.enable.toggle.info": "When enabled, the Illinois app will display the items you accessed via the Recently Viewed section. To quickly revisit this content, star the Recently Viewed section to add it to your Favorites.",
+    "panel.settings.home.recent_items.disable.toggle.prompt": "This will clear your browsing history. Proceed?",
 
     "panel.settings.home.appointments.description.format": "Mostrar citas en la aplicación {{app_title}} para:",
     "panel.settings.home.appointments.mckinley.label": "MyMcKinley",
@@ -3429,9 +3435,14 @@
     "widget.home.suggested_events.button.all.hint":"Toca para ver todos los eventos",
 
     "widget.home.recent_items.label.header.title":"Visto Recientemente",
-    "widget.home.recent_items.text.empty.description": "No hay elementos vistos recientemente disponibles.",
-    "widget.home.recent_items.button.all.title":"Ver todo",
-    "widget.home.recent_items.button.all.hint":"Toca para ver todos los elementos",
+    "widget.home.recent_items.label.browsing_history.title":"Browsing History",
+    "widget.home.recent_items.text.empty.description": "There is no recently viewed app content to display.",
+    "widget.home.recent_items.text.disabled.description": "Displaying recently viewed app content is turned off.",
+    "widget.home.recent_items.button.view_all.title":"Ver todo",
+    "widget.home.recent_items.button.view_all.hint":"Toca para ver todos los elementos",
+    "widget.home.recent_items.button.clear_all.title":"Clear All",
+    "widget.home.recent_items.button.clear_all.hint":"Tap to clear all items",
+    "widget.home.recent_items.prompt.clear_all.text":"Are you sure you want to CLEAR your browsing history>",
 
     "widget.home.event2_feed.label.header.title":"Todos los Eventos",
     "widget.home.event2_feed.text.empty.description": "There are no events available.",
@@ -3524,7 +3535,7 @@
 
     "widget.home.welcome_video.title.text": "Bienvenido a {{app_title}} {{app_version}}",
     "widget.home.welcome_message.title.text": "Tailor Your App Experience",
-    "widget.home.favorites.instructions.message.text": "Tap the ☆s in <a href='{{browse_local_url}}'>Sections</a> or <a href='{{favorites_local_url}}'>Favorites</a> to add shortcuts to Favorites. Note that some features require specific <a href='{{privacy_settings_local_url}}'>privacy settings</a> and <a href='{{sign_in_local_url}}'>signing in</a> with your NetID, phone number, or email address.",
+    "widget.home.favorites.instructions.message.text": "Tap the ☆s in <a href='{{browse_local_url}}'>Sections</a> or Favorites to add shortcuts to Favorites. Note that some features require specific <a href='{{privacy_settings_local_url}}'>privacy settings</a> and <a href='{{sign_in_local_url}}'>signing in</a> with your NetID, phone number, or email address.",
 
     "widget.home.athletics_news.text.title": "10 grandes noticias",
     "widget.home.athletics_news.text.empty.description": "Las 10 grandes noticias no están disponibles en este momento.",
