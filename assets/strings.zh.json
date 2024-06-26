@@ -3414,7 +3414,7 @@
 	"widget.home.suggested_events.button.all.hint":"點按即可查看所有活動",
 
 	"widget.home.recent_items.label.header.title":"最近瀏覽過的",
-	"widget.home.recent_items.text.empty.description": "沒有最近查看的可用項目。",
+	"widget.home.recent_items.text.empty.description": "There is no recently viewed app content to display.",
 	"widget.home.recent_items.button.view_all.title":"查看全部",
 	"widget.home.recent_items.button.view_all.hint":"點擊查看所有項目",
 	"widget.home.recent_items.button.clear_all.title":"Clear All",

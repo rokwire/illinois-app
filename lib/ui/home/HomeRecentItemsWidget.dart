@@ -160,7 +160,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
     
   Widget _buildContent() {
     return (_recentItems?.isEmpty ?? true) ? HomeMessageCard(
-      message: Localization().getStringEx("widget.home.recent_items.text.empty.description", "There are no recently viewed items available."),
+      message: Localization().getStringEx("widget.home.recent_items.text.empty.description", "There is no recently viewed app content to display."),
     ) : _buildRecentContent();
   }
 
@@ -303,14 +303,23 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Expanded(child:
             SingleChildScrollView(child:
-              Padding(padding: EdgeInsets.all(16), child:
-                Column(children: _buildListItems(),)
-              )
-            ,),
+              _buildPanelContent(),
+            ),
           ),
         ],)),
       backgroundColor: Styles().colors.background,
     );
+  }
+
+  Widget _buildPanelContent() {
+    if (_recentItems?.isNotEmpty == true) {
+      return Padding(padding: EdgeInsets.all(16), child:
+        Column(children: _buildListItems(),)
+      );
+    }
+    else {
+      return _buildMessageContent(Localization().getStringEx("widget.home.recent_items.text.empty.description", "There is no recently viewed app content to display."));
+    }
   }
 
   List<Widget> _buildListItems() {
@@ -325,6 +334,13 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
     }
     return widgets;
   }
+
+  double get _screenHeight => MediaQuery.of(context).size.height;
+
+  Widget _buildMessageContent(String message) =>
+    Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32), child:
+      Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.regular'),),
+    );
 
   Future<void> _onPullToRefresh() async {
     if (mounted && !DeepCollectionEquality().equals(_recentItems, RecentItems().recentItems)) {
