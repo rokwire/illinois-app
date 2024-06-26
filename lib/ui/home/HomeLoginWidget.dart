@@ -98,7 +98,7 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> implements Notificati
     return Container();
   }
   
-  Widget get _closeButton => Semantics(label: Localization().getStringEx('widget.home.welcome.button.close.label', 'Close'), button: true, excludeSemantics: true, child:
+  Widget get _closeButton => Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
     InkWell(onTap: _onClose, child:
       Padding(padding: const EdgeInsets.all(16), child:
         Styles().images.getImage('close-circle-white', excludeFromSemantics: true)
