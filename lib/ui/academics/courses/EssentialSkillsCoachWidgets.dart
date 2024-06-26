@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
-import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/ui/academics/courses/PDFPanel.dart';
 import 'package:illinois/ui/academics/courses/UnitInfoPanel.dart';
 import 'package:illinois/ui/academics/courses/VideoPanel.dart';
@@ -9,12 +8,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class EssentialSkillsCoachWidgets {
   static void openPdfContent(BuildContext context, String? resourceName, String? resourceKey, {Function(dynamic)? callback}) {
-    //TODO: move loadContentFile to pdf panel init state
-    CustomCourses().loadContentFile(resourceKey).then((fileContent) {
-      Navigator.push(context, MaterialPageRoute(
-        builder: (context) => PDFPanel(resourceName: resourceName, pdfData: fileContent,),
-      ),).then((result) => callback?.call(result));
-    });
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) => PDFPanel(resourceName: resourceName, resourceKey: resourceKey,),
+    ),).then((result) => callback?.call(result));
   }
 
   static void openVideoContent(BuildContext context, String? resourceName, String? resourceKey, {Function(dynamic)? callback}) {

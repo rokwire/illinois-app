@@ -2,25 +2,33 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class PDFPanel extends StatefulWidget {
+  final String? resourceKey;
   final String? resourceName;
-  final Uint8List? pdfData;
-  PDFPanel({Key? key, this.resourceName, this.pdfData}) : super(key: key);
+  PDFPanel({Key? key, this.resourceKey, this.resourceName}) : super(key: key);
 
   _PDFPanelState createState() => _PDFPanelState();
 }
 
 class _PDFPanelState extends State<PDFPanel> with WidgetsBindingObserver {
+  Uint8List? _fileContents;
   PDFViewController? _pdfViewController;
 
   int? _pages;
   int? currentPage;
   bool isReady = false;
   String errorMessage = '';
+
+  @override
+  void initState() {
+    _loadFileContents();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +39,7 @@ class _PDFPanelState extends State<PDFPanel> with WidgetsBindingObserver {
       body: Stack(
         children: <Widget>[
           PDFView(
-            pdfData: widget.pdfData,
+            pdfData: _fileContents,
             enableSwipe: true,
             swipeHorizontal: true,
             autoSpacing: false,
@@ -117,5 +125,14 @@ class _PDFPanelState extends State<PDFPanel> with WidgetsBindingObserver {
         ],
       ),
     );
+  }
+
+  Future<void> _loadFileContents() async {
+    Uint8List? fileContents = await CustomCourses().loadContentFile(widget.resourceKey);
+    if (fileContents != null && mounted) {
+      setState(() {
+        _fileContents = fileContents;
+      });
+    }
   }
 }
