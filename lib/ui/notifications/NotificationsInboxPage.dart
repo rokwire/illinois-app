@@ -950,7 +950,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
                           ),
                           (widget.message?.mute == true) ? Semantics(label: sprintf(Localization().getStringEx('widget.inbox_message_card.status.hint', 'status: %s ,for: '), [mutedStatus.toLowerCase()]), excludeSemantics: true, child:
                             Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2))), child:
-                              Text(mutedStatus.toUpperCase(), style: Styles().textStyles.getTextStyle("widget.heading.small"))
+                              Text(mutedStatus.toUpperCase(), style: Styles().textStyles.getTextStyle("widget.heading.extra_small"))
                           )) : Container()
                         ])
                       ) : Container(),
