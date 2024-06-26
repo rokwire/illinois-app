@@ -3430,6 +3430,7 @@
 
     "widget.home.recent_items.label.header.title":"Visto Recientemente",
     "widget.home.recent_items.text.empty.description": "There is no recently viewed app content to display.",
+    "widget.home.recent_items.text.disabled.description": "Displaying recently viewed app content is turned off.",
     "widget.home.recent_items.button.view_all.title":"Ver todo",
     "widget.home.recent_items.button.view_all.hint":"Toca para ver todos los elementos",
     "widget.home.recent_items.button.clear_all.title":"Clear All",

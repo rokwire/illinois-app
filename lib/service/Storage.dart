@@ -140,6 +140,10 @@ class Storage extends rokwire.Storage {
   List<dynamic>? get recentItems => JsonUtils.decode(getStringWithName(recentItemsKey));
 //set recentItems(List<dynamic>? recentItems) => setStringWithName(recentItemsKey, JsonUtils.encode(recentItems));
 
+  String get recentItemsEnabledKey => 'edu.illinois.rokwire.recent_items.enabled';
+  bool? get recentItemsEnabled => getBoolWithName(recentItemsEnabledKey);
+  set recentItemsEnabled(bool? value) => setBoolWithName(recentItemsEnabledKey, value);
+
   // Local Date/Time
   static const String useDeviceLocalTimeZoneKey  = 'use_device_local_time_zone';
   bool? get useDeviceLocalTimeZone => getBoolWithName(useDeviceLocalTimeZoneKey, defaultValue: true);

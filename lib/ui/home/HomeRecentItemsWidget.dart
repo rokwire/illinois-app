@@ -26,6 +26,7 @@ import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
@@ -159,9 +160,11 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
   }
     
   Widget _buildContent() {
-    return (_recentItems?.isEmpty ?? true) ? HomeMessageCard(
-      message: Localization().getStringEx("widget.home.recent_items.text.empty.description", "There is no recently viewed app content to display."),
-    ) : _buildRecentContent();
+    return (_recentItems?.isNotEmpty == true) ? _buildRecentContent() : HomeMessageCard(
+      message: (Storage().recentItemsEnabled != false) ?
+        Localization().getStringEx("widget.home.recent_items.text.empty.description", "There is no recently viewed app content to display.") :
+      Localization().getStringEx("widget.home.recent_items.text.disabled.description", "Displaying recently viewed app content is turned off."),
+    );
   }
 
   Widget _buildRecentContent() {
@@ -312,14 +315,14 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
   }
 
   Widget _buildPanelContent() {
-    if (_recentItems?.isNotEmpty == true) {
-      return Padding(padding: EdgeInsets.all(16), child:
+    return (_recentItems?.isNotEmpty == true) ?
+      Padding(padding: EdgeInsets.all(16), child:
         Column(children: _buildListItems(),)
+      ) :
+      _buildMessageContent((Storage().recentItemsEnabled != false) ?
+        Localization().getStringEx("widget.home.recent_items.text.empty.description", "There is no recently viewed app content to display.") :
+        Localization().getStringEx("widget.home.recent_items.text.disabled.description", "Displaying recently viewed app content is turned off."),
       );
-    }
-    else {
-      return _buildMessageContent(Localization().getStringEx("widget.home.recent_items.text.empty.description", "There is no recently viewed app content to display."));
-    }
   }
 
   List<Widget> _buildListItems() {

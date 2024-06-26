@@ -39,13 +39,17 @@ class RecentItems with Service implements NotificationsListener {
   }
   RecentItems._internal();
 
+  late bool _recentItemsEnabled;
   Queue<RecentItem> _recentItems = Queue<RecentItem>();
 
-  Queue<RecentItem> get recentItems => _recentItems;
+  Queue<RecentItem> get recentItems => _recentItemsEnabled ? _recentItems : Queue<RecentItem>();
 
   @override
   void createService() {
-    NotificationService().subscribe(this, Auth2.notifyUserDeleted);
+    NotificationService().subscribe(this, [
+      Auth2.notifyUserDeleted,
+      Storage.notifySettingChanged,
+    ]);
   }
 
   @override
@@ -55,6 +59,7 @@ class RecentItems with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
+    _recentItemsEnabled = (Storage().recentItemsEnabled != false);
     _recentItems = await _loadRecentItems() ?? Queue<RecentItem>();
     await super.initService();
   }
@@ -64,24 +69,55 @@ class RecentItems with Service implements NotificationsListener {
     return Set.from([Storage()]);
   }
 
-  void addRecentItem(RecentItem? item) {
+  // NotificationsListener
 
-    if ((item != null) && !_recentItems.contains(item)) {
-      _recentItems.addFirst(item);
-      
-      while (_recentItems.length > Config().recentItemsCount) {
-        _recentItems.removeLast();
-      }
-      _saveRecentItems(_recentItems);
-      NotificationService().notify(notifyChanged, null);
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2.notifyUserDeleted) {
+      clearRecentItems();
+    }
+    else if ((name == Storage.notifySettingChanged) && (param == Storage().recentItemsEnabledKey)) {
+      _updateRecentItemsEnabled();
     }
   }
 
-  void clearRecentItems() {
+  // Implementation
+
+  void addRecentItem(RecentItem? item) {
+    if (_recentItemsEnabled) {
+      if ((item != null) && !_recentItems.contains(item)) {
+        _recentItems.addFirst(item);
+
+        while (_recentItems.length > Config().recentItemsCount) {
+          _recentItems.removeLast();
+        }
+        _saveRecentItems(_recentItems);
+        NotificationService().notify(notifyChanged, null);
+      }
+    }
+  }
+
+  void clearRecentItems({bool notify = true}) {
     if (_recentItems.isNotEmpty) {
       _recentItems.clear();
       _saveRecentItems(_recentItems);
-      NotificationService().notify(notifyChanged, null);
+      if (notify) {
+        NotificationService().notify(notifyChanged, null);
+      }
+    }
+  }
+
+  void _updateRecentItemsEnabled({bool notify = true}) {
+    bool recentItemsEnabled = (Storage().recentItemsEnabled != false);
+    if (_recentItemsEnabled != recentItemsEnabled) {
+      _recentItemsEnabled = recentItemsEnabled;
+
+      if (!_recentItemsEnabled) {
+        clearRecentItems(notify: false);
+      }
+      if (notify) {
+        NotificationService().notify(notifyChanged, null);
+      }
     }
   }
 
@@ -106,14 +142,5 @@ class RecentItems with Service implements NotificationsListener {
     String? jsonString = JsonUtils.encode(RecentItem.queueToJson(recentItems));
     await cacheFile.writeAsString(jsonString ?? '', flush: true);
 
-  }
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == Auth2.notifyUserDeleted) {
-      clearRecentItems();
-    }
   }
 }

@@ -3415,6 +3415,7 @@
 
 	"widget.home.recent_items.label.header.title":"最近瀏覽過的",
 	"widget.home.recent_items.text.empty.description": "There is no recently viewed app content to display.",
+	"widget.home.recent_items.text.disabled.description": "Displaying recently viewed app content is turned off.",
 	"widget.home.recent_items.button.view_all.title":"查看全部",
 	"widget.home.recent_items.button.view_all.hint":"點擊查看所有項目",
 	"widget.home.recent_items.button.clear_all.title":"Clear All",
