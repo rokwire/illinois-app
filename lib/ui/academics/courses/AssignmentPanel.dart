@@ -2,6 +2,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart' as html;
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/CustomCourses.dart';
@@ -208,11 +209,29 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     List<Widget> assignmentWidgets = [
       Padding(
         padding: EdgeInsets.symmetric(horizontal: 8.0),
-        child: Align(alignment: AlignmentDirectional.centerStart, child: Text(_content.name ?? "", style: Styles().textStyles.getTextStyle("widget.detail.large.extra_fat"),)),
+        child: Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: html.Html(
+            data: _content.name ?? "",
+            style: {
+              'body': html.Style.fromTextStyle(Styles().textStyles.getTextStyle("widget.detail.large.extra_fat") ??
+                  TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20.0, color: Styles().colors.fillColorPrimary)),
+            }
+          )
+        ),
       ),
       Padding(
         padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
-        child: Align(alignment: AlignmentDirectional.centerStart, child: Text(_content.details ?? "", style: Styles().textStyles.getTextStyle("widget.detail.large"))),
+        child: Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: html.Html(
+            data: _content.details ?? "",
+            style: {
+              'body': html.Style.fromTextStyle(Styles().textStyles.getTextStyle("widget.detail.large") ??
+                TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20.0, color: Styles().colors.fillColorPrimary)),
+            }
+          )
+        ),
       ),
     ];
 
@@ -222,8 +241,11 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
         noteWidgets.addAll([
           Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
-            child: Text(_content.styles?.strings?['experience_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.selection.header', "How did it go?"),
-              style: Styles().textStyles.getTextStyle("widget.detail.regular"),
+            child: html.Html(data: _content.styles?.strings?['experience_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.selection.header', "How did it go?"),
+              style: {
+                'body': html.Style.fromTextStyle(Styles().textStyles.getTextStyle("widget.detail.regular") ??
+                  TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16.0, color: Styles().colors.fillColorPrimary)),
+              },
             ),
           ),
           Padding(
@@ -279,7 +301,13 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(notesHeaderText, style: Styles().textStyles.getTextStyle("widget.detail.small.fat"),),
+                html.Html(
+                    data: notesHeaderText,
+                    style: {
+                      'body': html.Style.fromTextStyle(Styles().textStyles.getTextStyle("widget.detail.small.fat") ??
+                          TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 14.0, color: Styles().colors.fillColorPrimary)),
+                    }
+                ),
                 Visibility(
                   visible: SpeechToText().isEnabled,
                   child: _buildSpeechToTextButton(),
@@ -293,8 +321,11 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
         Divider(color: _color, thickness: 2, indent: 8.0, endIndent: 8.0,),
         Padding(
           padding: EdgeInsets.symmetric(vertical: 16),
-          child: Text(_content.styles?.strings?['complete_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.completion.selection.header', "Did you complete this task?"),
-            style: Styles().textStyles.getTextStyle("widget.detail.regular"),
+          child: html.Html(data: _content.styles?.strings?['complete_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.completion.selection.header', "Did you complete this task?"),
+            style: {
+              'body': html.Style.fromTextStyle(Styles().textStyles.getTextStyle("widget.detail.regular") ??
+                  TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16.0, color: Styles().colors.fillColorPrimary)),
+            },
           ),
         ),
         Padding(
