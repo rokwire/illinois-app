@@ -97,25 +97,30 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
         onDragCompleted: () { widget.dragAndDropHost?.isDragging = false; },
         onDraggableCanceled: (velocity, offset) { widget.dragAndDropHost?.isDragging = false; },
         feedback: HomeDragFeedback(title: widget.title),
-        child: Row(crossAxisAlignment: widget.crossAxisAlignment, children: <Widget>[
+        // We need to set hitTestBehavior: HitTestBehavior.opaque here in order to resolve [#4120](https://github.com/rokwire/illinois-app/issues/4120).
+        // There is a fix of [this](https://github.com/flutter/flutter/issues/78443) issue that is not available in the latest stable Flutter version.
+        // As a workaround we use the Container bellow with a background color until the Flutter fix gets available.
+        child: Container(color: Styles().colors.background, child:
+          Row(crossAxisAlignment: widget.crossAxisAlignment, children: <Widget>[
 
-          Semantics(label: 'Drag Handle' /* TBD: Localization */, onLongPress: (){},button: true, child:
-            Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-              Styles().images.getImage('drag-white', excludeFromSemantics: true),
+            Semantics(label: 'Drag Handle' /* TBD: Localization */, onLongPress: (){},button: true, child:
+              Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+                Styles().images.getImage('drag-white', excludeFromSemantics: true),
+              ),
             ),
-          ),
 
-          Expanded(child:
-            Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-              Semantics(label: widget.title, header: true, excludeSemantics: true, child:
-                Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),)
+            Expanded(child:
+              Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+                Semantics(label: widget.title, header: true, excludeSemantics: true, child:
+                  Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),)
+                )
               )
-            )
-          ),
+            ),
 
-                
-          HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: FavoriteIconStyle.Handle, prompt: true),
-        ],),
+
+            HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: FavoriteIconStyle.Handle, prompt: true),
+          ],),
+        ),
       )),
 
       Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.end)) ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,),

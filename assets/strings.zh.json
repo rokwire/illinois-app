@@ -282,8 +282,8 @@
 	"panel.browse.alert.building_access.privacy_level.4.button.label": "設置為 4",
 	"panel.browse.alert.building_access.privacy_level.5.button.label": "設置為 5",
 
-	"panel.browse.prompt.add.all.favorites": "您確定要將所有項目添加到您的收藏夾嗎？",
-	"panel.browse.prompt.remove.all.favorites": "您確定要刪除收藏夾中的所有項目嗎？",
+	"panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD these items to your favorites?",
+ "panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE these items from your favorites?",
 
 	"panel.browse.section.academics.title": "學业",
 	"panel.browse.section.academics.description": "在{{app_title}}管理您的學術生活的工具。",
@@ -3509,7 +3509,7 @@
 
 	"widget.home.welcome_video.title.text": "“歡迎來到{{app_title}} {{app_version}}",
 	"widget.home.welcome_message.title.text": "Tailor Your App Experience",
-	"widget.home.favorites.instructions.message.text": "Tap the ☆s in <a href='{{browse_local_url}}'>Sections</a> or <a href='{{favorites_local_url}}'>Favorites</a> to add shortcuts to Favorites. Note that some features require specific <a href='{{privacy_settings_local_url}}'>privacy settings</a> and <a href='{{sign_in_local_url}}'>signing in</a> with your NetID, phone number, or email address.",
+	"widget.home.favorites.instructions.message.text": "Tap the ☆s in <a href='{{browse_local_url}}'>Sections</a> or Favorites to add shortcuts to Favorites. Note that some features require specific <a href='{{privacy_settings_local_url}}'>privacy settings</a> and <a href='{{sign_in_local_url}}'>signing in</a> with your NetID, phone number, or email address.",
 
 	"widget.home.athletics_news.text.title": "十大新聞",
 	"widget.home.athletics_news.text.empty.description": "目前無法查看十大新聞。",
