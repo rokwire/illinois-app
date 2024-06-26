@@ -283,8 +283,8 @@
     "panel.browse.alert.building_access.privacy_level.4.button.label": "Set to 4",
     "panel.browse.alert.building_access.privacy_level.5.button.label": "Set to 5",
 
-    "panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD ALL items to your favorites?",
-    "panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE ALL items from your favorites?",
+    "panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD these items to your favorites?",
+    "panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE these items from your favorites?",
 
     "panel.browse.section.academics.title": "Academics",
     "panel.browse.section.academics.description": "Tools for managing your academic life at {{app_title}}.",
