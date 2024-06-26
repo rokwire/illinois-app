@@ -16,7 +16,7 @@
 
 import 'dart:async';
 import 'dart:collection';
-import 'dart:io';
+import 'package:universal_io/io.dart';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
