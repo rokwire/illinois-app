@@ -1753,6 +1753,7 @@
 	"panel.settings.home.settings.sections.food_filter.label": "我的食物過濾器",
 	"panel.settings.home.settings.sections.sports.label": "我的運動隊",
 	"panel.settings.home.settings.sections.calendar.label": "Add to My Device's Calendar",
+	"panel.settings.home.settings.sections.recent_items.label": "My Browsing History",
 	"panel.settings.home.settings.sections.appointments.label": "My Success Team & Appointments",
 	"panel.settings.home.settings.sections.favorites.label": "自定義收藏夾",
 	"panel.settings.home.settings.sections.assessments.label": "我的評估",
@@ -1849,6 +1850,11 @@
 	"panel.settings.home.calendar.research.toggle.title": "參與研究",
 	"panel.settings.home.calendar.research.questionnaire.title": "研究興趣表",
 	"panel.settings.home.calendar.research.prompt.title": "請確認您希望不再參與Research at Illinois。 您在問卷中填寫的所有信息都將被刪除。",
+
+	"panel.settings.home.recent_items.title": "Browsing History",
+	"panel.settings.home.recent_items.enable.toggle.title": "Display recently viewed app content",
+	"panel.settings.home.recent_items.enable.toggle.info": "When enabled, the Illinois app will display the items you accessed via the Recently Viewed section. To quickly revisit this content, star the Recently Viewed section to add it to your Favorites.",
+	"panel.settings.home.recent_items.disable.toggle.prompt": "This will clear your browsing history. Proceed?",
 
 	"panel.settings.home.appointments.description.format": "在 {{app_title}} 應用程序中顯示約會：",
 	"panel.settings.home.appointments.mckinley.label": "我的麥金萊",
@@ -3414,6 +3420,7 @@
 	"widget.home.suggested_events.button.all.hint":"點按即可查看所有活動",
 
 	"widget.home.recent_items.label.header.title":"最近瀏覽過的",
+	"widget.home.recent_items.label.browsing_history.title":"Browsing History",
 	"widget.home.recent_items.text.empty.description": "There is no recently viewed app content to display.",
 	"widget.home.recent_items.text.disabled.description": "Displaying recently viewed app content is turned off.",
 	"widget.home.recent_items.button.view_all.title":"查看全部",

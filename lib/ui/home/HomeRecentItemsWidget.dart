@@ -33,6 +33,7 @@ import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
@@ -91,8 +92,9 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
     super.initState();
 
     NotificationService().subscribe(this, [
-      Config.notifyConfigChanged,
       RecentItems.notifyChanged,
+      RecentItems.notifySettingChanged,
+      Config.notifyConfigChanged,
     ]);
 
     if (widget.updateController != null) {
@@ -138,6 +140,16 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
           }
         });
       }
+    }
+    else if (name == RecentItems.notifySettingChanged) {
+      if (mounted) {
+        setState(() {
+          _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
+          _pageViewKey = UniqueKey();
+          _pageController = null;
+          _contentKeys.clear();
+        });
+     }
     }
     else if (name == Config.notifyConfigChanged) {
       if (mounted) {
@@ -269,7 +281,10 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, RecentItems.notifyChanged);
+    NotificationService().subscribe(this, [
+      RecentItems.notifyChanged,
+      RecentItems.notifySettingChanged,
+    ]);
     _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
   }
 
@@ -285,6 +300,13 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
   void onNotification(String name, dynamic param) {
     if (name == RecentItems.notifyChanged) {
       if (mounted && !DeepCollectionEquality().equals(_recentItems, RecentItems().recentItems)) {
+        setState(() {
+          _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
+        });
+      }
+    }
+    else if (name == RecentItems.notifySettingChanged) {
+      if (mounted) {
         setState(() {
           _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
         });
@@ -306,7 +328,13 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Expanded(child:
             SingleChildScrollView(child:
-              _buildPanelContent(),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
+                  _browsingHistoryButton,
+                  ... _buildPanelContent(),
+                  Container(height: 16,)
+                ])
+              ),
             ),
           ),
         ],)),
@@ -314,15 +342,12 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
     );
   }
 
-  Widget _buildPanelContent() {
-    return (_recentItems?.isNotEmpty == true) ?
-      Padding(padding: EdgeInsets.all(16), child:
-        Column(children: _buildListItems(),)
-      ) :
-      _buildMessageContent((Storage().recentItemsEnabled != false) ?
+  List<Widget> _buildPanelContent() {
+    return (_recentItems?.isNotEmpty == true) ? _buildListItems() :
+      [_buildMessageContent((Storage().recentItemsEnabled != false) ?
         Localization().getStringEx("widget.home.recent_items.text.empty.description", "There is no recently viewed app content to display.") :
         Localization().getStringEx("widget.home.recent_items.text.disabled.description", "Displaying recently viewed app content is turned off."),
-      );
+      )];
   }
 
   List<Widget> _buildListItems() {
@@ -339,16 +364,34 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
   }
 
   Widget _buildMessageContent(String message) =>
-    Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32), child:
-      Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.regular'),),
+    Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+      Text(message, textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle('widget.item.regular'),),
     );
-
+  
   Future<void> _onPullToRefresh() async {
     if (mounted && !DeepCollectionEquality().equals(_recentItems, RecentItems().recentItems)) {
       setState(() {
         _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
       });
     }
+  }
+
+  Widget get _browsingHistoryButton => InkWell(onTap: _onBrowsingHistory, child:
+    Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+      Row(mainAxisSize: MainAxisSize.min, children: [
+        Padding(padding: EdgeInsets.only(right: 8), child:
+          Styles().images.getImage('settings')
+        ),
+        Text(Localization().getStringEx("widget.home.recent_items.label.browsing_history.title", "Browsing History"), style:
+          Styles().textStyles.getTextStyle('widget.item.small.semi_fat.underline'),
+        ),
+      ],),
+    )
+  );
+  
+  void _onBrowsingHistory() {
+    Analytics().logSelect(target: "Browsing History", source: widget.runtimeType.toString());
+    SettingsHomeContentPanel.present(context, content: SettingsContent.recent_items);
   }
 
   Widget get _clearAllButton => LinkButton(

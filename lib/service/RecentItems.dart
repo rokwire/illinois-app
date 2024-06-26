@@ -30,6 +30,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class RecentItems with Service implements NotificationsListener {
   
   static const String notifyChanged  = "edu.illinois.rokwire.recentitems.changed";
+  static const String notifySettingChanged  = "edu.illinois.rokwire.recentitems.setting.changed";
 
   static const String _cacheFileName = "recentItems.json";
 
@@ -48,7 +49,6 @@ class RecentItems with Service implements NotificationsListener {
   void createService() {
     NotificationService().subscribe(this, [
       Auth2.notifyUserDeleted,
-      Storage.notifySettingChanged,
     ]);
   }
 
@@ -75,9 +75,6 @@ class RecentItems with Service implements NotificationsListener {
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyUserDeleted) {
       clearRecentItems();
-    }
-    else if ((name == Storage.notifySettingChanged) && (param == Storage().recentItemsEnabledKey)) {
-      _updateRecentItemsEnabled();
     }
   }
 
@@ -107,17 +104,17 @@ class RecentItems with Service implements NotificationsListener {
     }
   }
 
-  void _updateRecentItemsEnabled({bool notify = true}) {
-    bool recentItemsEnabled = (Storage().recentItemsEnabled != false);
-    if (_recentItemsEnabled != recentItemsEnabled) {
-      _recentItemsEnabled = recentItemsEnabled;
+  bool get recentItemsEnabled => _recentItemsEnabled;
+
+  set recentItemsEnabled(bool value) {
+    if (_recentItemsEnabled != value) {
+      Storage().recentItemsEnabled = _recentItemsEnabled = value;
 
       if (!_recentItemsEnabled) {
-        clearRecentItems(notify: false);
+        clearRecentItems();
       }
-      if (notify) {
-        NotificationService().notify(notifyChanged, null);
-      }
+
+      NotificationService().notify(notifySettingChanged, null);
     }
   }
 

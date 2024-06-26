@@ -1766,6 +1766,7 @@
     "panel.settings.home.settings.sections.food_filter.label": "Mi Filtro de Comida",
     "panel.settings.home.settings.sections.sports.label": "Mis Equipos Deportivos",
     "panel.settings.home.settings.sections.calendar.label": "Configuración de Mi Calendario",
+    "panel.settings.home.settings.sections.recent_items.label": "My Browsing History",
     "panel.settings.home.settings.sections.appointments.label": "My Success Team & Appointments",
     "panel.settings.home.settings.sections.favorites.label": "Personalizar Mis Favoritos",
     "panel.settings.home.settings.sections.assessments.label": "Mis Evaluaciones",
@@ -1862,6 +1863,11 @@
     "panel.settings.home.calendar.research.title": "Investigación en Illinois",
     "panel.settings.home.calendar.research.questionnaire.title": "Formulario de interés de investigación",
     "panel.settings.home.calendar.research.prompt.title": "Confirme que ya no desea participar en Investigación en Illinois. Toda la información completada en su cuestionario será eliminada.",
+
+    "panel.settings.home.recent_items.title": "Browsing History",
+    "panel.settings.home.recent_items.enable.toggle.title": "Display recently viewed app content",
+    "panel.settings.home.recent_items.enable.toggle.info": "When enabled, the Illinois app will display the items you accessed via the Recently Viewed section. To quickly revisit this content, star the Recently Viewed section to add it to your Favorites.",
+    "panel.settings.home.recent_items.disable.toggle.prompt": "This will clear your browsing history. Proceed?",
 
     "panel.settings.home.appointments.description.format": "Mostrar citas en la aplicación {{app_title}} para:",
     "panel.settings.home.appointments.mckinley.label": "MyMcKinley",
@@ -3429,6 +3435,7 @@
     "widget.home.suggested_events.button.all.hint":"Toca para ver todos los eventos",
 
     "widget.home.recent_items.label.header.title":"Visto Recientemente",
+    "widget.home.recent_items.label.browsing_history.title":"Browsing History",
     "widget.home.recent_items.text.empty.description": "There is no recently viewed app content to display.",
     "widget.home.recent_items.text.disabled.description": "Displaying recently viewed app content is turned off.",
     "widget.home.recent_items.button.view_all.title":"Ver todo",
