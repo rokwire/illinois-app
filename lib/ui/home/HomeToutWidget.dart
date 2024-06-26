@@ -96,10 +96,17 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
                 ],),
               )
             ),
-            GestureDetector(onTap: _onCustomize, child:
-              Padding(padding: EdgeInsets.only(top: 16, right: 16), child:
-                Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
-                  style: Styles().textStyles.getTextStyle("widget.home_tout.button.underline.title")))
+            InkWell(onTap: _onCustomize, child:
+              Padding(padding: EdgeInsets.only(top: 16, bottom: 16, left: 8, right: 16), child:
+                Row(mainAxisSize: MainAxisSize.min, children: [
+                  Padding(padding: EdgeInsets.only(right: 4), child:
+                    Styles().images.getImage('edit-white', size: 14, excludeFromSemantics: true) ?? Container(),
+                  ),
+
+                  Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
+                    style: Styles().textStyles.getTextStyle("widget.home_tout.button.underline.title"))
+                ],),
+              ),
             ),
           ],)
         )
