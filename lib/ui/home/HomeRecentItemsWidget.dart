@@ -35,6 +35,7 @@ import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/News.dart';
@@ -149,6 +150,10 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeRecentItemsWidget.title,
       titleIconKey: 'history',
+      actions: [
+        if (_recentItems?.isNotEmpty == true)
+          _clearAllButton
+      ],
       child: _buildContent(),
     );
   }
@@ -197,8 +202,8 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
       contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length, centerWidget:
         LinkButton(
-          title: Localization().getStringEx('widget.home.recent_items.button.all.title', 'View All'),
-          hint: Localization().getStringEx('widget.home.recent_items.button.all.hint', 'Tap to view all items'),
+          title: Localization().getStringEx('widget.home.recent_items.button.view_all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.recent_items.button.view_all.hint', 'Tap to view all items'),
           onTap: _onSeeAll,
         ),
       ),
@@ -208,6 +213,27 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
   void _onSeeAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => HomeRecentItemsPanel()));
+  }
+
+  Widget get _clearAllButton => LinkButton(
+    title: Localization().getStringEx('widget.home.recent_items.button.clear_all.title', 'Clear All'),
+    hint: Localization().getStringEx('widget.home.recent_items.button.clear_all.hint', 'Tap to clear all items'),
+    textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.semi_fat.underline.highlight'),
+    padding: const EdgeInsets.only(left: 16, top: 16, bottom: 16),
+    onTap: _onClearAll,
+  );
+
+  void _onClearAll() {
+    Analytics().logSelect(target: "Clear All", source: widget.runtimeType.toString());
+    AppAlert.showConfirmationDialog(buildContext: context,
+      message: Localization().getStringEx('widget.home.recent_items.prompt.clear_all.text', 'Are you sure you want to CLEAR your browsing history"'),
+      positiveButtonLabel: Localization().getStringEx('dialog.ok.title', 'OK'),
+      negativeButtonLabel: Localization().getStringEx('dialog.cancel.title', 'Cancel'),
+    ).then((value) {
+      if (value == true) {
+        RecentItems().clearRecentItems();
+      }
+    });
   }
 
   double get _pageHeight {

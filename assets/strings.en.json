@@ -3446,8 +3446,11 @@
 
     "widget.home.recent_items.label.header.title":"Recently Viewed",
     "widget.home.recent_items.text.empty.description": "There are no recently viewed items available.",
-    "widget.home.recent_items.button.all.title":"View All",
-    "widget.home.recent_items.button.all.hint":"Tap to view all items",
+    "widget.home.recent_items.button.view_all.title":"View All",
+    "widget.home.recent_items.button.view_all.hint":"Tap to view all items",
+    "widget.home.recent_items.button.clear_all.title":"Clear All",
+    "widget.home.recent_items.button.clear_all.hint":"Tap to clear all items",
+    "widget.home.recent_items.prompt.clear_all.text":"Are you sure you want to CLEAR your browsing history?",
 
     "widget.home.groups.my.label.header.title":"My Groups",
     "widget.home.groups.all.label.header.title":"All Groups",

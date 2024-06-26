@@ -3415,8 +3415,11 @@
 
 	"widget.home.recent_items.label.header.title":"最近瀏覽過的",
 	"widget.home.recent_items.text.empty.description": "沒有最近查看的可用項目。",
-	"widget.home.recent_items.button.all.title":"查看全部",
-	"widget.home.recent_items.button.all.hint":"點擊查看所有項目",
+	"widget.home.recent_items.button.view_all.title":"查看全部",
+	"widget.home.recent_items.button.view_all.hint":"點擊查看所有項目",
+	"widget.home.recent_items.button.clear_all.title":"Clear All",
+	"widget.home.recent_items.button.clear_all.hint":"Tap to clear all items",
+	"widget.home.recent_items.prompt.clear_all.text":"Are you sure you want to CLEAR your browsing history?",
 
 	"widget.home.event2_feed.label.header.title":"All Events",
 	"widget.home.event2_feed.text.empty.description": "There are no events available.",

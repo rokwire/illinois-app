@@ -3430,8 +3430,11 @@
 
     "widget.home.recent_items.label.header.title":"Visto Recientemente",
     "widget.home.recent_items.text.empty.description": "No hay elementos vistos recientemente disponibles.",
-    "widget.home.recent_items.button.all.title":"Ver todo",
-    "widget.home.recent_items.button.all.hint":"Toca para ver todos los elementos",
+    "widget.home.recent_items.button.view_all.title":"Ver todo",
+    "widget.home.recent_items.button.view_all.hint":"Toca para ver todos los elementos",
+    "widget.home.recent_items.button.clear_all.title":"Clear All",
+    "widget.home.recent_items.button.clear_all.hint":"Tap to clear all items",
+    "widget.home.recent_items.prompt.clear_all.text":"Are you sure you want to CLEAR your browsing history>",
 
     "widget.home.event2_feed.label.header.title":"Todos los Eventos",
     "widget.home.event2_feed.text.empty.description": "There are no events available.",
