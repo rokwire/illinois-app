@@ -685,7 +685,7 @@ class _GroupMemberCard extends StatelessWidget {
                           ),
                           child: Center(
                             child: Text(memberStatus?.toUpperCase() ?? '',
-                              style: Styles().textStyles.getTextStyle('widget.heading.small')
+                              style: Styles().textStyles.getTextStyle('widget.heading.extra_small')
                             ),
                           ),
                         ),
@@ -699,7 +699,7 @@ class _GroupMemberCard extends StatelessWidget {
                                         color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.all(Radius.circular(2))),
                                     child: Center(
                                         child: Text(Localization().getStringEx('widget.group.member.card.attended.label', 'ATTENDED'),
-                                            style: Styles().textStyles.getTextStyle('widget.heading.small')))))),
+                                            style: Styles().textStyles.getTextStyle('widget.heading.extra_small')))))),
                         Expanded(child: Container()),
                       ],
                     )
