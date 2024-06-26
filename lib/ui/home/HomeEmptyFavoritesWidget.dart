@@ -47,7 +47,7 @@ class HomeFavoritesInstructionsMessageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
     HomeMessageHtmlCard(
-      message: Localization().getStringEx("widget.home.favorites.instructions.message.text", "Tap the \u2606s in <a href='$_browseLocalUrlMacro'>Sections</a> or <a href='$_favoritesLocalUrlMacro'>Favorites</a> to add shortcuts to Favorites. Note that some features require specific <a href='$_privacySettingsLocalUrlMacro'>privacy settings</a> and <a href='$_signInLocalUrlMacro'>signing in</a> with your NetID, phone number, or email address.")
+      message: Localization().getStringEx("widget.home.favorites.instructions.message.text", "Tap the \u2606s in <a href='$_browseLocalUrlMacro'>Sections</a> or Favorites to add shortcuts to Favorites. Note that some features require specific <a href='$_privacySettingsLocalUrlMacro'>privacy settings</a> and <a href='$_signInLocalUrlMacro'>signing in</a> with your NetID, phone number, or email address.")
         .replaceAll(_browseLocalUrlMacro, '$_localScheme://$_browseLocalUrl')
         .replaceAll(_favoritesLocalUrlMacro, '$_localScheme://$_favoritesLocalUrl')
         .replaceAll(_signInLocalUrlMacro, '$_localScheme://$_signInLocalUrl')

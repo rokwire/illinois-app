@@ -3524,7 +3524,7 @@
 
     "widget.home.welcome_video.title.text": "Bienvenido a {{app_title}} {{app_version}}",
     "widget.home.welcome_message.title.text": "Tailor Your App Experience",
-    "widget.home.favorites.instructions.message.text": "Tap the ☆s in <a href='{{browse_local_url}}'>Sections</a> or <a href='{{favorites_local_url}}'>Favorites</a> to add shortcuts to Favorites. Note that some features require specific <a href='{{privacy_settings_local_url}}'>privacy settings</a> and <a href='{{sign_in_local_url}}'>signing in</a> with your NetID, phone number, or email address.",
+    "widget.home.favorites.instructions.message.text": "Tap the ☆s in <a href='{{browse_local_url}}'>Sections</a> or Favorites to add shortcuts to Favorites. Note that some features require specific <a href='{{privacy_settings_local_url}}'>privacy settings</a> and <a href='{{sign_in_local_url}}'>signing in</a> with your NetID, phone number, or email address.",
 
     "widget.home.athletics_news.text.title": "10 grandes noticias",
     "widget.home.athletics_news.text.empty.description": "Las 10 grandes noticias no están disponibles en este momento.",
