@@ -292,7 +292,13 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx('widget.home.recent_items.label.header.title', 'Recently Viewed'),),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('widget.home.recent_items.label.header.title', 'Recently Viewed'),
+        actions: [
+          if (_recentItems?.isNotEmpty == true)
+            _clearAllButton
+        ],
+      ),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Expanded(child:
@@ -326,6 +332,27 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
         _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
       });
     }
+  }
+
+  Widget get _clearAllButton => LinkButton(
+    title: Localization().getStringEx('widget.home.recent_items.button.clear_all.title', 'Clear All'),
+    hint: Localization().getStringEx('widget.home.recent_items.button.clear_all.hint', 'Tap to clear all items'),
+    textStyle: Styles().textStyles.getTextStyle('widget.heading.small.semi_fat.underline'),
+    padding: const EdgeInsets.all(16),
+    onTap: _onClearAll,
+  );
+
+  void _onClearAll() {
+    Analytics().logSelect(target: "Clear All", source: widget.runtimeType.toString());
+    AppAlert.showConfirmationDialog(buildContext: context,
+      message: Localization().getStringEx('widget.home.recent_items.prompt.clear_all.text', 'Are you sure you want to CLEAR your browsing history"'),
+      positiveButtonLabel: Localization().getStringEx('dialog.ok.title', 'OK'),
+      negativeButtonLabel: Localization().getStringEx('dialog.cancel.title', 'Cancel'),
+    ).then((value) {
+      if (value == true) {
+        RecentItems().clearRecentItems();
+      }
+    });
   }
 
 }
