@@ -478,7 +478,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
             Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
           button: true,
           child: InkWell(onTap: _onFavorite,
-            child: Padding(padding: EdgeInsets.all(16),
+            child: Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
               child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true,)
             )
           ),
