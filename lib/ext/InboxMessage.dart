@@ -100,7 +100,7 @@ extension InboxMessageExt on InboxMessage {
     }
   }
 
-  String? get displayBody => (body != null) ? StringUtils.truncate(value: body!, atLength: Config().truncationSymbolsCount) : body;
+  String? get displayBody => (body != null) ? StringUtils.truncate(value: body!, atLength: Config().notificationBodyMaxLength) : body;
 
   bool get isMuted => (mute == true);
 
