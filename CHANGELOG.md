@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [6.0.15] - 2024-06-27
 ### Changed
 - Update again 6.0 welcome message [#4121](https://github.com/rokwire/illinois-app/issues/4121).
 - Updated Browsing History settings page [#4132](https://github.com/rokwire/illinois-app/issues/4132).
@@ -15,11 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed "You are no longer registered for this event" message spelling.
 - Event2 Detail and Card styling fixes[#4158](https://github.com/rokwire/illinois-app/issues/4158).
+- GroupDetailPanel show create direct message button only if member is allowed to post to specific members[#4170](https://github.com/rokwire/illinois-app/issues/4170).
 
 ## [6.0.14] - 2024-06-26
 ### Changed
 - Update again 6.0 welcome message [#4121](https://github.com/rokwire/illinois-app/issues/4121).
-- Updated prompt texts in Browse panel [#4131](https://github.com/rokwire/illinois-app/issues/4131).
+- Updated prompt texts in Browse panel [#4131](https://github.com/rokwire/illinois-app/issues/4131). 
 - Updated Customize link style and icon in Home Tout widget [#4122](https://github.com/rokwire/illinois-app/issues/4122).
 - Updated Recently Viewed Favorite Widget and Panel [#4132](https://github.com/rokwire/illinois-app/issues/4132).
 ### Fixed
