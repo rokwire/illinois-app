@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed "You are no longer registered for this event" message spelling.
 - Event2 Detail and Card styling fixes[#4158](https://github.com/rokwire/illinois-app/issues/4158).
+- GroupDetailPanel show create direct message button only if member is allowed to post to specific members[#4170](https://github.com/rokwire/illinois-app/issues/4170).
 
 ## [6.0.14] - 2024-06-26
 ### Changed
