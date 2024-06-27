@@ -984,7 +984,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     _performRegistration(Events2().unregisterFromEvent, onSuccess: (Event2 event) {
       Event2Popup.showMessage(context,
         title: Localization().getStringEx("dialog.success.title", "Success"),
-        message: Localization().getStringEx("panel.event2.detail.unregister.succeeded", "You are no onder registerec for this event."),
+        message: Localization().getStringEx("panel.event2.detail.unregister.succeeded", "You are no longer registered for this event."),
       );
     });
   }
