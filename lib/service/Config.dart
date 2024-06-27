@@ -215,7 +215,7 @@ class Config extends rokwire.Config {
   String get appPrivacyVersion       => JsonUtils.stringValue(settings['privacyVersion']) ?? (JsonUtils.stringValue(content['mobileAppVersion']) ?? '0.0.0');
   bool get allowGroupsAuthmanSync    => JsonUtils.boolValue(settings['allowGroupsAuthmanSync']) ?? false;
   bool get showGroupPostReactions    => JsonUtils.boolValue(settings['showGroupPostReactions']) ?? false;
-  int  get notificationBodyMaxLength => JsonUtils.intValue(settings['truncationSymbolsCount']) ?? 256;
+  int  get notificationBodyMaxLength => JsonUtils.intValue(settings['notificationBodyMaxLength']) ?? 256;
 
   String? get healthScreenerSurveyID => JsonUtils.stringValue(settings['health_screener_survey_id']);
   String? get bessiSurveyID          => JsonUtils.stringValue(settings['bessi_survey_id']);
