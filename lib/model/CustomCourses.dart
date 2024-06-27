@@ -870,35 +870,36 @@ class CourseConfig {
     );
   }
 
-  DateTime? nextScheduleItemUnlockTime({bool inUtc = false}) {
-    if (streaksProcessTime != null) {
-      timezone.Location location = DateTimeLocal.timezoneLocal;
-      DateTime now = DateTime.now();
-      if (!usesUserTimezone) {
-        if (StringUtils.isNotEmpty(timezoneName)) {
-          return null;
-        }
-        location = timezone.getLocation(timezoneName!);
-        now = DateTimeUtils.nowTimezone(location);
-      }
-      int nowLocalSeconds = 3600*now.hour;
-
-      DateTime nextUnlock = timezone.TZDateTime(location, now.year, now.month, now.day, streaksProcessTime! ~/ 3600, 0, 0);
-      if (inUtc) {
-        nextUnlock = nextUnlock.toUtc();
-      }
-      if (nowLocalSeconds > streaksProcessTime!) {
-        // go forward one day if the current moment is after the unlock time in the current day
-        nextUnlock = nextUnlock.add(Duration(days: 1));
-      }
-      return nextUnlock;
-    }
-    return null;
-  }
-
   bool get usesUserTimezone => timezoneName == userTimezone;
 
   int? get finalNotificationTime => CollectionUtils.isNotEmpty(notifications) ? notifications!.last.processTime : null;
+
+  DateTime? nextScheduleItemUnlockTime({bool inUtc = false}) => streaksProcessTime != null ? _nextTime(streaksProcessTime!, inUtc: inUtc) : null;
+
+  DateTime? nextFinalNotificationTime({bool inUtc = false}) => finalNotificationTime != null ? _nextTime(finalNotificationTime!, inUtc: inUtc) : null;
+
+  DateTime? _nextTime(int timeInSeconds, {bool inUtc = false}) {
+    timezone.Location location = DateTimeLocal.timezoneLocal;
+    DateTime now = DateTime.now();
+    if (!usesUserTimezone) {
+      if (StringUtils.isNotEmpty(timezoneName)) {
+        return null;
+      }
+      location = timezone.getLocation(timezoneName!);
+      now = DateTimeUtils.nowTimezone(location);
+    }
+    int nowLocalSeconds = 3600*now.hour;
+
+    DateTime next = timezone.TZDateTime(location, now.year, now.month, now.day, timeInSeconds ~/ 3600, 0, 0);
+    if (inUtc) {
+      next = next.toUtc();
+    }
+    if (nowLocalSeconds > timeInSeconds) {
+      // go forward one day if the current moment is after the unlock time in the current day
+      next = next.add(Duration(days: 1));
+    }
+    return next;
+  }
 }
 
 class CourseNotification {
