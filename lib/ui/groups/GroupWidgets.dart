@@ -746,8 +746,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
       wrapContent.add(_buildHeadingWrapLabel(Localization().getStringEx('widget.group_card.status.hidden', 'Hidden')));
     }
 
-    List<String>? attributesList = Groups().contentAttributes?.displaySelectedLabelsFromSelection(widget.group?.attributes,
-      usage: ContentAttributeUsage.label);
+    List<String>? attributesList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group?.attributes, usage: ContentAttributeUsage.label);
     if ((attributesList != null) && attributesList.isNotEmpty) {
       for (String attribute in attributesList) {
         wrapContent.add(_buildHeadingWrapLabel(attribute));
@@ -803,7 +802,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(color: color, borderRadius: BorderRadius.all(Radius.circular(2))),
         child: Text(text,
-          style: Styles().textStyles.getTextStyle("widget.heading.small"))));
+          style: Styles().textStyles.getTextStyle("widget.heading.extra_small"))));
   }
 
   Widget _buildHeadingWrapLabel(String text) {
@@ -824,8 +823,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
   }
 
   Widget _buildCategories() {
-    List<String>? displayList = Groups().contentAttributes?.displaySelectedLabelsFromSelection(widget.group?.attributes,
-      usage: ContentAttributeUsage.category);
+    List<String>? displayList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group?.attributes, usage: ContentAttributeUsage.category);
     return (displayList?.isNotEmpty ?? false) ? Row(children: [
       Expanded(child:
         Text(displayList?.join(', ') ?? '',
@@ -844,7 +842,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
     List<ContentAttribute>? attributes = contentAttributes?.attributes;
     if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        if (attribute.usage == ContentAttributeUsage.property) {
+        if ((attribute.usage == ContentAttributeUsage.property) && Groups().isContentAttributeEnabled(attribute)) {
           List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
             propertiesList.add(_buildProperty("${attribute.displayTitle}: ", displayAttributeValues.join(', ')));
@@ -1172,7 +1170,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
         Container(width: 6,),
         Container( padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors.mediumGray1, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
           Semantics(label: "Scheduled for ${widget.post?.displayScheduledTime ?? ""}", excludeSemantics: true, child:
-            Text("Scheduled: ${widget.post?.displayScheduledTime ?? ""}", style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
+            Text("Scheduled: ${widget.post?.displayScheduledTime ?? ""}", style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
         ))
     ]));
 
@@ -2012,12 +2010,12 @@ class ImageChooserWidget extends StatefulWidget{ //TBD Localize properly
 }
 
 class _ImageChooserState extends State<ImageChooserWidget>{
-  String? _imageUrl;
+  // String? _imageUrl;
 
   @override
   void initState() {
+    // _imageUrl = widget.imageUrl;
     super.initState();
-    _imageUrl = widget.imageUrl;
   }
 
   @override
@@ -2026,7 +2024,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
     bool wrapContent = widget.wrapContent;
     bool explicitlyShowAddButton = widget.buttonVisible;
     bool showSlant = widget.showSlant;
-    String? imageUrl = _imageUrl ?? widget.imageUrl; // For some reason sometimes the widget url is present but the _imageUrl is null
+    String? imageUrl = widget.imageUrl; // For some reason sometimes the widget url is present but the _imageUrl is null
 
     return Container(
         constraints: BoxConstraints(
@@ -2061,13 +2059,13 @@ class _ImageChooserState extends State<ImageChooserWidget>{
 
   void _onTapAddImage() async {
     Analytics().logSelect(target: "Add Image");
-    ImagesResult? result = await GroupAddImageWidget.show(context: context, url: _imageUrl).then((result) => result);
+    ImagesResult? result = await GroupAddImageWidget.show(context: context, url: widget.imageUrl).then((result) => result);
 
     if(result?.succeeded == true) {
       widget.onImageChanged?.call(result?.stringData);
-      setStateIfMounted(() {
-        _imageUrl = result?.stringData;
-      });
+      // setStateIfMounted(() {
+      //   _imageUrl = result?.stringData;
+      // });
       Log.d("Image Url: ${result?.stringData}");
     }
   }

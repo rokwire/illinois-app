@@ -200,12 +200,12 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     return (label != null) ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
         Semantics(label: event2UserRoleToString(_event?.userRole), excludeSemantics: true, child:
-          Text(event2UserRoleToString(_event?.userRole)?.toUpperCase() ?? 'ADMIN', style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
+          Text(event2UserRoleToString(_event?.userRole)?.toUpperCase() ?? 'ADMIN', style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
     ))) : Container();
   }
 
 
-  Widget get _contentHeadingWidget => 
+  Widget get _contentHeadingWidget =>
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Expanded(child:
         Padding(padding: EdgeInsets.only(left: 16, top: _hasDisplayCategories ? 16 : 8, bottom: 8), child:
@@ -220,10 +220,10 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     ]);
 
   Widget get _categoriesContentWidget =>
-    Text(_displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles.getTextStyle("widget.card.title.small.fat"));
+    Text(_displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles.getTextStyle("common.title.secondary"));
 
   static List<String>? _buildDisplayCategories(Event2? event) =>
-    Events2().contentAttributes?.displaySelectedLabelsFromSelection(event?.attributes, usage: ContentAttributeUsage.category);
+    Events2().displaySelectedContentAttributeLabelsFromSelection(event?.attributes, usage: ContentAttributeUsage.category);
 
   Widget get _groupingBadgeWidget {
     String? badgeLabel;
@@ -236,7 +236,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     return (badgeLabel != null) ? Padding(padding: EdgeInsets.only(top: 16), child:
       Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
         Semantics(label: badgeLabel, excludeSemantics: true, child:
-          Text(badgeLabel, style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
+          Text(badgeLabel, style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
     ))) : Container();
   }
 
@@ -253,7 +253,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
             Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
           button: true,
           child: InkWell(onTap: _onFavorite,
-            child: Padding(padding: EdgeInsets.all(16),
+            child: Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
               child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true,)
             )
           ),
@@ -280,12 +280,12 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     ],) : Container();
 
   Widget get _titleContentWidget =>
-    Text(_event?.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.extra_large'));
+    Text(_event?.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'));
 
   Widget get _sponsorWidget => StringUtils.isNotEmpty(_event?.sponsor) ? Padding(padding: EdgeInsets.only(top: 8), child:
     Row(children: [
       Expanded(child: 
-        Text(_event?.sponsor ?? '', style: Styles().textStyles.getTextStyle('widget.item.regular.fat'), maxLines: 2,)
+        Text(_event?.sponsor ?? '', style: Styles().textStyles.getTextStyle('common.title.secondary'), maxLines: 2,)
       ),
     ],),
    ) : Container();
@@ -294,7 +294,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
        HtmlWidget(
           StringUtils.ensureNotEmpty(_event?.description),
           onTapUrl : (url) { _launchUrl(url, context: context); return true; },
-          textStyle: Styles().textStyles.getTextStyle("widget.info.regular")
+          textStyle: Styles().textStyles.getTextStyle("common.body")
       )
   ) : Container();
 
@@ -339,8 +339,8 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       ];
 
       Widget onlineWidget = canLaunch ?
-        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles.getTextStyle('widget.button.title.small.semi_fat.underline'),) :
-        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular'),);
+        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles.getTextStyle('common.body.underline'),) :
+        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles.getTextStyle('common.body'),);
       details.add(
         InkWell(onTap: canLaunch ? _onOnline : null, child:
           _buildDetailWidget(onlineWidget, 'laptop', iconVisible: false, detailPadding: EdgeInsets.zero)
@@ -358,7 +358,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
       bool canLocation = _event?.location?.isLocationCoordinateValid ?? false;
 
-      String textDetailStyleName = canLocation ? 'widget.explore.card.detail.regular.underline' : 'widget.explore.card.detail.regular';
+      String textDetailStyleName = canLocation ? 'common.body.underline' : 'common.body';
       TextStyle? textDetailStyle = Styles().textStyles.getTextStyle(textDetailStyleName);
       
       List<Widget> details = <Widget>[
@@ -414,7 +414,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       details.add(_buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.free.title', 'Free'), 'cost'));
       if (StringUtils.isNotEmpty(_event?.cost)) {
         details.add(_buildTextDetailWidget(_event?.cost ?? '', 'cost',
-          textStyle: Styles().textStyles.getTextStyle('widget.info.regular.thin'),
+          textStyle: Styles().textStyles.getTextStyle('common.body'),
           iconVisible: false,
           maxLines: 2,
           detailPadding: EdgeInsets.zero
@@ -557,7 +557,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
     return (description != null) ?<Widget>[
       _buildTextDetailWidget(description, 'info',
-        textStyle: Styles().textStyles.getTextStyle('widget.info.regular.thin.italic') ,
+        textStyle: Styles().textStyles.getTextStyle('common.body.italic') ,
         iconPadding: const EdgeInsets.only(right: 6),
         maxLines: 5,
       ),
@@ -579,12 +579,12 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
           _buildDetailWidget(
         // Text(details?? '', style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular.underline')),
               RichText(textScaler: MediaQuery.of(context).textScaler, text:
-                TextSpan(style: Styles().textStyles.getTextStyle("widget.explore.card.detail.regular"), children: <TextSpan>[
+                TextSpan(style: Styles().textStyles.getTextStyle("common.body"), children: <TextSpan>[
                   TextSpan(text: StringUtils.isNotEmpty(contact?.firstName)?"${contact?.firstName}, " : ""),
                   TextSpan(text: StringUtils.isNotEmpty(contact?.lastName)?"${contact?.lastName}, " : ""),
                   TextSpan(text: StringUtils.isNotEmpty(contact?.organization)?"${contact?.organization}, " : ""),
-                  TextSpan(text: StringUtils.isNotEmpty(contact?.email)?"${contact?.email}, " : "", style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular.underline'), recognizer: TapGestureRecognizer()..onTap = () => _onContactEmail(contact?.email),),
-                  TextSpan(text: StringUtils.isNotEmpty(contact?.phone)?"${contact?.phone}, " : "", style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular.underline'), recognizer: TapGestureRecognizer()..onTap = () => _onContactPhone(contact?.phone),),
+                  TextSpan(text: StringUtils.isNotEmpty(contact?.email)?"${contact?.email}, " : "", style: Styles().textStyles.getTextStyle('common.body.underline'), recognizer: TapGestureRecognizer()..onTap = () => _onContactEmail(contact?.email),),
+                  TextSpan(text: StringUtils.isNotEmpty(contact?.phone)?"${contact?.phone}, " : "", style: Styles().textStyles.getTextStyle('common.body.underline'), recognizer: TapGestureRecognizer()..onTap = () => _onContactPhone(contact?.phone),),
             ])),
             'person', iconVisible: false, detailPadding: EdgeInsets.zero));
       }
@@ -800,7 +800,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   Widget get _detailSpacerWidget => Container(height: 8,);
 
   Widget _buildLocationTextDetailWidget(String text, { TextStyle? textStyle }) =>
-    _buildDetailWidget(Text(text, style: textStyle ?? Styles().textStyles.getTextStyle('widget.explore.card.detail.regular')), // #3842 maxLines: 1, overflow: TextOverflow.ellipsis
+    _buildDetailWidget(Text(text, style: textStyle ?? Styles().textStyles.getTextStyle('common.body')), // #3842 maxLines: 1, overflow: TextOverflow.ellipsis
       'location', iconVisible: false, detailPadding: EdgeInsets.zero
     );
 
@@ -813,7 +813,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   }) =>
     _buildDetailWidget(
       Text(text,
-        style: textStyle ?? Styles().textStyles.getTextStyle(underlined ? 'widget.info.medium.underline' : 'widget.info.medium'),
+        style: textStyle ?? Styles().textStyles.getTextStyle(underlined ? 'common.body.underline' : 'common.body'),
         maxLines: maxLines,
         overflow: overflow,
       ),
@@ -984,7 +984,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     _performRegistration(Events2().unregisterFromEvent, onSuccess: (Event2 event) {
       Event2Popup.showMessage(context,
         title: Localization().getStringEx("dialog.success.title", "Success"),
-        message: Localization().getStringEx("panel.event2.detail.unregister.succeeded", "You are no onder registerec for this event."),
+        message: Localization().getStringEx("panel.event2.detail.unregister.succeeded", "You are no longer registered for this event."),
       );
     });
   }

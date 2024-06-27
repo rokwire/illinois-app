@@ -148,7 +148,7 @@ class Event2Card extends StatefulWidget {
   final List<String>? displayCategories;
   
   Event2Card(this.event, { Key? key, this.group, this.displayMode = Event2CardDisplayMode.list, this.linkType, this.userLocation, this.onTap}) :
-    displayCategories = Events2().contentAttributes?.displaySelectedLabelsFromSelection(event.attributes, usage: ContentAttributeUsage.category),
+    displayCategories = Events2().displaySelectedContentAttributeLabelsFromSelection(event.attributes, usage: ContentAttributeUsage.category),
     super(key: key);
 
   @override
@@ -448,7 +448,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     ]);
 
   Widget get _categoriesContentWidget =>
-    Text(widget.displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles.getTextStyle("widget.card.title.small.fat"));
+    Text(widget.displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles.getTextStyle("common.title.secondary"));
 
   /*Widget get _groupingBadgeWidget {
     String? badgeLabel;
@@ -461,7 +461,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     return (badgeLabel != null) ? 
       Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
         Semantics(label: badgeLabel, excludeSemantics: true, child:
-          Text(badgeLabel, style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
+          Text(badgeLabel, style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
     )) : Container();
   }*/
 
@@ -478,7 +478,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
             Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
           button: true,
           child: InkWell(onTap: _onFavorite,
-            child: Padding(padding: EdgeInsets.all(16),
+            child: Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
               child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true,)
             )
           ),
@@ -507,7 +507,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     ],) : Container();
 
   Widget get _titleContentWidget =>
-    Text(_event.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'), maxLines: 2, overflow: TextOverflow.ellipsis);
+    Text(_event.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.medium.fat'), maxLines: 2, overflow: TextOverflow.ellipsis);
 
   Widget get _detailsWidget {
     List<Widget> detailWidgets = <Widget>[
@@ -581,7 +581,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   }
 
   Widget _buildLocationTextDetailWidget(String text) =>
-    _buildDetailWidget(Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero);
+    _buildDetailWidget(Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle('common.body'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero);
 
   Widget _buildTextDetailWidget(String text, String iconKey, {
     EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),
@@ -589,7 +589,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     bool iconVisible = true, int maxLines = 1,
   }) =>
     _buildDetailWidget(
-      Text(text, style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular'), maxLines: maxLines, overflow: TextOverflow.ellipsis,),
+      Text(text, style: Styles().textStyles.getTextStyle('common.body'), maxLines: maxLines, overflow: TextOverflow.ellipsis,),
       iconKey, contentPadding: contentPadding, iconPadding: iconPadding, iconVisible: iconVisible
     );
 

@@ -34,14 +34,12 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class WalletMealPlanPanel extends StatefulWidget {
+//////////////////////////
+// WalletMealPlanPanel
 
-  final ScrollController? scrollController;
+class WalletMealPlanPanel extends StatelessWidget {
 
-  WalletMealPlanPanel({this.scrollController});
-
-  @override
-  _WalletMealPlanPanelState createState() => _WalletMealPlanPanelState();
+  WalletMealPlanPanel({super.key});
 
   static void present(BuildContext context) {
     if (Connectivity().isOffline) {
@@ -54,9 +52,43 @@ class WalletMealPlanPanel extends StatefulWidget {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: WalletIlliniCashPanel.routeName), builder: (context) => WalletMealPlanPanel()));
     }
   }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    body: _buildScaffoldBody(),
+    backgroundColor: Styles().colors.background,
+    bottomNavigationBar: uiuc.TabBar()
+  );
+
+  Widget _buildScaffoldBody() => CustomScrollView(
+    slivers: <Widget>[
+      SliverHeaderBar(
+        leadingIconKey: 'chevron-left-white',
+        title: Localization().getStringEx('panel.settings.meal_plan.label.title','University Housing Meal Plan'),
+        textStyle:  Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),
+      ),
+      SliverList(
+        delegate: SliverChildListDelegate([
+          WalletMealPlanContentWidget(),
+        ]),
+      )
+    ],
+  );
 }
 
-class _WalletMealPlanPanelState extends State<WalletMealPlanPanel> implements NotificationsListener {
+/////////////////////////////////
+// WalletMealPlanContentWidget
+
+class WalletMealPlanContentWidget extends StatefulWidget {
+
+  final double headerHeight;
+  WalletMealPlanContentWidget({super.key, this.headerHeight = 0});
+
+  @override
+  _WalletMealPlanContentWidgetState createState() => _WalletMealPlanContentWidgetState();
+}
+
+class _WalletMealPlanContentWidgetState extends State<WalletMealPlanContentWidget> implements NotificationsListener {
   bool _authLoading = false;
 
   bool _illiniCashLoading = false;
@@ -68,7 +100,7 @@ class _WalletMealPlanPanelState extends State<WalletMealPlanPanel> implements No
   List<BaseTransaction>? _mealPlanTransactions;
   List<BaseTransaction>? _cafeCreditTransactions;
 
-  _WalletMealPlanPanelState();
+  _WalletMealPlanContentWidgetState();
 
   @override
   void initState() {
@@ -77,7 +109,7 @@ class _WalletMealPlanPanelState extends State<WalletMealPlanPanel> implements No
       IlliniCash.notifyBallanceUpdated,
       IlliniCash.notifyEligibilityUpdated,
     ]);
-    
+
     _loadBallance();
     _loadThisMonthHistory();
     super.initState();
@@ -89,83 +121,24 @@ class _WalletMealPlanPanelState extends State<WalletMealPlanPanel> implements No
     super.dispose();
   }
 
-  void _loadMealPlanTransactions() {
-    _showMealPlanTransactionsProgress(true);
-    IlliniCash().loadMealPlanTransactionHistory(_startDate, _endDate).then((
-        transactions) => _onMealPlanTransactionsLoaded(transactions));
-  }
-
-  void _loadCafeCreditTransactions() {
-    _showMealPlanTransactionsProgress(true);
-    IlliniCash().loadCafeCreditTransactionHistory(_startDate, _endDate).then((
-        transactions) => _onCafeCreditTransactionsLoaded(transactions));
-  }
-
-  void _loadBallance() {
-    _illiniCashLoading = (IlliniCash().ballance == null);
-    IlliniCash().updateBalance().then((_){
-      setState(() {
-        _illiniCashLoading = false;
-      });
-    });
-  }
-
-  void _loadThisMonthHistory() {
-    Analytics().logSelect(target: "This Month");
-    DateTime now = DateTime.now();
-    DateTime lastMonth = now.subtract(Duration(
-      days: 30,
-    ));
-    _startDate = lastMonth;
-    _endDate = now;
-    _loadMealPlanTransactions();
-    _loadCafeCreditTransactions();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _buildScaffoldBody(),
-      backgroundColor: Styles().colors.background,
-      bottomNavigationBar: widget.scrollController == null
-          ? uiuc.TabBar()
-          : Container(height: 0,),
-    );
+    return _authLoading ? _buildLoading() : _buildBody();
   }
 
-  Widget _buildScaffoldBody() {
-    if (_authLoading) {
-      return Center(child: CircularProgressIndicator(),);
-    }
-    return CustomScrollView(
-      controller: widget.scrollController,
-      slivers: <Widget>[
-        SliverHeaderBar(
-          leadingIconKey: widget.scrollController == null ? 'chevron-left-white' : 'chevron-left-bold',
-          title: Localization().getStringEx('panel.settings.meal_plan.label.title','University Housing Meal Plan'),
-          textStyle:  widget.scrollController == null ? Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat") : Styles().textStyles.getTextStyle("widget.title.regular.extra_fat"),
-        ),
-        SliverList(
-          delegate: SliverChildListDelegate([
-            Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-
-                  _buildSettingsHeader(Localization().getStringEx(
-                      "panel.settings.meal_plan.heading.text", "University Housing Meal Plan"), 'dining'),
-                  _buildMealPlanSection(),
-                  _buildMealPlanHistory(),
-                  _buildCafeCreditHistory(),
-                  _buildBalancePeriodViewPicker(),
-                ],
-              ),
-            ),
-          ]),
-        )
-      ],
+  Widget _buildBody() =>
+    Container(child:
+      Column(crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _buildContentHeader(),
+          _buildSettingsHeader(Localization().getStringEx("panel.settings.meal_plan.heading.text", "University Housing Meal Plan"), 'dining'),
+          _buildMealPlanSection(),
+          _buildMealPlanHistory(),
+          _buildCafeCreditHistory(),
+          _buildBalancePeriodViewPicker(),
+        ],
+      ),
     );
-  }
 
   Widget _buildMealPlanHistory(){
     return Column(
@@ -188,6 +161,9 @@ class _WalletMealPlanPanelState extends State<WalletMealPlanPanel> implements No
       ],
     );
   }
+
+  Widget _buildContentHeader() =>
+    Container(height: widget.headerHeight, color: Styles().colors.fillColorPrimaryVariant,);
 
   Widget _buildSettingsHeader(String? title, String iconKey){
     if (!Auth2().isLoggedIn) {
@@ -228,7 +204,7 @@ class _WalletMealPlanPanelState extends State<WalletMealPlanPanel> implements No
   Widget _buildMealPlanSection() {
     List<Widget> widgets = [];
     widgets.add(Padding(padding: EdgeInsets.only(top: 16)));
-    
+
     if (Auth2().isLoggedIn) {
       if (_illiniCashLoading) {
         widgets.add(VerticalTitleValueSection(title: '', value: '',));
@@ -237,7 +213,7 @@ class _WalletMealPlanPanelState extends State<WalletMealPlanPanel> implements No
         String title = Localization().getStringEx('panel.settings.meal_plan.label.ineligible', 'Ineligible');
         String? status = StringUtils.isNotEmpty(IlliniCash().eligibility?.accountStatus) ? IlliniCash().eligibility?.accountStatus :
           Localization().getStringEx('panel.settings.meal_plan.label.ineligible_status', 'You are not eligibile for Meal Plan');
-        
+
         widgets.add(VerticalTitleValueSection(
           title: title,
           titleTextStyle: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),
@@ -250,7 +226,7 @@ class _WalletMealPlanPanelState extends State<WalletMealPlanPanel> implements No
           title: Localization().getStringEx("panel.settings.meal_plan.label.meal_plan_type.text", "Meal Plan Type"),
           value: StringUtils.isNotEmpty(IlliniCash().ballance?.mealPlanName) ? IlliniCash().ballance?.mealPlanName : Localization().getStringEx("panel.settings.meal_plan.label.meal_plan_unknown.text", "Unknown"),
         ));
-        
+
         widgets.add(Row(children: <Widget>[
           Expanded(child:
             VerticalTitleValueSection(
@@ -479,7 +455,7 @@ class _WalletMealPlanPanelState extends State<WalletMealPlanPanel> implements No
   Widget _buildBalanceTableHeaderItem(String text){
     return _buildBalanceTableItem(text: text, backColor: Styles().colors.fillColorPrimaryVariant,
         showBorder: false,
-        textStyle: Styles().textStyles.getTextStyle("widget.heading.medium_small"));
+        textStyle: Styles().textStyles.getTextStyle("widget.heading.small.fat"));
   }
 
   Widget _buildBalanceTableItem({required String text, bool showBorder = true, Color? backColor, TextStyle? textStyle, TextAlign textAlign = TextAlign.left}) {
@@ -547,6 +523,49 @@ class _WalletMealPlanPanelState extends State<WalletMealPlanPanel> implements No
       ),
     );
   }
+
+  Widget _buildLoading() => Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 72), child:
+    Center(child:
+      CircularProgressIndicator(color: Styles().colors.fillColorSecondary,),
+    ),
+  );
+
+  // Data Access
+
+  void _loadMealPlanTransactions() {
+    _showMealPlanTransactionsProgress(true);
+    IlliniCash().loadMealPlanTransactionHistory(_startDate, _endDate).then((
+        transactions) => _onMealPlanTransactionsLoaded(transactions));
+  }
+
+  void _loadCafeCreditTransactions() {
+    _showMealPlanTransactionsProgress(true);
+    IlliniCash().loadCafeCreditTransactionHistory(_startDate, _endDate).then((
+        transactions) => _onCafeCreditTransactionsLoaded(transactions));
+  }
+
+  void _loadBallance() {
+    _illiniCashLoading = (IlliniCash().ballance == null);
+    IlliniCash().updateBalance().then((_){
+      setState(() {
+        _illiniCashLoading = false;
+      });
+    });
+  }
+
+  void _loadThisMonthHistory() {
+    Analytics().logSelect(target: "This Month");
+    DateTime now = DateTime.now();
+    DateTime lastMonth = now.subtract(Duration(
+      days: 30,
+    ));
+    _startDate = lastMonth;
+    _endDate = now;
+    _loadMealPlanTransactions();
+    _loadCafeCreditTransactions();
+  }
+
+  // Handlers
 
   void _onMealPlanTransactionsLoaded(List<MealPlanTransaction>? transactions) {
     _showMealPlanTransactionsProgress(false, changeState: false);
@@ -683,7 +702,7 @@ class _WalletMealPlanPanelState extends State<WalletMealPlanPanel> implements No
   }
 
   // NotificationsListener
-  
+
   @override
   void onNotification(String name, dynamic param) {
     if (name == IlliniCash.notifyBallanceUpdated) {
@@ -703,6 +722,9 @@ class _WalletMealPlanPanelState extends State<WalletMealPlanPanel> implements No
   }
 }
 
+/////////////////////////////////
+// _DateLabel
+
 class _DateLabel extends StatelessWidget {
   final String? label;
 
@@ -718,6 +740,10 @@ class _DateLabel extends StatelessWidget {
       ],),);
   }
 }
+
+
+/////////////////////////////////
+// _DateValue
 
 class _DateValue extends StatelessWidget {
   final String? title;

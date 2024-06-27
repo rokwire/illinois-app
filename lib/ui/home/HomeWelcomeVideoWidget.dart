@@ -15,17 +15,17 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class HomeWelcomeWidget extends StatefulWidget {
+class HomeWelcomeVideoWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
 
-  HomeWelcomeWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+  HomeWelcomeVideoWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
   @override
-  State<HomeWelcomeWidget> createState() => _HomeWelcomeWidgetState();
+  State<HomeWelcomeVideoWidget> createState() => _HomeWelcomeVideoWidgetState();
 }
 
-class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements NotificationsListener {
+class _HomeWelcomeVideoWidgetState extends State<HomeWelcomeVideoWidget> implements NotificationsListener {
   Video? _video;
   bool? _visible;
 
@@ -35,7 +35,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
       Content.notifyVideoTutorialsChanged,
     ]);
 
-    _visible = Storage().homeWelcomeVisible;
+    _visible = Storage().homeWelcomeVideoVisible;
     _video = _loadVideo();
     super.initState();
   }
@@ -93,13 +93,13 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
           Row(children: [
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16), child:
-                Text(Localization().getStringEx("widget.home.welcome.text.title", 'Welcome to {{app_title}} {{app_version}}').
+                Text(Localization().getStringEx("widget.home.welcome_video.title.text", 'Welcome to {{app_title}} {{app_version}}').
                   replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')).
                   replaceAll('{{app_version}}', Config().appMajorVersion ?? ''),
                   style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat")),
               ),
             ),
-            Semantics(label: Localization().getStringEx('widget.home.welcome.button.close.label', 'Close'), button: true, excludeSemantics: true, child:
+            Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
               InkWell(onTap : _onClose, child:
                 Padding(padding: EdgeInsets.all(16), child:
                   Styles().images.getImage('close-circle-white', excludeFromSemantics: true)
@@ -157,7 +157,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
   void _onClose() {
     Analytics().logSelect(target: "Close", source: widget.runtimeType.toString());
     setState(() {
-      Storage().homeWelcomeVisible = _visible = false;
+      Storage().homeWelcomeVideoVisible = _visible = false;
     });
   }
 }

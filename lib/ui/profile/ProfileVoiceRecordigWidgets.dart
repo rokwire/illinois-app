@@ -250,12 +250,6 @@ class _ProfileSoundRecorderDialogState extends State<_ProfileSoundRecorderDialog
                                 }
                               } ,
                               child: Container(
-                                // padding: EdgeInsets.all(12),
-                                // height: 48, width: 48,
-                                // decoration: BoxDecoration(
-                                //     color: _playButtonColor,
-                                //     shape: BoxShape.circle,
-                                // ),
                                 child: _playButtonIcon ?? Container()
                               ),
                             ),
@@ -603,12 +597,6 @@ class _ProfileNamePronouncementConfirmDeleteDialog extends StatelessWidget {
                   Column(children: [
                     Container(height: 8,),
                     Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0), child:
-                      Text(Localization().getStringEx("", "Delete"), style:
-                        Styles().textStyles.getTextStyle("widget.detail.regular.fat"),
-                      ),
-                    ),
-                    Container(height: 4,),
-                    Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0), child:
                       Text(Localization().getStringEx("", "Delete current recording?"), style:
                         Styles().textStyles.getTextStyle("widget.detail.regular"),)
                       ),
@@ -632,20 +620,12 @@ class _ProfileNamePronouncementConfirmDeleteDialog extends StatelessWidget {
                   )
                 ]),
               ]),
-              Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
-                InkWell(onTap: () => Navigator.pop(context, null), child:
-                  Container(padding: EdgeInsets.all(16), child:
-                    Styles().images.getImage('close-circle', excludeFromSemantics: true)
-                  )
-                )
-              ),
             ])
           )
         )
       )
     );
 }
-
 
 class _BytesAudioSource extends StreamAudioSource{
   final Uint8List _data;

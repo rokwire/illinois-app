@@ -44,9 +44,7 @@ class WalletIlliniCashPanel extends StatefulWidget {
 
   static final String routeName = 'settings_illini_cash';
 
-  final ScrollController? scrollController;
-
-  WalletIlliniCashPanel({this.scrollController});
+  WalletIlliniCashPanel({super.key});
 
   @override
   _WalletIlliniCashPanelState createState() => _WalletIlliniCashPanelState();
@@ -131,9 +129,7 @@ class _WalletIlliniCashPanelState extends State<WalletIlliniCashPanel> implement
     return Scaffold(
       body: _buildScaffoldBody(),
       backgroundColor: Styles().colors.background,
-      bottomNavigationBar: widget.scrollController == null
-          ? uiuc.TabBar()
-          : Container(height: 0,),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -142,14 +138,11 @@ class _WalletIlliniCashPanelState extends State<WalletIlliniCashPanel> implement
       return Center(child: CircularProgressIndicator(),);
     }
     return CustomScrollView(
-      controller: widget.scrollController,
       slivers: <Widget>[
         SliverHeaderBar(
-          leadingIconKey: widget.scrollController == null
-              ? 'chevron-left-white'
-              : 'chevron-left-bold',
+          leadingIconKey: 'chevron-left-white',
           title: Localization().getStringEx('panel.settings.illini_cash.label.title','Illini Cash'),
-          textStyle:  widget.scrollController == null ? Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat") : Styles().textStyles.getTextStyle("widget.title.regular.extra_fat"),
+          textStyle:  Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),
         ),
         SliverList(
           delegate: SliverChildListDelegate([
@@ -481,7 +474,7 @@ class _WalletIlliniCashPanelState extends State<WalletIlliniCashPanel> implement
   Widget _buildBalanceTableHeaderItem(String text){
       return _buildBalanceTableItem(text: text, backColor: Styles().colors.fillColorPrimaryVariant,
           showBorder: false,
-          textStyle: Styles().textStyles.getTextStyle("widget.heading.medium_small"));
+          textStyle: Styles().textStyles.getTextStyle("widget.heading.small.fat"));
   }
 
   Widget _buildBalanceTableItem({required String text, bool showBorder = true, Color? backColor, TextStyle? textStyle}) {
@@ -587,7 +580,7 @@ class _WalletIlliniCashPanelState extends State<WalletIlliniCashPanel> implement
             name:"settings_add_illini_cash"
         ),
         builder: (context){
-          return WalletAddIlliniCashPanel(scrollController: widget.scrollController,);
+          return WalletAddIlliniCashPanel();
         }
     ));
   }

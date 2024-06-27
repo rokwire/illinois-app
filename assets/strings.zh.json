@@ -103,7 +103,7 @@
 	"payment_type.text.google_pay":"GooglePay",
 	"payment_type.text.apple_pay":"ApplePay",
 
-	"auth.logged_out.feature.not_available.message.verbose": "To access {{feature}}, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.",
+	"auth.logged_out.feature.not_available.message.verbose": "To access {{feature}}, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
 	"auth.logged_out.feature.not_available.message.short": "To access {{feature}}, you need to sign in with your NetID.",
 
 	"generic.app.feature.illini_cash": "Illini Cash",
@@ -282,8 +282,8 @@
 	"panel.browse.alert.building_access.privacy_level.4.button.label": "設置為 4",
 	"panel.browse.alert.building_access.privacy_level.5.button.label": "設置為 5",
 
-	"panel.browse.prompt.add.all.favorites": "您確定要將所有項目添加到您的收藏夾嗎？",
-	"panel.browse.prompt.remove.all.favorites": "您確定要刪除收藏夾中的所有項目嗎？",
+	"panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD these items to your favorites?",
+ "panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE these items from your favorites?",
 
 	"panel.browse.section.academics.title": "學业",
 	"panel.browse.section.academics.description": "在{{app_title}}管理您的學術生活的工具。",
@@ -317,8 +317,8 @@
 	"panel.browse.section.polls.description": "創建、參與和查看您和其他人創建的投票結果。",
 	"panel.browse.section.radio_stations.title": "Radio Stations",
 	"panel.browse.section.radio_stations.description": "Listen to Illinois Public Media and student-run WPGU.",
-	"panel.browse.section.recent.title": "最近的",
-	"panel.browse.section.recent.description": "您最近在應用程序中查看了什麼。 返回以再次輕鬆查看它們。",
+	"panel.browse.section.recent.title": "Recently Viewed",
+ 	"panel.browse.section.recent.description": "Revisit your recent app activity.",
 	"panel.browse.section.state_farm_center.title": "State Farm Center",
 	"panel.browse.section.state_farm_center.description": "去State Farm Center參加活動，獲得停車幫助並找到自己的路。",
 	"panel.browse.section.wallet.title": "錢包",
@@ -338,6 +338,7 @@
 	"panel.browse.entry.academics.wellness_todo.title": "待辦事項清單",
 	"panel.browse.entry.academics.due_date_catalog.title": "到期日目錄",
 	"panel.browse.entry.academics.appointments.title": "約會",
+	"panel.browse.entry.academics.my_illini.title": "myIllini",
 
 	"panel.browse.entry.app_help.video_tutorial.title": "視頻教程",
 	"panel.browse.entry.app_help.feedback.title": "反饋",
@@ -410,7 +411,7 @@
 	"panel.browse.entry.wallet.illini_id_card.title": "Illini ID",
 	"panel.browse.entry.wallet.library_card.title": "借書卡",
 
-	"panel.browse.entry.wellness.wellness_rings.title": "戒指",
+	"panel.browse.entry.wellness.wellness_rings.title": "Daily Rings",
 	"panel.browse.entry.wellness.wellness_todo.title": "待辦事項清單",
 	"panel.browse.entry.wellness.my_appointments.title": "MyMckinley預約",
 	"panel.browse.entry.wellness.wellness_tips.title": "每日提示",
@@ -418,11 +419,13 @@
 	"panel.browse.entry.wellness.wellness_resources.title": "資源",
 	"panel.browse.entry.wellness.wellness_mental_health.title": "心理健康資源",
 	"panel.browse.entry.wellness.wellness_success_team.title": "My Success Team",
+	"panel.browse.entry.wellness.wellness_podcast.title": "Healthy Illini Podcast",
+ "panel.browse.entry.wellness.wellness_struggling.title": "I'm Struggling",
 
 	"panel.assistant.header.title": "伊利諾伊州助理",
 	"panel.assistant.offline.label": "離線時，伊利諾伊州助手不可用。",
 	"panel.assistant.clear_all.label": "全部清除",
-	"panel.assistant.logged_out.label": "要存取伊利諾伊州助手，您需要使用 NetID 登錄，並在個人資料下將您的隱私等級設定為 4 或 5。",
+	"panel.assistant.logged_out.label": "To access the Illinois Assistant, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
 	"panel.assistant.content.conversation.label": "詢問伊利諾伊州助理",
 	"panel.assistant.content.faqs.label": "伊利諾伊州助理常見問題解答",
 	"panel.assistant.sources_links.label": "來源和連結",
@@ -446,6 +449,15 @@
 	"panel.assistant.dialog.context.button.profile2.title": "用户二",
 	"panel.assistant.dialog.context.button.save.title": "储存",
 	"panel.assistant.faqs.missing.msg": "沒有可用的常見問題。",
+
+	"panel.wallet.header.title": "Wallet",
+	"panel.wallet.offline.label": "The Wallet is not available while offline.",
+	"panel.wallet.logged_out.label": "To access the Wallet, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.",
+	"panel.wallet.content_type.illini_id.label": "Illini ID",
+	"panel.wallet.content_type.illini_id_faqs.label": "Illini ID FAQs",
+	"panel.wallet.content_type.bus_pass.label": "Bus Pass",
+	"panel.wallet.content_type.meal_plan.label": "Meal Plan",
+	"panel.wallet.content_type.add_illini_cash.label": "Add Illini Cash",
 
 	"panel.search.label.search_for":"搜索",
 	"panel.search.label.results_for":"结果为",
@@ -1419,7 +1431,7 @@
 	"panel.event2.detail.linked_events.recurrence.empty.message": "没有空闲时间。",
 	"panel.event2.detail.register.succeeded": "You're registered!",
 	"panel.event2.detail.register.succeeded.star.prompt": "You're registered! Would vou like to add this event to <span style='color:{{star_color}};'><b>\u2605</b></span> My Events?",
-	"panel.event2.detail.unregister.succeeded": "You are no onder registerec for this event.",
+	"panel.event2.detail.unregister.succeeded": "You are no longer registered for this event.",
 
 	"panel.event2.detail.take_attendance.title": "纪录出席纪录",
 	"panel.event2.detail.survey.description.reg_req": "Registration is available for this event.",
@@ -1741,6 +1753,7 @@
 	"panel.settings.home.settings.sections.food_filter.label": "我的食物過濾器",
 	"panel.settings.home.settings.sections.sports.label": "我的運動隊",
 	"panel.settings.home.settings.sections.calendar.label": "Add to My Device's Calendar",
+	"panel.settings.home.settings.sections.recent_items.label": "My Browsing History",
 	"panel.settings.home.settings.sections.appointments.label": "My Success Team & Appointments",
 	"panel.settings.home.settings.sections.favorites.label": "自定義收藏夾",
 	"panel.settings.home.settings.sections.assessments.label": "我的評估",
@@ -1837,6 +1850,11 @@
 	"panel.settings.home.calendar.research.toggle.title": "參與研究",
 	"panel.settings.home.calendar.research.questionnaire.title": "研究興趣表",
 	"panel.settings.home.calendar.research.prompt.title": "請確認您希望不再參與Research at Illinois。 您在問卷中填寫的所有信息都將被刪除。",
+
+	"panel.settings.home.recent_items.title": "Browsing History",
+	"panel.settings.home.recent_items.enable.toggle.title": "Display recently viewed app content",
+	"panel.settings.home.recent_items.enable.toggle.info": "When enabled, the Illinois app will display the items you accessed via the Recently Viewed section. To quickly revisit this content, star the Recently Viewed section to add it to your Favorites.",
+	"panel.settings.home.recent_items.disable.toggle.prompt": "This will clear your browsing history. Proceed?",
 
 	"panel.settings.home.appointments.description.format": "在 {{app_title}} 應用程序中顯示約會：",
 	"panel.settings.home.appointments.mckinley.label": "我的麥金萊",
@@ -3402,9 +3420,14 @@
 	"widget.home.suggested_events.button.all.hint":"點按即可查看所有活動",
 
 	"widget.home.recent_items.label.header.title":"最近瀏覽過的",
-	"widget.home.recent_items.text.empty.description": "沒有最近查看的可用項目。",
-	"widget.home.recent_items.button.all.title":"查看全部",
-	"widget.home.recent_items.button.all.hint":"點擊查看所有項目",
+	"widget.home.recent_items.label.browsing_history.title":"Browsing History",
+	"widget.home.recent_items.text.empty.description": "There is no recently viewed app content to display.",
+	"widget.home.recent_items.text.disabled.description": "Displaying recently viewed app content is turned off.",
+	"widget.home.recent_items.button.view_all.title":"查看全部",
+	"widget.home.recent_items.button.view_all.hint":"點擊查看所有項目",
+	"widget.home.recent_items.button.clear_all.title":"Clear All",
+	"widget.home.recent_items.button.clear_all.hint":"Tap to clear all items",
+	"widget.home.recent_items.prompt.clear_all.text":"Are you sure you want to CLEAR your browsing history?",
 
 	"widget.home.event2_feed.label.header.title":"All Events",
 	"widget.home.event2_feed.text.empty.description": "There are no events available.",
@@ -3495,10 +3518,9 @@
 	"widget.home.prompt.add.favorite": "您確定要添加此收藏夾嗎？",
 	"widget.home.prompt.remove.favorite": "您確定要從收藏夾中刪除此項目嗎？",
 
-	"widget.home.welcome.text.title": "“歡迎來到{{app_title}} {{app_version}}",
-	"widget.home.welcome.button.close.label": "關",
-
-	"widget.home.empty.content.text": "Tap the \u2606s under <a href='$_browseLocalUrlMacro'>Browse</a> to add shortcuts to Favorites. Note that some features require specific <a href='$_privacySettingsLocalUrlMacro'>privacy settings</a> and <a href='$_signInLocalUrlMacro'>signing in</a> with your NetID, phone number, or email address.",
+	"widget.home.welcome_video.title.text": "“歡迎來到{{app_title}} {{app_version}}",
+	"widget.home.welcome_message.title.text": "Tailor Your App Experience",
+	"widget.home.favorites.instructions.message.text": "Tap the \u2606s in <a href='{{browse_local_url}}'>Sections</a> or <a href='{{customize_favorites_local_url}}'>Customize</a> to add shortcuts to Favorites. Note that some features require specific <a href='{{privacy_settings_local_url}}'>privacy settings</a> and <a href='{{sign_in_local_url}}'>signing in</a> with your NetID, phone number, or email address.",
 
 	"widget.home.athletics_news.text.title": "十大新聞",
 	"widget.home.athletics_news.text.empty.description": "目前無法查看十大新聞。",

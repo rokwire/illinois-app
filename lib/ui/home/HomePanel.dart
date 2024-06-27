@@ -83,14 +83,32 @@ enum HomeContentType { favorites, browse }
 // HomePanel
 
 class HomePanel extends StatefulWidget with AnalyticsInfo {
-  static const String notifyRefresh      = "edu.illinois.rokwire.home.refresh";
-  static const String notifySelect       = "edu.illinois.rokwire.home.select";
+  static const String notifyRefresh  = "edu.illinois.rokwire.home.refresh";
+  static const String notifySelect   = "edu.illinois.rokwire.home.select";
+  static const String selectParamKey = "select-param";
+
+  final Map<String, dynamic> params = <String, dynamic>{};
+
+  HomeContentType? get initialContentType => params[selectParamKey];
+  set initialContentType(HomeContentType? value) => params[selectParamKey] = value;
 
   @override
   State<StatefulWidget> createState() => _HomePanelState();
 
   @override
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Home;
+
+  static bool get hasState {
+    Set<NotificationsListener>? subscribers = NotificationService().subscribers(notifySelect);
+    if (subscribers != null) {
+      for (NotificationsListener subscriber in subscribers) {
+        if ((subscriber is _HomePanelState) && subscriber.mounted) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 
   static dynamic dataFromCode(String code, {
     bool title = false,
@@ -568,9 +586,18 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
     NotificationService().subscribe(this, [
       _HomeContentTab.notifySelect,
+      HomePanel.notifySelect,
     ]);
 
-    _contentType = _homeContentTypeFromString(Storage().homeContentType) ?? HomeContentType.browse;
+    HomeContentType? initialContentType = widget.initialContentType;
+    if (initialContentType != null) {
+      Storage().homeContentType = _homeContentTypeToString(_contentType = initialContentType);
+      widget.initialContentType = null;
+    }
+    else {
+      _contentType = _homeContentTypeFromString(Storage().homeContentType) ?? HomeContentType.favorites;
+    }
+
     _availableSystemCodes = JsonUtils.setStringsValue(FlexUI()['home.system']) ?? <String>{};
     _availableSystemCodes?.remove('tout'); // Tout widget embedded statically here, do not show it as part of favorites
 
@@ -594,7 +621,10 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == _HomeContentTab.notifySelect) {
+    if ((name == _HomeContentTab.notifySelect) && (param is HomeContentType)) {
+      _updateContentType(param);
+    }
+    else if ((name == HomePanel.notifySelect) && (param is HomeContentType)) {
       _updateContentType(param);
     }
   }
@@ -612,19 +642,22 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         ],),
         Expanded(child:
           RefreshIndicator(onRefresh: _onPullToRefresh, child:
-            SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
-              Column(children: [
-                HomeToutWidget(key: _toutKey, contentType: _contentType, updateController: _updateController,),
+            Stack(children: [
+              SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
+                Column(children: [
+                  HomeToutWidget(key: _toutKey, contentType: _contentType, updateController: _updateController,),
 
-                Visibility(visible: (_contentType == HomeContentType.favorites), maintainState: true, child:
-                  HomeFavoritesContentWidget(key: _favoritesKey, availableSystemCodes: _availableSystemCodes, updateController: _updateController,),
-                ),
+                  Visibility(visible: (_contentType == HomeContentType.favorites), maintainState: true, child:
+                    HomeFavoritesContentWidget(key: _favoritesKey, availableSystemCodes: _availableSystemCodes, updateController: _updateController,),
+                  ),
 
-                Visibility(visible: (_contentType == HomeContentType.browse), maintainState: true, child:
-                  BrowseContentWidget(key: _browseKey),
-                ),
-              ],)
-            ),
+                  Visibility(visible: (_contentType == HomeContentType.browse), maintainState: true, child:
+                    BrowseContentWidget(key: _browseKey),
+                  ),
+                ],),
+              ),
+              _topShaddow,
+            ],),
           ),
         ),
       ]),
@@ -633,12 +666,20 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     );
   }
 
+  Widget get _topShaddow => Container(height: HomeToutWidget.triangleHeight, decoration: BoxDecoration(
+    // color: Styles().colors.fillColorPrimaryTransparent03,
+    gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+      Styles().colors.fillColorPrimaryTransparent03,
+      Colors.transparent,
+    ]),
+  ),);
+
   Future<void> _onPullToRefresh() async {
     _updateController.add(HomePanel.notifyRefresh);
   }
 
-  void _updateContentType(HomeContentType contentType) {
-    if (mounted && (contentType != _contentType)) {
+  void _updateContentType(HomeContentType? contentType) {
+    if (mounted && (contentType != null) && (contentType != _contentType)) {
       setState(() {
         Storage().homeContentType = _homeContentTypeToString(_contentType = contentType);
       });
@@ -722,8 +763,8 @@ class _HomeContentTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) => InkWell(onTap: _onTap, child:
     Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: selected ? Styles().colors.surfaceAccent : Styles().colors.white, width: 3))),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: selected ? Styles().colors.fillColorSecondary : Styles().colors.white, width: 3))),
       child: Center(child:
         Row(mainAxisSize: MainAxisSize.min, children: [
           _iconWidget,

@@ -461,8 +461,8 @@ class Guide with Service implements NotificationsListener {
 
   static bool _checkPromotionRoles(Map<String, dynamic>? promotion) {
     dynamic roles = (promotion != null) ? promotion['roles'] : null;
-    return (roles != null) ? BoolExpr.eval(roles, (String? argument) {
-      UserRole? userRole = UserRole.fromString(argument);
+    return (roles != null) ? BoolExpr.eval(roles, (dynamic argument) {
+      UserRole? userRole = (argument is String) ? UserRole.fromString(argument) : null;
       return (userRole != null) ? (Auth2().prefs?.roles?.contains(userRole) ?? false) : null;
     }) : true; 
   }
@@ -471,12 +471,12 @@ class Guide with Service implements NotificationsListener {
     Map<String, dynamic>? card = (promotion != null) ? JsonUtils.mapValue(promotion['card']) : null;
     if (card != null) {
       dynamic cardRole = card['role'];
-      if ((cardRole != null) && !BoolExpr.eval(cardRole, (String? role) { return Auth2().authCard?.role?.toLowerCase() == role?.toLowerCase(); })) {
+      if ((cardRole != null) && !BoolExpr.eval(cardRole, (dynamic role) { return (role is String) ? (Auth2().authCard?.role?.toLowerCase() == role.toLowerCase()) : null; })) {
         return false;
       }
 
       dynamic cardStudentLevel = card['student_level'];
-      if ((cardStudentLevel != null) && !BoolExpr.eval(cardStudentLevel, (String? studentLevel) { return Auth2().authCard?.studentLevel?.toLowerCase() == studentLevel?.toLowerCase(); })) {
+      if ((cardStudentLevel != null) && !BoolExpr.eval(cardStudentLevel, (dynamic studentLevel) { return (studentLevel is String) ? (Auth2().authCard?.studentLevel?.toLowerCase() == studentLevel.toLowerCase()) : null; })) {
         return false;
       }
     }

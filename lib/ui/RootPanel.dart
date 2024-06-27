@@ -122,6 +122,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyGroupsNotification,
       FirebaseMessaging.notifyGroupPostNotification,
       FirebaseMessaging.notifyHomeNotification,
+      FirebaseMessaging.notifyHomeFavoritesNotification,
+      FirebaseMessaging.notifyHomeBrowseNotification,
+      FirebaseMessaging.notifyFavoritesNotification,
       FirebaseMessaging.notifyBrowseNotification,
       FirebaseMessaging.notifyMapNotification,
       FirebaseMessaging.notifyMapEventsNotification,
@@ -156,6 +159,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyWellnessRingsNotification,
       FirebaseMessaging.notifyWellnessStrugglingNotification,
       FirebaseMessaging.notifyWellnessTodoListNotification,
+      FirebaseMessaging.notifyWalletNotification,
+      FirebaseMessaging.notifyWalletIlliniIdNotification,
+      FirebaseMessaging.notifyWalletIlliniIdFaqsNotification,
+      FirebaseMessaging.notifyWalletBusPassNotification,
+      FirebaseMessaging.notifyWalletMealPlanNotification,
+      FirebaseMessaging.notifyWalletAddIlliniCashNotification,
       FirebaseMessaging.notifyInboxNotification,
       FirebaseMessaging.notifyPollNotification,
       FirebaseMessaging.notifyCanvasAppDeepLinkNotification,
@@ -322,7 +331,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onFirebaseAthleticsTeamRosterNotification(param);
     }
     else if (name == FirebaseMessaging.notifyHomeNotification) {
-      _onFirebaseHomeNotification();
+      _onFirebaseTabNotification(RootTab.Home);
+    }
+    else if (name == FirebaseMessaging.notifyHomeFavoritesNotification) {
+      _onFirebaseTabNotification(RootTab.Favorites);
+    }
+    else if (name == FirebaseMessaging.notifyHomeBrowseNotification) {
+      _onFirebaseTabNotification(RootTab.Browse);
+    }
+    else if (name == FirebaseMessaging.notifyFavoritesNotification) {
+      _onFirebaseTabNotification(RootTab.Favorites);
     }
     else if (name == FirebaseMessaging.notifyBrowseNotification) {
       _onFirebaseTabNotification(RootTab.Browse);
@@ -426,6 +444,25 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyWellnessTodoListNotification) {
       _onFirebaseWellnessNotification(WellnessContent.todo);
     }
+
+    else if (name == FirebaseMessaging.notifyWalletNotification) {
+      _onFirebaseTabNotification(RootTab.Wallet);
+    }
+    else if (name == FirebaseMessaging.notifyWalletIlliniIdNotification) {
+      _onFirebaseWaletNotification(WalletContentType.illiniId);
+    }
+    else if (name == FirebaseMessaging.notifyWalletIlliniIdFaqsNotification) {
+      _onFirebaseWaletNotification(WalletContentType.illiniIdFaqs);
+    }
+    else if (name == FirebaseMessaging.notifyWalletBusPassNotification) {
+      _onFirebaseWaletNotification(WalletContentType.busPass);
+    }
+    else if (name == FirebaseMessaging.notifyWalletMealPlanNotification) {
+      _onFirebaseWaletNotification(WalletContentType.mealPlan);
+    }
+    else if (name == FirebaseMessaging.notifyWalletAddIlliniCashNotification) {
+      _onFirebaseWaletNotification(WalletContentType.addIlliniCash);
+    }
     else if (name == FirebaseMessaging.notifyInboxNotification) {
       _onFirebaseInboxNotification();
     }
@@ -493,7 +530,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onFirebaseGuideArticleNotification(param);
     }
     else if (name == HomePanel.notifySelect) {
-      _onSelectTab(RootTab.Home);
+      _onSelectHome(param);
     }
     else if (name == HomeFavoritesPanel.notifySelect) {
       _onSelectTab(RootTab.Favorites);
@@ -510,38 +547,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   }
 
-  void _onTabSelectionChanged(int tabIndex) {
-    if (mounted) {
-      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-      _selectTab(tabIndex);
-    }
-  }
-
-  void _onSelectTab(RootTab tab) {
-    int? tabIndex = _getIndexByRootTab(tab);
-    if (mounted && (tabIndex != null)) {
-      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-      _selectTab(tabIndex);
-    }
-  }
-
-  void _onSelectMaps(dynamic param) {
-    int? mapsIndex = _getIndexByRootTab(RootTab.Maps);
-    if (mounted && (mapsIndex != null)) {
-      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-      int lastTabIndex = _currentTabIndex;
-      _selectTab(mapsIndex);
-      if ((lastTabIndex != mapsIndex) && (param != null) && !ExploreMapPanel.hasState) {
-        Widget? mapsWidget = _panels[RootTab.Maps];
-        ExploreMapPanel? mapsPanel = (mapsWidget is ExploreMapPanel) ? mapsWidget : null;
-        mapsPanel?.params[ExploreMapPanel.selectParamKey] = param;
-      }
-    }
-  }
-
-  void _onFirebaseMapNotification(ExploreMapType mapType) {
-    NotificationService().notify(ExploreMapPanel.notifySelect, mapType);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -572,10 +577,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
     //Treat Assistant tab differently because it is modal bottom sheet
     if (rootTab == RootTab.Assistant) {
-        AssistantHomePanel.present(context);
+      AssistantHomePanel.present(context);
     }
     else if (rootTab == RootTab.Wallet) {
-        WalletHomePanel.present(context);
+      WalletHomePanel.present(context);
     }
     else if ((0 <= tabIndex) && (tabIndex < _tabs.length) && (tabIndex != _currentTabIndex)) {
       _tabBarController!.animateTo(tabIndex);
@@ -722,7 +727,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         toast: toast,
         gravity: ToastGravity.TOP,
         duration: Duration(seconds: Config().inAppNotificationToastTimeout),
-        child: InAppNotificationToast.message(body,
+        child: InAppNotificationToast.message(StringUtils.truncate(value: body, atLength: Config().notificationBodyMaxLength),
           actionText: Localization().getStringEx('dialog.show.title', 'Show'),
           onAction: (completion != null) ? () => _onFirebaseForegroundMessageCompletition(toast, completion) : null,
           onMessage: (completion != null) ? () => _onFirebaseForegroundMessageCompletition(toast, completion) : null,
@@ -995,6 +1000,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
+  void _onTabSelectionChanged(int tabIndex) {
+    if (mounted) {
+      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+      _selectTab(tabIndex);
+    }
+  }
+
   void _onFirebaseGroupsNotification(param) {
     if (param is Map<String, dynamic>) {
       String? groupId = param["entity_id"];
@@ -1044,20 +1056,62 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  void _onFirebaseHomeNotification() {
-    // Pop to Home Panel and select the first tab
-    Navigator.of(context).popUntil((route) => route.isFirst);
-    _selectTab(0);
+  void _onSelectTab(RootTab? tab) {
+    if (mounted) {
+      int? tabIndex = _getIndexByRootTab(tab);
+      if ((tabIndex == null) && (tab == RootTab.Home)) {
+        tabIndex = 0;
+      }
+      if (tabIndex != null) {
+        Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+        _selectTab(tabIndex);
+      }
+      else if (tab == RootTab.Favorites) {
+        _onFirebaseHomeNotification(HomeContentType.favorites);
+      }
+      else if (tab == RootTab.Browse) {
+        _onFirebaseHomeNotification(HomeContentType.browse);
+      }
+    }
   }
 
-  void _onFirebaseTabNotification(RootTab? tab) {
-    if (tab != null) {
-      // Pop to Home Panel
-      Navigator.of(context).popUntil((route) => route.isFirst);
-      // Select tab
-      int? tabIndex = _getIndexByRootTab(tab);
-      if (tabIndex != null) {
-        _selectTab(tabIndex);
+  void _onFirebaseTabNotification(RootTab? tab) =>
+    _onSelectTab(tab);
+
+  void _onFirebaseHomeNotification(HomeContentType homeType) {
+    NotificationService().notify(HomePanel.notifySelect, homeType);
+  }
+
+  void _onFirebaseMapNotification(ExploreMapType mapType) {
+    NotificationService().notify(ExploreMapPanel.notifySelect, mapType);
+  }
+
+  void _onSelectHome(dynamic param) {
+    int? homeIndex = _getIndexByRootTab(RootTab.Home);
+    if (mounted && (homeIndex != null)) {
+      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+      if (homeIndex != _currentTabIndex) {
+        _selectTab(homeIndex);
+        if ((param is HomeContentType) && !HomePanel.hasState) {
+          Widget? homeWidget = _panels[RootTab.Home];
+          HomePanel? homePanel = (homeWidget is HomePanel) ? homeWidget : null;
+          homePanel?.initialContentType = param;
+        }
+      }
+    }
+  }
+
+  void _onSelectMaps(dynamic param) {
+    int? mapsIndex = _getIndexByRootTab(RootTab.Maps);
+    if (mounted && (mapsIndex != null)) {
+      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+      if (mapsIndex != _currentTabIndex) {
+        _selectTab(mapsIndex);
+        if ((param is ExploreMapType) && !ExploreMapPanel.hasState) {
+          Widget? mapsWidget = _panels[RootTab.Maps];
+          ExploreMapPanel? mapsPanel = (mapsWidget is ExploreMapPanel) ? mapsWidget : null;
+          mapsPanel?.params[ExploreMapPanel.selectParamKey] = param;
+        }
       }
     }
   }
@@ -1121,6 +1175,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
+  void _onFirebaseWaletNotification(WalletContentType contentType) {
+    WalletHomePanel.present(context, contentType: contentType);
+  }
+
   void _onFirebaseAcademicsNotification(AcademicsContent content) {
     int? academicsIndex = _getIndexByRootTab(RootTab.Academics);
     if (academicsIndex != null) {
@@ -1181,3 +1239,4 @@ RootTab? rootTabFromString(String? value) {
   }
   return null;
 }
+

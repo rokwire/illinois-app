@@ -26,7 +26,6 @@ import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -59,7 +58,7 @@ class AppAlert {
     bool? alertDismissed = await showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(content: contentWidget, actions: actions,contentPadding: contentPadding,);
+        return AlertDialog(content: contentWidget, actions: actions, contentPadding: contentPadding,);
       },
     );
     return alertDismissed;
@@ -90,37 +89,6 @@ class AppAlert {
     },);
   }
 
-  static Future<void> showPopup(BuildContext context, String? message) async {
-    return showDialog(context: context, builder: (context) {
-      return AlertDialog(contentPadding: EdgeInsets.zero, content:
-        Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)), child:
-          Stack(alignment: Alignment.center, children: [
-            Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32), child:
-              Column(mainAxisSize: MainAxisSize.min, children: [
-                Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container(),
-                Padding(padding: EdgeInsets.only(top: 18), child:
-                  Text(message ?? '', textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle("widget.detail.small"))
-                ),
-              ])
-            ),
-            Positioned.fill(child:
-              Align(alignment: Alignment.topRight, child:
-                InkWell(onTap: () {
-                  Analytics().logAlert(text: message, selection: 'Close');
-                  Navigator.of(context).pop();
-                  }, child:
-                  Padding(padding: EdgeInsets.all(16), child:
-                    Styles().images.getImage('close-circle', excludeFromSemantics: true)
-                  )
-                )
-              )
-            ),
-          ])
-      )
-      );
-    },);
-  }
-
   static Future<bool> showConfirmationDialog(
       {required BuildContext buildContext,
       required String message,
@@ -133,25 +101,23 @@ class AppAlert {
         builder: (context) {
           return AlertDialog(content: Text(message), actions: <Widget>[
             TextButton(
-                child: Text(
-                    StringUtils.ensureNotEmpty(positiveButtonLabel, defaultValue: Localization().getStringEx('dialog.yes.title', 'Yes'))),
-                onPressed: () {
-                  Analytics().logAlert(text: message, selection: 'Yes');
-                  Navigator.pop(context, true);
-                  if (positiveCallback != null) {
-                    positiveCallback();
-                  }
-                }),
+            child: Text(StringUtils.ensureNotEmpty(positiveButtonLabel, defaultValue: Localization().getStringEx('dialog.yes.title', 'Yes'))),
+            onPressed: () {
+              Analytics().logAlert(text: message, selection: 'Yes');
+              Navigator.pop(context, true);
+              if (positiveCallback != null) {
+                positiveCallback();
+              }
+            }),
             TextButton(
-                child: Text(
-                    StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx('dialog.no.title', 'No'))),
-                onPressed: () {
-                  Analytics().logAlert(text: message, selection: 'No');
-                  Navigator.pop(context, false);
-                  if (negativeCallback != null) {
-                    negativeCallback();
-                  }
-                })
+              child: Text(StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx('dialog.no.title', 'No'))),
+              onPressed: () {
+                Analytics().logAlert(text: message, selection: 'No');
+                Navigator.pop(context, false);
+                if (negativeCallback != null) {
+                  negativeCallback();
+                }
+              })
           ]);
         });
     return alertDismissed;

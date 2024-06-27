@@ -6,8 +6,78 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Update again 6.0 welcome message [#4121](https://github.com/rokwire/illinois-app/issues/4121).
+- Updated Browsing History settings page [#4132](https://github.com/rokwire/illinois-app/issues/4132).
+- GroupCreatePanel cover image button text change when image is selected [#4150](https://github.com/rokwire/illinois-app/issues/4150).
+### Added
+- Truncate notification body [#4050](https://github.com/rokwire/illinois-app/issues/4050).
+### Fixed
+- Fixed "You are no longer registered for this event" message spelling.
+- Event2 Detail and Card styling fixes[#4158](https://github.com/rokwire/illinois-app/issues/4158).
+
+## [6.0.14] - 2024-06-26
+### Changed
+- Update again 6.0 welcome message [#4121](https://github.com/rokwire/illinois-app/issues/4121).
+- Updated prompt texts in Browse panel [#4131](https://github.com/rokwire/illinois-app/issues/4131).
+- Updated Customize link style and icon in Home Tout widget [#4122](https://github.com/rokwire/illinois-app/issues/4122).
+- Updated Recently Viewed Favorite Widget and Panel [#4132](https://github.com/rokwire/illinois-app/issues/4132).
+### Fixed
+- Fixed HomeHandleWidget hit test behavior [#4120](https://github.com/rokwire/illinois-app/issues/4120).
+
+## [6.0.13] - 2024-06-25
+### Fixed
+- Focus on "Sources and Links" in Assistant [#4128](https://github.com/rokwire/illinois-app/issues/4128).
+- Keep Illinois Assistant history until user clears it [#4129](https://github.com/rokwire/illinois-app/issues/4129).
+### Changed
+- Update text styles used for Events card and Detail Panel [#4158](https://github.com/rokwire/illinois-app/issues/4158).
+- Update 6.0 welcome message [#4121](https://github.com/rokwire/illinois-app/issues/4121).
+
+## [6.0.12] - 2024-06-24
+### Changed
+- Use static and permanently visible gradient shadow in HomePanel top [#4108](https://github.com/rokwire/illinois-app/issues/4108).
+- Fixed target browser type when opening URLs from Browse panel [#4143](https://github.com/rokwire/illinois-app/issues/4143).
+- Set different properies in app's theme data related to modal dilaog styles [#4080](https://github.com/rokwire/illinois-app/issues/4080).
+
+## [6.0.11] - 2024-06-21
+### Added
+- Added myIllini entry under Academics section in Sections Home tab [#4143](https://github.com/rokwire/illinois-app/issues/4143).
+- Added Healthy Illini Podcast and "I'm Struggling" entries under Wellness section in Sections Home tab [#4143](https://github.com/rokwire/illinois-app/issues/4143).
+### Changed
+- Use linear gradient shadow in HomeToutWidget [#4108](https://github.com/rokwire/illinois-app/issues/4108).
+- Hide App Help and Video Tutorials from Favorites and Browse tabs [#4144](https://github.com/rokwire/illinois-app/issues/4144).
+- Rings entry renamed to Daily Rings under Wellness section in Sections Home tab [#4143](https://github.com/rokwire/illinois-app/issues/4143).
+
+## [6.0.10] - 2024-06-20
+### Added
+- Implemented conditional content attributes [#4134](https://github.com/rokwire/illinois-app/issues/4134).
+### Fixed
+- Fixed small UI tweaks and inaccuracies in new Home panel [#4108](https://github.com/rokwire/illinois-app/issues/4108).
+### Changed
+- Increased leading button size in SliverToutHeaderBar [#3827](https://github.com/rokwire/illinois-app/issues/3827).
+- GroupDetailPanel redirects to MainPost of Reply instead to the Reply Panel [#4049](https://github.com/rokwire/illinois-app/issues/4049).
+
+## [6.0.9] - 2024-06-19
+### Changed
+- Remove "Due Date Catalog" from Academics [#4106](https://github.com/rokwire/illinois-app/issues/4106).
+- GroupPostDetailPanel after send report stay on the detail panel and refresh the Post data[#4087](https://github.com/rokwire/illinois-app/issues/4087).
+### Added
+- Report to dean of students button in GroupDetailPanel [#4038](https://github.com/rokwire/illinois-app/issues/4038).
+- Handled Firebase notifications for the new Home and Wallet panels [#4138](https://github.com/rokwire/illinois-app/issues/4138).
+
+## [6.0.8] - 2024-06-17
+### Changed
+- Remove rokwire from twitter accounts [#4112](https://github.com/rokwire/illinois-app/issues/4112).
+### Added
+- Created new Wallet panel, round #1 [#4114](https://github.com/rokwire/illinois-app/issues/4114).
+
+## [6.0.7] - 2024-06-14
+### Changed
 - Preserve content tab states in Home Panel [#4108](https://github.com/rokwire/illinois-app/issues/4108).
 - Show "My Canvas Courses" for all signed in users [#4115](https://github.com/rokwire/illinois-app/issues/4115).
+- Updated share icon style [#4041](https://github.com/rokwire/illinois-app/issues/4041).
+- Updated logged out prompt text [#4079](https://github.com/rokwire/illinois-app/issues/4079).
+- GroupPostDetailPanel change replies order so the newest reply goes at the bottom [#4081](https://github.com/rokwire/illinois-app/issues/4081).
+- ProfileNamePronouncementConfirmDeleteDialog enhancements [#4083](https://github.com/rokwire/illinois-app/issues/4083).
 
 ## [6.0.6] - 2024-06-12
 ### Changed
