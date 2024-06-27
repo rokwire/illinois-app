@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Update again 6.0 welcome message [#4121](https://github.com/rokwire/illinois-app/issues/4121).
+- Updated Browsing History settings page [#4132](https://github.com/rokwire/illinois-app/issues/4132).
 
 ## [6.0.14] - 2024-06-26
 ### Changed
