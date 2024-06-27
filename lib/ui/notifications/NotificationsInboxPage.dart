@@ -9,6 +9,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
+import 'package:illinois/ext/InboxMessage.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -959,7 +960,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
                       Padding(padding: EdgeInsets.only(bottom: 6), child:
                         Row(children: [
                           Expanded(child:
-                            Text(widget.message?.body ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.body.hint', 'Body: %s'), [widget.message?.body ?? '']), style: Styles().textStyles.getTextStyle("widget.card.detail.regular"))
+                            Text(widget.message?.displayBody ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.body.hint', 'Body: %s'), [widget.message?.displayBody ?? '']), style: Styles().textStyles.getTextStyle("widget.card.detail.regular"))
                       )])) : Container(),
 
                     Row(children: [

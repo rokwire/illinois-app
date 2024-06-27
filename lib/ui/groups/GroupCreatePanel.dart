@@ -283,12 +283,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //Image
   Widget _buildImageSection() {
     final double _imageHeight = 200;
-
+    String? url = _group?.imageURL;
+    String buttonLabel =  StringUtils.isEmpty(url) ? Localization().getStringEx("", "Add Cover Image") : Localization().getStringEx("", "Edit Cover Image");
     return Semantics(container: true,  child: Container(
         height: _imageHeight,
         color: Styles().colors.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-          StringUtils.isNotEmpty(_group?.imageURL)
+          StringUtils.isNotEmpty(url)
               ? Positioned.fill(child: ModalImageHolder(child:Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders)))
               : Container(),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
@@ -297,12 +298,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               height: _imageHeight,
               child: Center(
                   child: Semantics(
-                      label: Localization().getStringEx("panel.groups_settings.add_image", "Add Cover Image"),
+                      label: buttonLabel,
                       hint: Localization().getStringEx("panel.groups_settings.add_image.hint", ""),
                       button: true,
                       excludeSemantics: true,
                       child: RoundedButton(
-                          label: Localization().getStringEx("panel.groups_settings.add_image", "Add Cover Image"),
+                          label: buttonLabel,
                           textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                           onTap: _onTapAddImage,
                           contentWeight: 0.8,

@@ -48,34 +48,32 @@ class _SettingsRecentItemsContentWidgetState extends State<SettingsRecentItemsCo
   @override
   Widget build(BuildContext context) =>
     Column(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.start, children: [
-      _buildQuestionnaireOptions()
+      Padding(padding: EdgeInsets.only(top: 25), child:
+        Column(children:<Widget>[
+          /* Row(children: [
+            Expanded(child:
+              Text(Localization().getStringEx('panel.settings.home.recent_items.title', 'Browsing History'), style:
+                Styles().textStyles.getTextStyle("widget.title.large.fat")
+              ),
+            ),
+          ]),
+          Container(height: 4), */
+          ToggleRibbonButton(
+              label: Localization().getStringEx('panel.settings.home.recent_items.enable.toggle.title', 'Display recently viewed app content'),
+              border: Border.all(color: Styles().colors.surfaceAccent),
+              borderRadius: BorderRadius.all(Radius.circular(4)),
+              toggled: RecentItems().recentItemsEnabled,
+              onTap: _onRecentItemsEnabeldToggled
+          ),
+          Padding(padding: EdgeInsets.only(left: 16, top: 16, bottom: 16), child:
+            Text(Localization().getStringEx("panel.settings.home.recent_items.enable.toggle.info", "When enabled, the Illinois app will display the items you accessed via the Recently Viewed section. To quickly revisit this content, star the Recently Viewed section to add it to your Favorites."),
+              style: Styles().textStyles.getTextStyle('widget.item.regular.thin'),
+            ),
+          ),
+        ]),
+      ),
     ],);
 
-  Widget _buildQuestionnaireOptions() =>
-  Padding(padding: EdgeInsets.only(top: 25), child:
-    Column(children:<Widget>[
-      Row(children: [
-        Expanded(child:
-          Text(Localization().getStringEx('panel.settings.home.recent_items.title', 'Browsing History'), style:
-            Styles().textStyles.getTextStyle("widget.title.large.fat")
-          ),
-        ),
-      ]),
-      Container(height: 4),
-      ToggleRibbonButton(
-          label: Localization().getStringEx('panel.settings.home.recent_items.enable.toggle.title', 'Display recently viewed app content'),
-          border: Border.all(color: Styles().colors.surfaceAccent),
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-          toggled: RecentItems().recentItemsEnabled,
-          onTap: _onRecentItemsEnabeldToggled
-      ),
-      Padding(padding: EdgeInsets.only(left: 16, top: 16, bottom: 16), child:
-        Text(Localization().getStringEx("panel.settings.home.recent_items.enable.toggle.info", "When enabled, the Illinois app will display the items you accessed via the Recently Viewed section. To quickly revisit this content, star the Recently Viewed section to add it to your Favorites."),
-          style: Styles().textStyles.getTextStyle('widget.item.regular.thin'),
-        ),
-      ),
-    ]),
-  );
 
   void _onRecentItemsEnabeldToggled() {
     Analytics().logSelect(target: 'Display recently viewed app content');

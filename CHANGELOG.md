@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Update again 6.0 welcome message [#4121](https://github.com/rokwire/illinois-app/issues/4121).
+- Updated Browsing History settings page [#4132](https://github.com/rokwire/illinois-app/issues/4132).
+- GroupCreatePanel cover image button text change when image is selected [#4150](https://github.com/rokwire/illinois-app/issues/4150).
+- Updated strings.en.json [#4137](https://github.com/rokwire/illinois-app/issues/4137).
+### Added
+- Truncate notification body [#4050](https://github.com/rokwire/illinois-app/issues/4050).
+### Fixed
+- Fixed "You are no longer registered for this event" message spelling.
+- Event2 Detail and Card styling fixes[#4158](https://github.com/rokwire/illinois-app/issues/4158).
 
 ## [6.0.14] - 2024-06-26
 ### Changed
