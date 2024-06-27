@@ -959,7 +959,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
                       Padding(padding: EdgeInsets.only(bottom: 6), child:
                         Row(children: [
                           Expanded(child:
-                            Text(widget.message?.body ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.body.hint', 'Body: %s'), [widget.message?.body ?? '']), style: Styles().textStyles.getTextStyle("widget.card.detail.regular"))
+                            Text(widget.message?.displayBody ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.body.hint', 'Body: %s'), [widget.message?.displayBody ?? '']), style: Styles().textStyles.getTextStyle("widget.card.detail.regular"))
                       )])) : Container(),
 
                     Row(children: [
