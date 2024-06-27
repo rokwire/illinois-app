@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Truncate notification body [#4050](https://github.com/rokwire/illinois-app/issues/4050).
 ### Fixed
 - Fixed "You are no longer registered for this event" message spelling.
+- Event2 Detail and Card styling fixes[#4158](https://github.com/rokwire/illinois-app/issues/4158).
 
 ## [6.0.14] - 2024-06-26
 ### Changed
