@@ -727,7 +727,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         toast: toast,
         gravity: ToastGravity.TOP,
         duration: Duration(seconds: Config().inAppNotificationToastTimeout),
-        child: InAppNotificationToast.message(StringUtils.truncate(value: body, atLength: 250),
+        child: InAppNotificationToast.message(StringUtils.truncate(value: body, atLength: Config().truncationSymbolsCount),
           actionText: Localization().getStringEx('dialog.show.title', 'Show'),
           onAction: (completion != null) ? () => _onFirebaseForegroundMessageCompletition(toast, completion) : null,
           onMessage: (completion != null) ? () => _onFirebaseForegroundMessageCompletition(toast, completion) : null,

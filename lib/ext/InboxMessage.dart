@@ -15,6 +15,7 @@
  */
 
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -99,7 +100,7 @@ extension InboxMessageExt on InboxMessage {
     }
   }
 
-  String? get displayBody => (body != null) ? StringUtils.truncate(value: body!, atLength: 250) : body;
+  String? get displayBody => (body != null) ? StringUtils.truncate(value: body!, atLength: Config().truncationSymbolsCount) : body;
 
   bool get isMuted => (mute == true);
 
