@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
-import 'package:illinois/ui/home/HomeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
