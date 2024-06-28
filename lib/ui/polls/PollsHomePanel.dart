@@ -390,7 +390,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   void _evalBleDescriptionHeight() {
     try {
       final RenderObject? renderBox = _keyBleDescriptionText.currentContext?.findRenderObject();
-      if (renderBox is RenderBox) {
+      if ((renderBox is RenderBox) && renderBox.hasSize) {
         _bleDescriptionTextHeight = renderBox.size.height;
       }
     } on Exception catch (e) {
@@ -1108,7 +1108,7 @@ class _PollCardState extends State<PollCard> {
       double progressWidth = -1.0;
       for (GlobalKey progressKey in _progressKeys!) {
         final RenderObject? progressRender = progressKey.currentContext?.findRenderObject();
-        if ((progressRender is RenderBox) && (0 < progressRender.size.width)) {
+        if ((progressRender is RenderBox) && progressRender.hasSize && (0 < progressRender.size.width)) {
           if ((progressWidth < 0.0) || (progressRender.size.width < progressWidth)) {
             progressWidth = progressRender.size.width;
           }

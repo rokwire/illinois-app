@@ -932,7 +932,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   double get _chatBarHeight {
     RenderObject? chatBarRenderBox = _chatBarKey.currentContext?.findRenderObject();
-    double? chatBarHeight = (chatBarRenderBox is RenderBox) ? chatBarRenderBox.size.height : null;
+    double? chatBarHeight = ((chatBarRenderBox is RenderBox) && chatBarRenderBox.hasSize) ? chatBarRenderBox.size.height : null;
     return chatBarHeight ?? 0;
   }
 

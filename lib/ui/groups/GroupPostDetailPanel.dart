@@ -918,7 +918,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     double? sliverHeaderHeight;
     try {
       final RenderObject? renderBox = _sliverHeaderKey.currentContext?.findRenderObject();
-      if (renderBox is RenderBox) {
+      if ((renderBox is RenderBox) && renderBox.hasSize) {
         sliverHeaderHeight = renderBox.size.height;
       }
     } on Exception catch (e) {
@@ -939,7 +939,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
     BuildContext? scrollContainerContext = _scrollContainerKey.currentContext;
     RenderObject? scrollContainerRenderBox = scrollContainerContext?.findRenderObject();
-    double? scrollContainerHeight = (scrollContainerRenderBox is RenderBox) ? scrollContainerRenderBox.size.height : null;
+    double? scrollContainerHeight = ((scrollContainerRenderBox is RenderBox) && scrollContainerRenderBox.hasSize) ? scrollContainerRenderBox.size.height : null;
 
     if ((scrollContainerHeight != null) && (postEditTop != null)) {
       double offset = postEditTop - scrollContainerHeight + 120;

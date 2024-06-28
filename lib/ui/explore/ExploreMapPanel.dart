@@ -2281,7 +2281,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   static Size? _globalKeySize(GlobalKey key) {
     try {
       final RenderObject? renderBox = key.currentContext?.findRenderObject();
-      return (renderBox is RenderBox) ? renderBox.size : null;
+      return ((renderBox is RenderBox) && renderBox.hasSize) ? renderBox.size : null;
     }
     on Exception catch (e) {
       print(e.toString());
