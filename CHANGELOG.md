@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.0.16] - 2024-06-28
+### Fixed
+- Fixed group and research project page view height in their home widgets [#4125](https://github.com/rokwire/illinois-app/issues/4125).
+### Changed
+- Hide Wallet > Illini ID FAQs [#4183](https://github.com/rokwire/illinois-app/issues/4183).
+
 ## [6.0.15] - 2024-06-27
 ### Changed
 - Update again 6.0 welcome message [#4121](https://github.com/rokwire/illinois-app/issues/4121).
