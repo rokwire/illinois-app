@@ -1,4 +1,6 @@
 
+import 'dart:ui';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -111,6 +113,8 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   Color? get _selectedModulePrimaryColor => _selectedModule!.styles?.colors?['primary'] != null ? Styles().colors.getColor(_selectedModule!.styles!.colors!['primary']!) : Styles().colors.fillColorPrimary;
   Color? get _selectedModuleAccentColor => _selectedModule!.styles?.colors?['accent'] != null ? Styles().colors.getColor(_selectedModule!.styles!.colors!['accent']!) : Styles().colors.fillColorSecondary;
   Widget? get _selectedModuleIcon => Styles().images.getImage(_selectedModule!.styles?.images?['icon'] ?? 'skills-question', size: 48);
+
+  UserUnit? get _currentUnit => _selectedModuleKey != null ? _currentUserUnits[_selectedModuleKey!] : null;
 
   @override
   void onNotification(String name, param) {
@@ -301,11 +305,13 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   }
 
   Widget _buildUnitInfoWidget(UserUnit userUnit, int displayNumber){
+    Unit? previousUnit = _selectedModule?.previousUnit(userUnit);
+    UserUnit? previousUserUnit = _userCourseUnits?.firstWhereOrNull((uu) => previousUnit?.key != null && uu.unit?.key == previousUnit!.key && uu.moduleKey == _selectedModuleKey);
     return Container(
       color: Styles().colors.fillColorPrimary,
       child: Column(
         children: [
-          if (!userUnit.current && !userUnit.isCompleted)
+          if (!userUnit.current && !userUnit.isCompleted && !(previousUserUnit?.lastUserScheduleItem?.isComplete ?? false))
             Padding(
               padding: const EdgeInsets.only(top: 16.0),
               child: Text(sprintf(Localization().getStringEx('panel.essential_skills_coach.dashboard.complete_to_unlock.text', 'Complete Unit %d to unlock'), [displayNumber-1]), style: Styles().textStyles.getTextStyle("widget.title.light.regular.fat")),
@@ -406,13 +412,14 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     bool isCompletedOrCurrent = isCompleted || isCurrent;
 
     bool isNextWithCurrentComplete = (scheduleIndex == userUnit.completed + 1) && userUnit.current && (userUnit.currentUserScheduleItem?.isComplete ?? false);
-    // check for first schedule item of next unit
-    UserUnit? currentUnit = _selectedModuleKey != null ? _currentUserUnits[_selectedModuleKey!] : null;
-    if (currentUnit != null) {
-      isNextWithCurrentComplete |= (userUnit.unit?.key == _selectedModule?.nextUnit(currentUnit)?.key && (currentUnit.lastUserScheduleItem?.isComplete ?? false));
-    }
-
     bool isFirstIncompleteInScheduleItem = userContentReference.contentKey != null && userUnit.currentUserScheduleItem?.firstIncomplete?.contentKey == userContentReference.contentKey;
+
+    // check for first schedule item of next unit
+    bool isNextUnit = false;
+    if (_currentUnit != null) {
+      isNextUnit = userUnit.unit?.key == _selectedModule?.nextUnit(_currentUnit!)?.key;
+      isNextWithCurrentComplete |= (isNextUnit && (_currentUnit?.lastUserScheduleItem?.isComplete ?? false) && isFirstIncompleteInScheduleItem);
+    }
     bool shouldHighlight = (isCurrent && userContentReference.isNotComplete && isFirstIncompleteInScheduleItem) || isNextWithCurrentComplete;
 
     Color? contentColor = content.styles?.colors?['primary'] != null ? Styles().colors.getColor(content.styles!.colors!['primary']!) : Styles().colors.fillColorPrimary;
@@ -435,7 +442,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     }
     if (userContentReference.isComplete && required) {
       iconImage = Styles().images.getImage('skills-check', size: size);
-    } else if (!userUnit.current) {
+    } else if (!userUnit.current && required) {
       iconImage = Padding(
         padding: const EdgeInsets.only(left: 4.0, right: 4.0, bottom: 4.0),
         child: Styles().images.getImage('lock', size: size),
@@ -489,7 +496,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       key: shouldHighlight && userUnit.moduleKey != null ? _currentActivityKey[userUnit.moduleKey!] : null,
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: ElevatedButton(
-        onPressed: userUnit.current || userUnit.isCompleted ? () {
+        onPressed: userUnit.current || userUnit.isCompleted || (isNextWithCurrentComplete && !required) ? () {
           switch (content.reference?.type) {
             case ReferenceType.none:
               Navigator.push(context, CupertinoPageRoute(builder: (context) => AssignmentPanel(
@@ -543,7 +550,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
           shape: shouldHighlight ? RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))) : CircleBorder(),
           side: isCurrent && userContentReference.isNotComplete ? BorderSide(color: borderColor ?? Styles().colors.fillColorSecondary, width: 6.0, strokeAlign: BorderSide.strokeAlignOutside) : null,
           padding: EdgeInsets.all(8.0),
-          backgroundColor: isCompletedOrCurrent ? (userContentReference.isComplete ? completedColor : contentColor) : incompleteColor,
+          backgroundColor: isCompletedOrCurrent || (isNextWithCurrentComplete && !required) ? (userContentReference.isComplete ? completedColor : contentColor) : incompleteColor,
           disabledBackgroundColor: incompleteColor
         ),
       ),

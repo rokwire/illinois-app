@@ -308,6 +308,14 @@ class Module{
     }
     return null;
   }
+
+  Unit? previousUnit(UserUnit userUnit) {
+    int? currentUnitIndex = units?.indexWhere((moduleUnit) => moduleUnit.key == userUnit.unit?.key);
+    if (currentUnitIndex != null && currentUnitIndex >= 1 && currentUnitIndex < units!.length) {
+      return units![currentUnitIndex - 1];
+    }
+    return null;
+  }
 }
 
 class Unit{
