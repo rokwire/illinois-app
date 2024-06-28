@@ -703,10 +703,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
                 ),
                 _buildImage()
               ]),
-              (widget.displayType == GroupCardDisplayType.homeGroups) ?
-                Expanded(child: Container()) : Container(),
               Container(height: 4),
-              // (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups) ?
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Expanded(child:
                   _buildUpdateTime(),

@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -54,11 +55,13 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
 
   List<Group>? _researchProjects;
   bool _loadingResearchProjects = false;
+  Map<String, GlobalKey> _researchProjectsCardKeys = <String, GlobalKey>{};
   DateTime? _pausedDateTime;
 
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
   final double _pageSpacing = 16;
+  final double _pageBottomPadding = 16;
 
   static const String localScheme = 'local';
   static const String openProjectsHost = 'open_projects';
@@ -103,6 +106,7 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
         if (mounted) {
           setState(() {
             _researchProjects = researchProjects;
+            _researchProjectsCardKeys.clear();
             _loadingResearchProjects = false;
           });
         }
@@ -116,6 +120,7 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
       if (mounted && !DeepCollectionEquality().equals(_researchProjects, researchProjects)) {
         setState(() {
           _researchProjects = researchProjects;
+          _researchProjectsCardKeys.clear();
           _pageViewKey = UniqueKey();
           // _pageController = null;
           _pageController?.jumpToPage(0);
@@ -148,55 +153,60 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
     else if (_loadingResearchProjects) {
       return HomeProgressWidget();
     }
-    else if (_researchProjects?.isEmpty ?? true) {
-      return _buildEmpty();
-    }
     else {
-      return _buildProjects();
+      return _buildProjectsContent();
     }
   }
 
-  Widget _buildProjects() {
+  Widget _buildProjectsContent() {
 
-    List<Widget> pages = <Widget>[];
-    if(_researchProjects?.isNotEmpty ?? false) {
-      for (Group? researchProject in _researchProjects!) {
-        if ((researchProject != null) && researchProject.isVisible) {
-          pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
-            Semantics(
-              // excludeSemantics: !(_pageController?.page == _researchProjects?.indexOf(researchProject)),
-             child: GroupCard(group: researchProject, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
-          )));
-        }
+    Widget? contentWidget;
+    List<Group>? visibleResearchProjects = _visibleResearchProjects(_researchProjects);
+    int visibleCount = visibleResearchProjects?.length ?? 0;
+
+    if (1 < visibleCount) {
+      List<Widget> pages = <Widget>[];
+      for (Group researchProject in visibleResearchProjects!) {
+        GlobalKey researchProjectKey = (_researchProjectsCardKeys[researchProject.id!] ??= GlobalKey());
+        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: _pageBottomPadding), child:
+          Semantics(// excludeSemantics: !(_pageController?.page == _researchProjects?.indexOf(researchProject)),
+           child: GroupCard(key: researchProjectKey, group: researchProject, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
+        )));
       }
-    }
 
-    double pageHeight = 90 * MediaQuery.of(context).textScaler.scale(2);
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport);
+      }
 
-    if (_pageController == null) {
-      double screenWidth = MediaQuery.of(context).size.width;
-      double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-      _pageController = PageController(viewportFraction: pageViewport);
-    }
-
-    return Column(children: [
-      Container(height: pageHeight, child:
-        PageView(
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
           key: _pageViewKey,
           controller: _pageController,
-          children: pages,
+          estimatedPageSize: _pageHeight,
           allowImplicitScrolling : true,
+          children: pages,
         )
-      ),
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length, centerWidget:
+      );
+    }
+    else if (visibleCount == 1) {
+      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: _pageSpacing), child:
+        Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ child:
+        GroupCard(group: visibleResearchProjects!.first, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
+      ));
+    }
+
+    return (contentWidget != null) ? Column(children: [
+      contentWidget,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
         LinkButton(
           title: Localization().getStringEx('widget.home.research_projects.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.research_projects.button.all.hint', 'Tap to view all research projects'),
           onTap: _onSeeAll,
         ),
       ),
-    ],);
-
+    ],) : _buildEmpty();
   }
 
   List<Group>? _sortResearchProjects(List<Group>? researchProjects){
@@ -214,6 +224,19 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
     }
 
     return researchProjects;
+  }
+
+  List<Group>? _visibleResearchProjects(List<Group>? researchProjects) {
+    List<Group>? visibleResearchProjects;
+    if (researchProjects != null) {
+      visibleResearchProjects = <Group>[];
+      for (Group researchProject in researchProjects) {
+        if ((researchProject.id != null) && researchProject.isVisible) {
+          visibleResearchProjects.add(researchProject);
+        }
+      }
+    }
+    return visibleResearchProjects;
   }
 
   Widget _buildEmpty() {
@@ -235,6 +258,19 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
     else {
       return Container();
     }
+  }
+
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _researchProjectsCardKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && renderBox.hasSize && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
+      }
+    }
+
+    return minContentHeight ?? 0;
   }
 
   void _onMessageLink(String? url) {
