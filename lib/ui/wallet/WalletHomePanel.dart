@@ -213,7 +213,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
   Widget get _dropdownList {
     List<Widget> contentList = <Widget>[];
     contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (WalletContentType contentType in WalletContentType.values) {
+    for (WalletContentType contentType in _contentTypes) {
       if (_selectedContentType != contentType) {
         contentList.add(RibbonButton(
           backgroundColor: Styles().colors.white,
