@@ -1,6 +1,3 @@
-
-import 'dart:ui';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -505,7 +502,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                 color: _selectedModulePrimaryColor,
                 colorAccent: _selectedModuleAccentColor,
                 helpContent: (_userCourse?.course ?? _course) != null ? content.getLinkedContent(_userCourse?.course ?? _course) : null,
-                preview: !isCompletedOrCurrent,
+                preview: !isCompletedOrCurrent && required,
                 courseDayStart: nextCourseDayStart,
                 courseDayFinalNotification: _courseConfig?.nextFinalNotificationTime(inUtc: true),
                 moduleIcon: _selectedModuleIcon,
@@ -530,7 +527,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                 contentReference: userContentReference,
                 color: _selectedModulePrimaryColor,
                 colorAccent: _selectedModuleAccentColor,
-                preview: !isCompletedOrCurrent,
+                preview: !isCompletedOrCurrent && required,
                 moduleIcon: _selectedModuleIcon,
                 moduleName: _selectedModule?.name ?? '',
                 callback: (result) => _handleProgressUpdate(result, userUnit, unitNumber, userContentReference, activityNumber)
