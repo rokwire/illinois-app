@@ -307,15 +307,15 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
       noteWidgets.add(
           Padding(padding: EdgeInsets.only(top: 16),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                //TODO: html widgets throwing ui exception (infinite width)
-                html.Html(
-                    data: notesHeaderText,
-                    style: {
-                      'body': html.Style.fromTextStyle(Styles().textStyles.getTextStyle("widget.detail.small.fat") ??
-                          TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 14.0, color: Styles().colors.fillColorPrimary)),
-                    }
+                Expanded(
+                  child: html.Html(
+                      data: notesHeaderText,
+                      style: {
+                        'body': html.Style.fromTextStyle(Styles().textStyles.getTextStyle("widget.detail.small.fat") ??
+                            TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 14.0, color: Styles().colors.fillColorPrimary)),
+                      }
+                  ),
                 ),
                 Visibility(
                   visible: SpeechToText().isEnabled,
