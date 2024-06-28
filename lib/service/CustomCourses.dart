@@ -343,7 +343,7 @@ class CustomCourses with Service implements NotificationsListener {
         Uint8List? fileContent = await con.Content().getFileContentItem(key, Config().essentialSkillsCoachKey ?? "");
         _loadingContentReferenceKeys.remove(key);
         if (fileContent != null) {
-          _contentFileCache[key] = fileContent;
+          return _contentFileCache[key] = fileContent;
         }
       }
     }

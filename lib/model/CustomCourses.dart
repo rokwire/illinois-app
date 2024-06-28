@@ -176,17 +176,17 @@ class UserCourse {
         normalizedNow = normalizedNow.subtract(const Duration(days: 1));
       }
       if ((_isSameDay(date, normalizedFirstCompleted) || date.isAfter(normalizedFirstCompleted)) && (_isSameDay(date, normalizedNow) || date.isBefore(normalizedNow))) {
-        for (DateTime restart in normalizeDateTimes(streakRestarts ?? [], startOfDayOffset)) {
+        for (DateTime restart in normalizeDateTimes(streakRestarts ?? [], startOfDayOffset + Duration(minutes: 5))) {
           if (_isSameDay(restart, date)) {
             return true;  // part of a streak if a streak was restarted on this day
           }
         }
-        for (DateTime reset in normalizeDateTimes(streakResets ?? [], startOfDayOffset, onHour: true)) {
+        for (DateTime reset in normalizeDateTimes(streakResets ?? [], startOfDayOffset + Duration(minutes: 5))) {
           if (_isSameDay(reset, date)) {
             return false; // not part of streak if a streak was reset on this day
           }
         }
-        for (DateTime use in normalizeDateTimes(pauseUses ?? [], startOfDayOffset, onHour: true)) {
+        for (DateTime use in normalizeDateTimes(pauseUses ?? [], startOfDayOffset + Duration(minutes: 5))) {
           if (_isSameDay(use, date)) {
             return false; // not part of streak if a pause was used on this day
           }
@@ -205,7 +205,7 @@ class UserCourse {
       return false;
     }
 
-    for (DateTime use in normalizeDateTimes(pauseUses ?? [], startOfDayOffset)) {
+    for (DateTime use in normalizeDateTimes(pauseUses ?? [], startOfDayOffset + Duration(minutes: 5))) {
       if (_isSameDay(use, date)) {
         return true;
       }
@@ -218,10 +218,9 @@ class UserCourse {
     return date.year == other.year && date.month == other.month && date.day == other.day;
   }
 
-  static List<DateTime> normalizeDateTimes(List<DateTime> dateTimes, Duration startOfDayOffset, {bool onHour = false}) {
+  static List<DateTime> normalizeDateTimes(List<DateTime> dateTimes, Duration startOfDayOffset) {
     return List.generate(dateTimes.length, (index) {
-      DateTime dt = dateTimes[index].subtract(startOfDayOffset);
-      return onHour ? DateTime(dt.year, dt.month, dt.day, dt.hour) : dt;
+      return dateTimes[index].subtract(startOfDayOffset);
     });
   }
 }

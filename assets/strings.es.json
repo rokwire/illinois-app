@@ -3181,6 +3181,7 @@
     "panel.essential_skills_coach.assignment.experience.bad.notes.header.": "Why not? What got in your way?",
     "panel.essential_skills_coach.assignment.experience.notes.header.": "Notes",
     "panel.essential_skills_coach.assignment.completion.selection.header": "Did you complete this task?",
+    "panel.essential_skills_coach.assignment.completion.later.message": "Check back %s to tell us how it went.",
     "panel.essential_skills_coach.assignment.completion.button.yes.label": "Yes",
     "panel.essential_skills_coach.assignment.completion.button.no.label": "No",
     "panel.essential_skills_coach.assignment.history.header": "History",

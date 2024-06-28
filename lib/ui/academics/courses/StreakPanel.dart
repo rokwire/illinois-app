@@ -324,7 +324,7 @@ class _StreakPanelState extends State<StreakPanel> {
         hourOffset -= 24;
       }
     }
-    _courseDayStartOffset = Duration(hours: hourOffset + 12); // align timestamps to midday (day boundaries + 12 hours)
+    _courseDayStartOffset = Duration(hours: hourOffset);
     //TODO: verify this works as intended
   }
 
