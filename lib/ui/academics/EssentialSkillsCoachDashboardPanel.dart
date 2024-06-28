@@ -54,7 +54,6 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
 
     _loadCourseAndUnits();
     _loadCourseConfig();
-    //TODO: check ESC onboarding completed, _hasStartedSkillsCoach, completed BESSI for onboarding sequence
     super.initState();
   }
 
@@ -131,22 +130,28 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   }
 
   Widget get coachContent {
-    return Column(
-      children: [
-        _buildStreakWidget(),
-        Container(
-          color: _selectedModulePrimaryColor,
-          child: _buildModuleSelection(),
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            child: Container(
-              color: Styles().colors.background,
-              child: Column(children: _buildModuleUnitWidgets(),),
+    return RefreshIndicator(
+      onRefresh: () async {
+        _loadCourseAndUnits();
+        _loadCourseConfig();
+      },
+      child: Column(
+        children: [
+          _buildStreakWidget(),
+          Container(
+            color: _selectedModulePrimaryColor,
+            child: _buildModuleSelection(),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Container(
+                color: Styles().colors.background,
+                child: Column(children: _buildModuleUnitWidgets(),),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

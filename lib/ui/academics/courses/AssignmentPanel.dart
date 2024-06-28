@@ -300,7 +300,6 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
         ]);
       }
 
-      //TODO: check back at ... to tell us how it went
       String notesHeaderText = isComplete ? (_content.styles?.strings?['notes_complete_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.good.notes.header.', "Describe your experience.")) :
       (isNotComplete ? (_content.styles?.strings?['notes_incomplete_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.bad.notes.header.', "Why not? What got in your way?")) :
       (_content.styles?.strings?['notes_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.notes.header.', "Notes")));
@@ -326,18 +325,31 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
           )
       );
 
+      String completionResponseDay = AppDateTime().getDisplayDay(dateTimeUtc: widget.courseDayFinalNotification, includeAtSuffix: true)?.toLowerCase() ?? '';
+      String completionResponseTime = AppDateTime().getDisplayTime(dateTimeUtc: widget.courseDayFinalNotification) ?? '';
+      String completionResponseDateTime = 'later';
+      if (completionResponseDay.isNotEmpty) {
+        completionResponseDateTime = completionResponseDay;
+        if (completionResponseTime.isNotEmpty) {
+          completionResponseDateTime += ' $completionResponseTime';
+        }
+      }
       assignmentWidgets.addAll([
         Divider(color: _color, thickness: 2, indent: 8.0, endIndent: 8.0,),
-        if (_showCompletionOptions)
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: html.Html(data: _content.styles?.strings?['complete_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.completion.selection.header', "Did you complete this task?"),
-              style: {
-                'body': html.Style.fromTextStyle(Styles().textStyles.getTextStyle("widget.detail.regular") ??
-                    TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16.0, color: Styles().colors.fillColorPrimary)),
-              },
-            ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 16),
+          child: html.Html(
+            data: _showCompletionOptions ?
+              (_content.styles?.strings?['complete_prompt'] ??
+                  Localization().getStringEx('panel.essential_skills_coach.assignment.completion.selection.header', "Did you complete this task?")) :
+              sprintf(_content.styles?.strings?['check_later_message'] ??
+                  Localization().getStringEx('panel.essential_skills_coach.assignment.completion.later.message', "Check back %s to tell us how it went."), [completionResponseDateTime]),
+            style: {
+              'body': html.Style.fromTextStyle(Styles().textStyles.getTextStyle("widget.detail.regular") ??
+                  TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16.0, color: Styles().colors.fillColorPrimary)),
+            },
           ),
+        ),
         if (_showCompletionOptions)
           Padding(
             padding: EdgeInsets.only(bottom: 16),
