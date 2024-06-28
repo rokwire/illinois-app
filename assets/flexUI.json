@@ -226,6 +226,7 @@
 				"app_help"                      : false,
 				"home.video_tutorials"          : false,
 				"home.system.welcome_video"     : false,
+				"wallet.illini_id_faq"          : false,
 				"student_courses"               : "${config.settings.studentCoursesEnabled}"
 			}
 		}
