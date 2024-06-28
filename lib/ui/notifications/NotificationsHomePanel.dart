@@ -327,12 +327,12 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
       takenHeight += mediaQuery.viewPadding.top + mediaQuery.viewInsets.top + 16;
 
       final RenderObject? contentDropDownRenderBox = _contentDropDownKey.currentContext?.findRenderObject();
-      if (contentDropDownRenderBox is RenderBox) {
+      if ((contentDropDownRenderBox is RenderBox) && contentDropDownRenderBox.hasSize) {
         takenHeight += contentDropDownRenderBox.size.height;
       }
 
       final RenderObject? sheetHeaderRenderBox = _sheetHeaderKey.currentContext?.findRenderObject();
-      if (sheetHeaderRenderBox is RenderBox) {
+      if ((sheetHeaderRenderBox is RenderBox) && sheetHeaderRenderBox.hasSize) {
         takenHeight += sheetHeaderRenderBox.size.height;
       }
     } on Exception catch (e) {

@@ -849,7 +849,7 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
     double? minContentHeight;
     for (GlobalKey contentKey in _contentKeys.values) {
       final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
-      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+      if ((renderBox is RenderBox) && renderBox.hasSize && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
         minContentHeight = renderBox.size.height;
       }
     }

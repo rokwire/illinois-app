@@ -238,10 +238,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
 
   double? get _contentHeight {
     RenderObject? pageRenderBox = _pageKey.currentContext?.findRenderObject();
-    double? pageHeight = (pageRenderBox is RenderBox) ? pageRenderBox.size.height : null;
+    double? pageHeight = ((pageRenderBox is RenderBox) && pageRenderBox.hasSize) ? pageRenderBox.size.height : null;
 
     RenderObject? pageHeaderRenderBox = _pageHeadingKey.currentContext?.findRenderObject();
-    double? pageHeaderHeight = (pageHeaderRenderBox is RenderBox) ? pageHeaderRenderBox.size.height : null;
+    double? pageHeaderHeight = ((pageHeaderRenderBox is RenderBox) && pageHeaderRenderBox.hasSize) ? pageHeaderRenderBox.size.height : null;
 
     return ((pageHeight != null) && (pageHeaderHeight != null)) ? (pageHeight - pageHeaderHeight) : null;
   }
