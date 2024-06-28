@@ -3213,6 +3213,7 @@
     "panel.essential_skills_coach.unit_info.button.continue.label": "Continue",
     "panel.essential_skills_coach.pdf_view.header.title": "PDF View",
     "panel.essential_skills_coach.video.header.title": "Video",
+    "panel.essential_skills_coach.video.error.message": "Failed to load video. Please try again later.",
 
     "panel.home_canvas_course.header.title": "Curso",
     "panel.home_canvas_course.load.failed.error.msg": "No se ha podido cargar el curso. Vuelve a intentarlo más tarde.",
