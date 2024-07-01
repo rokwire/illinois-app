@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.0.17] - 2024-07-01
 ### Fixed
 - Essential Skills Coach Improvements [#4149](https://github.com/rokwire/illinois-app/issues/4149).
 - Loading and sorting Canvas Courses [#4136](https://github.com/rokwire/illinois-app/issues/4136).
