@@ -15,11 +15,9 @@
  */
 
 import 'dart:core';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Content.dart' as con;
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -33,8 +31,6 @@ class CustomCourses with Service implements NotificationsListener {
   Map<String, Course>? _courses;
   Map<String, UserCourse>? _userCourses;
   Map<String, List<UserUnit>>? _userUnits;
-  Set<String> _loadingContentReferenceKeys = {};
-  Map<String, Uint8List?> _contentFileCache = {};
   late String _timezoneName;
   late int _timezoneOffset;
 
@@ -326,25 +322,6 @@ class CustomCourses with Service implements NotificationsListener {
       if (responseString != null) {
         List<dynamic>? responseList = JsonUtils.decodeList(responseString);
         return UserContent.listFromJson(responseList);
-      }
-    }
-    return null;
-  }
-
-  // Course content files
-
-  Future<Uint8List?> loadContentFile(String? key) async {
-    if (key != null) {
-      if (_contentFileCache[key] != null) {
-        return _contentFileCache[key];
-      }
-      if (key.isNotEmpty && !_loadingContentReferenceKeys.contains(key)) {
-        _loadingContentReferenceKeys.add(key);
-        Uint8List? fileContent = await con.Content().getFileContentItem(key, Config().essentialSkillsCoachKey ?? "");
-        _loadingContentReferenceKeys.remove(key);
-        if (fileContent != null) {
-          return _contentFileCache[key] = fileContent;
-        }
       }
     }
     return null;

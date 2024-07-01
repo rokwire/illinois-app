@@ -2,7 +2,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:illinois/service/CustomCourses.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Content.dart' as con;
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -152,10 +153,16 @@ class _PDFPanelState extends State<PDFPanel> with WidgetsBindingObserver {
   Widget get _loadingIndicator => const Center(child: CircularProgressIndicator(),);
 
   Future<void> _loadFileContents() async {
-    Uint8List? fileContents = await CustomCourses().loadContentFile(widget.resourceKey);
-    if (fileContents != null && mounted) {
+    if (widget.resourceKey != null && Config().essentialSkillsCoachKey != null) {
+      Uint8List? fileContents = await con.Content().getFileContentItem(widget.resourceKey!, Config().essentialSkillsCoachKey!);
+      if (fileContents != null && mounted) {
+        setState(() {
+          _fileContents = fileContents;
+        });
+      }
+    } else if (mounted) {
       setState(() {
-        _fileContents = fileContents;
+        errorMessage = Localization().getStringEx('panel.essential_skills_coach.pdf_view.error.message', 'Missing required data to load the requested file. Please try again later.');
       });
     }
   }

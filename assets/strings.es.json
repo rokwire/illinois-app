@@ -3212,6 +3212,7 @@
     "panel.essential_skills_coach.unit_info.header.title": "Unit Information",
     "panel.essential_skills_coach.unit_info.button.continue.label": "Continue",
     "panel.essential_skills_coach.pdf_view.header.title": "PDF View",
+    "panel.essential_skills_coach.pdf_view.error.message": "Missing required data to load the requested file. Please try again later.",
     "panel.essential_skills_coach.video.header.title": "Video",
     "panel.essential_skills_coach.video.error.message": "Failed to load video. Please try again later.",
 
