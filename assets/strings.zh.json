@@ -3166,6 +3166,7 @@
 	"panel.essential_skills_coach.assignment.experience.bad.notes.header.": "Why not? What got in your way?",
 	"panel.essential_skills_coach.assignment.experience.notes.header.": "Notes",
 	"panel.essential_skills_coach.assignment.completion.selection.header": "Did you complete this task?",
+	"panel.essential_skills_coach.assignment.completion.later.message": "Check back %s to tell us how it went.",
 	"panel.essential_skills_coach.assignment.completion.button.yes.label": "Yes",
 	"panel.essential_skills_coach.assignment.completion.button.no.label": "No",
 	"panel.essential_skills_coach.assignment.history.header": "History",
@@ -3196,7 +3197,9 @@
 	"panel.essential_skills_coach.unit_info.header.title": "Unit Information",
 	"panel.essential_skills_coach.unit_info.button.continue.label": "Continue",
 	"panel.essential_skills_coach.pdf_view.header.title": "PDF View",
+	"panel.essential_skills_coach.pdf_view.error.message": "Missing required data to load the requested file. Please try again later.",
 	"panel.essential_skills_coach.video.header.title": "Video",
+	"panel.essential_skills_coach.video.error.message": "Failed to load video. Please try again later.",
 
 	"panel.home_canvas_course.header.title": "課程",
 	"panel.home_canvas_course.load.failed.error.msg": "無法加載課程. 請稍後再試.",

@@ -861,6 +861,9 @@
 
     "chevron-left-bold": {"src": "images/chevron-left.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "size issue?"},
     "chevron-right-bold": {"src": "images/chevron-right.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "size issue?"},
+
+    "double-chevron-left": {"src": "0xf100", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 16},
+    "double-chevron-right": {"src": "0xf101", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 16},
     
     "icon-up-orange": {"src": "images/icon-up.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "size issue?"},
     "icon-down-orange": {"src": "images/icon-down-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "size issue?"},
@@ -1073,7 +1076,7 @@
     "lock": {"src": "0xf023", "type":  "fa.icon", "weight": "solid", "color": "surface", "size": 48},
     "closed-book": {"src": "0xf02d", "type":  "fa.icon", "weight": "solid", "color": "fillColorPrimary", "size": 30},
     "text-icon": {"src": "images/text-icon.png", "type": "flutter.asset", "size": 35},
-    "link-icon": {"src": "images/external-link-icon.png", "type": "flutter.asset", "size": 35},
+    "uri-icon": {"src": "images/external-link-icon.png", "type": "flutter.asset", "size": 35},
     "pdf-icon": {"src": "images/pdf-icon.png", "type": "flutter.asset", "size": 35},
     "powerpoint-icon": {"src": "images/powerpoint.png", "type": "flutter.asset", "size": 35},
     "video-icon": {"src": "images/blue-play.png", "type": "flutter.asset", "size": 35},

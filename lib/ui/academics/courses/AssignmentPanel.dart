@@ -1,7 +1,7 @@
-
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart' as html;
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/CustomCourses.dart';
@@ -25,6 +25,7 @@ class AssignmentPanel extends StatefulWidget {
   final List<Content>? helpContent;
   final bool preview;
   final DateTime? courseDayStart;
+  final DateTime? courseDayFinalNotification;
 
   final Widget? moduleIcon;
   final String moduleName;
@@ -33,7 +34,8 @@ class AssignmentPanel extends StatefulWidget {
   final int activityNumber;
 
   AssignmentPanel({required this.content, required this.contentReference, required this.color, required this.colorAccent,
-    this.helpContent, required this.preview, this.courseDayStart, this.moduleIcon, required this.moduleName, required this.unitNumber, required this.unitName, required this.activityNumber});
+    this.helpContent, required this.preview, this.courseDayStart, this.courseDayFinalNotification, this.moduleIcon,
+    required this.moduleName, required this.unitNumber, required this.unitName, required this.activityNumber});
 
   @override
   State<AssignmentPanel> createState() => _AssignmentPanelState();
@@ -79,6 +81,11 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  bool get _showCompletionOptions {
+    bool isAfterFinalNotification = widget.courseDayStart == null && widget.courseDayFinalNotification == null && widget.courseDayStart!.isBefore(widget.courseDayFinalNotification!);
+    return isComplete || isNotComplete || isAfterFinalNotification;
   }
 
   Map<String, dynamic>? get displayResponse => _userResponseHistory?[_viewingHistoryIndex].response;
@@ -208,22 +215,43 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     List<Widget> assignmentWidgets = [
       Padding(
         padding: EdgeInsets.symmetric(horizontal: 8.0),
-        child: Align(alignment: AlignmentDirectional.centerStart, child: Text(_content.name ?? "", style: Styles().textStyles.getTextStyle("widget.detail.large.extra_fat"),)),
+        child: Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: html.Html(
+            data: _content.name ?? "",
+            style: {
+              'body': html.Style.fromTextStyle(Styles().textStyles.getTextStyle("widget.detail.large.extra_fat") ??
+                  TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20.0, color: Styles().colors.fillColorPrimary)),
+            }
+          )
+        ),
       ),
       Padding(
         padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
-        child: Align(alignment: AlignmentDirectional.centerStart, child: Text(_content.details ?? "", style: Styles().textStyles.getTextStyle("widget.detail.large"))),
+        child: Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: html.Html(
+            data: _content.details ?? "",
+            style: {
+              'body': html.Style.fromTextStyle(Styles().textStyles.getTextStyle("widget.detail.large") ??
+                TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20.0, color: Styles().colors.fillColorPrimary)),
+            }
+          )
+        ),
       ),
     ];
 
     if (!widget.preview) {
       List<Widget> noteWidgets = [];
-      if(isComplete){
+      if (isComplete) {
         noteWidgets.addAll([
           Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
-            child: Text(_content.styles?.strings?['experience_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.selection.header', "How did it go?"),
-              style: Styles().textStyles.getTextStyle("widget.detail.regular"),
+            child: html.Html(data: _content.styles?.strings?['experience_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.experience.selection.header', "How did it go?"),
+              style: {
+                'body': html.Style.fromTextStyle(Styles().textStyles.getTextStyle("widget.detail.regular") ??
+                  TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16.0, color: Styles().colors.fillColorPrimary)),
+              },
             ),
           ),
           Padding(
@@ -277,9 +305,16 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
       noteWidgets.add(
           Padding(padding: EdgeInsets.only(top: 16),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(notesHeaderText, style: Styles().textStyles.getTextStyle("widget.detail.small.fat"),),
+                Expanded(
+                  child: html.Html(
+                      data: notesHeaderText,
+                      style: {
+                        'body': html.Style.fromTextStyle(Styles().textStyles.getTextStyle("widget.detail.small.fat") ??
+                            TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 14.0, color: Styles().colors.fillColorPrimary)),
+                      }
+                  ),
+                ),
                 Visibility(
                   visible: SpeechToText().isEnabled,
                   child: _buildSpeechToTextButton(),
@@ -289,61 +324,79 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
           )
       );
 
+      String completionResponseDay = AppDateTime().getDisplayDay(dateTimeUtc: widget.courseDayFinalNotification, includeAtSuffix: true)?.toLowerCase() ?? '';
+      String completionResponseTime = AppDateTime().getDisplayTime(dateTimeUtc: widget.courseDayFinalNotification) ?? '';
+      String completionResponseDateTime = 'later';
+      if (completionResponseDay.isNotEmpty) {
+        completionResponseDateTime = completionResponseDay;
+        if (completionResponseTime.isNotEmpty) {
+          completionResponseDateTime += ' $completionResponseTime';
+        }
+      }
       assignmentWidgets.addAll([
         Divider(color: _color, thickness: 2, indent: 8.0, endIndent: 8.0,),
         Padding(
           padding: EdgeInsets.symmetric(vertical: 16),
-          child: Text(_content.styles?.strings?['complete_prompt'] ?? Localization().getStringEx('panel.essential_skills_coach.assignment.completion.selection.header', "Did you complete this task?"),
-            style: Styles().textStyles.getTextStyle("widget.detail.regular"),
+          child: html.Html(
+            data: _showCompletionOptions ?
+              (_content.styles?.strings?['complete_prompt'] ??
+                  Localization().getStringEx('panel.essential_skills_coach.assignment.completion.selection.header', "Did you complete this task?")) :
+              sprintf(_content.styles?.strings?['check_later_message'] ??
+                  Localization().getStringEx('panel.essential_skills_coach.assignment.completion.later.message', "Check back %s to tell us how it went."), [completionResponseDateTime]),
+            style: {
+              'body': html.Style.fromTextStyle(Styles().textStyles.getTextStyle("widget.detail.regular") ??
+                  TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16.0, color: Styles().colors.fillColorPrimary)),
+            },
           ),
         ),
-        Padding(
-          padding: EdgeInsets.only(bottom: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Expanded(
-                child:RoundedButton(
-                    label: Localization().getStringEx('panel.essential_skills_coach.assignment.completion.button.yes.label', 'Yes'),
-                    leftIconPadding: EdgeInsets.only(left: 16),
-                    textStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),
-                    backgroundColor: isComplete ? _color : _colorAccent,
-                    borderColor: _color,
-                    leftIcon: Icon(
-                      Icons.check_rounded,
-                      color: isComplete ? _colorAccent : _color,
-                      size: 20,
-                    ),
-                    onTap: _viewingHistoryIndex == 0 && _initialResponse?[UserContent.completeKey] != true ? () {
-                      setState(() {
-                        complete = isComplete ? null : true;
-                      });
-                    } : null
-                ),
-              ),
-              SizedBox(width: 8),
-              Expanded(
+        if (_showCompletionOptions)
+          Padding(
+            padding: EdgeInsets.only(bottom: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
                   child:RoundedButton(
-                    label: Localization().getStringEx('panel.essential_skills_coach.assignment.completion.button.no.label', 'No'),
-                    leftIconPadding: EdgeInsets.only(left: 16),
-                    textStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),
-                    backgroundColor:  isNotComplete ?  _color : _colorAccent,
-                    borderColor: _color,
-                    leftIcon: Icon(
-                      Icons.close_rounded,
-                      color: isNotComplete ? _colorAccent : _color,
-                      size: 20,
-                    ),
-                    onTap: _viewingHistoryIndex == 0 && _initialResponse?[UserContent.completeKey] != true ? (){
-                      setState(() {
-                        complete = isNotComplete ? null : false;
-                        experience = null;
-                      });
-                    } : null,
-                  )),
-            ],
+                      label: Localization().getStringEx('panel.essential_skills_coach.assignment.completion.button.yes.label', 'Yes'),
+                      leftIconPadding: EdgeInsets.only(left: 16),
+                      textStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),
+                      backgroundColor: isComplete ? _color : _colorAccent,
+                      borderColor: _color,
+                      leftIcon: Icon(
+                        Icons.check_rounded,
+                        color: isComplete ? _colorAccent : _color,
+                        size: 20,
+                      ),
+                      onTap: _viewingHistoryIndex == 0 && _initialResponse?[UserContent.completeKey] != true ? () {
+                        setState(() {
+                          complete = isComplete ? null : true;
+                        });
+                      } : null
+                  ),
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                    child:RoundedButton(
+                      label: Localization().getStringEx('panel.essential_skills_coach.assignment.completion.button.no.label', 'No'),
+                      leftIconPadding: EdgeInsets.only(left: 16),
+                      textStyle: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),
+                      backgroundColor:  isNotComplete ?  _color : _colorAccent,
+                      borderColor: _color,
+                      leftIcon: Icon(
+                        Icons.close_rounded,
+                        color: isNotComplete ? _colorAccent : _color,
+                        size: 20,
+                      ),
+                      onTap: _viewingHistoryIndex == 0 && _initialResponse?[UserContent.completeKey] != true ? (){
+                        setState(() {
+                          complete = isNotComplete ? null : false;
+                          experience = null;
+                        });
+                      } : null,
+                    )),
+              ],
+            ),
           ),
-        ),
         ...noteWidgets,
         Padding(
           padding: EdgeInsets.only(bottom: 16),
@@ -446,7 +499,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
       history.sort(((a, b) => b.dateCreated?.compareTo(a.dateCreated ?? DateTime.now()) ?? 0));
       for (int i = 0; i < history.length; i++) {
         UserContent historyItem = history[i];
-        if (widget.courseDayStart != null && !(historyItem.dateCreated?.isBefore(widget.courseDayStart!) ?? true)) {
+        if (widget.courseDayStart != null && !(historyItem.dateCreated?.isBefore(widget.courseDayStart!.subtract(Duration(days: 1))) ?? true)) {
           _initialResponse = historyItem.response != null ? Map.from(historyItem.response!) : null; // copy the current response so we can check if the user changed it when saving
           break;
         }
