@@ -216,6 +216,7 @@ class Config extends rokwire.Config {
   bool get allowGroupsAuthmanSync    => JsonUtils.boolValue(settings['allowGroupsAuthmanSync']) ?? false;
   bool get showGroupPostReactions    => JsonUtils.boolValue(settings['showGroupPostReactions']) ?? false;
   int  get notificationBodyMaxLength => JsonUtils.intValue(settings['notificationBodyMaxLength']) ?? 256;
+  int  get canvasCoursesCountPerPage => JsonUtils.intValue(settings['canvasCoursesCountPerPage']) ?? 100;
 
   String? get healthScreenerSurveyID => JsonUtils.stringValue(settings['health_screener_survey_id']);
   String? get bessiSurveyID          => JsonUtils.stringValue(settings['bessi_survey_id']);
