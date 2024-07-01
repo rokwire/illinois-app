@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Essential Skills Coach Improvements [#4149](https://github.com/rokwire/illinois-app/issues/4149).
+- Loading and sorting Canvas Courses [#4136](https://github.com/rokwire/illinois-app/issues/4136).
 
 ## [6.0.16] - 2024-06-28
 ### Fixed
