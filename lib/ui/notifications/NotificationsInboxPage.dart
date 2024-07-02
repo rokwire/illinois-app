@@ -249,12 +249,12 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
   }
 
   Widget _buildReadAllButton() {
-    return Container(
+    return Semantics(container: true, child: Container(
         child: UnderlinedButton(
             title: Localization().getStringEx("panel.inbox.mark_all_read.label", "Mark all as read"),
             padding: EdgeInsets.symmetric(vertical: 8),
             progress: _loadingMarkAllAsRead,
-            onTap: _onTapMarkAllAsRead));
+            onTap: _onTapMarkAllAsRead)));
   }
 
   // Filters
