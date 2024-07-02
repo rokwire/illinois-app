@@ -34,6 +34,7 @@ import 'package:illinois/ui/settings/SettingsLanguageContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsMapsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsNotificationPreferencesContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterContentWidget.dart';
+import 'package:illinois/ui/settings/SettingsRecentItemsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsResearchContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -45,7 +46,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum SettingsContent { interests, food_filters, sports, favorites, assessments, calendar, appointments, i_card, language, contact, maps, research, privacy, notifications}
+enum SettingsContent { interests, food_filters, sports, favorites, assessments, calendar, recent_items, appointments, i_card, language, contact, maps, research, privacy, notifications}
 
 class SettingsHomeContentPanel extends StatefulWidget with AnalyticsInfo {
   static final List<SettingsContent> _dropdownSettings = [ //SettingsContent visible in the dropdown. Some can be accessed only from outside. Example: SettingsHomeContentPanel.present(context, content: SettingsContent.food_filters);
@@ -55,6 +56,7 @@ class SettingsHomeContentPanel extends StatefulWidget with AnalyticsInfo {
     SettingsContent.assessments,
     SettingsContent.research,
     SettingsContent.calendar,
+    SettingsContent.recent_items,
     SettingsContent.language,
     SettingsContent.privacy,
     SettingsContent.notifications,
@@ -185,14 +187,16 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
             Container(color: Styles().colors.background, child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
-                  RibbonButton(
-                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-                    backgroundColor: Styles().colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-                    rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-                    label: _getContentLabel(_selectedContent),
-                    onTap: _onTapContentDropdown
+                  Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), focused: true, container: true, child:
+                    RibbonButton(
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+                      backgroundColor: Styles().colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                      rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
+                      label: _getContentLabel(_selectedContent),
+                      onTap: _onTapContentDropdown
+                    )
                   )
                 ),
                 _buildContent()
@@ -226,7 +230,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   Widget _buildContentDismissLayer() {
     return Container /* Positioned.fill */ (
         child: BlockSemantics(
-            child: GestureDetector(
+            child: Semantics(excludeSemantics: true,
+              child: GestureDetector(
                 onTap: () {
                   setState(() {
                     _contentValuesVisible = false;
@@ -236,7 +241,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
                   color: Styles().colors.blackTransparent06,
                   height: MediaQuery.of(context).size.height,
                   
-                ))));
+                )))));
   }
 
   Widget _buildContentValuesWidget() {
@@ -273,7 +278,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
       HomeCustomizeFavoritesPanel.present(context).then((_) => NotificationService().notify(HomePanel.notifySelect));
     }
     else {
-    _selectedContent = _lastSelectedContent = contentItem;
+      _selectedContent = _lastSelectedContent = contentItem;
     }
     _changeSettingsContentValuesVisibility();
   }
@@ -296,6 +301,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
         return AthleticsTeamsWidget();
       case SettingsContent.calendar:
         return SettingsCalendarContentWidget();
+      case SettingsContent.recent_items:
+        return SettingsRecentItemsContentWidget();
       case SettingsContent.appointments:
         return SettingsAppointmentsContentWidget();
       case SettingsContent.favorites:
@@ -343,6 +350,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
         return Localization().getStringEx('panel.settings.home.settings.sections.sports.label', 'My Sports Teams');
       case SettingsContent.calendar:
         return Localization().getStringEx('panel.settings.home.settings.sections.calendar.label', 'Add to My Device\'s Calendar');
+      case SettingsContent.recent_items:
+        return Localization().getStringEx('panel.settings.home.settings.sections.recent_items.label', 'My Browsing History');
       case SettingsContent.appointments:
         return Localization().getStringEx('panel.settings.home.settings.sections.appointments.label', 'My Success Team & Appointments');
       case SettingsContent.favorites:

@@ -23,6 +23,7 @@ import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
+import 'package:illinois/ext/InboxMessage.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -209,10 +210,10 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
         Row(key: _sheetHeaderKey, children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:
-              Text(Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'Notifications'), style:  Styles().textStyles.getTextStyle("widget.sheet.title.regular"),)
+              Semantics(container: true, header: true, child: Text(Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'Notifications'), style:  Styles().textStyles.getTextStyle("widget.sheet.title.regular"),))
             )
           ),
-          Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+          Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), container: true, button: true, child:
             InkWell(onTap : _onTapClose, child:
               Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
               Styles().images.getImage('close-circle', excludeFromSemantics: true),
@@ -240,9 +241,10 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
   }
 
   Widget _buildContent() {
-    return Container(color: Styles().colors.background, child:
+    return Semantics(container: true, child: Container(color: Styles().colors.background, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(key: _contentDropDownKey, padding: EdgeInsets.only(left: _defaultPadding, top: _defaultPadding, right: _defaultPadding), child:
+          Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), focused: true, container: true, child:
           RibbonButton(
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
             backgroundColor: Styles().colors.white,
@@ -252,7 +254,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
             label: _getContentItemName(_selectedContent),
             onTap: _changeSettingsContentValuesVisibility
           )
-        ),
+        )),
         Container(height: _contentWidgetHeight, child:
           Stack(children: [
             Padding(padding: EdgeInsets.all(_defaultPadding), child: _contentWidget),
@@ -260,7 +262,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
           ])
         )
       ])
-    );
+    ));
   }
 
   Widget _buildContentValuesContainer() {
@@ -277,13 +279,14 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
   Widget _buildContentDismissLayer() {
     return Positioned.fill(
         child: BlockSemantics(
-            child: GestureDetector(
+            child: Semantics(excludeSemantics: true, child:
+              GestureDetector(
                 onTap: () {
                   setState(() {
                     _contentValuesVisible = false;
                   });
                 },
-                child: Container(color: Styles().colors.blackTransparent06))));
+                child: Container(color: Styles().colors.blackTransparent06)))));
   }
 
   Widget _buildContentValuesWidget() {
@@ -326,12 +329,12 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
       takenHeight += mediaQuery.viewPadding.top + mediaQuery.viewInsets.top + 16;
 
       final RenderObject? contentDropDownRenderBox = _contentDropDownKey.currentContext?.findRenderObject();
-      if (contentDropDownRenderBox is RenderBox) {
+      if ((contentDropDownRenderBox is RenderBox) && contentDropDownRenderBox.hasSize) {
         takenHeight += contentDropDownRenderBox.size.height;
       }
 
       final RenderObject? sheetHeaderRenderBox = _sheetHeaderKey.currentContext?.findRenderObject();
-      if (sheetHeaderRenderBox is RenderBox) {
+      if ((sheetHeaderRenderBox is RenderBox) && sheetHeaderRenderBox.hasSize) {
         takenHeight += sheetHeaderRenderBox.size.height;
       }
     } on Exception catch (e) {

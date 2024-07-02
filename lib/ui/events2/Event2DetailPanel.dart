@@ -200,12 +200,12 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     return (label != null) ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
         Semantics(label: event2UserRoleToString(_event?.userRole), excludeSemantics: true, child:
-          Text(event2UserRoleToString(_event?.userRole)?.toUpperCase() ?? 'ADMIN', style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
+          Text(event2UserRoleToString(_event?.userRole)?.toUpperCase() ?? 'ADMIN', style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
     ))) : Container();
   }
 
 
-  Widget get _contentHeadingWidget => 
+  Widget get _contentHeadingWidget =>
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Expanded(child:
         Padding(padding: EdgeInsets.only(left: 16, top: _hasDisplayCategories ? 16 : 8, bottom: 8), child:
@@ -236,7 +236,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     return (badgeLabel != null) ? Padding(padding: EdgeInsets.only(top: 16), child:
       Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
         Semantics(label: badgeLabel, excludeSemantics: true, child:
-          Text(badgeLabel, style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
+          Text(badgeLabel, style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
     ))) : Container();
   }
 
@@ -253,7 +253,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
             Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
           button: true,
           child: InkWell(onTap: _onFavorite,
-            child: Padding(padding: EdgeInsets.all(16),
+            child: Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
               child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true,)
             )
           ),
@@ -285,7 +285,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   Widget get _sponsorWidget => StringUtils.isNotEmpty(_event?.sponsor) ? Padding(padding: EdgeInsets.only(top: 8), child:
     Row(children: [
       Expanded(child: 
-        Text(_event?.sponsor ?? '', style: Styles().textStyles.getTextStyle('widget.item.regular.fat'), maxLines: 2,)
+        Text(_event?.sponsor ?? '', style: Styles().textStyles.getTextStyle('common.title.secondary'), maxLines: 2,)
       ),
     ],),
    ) : Container();
@@ -984,7 +984,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     _performRegistration(Events2().unregisterFromEvent, onSuccess: (Event2 event) {
       Event2Popup.showMessage(context,
         title: Localization().getStringEx("dialog.success.title", "Success"),
-        message: Localization().getStringEx("panel.event2.detail.unregister.succeeded", "You are no onder registerec for this event."),
+        message: Localization().getStringEx("panel.event2.detail.unregister.succeeded", "You are no longer registered for this event."),
       );
     });
   }

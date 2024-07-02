@@ -205,6 +205,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return _isAdmin || (_isMember && _group?.isMemberAllowedToCreatePost == true && FlexUI().isSharingAvailable);
   }
 
+  bool get _canCreateMessage =>
+      _isAdmin || (_isMember && _group?.isMemberAllowedToPostToSpecificMembers == true && FlexUI().isSharingAvailable);
+
   bool get _canCreatePoll {
     return _isAdmin || ((_group?.canMemberCreatePoll ?? false) && _isMember && FlexUI().isSharingAvailable);
   }
@@ -221,7 +224,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return _isAdmin || (_isMember && (_group?.isMemberAllowedToViewMembersInfo == true));
   }
 
-  bool get _hasOptions => _canLeaveGroup || _canDeleteGroup || _canCreatePost || _canReportAbuse;
+  bool get _hasOptions => _canLeaveGroup || _canDeleteGroup || _canCreatePost|| _canCreateMessage || _canReportAbuse;
 
   @override
   void initState() {
@@ -1279,9 +1282,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           SectionSlantHeader(
               title: Localization().getStringEx("panel.group_detail.label.messages", 'Direct Messages'),
               titleIconKey: 'posts',
-              rightIconKey: _canCreatePost ? "plus-circle" : null,
-              rightIconAction: _canCreatePost ? _onTapCreatePost : null,
-              rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_message.title", "Create Direct Message") : null,
+              rightIconKey: _canCreateMessage ? "plus-circle" : null,
+              rightIconAction: _canCreateMessage ? _onTapCreatePost : null,
+              rightIconLabel: _canCreateMessage ? Localization().getStringEx("panel.group_detail.button.create_message.title", "Create Direct Message") : null,
               children: messagesContent)
         ]);
       } else {
@@ -1318,9 +1321,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       SectionSlantHeader(
           title: Localization().getStringEx("panel.group_detail.label.messages", 'Direct Messages'),
           titleIconKey: 'posts',
-          rightIconKey: _canCreatePost ? "plus-circle" : null,
-          rightIconAction: _canCreatePost ? _onTapCreatePost : null,
-          rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_message.title", "Create Direct Message") : null,
+          rightIconKey: _canCreateMessage ? "plus-circle" : null,
+          rightIconAction: _canCreateMessage ? _onTapCreatePost : null,
+          rightIconLabel: _canCreateMessage ? Localization().getStringEx("panel.group_detail.button.create_message.title", "Create Direct Message") : null,
           children: messagesContent)
     ]);
   }
@@ -1497,7 +1500,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   Widget _buildBadgeWidget() {
     Widget badgeWidget = Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
       Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
-        Text(_group!.currentUserStatusText!.toUpperCase(), style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
+        Text(_group!.currentUserStatusText!.toUpperCase(), style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
       ),
     );
     return _showPolicyButton ? Row(children: <Widget>[
@@ -1737,7 +1740,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                           _onTapCreatePost();
                         })),
                 Visibility(
-                    visible: _canCreatePost,
+                    visible: _canCreateMessage,
                     child: RibbonButton(
                         leftIconKey: "plus-circle",
                         label: Localization().getStringEx("panel.group_detail.button.create_message.title", "Create Direct Message"),

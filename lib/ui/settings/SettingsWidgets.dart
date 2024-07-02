@@ -250,7 +250,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
   void _evalConfirmSize() {
     try {
       final RenderObject? renderBox = _confirmKey.currentContext?.findRenderObject();
-      if (renderBox is RenderBox) {
+      if ((renderBox is RenderBox) && renderBox.hasSize) {
         if (mounted) {
           setState(() {
             _confirmSize = renderBox.size;

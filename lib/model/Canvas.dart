@@ -29,10 +29,12 @@ class CanvasCourse {
   final String? name;
   final bool? accessRestrictedByDate;
   final int? accountId;
+  final DateTime? createdAt;
+  final CanvasTerm? term;
 
   final String? syllabusBody;
 
-  CanvasCourse({this.id, this.name, this.accessRestrictedByDate, this.syllabusBody, this.accountId});
+  CanvasCourse({this.id, this.name, this.accessRestrictedByDate, this.syllabusBody, this.accountId, this.createdAt, this.term});
 
   static CanvasCourse? fromJson(Map<String, dynamic>? json) {
     return (json != null)
@@ -41,7 +43,9 @@ class CanvasCourse {
             name: JsonUtils.stringValue(json['name']),
             accessRestrictedByDate: JsonUtils.boolValue(json['access_restricted_by_date']),
             syllabusBody: JsonUtils.stringValue(json['syllabus_body']),
-            accountId: JsonUtils.intValue(json['account_id'])
+            accountId: JsonUtils.intValue(json['account_id']),
+            createdAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['created_at']), isUtc: true),
+            term: CanvasTerm.fromJson(JsonUtils.mapValue(json['term']))
           )
         : null;
   }
@@ -53,7 +57,9 @@ class CanvasCourse {
       (other.name == name) &&
       (other.accessRestrictedByDate == accessRestrictedByDate) &&
       (other.syllabusBody == syllabusBody) &&
-      (other.accountId == accountId);
+      (other.accountId == accountId) &&
+      (other.createdAt == createdAt) &&
+      (other.term == term);
 
   @override
   int get hashCode =>
@@ -61,7 +67,47 @@ class CanvasCourse {
       (name?.hashCode ?? 0) ^
       (accessRestrictedByDate?.hashCode ?? 0) ^
       (syllabusBody?.hashCode ?? 0) ^
-      (accountId?.hashCode ?? 0);
+      (accountId?.hashCode ?? 0) ^
+      (createdAt?.hashCode ?? 0) ^
+      (term?.hashCode ?? 0);
+}
+
+////////////////////////////////
+// CanvasTerm
+
+class CanvasTerm {
+  final int? id;
+  final String? name;
+  final DateTime? startAt;
+  final DateTime? endAt;
+  final DateTime? createdAt;
+
+  CanvasTerm({this.id, this.name, this.startAt, this.endAt, this.createdAt});
+
+  static CanvasTerm? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return CanvasTerm(
+        id: JsonUtils.intValue(json['id']),
+        name: JsonUtils.stringValue(json['name']),
+        startAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['start_at']), isUtc: true),
+        endAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['end_at']), isUtc: true),
+        createdAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['created_at']), isUtc: true));
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      (other is CanvasTerm) &&
+      (id == other.id) &&
+      (name == other.name) &&
+      (startAt == other.startAt) &&
+      (endAt == other.endAt) &&
+      (createdAt == other.createdAt);
+
+  @override
+  int get hashCode =>
+      (id?.hashCode ?? 0) ^ (name?.hashCode ?? 0) ^ (startAt?.hashCode ?? 0) ^ (endAt?.hashCode ?? 0) ^ (createdAt?.hashCode ?? 0);
 }
 
 ////////////////////////////////

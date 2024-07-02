@@ -474,7 +474,7 @@ class _WalletIlliniCashPanelState extends State<WalletIlliniCashPanel> implement
   Widget _buildBalanceTableHeaderItem(String text){
       return _buildBalanceTableItem(text: text, backColor: Styles().colors.fillColorPrimaryVariant,
           showBorder: false,
-          textStyle: Styles().textStyles.getTextStyle("widget.heading.medium_small"));
+          textStyle: Styles().textStyles.getTextStyle("widget.heading.small.fat"));
   }
 
   Widget _buildBalanceTableItem({required String text, bool showBorder = true, Color? backColor, TextStyle? textStyle}) {

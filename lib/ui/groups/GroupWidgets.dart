@@ -703,10 +703,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
                 ),
                 _buildImage()
               ]),
-              (widget.displayType == GroupCardDisplayType.homeGroups) ?
-                Expanded(child: Container()) : Container(),
               Container(height: 4),
-              // (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups) ?
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Expanded(child:
                   _buildUpdateTime(),
@@ -802,7 +799,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(color: color, borderRadius: BorderRadius.all(Radius.circular(2))),
         child: Text(text,
-          style: Styles().textStyles.getTextStyle("widget.heading.small"))));
+          style: Styles().textStyles.getTextStyle("widget.heading.extra_small"))));
   }
 
   Widget _buildHeadingWrapLabel(String text) {
@@ -1170,7 +1167,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
         Container(width: 6,),
         Container( padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors.mediumGray1, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
           Semantics(label: "Scheduled for ${widget.post?.displayScheduledTime ?? ""}", excludeSemantics: true, child:
-            Text("Scheduled: ${widget.post?.displayScheduledTime ?? ""}", style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
+            Text("Scheduled: ${widget.post?.displayScheduledTime ?? ""}", style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
         ))
     ]));
 
@@ -2341,7 +2338,7 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
       double progressWidth = -1.0;
       for (GlobalKey progressKey in _progressKeys!) {
         final RenderObject? progressRender = progressKey.currentContext?.findRenderObject();
-        if ((progressRender is RenderBox) && (0 < progressRender.size.width)) {
+        if ((progressRender is RenderBox) && progressRender.hasSize && (0 < progressRender.size.width)) {
           if ((progressWidth < 0.0) || (progressRender.size.width < progressWidth)) {
             progressWidth = progressRender.size.width;
           }

@@ -136,7 +136,7 @@ class _SpecialOfferState extends State<_SpecialOffer> {
   void _evalImageHeight() {
     try {
       final RenderObject? renderBoxHtml = _keyHtml.currentContext?.findRenderObject();
-      if (renderBoxHtml is RenderBox) {
+      if ((renderBoxHtml is RenderBox) && renderBoxHtml.hasSize) {
         setState(() {
           _imageHeight = renderBoxHtml.size.height + _textPadding.top + _textPadding.bottom;
         });

@@ -5,10 +5,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Improved semantics for dropdown buttons [#4181](https://github.com/rokwire/illinois-app/issues/4181).
+
+## [6.0.17] - 2024-07-01
+### Fixed
+- Essential Skills Coach Improvements [#4149](https://github.com/rokwire/illinois-app/issues/4149).
+- Loading and sorting Canvas Courses [#4136](https://github.com/rokwire/illinois-app/issues/4136).
+
+## [6.0.16] - 2024-06-28
+### Fixed
+- Fixed group and research project page view height in their home widgets [#4125](https://github.com/rokwire/illinois-app/issues/4125).
+### Changed
+- Hide Wallet > Illini ID FAQs [#4183](https://github.com/rokwire/illinois-app/issues/4183).
+
+## [6.0.15] - 2024-06-27
 ### Changed
 - Update again 6.0 welcome message [#4121](https://github.com/rokwire/illinois-app/issues/4121).
-- Updated prompt texts in Browse panel [#4131](https://github.com/rokwire/illinois-app/issues/4131).
+- Updated Browsing History settings page [#4132](https://github.com/rokwire/illinois-app/issues/4132).
+- GroupCreatePanel cover image button text change when image is selected [#4150](https://github.com/rokwire/illinois-app/issues/4150).
+- Updated strings.en.json [#4137](https://github.com/rokwire/illinois-app/issues/4137).
+### Added
+- Truncate notification body [#4050](https://github.com/rokwire/illinois-app/issues/4050).
+### Fixed
+- Fixed "You are no longer registered for this event" message spelling.
+- Event2 Detail and Card styling fixes[#4158](https://github.com/rokwire/illinois-app/issues/4158).
+- GroupDetailPanel show create direct message button only if member is allowed to post to specific members[#4170](https://github.com/rokwire/illinois-app/issues/4170).
+
+## [6.0.14] - 2024-06-26
+### Changed
+- Update again 6.0 welcome message [#4121](https://github.com/rokwire/illinois-app/issues/4121).
+- Updated prompt texts in Browse panel [#4131](https://github.com/rokwire/illinois-app/issues/4131). 
 - Updated Customize link style and icon in Home Tout widget [#4122](https://github.com/rokwire/illinois-app/issues/4122).
+- Updated Recently Viewed Favorite Widget and Panel [#4132](https://github.com/rokwire/illinois-app/issues/4132).
 ### Fixed
 - Fixed HomeHandleWidget hit test behavior [#4120](https://github.com/rokwire/illinois-app/issues/4120).
 

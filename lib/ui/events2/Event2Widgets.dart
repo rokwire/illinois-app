@@ -461,7 +461,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     return (badgeLabel != null) ? 
       Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
         Semantics(label: badgeLabel, excludeSemantics: true, child:
-          Text(badgeLabel, style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
+          Text(badgeLabel, style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
     )) : Container();
   }*/
 
@@ -478,7 +478,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
             Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
           button: true,
           child: InkWell(onTap: _onFavorite,
-            child: Padding(padding: EdgeInsets.all(16),
+            child: Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
               child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true,)
             )
           ),
@@ -849,7 +849,7 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
     double? minContentHeight;
     for (GlobalKey contentKey in _contentKeys.values) {
       final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
-      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+      if ((renderBox is RenderBox) && renderBox.hasSize && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
         minContentHeight = renderBox.size.height;
       }
     }

@@ -1,5 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:illinois/model/CustomCourses.dart';
+import 'package:illinois/ui/academics/courses/PDFPanel.dart';
+import 'package:illinois/ui/academics/courses/UnitInfoPanel.dart';
+import 'package:illinois/ui/academics/courses/VideoPanel.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+class EssentialSkillsCoachWidgets {
+  static void openPdfContent(BuildContext context, String? resourceName, String? resourceKey, {Function(dynamic)? callback}) {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) => PDFPanel(resourceName: resourceName, resourceKey: resourceKey,),
+    ),).then((result) => callback?.call(result));
+  }
+
+  static void openVideoContent(BuildContext context, String? resourceName, String? resourceKey, {Function(dynamic)? callback}) {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) => VideoPanel(resourceName: resourceName, resourceKey: resourceKey,),
+    ),).then((result) => callback?.call(result));
+  }
+
+  static Future<void> openUrlContent(Uri url) async {
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
+  static void openTextContent(BuildContext context, {required Content content, required UserContentReference contentReference,
+    Color? color, Color? colorAccent, required bool preview, Widget? moduleIcon, required String moduleName, Function(dynamic)? callback}) {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) => UnitInfoPanel(
+        content: content,
+        contentReference: contentReference,
+        color: color,
+        colorAccent: colorAccent,
+        preview: preview,
+        moduleIcon: moduleIcon,
+        moduleName: moduleName,
+      ),
+    ),).then((result) => callback?.call(result));
+  }
+}
 
 class EssentialSkillsCoachModuleHeader extends StatelessWidget {
   final Widget? icon;

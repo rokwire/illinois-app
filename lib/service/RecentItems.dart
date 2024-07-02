@@ -31,6 +31,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class RecentItems with Service implements NotificationsListener {
   
   static const String notifyChanged  = "edu.illinois.rokwire.recentitems.changed";
+  static const String notifySettingChanged  = "edu.illinois.rokwire.recentitems.setting.changed";
 
   static const String _cacheFileName = "recentItems.json";
 
@@ -40,13 +41,16 @@ class RecentItems with Service implements NotificationsListener {
   }
   RecentItems._internal();
 
+  late bool _recentItemsEnabled;
   Queue<RecentItem> _recentItems = Queue<RecentItem>();
 
-  Queue<RecentItem> get recentItems => _recentItems;
+  Queue<RecentItem> get recentItems => _recentItemsEnabled ? _recentItems : Queue<RecentItem>();
 
   @override
   void createService() {
-    NotificationService().subscribe(this, Auth2.notifyUserDeleted);
+    NotificationService().subscribe(this, [
+      Auth2.notifyUserDeleted,
+    ]);
   }
 
   @override
@@ -56,6 +60,7 @@ class RecentItems with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
+    _recentItemsEnabled = (Storage().recentItemsEnabled != false);
     _recentItems = await _loadRecentItems() ?? Queue<RecentItem>();
     await super.initService();
   }
@@ -65,24 +70,52 @@ class RecentItems with Service implements NotificationsListener {
     return Set.from([Storage()]);
   }
 
-  void addRecentItem(RecentItem? item) {
+  // NotificationsListener
 
-    if ((item != null) && !_recentItems.contains(item)) {
-      _recentItems.addFirst(item);
-      
-      while (_recentItems.length > Config().recentItemsCount) {
-        _recentItems.removeLast();
-      }
-      _saveRecentItems(_recentItems);
-      NotificationService().notify(notifyChanged, null);
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2.notifyUserDeleted) {
+      clearRecentItems();
     }
   }
 
-  void _clearRecentItems() {
+  // Implementation
+
+  void addRecentItem(RecentItem? item) {
+    if (_recentItemsEnabled) {
+      if ((item != null) && !_recentItems.contains(item)) {
+        _recentItems.addFirst(item);
+
+        while (_recentItems.length > Config().recentItemsCount) {
+          _recentItems.removeLast();
+        }
+        _saveRecentItems(_recentItems);
+        NotificationService().notify(notifyChanged, null);
+      }
+    }
+  }
+
+  void clearRecentItems({bool notify = true}) {
     if (_recentItems.isNotEmpty) {
       _recentItems.clear();
       _saveRecentItems(_recentItems);
-      NotificationService().notify(notifyChanged, null);
+      if (notify) {
+        NotificationService().notify(notifyChanged, null);
+      }
+    }
+  }
+
+  bool get recentItemsEnabled => _recentItemsEnabled;
+
+  set recentItemsEnabled(bool value) {
+    if (_recentItemsEnabled != value) {
+      Storage().recentItemsEnabled = _recentItemsEnabled = value;
+
+      if (!_recentItemsEnabled) {
+        clearRecentItems();
+      }
+
+      NotificationService().notify(notifySettingChanged, null);
     }
   }
 
@@ -107,14 +140,5 @@ class RecentItems with Service implements NotificationsListener {
     String? jsonString = JsonUtils.encode(RecentItem.queueToJson(recentItems));
     await cacheFile?.writeAsString(jsonString ?? '', flush: true);
 
-  }
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == Auth2.notifyUserDeleted) {
-      _clearRecentItems();
-    }
   }
 }
