@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Improved semantics for dropdown buttons [#4181](https://github.com/rokwire/illinois-app/issues/4181).
+### Changed
+- Use non-standard lexicographic sorting in Browse panel [#4143](https://github.com/rokwire/illinois-app/issues/4143).
 
 ## [6.0.17] - 2024-07-01
 ### Fixed
