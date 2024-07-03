@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Hide "My Gies Canvas Courses" and "My College of Medicine Compliance" [#4197](https://github.com/rokwire/illinois-app/issues/4197).
+- Always merge explores on the same location in map marker group, do not allow multiple markers at the same location [#4192](https://github.com/rokwire/illinois-app/issues/4192)
 
 ## [6.0.18] - 2024-07-02
 ### Fixed

@@ -346,7 +346,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx("panel.maps.header.title", "Map")),
       body: RefreshIndicator(onRefresh: _onRefresh, child: _buildScaffoldBody(),),
@@ -2082,38 +2081,36 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   static Set<dynamic>? _buildMarkerGroups(List<Explore>? explores, { double thresoldDistance = 0 }) {
     if (explores != null) {
-      if (0 < thresoldDistance) {
-        // group by thresoldDistance
-        List<List<Explore>> exploreGroups = <List<Explore>>[];
-        
-        for (Explore explore in explores) {
-          ExploreLocation? exploreLocation = explore.exploreLocation;
-          if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
-            List<Explore>? groupExploreList = _lookupExploreGroup(exploreGroups, exploreLocation, thresoldDistance: thresoldDistance);
-            if (groupExploreList != null) {
-              groupExploreList.add(explore);
-            }
-            else {
-              exploreGroups.add(<Explore>[explore]);
-            }
-          }
-        }
+      // group by thresoldDistance
+      List<List<Explore>> exploreGroups = <List<Explore>>[];
 
-        Set<dynamic> markerGroups = <dynamic>{};
-        for (List<Explore> exploreGroup in exploreGroups) {
-          if (exploreGroup.length == 1) {
-            markerGroups.add(exploreGroup.first);
+      for (Explore explore in explores) {
+        ExploreLocation? exploreLocation = explore.exploreLocation;
+        if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
+          List<Explore>? groupExploreList = _lookupExploreGroup(exploreGroups, exploreLocation, thresoldDistance: thresoldDistance);
+          if (groupExploreList != null) {
+            groupExploreList.add(explore);
           }
-          else if (exploreGroup.length > 1) {
-            markerGroups.add(exploreGroup);
+          else {
+            exploreGroups.add(<Explore>[explore]);
           }
         }
-        return markerGroups;
       }
-      else {
-        // no grouping
-        return Set<dynamic>.from(explores);
+
+      Set<dynamic> markerGroups = <dynamic>{};
+      for (List<Explore> exploreGroup in exploreGroups) {
+        if (exploreGroup.length == 1) {
+          markerGroups.add(exploreGroup.first);
+        }
+        else if (exploreGroup.length > 1) {
+          markerGroups.add(exploreGroup);
+        }
       }
+
+      return markerGroups;
+
+      // no grouping
+      // return Set<dynamic>.from(explores);
     }
     return null;
   }
@@ -2255,8 +2252,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
           exploreLocation.latitude?.toDouble() ?? 0,
           exploreLocation.longitude?.toDouble() ?? 0,
           groupExplore.exploreLocation?.latitude?.toDouble() ?? 0,
-          groupExplore.exploreLocation?.longitude?.toDouble() ?? 0);
-        if (distance < thresoldDistance) {
+          groupExplore.exploreLocation?.longitude?.toDouble() ?? 0
+        );
+        if (distance <= thresoldDistance) {
           return groupExploreList;
         }
       }
