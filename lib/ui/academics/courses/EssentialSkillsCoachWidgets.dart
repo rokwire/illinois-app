@@ -3,7 +3,9 @@ import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/ui/academics/courses/PDFPanel.dart';
 import 'package:illinois/ui/academics/courses/UnitInfoPanel.dart';
 import 'package:illinois/ui/academics/courses/VideoPanel.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/ui/SyrveyPanel.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EssentialSkillsCoachWidgets {
@@ -23,6 +25,12 @@ class EssentialSkillsCoachWidgets {
     if (!await launchUrl(url)) {
       throw Exception('Could not launch $url');
     }
+  }
+
+  static void openSurveyContent(BuildContext context, String? resourceKey, {Function(dynamic)? callback}) {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) => SurveyPanel(survey: resourceKey, onComplete: callback, tabBar: uiuc.TabBar(),),
+    ),);
   }
 
   static void openTextContent(BuildContext context, {required Content content, required UserContentReference contentReference,
