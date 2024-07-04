@@ -700,7 +700,7 @@ class UserContent{
   bool get isNotComplete => !isComplete;
 }
 
-enum ReferenceType { video, text, pdf, powerpoint, uri, none }
+enum ReferenceType { video, text, pdf, powerpoint, uri, survey, none }
 
 class Reference{
   final String? name;
@@ -737,6 +737,7 @@ class Reference{
       case 'powerpoint': return ReferenceType.powerpoint;
       case 'pdf': return ReferenceType.pdf;
       case 'uri': return ReferenceType.uri;
+      case 'survey': return ReferenceType.survey;
       default: return ReferenceType.none;
     }
   }
@@ -748,6 +749,7 @@ class Reference{
       case ReferenceType.powerpoint: return 'powerpoint';
       case ReferenceType.pdf: return 'pdf';
       case ReferenceType.uri: return 'uri';
+      case ReferenceType.survey: return 'survey';
       default: return '';
     }
   }

@@ -24,6 +24,7 @@ class AssignmentPanel extends StatefulWidget {
   final Color? colorAccent;
   final List<Content>? helpContent;
   final bool preview;
+  final bool current;
   final DateTime? courseDayStart;
   final DateTime? courseDayFinalNotification;
 
@@ -34,8 +35,8 @@ class AssignmentPanel extends StatefulWidget {
   final int activityNumber;
 
   AssignmentPanel({required this.content, required this.contentReference, required this.color, required this.colorAccent,
-    this.helpContent, required this.preview, this.courseDayStart, this.courseDayFinalNotification, this.moduleIcon,
-    required this.moduleName, required this.unitNumber, required this.unitName, required this.activityNumber});
+    this.helpContent, required this.preview, required this.current, this.courseDayStart, this.courseDayFinalNotification,
+    this.moduleIcon, required this.moduleName, required this.unitNumber, required this.unitName, required this.activityNumber});
 
   @override
   State<AssignmentPanel> createState() => _AssignmentPanelState();
@@ -85,7 +86,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
 
   bool get _showCompletionOptions {
     bool isAfterFinalNotification = widget.courseDayStart == null && widget.courseDayFinalNotification == null && widget.courseDayStart!.isBefore(widget.courseDayFinalNotification!);
-    return isComplete || isNotComplete || isAfterFinalNotification;
+    return !widget.current || isComplete || isNotComplete || isAfterFinalNotification;
   }
 
   Map<String, dynamic>? get displayResponse => _userResponseHistory?[_viewingHistoryIndex].response;
@@ -440,6 +441,16 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
       UserContent historyItem = _userResponseHistory![i];
       DateTime? displayTime = historyItem.dateUpdated ?? historyItem.dateCreated;
       bool isSelected = (i == _viewingHistoryIndex);
+      String label = '';
+      if (widget.current && !_showCompletionOptions) {
+        label = Localization().getStringEx("panel.essential_skills_coach.assignment.history.pending.label", "Pending Response");
+      } else if (displayTime == null) {
+        label = Localization().getStringEx("panel.essential_skills_coach.assignment.history.unsaved.label", "Unsaved Response");
+      } else if (historyItem.isComplete) {
+        label = Localization().getStringEx("panel.essential_skills_coach.assignment.history.complete.label", "Task Completed");
+      } else {
+        label = Localization().getStringEx("panel.essential_skills_coach.assignment.history.incomplete.label", "Task Not Completed");
+      }
       taskWidgets.add(Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -448,7 +459,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
             child: TextButton(
               onPressed: () => _onTapViewHistoryResponse(i),
               child: Text(
-                displayTime == null ? Localization().getStringEx("panel.essential_skills_coach.assignment.history.unsaved.label", "Unsaved Response") : (historyItem.isComplete ? Localization().getStringEx("panel.essential_skills_coach.assignment.history.complete.label", "Task Completed"): Localization().getStringEx("panel.essential_skills_coach.assignment.history.incomplete.label", "Task Not Completed")),
+                label,
                 style: Styles().textStyles.getTextStyle(isSelected ? "widget.detail.regular.extra_fat" : "widget.detail.regular")?.apply(decoration: TextDecoration.underline),
               ),
             ),

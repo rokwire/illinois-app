@@ -1064,6 +1064,7 @@
     "skills-emotional": {"src": "images/emotional_skills.png", "type": "flutter.asset"},
     "skills-innovation": {"src": "images/innovation.png", "type": "flutter.asset"},
     "skills-play": {"src": "images/play.png", "type": "flutter.asset", "size": 48},
+    "skills-survey": {"src": "0xf682", "type":  "fa.icon", "weight": "solid", "color": "surface", "size": 48},
     "skills-question": {"src": "images/question.png", "type": "flutter.asset", "size": 48},
     "skills-check": {"src": "images/check.png", "type": "flutter.asset", "size": 48},
     "skills-social-button": {"src": "images/skills_social_button.png", "type": "flutter.asset", "size": 48},
