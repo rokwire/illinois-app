@@ -152,17 +152,17 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
       Container(
               color: Styles().colors.background,
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Padding(
-                    key: _pageHeadingKey,
-                    padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-                    child: RibbonButton(
-                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-                        backgroundColor: Styles().colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-                        rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-                        label: _getContentItemName(_selectedContent) ?? '',
-                        onTap: _onTapContentSwitch)),
+                    Padding(
+                      key: _pageHeadingKey,
+                      padding: EdgeInsets.only(left: 16, top: 16, right: 16),
+                      child: Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), focused: true, container: true, child: RibbonButton(
+                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+                          backgroundColor: Styles().colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                          rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
+                          label: _getContentItemName(_selectedContent) ?? '',
+                          onTap: _onTapContentSwitch))),
                 _buildContent(),
               ]))
     ]);

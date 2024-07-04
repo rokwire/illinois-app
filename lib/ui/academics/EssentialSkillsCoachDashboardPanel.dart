@@ -16,6 +16,7 @@ import 'package:illinois/ui/academics/courses/ResourcesPanel.dart';
 import 'package:illinois/ui/academics/courses/SkillsHistoryPanel.dart';
 import 'package:illinois/ui/academics/courses/StreakPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -503,6 +504,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                 colorAccent: _selectedModuleAccentColor,
                 helpContent: (_userCourse?.course ?? _course) != null ? content.getLinkedContent(_userCourse?.course ?? _course) : null,
                 preview: !isCompletedOrCurrent && required,
+                current: isCurrent,
                 courseDayStart: nextCourseDayStart,
                 courseDayFinalNotification: _courseConfig?.nextFinalNotificationTime(inUtc: true),
                 moduleIcon: _selectedModuleIcon,
@@ -538,6 +540,11 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
               if (uri != null) {
                 EssentialSkillsCoachWidgets.openUrlContent(uri);
               }
+              break;
+            case ReferenceType.survey:
+              String? surveyId = content.reference!.referenceKey;
+              EssentialSkillsCoachWidgets.openSurveyContent(context, surveyId,
+                callback: surveyId == Config().bessiSurveyID ? (response) => _gotoHistory(response, userUnit, unitNumber, userContentReference, activityNumber) : null);
               break;
             default: return;
           }
@@ -667,6 +674,18 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     }
   }
 
+  void _gotoHistory(dynamic response, UserUnit userUnit, int unitNumber, UserContentReference userContentReference, int activityNumber) {
+    if (response is SurveyResponse) {
+      String? moduleKey = _selectedModuleKey;
+      if (moduleKey != null && StringUtils.isNotEmpty(userUnit.unit?.key) && StringUtils.isNotEmpty(userContentReference.contentKey)) {
+        _updateProgress(moduleKey, userUnit.unit!.key!, {UserContent.completeKey: true, "survey_response_id": response.id}, userContentReference, unitNumber, activityNumber);
+      }
+      setStateIfMounted(() {
+        _selectedTab = EssentialSkillsCoachTab.history;
+      });
+    }
+  }
+
   void _handleProgressUpdate(dynamic result, UserUnit userUnit, int unitNumber, UserContentReference userContentReference, int activityNumber) {
     if (result is Map<String, dynamic>) {
       String? moduleKey = _selectedModuleKey;
@@ -743,7 +762,6 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
       }
     }
   }
-
 
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {

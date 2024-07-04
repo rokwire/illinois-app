@@ -3185,6 +3185,7 @@
     "panel.essential_skills_coach.assignment.completion.button.yes.label": "Yes",
     "panel.essential_skills_coach.assignment.completion.button.no.label": "No",
     "panel.essential_skills_coach.assignment.history.header": "History",
+    "panel.essential_skills_coach.assignment.history.pending.label": "Pending Response",
     "panel.essential_skills_coach.assignment.history.unsaved.label": "Unsaved Response",
     "panel.essential_skills_coach.assignment.history.complete.label": "Task Completed",
     "panel.essential_skills_coach.assignment.history.incomplete.label": "Task Not Completed",
