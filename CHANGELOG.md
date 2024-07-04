@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support Essential Skills Coach survey content type [#4204](https://github.com/rokwire/illinois-app/issues/4204)
 ### Fixed
 - Improved semantics focus for Assistant panel [#4195](https://github.com/rokwire/illinois-app/issues/4195).
+- Fixed RegExp definition for Git4143 canonical representation [#4143](https://github.com/rokwire/illinois-app/issues/4143).
 
 ## [6.0.19] - 2024-07-03
 ### Changed
