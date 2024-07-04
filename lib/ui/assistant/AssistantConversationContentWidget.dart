@@ -50,9 +50,11 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   TextEditingController _inputController = TextEditingController();
   final GlobalKey _chatBarKey = GlobalKey();
   final GlobalKey _lastContentItemKey = GlobalKey();
+  final FocusNode _inputFieldFocus = FocusNode();
   late ScrollController _scrollController;
   static double? _scrollPosition;
   bool _shouldScrollToBottom = false;
+  bool _shouldSemanticFocusToLastBubble = false;
 
   bool _listening = false;
 
@@ -152,7 +154,11 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                 child: SingleChildScrollView(
                   controller: _scrollController,
                     physics: AlwaysScrollableScrollPhysics(),
-                    child: Padding(padding: EdgeInsets.all(16), child: Column(children: _buildContentList()))))),
+                    child: Padding(padding: EdgeInsets.all(16), child:
+                      Container(child:
+                        Semantics(/*liveRegion: true, */child:
+                          Column(children:
+                            _buildContentList()))))))),
             Positioned(bottom: _chatBarPaddingBottom, left: 0, right: 0, child: Container(key: _chatBarKey, color: Styles().colors.surface, child: SafeArea(child: _buildChatBar())))
           ]));
   }
@@ -161,7 +167,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     List<Widget> contentList = <Widget>[];
 
     for (Message message in Assistant().messages) {
-      contentList.add(Padding(padding: EdgeInsets.only(bottom: 16), child: _buildChatBubble(message)));
+      contentList.add(Padding(padding: EdgeInsets.only(bottom: 16),
+          child: _buildChatBubble(message)));
     }
 
     if (_loadingResponse) {
@@ -185,7 +192,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
               mainAxisAlignment: message.user ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: [
                 Flexible(
-                    child: Opacity(
+                    child: Semantics(focused: _shouldSemanticFocusToLastBubble && (!_loadingResponse && message == Assistant().messages.lastOrNull),
+                      child:Opacity(
                         opacity: message.example ? 0.5 : 1.0,
                         child: Material(
                             color: message.user
@@ -236,7 +244,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                           Visibility(
                                               visible: (message.feedbackResponseType == FeedbackResponseType.positive),
                                               child: _buildFeedbackResponseDisclaimer())
-                                        ])))))))
+                                        ]))))))))
               ])),
       _buildFeedbackAndSourcesExpandedWidget(message)
     ]);
@@ -422,7 +430,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Widget _buildTypingChatBubble() {
     return Align(
         alignment: AlignmentDirectional.centerStart,
-        child: SizedBox(
+        child: Semantics(focused: true, label: "Loading", child: SizedBox(
             width: 100,
             height: 50,
             child: Material(
@@ -431,7 +439,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                 child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: TypingIndicator(
-                        flashingCircleBrightColor: Styles().colors.surface, flashingCircleDarkColor: Styles().colors.blueAccent)))));
+                        flashingCircleBrightColor: Styles().colors.surface, flashingCircleDarkColor: Styles().colors.blueAccent))))));
   }
 
   List<Widget> _buildWebLinkWidgets(List<String> sources) {
@@ -516,7 +524,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
             child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
               Padding(padding: EdgeInsets.symmetric(horizontal: 14), child: Row(mainAxisSize: MainAxisSize.max, children: [
                 Expanded(
-                    child: Container(
+                    child: Semantics(textField: true, container: true, child:
+                      Container(
                         decoration: BoxDecoration(
                             border: Border.all(color: Styles().colors.surfaceAccent), borderRadius: BorderRadius.circular(12.0)),
                         child: Padding(
@@ -529,6 +538,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                   maxLines: 3,
                                   textCapitalization: TextCapitalization.sentences,
                                   textInputAction: TextInputAction.send,
+                                  focusNode: _inputFieldFocus,
                                   onSubmitted: _submitMessage,
                                   onChanged: (_) => setStateIfMounted((){}),
                                   decoration: InputDecoration(
@@ -541,7 +551,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                               Align(
                                   alignment: Alignment.centerRight,
                                   child: Padding(padding: EdgeInsets.only(right: 0), child: _buildSendImage(enabled)))
-                            ]))))
+                            ])))))
               ])),
               _buildQueryLimit(),
               Visibility(visible: Auth2().isDebugManager && FlexUI().hasFeature('assistant_personalization'), child: _buildContextButton())
@@ -774,6 +784,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       _inputController.text = '';
       _loadingResponse = true;
       _shouldScrollToBottom = true;
+      _shouldSemanticFocusToLastBubble = true;
     });
 
     int? limit = _queryLimit;
