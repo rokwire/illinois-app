@@ -50,7 +50,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   TextEditingController _inputController = TextEditingController();
   final GlobalKey _chatBarKey = GlobalKey();
   final GlobalKey _lastContentItemKey = GlobalKey();
-  final GlobalKey _inputFieldSemanticsKey = GlobalKey();
+  final GlobalKey _inputFieldKey = GlobalKey();
   final FocusNode _inputFieldFocus = FocusNode();
   late ScrollController _scrollController;
   static double? _scrollPosition;
@@ -532,45 +532,47 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   Widget _buildChatBar() {
     bool enabled = (_queryLimit == null) || (_queryLimit! > 0);
-    return Material(
-        color: Styles().colors.surface,
-        child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-            child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Padding(padding: EdgeInsets.symmetric(horizontal: 14), child: Row(mainAxisSize: MainAxisSize.max, children: [
-                Expanded(
-                    child: Semantics(key: _inputFieldSemanticsKey, textField: true, container: true, child:
-                      Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Styles().colors.surfaceAccent), borderRadius: BorderRadius.circular(12.0)),
-                        child: Padding(
-                            padding: const EdgeInsets.only(left: 16.0),
-                            child: Stack(children: [
-                              Padding(padding: EdgeInsets.only(right: 28), child: TextField(
-                                  enabled: enabled,
-                                  controller: _inputController,
-                                  minLines: 1,
-                                  maxLines: 3,
-                                  textCapitalization: TextCapitalization.sentences,
-                                  textInputAction: TextInputAction.send,
-                                  focusNode: _inputFieldFocus,
-                                  onSubmitted: _submitMessage,
-                                  onChanged: (_) => setStateIfMounted((){}),
-                                  decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: enabled
-                                          ? null
-                                          : Localization().getStringEx('panel.assistant.label.queries.limit.title',
-                                          'Sorry you are out of questions for today. Please check back tomorrow to ask more questions!')),
-                                  style: Styles().textStyles.getTextStyle('widget.title.regular'))),
-                              Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Padding(padding: EdgeInsets.only(right: 0), child: _buildSendImage(enabled)))
-                            ])))))
-              ])),
-              _buildQueryLimit(),
-              Visibility(visible: Auth2().isDebugManager && FlexUI().hasFeature('assistant_personalization'), child: _buildContextButton())
-            ])));
+    return Semantics(container: true,
+        child: Material(
+          color: Styles().colors.surface,
+          child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Padding(padding: EdgeInsets.symmetric(horizontal: 14), child: Row(mainAxisSize: MainAxisSize.max, children: [
+                  Expanded(
+                      child:
+                        Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Styles().colors.surfaceAccent), borderRadius: BorderRadius.circular(12.0)),
+                          child: Padding(
+                              padding: const EdgeInsets.only(left: 16.0),
+                              child: Stack(children: [
+                                  Semantics(container: true, child:  Padding(padding: EdgeInsets.only(right: 28), child: TextField(
+                                    key: _inputFieldKey,
+                                    enabled: enabled,
+                                    controller: _inputController,
+                                    minLines: 1,
+                                    maxLines: 3,
+                                    textCapitalization: TextCapitalization.sentences,
+                                    textInputAction: TextInputAction.send,
+                                    focusNode: _inputFieldFocus,
+                                    onSubmitted: _submitMessage,
+                                    onChanged: (_) => setStateIfMounted((){}),
+                                    decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: enabled
+                                            ? null
+                                            : Localization().getStringEx('panel.assistant.label.queries.limit.title',
+                                            'Sorry you are out of questions for today. Please check back tomorrow to ask more questions!')),
+                                    style: Styles().textStyles.getTextStyle('widget.title.regular')))),
+                                Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Padding(padding: EdgeInsets.only(right: 0), child: _buildSendImage(enabled)))
+                              ]))))
+                ])),
+                _buildQueryLimit(),
+                Visibility(visible: Auth2().isDebugManager && FlexUI().hasFeature('assistant_personalization'), child: _buildContextButton())
+              ]))));
   }
 
   Widget _buildSendImage(bool enabled) {
@@ -642,11 +644,12 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Widget _buildContextButton() {
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
-      child: RoundedButton(
-        label: Localization().getStringEx('panel.assistant.button.context.title', 'Context'),
-        onTap: _showContext,
-      ),
-    );
+      child: Semantics(container: true,
+        child: RoundedButton(
+          label: Localization().getStringEx('panel.assistant.button.context.title', 'Context'),
+          onTap: _showContext,
+        ),
+    ));
   }
 
   Future<void> _showContext() {
