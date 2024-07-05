@@ -266,42 +266,46 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
             Visibility(
                 visible: feedbackControlsVisible,
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  IconButton(
-                      onPressed: message.feedbackExplanation == null
-                          ? () {
-                              _sendFeedback(message, true);
-                            }
-                          : null,
-                      icon: Icon(message.feedback == MessageFeedback.good ? Icons.thumb_up : Icons.thumb_up_outlined,
-                          size: feedbackIconSize,
-                          color:
-                              message.feedbackExplanation == null ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor),
-                      iconSize: feedbackIconSize,
-                      splashRadius: feedbackIconSize),
-                  IconButton(
-                      onPressed: message.feedbackExplanation == null
-                          ? () {
-                              _sendFeedback(message, false);
-                            }
-                          : null,
-                      icon: Icon(message.feedback == MessageFeedback.bad ? Icons.thumb_down : Icons.thumb_down_outlined,
-                          size: feedbackIconSize, color: Styles().colors.fillColorPrimary),
-                      iconSize: feedbackIconSize,
-                      splashRadius: feedbackIconSize)
+                  MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Like"), selected: message.feedback == MessageFeedback.good,
+                    child: IconButton(
+                        onPressed: message.feedbackExplanation == null
+                            ? () {
+                                _sendFeedback(message, true);
+                              }
+                            : null,
+                        icon: Icon(message.feedback == MessageFeedback.good ? Icons.thumb_up : Icons.thumb_up_outlined,
+                            size: feedbackIconSize,
+                            color:
+                                message.feedbackExplanation == null ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor),
+                        iconSize: feedbackIconSize,
+                        splashRadius: feedbackIconSize))),
+                    MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Dislike"), selected: message.feedback == MessageFeedback.bad,
+                      child: IconButton(
+                        onPressed: message.feedbackExplanation == null
+                            ? () {
+                                _sendFeedback(message, false);
+                              }
+                            : null,
+                        icon: Icon(message.feedback == MessageFeedback.bad ? Icons.thumb_down : Icons.thumb_down_outlined,
+                            size: feedbackIconSize, color: Styles().colors.fillColorPrimary),
+                        iconSize: feedbackIconSize,
+                        splashRadius: feedbackIconSize)))
                 ])),
             Visibility(
                 visible: areSourcesLabelsVisible,
-                child: Padding(padding: EdgeInsets.only(top: (!message.acceptsFeedback ? 10 : 0), left: (!message.acceptsFeedback ? 5 : 0)), child: InkWell(
-                    onTap: () => _onTapSourcesAndLinksLabel(message),
-                    splashColor: Colors.transparent,
-                    child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                      Text(Localization().getStringEx('panel.assistant.sources_links.label', 'Sources and Links'),
-                          style: Styles().textStyles.getTextStyle('widget.message.small')),
-                      Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Styles().images.getImage(areSourcesValuesVisible ? 'chevron-up-dark-blue' : 'chevron-down-dark-blue') ??
-                              Container())
-                    ]))))
+                child: Padding(padding: EdgeInsets.only(top: (!message.acceptsFeedback ? 10 : 0), left: (!message.acceptsFeedback ? 5 : 0)),
+                    child: Semantics(
+                      child: InkWell(
+                        onTap: () => _onTapSourcesAndLinksLabel(message),
+                        splashColor: Colors.transparent,
+                        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                          Text(Localization().getStringEx('panel.assistant.sources_links.label', 'Sources and Links'),
+                              style: Styles().textStyles.getTextStyle('widget.message.small')),
+                          Padding(
+                              padding: EdgeInsets.only(left: 10),
+                              child: Styles().images.getImage(areSourcesValuesVisible ? 'chevron-up-dark-blue' : 'chevron-down-dark-blue') ??
+                                  Container())
+                    ])))))
           ]),
           Visibility(
               visible: areSourcesValuesVisible,
@@ -400,6 +404,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                   'Thank you for providing feedback!'),
               user: false, feedbackResponseType: FeedbackResponseType.positive));
           _shouldScrollToBottom = true;
+          _shouldSemanticFocusToLastBubble = true;
         }
       } else {
         if (message.feedback == MessageFeedback.bad) {
@@ -414,6 +419,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
           _feedbackMessage = message;
           bad = true;
           _shouldScrollToBottom = true;
+          _shouldSemanticFocusToLastBubble = true;
         }
       }
     });
@@ -422,6 +428,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       Assistant().removeLastMessage();
       _feedbackMessage = null;
       _shouldScrollToBottom = true;
+      _shouldSemanticFocusToLastBubble = true;
     }
 
     Assistant().sendFeedback(message);
@@ -560,20 +567,22 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   Widget _buildSendImage(bool enabled) {
     if (StringUtils.isNotEmpty(_inputController.text)) {
-      return IconButton(
-          splashRadius: 24,
-          icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor),
-          onPressed: enabled
-              ? () {
-            _submitMessage(_inputController.text);
-          }
-              : null);
+      return MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Send"), enabled: enabled,
+          child: IconButton(
+            splashRadius: 24,
+            icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor, semanticLabel: "",),
+            onPressed: enabled
+                ? () {
+              _submitMessage(_inputController.text);
+            }
+                : null)));
     } else {
       return Visibility(
           visible: enabled && SpeechToText().isEnabled,
-          child: IconButton(
+          child: MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Speech to text"),
+            child:IconButton(
               splashRadius: 24,
-              icon: Icon(_listening ? Icons.stop_circle_outlined : Icons.mic, color: Styles().colors.fillColorSecondary),
+              icon: _listening ? Icon(Icons.stop_circle_outlined, color: Styles().colors.fillColorSecondary, semanticLabel: "Stop",) : Icon(Icons.mic, color: Styles().colors.fillColorSecondary, semanticLabel: "microphone",),
               onPressed: enabled
                   ? () {
                 if (_listening) {
@@ -582,7 +591,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                   _startListening();
                 }
               }
-                  : null));
+                  : null))));
     }
   }
 
@@ -837,6 +846,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       Assistant().addMessage(Message(content: negativeFeedbackExplanation, user: true, isNegativeFeedbackMessage: true));
       _negativeFeedbackController.text = '';
       _shouldScrollToBottom = true;
+      _shouldSemanticFocusToLastBubble = true;
     });
     _feedbackMessage?.feedbackExplanation = negativeFeedbackExplanation;
     systemMessage.feedbackResponseType = FeedbackResponseType.positive;
