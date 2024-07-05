@@ -3563,6 +3563,7 @@
     "widget.home.recent_polls.text.title": "Recent Polls",
     "widget.home.recent_polls.text.empty.description": "No Recent Polls are available right now.",
     "widget.home.recent_polls.text.offline": "Recent Polls are not available while offline.",
+    "widget.home.recent_polls.text.logged_out": "Recent Polls are not available while not signed in.",
     "widget.home.recent_polls.button.all.title": "View All",
     "widget.home.recent_polls.button.all.hint": "Tap to view all polls",
 

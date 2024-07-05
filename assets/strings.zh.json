@@ -3541,6 +3541,7 @@
 	"widget.home.recent_polls.text.title": "最近的民意調查",
 	"widget.home.recent_polls.text.empty.description": "目前沒有可用的最近民意調查。.",
 	"widget.home.recent_polls.text.offline": "最近的民意調查在離線時不可用。",
+	"widget.home.recent_polls.text.logged_out": "Recent Polls are not available while not signed in.",
 	"widget.home.recent_polls.button.all.title": "查看全部",
 	"widget.home.recent_polls.button.all.hint": "點按即可查看所有民意調查",
 
