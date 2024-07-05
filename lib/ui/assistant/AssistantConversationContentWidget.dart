@@ -26,6 +26,7 @@ import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/TypingIndicator.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:keyboard_detection/keyboard_detection.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -50,6 +51,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   TextEditingController _inputController = TextEditingController();
   final GlobalKey _chatBarKey = GlobalKey();
   final GlobalKey _lastContentItemKey = GlobalKey();
+  final GlobalKey _inputFieldKey = GlobalKey();
   final FocusNode _inputFieldFocus = FocusNode();
   late ScrollController _scrollController;
   static double? _scrollPosition;
@@ -149,19 +151,21 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
     return accessWidget != null
         ? Column(children: [Padding(padding: EdgeInsets.only(top: 16.0), child: accessWidget)])
-        : Positioned.fill(
-            child: Stack(children: [
-            Padding(padding: EdgeInsets.only(bottom: _scrollContentPaddingBottom), child: RefreshIndicator(
-                onRefresh: _onPullToRefresh,
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                    physics: AlwaysScrollableScrollPhysics(),
-                    child: Padding(padding: EdgeInsets.all(16), child:
-                      Container(child:
-                        Semantics(/*liveRegion: true, */child:
-                          Column(children:
-                            _buildContentList()))))))),
-            Positioned(bottom: _chatBarPaddingBottom, left: 0, right: 0, child: Container(key: _chatBarKey, color: Styles().colors.surface, child: SafeArea(child: _buildChatBar())))
+        :  Positioned.fill(
+                child: Stack(children: [
+                Padding(padding: EdgeInsets.only(bottom: _scrollContentPaddingBottom), child: RefreshIndicator(
+                    onRefresh: _onPullToRefresh,
+                    child: SingleChildScrollView(
+                      controller: _scrollController,
+                        physics: AlwaysScrollableScrollPhysics(),
+                        child: Padding(padding: EdgeInsets.all(16), child:
+                        KeyboardDetection(
+                            controller: KeyboardDetectionController(onChanged: _onKeyboardVisibilityChanged),
+                            child: Container(
+                              child: Semantics(/*liveRegion: true, */child:
+                              Column(children:
+                                _buildContentList())))))))),
+                Positioned(bottom: _chatBarPaddingBottom, left: 0, right: 0, child: Container(key: _chatBarKey, color: Styles().colors.surface, child: SafeArea(child: _buildChatBar())))
           ]));
   }
 
@@ -601,7 +605,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     if (_queryLimit == null) {
       return Container();
     }
-    return Padding(
+    return Semantics(container: true,
+      child: Padding(
         padding: const EdgeInsets.only(top: 8.0),
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Row(mainAxisSize: MainAxisSize.min, children: [
@@ -629,7 +634,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 5))
-        ]));
+        ])));
   }
 
   Widget _buildContextButton() {
@@ -925,6 +930,14 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         });
       }
     });
+  }
+
+  void _onKeyboardVisibilityChanged(KeyboardState state) {
+    if(state == KeyboardState.visible) {
+      setStateIfMounted(() {
+        _shouldScrollToBottom = true;
+      });
+    }
   }
 
   void _clearAllMessages() {

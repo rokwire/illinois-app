@@ -66,6 +66,7 @@ dependencies:
   fl_chart: ^0.68.0
   font_awesome_flutter: '>= 4.7.0' # comment if published plugin is used
   record: ^4.4.4
+  keyboard_detection: ^0.7.1
 
   rokwire_plugin:
     # When depending on this package from a real application you should use:
