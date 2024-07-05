@@ -888,14 +888,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.9"
-  keyboard_detection:
-    dependency: "direct main"
-    description:
-      name: keyboard_detection
-      sha256: "8566ffe7e238ebe0b3684eb0e87f8a55ce78f02a7716a6caad28a83175b35092"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.7.1"
   leak_tracker:
     dependency: transitive
     description:

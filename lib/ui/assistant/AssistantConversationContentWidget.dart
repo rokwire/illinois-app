@@ -26,7 +26,6 @@ import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/TypingIndicator.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:keyboard_detection/keyboard_detection.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -43,7 +42,7 @@ class AssistantConversationContentWidget extends StatefulWidget {
 }
 
 class _AssistantConversationContentWidgetState extends State<AssistantConversationContentWidget>
-    with AutomaticKeepAliveClientMixin<AssistantConversationContentWidget>
+    with AutomaticKeepAliveClientMixin<AssistantConversationContentWidget>, WidgetsBindingObserver
     implements NotificationsListener {
   static final String resourceName = 'assistant';
 
@@ -71,6 +70,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   TextEditingController _negativeFeedbackController = TextEditingController();
   FocusNode _negativeFeedbackFocusNode = FocusNode();
 
+  bool _keyboardVisible = false;
+
   @override
   void initState() {
     super.initState();
@@ -96,6 +97,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     if (CollectionUtils.isNotEmpty(Assistant().messages)) {
       _shouldScrollToBottom = true;
     }
+
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
@@ -108,6 +111,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     _streamSubscription.cancel();
     _inputFieldFocus.dispose();
     _negativeFeedbackFocusNode.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -159,12 +163,10 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                       controller: _scrollController,
                         physics: AlwaysScrollableScrollPhysics(),
                         child: Padding(padding: EdgeInsets.all(16), child:
-                        KeyboardDetection(
-                            controller: KeyboardDetectionController(onChanged: _onKeyboardVisibilityChanged),
-                            child: Container(
+                        Container(
                               child: Semantics(/*liveRegion: true, */child:
                               Column(children:
-                                _buildContentList())))))))),
+                                _buildContentList()))))))),
                 Positioned(bottom: _chatBarPaddingBottom, left: 0, right: 0, child: Container(key: _chatBarKey, color: Styles().colors.surface, child: SafeArea(child: _buildChatBar())))
           ]));
   }
@@ -932,8 +934,16 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     });
   }
 
-  void _onKeyboardVisibilityChanged(KeyboardState state) {
-    if(state == KeyboardState.visible) {
+  @override
+  void didChangeMetrics() {
+      bool keyboardCurrentlyVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+      if(_keyboardVisible != keyboardCurrentlyVisible){
+          _onKeyboardVisibilityChanged(_keyboardVisible = keyboardCurrentlyVisible);
+      }
+  }
+
+  void _onKeyboardVisibilityChanged(bool visible) {
+    if(visible) {
       setStateIfMounted(() {
         _shouldScrollToBottom = true;
         _shouldSemanticFocusToLastBubble = false; //We want to keep the semantics focus on the textField
