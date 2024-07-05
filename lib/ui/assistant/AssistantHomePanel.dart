@@ -126,10 +126,11 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
           color: Styles().colors.white,
           child: Row(children: [
             Expanded(
-                child: Padding(
+                child: Semantics(container: true,
+                  child: Padding(
                     padding: EdgeInsets.only(left: 16),
                     child: Text(Localization().getStringEx('panel.assistant.header.title', 'Illinois Assistant'),
-                        style: Styles().textStyles.getTextStyle("widget.label.medium.fat")))),
+                        style: Styles().textStyles.getTextStyle("widget.label.medium.fat"))))),
             Visibility(visible: (_selectedContent == AssistantContent.conversation), child: LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14)),
             Semantics(
                 label: Localization().getStringEx('dialog.close.title', 'Close'),

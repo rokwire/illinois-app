@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Improved semantics button labels for Assistant panel [#4196](https://github.com/rokwire/illinois-app/issues/4196).
+- Fixed invisible semantics elements in Assistant panel [#4194](https://github.com/rokwire/illinois-app/issues/4193).
 
 ## [6.0.20] - 2024-07-04
 ### Added
