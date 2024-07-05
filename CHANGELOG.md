@@ -5,10 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Improved semantics button labels for Assistant panel [#4196](https://github.com/rokwire/illinois-app/issues/4196).
+
+## [6.0.20] - 2024-07-04
 ### Added
 - Support Essential Skills Coach survey content type [#4204](https://github.com/rokwire/illinois-app/issues/4204)
 ### Fixed
 - Improved semantics focus for Assistant panel [#4195](https://github.com/rokwire/illinois-app/issues/4195).
+- Fixed RegExp definition for Git4143 canonical representation [#4143](https://github.com/rokwire/illinois-app/issues/4143).
 
 ## [6.0.19] - 2024-07-03
 ### Changed
