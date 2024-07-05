@@ -51,7 +51,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   TextEditingController _inputController = TextEditingController();
   final GlobalKey _chatBarKey = GlobalKey();
   final GlobalKey _lastContentItemKey = GlobalKey();
-  final GlobalKey _inputFieldKey = GlobalKey();
+  final GlobalKey _inputFieldSemanticsKey = GlobalKey();
   final FocusNode _inputFieldFocus = FocusNode();
   late ScrollController _scrollController;
   static double? _scrollPosition;
@@ -537,7 +537,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
             child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
               Padding(padding: EdgeInsets.symmetric(horizontal: 14), child: Row(mainAxisSize: MainAxisSize.max, children: [
                 Expanded(
-                    child: Semantics(textField: true, container: true, child:
+                    child: Semantics(key: _inputFieldSemanticsKey, textField: true, container: true, child:
                       Container(
                         decoration: BoxDecoration(
                             border: Border.all(color: Styles().colors.surfaceAccent), borderRadius: BorderRadius.circular(12.0)),
@@ -936,6 +936,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     if(state == KeyboardState.visible) {
       setStateIfMounted(() {
         _shouldScrollToBottom = true;
+        _shouldSemanticFocusToLastBubble = false; //We want to keep the semantics focus on the textField
       });
     }
   }
