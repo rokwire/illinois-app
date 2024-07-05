@@ -104,6 +104,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     _inputController.dispose();
     _negativeFeedbackController.dispose();
     _streamSubscription.cancel();
+    _inputFieldFocus.dispose();
+    _negativeFeedbackFocusNode.dispose();
     super.dispose();
   }
 
@@ -149,7 +151,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         ? Column(children: [Padding(padding: EdgeInsets.only(top: 16.0), child: accessWidget)])
         : Positioned.fill(
             child: Stack(children: [
-            Padding(padding: EdgeInsets.only(bottom: _chatBarHeight), child: RefreshIndicator(
+            Padding(padding: EdgeInsets.only(bottom: _scrollContentPaddingBottom), child: RefreshIndicator(
                 onRefresh: _onPullToRefresh,
                 child: SingleChildScrollView(
                   controller: _scrollController,
@@ -956,6 +958,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     double? chatBarHeight = ((chatBarRenderBox is RenderBox) && chatBarRenderBox.hasSize) ? chatBarRenderBox.size.height : null;
     return chatBarHeight ?? 0;
   }
+
+  double get _scrollContentPaddingBottom => _chatBarHeight + _chatBarPaddingBottom;
 
   static List<String>? buildContentCodes() {
     List<String>? codes = JsonUtils.listStringsValue(FlexUI()['assistant']);
