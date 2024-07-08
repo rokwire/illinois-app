@@ -123,13 +123,6 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
     if (_guideItems != null) {
 
-        _guideItems!.sort((dynamic entry1, dynamic entry2) {
-          return SortUtils.compare(
-            (entry1 is Map) ? JsonUtils.intValue(entry1['sort_order']) : null,
-            (entry2 is Map) ? JsonUtils.intValue(entry2['sort_order']) : null
-          );
-        });
-
       _features = LinkedHashSet<String>();
       for (Map<String, dynamic> guideEntry in _guideItems!) {
         List<dynamic>? features = JsonUtils.listValue(Guide().entryValue(guideEntry, 'features'));
