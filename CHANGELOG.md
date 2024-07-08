@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed Guide list content sort order [#4209](https://github.com/rokwire/illinois-app/issues/4209).
+### Changed
+- Updated wellness wheel image [#4210](https://github.com/rokwire/illinois-app/issues/4210).
 
 ## [6.0.21] - 2024-07-05
 ### Fixed
