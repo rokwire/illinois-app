@@ -404,6 +404,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
       String? operation = JsonUtils.stringValue(data?['operation']);
       if ((entityType == 'event_attendance') && (operation == 'survey_invite')) {
         NotificationService().notify(notifyEventAttendeeSurveyInvitation, data);
+      } else if (entityType == 'event') {
+        // Handle 'upcoming_event' and 'event_notification' operations as showing event detail
+        NotificationService().notify(notifyEventDetail, data);
       }
     }
     else if (type == payloadTypeGameDetail) {
