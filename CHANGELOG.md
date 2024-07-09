@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.0.23] - 2024-07-09
 ### Fixed
 - Showing detail panel when taping over event custom notification [#4214](https://github.com/rokwire/illinois-app/issues/4214).
 - Show delete group dialog if attempting to remove the last admin from group [#4052](https://github.com/rokwire/illinois-app/issues/4052).
