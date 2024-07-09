@@ -26,6 +26,7 @@ import 'package:neom/ui/guide/GuideDetailPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 

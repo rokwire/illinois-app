@@ -1,13 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
-import 'package:neom/ui/profile/ProfileLoginEmailPanel.dart';
-import 'package:neom/ui/profile/ProfileLoginPhoneConfirmPanel.dart';
-import 'package:neom/ui/widgets/HeaderBar.dart';
-import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:neom/ui/profile/ProfileLoginCodePanel.dart';
+import 'package:neom/ui/widgets/RibbonButton.dart';
+import 'package:neom/ui/widgets/SlantedWidget.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';

@@ -30,7 +30,7 @@ import 'package:sprintf/sprintf.dart';
 
 import 'package:neom/service/Analytics.dart';
 
-class SettingsLoginCodePanel extends StatefulWidget with OnboardingPanel {
+class ProfileLoginCodePanel extends StatefulWidget with OnboardingPanel {
   @override
   final Map<String, dynamic>? onboardingContext;
   final bool? linkIdentifier;
@@ -39,10 +39,10 @@ class SettingsLoginCodePanel extends StatefulWidget with OnboardingPanel {
   final String? identifierId;
   final Function()? onFinish;
 
-  SettingsLoginCodePanel({super.key, this.onboardingContext, this.defaultIdentifierType, this.identifier, this.identifierId, this.linkIdentifier, this.onFinish});
+  ProfileLoginCodePanel({super.key, this.onboardingContext, this.defaultIdentifierType, this.identifier, this.identifierId, this.linkIdentifier, this.onFinish});
 
   @override
-  State<StatefulWidget> createState() => _SettingsLoginCodePanelState();
+  State<StatefulWidget> createState() => _ProfileLoginCodePanelState();
 
   @override
   bool get onboardingCanDisplay => !Auth2().isLoggedIn;
@@ -50,7 +50,7 @@ class SettingsLoginCodePanel extends StatefulWidget with OnboardingPanel {
   String? get identifierType => onboardingContext?["identifier_type"] ?? defaultIdentifierType;
 }
 
-class _SettingsLoginCodePanelState extends State<SettingsLoginCodePanel> {
+class _ProfileLoginCodePanelState extends State<ProfileLoginCodePanel> {
   final TextEditingController _codeController = TextEditingController();
 
   String? _identifier;

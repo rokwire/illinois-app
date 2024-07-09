@@ -16,10 +16,9 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
-import 'package:neom/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
+import 'package:neom/ui/profile/ProfileLoginPhoneOrEmailPanel.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/ui/widgets/SlantedWidget.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -371,7 +370,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
           ),
           WidgetSpan(
             child: TextButton(
-              style: ButtonStyle(overlayColor: MaterialStatePropertyAll(Styles().colors.gradientColorPrimary), splashFactory: NoSplash.splashFactory),
+              style: ButtonStyle(overlayColor: WidgetStatePropertyAll(Styles().colors.gradientColorPrimary), splashFactory: NoSplash.splashFactory),
               onPressed: _onTapSignUp,
               child: Text(
                 _state == Auth2PasskeyAccountState.failed ?
@@ -390,7 +389,7 @@ class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
 
   void _onTapSignUp() {
     Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) {
-      return SettingsLoginPhoneOrEmailPanel(/*onFinish: () => _next(context), identifier: _identifierController.text*/);
+      return ProfileLoginPhoneOrEmailPanel(/*onFinish: () => _next(context), identifier: _identifierController.text*/);
     }));
   }
 

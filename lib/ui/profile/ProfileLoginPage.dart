@@ -8,8 +8,7 @@ import 'package:neom/service/FirebaseMessaging.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/ui/profile/ProfileHomePanel.dart';
 import 'package:neom/ui/profile/ProfileLoginLinkedAccountPanel.dart';
-import 'package:neom/ui/profile/ProfileLoginEmailPanel.dart';
-import 'package:neom/ui/profile/ProfileLoginPhoneConfirmPanel.dart';
+import 'package:neom/ui/profile/ProfileLoginCodePanel.dart';
 import 'package:neom/ui/profile/ProfileLoginPhoneOrEmailPanel.dart';
 import 'package:neom/ui/settings/SettingsWidgets.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
@@ -767,7 +766,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       Auth2().authenticateWithCode(Auth2().account?.identifier?.identifier).then((Auth2RequestCodeResult result) {
         if (result == Auth2RequestCodeResult.succeeded) {
           Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) =>
-            ProfileLoginCodePanel(phoneNumber: Auth2().account?.identifier?.identifier, onFinish: () {
+            ProfileLoginCodePanel(identifier: Auth2().account?.identifier?.identifier, onFinish: () {
               completer.complete(true);
             },)
           ),).then((_) {
@@ -789,12 +788,12 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
 
   void _onTapAlternateEmail(Auth2Identifier linked) {
     Analytics().logSelect(target: "Alternate Email");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ProfileLoginLinkedAccountPanel(linkedAccount: linked, mode: LinkAccountMode.email,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ProfileLoginLinkedAccountPanel(linkedIdentifier: linked, mode: LinkAccountMode.email,)));
   }
 
   void _onTapAlternatePhone(Auth2Identifier linked) {
     Analytics().logSelect(target: "Alternate Phone");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ProfileLoginLinkedAccountPanel(linkedAccount: linked, mode: LinkAccountMode.phone,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ProfileLoginLinkedAccountPanel(linkedIdentifier: linked, mode: LinkAccountMode.phone,)));
   }
 
   // Debug
@@ -835,8 +834,8 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
 
   String get _appVersion => Config().appVersion ?? '';
 
-  String get _copyrightText => Localization().getStringEx('panel.settings.home.copyright.text', 'Copyright © {{COPYRIGHT_YEAR}} University of Illinois Board of Trustees')
-    .replaceAll('{{COPYRIGHT_YEAR}}', DateFormat('yyyy').format(DateTime.now()));
+  // String get _copyrightText => Localization().getStringEx('panel.settings.home.copyright.text', 'Copyright © {{COPYRIGHT_YEAR}} University of Illinois Board of Trustees')
+  //   .replaceAll('{{COPYRIGHT_YEAR}}', DateFormat('yyyy').format(DateTime.now()));
 
   // Utilities
 
