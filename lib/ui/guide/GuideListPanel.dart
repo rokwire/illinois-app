@@ -350,7 +350,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateGroups() {
     Analytics().logSelect(target: "Groups");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel()));
   }
 
   void _navigateIlliniCash() {

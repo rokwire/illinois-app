@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Showing detail panel when taping over event custom notification [#4214](https://github.com/rokwire/illinois-app/issues/4214).
+- Show delete group dialog if attempting to remove the last admin from group [#4052](https://github.com/rokwire/illinois-app/issues/4052).
 
 ## [6.0.22] - 2024-07-08
 ### Fixed

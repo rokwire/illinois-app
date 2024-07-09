@@ -42,6 +42,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class GroupsHomePanel extends StatefulWidget {
+  static final String routeName = 'groups_home_panel';
   final rokwire.GroupsContentType? contentType;
   
   GroupsHomePanel({Key? key, this.contentType}) : super(key: key);
@@ -462,7 +463,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                     TextSpan(text: Localization().getStringEx("panel.groups_home.label.my_groups.empty.link.all_groups", "All Groups"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
                         recognizer: TapGestureRecognizer()..onTap = () {
                           Analytics().logSelect(target: "All Groups");
-                          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel(contentType: GroupsContentType.all,)));
+                          Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel(contentType: GroupsContentType.all,)));
                         }, ),
                       TextSpan(text:"."),
               ]

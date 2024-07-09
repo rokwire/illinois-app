@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -50,16 +51,20 @@ class GroupMemberPanel extends StatefulWidget with AnalyticsInfo {
 class _GroupMemberPanelState extends State<GroupMemberPanel> {
   Group? _group;
   Member? _member;
+  List<Member>? _groupAdmins;
   int _progressLoading = 0;
   bool _isAdmin = false;
   bool _updating = false;
   bool _removing = false;
+  bool _deletingGroup = false;
+  bool _loadingAdmins = false;
 
   @override
   void initState() {
     super.initState();
     _loadGroup();
     _loadMember();
+    _loadGroupAdmins();
   }
 
   void _loadGroup() {
@@ -79,33 +84,55 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
     });
   }
 
+  void _loadGroupAdmins({bool showProgress = true}){
+    if(_loadingAdmins)
+      return;
+
+    setStateIfMounted((){_loadingAdmins = true;});
+    if(showProgress)
+      _increaseProgress();
+    Groups().loadMembers(groupId: widget.group.id, statuses: [GroupMemberStatus.admin]).then((admins) {
+      _groupAdmins = admins;
+      if(showProgress)
+        _decreaseProgress();
+      setStateIfMounted((){_loadingAdmins = false;});
+    });
+  }
+
   void _updateMemberStatus() {
     Analytics().logSelect(target: 'Admin');
-    if (!_updating) {
+    if(_loadingAdmins || _updating)
+      return;
+
+    if(_isLastAdmin){
+      showDialog(context: context, builder: _buildDeleteGroupDialog); //Don't allow removing the last admin. Delete the Group Instead
+      return;
+    }
 
       setState(() {
         _updating = true;
       });
 
-      // First invoke api  and then update the UI - if succeeded
-      bool newIsAdmin = !_isAdmin;
+    // First invoke api  and then update the UI - if succeeded
+    bool newIsAdmin = !_isAdmin;
 
-      GroupMemberStatus status = newIsAdmin ? GroupMemberStatus.admin : GroupMemberStatus.member;
-      Groups().updateMemberStatus(_group, widget.memberId, status).then((bool succeed) {
-        if (mounted) {
+    GroupMemberStatus status = newIsAdmin ? GroupMemberStatus.admin : GroupMemberStatus.member;
+    Groups().updateMemberStatus(_group, widget.memberId, status).then((bool succeed) {
+      if (mounted) {
+        setState(() {
+          _updating = false;
+        });
+        if(succeed){
           setState(() {
-            _updating = false;
+            _isAdmin = newIsAdmin;
           });
-          if(succeed){
-            setState(() {
-              _isAdmin = newIsAdmin;
-            });
-          } else {
-            AppAlert.showDialogResult(context, Localization().getStringEx("panel.member_detail.label.empty", 'Failed to update member'));
-          }
+        } else {
+          AppAlert.showDialogResult(context, Localization().getStringEx("panel.member_detail.label.empty", 'Failed to update member'));
         }
-      });
-    }
+      }
+    }).whenComplete((){
+      _loadGroupAdmins(showProgress: false);
+    });
   }
 
   Future<void> _removeMembership() async{
@@ -206,7 +233,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                         toggled: _isAdmin,
                         onTap: _updateMemberStatus
                     ),
-                    _updating ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), ) : Container()
+                    _updating || _loadingAdmins ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), ) : Container()
                   ],
                 ),
               ),
@@ -233,11 +260,17 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
           padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
           borderColor: Styles().colors.fillColorPrimary,
           borderWidth: 2,
-          onTap: (){
-            Analytics().logSelect(target: 'Remove from Group');
-            showDialog(context: context, builder: _buildRemoveFromGroupDialog);
-          }
+          onTap: _onTapRemoFromGroup
         );
+  }
+
+  void _onTapRemoFromGroup(){
+    Analytics().logSelect(target: 'Remove from Group');
+    if(_isLastAdmin){
+      showDialog(context: context, builder: _buildDeleteGroupDialog);
+      return;
+    }
+    showDialog(context: context, builder: _buildRemoveFromGroupDialog);
   }
 
   Widget _buildRemoveFromGroupDialog(BuildContext context) {
@@ -284,10 +317,10 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                           backgroundColor: Styles().colors.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                           contentWeight: 0.0,
-                          progress: _removing,
+                          progress: _removing || _loadingAdmins,
                           onTap: (){
                             Analytics().logAlert(text: "Remove member from this group?", selection: "Remove");
-                            if(!_removing) {
+                            if(!_removing && !_loadingAdmins) {
                               if (mounted) {
                                 setStateEx(() {
                                   _removing = true;
@@ -318,6 +351,92 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
       ),
     );
   }
+
+  Widget _buildDeleteGroupDialog(BuildContext context) =>
+      Dialog(
+        backgroundColor: Styles().colors.fillColorPrimary,
+        child: StatefulBuilder(
+          builder: (context, setStateEx){
+            return Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 26),
+                    child: Text(
+                        _isResearchProject?
+                        Localization().getStringEx("", "Would you like to remove yourself as the only project admin and delete this project?"):
+                        Localization().getStringEx("", "Would you like to remove yourself as the only group admin and delete this group?"),
+                        textAlign: TextAlign.left,
+                        style: Styles().textStyles.getTextStyle("widget.dialog.message.medium")
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      RoundedButton(
+                        label: Localization().getStringEx("", "No"),
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.thin"),
+                        borderColor: Styles().colors.white,
+                        backgroundColor: Styles().colors.white,
+                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        contentWeight: 0.0,
+                        onTap: (){
+                          Analytics().logAlert(text: "Delete this group?", selection: "No");
+                          Navigator.pop(context);
+                        },
+                      ),
+                      Container(width: 16,),
+                      RoundedButton(
+                        label: Localization().getStringEx("", "Yes"),
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                        borderColor: Styles().colors.white,
+                        backgroundColor: Styles().colors.white,
+                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        contentWeight: 0.0,
+                        progress: _deletingGroup,
+                        onTap: (){
+                          Analytics().logAlert(text: "Delete this group?", selection: "Yes");
+                          if(!_deletingGroup) {
+                            if (mounted) {
+                              setStateEx(() {
+                                _deletingGroup = true;
+                              });
+                            }
+                            Groups().deleteGroup(_group?.id).then((success) {
+                              if(success){
+                                Navigator.of(context).popUntil((Route route){
+                                  return route.settings.name == GroupsHomePanel.routeName;
+                                });
+                              } else {
+                                Navigator.pop(context);
+                              }
+
+
+                            }).whenComplete((){
+                              if (mounted) {
+                                setStateEx(() {
+                                  _deletingGroup = false;
+                                });
+                              }
+                            }).catchError((error) {
+                              Navigator.pop(context);
+                              AppAlert.showDialogResult(context, error);
+                            });
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      );
+
+  bool get _isLastAdmin => _isAdmin && (_groupAdmins != null && _groupAdmins!.length <=1);
 
   void _increaseProgress() {
     _progressLoading++;
