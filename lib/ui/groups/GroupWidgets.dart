@@ -28,7 +28,6 @@ import 'package:neom/service/Config.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:neom/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:neom/ui/groups/ImageEditPanel.dart';
-import 'package:neom/ui/widgets/SlantedWidget.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -688,43 +687,40 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(onTap: () => _onTapCard(context), child:
-      Padding(padding: widget.margin, child: SlantedWidget(
-        color: Styles().colors.surface,
-        child: Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
-          Stack(children: [
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              _buildHeading(),
-              Container(height: 6),
-              Row(children:[
-                Expanded(child:
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
-                    _buildCategories(),
-                    _buildTitle(),
-                    _buildProperties(),
-                  ]),
-                ),
-                _buildImage()
-              ]),
-              Container(height: 4),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Expanded(child:
-                  _buildUpdateTime(),
-                ),
-                _buildMembersCount()
-              ])
-              // : Container()
+      Padding(padding: widget.margin, child: Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
+        Stack(children: [
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            _buildHeading(),
+            Container(height: 6),
+            Row(children:[
+              Expanded(child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
+                  _buildCategories(),
+                  _buildTitle(),
+                  _buildProperties(),
+                ]),
+              ),
+              _buildImage()
             ]),
-            Visibility(visible: (_bussy == true), child:
-              Positioned.fill(child:
-                Align(alignment: Alignment.center, child:
-                  SizedBox(height: 24, width: 24, child:
-                    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
-                  ),
+            Container(height: 4),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Expanded(child:
+                _buildUpdateTime(),
+              ),
+              _buildMembersCount()
+            ])
+            // : Container()
+          ]),
+          Visibility(visible: (_bussy == true), child:
+            Positioned.fill(child:
+              Align(alignment: Alignment.center, child:
+                SizedBox(height: 24, width: 24, child:
+                  CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
                 ),
               ),
             ),
-          ],),
-        )
+          ),
+        ],),
       ))
     );
   }

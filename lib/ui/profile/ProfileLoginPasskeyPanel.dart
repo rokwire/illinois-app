@@ -31,16 +31,16 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'package:neom/service/Analytics.dart';
 
-class SettingsLoginPasskeyPanel extends StatefulWidget with OnboardingPanel {
+class ProfileLoginPasskeyPanel extends StatefulWidget with OnboardingPanel {
   @override
   final Map<String, dynamic>? onboardingContext;
 
   final bool? link;
 
-  SettingsLoginPasskeyPanel({super.key, this.onboardingContext, this.link});
+  ProfileLoginPasskeyPanel({super.key, this.onboardingContext, this.link});
 
   @override
-  State<StatefulWidget> createState() => _SettingsLoginPasskeyPanelState();
+  State<StatefulWidget> createState() => _ProfileLoginPasskeyPanelState();
 
   @override
   bool get onboardingCanDisplay {
@@ -50,7 +50,7 @@ class SettingsLoginPasskeyPanel extends StatefulWidget with OnboardingPanel {
 
 enum ResponseType { success, error, message }
 
-class _SettingsLoginPasskeyPanelState extends State<SettingsLoginPasskeyPanel> {
+class _ProfileLoginPasskeyPanelState extends State<ProfileLoginPasskeyPanel> {
   String? _responseMessage;
   ResponseType _responseType = ResponseType.message;
 

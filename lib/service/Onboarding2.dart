@@ -10,7 +10,7 @@ import 'package:neom/service/Storage.dart';
 import 'package:neom/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
 import 'package:neom/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
 import 'package:neom/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
-import 'package:neom/ui/settings/SettingsLoginPasskeyPanel.dart';
+import 'package:neom/ui/profile/ProfileLoginPasskeyPanel.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:neom/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
@@ -65,7 +65,7 @@ class Onboarding2 with Service {
   void _proceedToLogin(BuildContext context){
     Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
     if (codes.contains('login_passkey')) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginPasskeyPanel(onboardingContext: {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ProfileLoginPasskeyPanel(onboardingContext: {
         "onContinueAction": () {
           _didProceedToLogin(context);
         },

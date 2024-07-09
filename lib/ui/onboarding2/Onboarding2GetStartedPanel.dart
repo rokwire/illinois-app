@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/ui/onboarding2/Onboarding2VideoTutorialPanel.dart';
-import 'package:neom/ui/settings/SettingsLoginPasskeyPanel.dart';
+import 'package:neom/ui/profile/ProfileLoginPasskeyPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:neom/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
@@ -74,7 +74,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
   }
 
   void _onReturningUser(BuildContext context){
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginPasskeyPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ProfileLoginPasskeyPanel()));
   }
 
   void _onGoNext(BuildContext context) {
