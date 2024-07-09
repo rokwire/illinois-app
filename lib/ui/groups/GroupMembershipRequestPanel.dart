@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Analytics.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:neom/ext/Group.dart';
 import 'package:neom/service/Analytics.dart';

@@ -55,7 +55,6 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
   TextEditingController? _phoneController;
   String? _initialName;
   String? _initialEmail;
-  String? _initialPhone;
 
   Uint8List? _profileImageBytes;
 
@@ -70,7 +69,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
     ]);
     _nameController = TextEditingController(text: _initialName = Auth2().fullName ?? "");
     _emailController = TextEditingController(text: _initialEmail = Auth2().emails.isNotEmpty ? Auth2().emails.first : "");
-    _phoneController = TextEditingController(text: _initialPhone = Auth2().phones.isNotEmpty ? Auth2().phones.first : "");
+    _phoneController = TextEditingController(text: Auth2().phones.isNotEmpty ? Auth2().phones.first : "");
     _loadUserProfilePicture();
     super.initState();
   }
@@ -224,7 +223,8 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
 //               )
 //           ),
         ],
-      );
+      )
+    );
   }
 
   Widget _buildEmailLoginInfoContent(){
@@ -289,7 +289,8 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
 //               )
 //           ),
         ],
-      );
+      )
+    );
   }
 
   Widget _buildPasskeyLoginInfoContent(){
@@ -510,15 +511,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
 
   void _onSaveChangesClicked() async{
 
-    String? email, phone, firstName, lastName, middleName;
-    if (_isEmailChanged){
-      email = _customEmail;
-    }
-
-    if (_isPhoneChanged){
-      phone = _customPhone;
-    }
-
+    String? firstName, lastName, middleName;
     if (_isNameChanged){
       String fullName = _customFullName;
 
@@ -737,10 +730,6 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
   bool get _isEmailChanged{
     return (_initialEmail!= _customEmail);
   }
-  
-  bool get _isPhoneChanged{
-    return (_initialPhone!= _customPhone);
-  }
 
   String get _customFullName {
     return _nameController?.value.text??"";
@@ -748,10 +737,6 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
   
   String get _customEmail {
       return _emailController?.value.text??"";
-  }
-  
-  String get _customPhone {
-      return _phoneController?.value.text??"";
   }
 
   bool get _hasProfilePicture {

@@ -18,7 +18,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:illinois/ui/wallet/WalletHomePanel.dart';
+import 'package:neom/ui/wallet/WalletHomePanel.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';

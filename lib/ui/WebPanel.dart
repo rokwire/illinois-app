@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import 'package:illinois/model/Analytics.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
