@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/wellness/WellnessToDo.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/AppDateTime.dart';
@@ -29,9 +30,9 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-// import 'package:weekday_selector/weekday_selector.dart';
+import 'package:weekday_selector/weekday_selector.dart';
 
-class WellnessToDoItemDetailPanel extends StatefulWidget  implements AnalyticsPageAttributes {
+class WellnessToDoItemDetailPanel extends StatefulWidget  with AnalyticsInfo {
   final String? itemId;
   final WellnessToDoItem? item;
   final bool? optionalFieldsExpanded;
@@ -125,7 +126,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
             Stack(children: [
               Column(children: [
                 _buildRecurringContainer(),
-                // _buildWeekdaySelectorContainer(), //TODO: Replace this library
+                _buildWeekdaySelectorContainer(),
                 _buildDueDateContainer(),
                 _buildEndDateContainer(),
                 _buildDueTimeContainer(),
@@ -304,26 +305,26 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     );
   }
 
-  // Widget _buildWeekdaySelectorContainer(){
-  //   return Visibility(
-  //       visible: _selectedRecurringType == "Weekdays",
-  //       child: Padding(
-  //           padding: EdgeInsets.only(top: 17),
-  //           child: WeekdaySelector(
-  //             color:  Styles().colors.mediumGray,
-  //             selectedFillColor: Styles().colors.fillColorPrimary,
-  //             selectedColor: Styles().colors.fillColorSecondary,
-  //             onChanged: (int day) {
-  //               setState(() {
-  //                 final index = day % 7;
-  //                 _weekdayValues[index] = !_weekdayValues[index];
-  //               });
-  //             },
-  //             values: _weekdayValues,
-  //           )
-  //       )
-  //   );
-  // }
+  Widget _buildWeekdaySelectorContainer(){
+    return Visibility(
+        visible: _selectedRecurringType == "Weekdays",
+        child: Padding(
+            padding: EdgeInsets.only(top: 17),
+            child: WeekdaySelector(
+              color:  Styles().colors.mediumGray,
+              selectedFillColor: Styles().colors.fillColorPrimary,
+              selectedColor: Styles().colors.fillColorSecondary,
+              onChanged: (int day) {
+                setState(() {
+                  final index = day % 7;
+                  _weekdayValues[index] = !_weekdayValues[index];
+                });
+              },
+              values: _weekdayValues,
+            )
+        )
+    );
+  }
 
   Widget _buildRecurringContainer(){
     return Padding(
@@ -502,7 +503,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                       color: Styles().colors.lightGray,
                       child: Padding(
                           padding: EdgeInsets.only(left: 25, top: 7, right: 10, bottom: 7),
-                          child: Styles().images.getImage('close', excludeFromSemantics: true))))
+                          child: Styles().images.getImage('close-circle', excludeFromSemantics: true))))
             ])));
   }
 

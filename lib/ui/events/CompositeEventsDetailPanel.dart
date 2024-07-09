@@ -20,6 +20,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:neom/ext/Event.dart';
 import 'package:neom/ext/Explore.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/ui/widgets/SmallRoundedButton.dart';
 import 'package:neom/utils/AppUtils.dart';
@@ -51,7 +52,7 @@ import 'package:neom/ui/WebPanel.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CompositeEventsDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class CompositeEventsDetailPanel extends StatefulWidget with AnalyticsInfo {
 
   final Event? parentEvent;
   final Core.Position? initialLocationData;

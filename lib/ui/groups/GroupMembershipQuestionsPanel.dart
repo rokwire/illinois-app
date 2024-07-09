@@ -17,7 +17,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:rokwire_plugin/model/group.dart';
+import 'package:neom/ext/Group.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:neom/ui/groups/GroupWidgets.dart';
@@ -27,13 +29,20 @@ import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class GroupMembershipQuestionsPanel extends StatefulWidget {
+class GroupMembershipQuestionsPanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
 
   GroupMembershipQuestionsPanel({this.group});
 
   @override
   _GroupMembershipQuestionsPanelState createState() => _GroupMembershipQuestionsPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
+
+  @override
+  Map<String, dynamic>? get analyticsPageAttributes =>
+    group?.analyticsAttributes;
 }
 
 class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestionsPanel> {

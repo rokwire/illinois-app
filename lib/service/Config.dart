@@ -104,6 +104,9 @@ class Config extends rokwire.Config {
   String? get dateCatalogUrl         => JsonUtils.stringValue(otherUniversityServices['date_catalog_url']);
   String? get faqsUrl                => JsonUtils.stringValue(otherUniversityServices['faqs_url']);
   String? get wellness8DimensionsUrl => JsonUtils.stringValue(otherUniversityServices['wellness_8_dimensions_url']);
+  String? get willRadioUrl           => JsonUtils.stringValue(otherUniversityServices['will_radio_url']);
+  String? get willFmRadioUrl         => JsonUtils.stringValue(otherUniversityServices['willfm_radio_url']);
+  String? get willHdRadioUrl         => JsonUtils.stringValue(otherUniversityServices['willhd_radio_url']);
   String? get wpgufmRadioUrl         => JsonUtils.stringValue(otherUniversityServices['wpgufm_radio_url']);
   String? get preferredFirstNameStmntUrl => JsonUtils.stringValue(otherUniversityServices['preferred_first_name_stmnt_url']);
   String? get rokwirePlatformUrl     => JsonUtils.stringValue(otherUniversityServices['rokwire_platform_url']);
@@ -213,6 +216,8 @@ class Config extends rokwire.Config {
   String get appPrivacyVersion       => JsonUtils.stringValue(settings['privacyVersion']) ?? (JsonUtils.stringValue(content['mobileAppVersion']) ?? '0.0.0');
   bool get allowGroupsAuthmanSync    => JsonUtils.boolValue(settings['allowGroupsAuthmanSync']) ?? false;
   bool get showGroupPostReactions    => JsonUtils.boolValue(settings['showGroupPostReactions']) ?? false;
+  int  get notificationBodyMaxLength => JsonUtils.intValue(settings['notificationBodyMaxLength']) ?? 256;
+  int  get canvasCoursesCountPerPage => JsonUtils.intValue(settings['canvasCoursesCountPerPage']) ?? 100;
 
   String? get healthScreenerSurveyID  => JsonUtils.stringValue(settings['health_screener_survey_id']);
   String? get bessiSurveyID           => JsonUtils.stringValue(settings['bessi_survey_id']);

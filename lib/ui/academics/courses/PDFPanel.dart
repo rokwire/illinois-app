@@ -2,19 +2,22 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:neom/service/Config.dart';
+import 'package:neom/service/Content.dart' as con;
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class PDFPanel extends StatefulWidget {
+  final String? resourceKey;
   final String? resourceName;
-  final Uint8List? pdfData;
-  PDFPanel({Key? key, this.resourceName, this.pdfData}) : super(key: key);
+  PDFPanel({Key? key, this.resourceKey, this.resourceName}) : super(key: key);
 
   _PDFPanelState createState() => _PDFPanelState();
 }
 
 class _PDFPanelState extends State<PDFPanel> with WidgetsBindingObserver {
+  Uint8List? _fileContents;
   PDFViewController? _pdfViewController;
 
   int? _pages;
@@ -23,15 +26,21 @@ class _PDFPanelState extends State<PDFPanel> with WidgetsBindingObserver {
   String errorMessage = '';
 
   @override
+  void initState() {
+    _loadFileContents();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles().colors.background,
       appBar: HeaderBar(title: widget.resourceName ?? Localization().getStringEx('panel.essential_skills_coach.pdf_view.header.title', 'PDF View'),
         textStyle: Styles().textStyles.getTextStyle('header_bar'),),
-      body: Stack(
+      body: _fileContents != null ? Stack(
         children: <Widget>[
           PDFView(
-            pdfData: widget.pdfData,
+            pdfData: _fileContents,
             enableSwipe: true,
             swipeHorizontal: true,
             autoSpacing: false,
@@ -64,27 +73,38 @@ class _PDFPanelState extends State<PDFPanel> with WidgetsBindingObserver {
               });
             },
           ),
-          errorMessage.isEmpty ? (isReady ? Container() : Center(child: CircularProgressIndicator(),)) : Center(child: Text(errorMessage),),
+          errorMessage.isEmpty ? (isReady ? Container() : _loadingIndicator) : Center(child: Text(errorMessage),),
           Column(
             children: [
               Expanded(child: Container()),
               Row(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      int previous = (currentPage ?? 0) - 1;
-                      if (previous >= 0) {
-                        _pdfViewController?.setPage(previous);
-                      }
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: SizedBox(
-                          height: 64.0,
-                          child: Visibility(
-                            visible: (currentPage ?? 0) > 0,
-                            child: Styles().images.getImage('chevron-left-bold', excludeFromSemantics: true, color: Styles().colors.fillColorPrimary) ?? Container()
-                          )
+                  Visibility(
+                    visible: (currentPage ?? 0) > 0,
+                    replacement: SizedBox.square(dimension: 48.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        _pdfViewController?.setPage(0);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Styles().images.getImage('double-chevron-left', excludeFromSemantics: true, color: Styles().colors.fillColorPrimary) ?? Container(),
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: (currentPage ?? 0) > 0,
+                    replacement: SizedBox.square(dimension: 48.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        int previous = (currentPage ?? 0) - 1;
+                        if (previous >= 0) {
+                          _pdfViewController?.setPage(previous);
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Styles().images.getImage('chevron-left-bold', excludeFromSemantics: true, color: Styles().colors.fillColorPrimary, size: 16.0) ?? Container(),
                       ),
                     ),
                   ),
@@ -92,30 +112,58 @@ class _PDFPanelState extends State<PDFPanel> with WidgetsBindingObserver {
                   if (currentPage != null)
                     Text('${currentPage! + 1}/$_pages', style: Styles().textStyles.getTextStyle('widget.detail.extra_large.fat'), textAlign: TextAlign.center,),
                   Expanded(child: Container()),
-                  GestureDetector(
-                    onTap: () {
-                      int next = (currentPage ?? 0) + 1;
-                      if (next < (_pages ?? 0)) {
-                        _pdfViewController?.setPage(next);
-                      }
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: SizedBox(
-                          height: 64.0,
-                          child: Visibility(
-                            visible: (currentPage ?? 0) + 1 < (_pages ?? 0),
-                            child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true, color: Styles().colors.fillColorPrimary) ?? Container()
-                          )
+                  Visibility(
+                    visible: (currentPage ?? 0) + 1 < (_pages ?? 0),
+                    replacement: SizedBox.square(dimension: 48.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        int next = (currentPage ?? 0) + 1;
+                        if (next < (_pages ?? 0)) {
+                          _pdfViewController?.setPage(next);
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true, color: Styles().colors.fillColorPrimary, size: 16.0) ?? Container(),
                       ),
                     ),
-                  )
+                  ),
+                  Visibility(
+                    visible: (currentPage ?? 0) + 1 < (_pages ?? 0),
+                    replacement: SizedBox.square(dimension: 48.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        _pdfViewController?.setPage((_pages ?? 1) - 1);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Styles().images.getImage('double-chevron-right', excludeFromSemantics: true, color: Styles().colors.fillColorPrimary) ?? Container(),
+                      ),
+                    ),
+                  ),
                 ]
               ),
             ],
           ),
         ],
-      ),
+      ) : _loadingIndicator,
     );
+  }
+
+  Widget get _loadingIndicator => const Center(child: CircularProgressIndicator(),);
+
+  Future<void> _loadFileContents() async {
+    if (widget.resourceKey != null && Config().essentialSkillsCoachKey != null) {
+      Uint8List? fileContents = await con.Content().getFileContentItem(widget.resourceKey!, Config().essentialSkillsCoachKey!);
+      if (fileContents != null && mounted) {
+        setState(() {
+          _fileContents = fileContents;
+        });
+      }
+    } else if (mounted) {
+      setState(() {
+        errorMessage = Localization().getStringEx('panel.essential_skills_coach.pdf_view.error.message', 'Missing required data to load the requested file. Please try again later.');
+      });
+    }
   }
 }

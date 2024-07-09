@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/service/Analytics.dart';
@@ -31,9 +32,11 @@ import 'package:neom/ui/academics/MedicineCoursesContentWidget.dart';
 import 'package:neom/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:neom/ui/academics/StudentCourses.dart';
 import 'package:neom/ui/canvas/CanvasCoursesContentWidget.dart';
+import 'package:neom/ui/canvas/GiesCanvasCoursesContentWidget.dart';
 import 'package:neom/ui/gies/CheckListContentWidget.dart';
 import 'package:neom/ui/guide/GuideDetailPanel.dart';
 import 'package:neom/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
@@ -44,7 +47,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 enum AcademicsContent { events,
   gies_checklist, uiuc_checklist,
-  canvas_courses, medicine_courses, student_courses,
+  canvas_courses, gies_canvas_courses, medicine_courses, student_courses,
   skills_self_evaluation, essential_skills_coach,
   todo_list, due_date_catalog, my_illini, appointments
 }
@@ -86,14 +89,14 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
 
   static AcademicsContent? _lastSelectedContent;
   late AcademicsContent _selectedContent;
-  List<AcademicsContent>? _contentValues;
+  late List<AcademicsContent> _contentValues;
   bool _contentValuesVisible = false;
   UniqueKey _dueDateCatalogKey = UniqueKey();
 
   @override
   void initState() {
     NotificationService().subscribe(this, [FlexUI.notifyChanged, Auth2.notifyLoginChanged, AcademicsHomePanel.notifySelectContent]);
-    _buildContentValues();
+    _contentValues = _buildContentValues();
     _initSelectedContentItem();
     if (_initialContentItem == AcademicsContent.my_illini) {
       _onContentItem(_initialContentItem!);
@@ -189,11 +192,9 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   Widget _buildContentValuesWidget() {
     List<Widget> sectionList = <Widget>[];
     sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    if (CollectionUtils.isNotEmpty(_contentValues)) {
-      for (AcademicsContent section in _contentValues!) {
-        if ((_selectedContent != section)) {
-          sectionList.add(_buildContentItem(section));
-        }
+    for (AcademicsContent section in _contentValues) {
+      if ((_selectedContent != section)) {
+        sectionList.add(_buildContentItem(section));
       }
     }
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: sectionList)));
@@ -221,38 +222,48 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     }
   }
 
-  void _buildContentValues() {
+  List<AcademicsContent> _buildContentValues() {
+    List<AcademicsContent> contentValues = <AcademicsContent>[];
+    Map<AcademicsContent, String> contentLabels = <AcademicsContent, String>{};
+
     List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['academics']);
-    List<AcademicsContent>? contentValues;
     if (contentCodes != null) {
-      contentValues = [];
       for (String code in contentCodes) {
         AcademicsContent? value = _getContentValueFromCode(code);
         if (value != null) {
           contentValues.add(value);
+          contentLabels[value] = _getContentLabel(value);
         }
       }
     }
 
-    _contentValues = contentValues;
-    if (mounted) {
-      setState(() {});
+    contentValues.sort((AcademicsContent cont1, AcademicsContent cont2) =>
+      SortUtils.compare(contentLabels[cont1]?.toLowerCase(), contentLabels[cont2]?.toLowerCase())
+    );
+
+    return contentValues;
+  }
+
+  void _updateContentValues() {
+    List<AcademicsContent> contentValues = _buildContentValues();
+    if (!DeepCollectionEquality().equals(_contentValues, contentValues)) {
+      setStateIfMounted(() {
+        _contentValues = contentValues;
+      });
     }
   }
 
   void _initSelectedContentItem() {
     AcademicsContent? initialContent = _ensureContent(_initialContentItem) ?? _ensureContent(_lastSelectedContent);
     if (initialContent == null) {
-      if (CollectionUtils.isNotEmpty(_contentValues)) {
-        if (_contentValues!.contains(AcademicsContent.gies_checklist) && !_isCheckListCompleted(CheckList.giesOnboarding)) {
-          initialContent = AcademicsContent.gies_checklist;
-        } else if (_contentValues!.contains(AcademicsContent.canvas_courses)) {
-          initialContent = AcademicsContent.canvas_courses;
-        } else if (_contentValues!.contains(AcademicsContent.student_courses)) {
-          initialContent = AcademicsContent.student_courses;
-        } else if (_contentValues!.contains(AcademicsContent.skills_self_evaluation)) {
-          initialContent = AcademicsContent.skills_self_evaluation;
-        }
+      if (_contentValues.contains(AcademicsContent.gies_checklist) && !_isCheckListCompleted(CheckList.giesOnboarding)) {
+        initialContent = AcademicsContent.gies_checklist;
+      } else if (_contentValues.contains(AcademicsContent.gies_canvas_courses)) {
+        initialContent = AcademicsContent.gies_canvas_courses;
+      } else if (_contentValues.contains(AcademicsContent.student_courses)) {
+        initialContent = AcademicsContent.student_courses;
+      } else if (_contentValues.contains(AcademicsContent.skills_self_evaluation)) {
+        initialContent = AcademicsContent.skills_self_evaluation;
       }
     }
     _selectedContent = initialContent ?? AcademicsContent.events;
@@ -265,6 +276,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       return AcademicsContent.uiuc_checklist;
     } else if (code == 'canvas_courses') {
       return AcademicsContent.canvas_courses;
+    } else if (code == 'gies_canvas_courses') {
+      return AcademicsContent.gies_canvas_courses;
     } else if (code == 'medicine_courses') {
       return AcademicsContent.medicine_courses;
     } else if (code == 'student_courses') {
@@ -414,6 +427,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return CheckListContentWidget(contentKey: CheckList.uiucOnboarding);
       case AcademicsContent.canvas_courses:
         return CanvasCoursesContentWidget();
+      case AcademicsContent.gies_canvas_courses:
+        return GiesCanvasCoursesContentWidget();
       case AcademicsContent.medicine_courses:
         return MedicineCoursesContentWidget();
       case AcademicsContent.student_courses:
@@ -454,7 +469,9 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       case AcademicsContent.uiuc_checklist:
         return Localization().getStringEx('panel.academics.section.uiuc_checklist.label', 'New Student Checklist');
       case AcademicsContent.canvas_courses:
-        return Localization().getStringEx('panel.academics.section.canvas_courses.label', 'My Gies Canvas Courses');
+        return Localization().getStringEx('panel.academics.section.canvas_courses.label', 'My Canvas Courses');
+      case AcademicsContent.gies_canvas_courses:
+        return Localization().getStringEx('panel.academics.section.gies_canvas_courses.label', 'My Gies Canvas Courses');
       case AcademicsContent.medicine_courses:
         return Localization().getStringEx('panel.academics.section.medicine_courses.label', 'My College of Medicine Compliance');
       case AcademicsContent.student_courses:
@@ -476,7 +493,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
 
   AcademicsContent? _ensureContent(AcademicsContent? contentItem, {List<AcademicsContent>? contentItems}) {
     contentItems ??= _contentValues;
-    return ((contentItem != null) && (contentItem != AcademicsContent.my_illini) && contentItems!.contains(contentItem)) ? contentItem : null;
+    return ((contentItem != null) && (contentItem != AcademicsContent.my_illini) && contentItems.contains(contentItem)) ? contentItem : null;
   }
 
   AcademicsContent? get _initialContentItem => widget.params[AcademicsHomePanel.contentItemKey] ?? widget.content;
@@ -486,9 +503,9 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   @override
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
-      _buildContentValues();
+      _updateContentValues();
     } else if (name == Auth2.notifyLoginChanged) {
-      _buildContentValues();
+      _updateContentValues();
     } else if (name == AcademicsHomePanel.notifySelectContent) {
       AcademicsContent? contentItem = (param is AcademicsContent) ? param : null;
       if (mounted && (contentItem != null) && (contentItem != _selectedContent)) {

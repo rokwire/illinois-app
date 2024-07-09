@@ -108,7 +108,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
       ]);
     }
     else {
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      return Semantics(container: true, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(padding: EdgeInsets.only(bottom: 8), child:
           _buildProvidersDropdown(),
         ),
@@ -119,7 +119,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
           ],)
           
         )
-      ],);
+      ],));
     }
   }
 
@@ -151,8 +151,10 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
   Widget _buildProvidersDropdownDismissLayer() {
     return Positioned.fill(child:
       BlockSemantics(child:
-        GestureDetector(onTap: _onDismissProvidersDropdown, child:
-          Container(color: Styles().colors.blackTransparent06)
+        Semantics(excludeSemantics: true, child:
+          GestureDetector(onTap: _onDismissProvidersDropdown, child:
+            Container(color: Styles().colors.blackTransparent06)
+          )
         )
       )
     );

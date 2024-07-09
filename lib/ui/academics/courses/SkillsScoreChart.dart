@@ -190,9 +190,10 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
                     },
                     touchTooltipData: BarTouchTooltipData(
                       tooltipPadding: EdgeInsets.all(4),
-                      // tooltipBgColor: Styles().colors.background, //TODO: check if this needs to be replaced
+                      //tooltipBgColor: Styles().colors.background,
                       tooltipBorder: BorderSide(color: Styles().colors.dividerLine, width: 1.0),
                       getTooltipItem: getTooltipItem,
+                      getTooltipColor: (_) => Styles().colors.background,
                       // fitInsideVertically: true,
                     )
                 ),
@@ -355,4 +356,6 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
 
     return BarTooltipItem('${bottomTitleStrings(group.x)}\n', textStyle, children: barData.reversed.toList());
   }
+
+
 }

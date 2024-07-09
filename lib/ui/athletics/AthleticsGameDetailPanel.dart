@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/RecentItem.dart';
 import 'package:neom/model/sport/SportDetails.dart';
 import 'package:neom/ext/Game.dart';
@@ -39,7 +40,7 @@ import 'package:rokwire_plugin/ui/widgets/tile_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class AthleticsGameDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class AthleticsGameDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Game? game;
 
   final String? gameId;

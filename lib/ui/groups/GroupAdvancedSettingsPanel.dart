@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/ui/groups/GroupWidgets.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -6,13 +7,16 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
-class GroupAdvancedSettingsPanel extends StatefulWidget{
+class GroupAdvancedSettingsPanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
 
   const GroupAdvancedSettingsPanel({Key? key, this.group}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GroupAdvancedSettingsPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 }
 
 class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>{

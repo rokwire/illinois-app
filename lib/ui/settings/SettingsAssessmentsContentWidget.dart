@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/service/Analytics.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
@@ -24,8 +25,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:neom/ui/settings/SettingsPrivacyPanel.dart';
-import 'package:neom/ui/widgets/InfoPopup.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
 
 class SettingsAssessmentsContentWidget extends StatefulWidget {
@@ -134,7 +133,8 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
         Storage().assessmentsSaveResultsMap = assessmentsSaveResultsMap;
       });
     } else {
-      Widget infoTextWidget = RichText(
+      AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.skills_self_evaluation', 'Assessments'));
+      /*Widget infoTextWidget = RichText(
         text: TextSpan(
           children: [
             TextSpan(
@@ -159,12 +159,12 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
         padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
         alignment: Alignment.center,
         infoTextWidget: infoTextWidget,
-        closeIcon: Styles().images.getImage('close', excludeFromSemantics: true),
-      ),);
+        closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
+      ),);*/
     }
   }
 
-  void _onTapPrivacyLevel() {
+  /*void _onTapPrivacyLevel() {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
-  }
+  }*/
 }

@@ -20,22 +20,41 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:neom/service/AppDateTime.dart';
+import 'package:neom/service/AppReview.dart';
+import 'package:neom/service/Appointments.dart';
+import 'package:neom/service/Assistant.dart';
 import 'package:neom/service/Auth2.dart';
+import 'package:neom/service/Canvas.dart';
+import 'package:neom/service/CustomCourses.dart';
+import 'package:neom/service/CheckList.dart';
+import 'package:neom/service/MTD.dart';
+import 'package:neom/service/MobileAccess.dart';
 import 'package:neom/service/Questionnaire.dart';
+import 'package:neom/service/SpeechToText.dart';
+import 'package:neom/service/StudentCourses.dart';
 import 'package:neom/service/DeepLink.dart';
+import 'package:neom/service/Dinings.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/service/Content.dart';
 import 'package:neom/service/FirebaseMessaging.dart';
 import 'package:neom/service/FlexUI.dart';
+import 'package:neom/service/Guide.dart';
 import 'package:neom/service/IlliniCash.dart';
+import 'package:neom/service/LiveStats.dart';
 import 'package:neom/service/NativeCommunicator.dart';
+import 'package:neom/service/OnCampus.dart';
 import 'package:neom/service/Onboarding.dart';
 import 'package:neom/service/Onboarding2.dart';
+import 'package:neom/service/Polls.dart';
 import 'package:neom/service/RecentItems.dart';
-import 'package:neom/service/Services.dart' as illinois;
+import 'package:neom/service/Rewards.dart';
+import 'package:neom/service/Services.dart' as neom;
+import 'package:neom/service/Sports.dart';
 import 'package:neom/service/Analytics.dart';
-import 'package:neom/service/SpeechToText.dart';
 import 'package:neom/service/Storage.dart';
+import 'package:neom/service/RadioPlayer.dart';
+import 'package:neom/service/Wellness.dart';
+import 'package:neom/service/WellnessRings.dart';
 
 import 'package:neom/ui/onboarding/OnboardingErrorPanel.dart';
 import 'package:neom/ui/onboarding/OnboardingUpgradePanel.dart';
@@ -79,7 +98,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
 
     NotificationService().subscribe(appExitListener, AppLifecycle.notifyStateChanged);
 
-    illinois.Services().create([
+    neom.Services().create([
       // Add highest priority services at top
 
       FirebaseCore(),
@@ -126,17 +145,17 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       // OnCampus(),
       // Wellness(),
       // WellnessRings(),
-      // WPGUFMRadio(),
+      // RadioPlayer(),
       // AppReview(),
       // StudentCourses(),
       // Appointments(),
       // MTD(),
       SpeechToText(),
       // Assistant(),
-    //   MobileAccess(),
+      // MobileAccess(),
     ]);
 
-    ServiceError? serviceError = await illinois.Services().init();
+    ServiceError? serviceError = await neom.Services().init();
 
     //_testSecretKeys();
 
@@ -160,7 +179,7 @@ class AppExitListener implements NotificationsListener {
     if ((name == AppLifecycle.notifyStateChanged) && (param == AppLifecycleState.detached)) {
       Future.delayed(Duration(), () {
         NotificationService().unsubscribe(appExitListener);
-        illinois.Services().destroy();
+        neom.Services().destroy();
       });
     }
   }
@@ -264,10 +283,18 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
         title: Localization().getStringEx('app.title', 'Illinois'),
         theme: ThemeData(
           appBarTheme: AppBarTheme(backgroundColor: Styles().colors.fillColorPrimaryVariant),
+          dialogTheme: DialogTheme(
+            backgroundColor: Styles().colors.surface,
+            contentTextStyle: Styles().textStyles.getTextStyle('widget.message.medium.thin'),
+            titleTextStyle: Styles().textStyles.getTextStyle('widget.message.medium'),
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: ButtonStyle(textStyle: WidgetStateProperty.all(Styles().textStyles.getTextStyle('widget.message.medium.thin'))),
+          ),
           primaryColor: Styles().colors.fillColorPrimaryVariant,
           colorScheme: ColorScheme.dark(primary: Styles().colors.fillColorSecondary,
               secondary: Styles().colors.fillColorPrimary),
-          fontFamily: Styles().fontFamilies.extraBold),
+          fontFamily: Styles().fontFamilies.regular),
         home: _homePanel,
       ),
     );
@@ -340,7 +367,7 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
       return await _retryInitialzeFuture;
     }
     else {
-      _retryInitialzeFuture = illinois.Services().init();
+      _retryInitialzeFuture = neom.Services().init();
       ServiceError? serviceError = await _retryInitialzeFuture;
       _retryInitialzeFuture = null;
 

@@ -8,12 +8,13 @@ import 'package:neom/service/IlliniCash.dart';
 import 'package:neom/service/NativeCommunicator.dart';
 import 'package:neom/ui/home/HomePanel.dart';
 import 'package:neom/ui/home/HomeWidgets.dart';
-import 'package:neom/ui/settings/SettingsAddIlliniCashPanel.dart';
-import 'package:neom/ui/settings/SettingsIlliniCashPanel.dart';
-import 'package:neom/ui/settings/SettingsMealPlanPanel.dart';
-import 'package:neom/ui/wallet/ICardHomeContentPanel.dart';
-import 'package:neom/ui/wallet/MTDBusPassPanel.dart';
+import 'package:neom/ui/wallet/WalletAddIlliniCashPanel.dart';
+import 'package:neom/ui/wallet/WalletIlliniCashPanel.dart';
+import 'package:neom/ui/wallet/WalletMealPlanPanel.dart';
+import 'package:neom/ui/wallet/WalletICardHomePanel.dart';
+import 'package:neom/ui/wallet/WalletMTDBusPassPanel.dart';
 import 'package:neom/ui/widgets/FavoriteButton.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -141,7 +142,7 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
     }
     else if (!Auth2().isOidcLoggedIn) {
       contentWidget = VerticalTitleValueSection(
-       title: Localization().getStringEx('panel.browse.label.logged_out.illini_cash.short', 'You need to be logged in with your NetID to access Illini Cash.'),
+       title: AppTextUtils.loggedOutFeatureNA(Localization().getStringEx('generic.app.feature.illini_cash', 'Illini Cash')),
         titleTextStyle: Styles().textStyles.getTextStyle("widget.message.regular.semi_fat"),
         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       );
@@ -172,7 +173,7 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
                       Expanded(child:
                         contentWidget
                       ),
-                      Visibility(visible: SettingsAddIlliniCashPanel.canPresent, child:
+                      Visibility(visible: WalletAddIlliniCashPanel.canPresent, child:
                         Semantics(button: true, excludeSemantics: true, label: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.title', 'Add Illini Cash'), hint: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.hint', ''), child:
                           IconButton(color: Styles().colors.fillColorPrimary, icon: Styles().images.getImage('plus-circle-large', excludeFromSemantics: true) ?? Container(), onPressed: _onTapPlus)
                         ),
@@ -190,12 +191,12 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
 
   void _onTap() {
     Analytics().logSelect(target: 'Illini Cash', source: widget.runtimeType.toString());
-    SettingsIlliniCashPanel.present(context);
+    WalletIlliniCashPanel.present(context);
   }
 
   void _onTapPlus() {
     Analytics().logSelect(target: "Add Illini Cash", source: widget.runtimeType.toString());
-    SettingsAddIlliniCashPanel.present(context);
+    WalletAddIlliniCashPanel.present(context);
   }
 }
 
@@ -289,7 +290,7 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
       contentWidget = Row(children: <Widget>[
         Expanded(child:
           VerticalTitleValueSection(
-          title: Localization().getStringEx('panel.browse.label.logged_out.meal_plan.short', 'You need to be logged in with your NetID to access University Housing Meal Plan.'),
+          title: AppTextUtils.loggedOutFeatureNA(Localization().getStringEx('generic.app.feature.illini_cash', 'Illini Cash')),
             titleTextStyle: Styles().textStyles.getTextStyle("widget.message.regular.semi_fat"),
             margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),
@@ -336,7 +337,7 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
 
   void _onTap() {
     Analytics().logSelect(target: 'Meal Plan', source: widget.runtimeType.toString());
-    SettingsMealPlanPanel.present(context);
+    WalletMealPlanPanel.present(context);
   }
 }
 
@@ -382,7 +383,7 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
   Widget build(BuildContext context) {
     String? message;
     if (!Auth2().isOidcLoggedIn) {
-      message = Localization().getStringEx('panel.browse.label.logged_out.bus_pass.short', 'You need to be logged in with your NetID to access MTD Bus Pass.');
+      message = AppTextUtils.loggedOutFeatureNA(Localization().getStringEx('generic.app.feature.bus_pass', 'MTD Bus Pass'));
     }
     else if (StringUtils.isEmpty(Auth2().authCard?.cardNumber) || (Auth2().authCard?.expirationDateTimeUtc == null)) {
       message = Localization().getStringEx('panel.browse.label.no_card.bus_pass', 'You need a valid Illini Identity card to access MTD Bus Pass.');
@@ -429,7 +430,7 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
 
   void _onTap() {
     Analytics().logSelect(target: 'Bus Pass', source: widget.runtimeType.toString());
-    MTDBusPassPanel.present(context);
+    WalletMTDBusPassPanel.present(context);
   }
 }
 
@@ -475,7 +476,7 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
   Widget build(BuildContext context) {
     String? message, warning;
     if (!Auth2().isOidcLoggedIn) {
-      message = Localization().getStringEx('panel.browse.label.logged_out.illini_id.short', 'You need to be logged in with your NetID to access Illini ID.');
+      message = AppTextUtils.loggedOutFeatureNA(Localization().getStringEx('generic.app.feature.illini_id', 'Illini ID'));
     }
     else if (StringUtils.isEmpty(Auth2().authCard?.cardNumber)) {
       message = Localization().getStringEx('panel.browse.label.no_card.illini_id', 'No Illini ID information. You do not have an active Illini ID. Please visit the ID Center.');
@@ -536,7 +537,7 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
 
   void _onTap() {
     Analytics().logSelect(target: 'Illini ID', source: widget.runtimeType.toString());
-    ICardHomeContentPanel.present(context, content: ICardContent.i_card);
+    WalletICardHomeContentPanel.present(context, content: WalletICardContent.i_card);
   }
 }
 
@@ -584,7 +585,7 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
   Widget build(BuildContext context) {
     String? message;
     if (!Auth2().isOidcLoggedIn) {
-      message = Localization().getStringEx('panel.browse.label.logged_out.library_card.short', 'You need to be logged in with your NetID to access Library Card.');
+      message = AppTextUtils.loggedOutFeatureNA(Localization().getStringEx('generic.app.feature.library_card', 'Library Card'));
     }
     else if (StringUtils.isEmpty(Auth2().authCard?.libraryNumber)) {
       message = Localization().getStringEx('panel.browse.label.no_card.library_card', 'You need a valid Illini Identity card to access Library Card.');

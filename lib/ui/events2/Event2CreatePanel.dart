@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/ext/Event2.dart';
 import 'package:neom/ext/Explore.dart';
+import 'package:neom/ext/ImagesResult.dart';
 import 'package:neom/ext/Survey.dart';
 import 'package:neom/mainImpl.dart';
 import 'package:neom/model/Explore.dart';
@@ -34,6 +35,8 @@ import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -689,10 +692,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   void _onTapAddImage() {
     Analytics().logSelect(target: "Add Image");
     Event2CreatePanel.hideKeyboard(context);
-    GroupAddImageWidget.show(context: context, updateUrl: _imageUrl).then((String? updateUrl) {
-      if (mounted && (updateUrl != null) && (0 < updateUrl.length) && (_imageUrl != updateUrl)) {
-        setState(() {
-          _imageUrl = updateUrl;
+    GroupAddImageWidget.show(context: context, url: _imageUrl).then((ImagesResult? updateResult) {
+      if (updateResult?.succeeded == true && (_imageUrl != updateResult?.stringData)) {
+        setStateIfMounted(() {
+          _imageUrl = updateResult?.stringData;
         });
       }
     });
@@ -1381,6 +1384,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
       title:  Localization().getStringEx('panel.event2.attributes.attributes.header.title', 'Event Attributes'),
       description: Localization().getStringEx('panel.event2.attributes.attributes.header.description', 'Choose one or more attributes that help describe this event.'),
+      scope: Events2.contentAttributesScope,
       contentAttributes: Events2().contentAttributes,
       selection: _attributes,
       sortType: ContentAttributesSortType.native,
@@ -1979,29 +1983,39 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
               if (success == true && result.id != null) {
                 survey = await Surveys().loadEvent2Survey(result.id!);
                 if (mounted) {
-                  Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
-                    event: result,
-                    survey: survey,
-                  )));
+                  setState(() {
+                    _creatingEvent = false;
+                  });
+                  await _promptFavorite(result, surveySucceeded: true);
+                  if (mounted) {
+                    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
+                      event: result,
+                      survey: survey,
+                    )));
+                  }
                 }
               }
               else {
                 setState(() {
                   _creatingEvent = false;
                 });
-                Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.create.survey.create.failed.msg', 'Failed to create event survey.')).then((_) {
+                await _promptFavorite(result, surveySucceeded: false);
+                if (mounted) {
                   Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
                     event: result,
                     survey: null,
                   )));
-                });
+                }
               }
             }
           }
           else {
-            Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
-              event: result,
-            )));
+            await _promptFavorite(result);
+            if (mounted) {
+              Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
+                event: result,
+              )));
+            }
           }
         }
         else {
@@ -2060,6 +2074,29 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     return (result is CreateEventForGroupsV3Param) ? result.event : result;
   }
 
+  Future<bool> _promptFavorite(Event2 event, {bool? surveySucceeded} ) async {
+    final String eventNameMacro = '{{event_name}}';
+    final String starColorMacro = '{{star_color}}';
+
+    String messageHtml = ((surveySucceeded != false) ?
+      Localization().getStringEx("panel.event2.create.message.succeeded.star.promt", "Successfully created \"$eventNameMacro\" event. Would vou like to add this event to <span style='color:$starColorMacro;'><b>\u2605</b></span> My Events?") :
+      Localization().getStringEx("panel.event2.create.message.succeeded.survey.failed.star.promt", "Successfully created \"$eventNameMacro\" event but failed to create the survey. Would vou like to add this event to <span style='color:$starColorMacro;'><b>\u2605</b></span> My Events?"))
+        .replaceAll(eventNameMacro, event.name ?? '')
+        .replaceAll(starColorMacro, ColorUtils.toHex(Styles().colors.fillColorSecondary));
+
+    bool? result = await Event2Popup.showPrompt(context,
+      title: Localization().getStringEx("panel.event2.create.message.succeeded.title", "Event Created"),
+      messageHtml: messageHtml,
+      positiveButtonTitle: Localization().getStringEx("dialog.yes.title", "Yes"),
+      negativeButtonTitle: Localization().getStringEx("dialog.no.title", "No"),
+    );
+    if (result == true) {
+      Auth2().prefs?.setFavorite(event, true);
+      return true;
+    }
+    return false;
+  }
+
   bool get _onlineEventType => (_eventType == Event2Type.online) ||  (_eventType == Event2Type.hybrid);
   bool get _inPersonEventType => (_eventType == Event2Type.inPerson) ||  (_eventType == Event2Type.hybrid);
 
@@ -2097,7 +2134,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   bool get _hasOnlineDetails => _onlineUrlController.text.isNotEmpty;
   bool get _hasValidOnlineDetails => UrlUtils.isValidUrl(_onlineUrlController.text);
   bool get _hasAttendanceDetails => _attendanceDetails?.isNotEmpty ?? false;
-  bool get _hasRegistrationDetails => _registrationDetails?.requiresRegistration ?? false;
+  bool get _hasRegistrationDetails => _registrationDetails?.isNotEmpty ?? false;
   bool get _hasWebsiteURL => _websiteController.text.isNotEmpty;
   bool get _hasValidWebsiteURL => UrlUtils.isValidUrl(_websiteController.text);
 
@@ -2216,8 +2253,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
     if (modified) {
       bool? result = await Event2Popup.showPrompt(context,
-        Localization().getStringEx('panel.event2.create.exit.prompt.title', 'Exit'),
-        Localization().getStringEx('panel.event2.create.exit.prompt.message', 'Exit and lose your changes?'),
+        title: Localization().getStringEx('panel.event2.create.exit.prompt.title', 'Exit'),
+        message: Localization().getStringEx('panel.event2.create.exit.prompt.message', 'Exit and lose your changes?'),
       );
       return (result == true);
     }

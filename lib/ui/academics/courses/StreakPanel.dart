@@ -320,11 +320,12 @@ class _StreakPanelState extends State<StreakPanel> {
     int? courseDayStartHour = _courseConfig!.nextScheduleItemUnlockTime()?.hour;
     if (courseDayStartHour != null) {
       hourOffset = courseDayStartHour;
-      if (courseDayStartHour >= 12) {
-        hourOffset = 24 - hourOffset;
+      if (hourOffset >= 12) {
+        hourOffset -= 24;
       }
     }
     _courseDayStartOffset = Duration(hours: hourOffset);
+    //TODO: verify this works as intended
   }
 
   void _setLoading(bool value) {

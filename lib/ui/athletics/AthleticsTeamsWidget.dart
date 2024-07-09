@@ -130,7 +130,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget> implements N
   Widget buildMenSectionHeader(){
     bool allMenSelected = Sports.isAllSportsSelected(_menSports, _preferredSports);
     String menSelectClearTextKey = allMenSelected ? "widget.athletics_teams.label.clear" : "widget.athletics_teams.label.select_all";
-    String menSelectClearImageKey = allMenSelected ? "close" : "check";
+    String menSelectClearImageKey = allMenSelected ? "close-circle" : "check";
     return Container(decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4))), child:
       Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 10, bottom: 10), child:
         Row(children: <Widget>[
@@ -156,7 +156,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget> implements N
   Widget buildWomenSectionHeader(){
     bool allWomenSelected = Sports.isAllSportsSelected(_womenSports, _preferredSports);
     String womenSelectClearTextKey = allWomenSelected ? "widget.athletics_teams.label.clear" : "widget.athletics_teams.label.select_all";
-    String womenSelectClearImageKey = allWomenSelected ? "close" : "check";
+    String womenSelectClearImageKey = allWomenSelected ? "close-circle" : "check";
     return Container(decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.only( topLeft: Radius.circular(4), topRight: Radius.circular(4))), child:
       Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 10, bottom: 10), child:
         Row(children: <Widget>[

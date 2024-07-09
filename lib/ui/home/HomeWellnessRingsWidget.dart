@@ -98,7 +98,7 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
                         LinkButton(
                           title: Localization().getStringEx('widget.home.wellness.rings.view_all.label', 'View All'),
                           hint: Localization().getStringEx('widget.home.wellness.rings.view_all.hint', 'Tap to view all rings'),
-                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.semi_fat.underline"),
+                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.medium.underline"),
                           onTap: _onTapViewAll,
                         ),
                       ],

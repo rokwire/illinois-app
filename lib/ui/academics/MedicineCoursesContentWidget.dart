@@ -67,24 +67,13 @@ class _MedicineCoursesContentWidgetState extends State<MedicineCoursesContentWid
 
   Widget _buildContent() {
     if (Connectivity().isOffline) {
-      return _buildMessageContent(
-        Localization()
-            .getStringEx('panel.medicine_courses.load.offline.error.msg', 'My College of Medicine Compliance not available while offline.'),
-      );
+      return _buildMessageContent(Localization().getStringEx('panel.medicine_courses.load.offline.error.msg', 'My College of Medicine Compliance not available while offline.'),);
     } else if (!Auth2().isOidcLoggedIn) {
-      return _buildMessageContent(
-        Localization().getStringEx('panel.medicine_courses.load.logged_out.error.msg',
-            'You need to be logged in with your NetID to access My College of Medicine Compliance. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'),
-      );
+      return _buildMessageContent(AppTextUtils.loggedOutFeatureNA(Localization().getStringEx('generic.app.feature.medicine_courses', 'My College of Medicine Compliance'), verbose: true));
     } else if (_medicineCourses == null) {
-      return _buildMessageContent(
-        Localization().getStringEx('panel.medicine_courses.load.failed.error.msg', 'Unable to load courses.'),
-      );
+      return _buildMessageContent(Localization().getStringEx('panel.medicine_courses.load.failed.error.msg', 'Unable to load courses.'),);
     } else if (_medicineCourses?.isEmpty ?? true) {
-      return _buildMessageContent(
-        Localization()
-            .getStringEx('panel.medicine_courses.load.empty.error.msg', 'You do not appear to be enrolled in any Medicine courses.'),
-      );
+      return _buildMessageContent(Localization().getStringEx('panel.medicine_courses.load.empty.error.msg', 'You do not appear to be enrolled in any Medicine courses.'),);
     } else {
       return _buildCoursesContent();
     }

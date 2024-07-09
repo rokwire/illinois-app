@@ -9,6 +9,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class GroupPostReportAbuseOptions {
   final bool reportToDeanOfStudents;
@@ -179,7 +180,7 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
       alignment: Alignment.topRight,
       infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
       infoTextStyle: Styles().textStyles.getTextStyle("widget.title.regular.medium_fat"),
-      closeIcon: Styles().images.getImage('close'),
+      closeIcon: Styles().images.getImage('close-circle'),
     ),);
   }
 
@@ -210,9 +211,14 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
   }
 
   Future<void> _reportReportAbuse(bool result) {
-    return AppAlert.showMessage(context, result ? 
-      Localization().getStringEx("panel.group.detail.post.report_abuse.succeeded.msg", "Post reported successfully.") :
-      Localization().getStringEx("panel.group.detail.post.report_abuse.failed.msg", "Failed to report post."),
-    );
+    return AppAlert.showMessage(context, result ? _successMsg : _failMsg);
   }
+
+  String get _successMsg =>
+      _isPostReport ? Localization().getStringEx("panel.group.detail.post.report_abuse.succeeded.msg", "Post reported successfully.")  :  Localization().getStringEx("", "Group reported successfully.") ;
+
+  String get _failMsg =>
+      _isPostReport ? Localization().getStringEx("panel.group.detail.post.report_abuse.failed.msg", "Failed to report post.") :  Localization().getStringEx("", "Failed to report group.");
+
+  bool get _isPostReport => StringUtils.isNotEmpty(widget.postId);
 }

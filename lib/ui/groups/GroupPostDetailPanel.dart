@@ -20,11 +20,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/ui/groups/GroupPostReportAbuse.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:neom/ext/Group.dart';
 import 'package:neom/service/Analytics.dart';
+import 'package:rokwire_plugin/service/Log.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:neom/utils/AppUtils.dart';
@@ -37,7 +39,7 @@ import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
-class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GroupPostDetailPanel extends StatefulWidget with AnalyticsInfo {
   final GroupPost? post;
   final GroupPost? focusedReply;
   final List<GroupPost>? replyThread;
@@ -49,6 +51,9 @@ class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttrib
 
   @override
   _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
@@ -124,7 +129,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         Column(children: [
           Container(height: _sliverHeaderHeight ?? 0,),
           _isEditMainPost || StringUtils.isNotEmpty(_post?.imageUrl)
-            ? ImageChooserWidget(key: _postImageHolderKey, imageUrl: _post?.imageUrl, buttonVisible: _isEditMainPost, onImageChanged: (url) => _mainPostUpdateData?.imageUrl = url,)
+            ? ImageChooserWidget(key: _postImageHolderKey, buttonVisible: _isEditMainPost,
+            imageUrl:_isEditMainPost ?  _mainPostUpdateData?.imageUrl : _post?.imageUrl,
+            onImageChanged: (url) => _mainPostUpdateData?.imageUrl = url,)
             : Container(),
           _buildPostContent(),
           _buildRepliesSection(),
@@ -285,7 +292,21 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                           setStateIfMounted(() {
                             _mainPostUpdateData?.members = members;
                           });
-                        },)
+                        },),
+                      Container(height: 6,),
+                      Visibility(visible: widget.post?.dateScheduledUtc != null, child:
+                        GroupScheduleTimeWidget(
+                          timeZone: null,//TBD pass timezone
+                          scheduleTime: widget.post?.dateScheduledUtc,
+                          enabled: false, //_isEditMainPost, Disable editing since the BB do not support editing of the create notification
+                          onDateChanged: (DateTime? dateTimeUtc){
+                            setStateIfMounted(() {
+                              Log.d(groupUtcDateTimeToString(dateTimeUtc)??"");
+                              _mainPostUpdateData?.dateScheduled = dateTimeUtc;
+                            });
+                          },
+                        )
+                      )
                     ],
                   )),
 
@@ -300,7 +321,22 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     });
   }
 
-  _buildRepliesSection(){
+  void _refreshPostData(){
+    if(widget.group != null) {
+      _setLoading(true);
+      Groups().loadGroupPost(groupId: widget.group!.id, postId: _post?.id).then((updatedPost){
+          _setLoading(false);
+          if(updatedPost != null){
+            _sortReplies(updatedPost.replies);
+            setStateIfMounted((){
+              _post = updatedPost;
+            });
+          }
+      });
+    }
+  }
+
+  Widget _buildRepliesSection(){
     List<GroupPost>? replies;
     if (_focusedReply != null) {
       replies = _generateFocusedThreadList();
@@ -374,7 +410,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           showSlant: false,
           wrapContent: true,
           buttonVisible: _editingReply!=null,
-          onImageChanged: (String imageUrl) => _replyEditData?.imageUrl = imageUrl,
+          onImageChanged: (String? imageUrl) => _replyEditData?.imageUrl = imageUrl,
           imageSemanticsLabel: Localization().getStringEx('panel.group.detail.post.reply.reply.label', "Reply"),
         )
      );
@@ -491,21 +527,24 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   //Tap Actions
   void _onTapReplyCard(GroupPost? reply){
-    if((reply != null) &&
-        ((reply == _focusedReply) || (widget.replyThread!= null && widget.replyThread!.contains(reply)))){
-      //Already focused reply.
-      // Disabled listener for the focused reply. Prevent duplication. Fix for #2374
-      return;
+    if(_isSubReplySupported){  //Forbid sub reply //TODO if we do not bring back this functionality DELETE all related code.
+      if((reply != null) &&
+          ((reply == _focusedReply) || (widget.replyThread!= null && widget.replyThread!.contains(reply)))){
+        //Already focused reply.
+        // Disabled listener for the focused reply. Prevent duplication. Fix for #2374
+        return;
+      }
+
+      Analytics().logSelect(target: 'Reply Card');
+      List<GroupPost> thread = [];
+      if(CollectionUtils.isNotEmpty(widget.replyThread)){
+        thread.addAll(widget.replyThread!);
+      }
+      if(_focusedReply!=null) {
+        thread.add(_focusedReply!);
+      }
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true, replyThread: thread,)));
     }
-    Analytics().logSelect(target: 'Reply Card');
-    List<GroupPost> thread = [];
-    if(CollectionUtils.isNotEmpty(widget.replyThread)){
-      thread.addAll(widget.replyThread!);
-    }
-    if(_focusedReply!=null) {
-      thread.add(_focusedReply!);
-    }
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true, replyThread: thread,)));
   }
 
   void _onTapDeletePost() {
@@ -589,7 +628,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Visibility(visible: _isReplyVisible, child: RibbonButton(
+              Visibility(visible: _isReplyVisible && _isSubReplySupported, child: RibbonButton(
                 leftIconKey: "reply",
                 label: Localization().getStringEx("panel.group.detail.post.reply.reply.label", "Reply"),
                 onTap: () {
@@ -702,7 +741,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _onTapEditMainPost(){
-    _mainPostUpdateData = PostDataModel(body:_post?.body, imageUrl: _post?.imageUrl, members: GroupMembersSelectionWidget.constructUpdatedMembersList(selection:_post?.members, upToDateMembers: _allMembersAllowedToPost));
+    _mainPostUpdateData = PostDataModel(body:_post?.body, imageUrl: _post?.imageUrl, members: GroupMembersSelectionWidget.constructUpdatedMembersList(selection:_post?.members, upToDateMembers: _allMembersAllowedToPost), dateScheduled: _post?.dateScheduledUtc);
     setStateIfMounted(() { });
   }
 
@@ -718,7 +757,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
 
     _setLoading(true);
-    GroupPost postToUpdate = GroupPost(id: _post?.id, subject: _post?.subject, body: htmlModifiedBody, imageUrl: imageUrl, members: toMembers, private: true);
+    GroupPost postToUpdate = GroupPost(id: _post?.id, subject: _post?.subject, body: htmlModifiedBody, imageUrl: imageUrl, members: toMembers, dateScheduledUtc: _mainPostUpdateData?.dateScheduled, private: true);
     Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
       _mainPostUpdateData = null;
       _setLoading(false);
@@ -841,9 +880,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void _onSendFinished(bool succeeded) {
     _setLoading(false);
     if (succeeded) {
-      _clearSelectedReplyId();
-      _clearBodyControllerContent();
-      Navigator.of(context).pop(true);
+      setStateIfMounted(() {
+        _clearSelectedReplyId();
+        _clearBodyControllerContent();
+        _clearImageSelection();
+      });
+      // Navigator.of(context).pop(true);
+      _refreshPostData();
     } else {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.reply.failed.msg', 'Failed to create new reply.'));
     }
@@ -866,12 +909,16 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _replyEditData?.body = '';
   }
 
+  void _clearImageSelection(){
+  _replyEditData?.imageUrl = null;
+  }
+
   //Scroll
   void _evalSliverHeaderHeight() {
     double? sliverHeaderHeight;
     try {
       final RenderObject? renderBox = _sliverHeaderKey.currentContext?.findRenderObject();
-      if (renderBox is RenderBox) {
+      if ((renderBox is RenderBox) && renderBox.hasSize) {
         sliverHeaderHeight = renderBox.size.height;
       }
     } on Exception catch (e) {
@@ -892,7 +939,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
     BuildContext? scrollContainerContext = _scrollContainerKey.currentContext;
     RenderObject? scrollContainerRenderBox = scrollContainerContext?.findRenderObject();
-    double? scrollContainerHeight = (scrollContainerRenderBox is RenderBox) ? scrollContainerRenderBox.size.height : null;
+    double? scrollContainerHeight = ((scrollContainerRenderBox is RenderBox) && scrollContainerRenderBox.hasSize) ? scrollContainerRenderBox.size.height : null;
 
     if ((scrollContainerHeight != null) && (postEditTop != null)) {
       double offset = postEditTop - scrollContainerHeight + 120;
@@ -929,7 +976,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if(CollectionUtils.isNotEmpty(replies)) {
       try {
         replies!.sort((post1, post2) =>
-            post2.dateCreatedUtc!.compareTo(post1.dateCreatedUtc!));
+            post1.dateCreatedUtc!.compareTo(post2.dateCreatedUtc!));
       } catch (e) {}
     }
   }
@@ -980,6 +1027,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   bool get _isEditMainPost {
     return _mainPostUpdateData!=null;
   }
+
+  bool get _isSubReplySupported => false; //Disable sub-reply TBD if we do not return i sub-reply remove all internal logic and UI related to it.
 
   // Notifications Listener
   @override

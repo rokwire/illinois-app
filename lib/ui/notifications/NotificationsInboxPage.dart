@@ -9,6 +9,7 @@ import 'package:neom/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:neom/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
+import 'package:illinois/ext/InboxMessage.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -248,12 +249,12 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
   }
 
   Widget _buildReadAllButton() {
-    return Container(
+    return Semantics(container: true, child: Container(
         child: UnderlinedButton(
             title: Localization().getStringEx("panel.inbox.mark_all_read.label", "Mark all as read"),
             padding: EdgeInsets.symmetric(vertical: 8),
             progress: _loadingMarkAllAsRead,
-            onTap: _onTapMarkAllAsRead));
+            onTap: _onTapMarkAllAsRead)));
   }
 
   // Filters
@@ -485,7 +486,7 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> impleme
           Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
             Row(children:<Widget>[
               Padding(padding: EdgeInsets.only(right: 8), child:
-                Styles().images.getImage('close', excludeFromSemantics: true)
+                Styles().images.getImage('close-circle', excludeFromSemantics: true)
               ),
               Expanded(child:
                 Text("Cancel", style: Styles().textStyles.getTextStyle("widget.button.title.regular"),)
@@ -954,7 +955,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
                           ),
                           (widget.message?.mute == true) ? Semantics(label: sprintf(Localization().getStringEx('widget.inbox_message_card.status.hint', 'status: %s ,for: '), [mutedStatus.toLowerCase()]), excludeSemantics: true, child:
                             Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2))), child:
-                              Text(mutedStatus.toUpperCase(), style: Styles().textStyles.getTextStyle("widget.heading.small"))
+                              Text(mutedStatus.toUpperCase(), style: Styles().textStyles.getTextStyle("widget.heading.extra_small"))
                           )) : Container()
                         ])
                       ) : Container(),
@@ -963,7 +964,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
                       Padding(padding: EdgeInsets.only(bottom: 6), child:
                         Row(children: [
                           Expanded(child:
-                            Text(widget.message?.body ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.body.hint', 'Body: %s'), [widget.message?.body ?? '']), style: Styles().textStyles.getTextStyle("widget.card.detail.regular"))
+                            Text(widget.message?.displayBody ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.body.hint', 'Body: %s'), [widget.message?.displayBody ?? '']), style: Styles().textStyles.getTextStyle("widget.card.detail.regular"))
                       )])) : Container(),
 
                     Row(children: [

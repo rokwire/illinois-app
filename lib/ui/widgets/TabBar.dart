@@ -108,6 +108,15 @@ class TabBar extends rokwire.TabBar {
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
     }
+    else if (code == 'wallet') {
+      return rokwire.TabWidget(
+        label: Localization().getStringEx('tabbar.wallet.title', 'Wallet'),
+        hint: Localization().getStringEx('tabbar.wallet.hint', 'Wallet Page'),
+        iconKey: 'wallet-gray',
+        selected: (tabController?.index == index),
+        onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
+      );
+    }
     else {
       return null;
     }

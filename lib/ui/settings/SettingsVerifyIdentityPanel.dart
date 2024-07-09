@@ -16,7 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
+import 'package:neom/ui/profile/ProfileLoginPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -138,7 +138,7 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
     Navigator.push(
         context,
         CupertinoPageRoute(
-            builder: (context) => SettingsLoginPhoneOrEmailPanel(
+            builder: (context) => ProfileLoginPhoneOrEmailPanel(
                   onFinish: () {
                     _setLoading(false);
                     _didLogin(context);

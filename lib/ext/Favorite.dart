@@ -5,6 +5,7 @@ import 'package:neom/ext/Event2.dart';
 import 'package:neom/ext/Explore.dart';
 import 'package:neom/ext/Game.dart';
 import 'package:neom/ext/Appointment.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/Dining.dart';
 import 'package:neom/model/Explore.dart';
 import 'package:neom/model/Laundry.dart';
@@ -213,7 +214,7 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: this as MTDStop,)));
     }
     else if (this is GuideFavorite) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as GuideFavorite).id,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as GuideFavorite).id, analyticsFeature: AnalyticsFeature.Guide,)));
     }
     else if (this is ExplorePOI) {
       (this as ExplorePOI).launchDirections();

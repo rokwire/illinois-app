@@ -306,11 +306,11 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
               _tweetsAccountKey = accountKey;
             }
           });
-        // Future.delayed((Duration.zero),(){
-        if (mounted && (tweetsPage != null)) {
-          _pageController?.animateToPage(0, duration: Duration(milliseconds: 500), curve: Curves.easeIn);
-        }
-        // });
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && (tweetsPage != null) && (_pageController?.positions.isNotEmpty == true)) {
+              _pageController?.animateToPage(0, duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+            }
+          });
       });
   }
 

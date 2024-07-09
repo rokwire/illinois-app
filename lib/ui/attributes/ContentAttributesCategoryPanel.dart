@@ -3,6 +3,8 @@ import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/ext/ContentAttributes.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/utils/AppUtils.dart';
@@ -11,7 +13,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class ContentAttributesCategoryPanel extends StatefulWidget {
+class ContentAttributesCategoryPanel extends StatefulWidget with AnalyticsInfo {
 
   final ContentAttribute attribute;
   final ContentAttributes? contentAttributes;
@@ -29,6 +31,9 @@ class ContentAttributesCategoryPanel extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _ContentAttributesCategoryPanelState();
 
+  @override
+  AnalyticsFeature? get analyticsFeature => contentAttributes?.analyticsFeature;
+
   LinkedHashSet<dynamic> get emptySelection => (attribute.nullValue != null) ? LinkedHashSet<dynamic>.from([attribute.nullValue]) : LinkedHashSet<dynamic>();
 }
 
@@ -38,6 +43,9 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   LinkedHashSet<dynamic> _selection = LinkedHashSet<dynamic>();
 
   int get requirementsFunctionalScope => widget.filtersMode ? contentAttributeRequirementsFunctionalScopeFilter : contentAttributeRequirementsFunctionalScopeCreate;
+  bool get hasRequirements => widget.attribute.requirements?.hasFunctionalScope(requirementsFunctionalScope) ?? false;
+  int get minRequiredSelectedCount => widget.attribute.requirements?.minSelectedCount ?? 0;
+  bool get canClearSelection => hasRequirements ? (minRequiredSelectedCount == 0) : true;
 
   bool get singleSelection => widget.attribute.isSingleSelection(requirementsFunctionalScope);
   bool get multipleSelection => widget.attribute.isMultipleSelection(requirementsFunctionalScope);
@@ -127,7 +135,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
         onTap: _onTapApply,
       ));
     }
-    else if ((0 < (widget.attributeValues?.length ?? 0)) && !DeepCollectionEquality().equals(widget.selection ?? emptySelection, emptySelection)) {
+    else if (canClearSelection && (0 < (widget.attributeValues?.length ?? 0)) && !DeepCollectionEquality().equals(widget.selection ?? emptySelection, emptySelection)) {
       actions.add(_buildHeaderBarButton(
         title:  Localization().getStringEx('dialog.clear.title', 'Clear'),
         onTap: _onTapClear,
@@ -275,16 +283,21 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     }
   }
 
+
   void _processTapAttributeValue(ContentAttributeValue attributeValue, { bool forceProcessing = false }) {
     dynamic attributeRawValue = attributeValue.value;
     if (attributeRawValue != null) {
       if (_selection.contains(attributeRawValue)) {
-        int minSelectedCount = widget.attribute.requirements?.minSelectedCount ?? 0;
-        if (minSelectedCount < _selection.length) {
-          _selection.remove(attributeRawValue);
+        if (hasRequirements) {
+          if (minRequiredSelectedCount < _selection.length) {
+            _selection.remove(attributeRawValue);
+          }
+          else if (!forceProcessing) {
+            return;
+          }
         }
-        else if (!forceProcessing) {
-          return;
+        else {
+          _selection.remove(attributeRawValue);
         }
       }
       else {
@@ -295,7 +308,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
       _selection.clear();
     }
 
-    if (widget.attribute.requirements?.hasFunctionalScope(requirementsFunctionalScope) ?? false) {
+    if (hasRequirements) {
       widget.attribute.validateAttributeValuesSelection(_selection);
     }
 

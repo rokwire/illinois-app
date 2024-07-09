@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/semantics.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Appointments.dart';
 import 'package:neom/service/MTD.dart';
 import 'package:neom/ui/explore/ExploreSearchPanel.dart';
@@ -65,7 +66,7 @@ class _ExploreSortKey extends OrdinalSortKey {
   static const _ExploreSortKey headerBar = _ExploreSortKey(2.0);
 }
 
-class ExplorePanel extends StatefulWidget {
+class ExplorePanel extends StatefulWidget with AnalyticsInfo{
 
   final ExploreType exploreType;
   final ExploreFilter? initialFilter;
@@ -95,6 +96,9 @@ class ExplorePanel extends StatefulWidget {
 
   @override
   ExplorePanelState createState() => ExplorePanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.fromName(exploreType.toString());
 }
 
 class ExplorePanelState extends State<ExplorePanel>
@@ -138,7 +142,7 @@ class ExplorePanelState extends State<ExplorePanel>
     _initFilters();
 
     _loadingProgress = true;
-
+    
     if (widget.exploreType == ExploreType.Events) {
       _loadEventCategories().then((List<dynamic>? result) {
         _eventCategories = result;
@@ -681,7 +685,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   void _onTapSearch() {
     Analytics().logSelect(target: "Search");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreSearchPanel(browseGroup: widget.browseGroup,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreSearchPanel(browseGroup: widget.browseGroup, analyticsFeature: widget.analyticsFeature,)));
   }
 
   Widget _buildContent() {
@@ -1200,7 +1204,7 @@ class _MTDInstructionsPopupState extends State<ExploreOptionalMessagePopup> {
                 Navigator.of(context).pop();
                 }, child:
                 Padding(padding: EdgeInsets.all(16), child:
-                  Styles().images.getImage('close', excludeFromSemantics: true)
+                  Styles().images.getImage('close-circle', excludeFromSemantics: true)
                 )
               ))
             )

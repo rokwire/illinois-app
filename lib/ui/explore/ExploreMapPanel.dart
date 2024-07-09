@@ -12,6 +12,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:neom/ext/Event2.dart';
 import 'package:neom/ext/Explore.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/Dining.dart';
 import 'package:neom/model/Explore.dart';
 import 'package:neom/model/Laundry.dart';
@@ -77,7 +78,7 @@ class ExploreMapPanel extends StatefulWidget {
   State<StatefulWidget> createState() => _ExploreMapPanelState();
 
   static bool get hasState {
-    Set<NotificationsListener>? subscribers = NotificationService().subscribers(ExploreMapPanel.notifySelect);
+    Set<NotificationsListener>? subscribers = NotificationService().subscribers(notifySelect);
     if (subscribers != null) {
       for (NotificationsListener subscriber in subscribers) {
         if ((subscriber is _ExploreMapPanelState) && subscriber.mounted) {
@@ -355,7 +356,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx("panel.maps.header.title", "Map")),
       body: RefreshIndicator(onRefresh: _onRefresh, child: _buildScaffoldBody(),),
@@ -629,7 +629,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   void _onTapMapExploreDirections() async {
-    Analytics().logSelect(target: 'Directions');
+    Analytics().logSelect(
+      target: 'Directions',
+      feature: ExploreExt.getExploreAnalyticsFeature(_selectedMapExplore),
+    );
     
     dynamic explore = _selectedMapExplore;
     _selectMapExplore(null);
@@ -649,7 +652,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
   
   void _onTapMapExploreDetail() {
-    Analytics().logSelect(target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details');
+    Analytics().logSelect(
+      target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details',
+      feature: ExploreExt.getExploreAnalyticsFeature(_selectedMapExplore),
+    );
     if (_selectedMapExplore is Explore) {
         (_selectedMapExplore as Explore).exploreLaunchDetail(context);
     }
@@ -660,7 +666,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   void _onTapMapClear() {
-    Analytics().logSelect(target: 'Clear');
+    Analytics().logSelect(
+      target: 'Clear',
+      feature: ExploreExt.getExploreAnalyticsFeature(_selectedMapExplore),
+    );
     dynamic selectedMapExplore = _selectedMapExplore;
     _selectMapExplore(null);
     if (selectedMapExplore is Favorite) {
@@ -720,13 +729,19 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   void _logAnalyticsSelect(dynamic explore) {
     String? exploreTarget;
+    AnalyticsFeature? exploreFeature;
     if (explore is Explore) {
       exploreTarget = explore.exploreTitle ?? explore.exploreLocation?.name ?? explore.exploreLocation?.displayAddress ?? explore.exploreLocation?.displayCoordinates;
+      exploreFeature = explore.analyticsFeature;
     }
     else if (explore is List<Explore>) {
       exploreTarget = '${explore.length} ${ExploreExt.getExploresListDisplayTitle(explore, language: 'en')}';
+      exploreFeature = ExploreExt.getExploresListAnalyticsFeature(explore);
     }
-    Analytics().logMapSelect(target: exploreTarget);
+    Analytics().logMapSelect(
+      target: exploreTarget,
+      feature: exploreFeature,
+    );
   }
 
   Widget? _buildExploreBarStopDescription() {
@@ -809,7 +824,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
               Align(alignment: Alignment.topRight, child:
                 InkWell(onTap: () => _onCloseMessagePopup(message), child:
                   Padding(padding: EdgeInsets.all(16), child:
-                    Styles().images.getImage("close")
+                    Styles().images.getImage("close-circle")
                   )
                 )
               )
@@ -862,15 +877,15 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
             textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.underline'),
           ),
         ),
-        Visibility(visible: Auth2().account?.isCalendarAdmin ?? false, child:
-          Event2ImageCommandButton('plus-circle',
+        Visibility(visible: Auth2().isCalendarAdmin, child:
+          Event2ImageCommandButton(Styles().images.getImage('plus-circle'),
             label: Localization().getStringEx('panel.events2.home.bar.button.create.title', 'Create'),
             hint: Localization().getStringEx('panel.events2.home.bar.button.create.hint', 'Tap to create event'),
             contentPadding: EdgeInsets.only(left: 8, right: 8, top: 16, bottom: 16),
             onTap: _onEvent2Create
           ),
         ),
-        Event2ImageCommandButton('search',
+        Event2ImageCommandButton(Styles().images.getImage('search'),
           label: Localization().getStringEx('panel.events2.home.bar.button.search.title', 'Search'),
           hint: Localization().getStringEx('panel.events2.home.bar.button.search.hint', 'Tap to search events'),
           contentPadding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
@@ -2031,7 +2046,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       }
       else {
         thresoldDistance = 0;
-        exploreMarkerGroups = (explores != null) ? Set<dynamic>.from(explores) : null;
+        exploreMarkerGroups =  (explores != null) ? <dynamic>{ ExploreMap.validFromList(explores) } : null;
       }
       
       if (!DeepCollectionEquality().equals(_exploreMarkerGroups, exploreMarkerGroups)) {
@@ -2076,38 +2091,36 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   static Set<dynamic>? _buildMarkerGroups(List<Explore>? explores, { double thresoldDistance = 0 }) {
     if (explores != null) {
-      if (0 < thresoldDistance) {
-        // group by thresoldDistance
-        List<List<Explore>> exploreGroups = <List<Explore>>[];
-        
-        for (Explore explore in explores) {
-          ExploreLocation? exploreLocation = explore.exploreLocation;
-          if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
-            List<Explore>? groupExploreList = _lookupExploreGroup(exploreGroups, exploreLocation, thresoldDistance: thresoldDistance);
-            if (groupExploreList != null) {
-              groupExploreList.add(explore);
-            }
-            else {
-              exploreGroups.add(<Explore>[explore]);
-            }
-          }
-        }
+      // group by thresoldDistance
+      List<List<Explore>> exploreGroups = <List<Explore>>[];
 
-        Set<dynamic> markerGroups = <dynamic>{};
-        for (List<Explore> exploreGroup in exploreGroups) {
-          if (exploreGroup.length == 1) {
-            markerGroups.add(exploreGroup.first);
+      for (Explore explore in explores) {
+        ExploreLocation? exploreLocation = explore.exploreLocation;
+        if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
+          List<Explore>? groupExploreList = _lookupExploreGroup(exploreGroups, exploreLocation, thresoldDistance: thresoldDistance);
+          if (groupExploreList != null) {
+            groupExploreList.add(explore);
           }
-          else if (exploreGroup.length > 1) {
-            markerGroups.add(exploreGroup);
+          else {
+            exploreGroups.add(<Explore>[explore]);
           }
         }
-        return markerGroups;
       }
-      else {
-        // no grouping
-        return Set<dynamic>.from(explores);
+
+      Set<dynamic> markerGroups = <dynamic>{};
+      for (List<Explore> exploreGroup in exploreGroups) {
+        if (exploreGroup.length == 1) {
+          markerGroups.add(exploreGroup.first);
+        }
+        else if (exploreGroup.length > 1) {
+          markerGroups.add(exploreGroup);
+        }
       }
+
+      return markerGroups;
+
+      // no grouping
+      // return Set<dynamic>.from(explores);
     }
     return null;
   }
@@ -2249,8 +2262,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
           exploreLocation.latitude?.toDouble() ?? 0,
           exploreLocation.longitude?.toDouble() ?? 0,
           groupExplore.exploreLocation?.latitude?.toDouble() ?? 0,
-          groupExplore.exploreLocation?.longitude?.toDouble() ?? 0);
-        if (distance < thresoldDistance) {
+          groupExplore.exploreLocation?.longitude?.toDouble() ?? 0
+        );
+        if (distance <= thresoldDistance) {
           return groupExploreList;
         }
       }
@@ -2275,7 +2289,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   static Size? _globalKeySize(GlobalKey key) {
     try {
       final RenderObject? renderBox = key.currentContext?.findRenderObject();
-      return (renderBox is RenderBox) ? renderBox.size : null;
+      return ((renderBox is RenderBox) && renderBox.hasSize) ? renderBox.size : null;
     }
     on Exception catch (e) {
       print(e.toString());

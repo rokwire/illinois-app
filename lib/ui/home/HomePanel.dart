@@ -17,8 +17,8 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/Dining.dart';
 import 'package:neom/model/Explore.dart';
 import 'package:neom/model/Laundry.dart';
@@ -30,16 +30,17 @@ import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/CheckList.dart';
 import 'package:neom/service/Guide.dart';
+import 'package:neom/ui/BrowsePanel.dart';
+import 'package:neom/service/RadioPlayer.dart';
 import 'package:neom/ui/home/HomeAppHelpWidget.dart';
 import 'package:neom/ui/home/HomeAthleticsEventsWidget.dart';
 import 'package:neom/ui/home/HomeAthleticsNewsWidget.dart';
 import 'package:neom/ui/home/HomeCampusSafetyResourcesWidget.dart';
 import 'package:neom/ui/home/HomeCanvasCoursesWidget.dart';
+import 'package:neom/ui/home/HomeFavoritesPanel.dart';
 import 'package:neom/ui/home/HomeCheckListWidget.dart';
-import 'package:neom/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:neom/ui/home/HomeDailyIlliniWidget.dart';
 import 'package:neom/ui/home/HomeDiningWidget.dart';
-import 'package:neom/ui/home/HomeEmptyContentWidget.dart';
 import 'package:neom/ui/home/HomeEvent2Widget.dart';
 import 'package:neom/ui/home/HomeFavoritesWidget.dart';
 import 'package:neom/ui/home/HomeInboxWidget.dart';
@@ -50,9 +51,8 @@ import 'package:neom/ui/home/HomeStateFarmCenterWidget.dart';
 import 'package:neom/ui/home/HomeStudentCoursesWidget.dart';
 import 'package:neom/ui/home/HomeToutWidget.dart';
 import 'package:neom/ui/home/HomeVideoTutorialsWidget.dart';
-import 'package:neom/ui/home/HomeWPGUFMRadioWidget.dart';
+import 'package:neom/ui/home/HomeRadioWidget.dart';
 import 'package:neom/ui/home/HomeWalletWidget.dart';
-import 'package:neom/ui/home/HomeWelcomeWidget.dart';
 import 'package:neom/ui/home/HomeWellnessMentalHealthWidget.dart';
 import 'package:neom/ui/home/HomeWellnessToDoWidget.dart';
 import 'package:neom/ui/home/HomeWellnessRingsWidget.dart';
@@ -60,33 +60,55 @@ import 'package:neom/ui/home/HomeWellnessTipsWidget.dart';
 import 'package:neom/ui/home/HomeWellnessResourcesWidget.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:neom/ui/home/HomeCampusRemindersWidget.dart';
-import 'package:neom/ui/home/HomeCampusResourcesWidget.dart';
 import 'package:neom/ui/home/HomeCreatePollWidget.dart';
 import 'package:neom/ui/home/HomeAthleticsGameDayWidget.dart';
-import 'package:neom/ui/home/HomeLoginWidget.dart';
 import 'package:neom/ui/home/HomeGroupsWidget.dart';
 import 'package:neom/ui/home/HomeRecentItemsWidget.dart';
 import 'package:neom/ui/home/HomeSaferWidget.dart';
 import 'package:neom/ui/home/HomeCampusHighlightsWidget.dart';
 import 'package:neom/ui/home/HomeTwitterWidget.dart';
-import 'package:neom/ui/home/HomeVoterRegistrationWidget.dart';
 import 'package:neom/ui/widgets/FlexContent.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class HomePanel extends StatefulWidget {
-  static const String notifyRefresh      = "edu.illinois.rokwire.home.refresh";
-  static const String notifySelect       = "edu.illinois.rokwire.home.select";
+enum HomeContentType { favorites, browse }
+
+////////////////////////
+// HomePanel
+
+class HomePanel extends StatefulWidget with AnalyticsInfo {
+  static const String notifyRefresh  = "edu.illinois.rokwire.home.refresh";
+  static const String notifySelect   = "edu.illinois.rokwire.home.select";
+  static const String selectParamKey = "select-param";
+
+  final Map<String, dynamic> params = <String, dynamic>{};
+
+  HomeContentType? get initialContentType => params[selectParamKey];
+  set initialContentType(HomeContentType? value) => params[selectParamKey] = value;
 
   @override
-  _HomePanelState createState() => _HomePanelState();
+  State<StatefulWidget> createState() => _HomePanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Home;
+
+  static bool get hasState {
+    Set<NotificationsListener>? subscribers = NotificationService().subscribers(notifySelect);
+    if (subscribers != null) {
+      for (NotificationsListener subscriber in subscribers) {
+        if ((subscriber is _HomePanelState) && subscriber.mounted) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 
   static dynamic dataFromCode(String code, {
     bool title = false,
@@ -122,15 +144,6 @@ class HomePanel extends StatefulWidget {
         return HomeAthliticsNewsWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeAthliticsNewsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'campus_resources') {
-      if (title) {
-        return HomeCampusResourcesWidget.title;
-      } else if (handle) {
-        return HomeCampusResourcesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeCampusResourcesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'campus_reminders') {
@@ -232,9 +245,18 @@ class HomePanel extends StatefulWidget {
         return HomeCheckListWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, contentKey: CheckList.uiucOnboarding, );
       }
     }
+    else if (code == 'gies_canvas_courses') {
+      if (title) {
+        return HomeCanvasCoursesWidget.giesTitle;
+      } else if (handle) {
+        return HomeCanvasCoursesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position, isGies: true);
+      } else {
+        return HomeCanvasCoursesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, isGies: true,);
+      }
+    }
     else if (code == 'canvas_courses') {
       if (title) {
-        return HomeCanvasCoursesWidget.title;
+        return HomeCanvasCoursesWidget.canvasTitle;
       } else if (handle) {
         return HomeCanvasCoursesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
@@ -367,13 +389,40 @@ class HomePanel extends StatefulWidget {
         return HomeWalletWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
+    else if (code == 'will_radio') {
+      if (title) {
+        return HomeRadioWidget.stationTitle(RadioStation.will);
+      } else if (handle) {
+        return HomeRadioWidget.handle(RadioStation.will, key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeRadioWidget(RadioStation.will, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+    else if (code == 'willfm_radio') {
+      if (title) {
+        return HomeRadioWidget.stationTitle(RadioStation.willfm);
+      } else if (handle) {
+        return HomeRadioWidget.handle(RadioStation.willfm, key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeRadioWidget(RadioStation.willfm, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+    else if (code == 'willhd_radio') {
+      if (title) {
+        return HomeRadioWidget.stationTitle(RadioStation.willhd);
+      } else if (handle) {
+        return HomeRadioWidget.handle(RadioStation.willhd, key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeRadioWidget(RadioStation.willhd, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
     else if (code == 'wpgufm_radio') {
       if (title) {
-        return HomeWPGUFMRadioWidget.title;
+        return HomeRadioWidget.stationTitle(RadioStation.wpgufm);
       } else if (handle) {
-        return HomeWPGUFMRadioWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+        return HomeRadioWidget.handle(RadioStation.wpgufm, key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
-        return HomeWPGUFMRadioWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+        return HomeRadioWidget(RadioStation.wpgufm, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'all_notifications') {
@@ -467,7 +516,7 @@ class HomePanel extends StatefulWidget {
         return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: GuideFavorite.favoriteKeyName, );
       }
     }
-    
+
     else if (code == 'wellness_resources') {
       if (title) {
         return HomeWellnessResourcesWidget.title;
@@ -518,37 +567,40 @@ class HomePanel extends StatefulWidget {
     }
   }
 
-
   static Key? _globalKey(Map<String, GlobalKey>? globalKeys, String code) => (globalKeys != null) ? (globalKeys[code] ??= GlobalKey()) : null;
 }
 
 class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixin<HomePanel> implements NotificationsListener {
-  
-  List<String>? _favoriteCodes;
-  Set<String>? _availableCodes;
-  List<String>? _systemCodes;
+
+  late HomeContentType _contentType;
+  Set<String>? _availableSystemCodes;
   StreamController<String> _updateController = StreamController.broadcast();
-  Map<String, GlobalKey> _widgetKeys = <String, GlobalKey>{};
   GlobalKey _contentWrapperKey = GlobalKey();
+  GlobalKey _toutKey = GlobalKey();
+  GlobalKey _browseKey = GlobalKey();
+  GlobalKey _favoritesKey = GlobalKey();
   ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
 
-    // Build Favorite codes before start listening for Auth2UserPrefs.notifyFavoritesChanged
-    // because _buildFavoriteCodes may fire such.
-    _favoriteCodes = _buildFavoriteCodes();
-    _availableCodes = JsonUtils.setStringsValue(FlexUI()['home']) ?? <String>{};
-    _systemCodes = JsonUtils.listStringsValue(FlexUI()['home.system']);
-
     NotificationService().subscribe(this, [
-      AppLifecycle.notifyStateChanged,
-      Localization.notifyStringsUpdated,
-      Auth2UserPrefs.notifyFavoritesChanged,
-      FlexUI.notifyChanged,
-      Styles.notifyChanged,
-      HomeSaferWidget.notifyNeedsVisiblity,
+      _HomeContentTab.notifySelect,
+      HomePanel.notifySelect,
     ]);
+
+    HomeContentType? initialContentType = widget.initialContentType;
+    if (initialContentType != null) {
+      Storage().homeContentType = _homeContentTypeToString(_contentType = initialContentType);
+      widget.initialContentType = null;
+    }
+    else {
+      _contentType = _homeContentTypeFromString(Storage().homeContentType) ?? HomeContentType.favorites;
+    }
+
+    _availableSystemCodes = JsonUtils.setStringsValue(FlexUI()['home.system']) ?? <String>{};
+    _availableSystemCodes?.remove('tout'); // Tout widget embedded statically here, do not show it as part of favorites
+
     super.initState();
   }
 
@@ -560,196 +612,77 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     super.dispose();
   }
 
+  // AutomaticKeepAliveClientMixin
+
   @override
   bool get wantKeepAlive => true;
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if ((name == _HomeContentTab.notifySelect) && (param is HomeContentType)) {
+      _updateContentType(param);
+    }
+    else if ((name == HomePanel.notifySelect) && (param is HomeContentType)) {
+      _updateContentType(param);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
 
     return Scaffold(
-      appBar: RootHeaderBar(title: Localization().getStringEx('panel.home.header.title', 'Favorites')),
-      body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
-        Column(key: _contentWrapperKey, children: <Widget>[
-          Expanded(child:
-            SingleChildScrollView(controller: _scrollController, child:
-              Column(children: _buildRegularContentList(),)
-            )
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.home.header.title', 'Home')),
+      body: Column(key: _contentWrapperKey, children: <Widget>[
+        Row(children: [
+          Expanded(child: _HomeContentTab(HomeContentType.favorites, selected: _contentType == HomeContentType.favorites,)),
+          Expanded(child: _HomeContentTab(HomeContentType.browse, selected: _contentType == HomeContentType.browse,)),
+        ],),
+        Expanded(child:
+          RefreshIndicator(onRefresh: _onPullToRefresh, child:
+            Stack(children: [
+              SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
+                Column(children: [
+                  HomeToutWidget(key: _toutKey, contentType: _contentType, updateController: _updateController,),
+
+                  Visibility(visible: (_contentType == HomeContentType.favorites), maintainState: true, child:
+                    HomeFavoritesContentWidget(key: _favoritesKey, availableSystemCodes: _availableSystemCodes, updateController: _updateController,),
+                  ),
+
+                  Visibility(visible: (_contentType == HomeContentType.browse), maintainState: true, child:
+                    BrowseContentWidget(key: _browseKey),
+                  ),
+                ],),
+              ),
+              _topShaddow,
+            ],),
           ),
-        ]),
-      ),
+        ),
+      ]),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: null,
     );
   }
 
-  List<Widget> _buildRegularContentList() {
-    List<Widget> widgets = [];
-    widgets.addAll(_buildWidgetsFromCodes(_systemCodes));
-    List<Widget> favWidgets = _buildWidgetsFromCodes(_favoriteCodes?.reversed, availableCodes: _availableCodes);
-    if (favWidgets.isEmpty) {
-      favWidgets.add(HomeEmptyContentWidget());
-    }
-    widgets.addAll(favWidgets);
-    return widgets;
-  }
-
-  List<Widget> _buildWidgetsFromCodes(Iterable<String>? codes, { Set<String>? availableCodes }) {
-    List<Widget> widgets = [];
-    if (codes != null) {
-      for (String code in codes) {
-        if ((availableCodes == null) || availableCodes.contains(code)) {
-          Widget? widget = _widgetFromCode(code);
-          if (widget is Widget) {
-            widgets.add(widget);
-          }
-        }
-      }
-    }
-    return widgets;
-  }
-
-  Widget? _widgetFromCode(String code,) {
-    if (code == 'tout') {
-      return HomeToutWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController, onEdit: _onEdit,);
-    }
-    else if (code == 'emergency') {
-      return FlexContent(contentKey: code, key: _widgetKey(code), favoriteId: code, updateController: _updateController);
-    }
-    else if (code == 'voter_registration') {
-      return HomeVoterRegistrationWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
-    }
-    else if (code == 'connect') {
-      return HomeLoginWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
-    }
-    else if (code == 'welcome') {
-      return HomeWelcomeWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
-    }
-    else {
-      dynamic data = HomePanel.dataFromCode(code,
-        title: false, handle: false, position: 0,
-        globalKeys: _widgetKeys,
-        updateController: _updateController,
-      );
-      
-      return (data is Widget) ? data : FlexContent(contentKey: code, key: _widgetKey(code), favoriteId: code, updateController: _updateController);
-    }
-  }
-
-  GlobalKey _widgetKey(String code) => _widgetKeys[code] ??= GlobalKey();
-
-  void _updateSystemAndAvailableCodes() {
-    Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home']);
-    bool availableCodesChanged = (availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes);
-
-    List<String>? systemCodes = JsonUtils.listStringsValue(FlexUI()['home.system']);
-    bool systemCodesChanged = (systemCodes != null) && !DeepCollectionEquality().equals(_systemCodes, systemCodes);
-
-    if (mounted && (availableCodesChanged || systemCodesChanged)) {
-      setState(() {
-        if (availableCodesChanged) {
-          _availableCodes = availableCodes;
-        }
-        if (systemCodesChanged) {
-          _systemCodes = systemCodes;
-        }
-      });
-    }
-  }
-
-  List<String>? _buildFavoriteCodes() {
-    LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName());
-    if (homeFavorites == null) {
-      homeFavorites = _initDefaultFavorites();
-    }
-    return (homeFavorites != null) ? List.from(homeFavorites) : null;
-  }
-
-  void _updateFavoriteCodes() {
-    if (mounted) {
-      List<String>? favoriteCodes = _buildFavoriteCodes();
-      if ((favoriteCodes != null) && !DeepCollectionEquality().equals(_favoriteCodes, favoriteCodes)) {
-        setState(() {
-          _favoriteCodes = favoriteCodes;
-        });
-      }
-    }
-  }
-
-  static LinkedHashSet<String>? _initDefaultFavorites() {
-    Map<String, dynamic>? defaults = FlexUI().content('defaults.favorites');
-    if (defaults != null) {
-      List<String>? defaultContent = JsonUtils.listStringsValue(defaults['home']);
-      if (defaultContent != null) {
-
-        // Init content of all compound widgets that bellongs to home favorites content
-        for (String code in defaultContent) {
-          List<String>? defaultWidgetContent = JsonUtils.listStringsValue(defaults['home.$code']);
-          if (defaultWidgetContent != null) {
-            Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: code),
-              LinkedHashSet<String>.from(defaultWidgetContent.reversed));
-          }
-        }
-
-        // Clear content of all compound widgets that do not bellongs to home favorites content
-        Iterable<String>? favoriteKeys = Auth2().prefs?.favoritesKeys;
-        if (favoriteKeys != null) {
-          for (String favoriteKey in List.from(favoriteKeys)) {
-            String? code = HomeFavorite.parseFavoriteKeyCategory(favoriteKey);
-            if ((code != null) && !defaultContent.contains(code)) {
-              Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: code), null);
-            }
-          }
-        }
-
-        // Init content of home favorites
-        LinkedHashSet<String>? defaultFavorites = LinkedHashSet<String>.from(defaultContent.reversed);
-        Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), defaultFavorites);
-        return defaultFavorites;
-      }
-    }
-    return null;
-  }
+  Widget get _topShaddow => Container(height: HomeToutWidget.triangleHeight, decoration: BoxDecoration(
+    // color: Styles().colors.fillColorPrimaryTransparent03,
+    gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+      Styles().colors.fillColorPrimaryTransparent03,
+      Colors.transparent,
+    ]),
+  ),);
 
   Future<void> _onPullToRefresh() async {
     _updateController.add(HomePanel.notifyRefresh);
   }
 
-  GlobalKey get _saferWidgetKey => _widgetKey('safer');
-
-  void _ensureSaferWidgetVisibiity() {
-      BuildContext? saferContext = _saferWidgetKey.currentContext;
-      if (saferContext != null) {
-        Scrollable.ensureVisible(saferContext, duration: Duration(milliseconds: 300));
-      }
-  }
-
-  void _onEdit() {
-    HomeCustomizeFavoritesPanel.present(context);
-  }
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == FlexUI.notifyChanged) {
-      _updateSystemAndAvailableCodes();
-    }
-    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      _updateFavoriteCodes();
-    }
-    else if (name == HomeSaferWidget.notifyNeedsVisiblity) {
-      _ensureSaferWidgetVisibiity();
-    }
-    else if (((name == AppLifecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) ||
-        (name == Localization.notifyStringsUpdated) ||
-        (name == Styles.notifyChanged) ||
-        (name == Storage.offsetDateKey) ||
-        (name == Storage.useDeviceLocalTimeZoneKey))
-    {
-      if (mounted) {
-        setState(() {});
-      }
+  void _updateContentType(HomeContentType? contentType) {
+    if (mounted && (contentType != null) && (contentType != _contentType)) {
+      setState(() {
+        Storage().homeContentType = _homeContentTypeToString(_contentType = contentType);
+      });
     }
   }
 }
@@ -794,7 +727,7 @@ class HomeFavorite extends Favorite {
   static void log(dynamic favorite, [bool? selected]) {
     List<Favorite> usedList = <Favorite>[];
     List<Favorite> unusedList = <Favorite>[];
-    
+
     List<String>? fullContent = JsonUtils.listStringsValue(FlexUI()['home']);
     LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(favoriteKeyName());
 
@@ -818,3 +751,71 @@ class HomeFavorite extends Favorite {
   }
 }
 
+// _HomeContentTab
+
+class _HomeContentTab extends StatelessWidget {
+  static const String notifySelect      = "edu.illinois.rokwire.home.content_tab.select";
+
+  final HomeContentType contentType;
+  final bool selected;
+  _HomeContentTab(this.contentType, { this.selected = false });
+
+  @override
+  Widget build(BuildContext context) => InkWell(onTap: _onTap, child:
+    Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: selected ? Styles().colors.fillColorSecondary : Styles().colors.white, width: 3))),
+      child: Center(child:
+        Row(mainAxisSize: MainAxisSize.min, children: [
+          _iconWidget,
+          _textWidget,
+        ],)
+      ),
+    ),
+  );
+
+  Widget get _iconWidget {
+    Widget? image = _icon;
+    return (image != null) ? Padding(padding: EdgeInsets.only(right: 8,), child: image) : Container();
+  }
+
+  Widget? get _icon {
+    switch (contentType) {
+      case HomeContentType.favorites: return Styles().images.getImage(selected ? 'star-filled' : 'star-outline-gray');
+      case HomeContentType.browse: return Styles().images.getImage(selected ? 'browse-filled' : 'browse-outline-gray');
+    }
+  }
+
+  Widget get _textWidget => Text(_text, style: _textStyle,);
+
+  String get _text {
+    switch (contentType) {
+      case HomeContentType.favorites: return Localization().getStringEx('', 'Favorites');
+      case HomeContentType.browse: return Localization().getStringEx('', 'Sections');
+    }
+  }
+
+  TextStyle? get _textStyle => Styles().textStyles.getTextStyle(
+    selected ?'widget.message.small.fat' : 'widget.message.light.small.semi_fat',
+  );
+
+  void _onTap() => NotificationService().notify(notifySelect, contentType);
+}
+
+// HomeContentType
+
+HomeContentType? _homeContentTypeFromString(String? value) {
+  switch(value) {
+    case 'favorites': return HomeContentType.favorites;
+    case 'browse': return HomeContentType.browse;
+    default: return null;
+  }
+}
+
+String? _homeContentTypeToString(HomeContentType? value) {
+  switch(value) {
+    case HomeContentType.favorites: return 'favorites';
+    case HomeContentType.browse: return 'browse';
+    default: return null;
+  }
+}

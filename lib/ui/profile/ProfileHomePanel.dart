@@ -150,7 +150,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
             Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
               InkWell(onTap : _onTapClose, child:
                 Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-                  Styles().images.getImage('close', excludeFromSemantics: true),
+                  Styles().images.getImage('close-circle', excludeFromSemantics: true),
                 ),
               ),
             ),
@@ -172,14 +172,16 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
           SingleChildScrollView(physics: _contentValuesVisible ? NeverScrollableScrollPhysics() : null, child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Padding(key: _pageHeadingKey, padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
-                RibbonButton(
-                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                  backgroundColor: Styles().colors.gradientColorPrimary,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-                  rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-                  label: _getContentItemName(_selectedContent) ?? '',
-                  onTap: _onTapContentSwitch
+                Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), focused: true, container: true, child:
+                  RibbonButton(
+                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+                    backgroundColor: Styles().colors.gradientColorPrimary,
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                    rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
+                    label: _getContentItemName(_selectedContent) ?? '',
+                    onTap: _onTapContentSwitch
+                  )
                 )
               ),
               _buildContent(),
@@ -193,7 +195,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   Widget _buildContent() {
     return Stack(children: [
-      Padding(padding: EdgeInsets.all(16), child: _contentWidget),
+      _contentWidget,
       Container(height: _contentHeight),
       _buildContentValuesContainer()
     ]);
@@ -213,8 +215,10 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
   Widget _buildContentDismissLayer() {
     return Positioned.fill(child:
       BlockSemantics(child:
-        GestureDetector(onTap: _onTapDismissLayer, child:
-          Container(color: Styles().colors.blackTransparent06)
+        Semantics(excludeSemantics: true, child:
+          GestureDetector(onTap: _onTapDismissLayer, child:
+            Container(color: Styles().colors.blackTransparent06)
+          )
         )
       )
     );
@@ -281,20 +285,20 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
 
   double? get _contentHeight  {
     RenderObject? pageRenderBox = _pageKey.currentContext?.findRenderObject();
-    double? pageHeight = (pageRenderBox is RenderBox) ? pageRenderBox.size.height : null;
+    double? pageHeight = ((pageRenderBox is RenderBox) && pageRenderBox.hasSize) ? pageRenderBox.size.height : null;
 
     RenderObject? pageHeaderRenderBox = _pageHeadingKey.currentContext?.findRenderObject();
-    double? pageHeaderHeight = (pageHeaderRenderBox is RenderBox) ? pageHeaderRenderBox.size.height : null;
+    double? pageHeaderHeight = ((pageHeaderRenderBox is RenderBox) && pageHeaderRenderBox.hasSize) ? pageHeaderRenderBox.size.height : null;
 
     return ((pageHeight != null) && (pageHeaderHeight != null)) ? (pageHeight - pageHeaderHeight) : null;
   }
 
-  Widget? get _contentWidget {
+  Widget get _contentWidget {
     switch (_selectedContent) {
       case ProfileContent.profile: return ProfileDetailsPage(parentRouteName: ProfileHomePanel.routeName,);
       case ProfileContent.who_are_you: return ProfileRolesPage();
       case ProfileContent.login: return ProfileLoginPage();
-      default: return null;
+      default: return Container();
     }
   }
 

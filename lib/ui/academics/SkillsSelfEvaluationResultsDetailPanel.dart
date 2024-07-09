@@ -18,7 +18,7 @@ import 'package:neom/model/Video.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:neom/ui/guide/GuideDetailPanel.dart';
-import 'package:neom/ui/settings/SettingsVideoTutorialPanel.dart';
+import 'package:neom/ui/apphelp/AppHelpVideoTutorialPanel.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:neom/ui/widgets/VideoPlayButton.dart';
@@ -227,7 +227,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
 
   void _onTapVideo(BuildContext context, Video video) {
     Analytics().logSelect(target: 'Video', source: runtimeType.toString(), attributes: video.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVideoTutorialPanel(videoTutorial: video)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppHelpVideoTutorialPanel(videoTutorial: video)));
   }
 
   void _onTapLink(BuildContext context, SkillsSelfEvaluationLink link) {
@@ -247,7 +247,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
           switch (link.panel) {
             case "GuideDetailPanel":
               if (link.params != null) {
-                Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: link.params!['guideEntryId'])));
+                Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: link.params!['guideEntryId'] /*, analyticsFeature: TBD */ ,)));
               }
           }
         }

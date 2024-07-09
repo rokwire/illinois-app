@@ -217,6 +217,12 @@ Color? groupMemberStatusToColor(GroupMemberStatus? value) {
 
 
 extension GroupPostExt on GroupPost {
+
+  GroupPostType get type => (members?.isNotEmpty == true) ? GroupPostType.message : GroupPostType.post;
+  bool get isPost => (type == GroupPostType.post);
+  bool get isMessage => (type == GroupPostType.message);
+  bool get isScheduled => dateScheduledUtc?.isAfter(DateTime.now()) == true;
+
   String? get displayDateTime {
     DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
     if (deviceDateTime != null) {
@@ -227,22 +233,30 @@ extension GroupPostExt on GroupPost {
           return "now";
         }
         else if (difference.inMinutes < 60) {
-          return "${difference.inMinutes} ${Localization().getStringEx("generic.minutes", "minutes")}";
+          return "${difference.inMinutes} ${Localization().getStringEx("generic.time.minutes", "minutes")}";
         }
         else if (difference.inHours < 24) {
-          return "${difference.inHours} ${Localization().getStringEx("generic.hours", "hours")}";
+          return "${difference.inHours} ${Localization().getStringEx("generic.time.hours", "hours")}";
         }
         else if (difference.inDays < 30) {
-          return "${difference.inDays} ${Localization().getStringEx("generic.days", "days")}";
+          return "${difference.inDays} ${Localization().getStringEx("generic.time.days", "days")}";
         }
         else {
           int differenceInMonths = difference.inDays ~/ 30;
           if (differenceInMonths < 12) {
-            return "$differenceInMonths ${Localization().getStringEx("generic.months", "months")}";
+            return "$differenceInMonths ${Localization().getStringEx("generic.time.months", "months")}";
           }
         }
       }
       return DateFormat("MMM dd, yyyy").format(deviceDateTime);
+    }
+    return null;
+  }
+
+  String? get displayScheduledTime {
+    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateScheduledUtc);
+    if(deviceDateTime != null){
+      return DateFormat("MMM dd, HH:mm").format(deviceDateTime);
     }
     return null;
   }

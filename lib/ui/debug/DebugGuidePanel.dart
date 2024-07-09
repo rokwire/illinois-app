@@ -92,16 +92,16 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
 
   Widget _buildToolbar() {
     return Wrap(children: [
-      Visibility(visible: false, child:
+      Visibility(visible: true, child:
         GestureDetector(onTap: _nop,
           child: Container(width: 36, height: 36,
             child: Align(alignment: Alignment.center,
-              child: Styles().images.getImage('share', excludeFromSemantics: true),
+              child: Styles().images.getImage('upload', excludeFromSemantics: true),
             ),
           ),
         ),
       ),
-      Visibility(visible: false, child:
+      Visibility(visible: true, child:
         GestureDetector(onTap: _nop,
           child: Container(width: 36, height: 36,
             child: Align(alignment: Alignment.center,

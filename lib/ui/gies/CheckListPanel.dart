@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/CheckList.dart';
 import 'package:neom/ui/gies/CheckListContentWidget.dart';
 import 'package:neom/utils/AppUtils.dart';
@@ -24,10 +25,13 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 
-class CheckListPanel extends StatelessWidget {
+class CheckListPanel extends StatelessWidget with AnalyticsInfo {
   final String contentKey;
 
   const CheckListPanel({Key? key, required this.contentKey}) : super(key: key);
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Academics;
 
   static void present(BuildContext context, { required String contentKey }) {
     if (Connectivity().isOffline) {

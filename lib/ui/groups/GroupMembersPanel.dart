@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/service/FirebaseMessaging.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
@@ -35,7 +36,7 @@ import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class GroupMembersPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GroupMembersPanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
 
   String? get groupId => group?.id;
@@ -44,6 +45,9 @@ class GroupMembersPanel extends StatefulWidget implements AnalyticsPageAttribute
 
   @override
   _GroupMembersPanelState createState() => _GroupMembersPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
@@ -681,7 +685,7 @@ class _GroupMemberCard extends StatelessWidget {
                           ),
                           child: Center(
                             child: Text(memberStatus?.toUpperCase() ?? '',
-                              style: Styles().textStyles.getTextStyle('widget.heading.small')
+                              style: Styles().textStyles.getTextStyle('widget.heading.extra_small')
                             ),
                           ),
                         ),
@@ -695,7 +699,7 @@ class _GroupMemberCard extends StatelessWidget {
                                         color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.all(Radius.circular(2))),
                                     child: Center(
                                         child: Text(Localization().getStringEx('widget.group.member.card.attended.label', 'ATTENDED'),
-                                            style: Styles().textStyles.getTextStyle('widget.heading.small')))))),
+                                            style: Styles().textStyles.getTextStyle('widget.heading.extra_small')))))),
                         Expanded(child: Container()),
                       ],
                     )

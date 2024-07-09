@@ -18,9 +18,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:neom/ext/ImagesResult.dart';
 import 'package:neom/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -1446,8 +1448,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   void _onTapAddImage() async {
     Analytics().logSelect(target: "Add Image");
-    String? updateUrl = await  GroupAddImageWidget.show(context: context, updateUrl: _imageUrl);
-    if (StringUtils.isNotEmpty(updateUrl) && (_imageUrl != updateUrl)) {
+    ImagesResult? imageResult = await  GroupAddImageWidget.show(context: context, url: _imageUrl);
+    String? updateUrl = imageResult?.succeeded == true ? imageResult!.stringData : null;
+    if (_imageUrl != updateUrl) {
       if(mounted){
         setState(() {
           _imageUrl = updateUrl;

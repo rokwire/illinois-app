@@ -305,7 +305,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
                   alignment: Alignment.topRight,
                   child: GestureDetector(
                       onTap: _onClose,
-                      child: Padding(padding: EdgeInsets.all(11), child: Styles().images.getImage('close', excludeFromSemantics: true))))
+                      child: Padding(padding: EdgeInsets.all(11), child: Styles().images.getImage('close-circle', excludeFromSemantics: true))))
             ])));
   }
 

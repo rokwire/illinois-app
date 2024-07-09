@@ -15,6 +15,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/service/Config.dart';
+import 'package:neom/ui/SyrveyPanel.dart';
 import 'package:neom/ui/academics/EssentialSkillsResults.dart';
 import 'package:neom/ui/widgets/AccessWidgets.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
@@ -22,7 +23,6 @@ import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
-import 'package:rokwire_plugin/ui/panels/survey_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';

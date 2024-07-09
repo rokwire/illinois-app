@@ -22,6 +22,7 @@ import 'package:neom/ui/notifications/NotificationsInboxPage.dart';
 import 'package:neom/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/utils/AppUtils.dart';
+import 'package:neom/ext/InboxMessage.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
@@ -43,7 +44,7 @@ class NotificationsHomePanel extends StatefulWidget {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.inbox', 'Notifications are not available while offline.'));
     }
     else if (!Auth2().isLoggedIn) {
-      AppAlert.showMessage(context,Localization().getStringEx('panel.browse.label.logged_out.inbox', 'You need to be logged in with your NetID to access Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
+      AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.notifications', 'Notifications'));
     }
     else if (ModalRoute.of(context)?.settings.name != routeName) {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
@@ -91,7 +92,7 @@ class NotificationsHomePanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeMapStateFarmWayfinding,
       FirebaseMessaging.payloadTypeAcademics,
       FirebaseMessaging.payloadTypeAcademicsAppointments,
-      FirebaseMessaging.payloadTypeAcademicsCanvasCourses,
+      FirebaseMessaging.payloadTypeAcademicsGiesCanvasCourses,
       FirebaseMessaging.payloadTypeAcademicsDueDateCatalog,
       FirebaseMessaging.payloadTypeAcademicsEvents,
       FirebaseMessaging.payloadTypeAcademicsGiesCheckilst,
@@ -209,13 +210,13 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
         Row(key: _sheetHeaderKey, children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:
-              Text(Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'Notifications'), style:  Styles().textStyles.getTextStyle("widget.sheet.title.regular"),)
+              Semantics(container: true, header: true, child: Text(Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'Notifications'), style:  Styles().textStyles.getTextStyle("widget.sheet.title.regular"),))
             )
           ),
-          Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+          Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), container: true, button: true, child:
             InkWell(onTap : _onTapClose, child:
               Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-              Styles().images.getImage('close', excludeFromSemantics: true),
+              Styles().images.getImage('close-circle', excludeFromSemantics: true),
               ),
             ),
           ),
@@ -240,9 +241,10 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
   }
 
   Widget _buildContent() {
-    return Container(color: Styles().colors.background, child:
+    return Semantics(container: true, child: Container(color: Styles().colors.background, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(key: _contentDropDownKey, padding: EdgeInsets.only(left: _defaultPadding, top: _defaultPadding, right: _defaultPadding), child:
+          Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), focused: true, container: true, child:
           RibbonButton(
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
             backgroundColor: Styles().colors.gradientColorPrimary,
@@ -252,7 +254,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
             label: _getContentItemName(_selectedContent),
             onTap: _changeSettingsContentValuesVisibility
           )
-        ),
+        )),
         Container(height: _contentWidgetHeight, child:
           Stack(children: [
             Padding(padding: EdgeInsets.all(_defaultPadding), child: _contentWidget),
@@ -260,7 +262,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
           ])
         )
       ])
-    );
+    ));
   }
 
   Widget _buildContentValuesContainer() {
@@ -277,13 +279,14 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
   Widget _buildContentDismissLayer() {
     return Positioned.fill(
         child: BlockSemantics(
-            child: GestureDetector(
+            child: Semantics(excludeSemantics: true, child:
+              GestureDetector(
                 onTap: () {
                   setState(() {
                     _contentValuesVisible = false;
                   });
                 },
-                child: Container(color: Styles().colors.blackTransparent06))));
+                child: Container(color: Styles().colors.blackTransparent06)))));
   }
 
   Widget _buildContentValuesWidget() {
@@ -327,12 +330,12 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
       takenHeight += mediaQuery.viewPadding.top + mediaQuery.viewInsets.top + 16;
 
       final RenderObject? contentDropDownRenderBox = _contentDropDownKey.currentContext?.findRenderObject();
-      if (contentDropDownRenderBox is RenderBox) {
+      if ((contentDropDownRenderBox is RenderBox) && contentDropDownRenderBox.hasSize) {
         takenHeight += contentDropDownRenderBox.size.height;
       }
 
       final RenderObject? sheetHeaderRenderBox = _sheetHeaderKey.currentContext?.findRenderObject();
-      if (sheetHeaderRenderBox is RenderBox) {
+      if ((sheetHeaderRenderBox is RenderBox) && sheetHeaderRenderBox.hasSize) {
         takenHeight += sheetHeaderRenderBox.size.height;
       }
     } on Exception catch (e) {

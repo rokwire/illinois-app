@@ -92,7 +92,7 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
     );
   }
 
-  Widget _buildAddContactButton() => Event2ImageCommandButton('plus-circle',
+  Widget _buildAddContactButton() => Event2ImageCommandButton(Styles().images.getImage('plus-circle'),
     label: Localization().getStringEx('panel.event2.setup.sponsorship_and_contacts.contacts.button.create.title', 'Create'),
     hint: Localization().getStringEx('panel.event2.setup.sponsorship_and_contacts.contacts.button.create.hint', 'Tap to create contact'),
     contentPadding: EdgeInsets.all(16),

@@ -176,17 +176,17 @@ class UserCourse {
         normalizedNow = normalizedNow.subtract(const Duration(days: 1));
       }
       if ((_isSameDay(date, normalizedFirstCompleted) || date.isAfter(normalizedFirstCompleted)) && (_isSameDay(date, normalizedNow) || date.isBefore(normalizedNow))) {
-        for (DateTime restart in normalizeDateTimes(streakRestarts ?? [], startOfDayOffset)) {
+        for (DateTime restart in normalizeDateTimes(streakRestarts ?? [], startOfDayOffset + Duration(minutes: 5))) {
           if (_isSameDay(restart, date)) {
             return true;  // part of a streak if a streak was restarted on this day
           }
         }
-        for (DateTime reset in normalizeDateTimes(streakResets ?? [], startOfDayOffset, onHour: true)) {
+        for (DateTime reset in normalizeDateTimes(streakResets ?? [], startOfDayOffset + Duration(minutes: 5))) {
           if (_isSameDay(reset, date)) {
             return false; // not part of streak if a streak was reset on this day
           }
         }
-        for (DateTime use in normalizeDateTimes(pauseUses ?? [], startOfDayOffset, onHour: true)) {
+        for (DateTime use in normalizeDateTimes(pauseUses ?? [], startOfDayOffset + Duration(minutes: 5))) {
           if (_isSameDay(use, date)) {
             return false; // not part of streak if a pause was used on this day
           }
@@ -205,7 +205,7 @@ class UserCourse {
       return false;
     }
 
-    for (DateTime use in normalizeDateTimes(pauseUses ?? [], startOfDayOffset)) {
+    for (DateTime use in normalizeDateTimes(pauseUses ?? [], startOfDayOffset + Duration(minutes: 5))) {
       if (_isSameDay(use, date)) {
         return true;
       }
@@ -218,10 +218,9 @@ class UserCourse {
     return date.year == other.year && date.month == other.month && date.day == other.day;
   }
 
-  static List<DateTime> normalizeDateTimes(List<DateTime> dateTimes, Duration startOfDayOffset, {bool onHour = false}) {
+  static List<DateTime> normalizeDateTimes(List<DateTime> dateTimes, Duration startOfDayOffset) {
     return List.generate(dateTimes.length, (index) {
-      DateTime dt = dateTimes[index].subtract(startOfDayOffset);
-      return onHour ? DateTime(dt.year, dt.month, dt.day, dt.hour) : dt;
+      return dateTimes[index].subtract(startOfDayOffset);
     });
   }
 }
@@ -298,6 +297,22 @@ class Module{
           return content;
         }
       }
+    }
+    return null;
+  }
+
+  Unit? nextUnit(UserUnit userUnit) {
+    int? currentUnitIndex = units?.indexWhere((moduleUnit) => moduleUnit.key == userUnit.unit?.key);
+    if (currentUnitIndex != null && currentUnitIndex >= 0 && currentUnitIndex < units!.length - 1) {
+      return units![currentUnitIndex + 1];
+    }
+    return null;
+  }
+
+  Unit? previousUnit(UserUnit userUnit) {
+    int? currentUnitIndex = units?.indexWhere((moduleUnit) => moduleUnit.key == userUnit.unit?.key);
+    if (currentUnitIndex != null && currentUnitIndex >= 1 && currentUnitIndex < units!.length) {
+      return units![currentUnitIndex - 1];
     }
     return null;
   }
@@ -476,6 +491,9 @@ class UserUnit {
   }
 
   UserScheduleItem? get currentUserScheduleItem => completed >= 0 && completed < (userSchedule?.length ?? 0) ? (userSchedule?[completed]) : null;
+  UserScheduleItem? get lastUserScheduleItem => CollectionUtils.isNotEmpty(userSchedule) ? userSchedule!.last : null;
+
+  bool get isCompleted => completed == (userSchedule?.length ?? -1);
 }
 
 class UserScheduleItem{
@@ -682,7 +700,7 @@ class UserContent{
   bool get isNotComplete => !isComplete;
 }
 
-enum ReferenceType { video, text, pdf, powerpoint, uri, none }
+enum ReferenceType { video, text, pdf, powerpoint, uri, survey, none }
 
 class Reference{
   final String? name;
@@ -719,6 +737,7 @@ class Reference{
       case 'powerpoint': return ReferenceType.powerpoint;
       case 'pdf': return ReferenceType.pdf;
       case 'uri': return ReferenceType.uri;
+      case 'survey': return ReferenceType.survey;
       default: return ReferenceType.none;
     }
   }
@@ -730,6 +749,7 @@ class Reference{
       case ReferenceType.powerpoint: return 'powerpoint';
       case ReferenceType.pdf: return 'pdf';
       case ReferenceType.uri: return 'uri';
+      case ReferenceType.survey: return 'survey';
       default: return '';
     }
   }
@@ -832,10 +852,12 @@ class CourseConfig {
   final int? pauseProgressReward;
 
   final int? streaksProcessTime;
+  final List<CourseNotification>? notifications;
   final String? timezoneName;
   final int? timezoneOffset;
 
-  CourseConfig({this.id, this.courseKey, this.initialPauses, this.maxPauses, this.pauseProgressReward, this.streaksProcessTime, this.timezoneName, this.timezoneOffset});
+  CourseConfig({this.id, this.courseKey, this.initialPauses, this.maxPauses, this.pauseProgressReward,
+    this.streaksProcessTime, this.notifications, this.timezoneName, this.timezoneOffset});
 
   static const String userTimezone = "user";
 
@@ -843,6 +865,7 @@ class CourseConfig {
     if (json == null) {
       return null;
     }
+
     return CourseConfig(
       id: JsonUtils.stringValue(json['id']),
       courseKey: JsonUtils.stringValue(json['course_key']),
@@ -850,38 +873,69 @@ class CourseConfig {
       maxPauses: JsonUtils.intValue(json['max_pauses']),
       pauseProgressReward: JsonUtils.intValue(json['pause_progress_reward']),
       streaksProcessTime: JsonUtils.intValue(json['streaks_notifications_config']?['streaks_process_time']),
+      notifications: CourseNotification.listFromJson(JsonUtils.listValue(json['streaks_notifications_config']?['notifications'])),
       timezoneName: JsonUtils.stringValue(json['streaks_notifications_config']?['timezone_name']),
       timezoneOffset: JsonUtils.intValue(json['streaks_notifications_config']?['timezone_offset']),
     );
   }
 
-  DateTime? nextScheduleItemUnlockTime({bool inUtc = false}) {
-    if (streaksProcessTime != null) {
-      timezone.Location location = DateTimeLocal.timezoneLocal;
-      DateTime now = DateTime.now();
-      if (!usesUserTimezone) {
-        if (StringUtils.isNotEmpty(timezoneName)) {
-          return null;
-        }
-        location = timezone.getLocation(timezoneName!);
-        now = DateTimeUtils.nowTimezone(location);
-      }
-      int nowLocalSeconds = 3600*now.hour;
+  bool get usesUserTimezone => timezoneName == userTimezone;
 
-      DateTime nextUnlock = timezone.TZDateTime(location, now.year, now.month, now.day, streaksProcessTime! ~/ 3600, 0, 0);
-      if (inUtc) {
-        nextUnlock = nextUnlock.toUtc();
+  int? get finalNotificationTime => CollectionUtils.isNotEmpty(notifications) ? notifications!.last.processTime : null;
+
+  DateTime? nextScheduleItemUnlockTime({bool inUtc = false}) => streaksProcessTime != null ? _nextTime(streaksProcessTime!, inUtc: inUtc) : null;
+
+  DateTime? nextFinalNotificationTime({bool inUtc = false}) => finalNotificationTime != null ? _nextTime(finalNotificationTime!, inUtc: inUtc) : null;
+
+  DateTime? _nextTime(int timeInSeconds, {bool inUtc = false}) {
+    timezone.Location location = DateTimeLocal.timezoneLocal;
+    DateTime now = DateTime.now();
+    if (!usesUserTimezone) {
+      if (StringUtils.isNotEmpty(timezoneName)) {
+        return null;
       }
-      if (nowLocalSeconds > streaksProcessTime!) {
-        // go forward one day if the current moment is after the unlock time in the current day
-        nextUnlock = nextUnlock.add(Duration(days: 1));
-      }
-      return nextUnlock;
+      location = timezone.getLocation(timezoneName!);
+      now = DateTimeUtils.nowTimezone(location);
     }
-    return null;
+    int nowLocalSeconds = 3600*now.hour;
+
+    DateTime next = timezone.TZDateTime(location, now.year, now.month, now.day, timeInSeconds ~/ 3600, 0, 0);
+    if (inUtc) {
+      next = next.toUtc();
+    }
+    if (nowLocalSeconds > timeInSeconds) {
+      // go forward one day if the current moment is after the unlock time in the current day
+      next = next.add(Duration(days: 1));
+    }
+    return next;
+  }
+}
+
+class CourseNotification {
+  final int? processTime;
+
+  CourseNotification({this.processTime});
+
+  static CourseNotification? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+
+    return CourseNotification(
+      processTime: JsonUtils.intValue(json['process_time']),
+    );
   }
 
-  bool get usesUserTimezone => timezoneName == userTimezone;
+  static List<CourseNotification>? listFromJson(List<dynamic>? jsonList) {
+    List<CourseNotification>? result;
+    if (jsonList != null) {
+      result = <CourseNotification>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CourseNotification.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
 }
 
 // CourseStyles

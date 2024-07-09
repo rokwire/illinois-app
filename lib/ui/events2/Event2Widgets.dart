@@ -2,6 +2,7 @@
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:neom/ext/Event2.dart';
 import 'package:neom/ext/Explore.dart';
@@ -111,12 +112,12 @@ class Event2FilterCommandButton extends StatelessWidget {
 //
 
 class Event2ImageCommandButton extends StatelessWidget {
-  final String imageKey;
+  final Widget? image;
   final String? label;
   final String? hint;
   final EdgeInsetsGeometry contentPadding;
   final void Function()? onTap;
-  Event2ImageCommandButton(this.imageKey, { Key? key,
+  Event2ImageCommandButton(this.image, { Key? key,
     this.label, this.hint,
     this.contentPadding = const EdgeInsets.all(16),
     this.onTap,
@@ -127,7 +128,7 @@ class Event2ImageCommandButton extends StatelessWidget {
     Semantics(label: label, hint: hint, button: true, child:
       InkWell(onTap: onTap, child:
         Padding(padding: contentPadding, child:
-          Styles().images.getImage(imageKey)
+          image
         )
       ),
     );
@@ -148,7 +149,7 @@ class Event2Card extends StatefulWidget {
   final List<String>? displayCategories;
   
   Event2Card(this.event, { Key? key, this.group, this.displayMode = Event2CardDisplayMode.list, this.linkType, this.userLocation, this.onTap}) :
-    displayCategories = Events2().contentAttributes?.displaySelectedLabelsFromSelection(event.attributes, usage: ContentAttributeUsage.category),
+    displayCategories = Events2().displaySelectedContentAttributeLabelsFromSelection(event.attributes, usage: ContentAttributeUsage.category),
     super(key: key);
 
   @override
@@ -451,7 +452,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     ]);
 
   Widget get _categoriesContentWidget =>
-    Text(widget.displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles.getTextStyle("widget.card.title.small.fat"));
+    Text(widget.displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles.getTextStyle("common.title.secondary"));
 
   /*Widget get _groupingBadgeWidget {
     String? badgeLabel;
@@ -464,7 +465,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     return (badgeLabel != null) ? 
       Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
         Semantics(label: badgeLabel, excludeSemantics: true, child:
-          Text(badgeLabel, style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
+          Text(badgeLabel, style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
     )) : Container();
   }*/
 
@@ -481,7 +482,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
             Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
           button: true,
           child: InkWell(onTap: _onFavorite,
-            child: Padding(padding: EdgeInsets.all(16),
+            child: Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
               child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true,)
             )
           ),
@@ -510,7 +511,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     ],) : Container();
 
   Widget get _titleContentWidget =>
-    Text(_event.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.dark.large.extra_fat'), maxLines: 2, overflow: TextOverflow.ellipsis);
+    Text(_event.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.dark.medium.fat'), maxLines: 2, overflow: TextOverflow.ellipsis);
 
   Widget get _detailsWidget {
     List<Widget> detailWidgets = <Widget>[
@@ -584,7 +585,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   }
 
   Widget _buildLocationTextDetailWidget(String text) =>
-    _buildDetailWidget(Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero);
+    _buildDetailWidget(Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle('common.body'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero);
 
   Widget _buildTextDetailWidget(String text, String iconKey, {
     EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),
@@ -592,7 +593,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     bool iconVisible = true, int maxLines = 1,
   }) =>
     _buildDetailWidget(
-      Text(text, style: Styles().textStyles.getTextStyle('widget.explore.card.detail.regular'), maxLines: maxLines, overflow: TextOverflow.ellipsis,),
+      Text(text, style: Styles().textStyles.getTextStyle('common.body'), maxLines: maxLines, overflow: TextOverflow.ellipsis,),
       iconKey, contentPadding: contentPadding, iconPadding: iconPadding, iconVisible: iconVisible
     );
 
@@ -852,7 +853,7 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
     double? minContentHeight;
     for (GlobalKey contentKey in _contentKeys.values) {
       final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
-      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+      if ((renderBox is RenderBox) && renderBox.hasSize && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
         minContentHeight = renderBox.size.height;
       }
     }
@@ -965,18 +966,30 @@ class Event2Popup {
       message: StringUtils.isNotEmptyString(result) ? result : Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred'),
     );
 
-  static Future<bool?> showPrompt(BuildContext context, String title, String? message, {
+  static Future<bool?> showPrompt(BuildContext context, {
+    String? title, TextStyle? titleTextStyle,
+    String? message, String? messageHtml, TextStyle? messageTextStyle,
     String? positiveButtonTitle, String? positiveAnalyticsTitle,
     String? negativeButtonTitle, String? negativeAnalyticsTitle,
   }) async {
     return showDialog<bool?>(context: context, builder: (BuildContext context) => AlertDialog(
       surfaceTintColor: Styles().colors.surface,
       content: Column(mainAxisSize: MainAxisSize.min, children: [
-        Text(title, style: Styles().textStyles.getTextStyle("widget.card.title.light.regular.fat"),),
+        (title != null) ?
+          Text(title, style: titleTextStyle ?? Styles().textStyles.getTextStyle("widget.card.title.light.regular.fat"),)
+        : Container(),
         (message != null) ? Padding(padding: EdgeInsets.only(top: 12), child:
-          Text(message, style: Styles().textStyles.getTextStyle("widget.card.light.title.small"),),
-        ) : Container()
+          Text(message, style: messageTextStyle ?? Styles().textStyles.getTextStyle("widget.message.light.regular.semi_fat"),),
+        ) : Container(),
+        (messageHtml != null) ? Padding(padding: EdgeInsets.only(top: 12), child:
+          HtmlWidget(
+            messageHtml,
+            textStyle:  messageTextStyle ?? Styles().textStyles.getTextStyle("widget.message.light.regular.semi_fat"),
+            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
+          )
+        ) : Container(),
       ],),
+      contentPadding: EdgeInsets.only(top: 8, left: 16, right: 16),
       actions: <Widget>[
         TextButton(
           child: Text(positiveButtonTitle ?? Localization().getStringEx("dialog.ok.title", "OK"), style:
@@ -997,6 +1010,7 @@ class Event2Popup {
           }
         )
       ],
+      actionsPadding: EdgeInsets.zero,
     ));
   }
 }

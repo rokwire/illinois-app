@@ -593,7 +593,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     if (widget.explore is Event) {
       return (widget.explore as Event).category;
     } else if (widget.explore is Event2) {
-      return Events2().contentAttributes?.displaySelectedLabelsFromSelection((widget.explore as Event2).attributes, usage: ContentAttributeUsage.category).join(', ');
+      return Events2().displaySelectedContentAttributeLabelsFromSelection((widget.explore as Event2).attributes, usage: ContentAttributeUsage.category)?.join(', ');
     } else if (widget.explore is Game) {
       return Events2.sportEventCategory;
     } else {

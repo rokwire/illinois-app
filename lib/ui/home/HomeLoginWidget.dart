@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:neom/ui/home/HomeWidgets.dart';
-import 'package:neom/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
+import 'package:neom/ui/profile/ProfileLoginPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -98,7 +98,7 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> implements Notificati
     return Container();
   }
   
-  Widget get _closeButton => Semantics(label: Localization().getStringEx('widget.home.welcome.button.close.label', 'Close'), button: true, excludeSemantics: true, child:
+  Widget get _closeButton => Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
     InkWell(onTap: _onClose, child:
       Padding(padding: const EdgeInsets.all(16), child:
         Styles().images.getImage('close-circle-white', excludeFromSemantics: true)
@@ -223,7 +223,7 @@ class _HomeLoginPhoneOrEmailWidget extends StatelessWidget{
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute(
         settings: RouteSettings(),
-        builder: (context) => SettingsLoginPhoneOrEmailPanel(
+        builder: (context) => ProfileLoginPhoneOrEmailPanel(
           onFinish: () {
             _didLogin(context);
           }

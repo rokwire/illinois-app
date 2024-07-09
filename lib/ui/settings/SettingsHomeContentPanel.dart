@@ -17,9 +17,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/MobileAccess.dart';
-import 'package:neom/service/FlexUI.dart';
 import 'package:neom/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:neom/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:neom/ui/home/HomePanel.dart';
@@ -34,8 +34,8 @@ import 'package:neom/ui/settings/SettingsLanguageContentWidget.dart';
 import 'package:neom/ui/settings/SettingsMapsContentWidget.dart';
 import 'package:neom/ui/settings/SettingsNotificationPreferencesContentWidget.dart';
 import 'package:neom/ui/settings/SettingsPrivacyCenterContentWidget.dart';
+import 'package:neom/ui/settings/SettingsRecentItemsContentWidget.dart';
 import 'package:neom/ui/settings/SettingsResearchContentWidget.dart';
-import 'package:neom/ui/settings/SettingsSectionsContentWidget.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -46,9 +46,9 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum SettingsContent { sections, interests, food_filters, sports, favorites, assessments, calendar, appointments, i_card, language, contact, maps, research, privacy, notifications}
+enum SettingsContent { interests, food_filters, sports, favorites, assessments, calendar, recent_items, appointments, i_card, language, contact, maps, research, privacy, notifications}
 
-class SettingsHomeContentPanel extends StatefulWidget {
+class SettingsHomeContentPanel extends StatefulWidget with AnalyticsInfo {
   static final List<SettingsContent> _dropdownSettings = [ //SettingsContent visible in the dropdown. Some can be accessed only from outside. Example: SettingsHomeContentPanel.present(context, content: SettingsContent.food_filters);
     SettingsContent.contact,
     SettingsContent.maps,
@@ -56,6 +56,7 @@ class SettingsHomeContentPanel extends StatefulWidget {
     SettingsContent.assessments,
     SettingsContent.research,
     SettingsContent.calendar,
+    SettingsContent.recent_items,
     SettingsContent.language,
     SettingsContent.privacy,
     SettingsContent.notifications,
@@ -70,6 +71,9 @@ class SettingsHomeContentPanel extends StatefulWidget {
 
   @override
   _SettingsHomeContentPanelState createState() => _SettingsHomeContentPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Settings;
 
   static void present(BuildContext context, { SettingsContent? content}) {
     if (ModalRoute.of(context)?.settings.name != routeName) {
@@ -182,7 +186,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
             Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
               InkWell(onTap : _onTapClose, child:
                 Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-                  Styles().images.getImage('close', excludeFromSemantics: true),
+                  Styles().images.getImage('close-circle', excludeFromSemantics: true),
                 ),
               ),
             ),
@@ -204,14 +208,16 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
             Container(color: Styles().colors.background, child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
-                  RibbonButton(
-                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                    backgroundColor: Styles().colors.gradientColorPrimary,
-                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-                    rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-                    label: _getContentLabel(_selectedContent),
-                    onTap: _onTapContentDropdown
+                  Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), focused: true, container: true, child:
+                    RibbonButton(
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+                      backgroundColor: Styles().colors.gradientColorPrimary,
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                      rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
+                      label: _getContentLabel(_selectedContent),
+                      onTap: _onTapContentDropdown
+                    )
                   )
                 ),
                 _buildContent()
@@ -245,7 +251,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   Widget _buildContentDismissLayer() {
     return Container /* Positioned.fill */ (
         child: BlockSemantics(
-            child: GestureDetector(
+            child: Semantics(excludeSemantics: true,
+              child: GestureDetector(
                 onTap: () {
                   setState(() {
                     _contentValuesVisible = false;
@@ -255,7 +262,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
                   color: Styles().colors.background.withAlpha(153),
                   height: MediaQuery.of(context).size.height,
                   
-                ))));
+                )))));
   }
 
   Widget _buildContentValuesWidget() {
@@ -293,7 +300,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
       HomeCustomizeFavoritesPanel.present(context).then((_) => NotificationService().notify(HomePanel.notifySelect));
     }
     else {
-    _selectedContent = _lastSelectedContent = contentItem;
+      _selectedContent = _lastSelectedContent = contentItem;
     }
     _changeSettingsContentValuesVisibility();
   }
@@ -333,8 +340,6 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
 
   Widget get _contentWidget {
     switch (_selectedContent) {
-      case SettingsContent.sections: //TBD remove and use profile.login instead
-        return SettingsSectionsContentWidget();
       case SettingsContent.interests:
         return SettingsInterestsContentWidget();
       case SettingsContent.food_filters:
@@ -343,6 +348,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
         return AthleticsTeamsWidget();
       case SettingsContent.calendar:
         return SettingsCalendarContentWidget();
+      case SettingsContent.recent_items:
+        return SettingsRecentItemsContentWidget();
       case SettingsContent.appointments:
         return SettingsAppointmentsContentWidget();
       case SettingsContent.favorites:
@@ -382,8 +389,6 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
 
   String _getContentLabel(SettingsContent section) {
     switch (section) {
-      case SettingsContent.sections: //TBD remove and use profile.login instead
-        return Localization().getStringEx('panel.settings.home.settings.sections.section.label', 'Sign In/Sign Out');
       case SettingsContent.interests:
         return Localization().getStringEx('panel.settings.home.settings.sections.interests.label', 'My Interests');
       case SettingsContent.food_filters:
@@ -392,6 +397,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
         return Localization().getStringEx('panel.settings.home.settings.sections.sports.label', 'My Sports Teams');
       case SettingsContent.calendar:
         return Localization().getStringEx('panel.settings.home.settings.sections.calendar.label', 'Add to My Device\'s Calendar');
+      case SettingsContent.recent_items:
+        return Localization().getStringEx('panel.settings.home.settings.sections.recent_items.label', 'My Browsing History');
       case SettingsContent.appointments:
         return Localization().getStringEx('panel.settings.home.settings.sections.appointments.label', 'My Success Team & Appointments');
       case SettingsContent.favorites:
@@ -416,7 +423,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   }
 
   // NotificationsListener
-
+  
   @override
   void onNotification(String name, dynamic param) {
     if (name == MobileAccess.notifyMobileStudentIdChanged) {

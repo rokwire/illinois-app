@@ -770,15 +770,15 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   }
 
   Future<bool?> _promptUnregisteredAttendee() => Event2Popup.showPrompt(context,
-    Localization().getStringEx('panel.event2.detail.attendance.prompt.attendee_not_registered.title', 'Not registered'),
-    Localization().getStringEx('panel.event2.detail.attendance.prompt.attendee_not_registered.description', 'Mark as attended?'),
+    title: Localization().getStringEx('panel.event2.detail.attendance.prompt.attendee_not_registered.title', 'Not registered'),
+    message: Localization().getStringEx('panel.event2.detail.attendance.prompt.attendee_not_registered.description', 'Mark as attended?'),
     positiveButtonTitle: Localization().getStringEx("dialog.yes.title", "Yes"),
     negativeButtonTitle: Localization().getStringEx("dialog.no.title", "No"),
   );
 
   Future<bool?> _promptCapacityReached() => Event2Popup.showPrompt(context,
-    Localization().getStringEx('panel.event2.detail.attendance.prompt.event_capacity_reached.title', 'At event capacity'),
-    Localization().getStringEx('panel.event2.detail.attendance.prompt.event_capacity_reached.description', 'Mark as attended?'),
+    title: Localization().getStringEx('panel.event2.detail.attendance.prompt.event_capacity_reached.title', 'At event capacity'),
+    message: Localization().getStringEx('panel.event2.detail.attendance.prompt.event_capacity_reached.description', 'Mark as attended?'),
     positiveButtonTitle: Localization().getStringEx("dialog.yes.title", "Yes"),
     negativeButtonTitle: Localization().getStringEx("dialog.no.title", "No"),
   );

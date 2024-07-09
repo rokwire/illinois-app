@@ -7,9 +7,10 @@ import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/FirebaseMessaging.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/ui/profile/ProfileHomePanel.dart';
-import 'package:neom/ui/settings/SettingsLinkedAccountPanel.dart';
-import 'package:neom/ui/settings/SettingsLoginCodePanel.dart';
-import 'package:neom/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
+import 'package:neom/ui/profile/ProfileLoginLinkedAccountPanel.dart';
+import 'package:neom/ui/profile/ProfileLoginEmailPanel.dart';
+import 'package:neom/ui/profile/ProfileLoginPhoneConfirmPanel.dart';
+import 'package:neom/ui/profile/ProfileLoginPhoneOrEmailPanel.dart';
 import 'package:neom/ui/settings/SettingsWidgets.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/utils/AppUtils.dart';
@@ -25,6 +26,10 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileLoginPage extends StatefulWidget {
+  final EdgeInsetsGeometry margin;
+
+  ProfileLoginPage({super.key, this.margin = const EdgeInsets.all(16) });
+
   @override
   State<StatefulWidget> createState() => _ProfileLoginPageState();
 }
@@ -103,7 +108,9 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
 
     contentList.add(_buildAppInfo());
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: contentList);
+    return Padding(padding: widget.margin, child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList)
+    );
   }
 
   // Connect
@@ -190,7 +197,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
   void _onPhoneOrEmailLoginClicked() {
     Analytics().logSelect(target: "Phone or Email Login");
     if (Connectivity().isNotOffline) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsLoginPhoneOrEmailPanel(onFinish: () {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => ProfileLoginPhoneOrEmailPanel(onFinish: () {
         _popToMe();
       },),),);
     } else {
@@ -739,7 +746,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       progressController(loading: false);
       _popToMe();
       if (result == true) {
-        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsLoginPhoneOrEmailPanel(mode: mode, link: true, onFinish: () {
+        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => ProfileLoginPhoneOrEmailPanel(mode: mode, link: true, onFinish: () {
           _popToMe();
         },)),);
       }
@@ -760,7 +767,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
       Auth2().authenticateWithCode(Auth2().account?.identifier?.identifier).then((Auth2RequestCodeResult result) {
         if (result == Auth2RequestCodeResult.succeeded) {
           Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) =>
-            SettingsLoginCodePanel(identifier: Auth2().account?.identifier?.identifier, onFinish: () {
+            ProfileLoginCodePanel(phoneNumber: Auth2().account?.identifier?.identifier, onFinish: () {
               completer.complete(true);
             },)
           ),).then((_) {
@@ -782,12 +789,12 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
 
   void _onTapAlternateEmail(Auth2Identifier linked) {
     Analytics().logSelect(target: "Alternate Email");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedAccountPanel(linkedIdentifier: linked, mode: LinkAccountMode.email,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ProfileLoginLinkedAccountPanel(linkedAccount: linked, mode: LinkAccountMode.email,)));
   }
 
   void _onTapAlternatePhone(Auth2Identifier linked) {
     Analytics().logSelect(target: "Alternate Phone");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedAccountPanel(linkedIdentifier: linked, mode: LinkAccountMode.phone,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ProfileLoginLinkedAccountPanel(linkedAccount: linked, mode: LinkAccountMode.phone,)));
   }
 
   // Debug

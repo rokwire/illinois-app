@@ -16,6 +16,7 @@ import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -59,6 +60,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
 
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
+      Auth2.notifyLoginChanged,
       AppLifecycle.notifyStateChanged,
       Config.notifyConfigChanged,
       Polls.notifyCreated,
@@ -70,7 +72,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
         if (command == HomePanel.notifyRefresh) {
-          _refreshPolls(showProgress: true);
+          _refreshPolls(showProgress: true, initResult: true);
         }
       });
     }
@@ -79,8 +81,13 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
       _loadingPolls = true;
       Polls().getRecentPolls(cursor: PollsCursor(offset: 0, limit: Config().homeRecentPollsCount + 1))?.then((PollsChunk? result) {
         setStateIfMounted(() {
-          _loadingPolls = false;
           _recentPolls = result?.polls;
+        });
+      }).catchError((_){
+
+      }).whenComplete((){
+        setStateIfMounted(() {
+          _loadingPolls = false;
         });
       });
     }
@@ -100,15 +107,16 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
   @override
   void onNotification(String name, dynamic param) {
     if (name == Connectivity.notifyStatusChanged) {
-      _refreshPolls();
+      _onContentAvailabilityChanged(Connectivity().isOnline);
+    }
+    else if (name == Auth2.notifyLoginChanged) {
+      _onContentAvailabilityChanged(Auth2().isLoggedIn);
     }
     else if (name == AppLifecycle.notifyStateChanged) {
       _onAppLifecycleStateChanged(param);
     }
     else if (name == Config.notifyConfigChanged) {
-      if (mounted) {
-        setState(() {});
-      }
+      setStateIfMounted(() {});
     }
     else if (name == Polls.notifyCreated) {
       _onPollCreated(param);
@@ -138,6 +146,11 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
       return HomeMessageCard(
         title: Localization().getStringEx("common.message.offline", "You appear to be offline"),
         message: Localization().getStringEx("widget.home.recent_polls.text.offline", "Recent Polls are not available while offline"),);
+    }
+    else if (!Auth2().isLoggedIn) {
+      return HomeMessageCard(
+        title: Localization().getStringEx("common.message.logged_out", "You are not signed in"),
+        message: Localization().getStringEx("widget.home.recent_polls.text.logged_out", "Recent Polls are not available while not signed in."),);
     }
     else if (_loadingPolls) {
       return HomeProgressWidget();
@@ -234,7 +247,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
     double? minContentHeight;
     for(GlobalKey contentKey in _contentKeys.values) {
       final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
-      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+      if ((renderBox is RenderBox) && renderBox.hasSize && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
         minContentHeight = renderBox.size.height;
       }
     }
@@ -247,26 +260,35 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
     Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
   }
 
-  void _refreshPolls({bool showProgress = false}) {
-    if (Connectivity().isOnline) {
+  void _refreshPolls({bool showProgress = false, bool initResult = false}) {
+    if (Connectivity().isOnline && Auth2().isLoggedIn && (_loadingPolls != true)) {
       if (showProgress && mounted) {
         setState(() {
           _loadingPolls = true;
         });
       }
       Polls().getRecentPolls(cursor: PollsCursor(offset: 0, limit: max(_recentPolls?.length ?? 0, Config().homeRecentPollsCount + 1)))?.then((PollsChunk? result) {
-        if (mounted) {
+        if (initResult || ((result?.polls != null) && !DeepCollectionEquality().equals(_recentPolls, result?.polls))) {
+          setStateIfMounted(() {
+            _recentPolls = result?.polls;
+            _pageViewKey = UniqueKey();
+            _pageController?.jumpToPage(0);
+            _contentKeys.clear();
+          });
+        }
+      }).catchError((_){
+        if (initResult) {
+          setStateIfMounted(() {
+            _recentPolls = null;
+            _pageViewKey = UniqueKey();
+            _pageController?.jumpToPage(0);
+            _contentKeys.clear();
+          });
+        }
+      }).whenComplete((){
+        if (showProgress && mounted) {
           setState(() {
-            if (showProgress) {
-              _loadingPolls = false;
-            }
-            if ((result?.polls != null) && !DeepCollectionEquality().equals(_recentPolls, result?.polls)) {
-              _recentPolls = result?.polls;
-              _pageViewKey = UniqueKey();
-              // _pageController = null;
-              _pageController?.jumpToPage(0);
-              _contentKeys.clear();
-            }
+            _loadingPolls = false;
           });
         }
       });
@@ -275,26 +297,27 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
 
   void _loadNextPollsPage() {
     if (Connectivity().isOnline && _hasMorePolls && !_loadingPollsPage) {
-      if (mounted) {
-        setState(() {
-          _loadingPollsPage = true;
-        });
-      }
+      setStateIfMounted(() {
+        _loadingPollsPage = true;
+      });
       Polls().getRecentPolls(cursor: PollsCursor(offset: _recentPolls?.length, limit: Config().homeRecentPollsCount + 1))?.then((PollsChunk? result) {
-        if (mounted) {
-          setState(() {
-            _loadingPollsPage = false;
-            if (result?.polls != null) {
-              _hasMorePolls = result?.polls?.isNotEmpty ?? false;
-              if (_recentPolls != null) {
-                _recentPolls?.addAll(result!.polls!);
-              }
-              else {
-                _recentPolls = result?.polls;
-              }
+        setStateIfMounted(() {
+          if (result?.polls != null) {
+            _hasMorePolls = result?.polls?.isNotEmpty ?? false;
+            if (_recentPolls != null) {
+              _recentPolls?.addAll(result!.polls!);
             }
-          });
-        }
+            else {
+              _recentPolls = result?.polls;
+            }
+          }
+        });
+      }).catchError((_){
+
+      }).whenComplete((){
+        setStateIfMounted(() {
+          _loadingPollsPage = false;
+        });
       });
     }
   }
@@ -310,6 +333,15 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
           _refreshPolls();
         }
       }
+    }
+  }
+
+  void _onContentAvailabilityChanged(bool available) {
+    if (available) {
+      _refreshPolls(showProgress: true, initResult: true);
+    }
+    else {
+      setStateIfMounted();
     }
   }
 

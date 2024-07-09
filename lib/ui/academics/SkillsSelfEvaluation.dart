@@ -16,6 +16,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/service/Occupations.dart';
+import 'package:neom/ui/SyrveyPanel.dart';
 import 'package:neom/ui/academics/SkillsSelfEvaluationInfoPanel.dart';
 import 'package:neom/ui/academics/SkillsSelfEvaluationResultsPanel.dart';
 import 'package:neom/ui/settings/SettingsHomeContentPanel.dart';
@@ -28,7 +29,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/panels/survey_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
@@ -247,7 +247,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   void _onTapStartEvaluation() {
     Future? result = AccessDialog.show(context: context, resource: 'academics.skills_self_evaluation');
     if (Config().bessiSurveyID != null && result == null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _gotoResults, offlineWidget: _buildOfflineWidget(), tabBar: uiuc.TabBar())));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _gotoResults, offlineWidget: _buildOfflineWidget(), tabBar: uiuc.TabBar(),)));
     }
   }
 
@@ -265,7 +265,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
       padding: EdgeInsets.only(left: 32, right: 32, top: 40, bottom: 32),
       alignment: Alignment.center,
       infoTextWidget: textWidget,
-      closeIcon: Styles().images.getImage('close', excludeFromSemantics: true),
+      closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
     ),);
   }
 

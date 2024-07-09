@@ -31,7 +31,7 @@ class CanvasCourseCard extends StatefulWidget {
   State<CanvasCourseCard> createState() => _CanvasCourseCardState();
 
   static double height(BuildContext context, { bool isSmall = false }) =>
-    MediaQuery.of(context).textScaler.scale(isSmall ? 130 : 86);
+    MediaQuery.of(context).textScaler.scale(isSmall ? 130 : 92);
 }
 
 class _CanvasCourseCardState extends State<CanvasCourseCard> {

@@ -418,6 +418,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
         title: Localization().getStringEx('panel.group.attributes.filters.header.title', 'Group Filters'),
         description: Localization().getStringEx('panel.group.attributes.filters.header.description', 'Choose one or more attributes to filter the list of groups.'),
+        scope: Groups.contentAttributesScope,
         contentAttributes: Groups().contentAttributes,
         selection: _contentAttributesSelection,
         sortType: ContentAttributesSortType.alphabetical,
@@ -653,7 +654,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
   
   bool get _canCreateGroup {
-    return Auth2().isLoggedIn && FlexUI().isSharingAvailable;
+    return Auth2().isLoggedIn;
   }
 
   bool get _canTapGroupsContentType {

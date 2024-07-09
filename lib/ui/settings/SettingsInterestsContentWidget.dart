@@ -264,7 +264,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
                 onTap: () {
                   _onCancelSearchTap();
                 },
-                child: Styles().images.getImage('close', excludeFromSemantics: true),
+                child: Styles().images.getImage('close-circle', excludeFromSemantics: true),
               ),
             ),
           ),

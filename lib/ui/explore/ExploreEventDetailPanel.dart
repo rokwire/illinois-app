@@ -19,6 +19,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:neom/ext/Explore.dart';
 import 'package:neom/ext/Event.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/ui/groups/GroupWidgets.dart';
 import 'package:neom/utils/AppUtils.dart';
@@ -44,7 +45,7 @@ import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/ui/explore/ExploreConvergeDetailItem.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 
-class ExploreEventDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class ExploreEventDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Event? event;
   final bool previewMode;
   final Core.Position? initialLocationData;
@@ -356,7 +357,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     String eventType = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
     String locationText = widget.event?.getLongDisplayLocation(_locationData) ?? "";
     bool canHandleLocation = (widget.event?.location?.isLocationCoordinateValid == true);
-    TextStyle? locationTextStyle = canHandleLocation ? Styles().textStyles.getTextStyle("widget.button.title.small.semi_fat.underline") : Styles().textStyles.getTextStyle("widget.button.title.small.semi_fat");
+    TextStyle? locationTextStyle = canHandleLocation ? Styles().textStyles.getTextStyle("widget.button.title.small.medium.underline") : Styles().textStyles.getTextStyle("widget.button.title.small.medium");
     String semanticsLabel = "$eventType, $locationText";
     String semanticsHint = Localization().getStringEx('panel.explore_detail.button.directions.hint', '');
     
@@ -408,7 +409,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             Container(height: 4,),
             Visibility(visible: canHandleLink, child:
               Container(padding: EdgeInsets.only(left: 30), child:
-                Text(linkUrl ?? '', style: Styles().textStyles.getTextStyle("widget.button.title.small.semi_fat.underline"))
+                Text(linkUrl ?? '', style: Styles().textStyles.getTextStyle("widget.button.title.small.medium.underline"))
               ),
             ),
           ],),

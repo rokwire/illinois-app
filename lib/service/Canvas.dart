@@ -24,6 +24,7 @@ import 'package:neom/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
@@ -728,21 +729,25 @@ class Canvas with Service implements NotificationsListener {
         ListUtils.add(courses, course);
       }
     }
+    _sortCourses(courses);
     return courses;
   }
 
-  Future<String?> _loadCoursesStringFromNet() async {
+  Future<String?> _loadCoursesStringFromNet({int? limit}) async {
     if (!Auth2().isOidcLoggedIn) {
       debugPrint('Canvas courses: the user is not signed in with oidc');
       return null;
     }
+    if (limit == null) {
+      limit = Config().canvasCoursesCountPerPage;
+    }
     String? url;
     http.Response? response;
     if (_useCanvasApi) {
-      url = _masquerade('${Config().canvasUrl}/api/v1/courses');
+      url = _masquerade('${Config().canvasUrl}/api/v1/courses?per_page=$limit');
       response = await Network().get(url, headers: _canvasAuthHeaders);
     } else {
-      url = '${Config().lmsUrl}/courses';
+      url = '${Config().lmsUrl}/courses?limit=$limit';
       response = await Network().get(url, auth: Auth2());
     }
     int? responseCode = response?.statusCode;
@@ -753,6 +758,28 @@ class Canvas with Service implements NotificationsListener {
       debugPrint('Failed to load canvas courses from net. Reason: $url $responseCode $responseString');
       return null;
     }
+  }
+
+  ///
+  /// Sort Courses desc by createdAt field
+  ///
+  void _sortCourses(List<CanvasCourse>? courses) {
+    if (CollectionUtils.isEmpty(courses)) {
+      return;
+    }
+    courses!.sort((CanvasCourse course1, CanvasCourse course2) {
+      DateTime? createdAt1 = course1.createdAt;
+      DateTime? createdAt2 = course2.createdAt;
+      if ((createdAt1 == null) && (createdAt2 == null)) {
+        return 0;
+      } else if ((createdAt1 == null) && (createdAt2 != null)) {
+        return 1;
+      } else if ((createdAt1 != null) && (createdAt2 == null)) {
+        return -1;
+      } else {
+        return createdAt2!.compareTo(createdAt1!);
+      }
+    });
   }
 
   ///
@@ -787,13 +814,15 @@ class Canvas with Service implements NotificationsListener {
     if (name == AppLifecycle.notifyStateChanged) {
       _onAppLifecycleStateChanged(param);
     } else if (name == Auth2.notifyLoginChanged) {
-      _updateCourses();
+      if (isInitialized) {
+        _updateCourses();
+      }
     } else if (name == Connectivity.notifyStatusChanged) {
-      if (Connectivity().isNotOffline) {
+      if (Connectivity().isNotOffline && isInitialized) {
         _updateCourses();
       }
     } else if (name == Storage.notifySettingChanged) {
-      if (param == Storage.debugUseCanvasLmsKey) {
+      if ((param == Storage.debugUseCanvasLmsKey) && isInitialized) {
         _updateCourses();
       }
     } else if (name == DeepLink.notifyUri) {

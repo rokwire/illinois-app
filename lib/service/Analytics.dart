@@ -20,6 +20,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/mainImpl.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/wellness/WellnessToDo.dart' as wellness;
 import 'package:neom/model/wellness/WellnessRing.dart';
 import 'package:neom/service/FlexUI.dart';
@@ -94,6 +95,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogEvent                           = "event";
   static const String   LogEventName                       = "name";
   static const String   LogEventPageName                   = "page";
+  static const String   LogEventPageFeature                = "feature";
 
   static const List<String> DefaultAttributes = [
     LogStdTimestampName,
@@ -128,6 +130,8 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     LogStdStudentFirstYear,
   ];
 
+  // Features
+
   // Livecycle Event
   // { "event" : { "name":"livecycle", "livecycle_event":"..." } }
   static const String   LogLivecycleEventName              = "livecycle";
@@ -141,13 +145,16 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   // { "event" : { "name":"page", "page":"...", "page_name":"...", "previous_page_name":"" } }
   static const String   LogPageEventName                   = "page";
   static const String   LogPageName                        = "page_name";
+  static const String   LogPageFeature                     = "page_feature";
   static const String   LogPagePreviousName                = "previous_page_name";
+  static const String   LogPagePreviousFeature             = "previous_page_feature";
 
   // Select Event
   // "event" : { "name":"select", "page":"...", "target":"..." } }
   static const String   LogSelectEventName                 = "select";
   static const String   LogSelectTargetName                = "target";
   static const String   LogSelectSourceName                = "source";
+  static const String   LogSelectFeatureName               = "target_feature";
 
   // Alert Event
   // {  "event" : { "name":"alert", "page":"...", "text":"...", "selection":"..." }}
@@ -209,7 +216,8 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogMapDisplayHideActionName        = "hide";
 
   static const String   LogMapSelectEventName             = "map_select";
-  static const String   LogMapSelectTarget                = "target";
+  static const String   LogMapSelectTargetName            = "target";
+  static const String   LogMapSelectTargetFeature         = "target_feature";
 
   // GeoFence Regions
   static const String   LogGeoFenceRegionEventName         = "geofence_region";
@@ -318,6 +326,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   // Data
 
   String?               _currentPageName;
+  AnalyticsFeature?     _currentPageFeature;
   Map<String, dynamic>? _currentPageAttributes;
   String?               _connectionName;
   String?               _locationServices;
@@ -439,7 +448,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     else if (name == Network.notifyHttpResponse) {
       logHttpResponse(param);
     }
-
+    
     else if (name == GeoFence.notifyRegionEnter) {
       logGeoFenceRegion(action: LogGeoFenceRegionEnterActionName, regionId: param);
     }
@@ -558,30 +567,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     }
     catch(e) { print(e.toString()); }
 
-    if (panel != null) {
-      
-      if (panel is RootPanel) {
-        Widget? tabPanel = RootPanel.stateKey.currentState?.currentTabPanel;
-        if (tabPanel != null) {
-          panel = tabPanel;
-        }
-      }
-      
-      String? panelName;
-      if (panel is AnalyticsPageName) {
-        panelName = (panel as AnalyticsPageName).analyticsPageName;
-      }
-      if (panelName == null) {
-        panelName = panel.runtimeType.toString();
-      }
-
-      Map<String, dynamic>? panelAttributes;
-      if (panel is AnalyticsPageAttributes) {
-        panelAttributes = (panel as AnalyticsPageAttributes).analyticsPageAttributes;
-      }
-
-      logPage(name: panelName, attributes: panelAttributes);
-    }
+    logPageWidget(panel);
   }
 
   // Location Services
@@ -653,6 +639,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     if (FlexUI().isAnalyticsAvailable) {
 
       event[LogEventPageName] = _currentPageName;
+      event[LogEventPageFeature] = _currentPageFeature?.name;
 
       Map<String, dynamic> analyticsEvent = {
         LogEvent:            event,
@@ -757,34 +744,69 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     }
   }
 
-  void logLivecycle({String? name}) {
+  void logLivecycle({String? name}) =>
     logEvent({
       LogEventName          : LogLivecycleEventName,
       LogLivecycleName      : name,
     });
+
+  String? get currentPageName => _currentPageName;
+  AnalyticsFeature? get currentPageFeature => _currentPageFeature;
+  Map<String, dynamic>? get currentPageAttributes => _currentPageAttributes;
+
+  void logPageWidget(Widget? panel) {
+    if (panel != null) {
+      if (panel is RootPanel) {
+        Widget? tabPanel = RootPanel.stateKey.currentState?.currentTabPanel;
+        if (tabPanel != null) {
+          panel = tabPanel;
+        }
+      }
+
+      String? panelName;
+      AnalyticsFeature? panelFeature;
+      Map<String, dynamic>? panelAttributes;
+      if (panel is AnalyticsInfo) {
+        panelName = (panel as AnalyticsInfo).analyticsPageName;
+        panelFeature = (panel as AnalyticsInfo).analyticsFeature;
+        panelAttributes = (panel as AnalyticsInfo).analyticsPageAttributes;
+      }
+      if (panelName == null) {
+        panelName = panel.runtimeType.toString();
+      }
+      if (panelFeature == null) {
+        panelFeature = AnalyticsFeature.fromName(panelName);
+      }
+
+      logPage(name: panelName, feature: panelFeature, attributes: panelAttributes);
+    }
   }
 
-  String? get currentPageName {
-    return _currentPageName;
-  }
-
-  Map<String, dynamic>? get currentPageAttributes {
-    return _currentPageAttributes;
-  }
-
-  void logPage({String? name,  Map<String, dynamic>? attributes}) {
+  void logPage({String? name, AnalyticsFeature? feature,  Map<String, dynamic>? attributes}) {
 
     // Update Current page name
     String? previousPageName = _currentPageName;
-    _currentPageName        = name;
-    _currentPageAttributes  = attributes;
+    AnalyticsFeature? previousPageFeature = _currentPageFeature;
+
+    _currentPageName         = name;
+    _currentPageFeature      = (feature != null) ? feature : previousPageFeature;
+    _currentPageAttributes   = attributes;
 
     // Build event data
     Map<String, dynamic> event = {
-      LogEventName          : LogPageEventName,
-      LogPageName           : name,
-      LogPagePreviousName   : previousPageName
+      LogEventName           : LogPageEventName,
+      LogPageName            : name,
+      LogPageFeature         : feature?.name,
+      LogPagePreviousName    : previousPageName,
+      LogPagePreviousFeature : previousPageFeature?.name,
     };
+
+    if (previousPageFeature != feature) {
+      event.addAll(<String, dynamic>{
+        LogPageFeature         : feature?.name,
+        LogPagePreviousFeature : previousPageFeature?.name,
+      });
+    }
 
     // Add optional attribute, if applied
     if (attributes != null) {
@@ -795,13 +817,14 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     logEvent(event);
   }
 
-  void logSelect({String? target, String? source,  Map<String, dynamic>? attributes}) {
+  void logSelect({String? target, String? source, AnalyticsFeature? feature,  Map<String, dynamic>? attributes}) {
 
     // Build event data
     Map<String, dynamic> event = {
       LogEventName          : LogSelectEventName,
       LogSelectTargetName   : target,
       LogSelectSourceName   : source,
+      LogSelectFeatureName  : feature?.name,
     };
 
     // Add optional attribute, if applied
@@ -928,11 +951,12 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     });
   }
 
-  void logMapSelect({String? target}) {
-
+  void logMapSelect({String? target, AnalyticsFeature? feature}) {
+    
     logEvent({
       LogEventName             : LogMapSelectEventName,
-      LogMapSelectTarget       : target
+      LogMapSelectTargetName   : target,
+      LogMapSelectTargetFeature : feature?.name,
     });
   }
 
@@ -1071,15 +1095,6 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     // Log the event
     logEvent(event);
   }
-}
-
-
-abstract class AnalyticsPageName {
-  String? get analyticsPageName;
-}
-
-abstract class AnalyticsPageAttributes {
-  Map<String, dynamic>? get analyticsPageAttributes;
 }
 
 class _TicketWidget extends StatefulWidget {

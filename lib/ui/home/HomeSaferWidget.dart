@@ -6,7 +6,7 @@ import 'package:neom/service/Config.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/ui/home/HomePanel.dart';
 import 'package:neom/ui/home/HomeWidgets.dart';
-import 'package:neom/ui/wallet/ICardHomeContentPanel.dart';
+import 'package:neom/ui/wallet/WalletICardHomePanel.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -186,7 +186,7 @@ class _HomeSaferWidgetState extends HomeCompoundWidgetState<HomeSaferWidget> {
   }
 
   void _showBuildingAccessPanel() {
-     ICardHomeContentPanel.present(context, content: ICardContent.i_card);
+     WalletICardHomeContentPanel.present(context, content: WalletICardContent.i_card);
   }
 
   void _onTestLocations() {

@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/service/Config.dart';
+import 'package:neom/ui/SyrveyPanel.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:neom/ui/widgets/AccessWidgets.dart';
 import 'package:rokwire_plugin/model/survey.dart';
@@ -24,7 +25,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
-import 'package:rokwire_plugin/ui/panels/survey_panel.dart';
 import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/ui/widget_builders/scroll_pager.dart';
 import 'package:rokwire_plugin/ui/widget_builders/survey.dart';
@@ -292,7 +292,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
       messageTextAlign: TextAlign.center,
       buttons: buttons,
       buttonsPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 32),
-      closeButtonIcon: Styles().images.getImage('close', excludeFromSemantics: true),
+      closeButtonIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
     );
   }
 
@@ -380,7 +380,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
       padding: EdgeInsets.only(left: 32, right: 32, top: 40, bottom: 32),
       alignment: Alignment.center,
       infoTextWidget: textWidget,
-      closeIcon: Styles().images.getImage('close', excludeFromSemantics: true),
+      closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
     ),);
   }
 

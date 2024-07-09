@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/RecentItem.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/service/RecentItems.dart';
@@ -34,7 +35,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
-class LaundryRoomDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class LaundryRoomDetailPanel extends StatefulWidget with AnalyticsInfo {
   final LaundryRoom room;
 
   LaundryRoomDetailPanel({required this.room});

@@ -179,7 +179,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
                 onTap: () {
                   _onTapCancelSearch();
                 },
-                child: Styles().images.getImage('close', excludeFromSemantics: true),
+                child: Styles().images.getImage('close-circle', excludeFromSemantics: true),
               ),
             ),
           ),

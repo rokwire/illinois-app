@@ -3,10 +3,11 @@ import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/ui/athletics/AthleticsContentPanel.dart';
-import 'package:neom/ui/wallet/ICardHomeContentPanel.dart';
+import 'package:neom/ui/wallet/WalletICardHomePanel.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:neom/service/FlexUI.dart';
@@ -21,15 +22,15 @@ import 'package:neom/ui/guide/GuideEntryCard.dart';
 import 'package:neom/ui/laundry/LaundryHomePanel.dart';
 import 'package:neom/ui/parking/ParkingEventsPanel.dart';
 import 'package:neom/ui/polls/PollsHomePanel.dart';
-import 'package:neom/ui/settings/SettingsIlliniCashPanel.dart';
-import 'package:neom/ui/settings/SettingsMealPlanPanel.dart';
-import 'package:neom/ui/wallet/MTDBusPassPanel.dart';
+import 'package:neom/ui/wallet/WalletIlliniCashPanel.dart';
+import 'package:neom/ui/wallet/WalletMealPlanPanel.dart';
+import 'package:neom/ui/wallet/WalletMTDBusPassPanel.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class GuideListPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GuideListPanel extends StatefulWidget with AnalyticsInfo {
   final String? guide;
   final String? category;
   final GuideSection? section;
@@ -42,6 +43,11 @@ class GuideListPanel extends StatefulWidget implements AnalyticsPageAttributes {
 
   @override
   _GuideListPanelState createState() => _GuideListPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature =>
+    AnalyticsFeature.fromName(guide) ??
+    AnalyticsFeature.fromName(Guide().listContentType(contentList));
 
   @override
   Map<String, dynamic> get analyticsPageAttributes {
@@ -116,13 +122,6 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     }
 
     if (_guideItems != null) {
-
-        _guideItems!.sort((dynamic entry1, dynamic entry2) {
-          return SortUtils.compare(
-            (entry1 is Map) ? JsonUtils.intValue(entry1['sort_order']) : null,
-            (entry2 is Map) ? JsonUtils.intValue(entry2['sort_order']) : null
-          );
-        });
 
       _features = LinkedHashSet<String>();
       for (Map<String, dynamic> guideEntry in _guideItems!) {
@@ -336,7 +335,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateBusPass() {
     Analytics().logSelect(target: "Bus Pass");
-    MTDBusPassPanel.present(context);
+    WalletMTDBusPassPanel.present(context);
   }
 
   void _navigateDining() {
@@ -356,12 +355,12 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateIlliniCash() {
     Analytics().logSelect(target: "Illini Cash");
-    SettingsIlliniCashPanel.present(context);
+    WalletIlliniCashPanel.present(context);
   }
 
   void _navigateIlliniId() {
     Analytics().logSelect(target: "Illini ID");
-    ICardHomeContentPanel.present(context, content: ICardContent.i_card);
+    WalletICardHomeContentPanel.present(context, content: WalletICardContent.i_card);
   }
 
   void _navigateLaundry() {
@@ -376,7 +375,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateMealPlan() {
     Analytics().logSelect(target: "Meal Plan");
-    SettingsMealPlanPanel.present(context);
+    WalletMealPlanPanel.present(context);
   }
 
   void _navigateMyIllini() {

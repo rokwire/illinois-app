@@ -397,7 +397,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                   alignment: Alignment.topRight,
                   child: GestureDetector(
                       onTap: _onClose,
-                      child: Padding(padding: EdgeInsets.all(16), child: Styles().images.getImage('close', excludeFromSemantics: true))))
+                      child: Padding(padding: EdgeInsets.all(16), child: Styles().images.getImage('close-circle', excludeFromSemantics: true))))
             ])));
   }
 
@@ -988,7 +988,7 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
                 onTap: _onTapCloseEditReminderDialog,
                 child: Container(
                     color: Colors.transparent,
-                    child: Padding(padding: EdgeInsets.all(16), child: Styles().images.getImage('close', excludeFromSemantics: true))))),
+                    child: Padding(padding: EdgeInsets.all(16), child: Styles().images.getImage('close-circle', excludeFromSemantics: true))))),
         Padding(
             padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
             child: Center(

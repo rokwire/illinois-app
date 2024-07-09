@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/wellness/WellnessRing.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/WellnessRings.dart';
@@ -12,7 +13,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-class WellnessRingCreatePanel extends StatefulWidget implements AnalyticsPageAttributes {
+class WellnessRingCreatePanel extends StatefulWidget with AnalyticsInfo {
   final WellnessRingDefinition? data;
   final String? examplesText;
   final bool initialCreation;

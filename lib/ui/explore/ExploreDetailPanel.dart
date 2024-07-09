@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/Laundry.dart';
 import 'package:neom/model/MTD.dart';
 import 'package:neom/model/StudentCourse.dart';
@@ -29,7 +30,6 @@ import 'package:neom/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:neom/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:neom/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:rokwire_plugin/model/event.dart';
-import 'package:neom/service/Analytics.dart';
 import 'package:neom/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:neom/ui/explore/ExploreEventDetailPanel.dart';
 
@@ -39,7 +39,7 @@ import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/ext/Explore.dart';
 import 'package:rokwire_plugin/model/group.dart';
 
-class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttributes {
+class ExploreDetailPanel extends StatelessWidget with AnalyticsInfo {
   final Explore? explore;
   final Position? initialLocationData;
   final Group? browseGroup;
@@ -83,6 +83,9 @@ class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttribu
       return null;
     }
   }
+
+  @override
+  AnalyticsFeature? get analyticsFeature => explore?.analyticsFeature;
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes => explore?.analyticsAttributes;

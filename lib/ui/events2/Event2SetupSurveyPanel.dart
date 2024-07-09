@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:neom/ext/Event2.dart';
 import 'package:neom/ext/Survey.dart';
 import 'package:neom/service/Analytics.dart';
+import 'package:neom/ui/SyrveyPanel.dart';
 import 'package:neom/ui/events2/Event2CreatePanel.dart';
 import 'package:neom/ui/events2/Event2Widgets.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
@@ -31,7 +32,6 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
-import 'package:rokwire_plugin/ui/panels/survey_panel.dart';
 import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 

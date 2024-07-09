@@ -20,6 +20,8 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/ext/Group.dart';
+import 'package:neom/ext/ImagesResult.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:neom/ui/attributes/ContentAttributesPanel.dart';
@@ -45,10 +47,16 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class GroupCreatePanel extends StatefulWidget {
+class GroupCreatePanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
+
   GroupCreatePanel({Key? key, this.group}) : super(key: key);
+
+  @override
   _GroupCreatePanelState createState() => _GroupCreatePanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 }
 
 class _GroupCreatePanelState extends State<GroupCreatePanel> {
@@ -275,12 +283,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //Image
   Widget _buildImageSection() {
     final double _imageHeight = 200;
-
+    String? url = _group?.imageURL;
+    String buttonLabel =  StringUtils.isEmpty(url) ? Localization().getStringEx("", "Add Cover Image") : Localization().getStringEx("", "Edit Cover Image");
     return Semantics(container: true,  child: Container(
         height: _imageHeight,
         color: Styles().colors.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-          StringUtils.isNotEmpty(_group?.imageURL)
+          StringUtils.isNotEmpty(url)
               ? Positioned.fill(child: ModalImageHolder(child:Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders)))
               : Container(),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
@@ -289,12 +298,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               height: _imageHeight,
               child: Center(
                   child: Semantics(
-                      label: Localization().getStringEx("panel.groups_settings.add_image", "Add Cover Image"),
+                      label: buttonLabel,
                       hint: Localization().getStringEx("panel.groups_settings.add_image.hint", ""),
                       button: true,
                       excludeSemantics: true,
                       child: RoundedButton(
-                          label: Localization().getStringEx("panel.groups_settings.add_image", "Add Cover Image"),
+                          label: buttonLabel,
                           textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                           onTap: _onTapAddImage,
                           contentWeight: 0.8,
@@ -304,15 +313,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   void _onTapAddImage() async {
     Analytics().logSelect(target: "Add Image");
-    String? _imageUrl = await GroupAddImageWidget.show(context: context, updateUrl: _group!.imageURL);
-    if (_imageUrl != null) {
-      if (mounted) {
-        setState(() {
-          _group!.imageURL = _imageUrl;
-        });
-      }
-    }
-    Log.d("Image Url: $_imageUrl");
+    ImagesResult? result = await GroupAddImageWidget.show(context: context, url: _group!.imageURL).then((result) => result);
+    if(result?.succeeded == true)
+    setStateIfMounted(() {
+      _group!.imageURL = result?.stringData;
+    });
+    Log.d("Image Url: ${result?.stringData}");
   }
 
   //Name
@@ -630,6 +636,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       description: (_group?.researchProject == true) ?
         Localization().getStringEx('panel.project.attributes.attributes.header.description', 'Choose one or more attributes that help describe this project.') :
         Localization().getStringEx('panel.group.attributes.attributes.header.description', 'Choose one or more attributes that help describe this group.'),
+      scope: Groups.contentAttributesScope,
       contentAttributes: Groups().contentAttributes,
       selection: _group?.attributes,
       sortType: ContentAttributesSortType.alphabetical,
@@ -1136,7 +1143,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   bool get _isManagedGroupAdmin {
-    return Auth2().account?.isManagedGroupAdmin ?? false;
+    return Auth2().isManagedGroupAdmin;
   }
 
   bool get _isAuthManGroup{

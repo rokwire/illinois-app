@@ -17,7 +17,6 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:neom/service/AppDateTime.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
@@ -134,7 +133,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
               excludeSemantics: true,
               button: true,
               child: GestureDetector(
-                child: Styles().images.getImage('close', excludeFromSemantics: true),
+                child: Styles().images.getImage('close-circle', excludeFromSemantics: true),
                 onTap: _hideByUser,
               ),
             ),)
@@ -169,13 +168,14 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
     );
   }
 
-  Widget _buildLoadingContent() => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
-    Center(child:
-      SizedBox(width: 32, height: 32, child:
-        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+  Widget _buildLoadingContent() => Container();
+    /*Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
+      Center(child:
+        SizedBox(width: 32, height: 32, child:
+          CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+        ),
       ),
-    ),
-  );
+    );*/
 
   void _reloadVoterRule() {
     setStateIfMounted(() {

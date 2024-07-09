@@ -15,12 +15,13 @@
  */
 
 import 'package:flutter/cupertino.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/Video.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/service/DeepLink.dart';
 import 'package:neom/service/Guide.dart';
-import 'package:neom/ui/settings/SettingsVideoTutorialPanel.dart';
+import 'package:neom/ui/apphelp/AppHelpVideoTutorialPanel.dart';
 import 'package:neom/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:neom/ui/widgets/VideoPlayButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -152,21 +153,7 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
       });
 
       _sectionLists.forEach((String secton, List<Map<String, dynamic>> sectionList) {
-        sectionList.sort((Map<String, dynamic> entry1, Map<String, dynamic> entry2) {
-          int? sortOrder1 = JsonUtils.intValue(entry1['sort_order']);
-          int? sortOrder2 = JsonUtils.intValue(entry2['sort_order']);
-          if ((sortOrder1 != null) && (sortOrder2 != null)) {
-            sortOrder1.compareTo(sortOrder2);
-          }
-
-          String? listTitle1 = Guide().entryListTitle(entry1);
-          String? listTitle2 = Guide().entryListTitle(entry2);
-          if ((listTitle1 != null) && (listTitle2 != null)) {
-            listTitle1.compareTo(listTitle2);
-          }
-
-          return 0;
-        });
+        Guide().listSortDefault(sectionList);
       });
     }
   }
@@ -176,7 +163,7 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
     Analytics().logSelect(target: title, source: widget.runtimeType.toString());
 
     String? id = Guide().entryId(guideItem);
-    String? url = "${Guide().guideDetailUrl}?guide_id=$id";
+    String? url = "${Guide().guideDetailUrl}?guide_id=$id&analytics_feature=${AnalyticsFeature.Wellness}";
     if (DeepLink().isAppUrl(url)) {
       DeepLink().launchUrl(url);
     }
@@ -235,7 +222,7 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
     if (_video != null) {
       Analytics().logSelect(
           target: 'Mental Health Video', source: widget.runtimeType.toString(), attributes: _video!.analyticsAttributes);
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVideoTutorialPanel(videoTutorial: _video!)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AppHelpVideoTutorialPanel(videoTutorial: _video!)));
     }
   }
 }
