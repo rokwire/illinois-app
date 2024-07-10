@@ -19,7 +19,7 @@
 			"browse.inbox": ["all_notifications", "unread_notifications"],
 			"browse.recent": ["recent_items"],
 
-			"settings": ["favorites", "notifications"],
+			"settings": ["contact", "favorites", "notifications"],
 			"authenticate": ["connect", "connected", "feedback"],
 			"authenticate.connect": ["phone_or_email"],
 			"authenticate.connected": ["code", "password", "passkey"],
@@ -52,7 +52,7 @@
 			"calendar": ["settings"],
 			"calendar.settings": ["add", "prompt"],
 
-			"roles": ["student", "prospective_student", "faculty", "staff"],
+			"roles": ["student", "prospective_student", "faculty", "prospective_faculty", "staff", "prospective_staff"],
 
 			"onboarding":["login_passkey", "login_code", "roles", "notifications_auth"],
 

@@ -76,7 +76,7 @@ class _ProfileRolesPageState extends State<ProfileRolesPage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 0, top: 8, right: 8, bottom: 0),
+                padding: EdgeInsets.only(left: 0, top: 8, right: 0, bottom: 0),
                 child: RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton, textScaler: MediaQuery.of(context).textScaler,),
               ),
             ],

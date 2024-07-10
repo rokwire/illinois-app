@@ -327,6 +327,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
         return SettingsContent.assessments;
       case "notifications":
         return SettingsContent.notifications;
+      case "contact":
+        return SettingsContent.contact;
     }
     return null;
   }

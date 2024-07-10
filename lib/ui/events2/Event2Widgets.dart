@@ -13,7 +13,6 @@ import 'package:neom/ui/home/HomeWidgets.dart';
 import 'package:neom/ui/events2/Event2CreatePanel.dart';
 import 'package:neom/ui/events2/Event2DetailPanel.dart';
 import 'package:neom/ui/groups/GroupWidgets.dart';
-import 'package:neom/ui/widgets/SlantedWidget.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -206,10 +205,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   Widget build(BuildContext context) => Semantics(label: _semanticsLabel, hint: _semanticsHint, button: true, child:
     InkWell(onTap: widget.onTap, child:
       Semantics(excludeSemantics: StringUtils.isNotEmpty(_semanticsLabel), child:
-        SlantedWidget(
-           color: Styles().colors.surface,
-           child: _contentWidget
-        )
+        _contentWidget
       )
     )
   );

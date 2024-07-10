@@ -40,10 +40,10 @@ class TabBar extends rokwire.TabBar {
     }
     else if (code == 'favorites') {
       return rokwire.TabWidget(
-        label: Localization().getStringEx('tabbar.feed.title', 'Feed'),
-        hint: Localization().getStringEx('tabbar.feed.hint', ''),
-        iconKey: 'tab-feed',
-        selectedIconKey: 'tab-feed-selected',
+        label: Localization().getStringEx('tabbar.favorites.title', 'Favorites'),
+        hint: Localization().getStringEx('tabbar.favorites.hint', ''),
+        iconKey: 'tab-favorites',
+        selectedIconKey: 'tab-favorites-selected',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );

@@ -24,7 +24,6 @@ import 'package:neom/service/Config.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:neom/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:neom/ui/groups/ImageEditPanel.dart';
-import 'package:neom/ui/widgets/SlantedWidget.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:neom/ext/Group.dart';
@@ -659,46 +658,43 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
     return GestureDetector(onTap: () => _onTapCard(context), child:
       Padding(
         padding: widget.margin,
-        child: SlantedWidget(
-          color: Styles().colors.surface,
-          child: Container(padding: EdgeInsets.all(16), color: Styles().colors.surface, child:
-            Stack(children: [
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                _buildHeading(),
-                Container(height: 6),
-                Row(children:[
-                  Expanded(child:
-                    Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
-                      _buildCategories(),
-                      _buildTitle(),
-                      _buildProperties(),
-                    ]),
-                  ),
-                  _buildImage()
-                ]),
-                // (widget.displayType == GroupCardDisplayType.homeGroups) ?
-                // Expanded(child: Container()) : Container(),
-                Container(height: 4),
-                // (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups) ?
-                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  Expanded(child:
-                    _buildUpdateTime(),
-                  ),
-                  _buildMembersCount()
-                ])
-                // : Container()
+        child: Container(padding: EdgeInsets.all(16), color: Styles().colors.surface, child:
+          Stack(children: [
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              _buildHeading(),
+              Container(height: 6),
+              Row(children:[
+                Expanded(child:
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
+                    _buildCategories(),
+                    _buildTitle(),
+                    _buildProperties(),
+                  ]),
+                ),
+                _buildImage()
               ]),
-              Visibility(visible: (_bussy == true), child:
-                Positioned.fill(child:
-                  Align(alignment: Alignment.center, child:
-                    SizedBox(height: 24, width: 24, child:
-                      CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
-                    ),
+              // (widget.displayType == GroupCardDisplayType.homeGroups) ?
+              // Expanded(child: Container()) : Container(),
+              Container(height: 4),
+              // (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups) ?
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Expanded(child:
+                  _buildUpdateTime(),
+                ),
+                _buildMembersCount()
+              ])
+              // : Container()
+            ]),
+            Visibility(visible: (_bussy == true), child:
+              Positioned.fill(child:
+                Align(alignment: Alignment.center, child:
+                  SizedBox(height: 24, width: 24, child:
+                    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
                   ),
                 ),
               ),
-            ],),
-          ),
+            ),
+          ],),
         ),
       )
     );
