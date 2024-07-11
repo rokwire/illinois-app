@@ -99,7 +99,7 @@ PODS:
     - GoogleMaps (< 8.0)
   - GoogleDataTransport (9.3.0):
     - GoogleUtilities/Environment (~> 7.7)
-    - nanopb (< 2.30911.0, >= 2.30908.0)
+    - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
   - GoogleMaps (7.2.0):
     - GoogleMaps/Maps (= 7.2.0)
@@ -139,11 +139,11 @@ PODS:
   - just_audio (0.0.1):
     - Flutter
   - Mixpanel (5.0.2)
-  - nanopb (2.30910.0):
-    - nanopb/decode (= 2.30910.0)
-    - nanopb/encode (= 2.30910.0)
-  - nanopb/decode (2.30910.0)
-  - nanopb/encode (2.30910.0)
+  - nanopb (2.30909.1):
+    - nanopb/decode (= 2.30909.1)
+    - nanopb/encode (= 2.30909.1)
+  - nanopb/decode (2.30909.1)
+  - nanopb/encode (2.30909.1)
   - OrigoSDK-Debug (1.10.0):
     - BerTlv
     - CocoaLumberjack
@@ -367,17 +367,18 @@ SPEC CHECKSUMS:
   connectivity_plus: 07c49e96d7fc92bc9920617b83238c4d178b446a
   device_calendar: 9cb33f88a02e19652ec7b8b122ca778f751b1f7b
   device_info_plus: 97af1d7e84681a90d0693e63169a5d50e0839a0d
-  Firebase: 414ad272f8d02dfbf12662a9d43f4bba9bec2a06
-  firebase_core: 0af4a2b24f62071f9bf283691c0ee41556dcb3f5
-  firebase_crashlytics: 4b91b8ad60ee7c168fe88979f84c9573a729de7a
-  firebase_messaging: 90e8a6db84b6e1e876cebce4f30f01dc495e7014
-  FirebaseCore: 2322423314d92f946219c8791674d2f3345b598f
-  FirebaseCoreExtension: 0659f035b88c5a7a15a9763c48c2e6ca8c0a2977
-  FirebaseCoreInternal: efeeb171ac02d623bdaefe121539939821e10811
-  FirebaseCrashlytics: 86d5bce01f42fa1db265f87ff1d591f04db610ec
-  FirebaseInstallations: 558b1da7d65afeb996fd5c814332f013234ece4e
-  FirebaseMessaging: 9bc34a98d2e0237e1b121915120d4d48ddcf301e
-  FirebaseSessions: 2f348975f6d1c139231c180e12194161da2e0cd6
+  Firebase: 5121c624121af81cbc81df3bda414b3c28c4f3c3
+  firebase_core: a9d0180d5285527884d07a41eb4a9ec9ed12cdb6
+  firebase_crashlytics: 12b2b1ecfc50f6c551c68e491ae156b2b7d41273
+  firebase_messaging: ccc82a143a74de75f440a4e413dbbb37ec3fddbc
+  FirebaseCore: 857dc1c6dd1255675047404d8466f7dfaac5d779
+  FirebaseCoreExtension: 705ca5b14bf71d2564a0ddc677df1fc86ffa600f
+  FirebaseCoreInternal: df84dd300b561c27d5571684f389bf60b0a5c934
+  FirebaseCrashlytics: f51e12b93f8e1134bbed602ed22df33804d55ccf
+  FirebaseInstallations: 913cf60d0400ebd5d6b63a28b290372ab44590dd
+  FirebaseMessaging: 087a7c7cadef7b9239f005bc4db823894844f323
+  FirebaseRemoteConfigInterop: 6efda51fb5e2f15b16585197e26eaa09574e8a4d
+  FirebaseSessions: dbd14adac65ce996228652c1fc3a3f576bdf3ecc
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_barcode_scanner: 7a1144744c28dc0c57a8de7218ffe5ec59a9e4bf
   flutter_beep: 54fb393b22dfa0f0e4573c81b1c74dd71c4e5af8
@@ -397,7 +398,7 @@ SPEC CHECKSUMS:
   JSONModel: 02ab723958366a3fd27da57ea2af2113658762e9
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   Mixpanel: 62e5fb088d56a7ba1369aeb335d0bff7ebae061e
-  nanopb: 438bc412db1928dac798aa6fd75726007be04262
+  nanopb: d4d75c12cd1316f4a64e3c6963f879ecd4b5e0d5
   OrigoSDK-Debug: 425bf16ad0796cb41a1b9239031b09ba33946376
   OrigoSDK-Release: 5e57c26ed74121d287ad820d3b7001e018561fb9
   package_info_plus: 58f0028419748fad15bf008b270aaa8e54380b1c
