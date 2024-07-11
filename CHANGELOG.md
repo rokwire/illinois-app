@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Added ID instructions in WalletICardContentWidget [#4223](https://github.com/rokwire/illinois-app/issues/4223).
+- Added Illini Cash option in Wallet panel [#4225](https://github.com/rokwire/illinois-app/issues/4225).
 
 ## [6.0.24] - 2024-07-10
 ### Changed
