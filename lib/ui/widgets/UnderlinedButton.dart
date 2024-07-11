@@ -5,6 +5,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 class UnderlinedButton extends StatelessWidget {
   final Function? onTap;
   final String? title;
+  final TextStyle? titleStyle;
   final String? hint;
   final double fontSize;
   final EdgeInsets padding;
@@ -12,7 +13,7 @@ class UnderlinedButton extends StatelessWidget {
   final bool progress;
 
   const UnderlinedButton(
-      {Key? key, this.onTap, this.title, this.hint, this.fontSize = 16, this.padding = const EdgeInsets
+      {Key? key, this.onTap, this.title, this.titleStyle, this.hint, this.fontSize = 16, this.padding = const EdgeInsets
           .symmetric(vertical: 20), this.fontFamily, this.progress = false}) : super(key: key);
 
   @override
@@ -44,7 +45,7 @@ class UnderlinedButton extends StatelessWidget {
                             padding: EdgeInsets.only(bottom: 2),
                             child: Text(
                               title!,
-                              style: Styles().textStyles.getTextStyle("widget.button.title.medium")?.copyWith(fontSize: fontSize, fontFamily: fontFamily ?? Styles().fontFamilies.medium),
+                              style: titleStyle?.copyWith(fontSize: fontSize, fontFamily: fontFamily ?? Styles().fontFamilies.medium),
                             )))),
                 progress ?
                 Align(alignment: Alignment.center,

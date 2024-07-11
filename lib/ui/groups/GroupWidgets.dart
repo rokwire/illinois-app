@@ -1199,8 +1199,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
     }
     return result;
   }
-
-
 }
 
 //////////////////////////////////////

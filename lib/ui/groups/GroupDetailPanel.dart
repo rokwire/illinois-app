@@ -1145,7 +1145,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       content.add(Padding(padding: EdgeInsets.only(top: 16), child:
         RoundedButton(
           label: Localization().getStringEx("panel.group_detail.button.all_events.title", 'See all events'),
-          textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+          textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.dark"),
           backgroundColor: Styles().colors.surface,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           borderColor: Styles().colors.fillColorSecondary,

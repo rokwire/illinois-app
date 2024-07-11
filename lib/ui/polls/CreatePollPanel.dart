@@ -394,6 +394,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                       )),
                   UnderlinedButton(
                       title: Localization().getStringEx("panel.create_poll.setting.button.save.title", "Save poll to start later"),//TBD localize
+                      titleStyle: Styles().textStyles.getTextStyle("widget.button.title.medium"),
                       // backgroundColor: Colors.white,
                       // borderColor: Styles().colors.fillColorPrimary,
                       // textColor: Styles().colors.fillColorPrimary,
