@@ -313,7 +313,7 @@
     "panel.browse.section.mtd.title": "MTD Buses",
     "panel.browse.section.mtd.description": "View MTD bus stop locations, routes, and availability.",
     "panel.browse.section.inbox.title": "Notifications",
-    "panel.browse.section.inbox.description": "Shortcuts to your in-app notifications from groups, academics, athletics events, and more.",
+    "panel.browse.section.inbox.description": "Shortcuts to your in-app notifications from groups and events.",
     "panel.browse.section.polls.title": "Polls",
     "panel.browse.section.polls.description": "Create, participate in, and check out results of polls you and others create.",
     "panel.browse.section.radio_stations.title": "Radio Stations",
@@ -339,7 +339,6 @@
     "panel.browse.entry.academics.wellness_todo.title": "To-Do List",
     "panel.browse.entry.academics.due_date_catalog.title": "Due Date Catalog",
     "panel.browse.entry.academics.appointments.title": "Appointments",
-    "panel.browse.entry.academics.my_illini.title": "myIllini",
 
     "panel.browse.entry.app_help.video_tutorial.title": "Video Tutorials",
     "panel.browse.entry.app_help.feedback.title": "Feedback",
