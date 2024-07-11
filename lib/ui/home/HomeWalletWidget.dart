@@ -9,10 +9,7 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wallet/WalletAddIlliniCashPanel.dart';
-import 'package:illinois/ui/wallet/WalletIlliniCashPanel.dart';
-import 'package:illinois/ui/wallet/WalletMealPlanPanel.dart';
-import 'package:illinois/ui/wallet/WalletICardHomePanel.dart';
-import 'package:illinois/ui/wallet/WalletMTDBusPassPanel.dart';
+import 'package:illinois/ui/wallet/WalletHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -191,12 +188,12 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
 
   void _onTap() {
     Analytics().logSelect(target: 'Illini Cash', source: widget.runtimeType.toString());
-    WalletIlliniCashPanel.present(context);
+    WalletHomePanel.present(context, contentType: WalletContentType.illiniCash);
   }
 
   void _onTapPlus() {
     Analytics().logSelect(target: "Add Illini Cash", source: widget.runtimeType.toString());
-    WalletAddIlliniCashPanel.present(context);
+    WalletHomePanel.present(context, contentType: WalletContentType.addIlliniCash);
   }
 }
 
@@ -337,7 +334,7 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
 
   void _onTap() {
     Analytics().logSelect(target: 'Meal Plan', source: widget.runtimeType.toString());
-    WalletMealPlanPanel.present(context);
+    WalletHomePanel.present(context, contentType: WalletContentType.mealPlan);
   }
 }
 
@@ -430,7 +427,7 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
 
   void _onTap() {
     Analytics().logSelect(target: 'Bus Pass', source: widget.runtimeType.toString());
-    WalletMTDBusPassPanel.present(context);
+    WalletHomePanel.present(context, contentType: WalletContentType.busPass);
   }
 }
 
@@ -537,7 +534,7 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
 
   void _onTap() {
     Analytics().logSelect(target: 'Illini ID', source: widget.runtimeType.toString());
-    WalletICardHomeContentPanel.present(context, content: WalletICardContent.i_card);
+    WalletHomePanel.present(context, contentType: WalletContentType.illiniId);
   }
 }
 
