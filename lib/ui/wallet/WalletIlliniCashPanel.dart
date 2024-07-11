@@ -67,7 +67,7 @@ class WalletIlliniCashPanel extends StatelessWidget {
         textStyle:  Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),
       ),
       SliverList(delegate: SliverChildListDelegate([
-        WalletIlliniCashWidget(),
+        WalletIlliniCashContentWidget(),
       ]),),
     ],),
     backgroundColor: Styles().colors.background,
@@ -75,15 +75,16 @@ class WalletIlliniCashPanel extends StatelessWidget {
   );
 }
 
-class WalletIlliniCashWidget extends StatefulWidget {
+class WalletIlliniCashContentWidget extends StatefulWidget {
 
-  WalletIlliniCashWidget({super.key});
+  final double headerHeight;
+  WalletIlliniCashContentWidget({super.key, this.headerHeight = 0});
 
   @override
-  _WalletIlliniCashWidgetState createState() => _WalletIlliniCashWidgetState();
+  _WalletIlliniCashContentWidgetState createState() => _WalletIlliniCashContentWidgetState();
 }
 
-class _WalletIlliniCashWidgetState extends State<WalletIlliniCashWidget> implements NotificationsListener {
+class _WalletIlliniCashContentWidgetState extends State<WalletIlliniCashContentWidget> implements NotificationsListener {
 
   DateTime? _startDate;
   DateTime? _endDate;
@@ -134,6 +135,7 @@ class _WalletIlliniCashWidgetState extends State<WalletIlliniCashWidget> impleme
 
   Widget _buildContentSection() =>
     Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+      _buildContentHeader(),
       _buildPrivacyAlertSection(),
       _buildBalanceSection(),
       _buildAddIlliniCashSection(),
@@ -515,6 +517,9 @@ class _WalletIlliniCashWidgetState extends State<WalletIlliniCashWidget> impleme
       ),
     );
   }
+
+  Widget _buildContentHeader() =>
+    Container(height: widget.headerHeight, color: Styles().colors.fillColorPrimaryVariant,);
 
   Widget _buildLoadingStatus() {
     return Padding(padding: EdgeInsets.symmetric(vertical: 128, horizontal: 48), child:

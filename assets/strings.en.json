@@ -458,6 +458,7 @@
     "panel.wallet.content_type.illini_id_faqs.label": "Illini ID FAQs",
     "panel.wallet.content_type.bus_pass.label": "Bus Pass",
     "panel.wallet.content_type.meal_plan.label": "Meal Plan",
+    "panel.wallet.content_type.illini_cash.label": "Illini Cash",
     "panel.wallet.content_type.add_illini_cash.label": "Add Illini Cash",
 
     "panel.search.header.title":"Search",
