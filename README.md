@@ -1,5 +1,5 @@
-# Illinois App
-The official mobile app of the University of Illinois. Powered by the [Rokwire Platform](https://rokwire.org/).
+# NEOM U App
+The official mobile app of NEOM U. Powered by the [Rokwire Platform](https://rokwire.org/).
 
 ## Requirements
 
@@ -16,20 +16,20 @@ The official mobile app of the University of Illinois. Powered by the [Rokwire P
 
 ### Clone this repo
 ```
-git clone --recurse-submodules https://github.com/rokwire/illinois-app.git
+git clone --recurse-submodules https://github.com/rokmetro/neom-app.git
 ```
 
 ### Make sure app flutter plugin persists
-Rokwire app flutter plugin is used by the Illinois app. It should be located in the `plugin` subdirectory of the application's root project directory. If it does not exist you need to clone it manually.
+Rokwire app flutter plugin is used by the NEOM U app. It should be located in the `plugin` subdirectory of the application's root project directory. If it does not exist you need to clone it manually.
 ```
-cd illinois-app.git
+cd neom-app.git
 git clone https://github.com/rokwire/app-flutter-plugin.git plugin
 ```
 
 ### Make sure libs repo persists
-Rokwire app libs directory is used by the Illinois app for private external libraries. It should be located in the `libs` subdirectory of the application's root project directory. If it does not exist you need to clone it manually.
+Rokwire app libs directory is used by the NEOM U app for private external libraries. It should be located in the `libs` subdirectory of the application's root project directory. If it does not exist you need to clone it manually.
 ```
-cd illinois-app
+cd neom-app
 git clone https://github.com/rokwire/illinois-app-libs.git libs
 ```
 
@@ -69,15 +69,15 @@ JSON data with the following format:
 ```
 {
   "production": {
-    "config_url": "https://api.rokwire.illinois.edu/app/configs",
+    "config_url": "https://core.prod.api.rokmetro.com/core/services/application/configs",
     "api_key": "XXXXXXXX-XXXX-XXXX-XXXXXXXXXXXXXXXXX"
   },
   "dev": {
-    "config_url": "https://api-dev.rokwire.illinois.edu/app/configs",
+    "config_url": "https://core.dev.api.rokmetro.com/core/services/application/configs",
     "api_key": "XXXXXXXX-XXXX-XXXX-XXXXXXXXXXXXXXXXX"
   },
   "test": {
-    "config_url": "https://api-test.rokwire.illinois.edu/app/configs",
+    "config_url": "https://core.stage.api.rokmetro.com/core/services/application/configs",
     "api_key": "XXXXXXXX-XXXX-XXXX-XXXXXXXXXXXXXXXXX"
   }
 }
@@ -96,14 +96,14 @@ Alternatively, you can use AESCrypt.encode from /lib/utils/Crypt.dart to generat
 
 #### • ios/Resources/Runner/GoogleService-Info-Debug.plist
 #### • ios/Resources/Runner/GoogleService-Info-Release.plist
-#### • ios/Resources/Illinois/GoogleService-Info-Debug.plist
-#### • ios/Resources/Illinois/GoogleService-Info-Release.plist
+#### • ios/Resources/Neom/GoogleService-Info-Debug.plist
+#### • ios/Resources/Neom/GoogleService-Info-Release.plist
 
 The Firebase configuration file for iOS generated from Google Firebase console.
 
-#### • android/app/src/illinois/keys.properties
+#### • android/app/src/neom/keys.properties
 Contains:
-- GoogleMaps API key for the Illinois flavor.
+- GoogleMaps API key for the NEOM flavor.
 - Origo configuration specific keys and ids.
 ```
 googleMapsApiKey=XXXXXXXXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXX
@@ -113,28 +113,28 @@ origoAidFilter1=XXXXXXXXXXXXXXXXXXXX
 origoAidFilter2=XXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
-#### • android/app/src/illinois/dev/google-services.json
-#### • android/app/src/illinois/prod/google-services.json
-#### • android/app/src/illinois/tst/google-services.json
+#### • android/app/src/neom/dev/google-services.json
+#### • android/app/src/neom/prod/google-services.json
+#### • android/app/src/neom/tst/google-services.json
 The Firebase configuration file for Android generated from Google Firebase console.
 
 ### Build the project
 
 ```
-$ sh ./scripts/prebuild_illinois.sh
-$ flutter build apk --no-tree-shake-icons --flavor IllinoisProd -t lib/mainProd.dart
-$ flutter build apk --no-tree-shake-icons --flavor IllinoisDev -t lib/mainDev.dart
-$ flutter build apk --no-tree-shake-icons --flavor IllinoisTst -t lib/mainTest.dart
+$ sh ./scripts/prebuild_neom.sh
+$ flutter build apk --no-tree-shake-icons --flavor NeomProd -t lib/mainProd.dart
+$ flutter build apk --no-tree-shake-icons --flavor NeomDev -t lib/mainDev.dart
+$ flutter build apk --no-tree-shake-icons --flavor NeomTst -t lib/mainTest.dart
 
-$ flutter build ios --no-tree-shake-icons --flavor IllinoisProd -t lib/mainProd.dart
-$ flutter build ios --no-tree-shake-icons --flavor IllinoisDev -t lib/mainDev.dart
-$ flutter build ios --no-tree-shake-icons --flavor IllinoisTst -t lib/mainTest.dart
+$ flutter build ios --no-tree-shake-icons --flavor NeomProd -t lib/mainProd.dart
+$ flutter build ios --no-tree-shake-icons --flavor NeomDev -t lib/mainDev.dart
+$ flutter build ios --no-tree-shake-icons --flavor NeomTst -t lib/mainTest.dart
 ```
 NB: Product environments: Prod/Dev/Test
 ```
---flavor IllinoisProd -t lib/mainProd.dart
---flavor IllinoisDev -t lib/mainDev.dart
---flavor IllinoisTst -t lib/mainTest.dart
+--flavor NeomProd -t lib/mainProd.dart
+--flavor NeomDev -t lib/mainDev.dart
+--flavor NeomTst -t lib/mainTest.dart
 ```
 
 NB: For versions prior to 4.2 you may omit the `no-tree-shake-icons` build parameter.

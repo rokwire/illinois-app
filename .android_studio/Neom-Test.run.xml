@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Neom-Dev" type="FlutterRunConfigurationType" factoryName="Flutter">
-    <option name="buildFlavor" value="NeomDev" />
-    <option name="filePath" value="$PROJECT_DIR$/lib/mainDev.dart" />
+  <configuration default="false" name="Neom-Test" type="FlutterRunConfigurationType" factoryName="Flutter">
+    <option name="buildFlavor" value="NeomTst" />
+    <option name="filePath" value="$PROJECT_DIR$/lib/mainTest.dart" />
     <method v="2">
       <option name="RunConfigurationTask" enabled="true" run_configuration_name="prebuild_neom" run_configuration_type="ShConfigurationType" />
     </method>

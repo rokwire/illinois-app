@@ -41,7 +41,7 @@ cleanupResources() {
 
 prebuild() {
     echo "Calling prebuild_illinois resource script"
-    ./scripts/prebuild_illinois.sh
+    ./scripts/prebuild_neom.sh
     echo "prebuild_illinois script finished"
 }
 
