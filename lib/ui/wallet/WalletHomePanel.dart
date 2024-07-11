@@ -22,6 +22,7 @@ import 'package:neom/service/Storage.dart';
 import 'package:neom/ui/wallet/WalletAddIlliniCashPanel.dart';
 import 'package:neom/ui/wallet/WalletICardContentWidget.dart';
 import 'package:neom/ui/wallet/WalletICardFaqsContentWidget.dart';
+import 'package:neom/ui/wallet/WalletIlliniCashPanel.dart';
 import 'package:neom/ui/wallet/WalletMTDBusPassPanel.dart';
 import 'package:neom/ui/wallet/WalletMealPlanPanel.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
@@ -32,7 +33,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum WalletContentType { illiniId, illiniIdFaqs, busPass, mealPlan, addIlliniCash }
+enum WalletContentType { illiniId, illiniIdFaqs, busPass, mealPlan, illiniCash, addIlliniCash }
 
 class WalletHomePanel extends StatefulWidget {
   final WalletContentType? contentType;
@@ -186,6 +187,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
       case WalletContentType.illiniIdFaqs:  return WalletICardFaqsContentWidget(key: _contentPageKey);
       case WalletContentType.busPass:       return WalletMTDBusPassContentWidget(key: _contentPageKey, expandHeight: false,);
       case WalletContentType.mealPlan:      return WalletMealPlanContentWidget(key: _contentPageKey, headerHeight: 82,);
+      case WalletContentType.illiniCash:    return WalletIlliniCashContentWidget(key: _contentPageKey, headerHeight: 88);
       case WalletContentType.addIlliniCash: return WalletAddIlliniCashContentWidget(key: _contentPageKey, topOffset: 82, hasCancel: false,);
     }
   }
@@ -294,6 +296,7 @@ WalletContentType? _walletContentTypeFromString(String? value) {
     case 'illini_id_faq': return WalletContentType.illiniIdFaqs;
     case 'bus_pass': return WalletContentType.busPass;
     case 'meal_plan': return WalletContentType.mealPlan;
+    case 'illini_cash': return WalletContentType.illiniCash;
     case 'add_illini_cash': return WalletContentType.addIlliniCash;
     default: return null;
   }
@@ -305,6 +308,7 @@ String? _walletContentTypeToString(WalletContentType? value) {
     case WalletContentType.illiniIdFaqs: return 'illini_id_faq';
     case WalletContentType.busPass: return 'bus_pass';
     case WalletContentType.mealPlan: return 'meal_plan';
+    case WalletContentType.illiniCash: return 'illini_cash';
     case WalletContentType.addIlliniCash: return 'add_illini_cash';
     default: return null;
   }
@@ -316,6 +320,7 @@ String? _walletContentTypeToDisplayString(WalletContentType? contentType) {
     case WalletContentType.illiniIdFaqs: return Localization().getStringEx('panel.wallet.content_type.illini_id_faqs.label', 'Illini ID FAQs');
     case WalletContentType.busPass: return Localization().getStringEx('panel.wallet.content_type.bus_pass.label', 'Bus Pass');
     case WalletContentType.mealPlan: return Localization().getStringEx('panel.wallet.content_type.meal_plan.label', 'Meal Plan');
+    case WalletContentType.illiniCash: return Localization().getStringEx('panel.wallet.content_type.illini_cash.label', 'Illini Cash');
     case WalletContentType.addIlliniCash: return Localization().getStringEx('panel.wallet.content_type.add_illini_cash.label', 'Add Illini Cash');
     default: return null;
   }

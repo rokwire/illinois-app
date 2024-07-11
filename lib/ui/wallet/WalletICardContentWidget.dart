@@ -272,6 +272,12 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
 
       Text(cardExpiresText, style:  Styles().textStyles.getTextStyle("panel.id_card.detail.title.tiny")),
 
+      Container(height: 16,),
+      
+      Padding(padding: EdgeInsets.symmetric(horizontal: 48), child:
+        Text(Localization().getStringEx('widget.id_card.text.card_instructions', 'This ID must be presented to university officials upon request.'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.id_card.detail.description.itallic")),
+      ),
+
       Container(height: 32,),
 
       _buildMobileAccessContent(),
@@ -384,7 +390,7 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
                 LinkButton(
                     title: Localization().getStringEx('widget.id_card.label.mobile_access.permissions', 'Set mobile access permissions'),
                     padding: EdgeInsets.symmetric(horizontal: 10),
-                    textStyle: Styles().textStyles.getTextStyle('panel.id_card.detail.description.medium.underline'),
+                    textStyle: Styles().textStyles.getTextStyle('panel.id_card.mobile_access.link_button.description.medium.underline'),
                     onTap: _onTapMobileAccessPermissions)
               ])))
     ]);
@@ -453,7 +459,7 @@ class _WalletICardContentWidgetState extends State<WalletICardContentWidget>
               Localization().getStringEx('widget.id_card.label.mobile_access.i_card.not_available',
                   'Access various services and buildings on campus with your Illini ID.'),
               textAlign: TextAlign.center,
-              style: Styles().textStyles.getTextStyle('panel.id_card.detail.description.italic')))
+              style: Styles().textStyles.getTextStyle('panel.id_card.mobile_access.description.italic')))
     ]);
   }
 

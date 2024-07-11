@@ -40,14 +40,11 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class WalletIlliniCashPanel extends StatefulWidget {
+class WalletIlliniCashPanel extends StatelessWidget {
 
   static final String routeName = 'settings_illini_cash';
 
   WalletIlliniCashPanel({super.key});
-
-  @override
-  _WalletIlliniCashPanelState createState() => _WalletIlliniCashPanelState();
 
   static void present(BuildContext context) {
     if (Connectivity().isOffline) {
@@ -60,9 +57,34 @@ class WalletIlliniCashPanel extends StatefulWidget {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: WalletIlliniCashPanel.routeName), builder: (context) => WalletIlliniCashPanel()));
     }
   }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    body: CustomScrollView(slivers: <Widget>[
+      SliverHeaderBar(
+        leadingIconKey: 'chevron-left-white',
+        title: Localization().getStringEx('panel.settings.illini_cash.label.title','Illini Cash'),
+        textStyle:  Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),
+      ),
+      SliverList(delegate: SliverChildListDelegate([
+        WalletIlliniCashContentWidget(),
+      ]),),
+    ],),
+    backgroundColor: Styles().colors.background,
+    bottomNavigationBar: uiuc.TabBar(),
+  );
 }
 
-class _WalletIlliniCashPanelState extends State<WalletIlliniCashPanel> implements NotificationsListener {
+class WalletIlliniCashContentWidget extends StatefulWidget {
+
+  final double headerHeight;
+  WalletIlliniCashContentWidget({super.key, this.headerHeight = 0});
+
+  @override
+  _WalletIlliniCashContentWidgetState createState() => _WalletIlliniCashContentWidgetState();
+}
+
+class _WalletIlliniCashContentWidgetState extends State<WalletIlliniCashContentWidget> implements NotificationsListener {
 
   DateTime? _startDate;
   DateTime? _endDate;
@@ -71,8 +93,6 @@ class _WalletIlliniCashPanelState extends State<WalletIlliniCashPanel> implement
   bool _transactionsLoading = false;
   bool _authLoading = false;
   bool _illiniCashLoading = false;
-
-  _WalletIlliniCashPanelState();
 
   @override
   void initState() {
@@ -93,76 +113,34 @@ class _WalletIlliniCashPanelState extends State<WalletIlliniCashPanel> implement
     super.dispose();
   }
 
-  void _loadTransactions() {
-    _transactionHistoryVisible = true;
-    _showTransactionsProgress(true);
-    IlliniCash().loadTransactionHistory(_startDate, _endDate).then((
-        transactions) => _onTransactionsLoaded(transactions));
-  }
+  // NotificationsListener
 
-  void _loadBallance() {
-    _illiniCashLoading = (IlliniCash().ballance == null);
-    IlliniCash().updateBalance().then((_) {
-      if (mounted) {
-        setState(() {
-          _illiniCashLoading = false;
-        });
-      }
-    });
-  }
-
-  void _loadThisMonthHistory() {
-    if(Auth2().isOidcLoggedIn) {
-      Analytics().logSelect(target: "This Month");
-      DateTime now = DateTime.now();
-      DateTime lastMonth = now.subtract(Duration(
-        days: 30,
-      ));
-      _startDate = lastMonth;
-      _endDate = now;
-      _loadTransactions();
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == IlliniCash.notifyPaymentSuccess) {
+      _loadThisMonthHistory();
+    }
+    else if (name == IlliniCash.notifyEligibilityUpdated) {
+      setState(() {});
+    }
+    else if (name == IlliniCash.notifyBallanceUpdated) {
+      setState(() {});
+      _loadThisMonthHistory();
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _buildScaffoldBody(),
-      backgroundColor: Styles().colors.background,
-      bottomNavigationBar: uiuc.TabBar(),
-    );
-  }
+  Widget build(BuildContext context) =>
+    _authLoading ? _buildLoadingStatus() : _buildContentSection();
 
-  Widget _buildScaffoldBody() {
-    if (_authLoading) {
-      return Center(child: CircularProgressIndicator(),);
-    }
-    return CustomScrollView(
-      slivers: <Widget>[
-        SliverHeaderBar(
-          leadingIconKey: 'chevron-left-white',
-          title: Localization().getStringEx('panel.settings.illini_cash.label.title','Illini Cash'),
-          textStyle:  Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),
-        ),
-        SliverList(
-          delegate: SliverChildListDelegate([
-            Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  _buildPrivacyAlertSection(),
-                  _buildBalanceSection(),
-                  _buildAddIlliniCashSection(),
-                  Auth2().isOidcLoggedIn ? _buildHistorySection() : Container(),
-                ],
-              ),
-            ),
-          ]),
-        )
-      ],
-
-    );
-  }
+  Widget _buildContentSection() =>
+    Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+      _buildContentHeader(),
+      _buildPrivacyAlertSection(),
+      _buildBalanceSection(),
+      _buildAddIlliniCashSection(),
+      Auth2().isOidcLoggedIn ? _buildHistorySection() : Container(),
+    ],);
 
   Widget _buildBalanceSection() {
     Widget contentWidget;
@@ -173,7 +151,7 @@ class _WalletIlliniCashPanelState extends State<WalletIlliniCashPanel> implement
       String title = Localization().getStringEx('panel.settings.illini_cash.label.ineligible', 'Ineligible');
       String? status = StringUtils.isNotEmpty(IlliniCash().eligibility?.accountStatus) ? IlliniCash().eligibility?.accountStatus :
         Localization().getStringEx('panel.settings.illini_cash.label.ineligible_status', 'You are not eligibile for Illini Cash');
-      
+
       contentWidget = VerticalTitleValueSection(
         title: title,
         titleTextStyle: Styles().textStyles.getTextStyle("widget.title.dark.large.extra_fat"),
@@ -540,6 +518,48 @@ class _WalletIlliniCashPanelState extends State<WalletIlliniCashPanel> implement
     );
   }
 
+  Widget _buildContentHeader() =>
+    Container(height: widget.headerHeight, color: Styles().colors.fillColorPrimaryVariant,);
+
+  Widget _buildLoadingStatus() {
+    return Padding(padding: EdgeInsets.symmetric(vertical: 128, horizontal: 48), child:
+      Center(child:
+        CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,),
+      ),
+    );
+  }
+
+  void _loadTransactions() {
+    _transactionHistoryVisible = true;
+    _showTransactionsProgress(true);
+    IlliniCash().loadTransactionHistory(_startDate, _endDate).then((
+        transactions) => _onTransactionsLoaded(transactions));
+  }
+
+  void _loadBallance() {
+    _illiniCashLoading = (IlliniCash().ballance == null);
+    IlliniCash().updateBalance().then((_) {
+      if (mounted) {
+        setState(() {
+          _illiniCashLoading = false;
+        });
+      }
+    });
+  }
+
+  void _loadThisMonthHistory() {
+    if(Auth2().isOidcLoggedIn) {
+      Analytics().logSelect(target: "This Month");
+      DateTime now = DateTime.now();
+      DateTime lastMonth = now.subtract(Duration(
+        days: 30,
+      ));
+      _startDate = lastMonth;
+      _endDate = now;
+      _loadTransactions();
+    }
+  }
+
   void _onTransactionsLoaded(List<IlliniCashTransaction>? transactions) {
     _showTransactionsProgress(false, changeState: false);
     if (mounted) {
@@ -669,22 +689,6 @@ class _WalletIlliniCashPanelState extends State<WalletIlliniCashPanel> implement
 
   bool get _canSignIn{
     return FlexUI().isAuthenticationAvailable;
-  }
-
-  // NotificationsListener
-  
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == IlliniCash.notifyPaymentSuccess) {
-      _loadThisMonthHistory();
-    }
-    else if (name == IlliniCash.notifyEligibilityUpdated) {
-      setState(() {});
-    }
-    else if (name == IlliniCash.notifyBallanceUpdated) {
-      setState(() {});
-      _loadThisMonthHistory();
-    }
   }
 }
 

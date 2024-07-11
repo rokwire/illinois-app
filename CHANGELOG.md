@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [6.0.25] - 2024-07-11
+### Added
+- Added ID instructions in WalletICardContentWidget [#4223](https://github.com/rokwire/illinois-app/issues/4223).
+- Added Illini Cash option in Wallet panel [#4225](https://github.com/rokwire/illinois-app/issues/4225).
+### Changed
+- Launch new Wallet panel with proper selection instead of obsolete card panels [#4224](https://github.com/rokwire/illinois-app/issues/4224).
+
 ## [6.0.24] - 2024-07-10
 ### Changed
 - Upgrade to latest Firebase libraries [#4220](https://github.com/rokwire/illinois-app/issues/4220).

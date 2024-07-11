@@ -458,6 +458,7 @@
     "panel.wallet.content_type.illini_id_faqs.label": "Illini ID FAQs",
     "panel.wallet.content_type.bus_pass.label": "Bus Pass",
     "panel.wallet.content_type.meal_plan.label": "Meal Plan",
+    "panel.wallet.content_type.illini_cash.label": "Illini Cash",
     "panel.wallet.content_type.add_illini_cash.label": "Add Illini Cash",
 
     "panel.search.header.title":"Search",
@@ -3772,6 +3773,7 @@
     "widget.explore_display_type.header.map.hint":"View map",
 
     "widget.id_card.label.update_i_card": "Update your Illini ID",
+    "widget.id_card.text.card_instructions": "This ID must be presented to university officials upon request.",
     "widget.id_card.label.building_access": "Building Access",
     "widget.id_card.label.building_access.granted": "GRANTED",
     "widget.id_card.label.building_access.denied": "DENIED",
