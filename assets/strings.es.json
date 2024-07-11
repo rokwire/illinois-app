@@ -3765,6 +3765,7 @@
     "widget.explore_display_type.header.map.hint":"Ver mapa",
 
     "widget.id_card.label.update_i_card": "Actualiza tu Illini ID",
+    "widget.id_card.text.card_instructions": "This ID must be presented to university officials upon request.",
     "widget.id_card.label.building_access": "Acceso al edificio",
     "widget.id_card.label.building_access.granted": "OTORGADO",
     "widget.id_card.label.building_access.denied": "NEGADO",
