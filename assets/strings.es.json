@@ -3556,6 +3556,7 @@
     "widget.home.recent_polls.text.title": "Encuestas recientes",
     "widget.home.recent_polls.text.empty.description": "No hay encuestas recientes disponibles en este momento.",
     "widget.home.recent_polls.text.offline": "Las encuestas recientes no están disponibles sin conexión.",
+    "widget.home.recent_polls.text.logged_out": "Recent Polls are not available while not signed in.",
     "widget.home.recent_polls.button.all.title": "Ver todo",
     "widget.home.recent_polls.button.all.hint": "Toca para ver todas las encuestas",
 
@@ -3764,6 +3765,7 @@
     "widget.explore_display_type.header.map.hint":"Ver mapa",
 
     "widget.id_card.label.update_i_card": "Actualiza tu Illini ID",
+    "widget.id_card.text.card_instructions": "This ID must be presented to university officials upon request.",
     "widget.id_card.label.building_access": "Acceso al edificio",
     "widget.id_card.label.building_access.granted": "OTORGADO",
     "widget.id_card.label.building_access.denied": "NEGADO",

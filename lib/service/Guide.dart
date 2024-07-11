@@ -337,6 +337,7 @@ class Guide with Service implements NotificationsListener {
           guideList.add(guideEntry);
         }
       }
+      listSortDefault(guideList);
       return guideList;
     }
     return null;
@@ -383,9 +384,7 @@ class Guide with Service implements NotificationsListener {
         }
       }
 
-      safetyResourcesList.sort((Map<String, dynamic> entry1, Map<String, dynamic> entry2) {
-        return SortUtils.compare(Guide().entryListTitle(entry1, stripHtmlTags: true), Guide().entryListTitle(entry2, stripHtmlTags: true));
-      });
+      listSortDefault(safetyResourcesList);
 
       return safetyResourcesList;
     }
@@ -421,6 +420,8 @@ class Guide with Service implements NotificationsListener {
           promotedList.add(guideEntry!);
         }
       }
+
+      listSortDefault(promotedList);
       return promotedList;
     }
     return null;
@@ -555,6 +556,118 @@ class Guide with Service implements NotificationsListener {
     }
   }
 
+  // Sort
+
+  bool listSortDefault(List<Map<String, dynamic>>? guideList) {
+    if (_listSortBySortOrder(guideList)) {
+      return true;
+    }
+    else if (_listIsReminders(guideList) && _listSortByDate(guideList)) {
+      return true;
+    }
+    else if (_listSortByListTitle(guideList)) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  bool _listSortBySortOrder(List<Map<String, dynamic>>? guideList) {
+    if (_listHasSortOrder(guideList)) {
+      guideList?.sort((Map<String, dynamic> guideItem1, Map<String, dynamic> guideItem2) {
+        int? sortOrder1 = JsonUtils.intValue(entryValue(guideItem1, 'sort_order'));
+        int? sortOrder2 = JsonUtils.intValue(entryValue(guideItem2, 'sort_order'));
+        return SortUtils.compare(sortOrder1, sortOrder2);
+      });
+      return true;
+    }
+    return false;
+  }
+
+  bool _listHasSortOrder(List<Map<String, dynamic>>? guideList) {
+    if (guideList == null) {
+      return false;
+    }
+    else {
+      for (Map<String, dynamic> guideItem in guideList) {
+        int? sortOrder = JsonUtils.intValue(entryValue(guideItem, 'sort_order'));
+        if (sortOrder == null) {
+          return false;
+        }
+      }
+      return true;
+    }
+  }
+
+  bool _listSortByListTitle(List<Map<String, dynamic>>? guideList) {
+    if (listHasListTitle(guideList)) {
+      guideList?.sort((Map<String, dynamic> guideItem1, Map<String, dynamic> guideItem2) {
+        String? listTitle1 = Guide().entryListTitle(guideItem1, stripHtmlTags: true);
+        String? listTitle2 = Guide().entryListTitle(guideItem2, stripHtmlTags: true);
+        return SortUtils.compare(listTitle1, listTitle2);
+      });
+      return true;
+    }
+    return false;
+  }
+
+  bool listHasListTitle(List<Map<String, dynamic>>? guideList) {
+    if (guideList == null) {
+      return false;
+    }
+    else {
+      for (Map<String, dynamic> guideItem in guideList) {
+        String? listTitle = Guide().entryListTitle(guideItem);
+        if (listTitle == null) {
+          return false;
+        }
+      }
+      return true;
+    }
+  }
+
+  bool _listSortByDate(List<Map<String, dynamic>>? guideList) {
+    if (_listHasDate(guideList)) {
+      guideList?.sort((Map<String, dynamic> guideItem1, Map<String, dynamic> guideItem2) {
+        String? date1 = JsonUtils.stringValue(entryValue(guideItem1, 'date'));
+        String? date2 = JsonUtils.stringValue(entryValue(guideItem2, 'date'));
+        return SortUtils.compare(date1, date2);
+      });
+      return true;
+    }
+    return false;
+  }
+
+  bool _listHasDate(List<Map<String, dynamic>>? guideList) {
+    if (guideList == null) {
+      return false;
+    }
+    else {
+      for (Map<String, dynamic> guideItem in guideList) {
+        String? date = JsonUtils.stringValue(entryValue(guideItem, 'date'));
+        if (date == null) {
+          return false;
+        }
+      }
+      return true;
+    }
+  }
+
+  bool _listIsReminders(List<Map<String, dynamic>>? guideList) {
+    if (guideList == null) {
+      return false;
+    }
+    else {
+      for (Map<String, dynamic> guideItem in guideList) {
+        if (!isEntryReminder(guideItem)) {
+          return false;
+        }
+      }
+      return true;
+    }
+  }
+
   // Debug
 
   Future<String?> getContentString() async {
@@ -673,7 +786,6 @@ class Guide with Service implements NotificationsListener {
       }
     }
   }
-
 
   /*static Future<void> _convertFile(String contentFileName, String sourceFileName) async {
     Directory? appDocDir = kIsWeb ? null : await getApplicationDocumentsDirectory();

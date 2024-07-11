@@ -5,8 +5,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Added ID instructions in WalletICardContentWidget [#4223](https://github.com/rokwire/illinois-app/issues/4223).
+
+## [6.0.24] - 2024-07-10
+### Changed
+- Upgrade to latest Firebase libraries [#4220](https://github.com/rokwire/illinois-app/issues/4220).
+- Update default favorites content in Home panel [#4219](https://github.com/rokwire/illinois-app/issues/4219).
+
+## [6.0.23] - 2024-07-09
+### Fixed
+- Showing detail panel when taping over event custom notification [#4214](https://github.com/rokwire/illinois-app/issues/4214).
+- Show delete group dialog if attempting to remove the last admin from group [#4052](https://github.com/rokwire/illinois-app/issues/4052).
+
+## [6.0.22] - 2024-07-08
+### Fixed
+- Fixed Guide list content sort order [#4209](https://github.com/rokwire/illinois-app/issues/4209).
+### Changed
+- Updated wellness wheel image [#4210](https://github.com/rokwire/illinois-app/issues/4210).
+
+## [6.0.21] - 2024-07-05
 ### Fixed
 - Improved semantics button labels for Assistant panel [#4196](https://github.com/rokwire/illinois-app/issues/4196).
+- Fixed invisible semantics elements in Assistant panel [#4194](https://github.com/rokwire/illinois-app/issues/4193).
+- Fixed HomeRecentPollsWidget error handling and content updates.
 
 ## [6.0.20] - 2024-07-04
 ### Added

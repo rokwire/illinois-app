@@ -234,8 +234,7 @@
 	"defaults": {
 		"favorites": {
 			"content": {
-				"home": ["event_feed", "wallet"],
-				"home.wallet": ["illini_id_card", "illini_cash_card", "meal_plan_card", "bus_pass_card", "library_card"]
+				"home": ["event_feed", "my_groups"]
 			},
 			"rules": {
 			}

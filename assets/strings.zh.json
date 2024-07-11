@@ -3541,6 +3541,7 @@
 	"widget.home.recent_polls.text.title": "最近的民意調查",
 	"widget.home.recent_polls.text.empty.description": "目前沒有可用的最近民意調查。.",
 	"widget.home.recent_polls.text.offline": "最近的民意調查在離線時不可用。",
+	"widget.home.recent_polls.text.logged_out": "Recent Polls are not available while not signed in.",
 	"widget.home.recent_polls.button.all.title": "查看全部",
 	"widget.home.recent_polls.button.all.hint": "點按即可查看所有民意調查",
 
@@ -3749,6 +3750,7 @@
 	"widget.explore_display_type.header.map.hint":"查看地图",
 
 	"widget.id_card.label.update_i_card": "更新您的 Illini ID",
+	"widget.id_card.text.card_instructions": "This ID must be presented to university officials upon request.",
 	"widget.id_card.label.building_access": "建築通道",
 	"widget.id_card.label.building_access.granted": "的確",
 	"widget.id_card.label.building_access.denied": "拒絕",

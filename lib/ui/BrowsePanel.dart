@@ -922,12 +922,12 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapAllGroups(BuildContext context) {
     Analytics().logSelect(target: "All Groups");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel(contentType: GroupsContentType.all,)));
+    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel(contentType: GroupsContentType.all,)));
   }
 
   void _onTapMyGroups(BuildContext context) {
     Analytics().logSelect(target: "My Groups");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel(contentType: GroupsContentType.my)));
+    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel(contentType: GroupsContentType.my)));
   }
 
   void _onTapOpenResearchProjects(BuildContext context) {
