@@ -1295,6 +1295,8 @@
     "panel.event2.create.label.cost.description": " (e.g., $10, Donation suggested)",
     "panel.event2.create.button.confirm_url.title": "Confirm URL",
     "panel.event2.create.button.confirm_url.hint": "",
+    "panel.event2.create.button.clear_end_datetime.title": "Clear End Date and Time",
+    "panel.event2.create.button.clear_end_datetime.hint": "",
     "panel.event2.create.confirm_url.empty.message": "Please enter URL string.",
     "panel.event2.create.confirm_url.invalid.message": "Please enter a valid URL.",
     "panel.event2.create.confirm_url.failed.message": "Failed to confirm URL.",
