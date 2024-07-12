@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [6.0.27] - 2024-07-12
+- Added ability to clear end date and time in Create Event Panel [#4233](https://github.com/rokwire/illinois-app/issues/4233).
+
 ## [6.0.26] - 2024-07-12
 ### Changed
 - Disabled root tab animation [#4230](https://github.com/rokwire/illinois-app/issues/4230).
