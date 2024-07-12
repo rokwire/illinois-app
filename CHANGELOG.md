@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased - Illinois
 
+## [6.0.26] - 2024-07-12
+### Changed
+- Disabled root tab animation [#4230](https://github.com/rokwire/illinois-app/issues/4230).
+- "Skip" rounded button to link button [#4226](https://github.com/rokwire/illinois-app/issues/4226).
+
 ## [6.0.25] - 2024-07-11
 ### Added
 - Added ID instructions in WalletICardContentWidget [#4223](https://github.com/rokwire/illinois-app/issues/4223).

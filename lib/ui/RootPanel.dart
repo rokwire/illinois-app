@@ -214,7 +214,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
     _tabs = _getTabs();
     _currentTabIndex = _defaultTabIndex ?? _getIndexByRootTab(RootTab.Home) ?? 0;
-    _tabBarController = TabController(initialIndex: _currentTabIndex, length: _tabs.length, vsync: this);
+    _tabBarController = TabController(length: _tabs.length, initialIndex: _currentTabIndex, animationDuration: Duration.zero, vsync: this);
     _updatePanels(_tabs);
 
     Analytics().logPageWidget(_getTabPanelAtIndex(_currentTabIndex));
@@ -942,14 +942,14 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
           
           // Do not initialize _currentTabIndex as initialIndex because we get empty panel content.
           // Initialize TabController with initialIndex = 0 and then manually animate to desired tab index.
-          _tabBarController = TabController(length: _tabs.length, vsync: this);
+          _tabBarController = TabController(length: _tabs.length, animationDuration: Duration.zero, vsync: this);
         });
         _tabBarController!.animateTo(_currentTabIndex);
       }
       else {
         _tabs = tabs;
         _currentTabIndex = (currentRootTab != null) ? (_getIndexByRootTab(currentRootTab) ?? 0)  : 0;
-        _tabBarController = TabController(length: _tabs.length, vsync: this, initialIndex: _currentTabIndex);
+        _tabBarController = TabController(length: _tabs.length, initialIndex: _currentTabIndex, animationDuration: Duration.zero, vsync: this);
       }
     }
   }
