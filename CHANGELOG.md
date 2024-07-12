@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Disabled root tab animation [#4230](https://github.com/rokwire/illinois-app/issues/4230).
+- "Skip" rounded button to link button [#4226](https://github.com/rokwire/illinois-app/issues/4226).
 
 ## [6.0.25] - 2024-07-11
 ### Added
