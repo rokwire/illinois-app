@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/ui/gies/CheckListContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -24,10 +25,13 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 
-class CheckListPanel extends StatelessWidget {
+class CheckListPanel extends StatelessWidget with AnalyticsInfo {
   final String contentKey;
 
   const CheckListPanel({Key? key, required this.contentKey}) : super(key: key);
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Academics;
 
   static void present(BuildContext context, { required String contentKey }) {
     if (Connectivity().isOffline) {

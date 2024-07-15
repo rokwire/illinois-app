@@ -20,7 +20,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/ui/dining/LocationsWithSpecialPanel.dart';
+import 'package:illinois/ui/dining/LocationsWithDiningSpecialPanel.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -136,7 +136,7 @@ class _SpecialOfferState extends State<_SpecialOffer> {
   void _evalImageHeight() {
     try {
       final RenderObject? renderBoxHtml = _keyHtml.currentContext?.findRenderObject();
-      if (renderBoxHtml is RenderBox) {
+      if ((renderBoxHtml is RenderBox) && renderBoxHtml.hasSize) {
         setState(() {
           _imageHeight = renderBoxHtml.size.height + _textPadding.top + _textPadding.bottom;
         });
@@ -148,6 +148,6 @@ class _SpecialOfferState extends State<_SpecialOffer> {
 
   void _onOfferTap() {
     Analytics().logSelect(target: "Special Offer: ${widget.special!.text}");
-    Navigator.push(context, CupertinoPageRoute( builder: (context) => LocationsWithSpecialPanel(special: widget.special,)));
+    Navigator.push(context, CupertinoPageRoute( builder: (context) => LocationsWithDiningSpecialPanel(special: widget.special,)));
   }
 }

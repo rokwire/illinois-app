@@ -6,6 +6,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
+import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -20,16 +21,18 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 class HomeCanvasCoursesWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
+  final bool isGies;
 
-  HomeCanvasCoursesWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+  HomeCanvasCoursesWidget({Key? key, this.favoriteId, this.updateController, this.isGies = false}) : super(key: key);
 
-  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position, bool? isGies}) =>
     HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: title,
+      title: (isGies == true) ? giesTitle : canvasTitle,
     );
 
-  static String get title => Localization().getStringEx('widget.home.canvas_courses.header.label', 'My Gies Canvas Courses');
-  
+  static String get giesTitle => Localization().getStringEx('widget.home.gies_canvas_courses.header.label', 'My Gies Canvas Courses');
+  static String get canvasTitle => Localization().getStringEx('widget.home.canvas_courses.header.label', 'My Canvas Courses');
+
   @override
   _HomeCanvasCoursesWidgetState createState() => _HomeCanvasCoursesWidgetState();
 }
@@ -57,7 +60,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
       });
     }
 
-    _courses = Canvas().giesCourses;
+    _courses = widget.isGies ? Canvas().giesCourses : Canvas().courses;
     super.initState();
   }
 
@@ -81,7 +84,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
   Widget build(BuildContext context) {
 
     return HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: HomeCanvasCoursesWidget.title,
+      title: widget.isGies ? HomeCanvasCoursesWidget.giesTitle : HomeCanvasCoursesWidget.canvasTitle,
       titleIconKey: 'courses',
       child: _buildContent(),
     );
@@ -89,16 +92,28 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
 
   Widget _buildContent() {
     if (Connectivity().isOffline) {
-      return HomeMessageCard(message: Localization().getStringEx('panel.canvas_courses.load.offline.error.msg', 'My Gies Canvas Courses not available while offline.'),);
+      String offlineMessage = widget.isGies
+          ? Localization()
+              .getStringEx('panel.gies_canvas_courses.load.offline.error.msg', 'My Gies Canvas Courses not available while offline.')
+          : Localization().getStringEx('panel.canvas_courses.load.offline.error.msg', 'My Canvas Courses not available while offline.');
+      return HomeMessageCard(message: offlineMessage);
     }
     else if (!Auth2().isOidcLoggedIn) {
-      return HomeMessageCard(message: Localization().getStringEx('panel.canvas_courses.load.logged_out.error.msg', 'You need to be logged in with your NetID to access My Gies Canvas Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'),);
+      String signedOutMsg = widget.isGies
+          ? Localization().getStringEx('generic.app.feature.canvas_courses.gies', 'My Gies Canvas Courses')
+          : Localization().getStringEx('generic.app.feature.canvas_courses.uiuc', 'My Canvas Courses');
+      return HomeMessageCard(message: AppTextUtils.loggedOutFeatureNA(signedOutMsg, verbose: true));
     }
     else if (_courses == null) {
-      return HomeMessageCard(message: Localization().getStringEx('panel.canvas_courses.load.failed.error.msg', 'Unable to load courses.'),);
+      return HomeMessageCard(message: Localization().getStringEx('panel.gies_canvas_courses.load.failed.error.msg', 'Unable to load courses.'),);
     }
     else if (_courses?.isEmpty ?? true) {
-      return HomeMessageCard(message: Localization().getStringEx('panel.canvas_courses.load.empty.error.msg', 'You do not appear to be enrolled in any Gies Canvas courses.'),);
+      String emptyMsg = widget.isGies
+          ? Localization()
+              .getStringEx('panel.gies_canvas_courses.load.empty.error.msg', 'You do not appear to be enrolled in any Gies Canvas courses.')
+          : Localization()
+              .getStringEx('panel.canvas_courses.load.empty.error.msg', 'You do not appear to be enrolled in any Canvas courses.');
+      return HomeMessageCard(message: emptyMsg);
     }
     else {
       return _buildCoursesContent();
@@ -136,8 +151,8 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
       ),
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => coursePages.length, centerWidget:
         LinkButton(
-          title: Localization().getStringEx('widget.home.canvas_courses.button.all.title', 'View All'),
-          hint: Localization().getStringEx('widget.home.canvas_courses.button.all.hint', 'Tap to view all courses'),
+          title: Localization().getStringEx('widget.home.gies_canvas_courses.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.gies_canvas_courses.button.all.hint', 'Tap to view all courses'),
           onTap: _onViewAll,
         ),
       ),
@@ -146,7 +161,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
 
   void _updateCourses() {
     setStateIfMounted(() {
-      _courses = Canvas().giesCourses;
+      _courses = widget.isGies ? Canvas().giesCourses : Canvas().courses;
       _pageViewKey = UniqueKey();
       // _pageController = null;
       _pageController?.jumpToPage(0);
@@ -160,6 +175,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
 
   void _onViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCoursesListPanel()));
+    Navigator.push(
+        context, CupertinoPageRoute(builder: (context) => widget.isGies ? GiesCanvasCoursesListPanel() : CanvasCoursesListPanel()));
   }
 }

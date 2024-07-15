@@ -620,6 +620,8 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		_statusView.font = [UIFont systemFontOfSize:16];
 		_statusView.textAlignment = NSTextAlignmentCenter;
 		_statusView.textColor = UIColor.whiteColor;
+		_statusView.numberOfLines = 0;
+		_statusView.lineBreakMode = NSLineBreakByWordWrapping;
 		_statusView.shadowColor = [UIColor colorWithWhite:1.0 alpha:0.5];
 		_statusView.shadowOffset = CGSizeMake(1, 1);
 		[self addSubview:_statusView];

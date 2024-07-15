@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/wellness/WellnessToDo.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -31,7 +32,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:weekday_selector/weekday_selector.dart';
 
-class WellnessToDoItemDetailPanel extends StatefulWidget  implements AnalyticsPageAttributes {
+class WellnessToDoItemDetailPanel extends StatefulWidget  with AnalyticsInfo {
   final String? itemId;
   final WellnessToDoItem? item;
   final bool? optionalFieldsExpanded;
@@ -502,7 +503,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                       color: Styles().colors.lightGray,
                       child: Padding(
                           padding: EdgeInsets.only(left: 25, top: 7, right: 10, bottom: 7),
-                          child: Styles().images.getImage('close', excludeFromSemantics: true))))
+                          child: Styles().images.getImage('close-circle', excludeFromSemantics: true))))
             ])));
   }
 

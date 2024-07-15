@@ -196,7 +196,7 @@ class _WellnessSuccessTeamContentWidgetState extends State<WellnessSuccessTeamCo
       padding: EdgeInsets.only(left: 32, right: 32, top: 40, bottom: 32),
       alignment: Alignment.center,
       infoTextWidget: textWidget,
-      closeIcon: Styles().images.getImage('close', excludeFromSemantics: true),
+      closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
     ),);
   }
 

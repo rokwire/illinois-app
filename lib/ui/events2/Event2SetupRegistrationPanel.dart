@@ -9,9 +9,9 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
-import 'package:illinois/ui/widgets/GestureDetector.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
@@ -110,16 +110,8 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   }
 
   @override
-  Widget build(BuildContext context) {
-    // TBD: Replace with PopScope
-    // ignore: deprecated_member_use
-    return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBarBack), child: Platform.isIOS ?
-      BackGestureDetector(onBack: _onHeaderBarBack, child:
-        _buildScaffoldContent(),
-      ) :
-      _buildScaffoldContent()
-    );
-  }
+  Widget build(BuildContext context) =>
+    PopScopeFix(onBack: _onHeaderBarBack, child: _buildScaffoldContent());
 
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
@@ -127,8 +119,8 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     backgroundColor: Styles().colors.white,
   );
 
-  Widget _buildPanelContent() {
-    return SingleChildScrollView(child:
+  Widget _buildPanelContent() =>
+    SingleChildScrollView(child:
       Column(children: [
         Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -144,9 +136,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
         )
 
       ],)
-
     );
-  }
 
   // Registration Type
 

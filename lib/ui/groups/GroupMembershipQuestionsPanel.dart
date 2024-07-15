@@ -17,7 +17,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:rokwire_plugin/model/group.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -27,13 +29,20 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class GroupMembershipQuestionsPanel extends StatefulWidget {
+class GroupMembershipQuestionsPanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
 
   GroupMembershipQuestionsPanel({this.group});
 
   @override
   _GroupMembershipQuestionsPanelState createState() => _GroupMembershipQuestionsPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
+
+  @override
+  Map<String, dynamic>? get analyticsPageAttributes =>
+    group?.analyticsAttributes;
 }
 
 class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestionsPanel> {

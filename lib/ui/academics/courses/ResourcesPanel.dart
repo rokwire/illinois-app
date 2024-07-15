@@ -1,17 +1,9 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:illinois/model/CustomCourses.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/academics/courses/EssentialSkillsCoachWidgets.dart';
-import 'package:illinois/ui/academics/courses/PDFPanel.dart';
-import 'package:illinois/ui/academics/courses/VideoPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/service/content.dart' as con;
-import 'package:url_launcher/url_launcher.dart';
 
 
 class ResourcesPanel extends StatefulWidget {
@@ -34,8 +26,6 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
   Color? _color;
   late List<Content> _contentItems;
   Set<ReferenceType> _referenceTypes = {};
-  Set<String> _loadingReferenceKeys = {};
-  Map<String, Uint8List?> _fileCache = {};
   ReferenceType? _selectedResourceType;
 
   @override
@@ -89,20 +79,14 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
               child: InkWell(
                 onTap: (){
                   if (reference?.type == ReferenceType.video) {
-                    _openVideo(context, reference?.name, reference?.referenceKey);
+                    EssentialSkillsCoachWidgets.openVideoContent(context, reference?.name, reference?.referenceKey);
                   } else if (reference?.type == ReferenceType.uri) {
                     Uri? uri = Uri.tryParse(reference?.referenceKey ?? "");
                     if (uri != null) {
-                      _launchUrl(uri);
+                      EssentialSkillsCoachWidgets.openUrlContent(uri);
                     }
                   } else if (reference?.type != ReferenceType.text) {
-                    if (_fileCache[reference?.referenceKey] != null) {
-                      _openPdf(context, reference?.name, _fileCache[reference?.referenceKey]!);
-                    } else {
-                      _loadContentForKey(reference?.referenceKey, onResult: (value) {
-                        _openPdf(context, reference?.name, value);
-                      });
-                    }
+                    EssentialSkillsCoachWidgets.openPdfContent(context, reference?.name, reference?.referenceKey);
                   }
                 },
                 child: ListTile(
@@ -110,7 +94,7 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
                   leading: Styles().images.getImage("${reference?.stringFromType()}-icon"),
                   title: Text(contentItem.name ?? "", style: Styles().textStyles.getTextStyle("widget.message.large.fat"),),
                   subtitle: Text(contentItem.details ?? ""),
-                  trailing: reference?.type != ReferenceType.text ? _loadingReferenceKeys.contains(reference?.referenceKey) ? CircularProgressIndicator() : Icon(
+                  trailing: reference?.type != ReferenceType.text ? Icon(
                     Icons.chevron_right_rounded,
                     size: 25.0,
                   ) : null,
@@ -210,46 +194,11 @@ class _ResourcesPanelState extends State<ResourcesPanel> {
     return dropDownItems;
   }
 
-  Future<void> _launchUrl(Uri url) async {
-    if (!await launchUrl(url)) {
-      throw Exception('Could not launch $url');
-    }
-  }
-
   List<Content> _filterContentItems() {
     if (_selectedResourceType != null) {
       List<Content> filteredContentItems =  _contentItems.where((i) => i.reference?.type == _selectedResourceType).toList();
       return filteredContentItems;
     }
     return _contentItems;
-  }
-
-  void _loadContentForKey(String? key, {Function(Uint8List)? onResult}) {
-    if ((key != null) && key.isNotEmpty && !_loadingReferenceKeys.contains(key) && mounted) {
-      setState(() {
-        _loadingReferenceKeys.add(key);
-      });;
-      con.Content().getFileContentItem(key, Config().essentialSkillsCoachKey ?? "").then((value) => {
-        setStateIfMounted(() {
-          _loadingReferenceKeys.remove(key);
-          if (value != null) {
-            _fileCache[key] = value;
-            onResult?.call(value);
-          }
-        })
-      });
-    }
-  }
-
-  void _openPdf(BuildContext context, String? resourceName, Uint8List? pdfData) {
-    Navigator.push(context, MaterialPageRoute(
-      builder: (context) => PDFPanel(resourceName: resourceName, pdfData: pdfData,),
-    ),);
-  }
-
-  void _openVideo(BuildContext context, String? resourceName, String? resourceKey) {
-    Navigator.push(context, MaterialPageRoute(
-      builder: (context) => VideoPanel(resourceName: resourceName, resourceKey: resourceKey,),
-    ),);
   }
 }

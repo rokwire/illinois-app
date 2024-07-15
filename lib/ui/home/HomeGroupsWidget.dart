@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
@@ -48,12 +49,13 @@ class HomeGroupsWidget extends StatefulWidget {
 
 class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements NotificationsListener{
   List<Group>? _groups;
-  Map<String, Key> _groupCardKeys = <String, Key>{};
+  Map<String, GlobalKey> _groupCardKeys = <String, GlobalKey>{};
   DateTime? _pausedDateTime;
 
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
   final double _pageSpacing = 16;
+  final double _pageBottomPadding = 16;
 
   @override
   void initState() {
@@ -164,50 +166,59 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: widget._title,
       titleIconKey: 'groups',
-      child: _haveGroups ? _buildContent() : _buildEmpty(),
+      child: _buildContent(),
     );
   }
 
 
   Widget _buildContent() {
-    List<Widget> pages = <Widget>[];
-    if(_groups?.isNotEmpty ?? false) {
-      for (Group? group in _groups!) {
-        if ((group != null) && group.isVisible) {
-          Key groupKey = (_groupCardKeys[group.id] ?? UniqueKey());
-          pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
-            Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ child:
-              GroupCard(key: groupKey, group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
-          )));
-        }
+    Widget? contentWidget;
+    List<Group>? visibleGroups = _visibleGroups(_groups);
+    int visibleCount = visibleGroups?.length ?? 0;
+
+    if (1 < visibleCount) {
+      List<Widget> pages = <Widget>[];
+      for (Group group in visibleGroups!) {
+        GlobalKey groupKey = (_groupCardKeys[group.id!] ??= GlobalKey());
+        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: _pageBottomPadding), child:
+          Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ child:
+            GroupCard(key: groupKey, group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
+        )));
       }
-    }
 
-    double pageHeight = 92 * MediaQuery.of(context).textScaler.scale(2);
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport);
+      }
 
-    if (_pageController == null) {
-      double screenWidth = MediaQuery.of(context).size.width;
-      double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-      _pageController = PageController(viewportFraction: pageViewport);
-    }
-
-    return Column(children: [
-      Container(height: pageHeight, child:
-        PageView(
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
           key: _pageViewKey,
           controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          allowImplicitScrolling: true,
           children: pages,
-          allowImplicitScrolling : true,
-        )
-      ),
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length, centerWidget:
+        ),
+      );
+    }
+    else if (visibleCount == 1) {
+      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: _pageSpacing), child:
+        Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ child:
+          GroupCard(group: visibleGroups!.first, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
+      ));
+    }
+
+    return (contentWidget != null) ? Column(children: [
+      contentWidget,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
         LinkButton(
           title: Localization().getStringEx('widget.home.groups.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.groups.button.all.hint', 'Tap to view all groups'),
           onTap: _onSeeAll,
         ),
       ),
-    ],);
+    ],) : _buildEmpty();
 
   }
 
@@ -228,6 +239,19 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
     return groups;
   }
 
+  List<Group>? _visibleGroups(List<Group>? groups) {
+    List<Group>? visibleGroups;
+    if (groups != null) {
+      visibleGroups = <Group>[];
+      for (Group group in groups) {
+        if ((group.id != null) && group.isVisible) {
+          visibleGroups.add(group);
+        }
+      }
+    }
+    return visibleGroups;
+  }
+
   Widget _buildEmpty() {
     String message;
     switch(widget.contentType) {
@@ -242,12 +266,21 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
     return HomeMessageCard(message: message,);
   }
 
-  bool get _haveGroups{
-    return _groups?.isNotEmpty ?? false;
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _groupCardKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && renderBox.hasSize && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
+      }
+    }
+
+    return minContentHeight ?? 0;
   }
 
   void _onSeeAll() {
     Analytics().logSelect(target: "View All", source: '${widget.runtimeType}(${widget.contentType})' );
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel(contentType: widget.contentType,)));
+    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel(contentType: widget.contentType,)));
   }
 }

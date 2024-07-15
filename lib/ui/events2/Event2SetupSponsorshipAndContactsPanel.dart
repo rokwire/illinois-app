@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -7,8 +5,8 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupContactPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
-import 'package:illinois/ui/widgets/GestureDetector.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -43,16 +41,8 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
   }
 
   @override
-  Widget build(BuildContext context) {
-    // TBD: Replace with PopScope
-    // ignore: deprecated_member_use
-    return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBack), child: Platform.isIOS ?
-      BackGestureDetector(onBack: _onHeaderBack, child:
-        _buildScaffoldContent(),
-      ) :
-      _buildScaffoldContent()
-    );
-  }
+  Widget build(BuildContext context) =>
+    PopScopeFix(onBack: _onHeaderBack, child: _buildScaffoldContent());
 
   Widget _buildScaffoldContent() => Scaffold(
     appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.sponsorship_and_contacts.header.title", "Event Host Details"), onLeading: _onHeaderBack,),
@@ -60,8 +50,8 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
     backgroundColor: Styles().colors.white,
   );
 
-  Widget _buildPanelContent() {
-    return SingleChildScrollView(child:
+  Widget _buildPanelContent() =>
+    SingleChildScrollView(child:
       Column(children: [
         Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -73,7 +63,6 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
         )
       ],)
     );
-  }
 
   // Sponsor
   
@@ -103,7 +92,7 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
     );
   }
 
-  Widget _buildAddContactButton() => Event2ImageCommandButton('plus-circle',
+  Widget _buildAddContactButton() => Event2ImageCommandButton(Styles().images.getImage('plus-circle'),
     label: Localization().getStringEx('panel.event2.setup.sponsorship_and_contacts.contacts.button.create.title', 'Create'),
     hint: Localization().getStringEx('panel.event2.setup.sponsorship_and_contacts.contacts.button.create.hint', 'Tap to create contact'),
     contentPadding: EdgeInsets.all(16),

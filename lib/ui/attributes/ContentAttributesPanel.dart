@@ -3,7 +3,10 @@ import 'dart:collection';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/ContentAttributes.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/attributes/ContentAttributesCategoryPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -16,7 +19,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 enum ContentAttributesSortType { native, explicit, alphabetical, }
 
-class ContentAttributesPanel extends StatefulWidget {
+class ContentAttributesPanel extends StatefulWidget with AnalyticsInfo {
   final String? title;
   final String? bgImageKey;
   final String? description;
@@ -31,6 +34,7 @@ class ContentAttributesPanel extends StatefulWidget {
   final String? continueTitle;
   final TextStyle? continueTextStyle;
   
+  final String? scope;
   final bool filtersMode;
   final ContentAttributesSortType sortType;
   final Map<String, dynamic>? selection;
@@ -50,11 +54,17 @@ class ContentAttributesPanel extends StatefulWidget {
     this.continueTitle, this.continueTextStyle,
     this.contentAttributes, this.selection,
     this.sortType = ContentAttributesSortType.native,
-    this.filtersMode = false, this.handleAttributeValue,
+    this.scope, this.filtersMode = false,
+    this.handleAttributeValue,
   }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _ContentAttributesPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => contentAttributes?.analyticsFeature;
+
+
 }
 
 class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
@@ -135,10 +145,12 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       }
       for (ContentAttribute attribute in attributes) {
         Widget? attributeWidget;
-        switch (attribute.widget) {
-          case ContentAttributeWidget.dropdown: attributeWidget = _buildAttributeDropDown(attribute); break;
-          case ContentAttributeWidget.checkbox: attributeWidget = _buildAttributeCheckbox(attribute); break;
-          default: break;
+        if (FlexUI().isAttributeEnabled(attribute.id, scope: widget.scope)) {
+          switch (attribute.widget) {
+            case ContentAttributeWidget.dropdown: attributeWidget = _buildAttributeDropDown(attribute); break;
+            case ContentAttributeWidget.checkbox: attributeWidget = _buildAttributeCheckbox(attribute); break;
+            default: break;
+          }
         }
         if (attributeWidget != null) {
           contentList.add(attributeWidget);

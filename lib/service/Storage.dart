@@ -140,6 +140,10 @@ class Storage extends rokwire.Storage {
   List<dynamic>? get recentItems => JsonUtils.decode(getStringWithName(recentItemsKey));
 //set recentItems(List<dynamic>? recentItems) => setStringWithName(recentItemsKey, JsonUtils.encode(recentItems));
 
+  String get recentItemsEnabledKey => 'edu.illinois.rokwire.recent_items.enabled';
+  bool? get recentItemsEnabled => getBoolWithName(recentItemsEnabledKey);
+  set recentItemsEnabled(bool? value) => setBoolWithName(recentItemsEnabledKey, value);
+
   // Local Date/Time
   static const String useDeviceLocalTimeZoneKey  = 'use_device_local_time_zone';
   bool? get useDeviceLocalTimeZone => getBoolWithName(useDeviceLocalTimeZoneKey, defaultValue: true);
@@ -335,13 +339,21 @@ class Storage extends rokwire.Storage {
   set homeToutImageTime(int? value) => setIntWithName(homeToutImageTimeKey, value);
 
   // Home
-  String get homeWelcomeVisibleKey => 'edu.illinois.rokwire.home.welcome.visible';
-  bool? get homeWelcomeVisible => getBoolWithName(homeWelcomeVisibleKey);
-  set homeWelcomeVisible(bool? value) => setBoolWithName(homeWelcomeVisibleKey, value);
+  String get homeWelcomeVideoVisibleKey => 'edu.illinois.rokwire.home.welcome_video.visible';
+  bool? get homeWelcomeVideoVisible => getBoolWithName(homeWelcomeVideoVisibleKey);
+  set homeWelcomeVideoVisible(bool? value) => setBoolWithName(homeWelcomeVideoVisibleKey, value);
+
+  String get homeWelcomeMessageVisibleKey => 'edu.illinois.rokwire.home.welcome_message.visible';
+  bool? get homeWelcomeMessageVisible => getBoolWithName(homeWelcomeMessageVisibleKey);
+  set homeWelcomeMessageVisible(bool? value) => setBoolWithName(homeWelcomeMessageVisibleKey, value);
 
   String get homeLoginVisibleKey => 'edu.illinois.rokwire.home.login.visible';
   bool? get homeLoginVisible => getBoolWithName(homeLoginVisibleKey);
   set homeLoginVisible(bool? value) => setBoolWithName(homeLoginVisibleKey, value);
+
+  String get homeContentTypeKey => 'edu.illinois.rokwire.home.content_type';
+  String? get homeContentType => getStringWithName(homeContentTypeKey);
+  set homeContentType(String? value) => setStringWithName(homeContentTypeKey, value);
 
   // Browse Tout
   String get browseToutImageUrlKey => 'edu.illinois.rokwire.browse.tout.image.url';
@@ -452,4 +464,10 @@ class Storage extends rokwire.Storage {
   static const String essentialSkillsCoachModuleKey = 'essential_skills_coach_module';
   String? get essentialSkillsCoachModule => getStringWithName(essentialSkillsCoachModuleKey);
   set essentialSkillsCoachModule(String? value) => setStringWithName(essentialSkillsCoachModuleKey, value);
+
+  // Wallet
+
+  static const String walletContentTypeKey = 'edu.illinois.rokwire.wallet.content_type';
+  String? get walletContentType => getStringWithName(walletContentTypeKey);
+  set walletContentType(String? value) => setStringWithName(walletContentTypeKey, value);
 }

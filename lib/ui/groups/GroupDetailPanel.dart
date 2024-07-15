@@ -17,6 +17,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
@@ -25,8 +26,10 @@ import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
+import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
+import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -48,7 +51,6 @@ import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
 import 'package:illinois/ui/groups/GroupPollListPanel.dart';
 import 'package:illinois/ui/groups/GroupPostCreatePanel.dart';
-import 'package:illinois/ui/groups/GroupQrCodePanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/widgets/ExpandableText.dart';
@@ -65,9 +67,9 @@ import 'package:sprintf/sprintf.dart';
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
 
-enum _DetailTab { Events, Posts, Polls, About }
+enum _DetailTab { Events, Posts, Messages, Polls, About }
 
-class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'group_detail_content_panel';
 
   final Group? group;
@@ -78,6 +80,9 @@ class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes
 
   @override
  _GroupDetailPanelState createState() => _GroupDetailPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes {
@@ -93,23 +98,39 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Group?             _group;
   GroupStats?        _groupStats;
-  int                _progress = 0;
-  bool               _confirmationLoading = false;
-  bool               _updatingEvents = false;
-  int                _allEventsCount = 0;
-  List<Event2>?      _groupEvents;
-  List<GroupPost>    _visibleGroupPosts = <GroupPost>[];
   List<Member>?      _groupAdmins;
 
   _DetailTab         _currentTab = _DetailTab.Events;
 
-  GlobalKey          _lastPostKey = GlobalKey();
-  bool?               _refreshingPosts;
-  bool?               _loadingPostsPage;
-  bool?               _hasMorePosts;
-  bool?               _shouldScrollToLastAfterRefresh;
+  int                _progress = 0;
+  bool               _confirmationLoading = false;
 
-  DateTime?           _pausedDateTime;
+  List<Event2>?      _groupEvents;
+  bool               _updatingEvents = false;
+  int                _allEventsCount = 0;
+
+  List<GroupPost>    _posts = <GroupPost>[];
+  GlobalKey          _lastPostKey = GlobalKey();
+  bool?              _refreshingPosts;
+  bool?              _loadingPostsPage;
+  bool?              _hasMorePosts;
+  bool?              _scrollToLastPostAfterRefresh;
+
+  List<GroupPost>    _scheduledPosts = <GroupPost>[];
+  GlobalKey          _lastScheduledPostKey = GlobalKey();
+  bool?              _refreshingScheduledPosts;
+  bool?              _loadingScheduledPostsPage;
+  bool?              _hasMoreScheduledPosts;
+  bool?              _scrollToLastScheduledPostsAfterRefresh;
+
+  List<GroupPost>    _messages = <GroupPost>[];
+  GlobalKey          _lastMessageKey = GlobalKey();
+  bool?              _refreshingMessages;
+  bool?              _loadingMessagesPage;
+  bool?              _hasMoreMessages;
+  bool?              _scrollToLastMessageAfterRefresh;
+
+  DateTime?          _pausedDateTime;
 
   GlobalKey          _pollsKey = GlobalKey();
   List<Poll>?        _groupPolls;
@@ -161,10 +182,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return _isAdmin;
   }
 
+  bool get _canReportAbuse => true;  //Even non members car report the group
+
+
   bool get _canDeleteGroup {
     if (_isAdmin) {
       if (_group?.authManEnabled ?? false) {
-        return Auth2().account?.isManagedGroupAdmin ?? false;
+        return Auth2().isManagedGroupAdmin;
       } else {
         return true;
       }
@@ -180,6 +204,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool get _canCreatePost {
     return _isAdmin || (_isMember && _group?.isMemberAllowedToCreatePost == true && FlexUI().isSharingAvailable);
   }
+
+  bool get _canCreateMessage =>
+      _isAdmin || (_isMember && _group?.isMemberAllowedToPostToSpecificMembers == true && FlexUI().isSharingAvailable);
 
   bool get _canCreatePoll {
     return _isAdmin || ((_group?.canMemberCreatePoll ?? false) && _isMember && FlexUI().isSharingAvailable);
@@ -197,6 +224,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return _isAdmin || (_isMember && (_group?.isMemberAllowedToViewMembersInfo == true));
   }
 
+  bool get _hasOptions => _canLeaveGroup || _canDeleteGroup || _canCreatePost|| _canCreateMessage || _canReportAbuse;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -206,7 +235,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Groups.notifyGroupUpdated,
       Groups.notifyGroupEventsUpdated,
       Groups.notifyGroupStatsUpdated,
-      Groups.notifyGroupPostsUpdated,
+      Groups.notifyGroupPostCreated,
+      Groups.notifyGroupPostUpdated,
+      Groups.notifyGroupPostDeleted,
       Polls.notifyCreated,
       Polls.notifyDeleted,
       Polls.notifyStatusChanged,
@@ -249,9 +280,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         if (_isResearchProject && _isMember) {
           _currentTab = _DetailTab.About;
         }
-        _redirectToPostIfExists();
+        _redirectToGroupPostIfExists();
         _loadGroupAdmins();
         _loadInitialPosts();
+        _loadInitialScheduledPosts();
+        _loadInitialMessages();
         _loadPolls();
       }
       if (loadEvents) {
@@ -272,6 +305,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           _refreshGroupAdmins();
         });
         _refreshCurrentPosts();
+        _refreshCurrentScheduledPosts();
+        _refreshCurrentMessages();
         _refreshPolls();
       }
     });
@@ -303,6 +338,74 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     });
   }
 
+  // Posts & Direct Messages
+
+  ///
+  /// Loads group post by id (if exists) and redirects to Post detail panel
+  ///
+  void _redirectToGroupPostIfExists() {
+    if ((_group?.id != null) && (_postId != null)) {
+      _increaseProgress();
+      Groups().loadGroupPost(groupId: _group!.id, postId: _postId!).then((post) {
+        _postId = null; // Clear _postId in order not to redirect on the next group load.
+        if (post != null) {
+          if(StringUtils.isNotEmpty(post.topParentId)){ // This is reply
+            Groups().loadGroupPost(groupId: _group!.id, postId: post.topParentId).then((mainPost) {
+              _decreaseProgress();
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group, post: mainPost)));
+            });
+          } else { //this is the main Post
+            _decreaseProgress();
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group, post: post)));
+          }
+        } else {
+          _decreaseProgress();
+        }
+      });
+    }
+  }
+
+  void _onGroupPostCreated(GroupPost? post) {
+      if (post?.isPost == true) {
+        _refreshCurrentPosts(delta: (post?.parentId == null) ? 1 : null);
+      }
+      else if (post?.isMessage == true) {
+        _refreshCurrentMessages(delta: (post?.parentId == null) ? 1 : null);
+      }
+      //For both post and messages
+      if(post?.isScheduled == true){
+        _refreshCurrentScheduledPosts(delta: (post?.parentId == null) ? 1 : null);
+      }
+  }
+
+  void _onGroupPostUpdated(GroupPost? post) {
+      if (post?.isPost == true) {
+        _refreshCurrentPosts();
+      }
+      else if (post?.isMessage == true) {
+        _refreshCurrentMessages();
+      }
+      //For both post and messages
+      if(post?.isScheduled == true){
+        _refreshCurrentScheduledPosts();
+      }
+  }
+
+  void _onGroupPostDeleted(GroupPost? post) {
+      if (post?.isPost == true) {
+        _refreshCurrentPosts(delta: (post?.parentId == null) ? -1 : null);
+      }
+      else if (post?.isMessage == true) {
+        _refreshCurrentMessages(delta: (post?.parentId == null) ? -1 : null);
+      }
+      //For both post and messages
+      if(post?.isScheduled == true){
+        _refreshCurrentScheduledPosts();
+      }
+  }
+
+  // Posts
+
   void _loadInitialPosts() {
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin) {
       setState(() {
@@ -320,41 +423,24 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
   }
 
-  ///
-  /// Loads group post by id (if exists) and redirects to Post detail panel
-  ///
-  void _redirectToPostIfExists() {
-    if ((_group?.id != null) && (_postId != null)) {
-      _increaseProgress();
-      Groups().loadGroupPost(groupId: _group!.id, postId: _postId!).then((post) {
-        // Clear _postId in order not to redirect on the next group load.
-        _postId = null;
-        if (post != null) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group, post: post)));
-        }
-        _decreaseProgress();
-      });
-    }
-  }
-
   void _refreshCurrentPosts({int? delta}) {
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_refreshingPosts != true)) {
-      int limit = _visibleGroupPosts.length + (delta ?? 0);
+      int limit = _posts.length + (delta ?? 0);
       _refreshingPosts = true;
-      Groups().loadGroupPosts(widget.groupId, offset: 0, limit: limit, order: GroupSortOrder.desc).then((List<GroupPost>? posts) {
+      Groups().loadGroupPosts(widget.groupId, type: GroupPostType.post, offset: 0, limit: limit, order: GroupSortOrder.desc).then((List<GroupPost>? posts) {
         _refreshingPosts = false;
         if (mounted && (posts != null)) {
           setState(() {
-            _visibleGroupPosts = posts;
+            _posts = posts;
             if (posts.length < limit) {
               _hasMorePosts = false;
             }
           });
-          if (_shouldScrollToLastAfterRefresh == true) {
+          if (_scrollToLastPostAfterRefresh == true) {
             _scheduleLastPostScroll();
           }
         }
-        _shouldScrollToLastAfterRefresh = null;
+        _scrollToLastPostAfterRefresh = null;
       });
     }
   }
@@ -375,11 +461,143 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Future<void> _loadPostsPage() async {
-    List<GroupPost>? postsPage = await Groups().loadGroupPosts(widget.groupId, offset: _visibleGroupPosts.length, limit: _postsPageSize, order: GroupSortOrder.desc);
+    List<GroupPost>? postsPage = await Groups().loadGroupPosts(widget.groupId, type: GroupPostType.post , offset: _posts.length, limit: _postsPageSize, order: GroupSortOrder.desc);
     if (postsPage != null) {
-      _visibleGroupPosts.addAll(postsPage);
+      _posts.addAll(postsPage);
       if (postsPage.length < _postsPageSize) {
         _hasMorePosts = false;
+      }
+    }
+  }
+
+  // Scheduled Posts
+
+  void _loadInitialScheduledPosts() {
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin) {
+      setState(() {
+        _progress++;
+        _loadingScheduledPostsPage = true;
+      });
+      _loadScheduledPostsPage().then((_) {
+        if (mounted) {
+          setState(() {
+            _progress--;
+            _loadingScheduledPostsPage = false;
+          });
+        }
+      });
+    }
+  }
+
+  void _refreshCurrentScheduledPosts({int? delta}) {
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_refreshingScheduledPosts != true)) {
+      int limit = _scheduledPosts.length + (delta ?? 0);
+      _refreshingScheduledPosts = true;
+      Groups().loadGroupPosts(widget.groupId, type: GroupPostType.post, offset: 0, limit: limit, order: GroupSortOrder.desc, scheduledOnly: true).then((List<GroupPost>? scheduledPost) {
+        _refreshingScheduledPosts = false;
+        if (mounted && (scheduledPost != null)) {
+          setState(() {
+            _scheduledPosts = scheduledPost;
+            if (scheduledPost.length < limit) {
+              _hasMoreScheduledPosts = false;
+            }
+          });
+          if (_scrollToLastScheduledPostsAfterRefresh == true) {
+            _scheduleLastScheduledPostScroll();
+          }
+        }
+        _scrollToLastScheduledPostsAfterRefresh = null;
+      });
+    }
+  }
+
+  void _loadNextScheduledPostsPage() {
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_loadingScheduledPostsPage != true)) {
+      setState(() {
+        _loadingScheduledPostsPage = true;
+      });
+      _loadScheduledPostsPage().then((_) {
+        if (mounted) {
+          setState(() {
+            _loadingScheduledPostsPage = false;
+          });
+        }
+      });
+    }
+  }
+
+  Future<void> _loadScheduledPostsPage() async {
+    List<GroupPost>? scheduledPostsPage = await Groups().loadGroupPosts(widget.groupId, type: GroupPostType.post , offset: _scheduledPosts.length, limit: _postsPageSize, order: GroupSortOrder.desc, scheduledOnly: true);
+    if (scheduledPostsPage != null) {
+      _scheduledPosts.addAll(scheduledPostsPage);
+      if (scheduledPostsPage.length < _postsPageSize) {
+        _hasMoreScheduledPosts = false;
+      }
+    }
+  }
+
+  // Direct Messages
+
+  void _loadInitialMessages() {
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin) {
+      setState(() {
+        _progress++;
+        _loadingMessagesPage = true;
+      });
+      _loadMessagesPage().then((_) {
+        if (mounted) {
+          setState(() {
+            _progress--;
+            _loadingMessagesPage = false;
+          });
+        }
+      });
+    }
+  }
+
+  void _refreshCurrentMessages({int? delta}) {
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_refreshingMessages != true)) {
+      int limit = _messages.length + (delta ?? 0);
+      _refreshingMessages = true;
+      Groups().loadGroupPosts(widget.groupId, type: GroupPostType.message, offset: 0, limit: limit, order: GroupSortOrder.desc).then((List<GroupPost>? messages) {
+        _refreshingMessages = false;
+        if (mounted && (messages != null)) {
+          setState(() {
+            _messages = messages;
+            if (messages.length < limit) {
+              _hasMoreMessages = false;
+            }
+          });
+          if (_scrollToLastMessageAfterRefresh == true) {
+            _scheduleLastMessageScroll();
+          }
+        }
+        _scrollToLastMessageAfterRefresh = null;
+      });
+    }
+  }
+
+  void _loadNextMessagesPage() {
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_loadingMessagesPage != true)) {
+      setState(() {
+        _loadingMessagesPage = true;
+      });
+      _loadMessagesPage().then((_) {
+        if (mounted) {
+          setState(() {
+            _loadingMessagesPage = false;
+          });
+        }
+      });
+    }
+  }
+
+  Future<void> _loadMessagesPage() async {
+    List<GroupPost>? messagesPage = await Groups().loadGroupPosts(widget.groupId, type: GroupPostType.message , offset: _messages.length, limit: _postsPageSize, order: GroupSortOrder.desc);
+    if (messagesPage != null) {
+      _messages.addAll(messagesPage);
+      if (messagesPage.length < _postsPageSize) {
+        _hasMoreMessages = false;
       }
     }
   }
@@ -492,7 +710,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     String? barTitle = (_isResearchProject && !_isMemberOrAdmin) ? 'Your Invitation To Participate' : null;
-    List<Widget>? barActions = (_canLeaveGroup || _canDeleteGroup || _canCreatePost) ? <Widget>[
+    List<Widget>? barActions = (_hasOptions) ? <Widget>[
       Semantics(label: Localization().getStringEx("panel.group_detail.label.options", 'Options'), button: true, excludeSemantics: true, child:
         IconButton(icon: Styles().images.getImage('more-white',) ?? Container(), onPressed: _onGroupOptionsTap,)
       )
@@ -527,9 +745,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)) {
       _loadGroup(loadEvents: true);
     } 
-    else if (name == Groups.notifyGroupPostsUpdated) {
-      _refreshCurrentPosts(delta: param is int ? param : null);
-    } 
+    else if (name == Groups.notifyGroupPostCreated) {
+      _onGroupPostCreated(param is GroupPost ? param : null);
+    }
+    else if (name == Groups.notifyGroupPostUpdated) {
+      _onGroupPostUpdated(param is GroupPost ? param : null);
+    }
+    else if (name == Groups.notifyGroupPostDeleted) {
+      _onGroupPostDeleted(param is GroupPost ? param : null);
+    }
     else if ((name == Polls.notifyCreated) || (name == Polls.notifyDeleted)) {
       _refreshPolls();
     } 
@@ -614,6 +838,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if (_currentTab != _DetailTab.About) {
         content.add(_buildEvents());
         content.add(_buildPosts());
+        content.add(_buildScheduledPosts());
+        content.add(_buildMessages());
         content.add(_buildPolls());
       }
       else if (_currentTab == _DetailTab.About) {
@@ -741,7 +967,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             RibbonButton(
             label: Localization().getStringEx("panel.group_detail.button.take_attendance.title", "Take Attendance"),
             hint: Localization().getStringEx("panel.group_detail.button.take_attendance.hint", ""),
-            leftIconKey: 'qr',
+            leftIconKey: 'share',
             padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
             onTap: _onTapTakeAttendance,
           ),
@@ -858,6 +1084,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         case _DetailTab.Posts:
           title = Localization().getStringEx("panel.group_detail.button.posts.title", 'Posts');
           break;
+        case _DetailTab.Messages:
+          title = Localization().getStringEx("panel.group_detail.button.messages.title", 'Messages');
+          break;
         case _DetailTab.Polls:
           title = Localization().getStringEx("panel.group_detail.button.polls.title", 'Polls');
           break;
@@ -952,11 +1181,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   Widget _buildPosts() {
     List<Widget> postsContent = [];
 
-    if (CollectionUtils.isEmpty(_visibleGroupPosts)) {
+    if (CollectionUtils.isEmpty(_posts)) {
       if (_isMemberOrAdmin) {
         Column(children: <Widget>[
           SectionSlantHeader(
-              title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts and Direct Messages'),
+              title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
               titleIconKey: 'posts',
               rightIconKey: _canCreatePost ? "plus-circle" : null,
               rightIconAction: _canCreatePost ? _onTapCreatePost : null,
@@ -968,15 +1197,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
     }
 
-    for (int i = 0; i <_visibleGroupPosts.length ; i++) {
-      GroupPost? post = _visibleGroupPosts[i];
+    for (int i = 0; i <_posts.length ; i++) {
+      GroupPost? post = _posts[i];
       if (i > 0) {
         postsContent.add(Container(height: 16));
       }
       postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group));
     }
 
-    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _visibleGroupPosts.length)) {
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _posts.length)) {
       String title = Localization().getStringEx('panel.group_detail.button.show_older.title', 'Show older');
       postsContent.add(Container(padding: EdgeInsets.only(top: 16),
         child: Semantics(label: title, button: true, excludeSemantics: true,
@@ -995,12 +1224,107 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     return Column(children: <Widget>[
       SectionSlantHeader(
-          title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts and Direct Messages'),
+          title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
           titleIconKey: 'posts',
           rightIconKey: _canCreatePost ? "plus-circle" : null,
           rightIconAction: _canCreatePost ? _onTapCreatePost : null,
           rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post") : null,
           children: postsContent)
+    ]);
+  }
+
+  Widget _buildScheduledPosts() {
+    List<Widget> scheduledPostsContent = [];
+
+    if (CollectionUtils.isEmpty(_scheduledPosts)) {
+      return Container();
+    }
+
+    for (int i = 0; i <_scheduledPosts.length ; i++) {
+      GroupPost? post = _scheduledPosts[i];
+      if (i > 0) {
+        scheduledPostsContent.add(Container(height: 16));
+      }
+      scheduledPostsContent.add(GroupPostCard(key: (i == 0) ? _lastScheduledPostKey : null, post: post, group: _group));
+    }
+
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMoreScheduledPosts != false) && (0 < _scheduledPosts.length)) {
+      String title = Localization().getStringEx('panel.group_detail.button.show_older.title', 'Show older');
+      scheduledPostsContent.add(Container(padding: EdgeInsets.only(top: 16),
+          child: Semantics(label: title, button: true, excludeSemantics: true,
+              child: InkWell(onTap: _loadNextScheduledPostsPage,
+                  child: Container(height: 36,
+                    child: Align(alignment: Alignment.topCenter,
+                      child: (_loadingScheduledPostsPage == true) ?
+                      SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), )) :
+                      Text(title, style: Styles().textStyles.getTextStyle('panel.group.button.show_older.title'),),
+                    ),
+                  )
+              )
+          ))
+      );
+    }
+
+    return Column(children: <Widget>[
+      SectionSlantHeader(
+          title: Localization().getStringEx("panel.group_detail.label.scheduled_posts", 'Scheduled Posts'),
+          titleIconKey: 'posts',
+          children: scheduledPostsContent)
+    ]);
+  }
+
+  Widget _buildMessages() {
+    List<Widget> messagesContent = [];
+
+    if (CollectionUtils.isEmpty(_messages)) {
+      if (_isMemberOrAdmin) {
+        Column(children: <Widget>[
+          SectionSlantHeader(
+              title: Localization().getStringEx("panel.group_detail.label.messages", 'Direct Messages'),
+              titleIconKey: 'posts',
+              rightIconKey: _canCreateMessage ? "plus-circle" : null,
+              rightIconAction: _canCreateMessage ? _onTapCreatePost : null,
+              rightIconLabel: _canCreateMessage ? Localization().getStringEx("panel.group_detail.button.create_message.title", "Create Direct Message") : null,
+              children: messagesContent)
+        ]);
+      } else {
+        return Container();
+      }
+    }
+
+    for (int i = 0; i <_messages.length ; i++) {
+      GroupPost? message = _messages[i];
+      if (i > 0) {
+        messagesContent.add(Container(height: 16));
+      }
+      messagesContent.add(GroupPostCard(key: (i == 0) ? _lastMessageKey : null, post: message, group: _group));
+    }
+
+    if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMoreMessages != false) && (0 < _messages.length)) {
+      String title = Localization().getStringEx('panel.group_detail.button.show_older.title', 'Show older');
+      messagesContent.add(Container(padding: EdgeInsets.only(top: 16),
+        child: Semantics(label: title, button: true, excludeSemantics: true,
+          child: InkWell(onTap: _loadNextMessagesPage,
+              child: Container(height: 36,
+                child: Align(alignment: Alignment.topCenter,
+                  child: (_loadingPostsPage == true) ?
+                  SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), )) :
+                  Text(title, style: Styles().textStyles.getTextStyle('panel.group.button.show_older.title'),),
+                ),
+              )
+          )
+      ))
+      );
+    }
+
+    return Column(children: <Widget>[
+      SectionSlantHeader(
+          title: Localization().getStringEx("panel.group_detail.label.messages", 'Direct Messages'),
+          titleIconKey: 'posts',
+          rightIconKey: _canCreateMessage ? "plus-circle" : null,
+          rightIconAction: _canCreateMessage ? _onTapCreatePost : null,
+          rightIconLabel: _canCreateMessage ? Localization().getStringEx("panel.group_detail.button.create_message.title", "Create Direct Message") : null,
+          children: messagesContent)
     ]);
   }
 
@@ -1107,7 +1431,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return RibbonButton(
       label: Localization().getStringEx("panel.group_detail.button.group_promote.title", "Share this group"),
       hint: Localization().getStringEx("panel.group_detail.button.group_promote.hint", ""),
-      leftIconKey: 'qr',
+      leftIconKey: 'share',
       padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
       onTap: _onTapPromote,
     );
@@ -1130,18 +1454,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     List<ContentAttribute>? attributes = contentAttributes?.attributes;
     if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
-        if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
-          attributesList.add(Row(children: [
-            Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
-              Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
-            ),
-            Expanded(child:
-              Text(displayAttributeValues.join(', '), maxLines: 1, style:
-                Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
+        if (Groups().isContentAttributeEnabled(attribute)) {
+          List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
+          if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+            attributesList.add(Row(children: [
+              Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
+                Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
               ),
-            ),
-          ],),);
+              Expanded(child:
+                Text(displayAttributeValues.join(', '), maxLines: 1, style:
+                  Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
+                ),
+              ),
+            ],),);
+          }
         }
       }
     }
@@ -1174,7 +1500,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   Widget _buildBadgeWidget() {
     Widget badgeWidget = Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
       Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
-        Text(_group!.currentUserStatusText!.toUpperCase(), style:  Styles().textStyles.getTextStyle('widget.heading.small'),)
+        Text(_group!.currentUserStatusText!.toUpperCase(), style:  Styles().textStyles.getTextStyle('widget.heading.extra_small'),)
       ),
     );
     return _showPolicyButton ? Row(children: <Widget>[
@@ -1414,6 +1740,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                           _onTapCreatePost();
                         })),
                 Visibility(
+                    visible: _canCreateMessage,
+                    child: RibbonButton(
+                        leftIconKey: "plus-circle",
+                        label: Localization().getStringEx("panel.group_detail.button.create_message.title", "Create Direct Message"),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          _onTapCreatePost();
+                        })),
+                Visibility(visible: _canReportAbuse, child: RibbonButton(
+                  leftIconKey: "report",
+                  label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
+                  onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true)   ),
+                )),
+                Visibility(
                     visible: _canLeaveGroup,
                     child: RibbonButton(
                         leftIconKey: "trash",
@@ -1528,8 +1868,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
       switch (_currentTab) {
         case _DetailTab.Posts:
-          if (CollectionUtils.isNotEmpty(_visibleGroupPosts)) {
+          if (CollectionUtils.isNotEmpty(_posts)) {
             _scheduleLastPostScroll();
+          }
+          break;
+        case _DetailTab.Messages:
+          if (CollectionUtils.isNotEmpty(_messages)) {
+            _scheduleLastMessageScroll();
           }
           break;
         case _DetailTab.Polls:
@@ -1580,7 +1925,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       alignment: Alignment.center,
       infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
       infoTextStyle: Styles().textStyles.getTextStyle('widget.description.regular.thin"'),
-      closeIcon: Styles().images.getImage('close', excludeFromSemantics: true),
+      closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
     ),);
   }
 
@@ -1601,12 +1946,28 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapPromote() {
     Analytics().logSelect(target: "Promote Group", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupQrCodePanel(group: _group)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromGroup(_group)));
   }
 
   void _onTapNotifications() {
     Analytics().logSelect(target: "Notifications", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMemberNotificationsPanel(groupId: _group?.id, memberId: _group?.currentMember?.id)));
+  }
+
+  void _onTapReportAbuse({required GroupPostReportAbuseOptions options}) {
+    String? analyticsTarget;
+    if (options.reportToDeanOfStudents && !options.reportToGroupAdmins) {
+      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.students_dean.description.text', 'Report violation of Student Code to Dean of Students');
+    }
+    else if (!options.reportToDeanOfStudents && options.reportToGroupAdmins) {
+      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.group_admins.description.text', 'Report obscene, threatening, or harassing content to Group Administrators');
+    }
+    else if (options.reportToDeanOfStudents && options.reportToGroupAdmins) {
+      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.both.description.text', 'Report violation of Student Code to Dean of Students and obscene, threatening, or harassing content to Group Administrators');
+    }
+    Analytics().logSelect(target: analyticsTarget);
+
+    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbuse(options: options, groupId: widget.group?.id)));
   }
 
   /*void _onTapTakeAttendance() {
@@ -1816,11 +2177,25 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     Analytics().logSelect(target: "Create Post", attributes: _group?.analyticsAttributes);
     if (_group != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostCreatePanel(group: _group!))).then((result) {
-        if (_refreshingPosts != true) {
-          _refreshCurrentPosts();
-        }
-        if (result == true) {
-          _shouldScrollToLastAfterRefresh = true;
+        if (result is GroupPost) {
+          if(result.isScheduled){ //Post and messages can be both scheduled, so check for scheduled first
+            _scrollToLastScheduledPostsAfterRefresh = true;
+            if (_refreshingScheduledPosts != true) {
+              _refreshCurrentScheduledPosts();
+            }
+          }
+          else if (result.isPost) {
+            _scrollToLastPostAfterRefresh = true;
+            if (_refreshingPosts != true) {
+              _refreshCurrentPosts();
+            }
+          }
+          else if (result.isMessage) {
+            _scrollToLastMessageAfterRefresh = true;
+            if (_refreshingMessages != true) {
+              _refreshCurrentMessages();
+            }
+          }
         }
       });
     }
@@ -1873,6 +2248,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _refreshGroupStats();
       _refreshEvents();
       _refreshCurrentPosts();
+      _refreshCurrentScheduledPosts();
+      _refreshCurrentMessages();
     }
   }
 
@@ -1884,6 +2261,26 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _scrollToLastPost() {
     _scrollTo(_lastPostKey);
+  }
+
+  void _scheduleLastScheduledPostScroll() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToLastScheduledPost();
+    });
+  }
+
+  void _scrollToLastScheduledPost() {
+    _scrollTo(_lastScheduledPostKey);
+  }
+
+  void _scheduleLastMessageScroll() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToLastMessage();
+    });
+  }
+
+  void _scrollToLastMessage() {
+    _scrollTo(_lastMessageKey);
   }
 
   void _schedulePollsScroll() {

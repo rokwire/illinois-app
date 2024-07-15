@@ -26,15 +26,18 @@ import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/News.dart';
@@ -89,8 +92,9 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
     super.initState();
 
     NotificationService().subscribe(this, [
-      Config.notifyConfigChanged,
       RecentItems.notifyChanged,
+      RecentItems.notifySettingChanged,
+      Config.notifyConfigChanged,
     ]);
 
     if (widget.updateController != null) {
@@ -137,6 +141,16 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
         });
       }
     }
+    else if (name == RecentItems.notifySettingChanged) {
+      if (mounted) {
+        setState(() {
+          _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
+          _pageViewKey = UniqueKey();
+          _pageController = null;
+          _contentKeys.clear();
+        });
+     }
+    }
     else if (name == Config.notifyConfigChanged) {
       if (mounted) {
         setState(() {});
@@ -149,14 +163,20 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeRecentItemsWidget.title,
       titleIconKey: 'history',
+      actions: [
+        if (_recentItems?.isNotEmpty == true)
+          _clearAllButton
+      ],
       child: _buildContent(),
     );
   }
     
   Widget _buildContent() {
-    return (_recentItems?.isEmpty ?? true) ? HomeMessageCard(
-      message: Localization().getStringEx("widget.home.recent_items.text.empty.description", "There are no recently viewed items available."),
-    ) : _buildRecentContent();
+    return (_recentItems?.isNotEmpty == true) ? _buildRecentContent() : HomeMessageCard(
+      message: (Storage().recentItemsEnabled != false) ?
+        Localization().getStringEx("widget.home.recent_items.text.empty.description", "There is no recently viewed app content to display.") :
+      Localization().getStringEx("widget.home.recent_items.text.disabled.description", "Displaying recently viewed app content is turned off."),
+    );
   }
 
   Widget _buildRecentContent() {
@@ -197,8 +217,8 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
       contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length, centerWidget:
         LinkButton(
-          title: Localization().getStringEx('widget.home.recent_items.button.all.title', 'View All'),
-          hint: Localization().getStringEx('widget.home.recent_items.button.all.hint', 'Tap to view all items'),
+          title: Localization().getStringEx('widget.home.recent_items.button.view_all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.recent_items.button.view_all.hint', 'Tap to view all items'),
           onTap: _onSeeAll,
         ),
       ),
@@ -210,12 +230,33 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
     Navigator.push(context, CupertinoPageRoute(builder: (context) => HomeRecentItemsPanel()));
   }
 
+  Widget get _clearAllButton => LinkButton(
+    title: Localization().getStringEx('widget.home.recent_items.button.clear_all.title', 'Clear All'),
+    hint: Localization().getStringEx('widget.home.recent_items.button.clear_all.hint', 'Tap to clear all items'),
+    textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.semi_fat.underline.highlight'),
+    padding: const EdgeInsets.only(left: 16, top: 16, bottom: 16),
+    onTap: _onClearAll,
+  );
+
+  void _onClearAll() {
+    Analytics().logSelect(target: "Clear All", source: widget.runtimeType.toString());
+    AppAlert.showConfirmationDialog(buildContext: context,
+      message: Localization().getStringEx('widget.home.recent_items.prompt.clear_all.text', 'Are you sure you want to CLEAR your browsing history"'),
+      positiveButtonLabel: Localization().getStringEx('dialog.ok.title', 'OK'),
+      negativeButtonLabel: Localization().getStringEx('dialog.cancel.title', 'Cancel'),
+    ).then((value) {
+      if (value == true) {
+        RecentItems().clearRecentItems();
+      }
+    });
+  }
+
   double get _pageHeight {
 
     double? minContentHeight;
     for(GlobalKey contentKey in _contentKeys.values) {
       final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
-      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+      if ((renderBox is RenderBox) && renderBox.hasSize && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
         minContentHeight = renderBox.size.height;
       }
     }
@@ -240,7 +281,10 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, RecentItems.notifyChanged);
+    NotificationService().subscribe(this, [
+      RecentItems.notifyChanged,
+      RecentItems.notifySettingChanged,
+    ]);
     _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
   }
 
@@ -261,24 +305,49 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
         });
       }
     }
+    else if (name == RecentItems.notifySettingChanged) {
+      if (mounted) {
+        setState(() {
+          _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx('widget.home.recent_items.label.header.title', 'Recently Viewed'),),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('widget.home.recent_items.label.header.title', 'Recently Viewed'),
+        actions: [
+          if (_recentItems?.isNotEmpty == true)
+            _clearAllButton
+        ],
+      ),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Expanded(child:
             SingleChildScrollView(child:
-              Padding(padding: EdgeInsets.all(16), child:
-                Column(children: _buildListItems(),)
-              )
-            ,),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
+                  _browsingHistoryButton,
+                  ... _buildPanelContent(),
+                  Container(height: 16,)
+                ])
+              ),
+            ),
           ),
         ],)),
       backgroundColor: Styles().colors.background,
     );
+  }
+
+  List<Widget> _buildPanelContent() {
+    return (_recentItems?.isNotEmpty == true) ? _buildListItems() :
+      [_buildMessageContent((Storage().recentItemsEnabled != false) ?
+        Localization().getStringEx("widget.home.recent_items.text.empty.description", "There is no recently viewed app content to display.") :
+        Localization().getStringEx("widget.home.recent_items.text.disabled.description", "Displaying recently viewed app content is turned off."),
+      )];
   }
 
   List<Widget> _buildListItems() {
@@ -294,12 +363,56 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
     return widgets;
   }
 
+  Widget _buildMessageContent(String message) =>
+    Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+      Text(message, textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle('widget.item.regular'),),
+    );
+  
   Future<void> _onPullToRefresh() async {
     if (mounted && !DeepCollectionEquality().equals(_recentItems, RecentItems().recentItems)) {
       setState(() {
         _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
       });
     }
+  }
+
+  Widget get _browsingHistoryButton => InkWell(onTap: _onBrowsingHistory, child:
+    Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+      Row(mainAxisSize: MainAxisSize.min, children: [
+        Padding(padding: EdgeInsets.only(right: 8), child:
+          Styles().images.getImage('settings')
+        ),
+        Text(Localization().getStringEx("widget.home.recent_items.label.browsing_history.title", "Browsing History"), style:
+          Styles().textStyles.getTextStyle('widget.item.small.semi_fat.underline'),
+        ),
+      ],),
+    )
+  );
+  
+  void _onBrowsingHistory() {
+    Analytics().logSelect(target: "Browsing History", source: widget.runtimeType.toString());
+    SettingsHomeContentPanel.present(context, content: SettingsContent.recent_items);
+  }
+
+  Widget get _clearAllButton => LinkButton(
+    title: Localization().getStringEx('widget.home.recent_items.button.clear_all.title', 'Clear All'),
+    hint: Localization().getStringEx('widget.home.recent_items.button.clear_all.hint', 'Tap to clear all items'),
+    textStyle: Styles().textStyles.getTextStyle('widget.heading.small.semi_fat.underline'),
+    padding: const EdgeInsets.all(16),
+    onTap: _onClearAll,
+  );
+
+  void _onClearAll() {
+    Analytics().logSelect(target: "Clear All", source: widget.runtimeType.toString());
+    AppAlert.showConfirmationDialog(buildContext: context,
+      message: Localization().getStringEx('widget.home.recent_items.prompt.clear_all.text', 'Are you sure you want to CLEAR your browsing history"'),
+      positiveButtonLabel: Localization().getStringEx('dialog.ok.title', 'OK'),
+      negativeButtonLabel: Localization().getStringEx('dialog.cancel.title', 'Cancel'),
+    ).then((value) {
+      if (value == true) {
+        RecentItems().clearRecentItems();
+      }
+    });
   }
 
 }

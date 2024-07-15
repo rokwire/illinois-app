@@ -1,17 +1,18 @@
 
 import 'package:collection/collection.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class WellnessBuilding with Explore {
+class WellnessBuilding with Explore, AnalyticsInfo {
   final Building building;
   final Map<String, dynamic> guideEntry;
   WellnessBuilding({required this.building, required this.guideEntry});
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is WellnessBuilding) &&
     (building == other.building) &&
     (DeepCollectionEquality().equals(guideEntry, other.guideEntry));
@@ -57,4 +58,8 @@ class WellnessBuilding with Explore {
     latitude : building.latitude,
     longitude : building.longitude,
   );
+
+  // AnaoyticsInfo implementation
+  @override AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Wellness;
+
 }

@@ -24,8 +24,8 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/settings/SettingsVideoTutorialListPanel.dart';
-import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
+import 'package:illinois/ui/apphelp/AppHelpVideoTutorialListPanel.dart';
+import 'package:illinois/ui/apphelp/AppHelpVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
@@ -244,7 +244,7 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
     double? minContentHeight;
     for (GlobalKey contentKey in _contentKeys.values) {
       final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
-      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+      if ((renderBox is RenderBox) && renderBox.hasSize && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
         minContentHeight = renderBox.size.height;
       }
     }
@@ -253,13 +253,13 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
 
   void _onTapVideo(Video video) {
     Analytics().logSelect(target: 'Video Tutorial', source: widget.runtimeType.toString(), attributes: video.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVideoTutorialPanel(videoTutorial: video)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppHelpVideoTutorialPanel(videoTutorial: video)));
   }
 
   void _onTapViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     if (_canViewVideos) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialListPanel(videoTutorials: _videos)));
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => AppHelpVideoTutorialListPanel(videoTutorials: _videos)));
     }
   }
 

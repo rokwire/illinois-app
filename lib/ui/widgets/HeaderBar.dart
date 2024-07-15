@@ -15,10 +15,9 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/WPGUFMRadio.dart';
+import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
@@ -33,8 +32,8 @@ class HeaderBar extends rokwire.HeaderBar {
 
   static const String defaultLeadingIconKey = 'chevron-left-white';
 
-  HeaderBar({Key? key,
-    SemanticsSortKey? sortKey,
+  HeaderBar({super.key,
+    super.sortKey,
 
     Widget? leadingWidget,
     String? leadingLabel,
@@ -54,8 +53,7 @@ class HeaderBar extends rokwire.HeaderBar {
     bool? centerTitle = false,
 
     List<Widget>? actions,
-  }) : super(key: key,
-    sortKey: sortKey,
+  }) : super(
     
     leadingWidget: leadingWidget,
     leadingLabel: leadingLabel ?? Localization().getStringEx('headerbar.back.title', 'Back'),
@@ -89,9 +87,12 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
   static const String defaultLeadingIconKey = 'chevron-left-white';
 
   SliverToutHeaderBar({
+    super.key,
+
     bool pinned = true,
     bool floating = false,
-    double? expandedHeight = 200,
+    double toolbarHeight = 9 * kToolbarHeight / 7,
+    double? expandedHeight = kToolbarHeight * 4,
     Color? backgroundColor,
 
     Widget? flexWidget,
@@ -104,9 +105,10 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     double? flexLeftToRightTriangleHeight = 53,
 
     Widget? leadingWidget,
+    double? leadingWidth = 9 * kToolbarHeight / 7,
     String? leadingLabel,
     String? leadingHint,
-    EdgeInsetsGeometry? leadingPadding = const EdgeInsets.all(8),
+    EdgeInsetsGeometry leadingPadding = const EdgeInsets.all(8 + kToolbarHeight / 7),
     Size? leadingOvalSize = const Size(32, 32),
     Color? leadingOvalColor,
     String? leadingIconKey = defaultLeadingIconKey,
@@ -124,6 +126,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
   }) : super(
     pinned: pinned,
     floating: floating,
+    toolbarHeight: toolbarHeight,
     expandedHeight: expandedHeight,
     backgroundColor: backgroundColor ?? Styles().colors.fillColorPrimaryVariant,
 
@@ -137,6 +140,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     flexLeftToRightTriangleHeight: flexLeftToRightTriangleHeight,
 
     leadingWidget: leadingWidget,
+    leadingWidth: leadingWidth,
     leadingLabel: leadingLabel ?? Localization().getStringEx('headerbar.back.title', 'Back'),
     leadingHint: leadingHint ?? Localization().getStringEx('headerbar.back.hint', ''),
     leadingPadding: leadingPadding,
@@ -168,13 +172,17 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
 class SliverHeaderBar extends rokwire.SliverHeaderBar  {
   static const String defaultLeadingIconKey = 'close-circle-white';
 
-  SliverHeaderBar({Key? key,
+  SliverHeaderBar({
+    super.key,
+
     bool pinned = true,
     bool floating = false,
     double? elevation = 0,
+    double toolbarHeight = kToolbarHeight,
     Color? backgroundColor,
 
     Widget? leadingWidget,
+    double? leadingWidth,
     String? leadingLabel,
     String? leadingHint,
     String? leadingIconKey = defaultLeadingIconKey,
@@ -191,14 +199,16 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     TextAlign? textAlign,
 
     List<Widget>? actions,
-  }) : super(key: key,
+  }) : super(
     
     pinned: pinned,
     floating: floating,
     elevation: elevation,
+    toolbarHeight: toolbarHeight,
     backgroundColor: backgroundColor ?? Styles().colors.fillColorPrimaryVariant,
 
     leadingWidget: leadingWidget,
+    leadingWidth: leadingWidth,
     leadingLabel: leadingLabel ?? Localization().getStringEx('headerbar.back.title', 'Back'),
     leadingHint: leadingHint ?? Localization().getStringEx('headerbar.back.hint', ''),
     leadingIconKey: leadingIconKey,
@@ -224,42 +234,6 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
   }
 }
 
-/*class SliverHeaderBar extends SliverAppBar {
-  final BuildContext context;
-  final Widget? titleWidget;
-  final bool backVisible;
-  final Color? backgroundColor;
-  final String backIconRes;
-  final Function? onBackPressed;
-  final List<Widget>? actions;
-
-  SliverHeaderBar({required this.context, this.titleWidget, this.backVisible = true, this.onBackPressed, this.backgroundColor, this.backIconRes = 'images/chevron-left-white.png', this.actions}):
-        super(
-        pinned: true,
-        floating: false,
-        backgroundColor: backgroundColor ?? Styles().colors.fillColorPrimaryVariant,
-        elevation: 0,
-        leading: Visibility(visible: backVisible, child: Semantics(
-            label: Localization().getStringEx('headerbar.back.title', 'Back'),
-            hint: Localization().getStringEx('headerbar.back.hint', ''),
-            button: true,
-            excludeSemantics: true,
-            child: IconButton(
-                icon: Image.asset(backIconRes, excludeFromSemantics: true),
-                onPressed: (){
-                    Analytics().logSelect(target: "Back");
-                    if (onBackPressed != null) {
-                      onBackPressed();
-                    } else {
-                      Navigator.pop(context);
-                    }
-                })),),
-        title: titleWidget,
-        centerTitle: false,
-        actions: actions,
-      );
-}*/
-
 enum RootHeaderBarLeading { Home, Back }
 
 class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
@@ -283,7 +257,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      WPGUFMRadio.notifyPlayerStateChanged,
+      RadioPlayer.notifyPlayerStateChanged,
       Inbox.notifyInboxUnreadMessagesCountChanged,
       Auth2.notifyPictureChanged,
     ]);
@@ -300,7 +274,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == WPGUFMRadio.notifyPlayerStateChanged) {
+    if (name == RadioPlayer.notifyPlayerStateChanged) {
       if (mounted) {
         setState(() {});
       }
@@ -346,7 +320,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
   }
 
   Widget _buildHeaderTitle() {
-    return WPGUFMRadio().isPlaying ? Row(mainAxisSize: MainAxisSize.min, children: [
+    return RadioPlayer().isPlaying ? Row(mainAxisSize: MainAxisSize.min, children: [
       _buildHeaderTitleText(),
       _buildHeaderRadioButton(),
     ],) : _buildHeaderTitleText();
@@ -429,7 +403,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 
   void _onTapRadio() {
     Analytics().logSelect(target: "WPGU FM Radio");
-    WPGUFMRadio().pause();
+    RadioPlayer().pause();
   }
 
   void _onTapSettings() {

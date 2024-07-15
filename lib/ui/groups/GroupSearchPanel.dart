@@ -16,6 +16,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -29,13 +30,16 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
-class GroupsSearchPanel extends StatefulWidget {
+class GroupsSearchPanel extends StatefulWidget with AnalyticsInfo {
   final bool researchProject;
 
   GroupsSearchPanel({Key? key, this.researchProject = false }) : super(key: key);
 
   @override
   _GroupsSearchPanelState createState() => _GroupsSearchPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => (researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 }
 
 class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements NotificationsListener {
@@ -134,7 +138,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
                       padding: EdgeInsets.all(12),
                       child: GestureDetector(
                         onTap: _onTapClear,
-                        child: Styles().images.getImage('close', excludeFromSemantics: true),
+                        child: Styles().images.getImage('close-circle', excludeFromSemantics: true),
                       ),
                     )
                 ),

@@ -36,6 +36,8 @@
 		261784D428C8ED6A009172BB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		261784D628C8ED6A009172BB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B6BDCD39242CCF5F002F7364 /* Localizable.strings */; };
 		2626D94B22DC99C800F6BC2F /* NSString+InaJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 2626D94922DC99C700F6BC2F /* NSString+InaJson.m */; };
+		263EB9332BB721AB00E79CDB /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 263EB9322BB721AB00E79CDB /* PrivacyInfo.xcprivacy */; };
+		263EB9342BB721AB00E79CDB /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 263EB9322BB721AB00E79CDB /* PrivacyInfo.xcprivacy */; };
 		268F310022E5E7BF00547FE1 /* NSUserDefaults+InaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 268F30FF22E5E7BF00547FE1 /* NSUserDefaults+InaUtils.m */; };
 		268F647A22DF050400A85AFD /* CLLocationCoordinate2D+InaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 268F647922DF050400A85AFD /* CLLocationCoordinate2D+InaUtils.m */; };
 		268F647D22DF09D900A85AFD /* NSArray+InaTypedValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 268F647B22DF09D900A85AFD /* NSArray+InaTypedValue.m */; };
@@ -120,6 +122,7 @@
 		263C9CB728C635720092B53B /* Test.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Test.xcconfig; path = Flutter/Test.xcconfig; sourceTree = "<group>"; };
 		263C9CB828C635720092B53B /* Release-Prod.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "Release-Prod.xcconfig"; path = "Flutter/Release-Prod.xcconfig"; sourceTree = "<group>"; };
 		263C9CB928C635A70092B53B /* Prod.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Prod.xcconfig; path = Flutter/Prod.xcconfig; sourceTree = "<group>"; };
+		263EB9322BB721AB00E79CDB /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2668953022E1E074003CAB94 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		26695108D663C5F02B96B5EB /* Pods-Runner.debug-illinoisdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-illinoisdev.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-illinoisdev.xcconfig"; sourceTree = "<group>"; };
 		26737E101384436ACB934FD2 /* Pods-Runner.debug-illinoistst.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-illinoistst.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-illinoistst.xcconfig"; sourceTree = "<group>"; };
@@ -261,6 +264,7 @@
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */,
 				B6BDCD39242CCF5F002F7364 /* Localizable.strings */,
+				263EB9322BB721AB00E79CDB /* PrivacyInfo.xcprivacy */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -564,7 +568,7 @@
 		97C146E61CF9000F007C117D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1510;
 				ORGANIZATIONNAME = "The Chromium Authors";
 				TargetAttributes = {
 					2617849928C8ED6A009172BB = {
@@ -609,6 +613,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				261784BD28C8ED6A009172BB /* LaunchScreen.storyboard in Resources */,
+				263EB9342BB721AB00E79CDB /* PrivacyInfo.xcprivacy in Resources */,
 				261784CA28C8ED6A009172BB /* AppFrameworkInfo.plist in Resources */,
 				26F8CF632A71352A00AD7AC5 /* hid-unlock.wav in Resources */,
 				261784D428C8ED6A009172BB /* Main.storyboard in Resources */,
@@ -622,6 +627,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
+				263EB9332BB721AB00E79CDB /* PrivacyInfo.xcprivacy in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
 				26F8CF612A71351800AD7AC5 /* hid-unlock.wav in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,

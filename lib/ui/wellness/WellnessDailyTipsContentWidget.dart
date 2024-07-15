@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -23,7 +22,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Transportation.dart';
 import 'package:illinois/service/Wellness.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -169,7 +167,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
                 Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
                   InkWell(onTap : () => _onClosePopup(context), child:
                     Padding(padding: EdgeInsets.all(18), child: 
-                      Styles().images.getImage('close', excludeFromSemantics: true),
+                      Styles().images.getImage('close-circle', excludeFromSemantics: true),
                     ),
                   ),
                 ),
@@ -184,7 +182,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
   void onTapEightDimension() {
     Analytics().logSelect(target: 'Learn more about the 8 dimensions', source: widget.runtimeType.toString());
     if (StringUtils.isNotEmpty(Config().wellness8DimensionsUrl)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().wellness8DimensionsUrl, title: Localization().getStringEx('panel.wellness.sections.dimensions.title', '8 Dimensions of Wellness'),)));
+      _launchUrl(Config().wellness8DimensionsUrl);
     }
   }
 
@@ -207,9 +205,6 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
     if (StringUtils.isNotEmpty(url)) {
       if (DeepLink().isAppUrl(url)) {
         DeepLink().launchUrl(url);
-      }
-      else if (UrlUtils.launchInternal(url)){
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       }
       else {
         Uri? uri = Uri.tryParse(url!);

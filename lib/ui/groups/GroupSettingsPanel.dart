@@ -18,6 +18,8 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/ImagesResult.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
@@ -28,6 +30,7 @@ import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/config.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -43,7 +46,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class GroupSettingsPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GroupSettingsPanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
   final GroupStats? groupStats;
   
@@ -51,6 +54,9 @@ class GroupSettingsPanel extends StatefulWidget implements AnalyticsPageAttribut
 
   @override
   _GroupSettingsPanelState createState() => _GroupSettingsPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
@@ -244,13 +250,13 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       return;
     }
     Analytics().logSelect(target: "Add Image");
-    String? _imageUrl = await GroupAddImageWidget.show(context: context, updateUrl: _group!.imageURL);
-    if(_imageUrl!=null){
-      setState(() {
-        _group!.imageURL = _imageUrl;
+    ImagesResult? result = await GroupAddImageWidget.show(context: context, url: _group!.imageURL).then((result) => result);
+    if(result?.succeeded == true &&  _group!.imageURL != result?.stringData){
+      setStateIfMounted(() {
+        _group!.imageURL = result?.stringData;
       });
     }
-    Log.d("Image Url: $_imageUrl");
+    Log.d("Image Url: ${result?.stringData}]");
   }
   //
   //Name
@@ -487,20 +493,22 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     List<ContentAttribute>? attributes = contentAttributes?.attributes;
     if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
-        if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
-          attributesList.add(
-            Semantics(container:true, child:
-              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
-                  Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
-                ),
-                Expanded(child:
-                  Text(displayAttributeValues.join(', '), /*overflow: TextOverflow.ellipsis, maxLines: 1,*/ style:
-                    Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
+        if (Groups().isContentAttributeEnabled(attribute)) {
+          List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
+          if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+            attributesList.add(
+              Semantics(container:true, child:
+                Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
+                    Styles().textStyles.getTextStyle("widget.card.detail.small.fat")
                   ),
-              ),
-          ],)),);
+                  Expanded(child:
+                    Text(displayAttributeValues.join(', '), /*overflow: TextOverflow.ellipsis, maxLines: 1,*/ style:
+                      Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
+                    ),
+                ),
+            ],)),);
+          }
         }
       }
     }
@@ -516,6 +524,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       description: (_group?.researchProject == true) ?
         Localization().getStringEx('panel.project.attributes.attributes.header.description', 'Choose one or more attributes that help describe this project.') :
         Localization().getStringEx('panel.group.attributes.attributes.header.description', 'Choose one or more attributes that help describe this group.'),
+      scope: Groups.contentAttributesScope,
       contentAttributes: Groups().contentAttributes,
       selection: _group?.attributes,
       sortType: ContentAttributesSortType.alphabetical,
@@ -1317,7 +1326,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   bool get _isUserManagedGroupAdmin {
-    return Auth2().account?.isManagedGroupAdmin ?? false;
+    return Auth2().isManagedGroupAdmin;
   }
 
   bool get _isAuthManGroup{

@@ -21,6 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Favorite.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/Appointment.dart';
@@ -56,7 +57,7 @@ import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class SavedPanel extends StatefulWidget {
+class SavedPanel extends StatefulWidget with AnalyticsInfo {
 
   static const List<String> allFavoriteCategories = <String>[
     Event.favoriteKeyName,
@@ -76,6 +77,32 @@ class SavedPanel extends StatefulWidget {
 
   @override
   _SavedPanelState createState() => _SavedPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature {
+    String? favoriteCategory = (favoriteCategories.length == 1) ? favoriteCategories.first : null;
+    if ((favoriteCategory == Event.favoriteKeyName) || (favoriteCategory == Event2.favoriteKeyName)) {
+      return AnalyticsFeature.Events;
+    }
+    else if (favoriteCategory == Dining.favoriteKeyName) {
+      return AnalyticsFeature.Dining;
+    }
+    else if ((favoriteCategory == Game.favoriteKeyName) || (favoriteCategory == News.favoriteKeyName)) {
+      return AnalyticsFeature.Athletics;
+    }
+    else if (favoriteCategory == LaundryRoom.favoriteKeyName) {
+      return AnalyticsFeature.Laundry;
+    }
+    else if ((favoriteCategory == MTDStop.favoriteKeyName) || (favoriteCategory == ExplorePOI.favoriteKeyName)) {
+      return AnalyticsFeature.MTD;
+    }
+    else if (favoriteCategory == GuideFavorite.favoriteKeyName) {
+      return AnalyticsFeature.Guide;
+    }
+    else {
+      return AnalyticsFeature.Unknown;
+    }
+  }
 }
 
 class _SavedPanelState extends State<SavedPanel> implements NotificationsListener {

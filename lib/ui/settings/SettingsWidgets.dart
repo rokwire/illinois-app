@@ -106,7 +106,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
               child:
                 Container(
                   padding: EdgeInsets.only(left: 50, top: 4),
-                  child: Styles().images.getImage('close', excludeFromSemantics: true)
+                  child: Styles().images.getImage('close-circle', excludeFromSemantics: true)
                 ),
               ),)
             ],),
@@ -250,7 +250,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
   void _evalConfirmSize() {
     try {
       final RenderObject? renderBox = _confirmKey.currentContext?.findRenderObject();
-      if (renderBox is RenderBox) {
+      if ((renderBox is RenderBox) && renderBox.hasSize) {
         if (mounted) {
           setState(() {
             _confirmSize = renderBox.size;

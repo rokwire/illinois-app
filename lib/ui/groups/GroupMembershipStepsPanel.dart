@@ -17,6 +17,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -31,14 +32,14 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ext/Event2.dart';
 
-class GroupMembershipStepsPanel extends StatefulWidget {
+class GroupMembershipStepsPanel extends StatefulWidget with AnalyticsInfo {
   final List<GroupMembershipStep>? steps;
 
   GroupMembershipStepsPanel({this.steps});
 
   @override
-  _GroupMembershipStepsPanelState createState() =>
-      _GroupMembershipStepsPanelState();
+  _GroupMembershipStepsPanelState createState() => _GroupMembershipStepsPanelState();
+
 }
 
 class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {

@@ -38,7 +38,7 @@ class StudentCourse with Explore {
   String get detail => '$shortName ($number) $instructionMethod';
   
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is StudentCourse) &&
     (title == other.title) &&
     (shortName == other.shortName) &&
@@ -147,7 +147,7 @@ class StudentCourseSection {
   };
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is StudentCourseSection) &&
     
     (buildingName == other.buildingName) &&
@@ -280,7 +280,7 @@ class Building with Explore {
   bool get hasValidLocation => (latitude != null) && (latitude != 0) && (longitude != null) && (longitude != 0);
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is Building) &&
     
     (id == other.id) &&
@@ -421,7 +421,7 @@ class BuildingEntrance {
   bool get hasValidLocation => (latitude != null) && (latitude != 0) && (longitude != null) && (longitude != 0);
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is BuildingEntrance) &&
     (id == other.id) &&
     (name == other.name) &&
@@ -511,7 +511,7 @@ class StudentCourseTerm {
   };
 
   @override
-  bool operator==(dynamic other) =>
+  bool operator==(Object other) =>
     (other is StudentCourseTerm) &&
     (id == other.id) &&
     (name == other.name) &&

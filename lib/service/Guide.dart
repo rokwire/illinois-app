@@ -264,6 +264,10 @@ class Guide with Service implements NotificationsListener {
     return JsonUtils.stringValue(entryValue(entry, 'section'));
   }
 
+  String? entryContentType(Map<String, dynamic>? entry) {
+    return JsonUtils.stringValue(entryValue(entry, 'content_type'));
+  }
+
   String? entryTitle(Map<String, dynamic>? entry, { bool? stripHtmlTags }) {
     String? result = JsonUtils.stringValue(entryValue(entry, 'title')) ?? JsonUtils.stringValue(entryValue(entry, 'list_title')) ?? JsonUtils.stringValue(entryValue(entry, 'detail_title'));
     return ((result != null) && (stripHtmlTags == true)) ? StringUtils.stripHtmlTags(result) : result;
@@ -291,15 +295,15 @@ class Guide with Service implements NotificationsListener {
   } : null;
 
   bool isEntryReminder(Map<String, dynamic>? entry) {
-    return JsonUtils.stringValue(entryValue(entry, 'content_type')) == campusReminderContentType;
+    return entryContentType(entry) == campusReminderContentType;
   }
 
   bool isEntrySafetyResource(Map<String, dynamic>? entry) {
-    return JsonUtils.stringValue(entryValue(entry, 'content_type')) == campusSafetyResourceContentType;
+    return entryContentType(entry) == campusSafetyResourceContentType;
   }
 
   bool isEntryMentalHeatlh(Map<String, dynamic>? entry) {
-    return JsonUtils.stringValue(entryValue(entry, 'content_type')) == wellnessMentalHealthContentType;
+    return entryContentType(entry) == wellnessMentalHealthContentType;
   }
 
   // Returns the date in:
@@ -332,6 +336,7 @@ class Guide with Service implements NotificationsListener {
           guideList.add(guideEntry);
         }
       }
+      listSortDefault(guideList);
       return guideList;
     }
     return null;
@@ -378,9 +383,7 @@ class Guide with Service implements NotificationsListener {
         }
       }
 
-      safetyResourcesList.sort((Map<String, dynamic> entry1, Map<String, dynamic> entry2) {
-        return SortUtils.compare(Guide().entryListTitle(entry1, stripHtmlTags: true), Guide().entryListTitle(entry2, stripHtmlTags: true));
-      });
+      listSortDefault(safetyResourcesList);
 
       return safetyResourcesList;
     }
@@ -416,6 +419,8 @@ class Guide with Service implements NotificationsListener {
           promotedList.add(guideEntry!);
         }
       }
+
+      listSortDefault(promotedList);
       return promotedList;
     }
     return null;
@@ -457,8 +462,8 @@ class Guide with Service implements NotificationsListener {
 
   static bool _checkPromotionRoles(Map<String, dynamic>? promotion) {
     dynamic roles = (promotion != null) ? promotion['roles'] : null;
-    return (roles != null) ? BoolExpr.eval(roles, (String? argument) {
-      UserRole? userRole = UserRole.fromString(argument);
+    return (roles != null) ? BoolExpr.eval(roles, (dynamic argument) {
+      UserRole? userRole = (argument is String) ? UserRole.fromString(argument) : null;
       return (userRole != null) ? (Auth2().prefs?.roles?.contains(userRole) ?? false) : null;
     }) : true; 
   }
@@ -467,18 +472,40 @@ class Guide with Service implements NotificationsListener {
     Map<String, dynamic>? card = (promotion != null) ? JsonUtils.mapValue(promotion['card']) : null;
     if (card != null) {
       dynamic cardRole = card['role'];
-      if ((cardRole != null) && !BoolExpr.eval(cardRole, (String? role) { return Auth2().authCard?.role?.toLowerCase() == role?.toLowerCase(); })) {
+      if ((cardRole != null) && !BoolExpr.eval(cardRole, (dynamic role) { return (role is String) ? (Auth2().authCard?.role?.toLowerCase() == role.toLowerCase()) : null; })) {
         return false;
       }
 
       dynamic cardStudentLevel = card['student_level'];
-      if ((cardStudentLevel != null) && !BoolExpr.eval(cardStudentLevel, (String? studentLevel) { return Auth2().authCard?.studentLevel?.toLowerCase() == studentLevel?.toLowerCase(); })) {
+      if ((cardStudentLevel != null) && !BoolExpr.eval(cardStudentLevel, (dynamic studentLevel) { return (studentLevel is String) ? (Auth2().authCard?.studentLevel?.toLowerCase() == studentLevel.toLowerCase()) : null; })) {
         return false;
       }
     }
     return true;
   }
   
+  /////////////////////////
+  // List Content Type
+
+  String? listContentType(List<Map<String, dynamic>>? guideList) {
+    String? listContentType;
+    if (guideList != null) {
+      for (Map<String, dynamic> guideEntry in guideList) {
+        String? guideEntryContentType = entryContentType(guideEntry);
+        if (guideEntryContentType != null) {
+          if (listContentType == null) {
+            listContentType = guideEntryContentType;
+          }
+          else if (listContentType != guideEntryContentType) {
+            listContentType = null;
+            break;
+          }
+        }
+      }
+    }
+    return listContentType;
+  }
+
   /////////////////////////
   // DefaultFavorites
 
@@ -493,7 +520,7 @@ class Guide with Service implements NotificationsListener {
         if (isFavorite == true) {
           String? guideEntryId = entryId(guideEntry);
           if (guideEntryId != null) {
-            String? guideEntryContentType = JsonUtils.stringValue(entryValue(guideEntry, 'content_type'));
+            String? guideEntryContentType = entryContentType(guideEntry);
             if (guideEntryContentType != null) {
               _processDefaultFavorites(guideEntryId: guideEntryId, guideEntryContentType: guideEntryContentType, favorites: favorites, modifiedFavoriteKeys: modifiedFavoriteKeys);
             }
@@ -525,6 +552,118 @@ class Guide with Service implements NotificationsListener {
       processedGuideEntryIds.add(guideEntryId); // Mark guideEntryId as processed
       modifiedFavoriteKeys.add(favoriteKeyName);
       modifiedFavoriteKeys.add(processedKeyName);
+    }
+  }
+
+  // Sort
+
+  bool listSortDefault(List<Map<String, dynamic>>? guideList) {
+    if (_listSortBySortOrder(guideList)) {
+      return true;
+    }
+    else if (_listIsReminders(guideList) && _listSortByDate(guideList)) {
+      return true;
+    }
+    else if (_listSortByListTitle(guideList)) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  bool _listSortBySortOrder(List<Map<String, dynamic>>? guideList) {
+    if (_listHasSortOrder(guideList)) {
+      guideList?.sort((Map<String, dynamic> guideItem1, Map<String, dynamic> guideItem2) {
+        int? sortOrder1 = JsonUtils.intValue(entryValue(guideItem1, 'sort_order'));
+        int? sortOrder2 = JsonUtils.intValue(entryValue(guideItem2, 'sort_order'));
+        return SortUtils.compare(sortOrder1, sortOrder2);
+      });
+      return true;
+    }
+    return false;
+  }
+
+  bool _listHasSortOrder(List<Map<String, dynamic>>? guideList) {
+    if (guideList == null) {
+      return false;
+    }
+    else {
+      for (Map<String, dynamic> guideItem in guideList) {
+        int? sortOrder = JsonUtils.intValue(entryValue(guideItem, 'sort_order'));
+        if (sortOrder == null) {
+          return false;
+        }
+      }
+      return true;
+    }
+  }
+
+  bool _listSortByListTitle(List<Map<String, dynamic>>? guideList) {
+    if (listHasListTitle(guideList)) {
+      guideList?.sort((Map<String, dynamic> guideItem1, Map<String, dynamic> guideItem2) {
+        String? listTitle1 = Guide().entryListTitle(guideItem1, stripHtmlTags: true);
+        String? listTitle2 = Guide().entryListTitle(guideItem2, stripHtmlTags: true);
+        return SortUtils.compare(listTitle1, listTitle2);
+      });
+      return true;
+    }
+    return false;
+  }
+
+  bool listHasListTitle(List<Map<String, dynamic>>? guideList) {
+    if (guideList == null) {
+      return false;
+    }
+    else {
+      for (Map<String, dynamic> guideItem in guideList) {
+        String? listTitle = Guide().entryListTitle(guideItem);
+        if (listTitle == null) {
+          return false;
+        }
+      }
+      return true;
+    }
+  }
+
+  bool _listSortByDate(List<Map<String, dynamic>>? guideList) {
+    if (_listHasDate(guideList)) {
+      guideList?.sort((Map<String, dynamic> guideItem1, Map<String, dynamic> guideItem2) {
+        String? date1 = JsonUtils.stringValue(entryValue(guideItem1, 'date'));
+        String? date2 = JsonUtils.stringValue(entryValue(guideItem2, 'date'));
+        return SortUtils.compare(date1, date2);
+      });
+      return true;
+    }
+    return false;
+  }
+
+  bool _listHasDate(List<Map<String, dynamic>>? guideList) {
+    if (guideList == null) {
+      return false;
+    }
+    else {
+      for (Map<String, dynamic> guideItem in guideList) {
+        String? date = JsonUtils.stringValue(entryValue(guideItem, 'date'));
+        if (date == null) {
+          return false;
+        }
+      }
+      return true;
+    }
+  }
+
+  bool _listIsReminders(List<Map<String, dynamic>>? guideList) {
+    if (guideList == null) {
+      return false;
+    }
+    else {
+      for (Map<String, dynamic> guideItem in guideList) {
+        if (!isEntryReminder(guideItem)) {
+          return false;
+        }
+      }
+      return true;
     }
   }
 
@@ -646,222 +785,6 @@ class Guide with Service implements NotificationsListener {
       }
     }
   }
-
-
-  /*static Future<void> _convertFile(String contentFileName, String sourceFileName) async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-
-    String sourceFilePath = join(appDocDir.path, sourceFileName);
-    File sourceFile = File(sourceFilePath);
-    String sourceString = await sourceFile.exists() ? await sourceFile.readAsString() : null;
-    List<dynamic> sourceList = JsonUtils.decodeList(sourceString);
-    
-    List<dynamic> contentList = _convertContent(sourceList);
-    String contentString = JsonUtils.encode(contentList, /*prettify: true*/);
-    if (contentString != null) {
-      String contentFilePath = join(appDocDir.path, contentFileName);
-      File contentFile = File(contentFilePath);
-      await contentFile.writeAsString(contentString, flush: true);
-    }
-  }
-
-  static List<dynamic> _convertContent(List<dynamic> sourceList) {
-    List<dynamic> contentList;
-    if (sourceList != null) {
-      contentList = <dynamic>[];
-      for (dynamic sourceEntry in sourceList) {
-        dynamic contentEntry = _convertContentEntry(sourceEntry);
-        if (contentEntry != null) {
-          contentList.add(contentEntry);
-        }
-      }
-    }
-    return contentList;
-  }
-
-  static Map<String, dynamic> _convertContentEntry(Map<String, dynamic> sourceEntry) {
-    Map<String, dynamic> contentEntry = Map<String, dynamic>();
-
-    // ID
-    dynamic sourceValue = sourceEntry['id'];
-    if (sourceValue != null) {
-      contentEntry['content_id'] = sourceValue;
-    }
-
-    // Shared Fields
-    for (String key in ['guide', 'category', 'section', 'list_title', 'list_description', 'detail_title', 'detail_description', 'image', 'sub_details_title', 'sub_details_description']) {
-      dynamic sourceValue = sourceEntry[key];
-      if (sourceValue != null) {
-        contentEntry[key] = sourceValue;
-      }
-    }
-
-    // Features
-    List<dynamic> features = <dynamic>[];
-    String sourceFeaturesString = JsonUtils.stringValue(sourceEntry['features']);
-    if (sourceFeaturesString != null) {
-      List<String> sourceFeatures = sourceFeaturesString.split(RegExp('[;,\n]'));
-      for (String sourceFeature in sourceFeatures) {
-        sourceFeature = sourceFeature.trim();
-        if (sourceFeature.isNotEmpty) {
-          features.add(sourceFeature.toLowerCase().replaceAll(' ', '-'));
-        }
-      }
-    }
-    if (features.isNotEmpty) {
-      contentEntry['features'] = features;
-    }
-
-    // Links
-    List<dynamic> contentLinks = <dynamic>[];
-
-    String phoneLinksString = JsonUtils.stringValue(sourceEntry['phone_links']);
-    if (phoneLinksString != null) {
-      List<String> phoneLinks = phoneLinksString.split(RegExp('[;,\n ]'));
-      for (String phoneLink in phoneLinks) {
-        if (phoneLink.isNotEmpty) {
-          contentLinks.add({ "text": phoneLink, "icon": "https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp", "url": "tel:+1-$phoneLink" });
-        }
-      }
-    }
-    String emailLinksString = JsonUtils.stringValue(sourceEntry['email_links']);
-    if (emailLinksString != null) {
-      List<String> emailLinks = emailLinksString.split(RegExp('[;,\n ]'));
-      for (String emailLink in emailLinks) {
-        if (emailLink.isNotEmpty) {
-          contentLinks.add({ "text": emailLink, "icon": "https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp", "url": "mailto:$emailLink" });
-        }
-      }
-    }
-    String webLinksString = JsonUtils.stringValue(sourceEntry['web_links']);
-    if (webLinksString != null) {
-      List<String> webLinks = webLinksString.split(RegExp('[;,\n ]'));
-      for (String webLink in webLinks) {
-        if (webLink.isNotEmpty) {
-          contentLinks.add({ "text": webLink, "icon": "https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp", "url": webLink });
-        }
-      }
-    }
-    String locationLinkString = JsonUtils.stringValue(sourceEntry['location_links']);
-    if (locationLinkString != null) {
-      List<String> locationItems = locationLinkString.split(RegExp('[\n]'));
-      String locationTitle = locationLinkString;
-      for (String locationItem in locationItems) {
-        if (locationItem.isNotEmpty) {
-          locationTitle = locationItem;
-          break;
-        }
-      }
-      contentLinks.add({ "text": locationLinkString, "icon": "https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp", "location": { "location": { "latitude": 0.00, "longitude": 0.00}, "title": locationTitle } });
-
-    }
-    
-    if (contentLinks.isNotEmpty) {
-      contentEntry['links'] = contentLinks;
-    }
-
-    // Buttons
-    String buttonText = JsonUtils.stringValue(sourceEntry['button_text']);
-    String buttonUrl = JsonUtils.stringValue(sourceEntry['button_link']);
-    if ((buttonText != null) && (0 < buttonText.length) || (buttonUrl != null) && (0 < buttonUrl.length)) {
-      contentEntry['buttons'] = [{ "text": buttonText, "url": buttonUrl }];
-    }
-
-    // Sub Details
-    List<dynamic> subDetails = <dynamic>[];
-    for (int index = 1; index <= 5; index++) {
-      
-      Map<String, dynamic> subDetail = <String, dynamic>{};
-      String sectionTitle = JsonUtils.stringValue(sourceEntry['sub_details_section${index}_title'])?.replaceAll('\n', '');
-      if (sectionTitle != null) {
-        subDetail['section'] = sectionTitle;
-      }
-
-      Map<String, dynamic> sectionEntry = <String, dynamic>{};
-      
-      String sectionHeading = JsonUtils.stringValue(sourceEntry['sub_details_section${index}_headings'])?.replaceAll('\n', '');
-      if (sectionHeading != null) {
-        sectionEntry['heading'] = sectionHeading;
-      }
-
-      List<dynamic> numbers = <dynamic>[];
-      String sectionNumbersString = JsonUtils.stringValue(sourceEntry['sub_details_section${index}_numbers']);
-      if (sectionNumbersString != null) {
-        List<String> sectionNumers = sectionNumbersString.split(RegExp('[;\n]'));
-        if (sectionNumers.length < 2) {
-          sectionNumers = _splitByCommas(sectionNumbersString);
-        }
-        for (String sectionNumer in sectionNumers) {
-          sectionNumer = sectionNumer.trim();
-          if (sectionNumer.isNotEmpty) {
-            numbers.add(sectionNumer);
-          }
-        }
-      }
-      if (numbers.isNotEmpty) {
-        sectionEntry['numbers'] = numbers;
-      }
-
-      List<dynamic> bullets = <dynamic>[];
-      String sectionBulletsString = JsonUtils.stringValue(sourceEntry['sub_details_section${index}_bullets']);
-      if (sectionBulletsString != null) {
-        List<String> sectionBullets = sectionBulletsString.split(RegExp('[;\n]'));
-        if (sectionBullets.length < 2) {
-          sectionBullets = _splitByCommas(sectionBulletsString);
-        }
-        for (String sectionBullet in sectionBullets) {
-          sectionBullet = sectionBullet.trim();
-          if (sectionBullet.isNotEmpty) {
-            bullets.add(sectionBullet);
-          }
-        }
-      }
-      if (bullets.isNotEmpty) {
-        sectionEntry['bullets'] = bullets;
-      }
-
-      if (sectionEntry.isNotEmpty) {
-        subDetail['entries'] = [ sectionEntry ];
-      }
-
-      if (subDetail.isNotEmpty) {
-        subDetails.add(subDetail);
-      }
-    }
-    if (subDetails.isNotEmpty) {
-      contentEntry['sub_details'] = subDetails;
-    }
-
-    // Related
-    List<dynamic> relatedList = <dynamic>[];
-    String relatedString = JsonUtils.stringValue(sourceEntry['related']);
-    if (relatedString != null) {
-      List<String> related = relatedString.split(RegExp('[;,\n ]'));
-      for (String relatedEntry in related) {
-        relatedEntry = relatedEntry.trim();
-        if (relatedEntry.isNotEmpty) {
-          relatedList.add(relatedEntry);
-        }
-      }
-    }
-    if (relatedList.isNotEmpty) {
-      contentEntry['related'] = relatedList;
-    }
-    
-    return contentEntry;
-  }
-
-  static List<String> _splitByCommas(String source) {
-    List<String> result = <String>[];
-    int pos, index = 0;
-    while (0 <= (pos = source.indexOf(RegExp(r",[^ ]|,$"), index))) {
-      result.add(source.substring(index, pos));
-      index = pos + 1;
-    }
-    result.add(source.substring(index));
-    return result;
-  }*/
-
 }
 
 class GuideSection {

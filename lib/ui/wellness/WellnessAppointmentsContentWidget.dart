@@ -276,7 +276,7 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
                   alignment: Alignment.topRight,
                   child: InkWell(
                       onTap: _onTapCloseReschedulePopup,
-                      child: Padding(padding: EdgeInsets.all(16), child: Styles().images.getImage('close', excludeFromSemantics: true)))))
+                      child: Padding(padding: EdgeInsets.all(16), child: Styles().images.getImage('close-circle', excludeFromSemantics: true)))))
             ])));
   }
 

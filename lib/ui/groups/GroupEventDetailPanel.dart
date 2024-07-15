@@ -2,8 +2,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -32,7 +34,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
-class GroupEventDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GroupEventDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Event2? event;
   final Group? group;
   final bool previewMode;
@@ -47,9 +49,10 @@ class GroupEventDetailPanel extends StatefulWidget implements AnalyticsPageAttri
   }
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes {
-    return group?.analyticsAttributes;
-  }
+  AnalyticsFeature? get analyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
+
+  @override
+  Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
 }
 
 class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with NotificationsListener{
@@ -177,7 +180,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   Widget _eventTitle(){
-    dynamic category = (_event?.attributes != null) ? _event?.attributes!['category'] : null;
+    dynamic category = ((_event?.attributes != null) && (Events2().isContentAttributeEnabled(ContentAttribute(id: 'category')))) ? _event?.attributes!['category'] : null;
     return Container(child:
         Column(
         crossAxisAlignment: CrossAxisAlignment.start,

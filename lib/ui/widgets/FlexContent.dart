@@ -48,7 +48,7 @@ class FlexContent extends rokwire.FlexContent {
   String get closeButtonHint => Localization().getStringEx("widget.flex_content.button.close.hint", "");
 
   @override
-  String? get closeButtonKey => 'close';
+  String? get closeButtonKey => 'close-circle';
 
   @override
   void onTapClose(rokwire.FlexContentWidgetState state) {
