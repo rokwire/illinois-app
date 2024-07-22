@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/surveys/PublicSurveyCard.dart';
 import 'package:illinois/ui/surveys/SurveyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -26,7 +27,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
   List<Survey>? _contentList;
   bool? _lastPageLoaded;
   _DataActivity? _dataActivity;
-  static const int _pageLength = 16;
+  static const int _contentPageLength = 16;
 
   ScrollController _scrollController = ScrollController();
 
@@ -84,7 +85,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
     List<Widget> cardsList = <Widget>[];
     for (Survey survey in _contentList!) {
       cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child:
-        _SurveyCard(survey, onTap: () => _onSurvey(survey),),
+        PublicSurveyCard.listCard(survey, onTap: () => _onSurvey(survey),),
       ),);
     }
     if (_dataActivity == _DataActivity.extend) {
@@ -125,7 +126,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
 
   double get _screenHeight => MediaQuery.of(context).size.height;
 
-  Future<void> _init({ int limit = _pageLength }) async {
+  Future<void> _init({ int limit = _contentPageLength }) async {
     if ((_dataActivity != _DataActivity.init) && (_dataActivity != _DataActivity.refresh)) {
       setStateIfMounted(() {
         _dataActivity = _DataActivity.init;
@@ -149,7 +150,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
         _dataActivity = _DataActivity.refresh;
       });
 
-      int limit = max(_contentList?.length ?? 0, _pageLength);
+      int limit = max(_contentList?.length ?? 0, _contentPageLength);
       List<Survey>? contentList = await Surveys().loadSurveys(SurveysQueryParam.public(limit: limit));
 
       if (mounted && (_dataActivity == _DataActivity.refresh)) {
@@ -170,7 +171,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
         _dataActivity = _DataActivity.extend;
       });
 
-      int limit = _pageLength;
+      int limit = _contentPageLength;
       int offset = _contentList?.length ?? 0;
       List<Survey>? contentList = await Surveys().loadSurveys(SurveysQueryParam.public(offset: offset, limit: limit));
 
@@ -204,46 +205,6 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
 
   void _onSurvey(Survey survey) {
     Analytics().logSelect(target: 'Survey: ${survey.title}');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: survey)));  }
-}
-
-class _SurveyCard extends StatelessWidget {
-  final Survey survey;
-  final void Function()? onTap;
-
-  // ignore: unused_element
-  _SurveyCard(this.survey, {super.key, this.onTap});
-
-  @override
-  Widget build(BuildContext context) =>
-    InkWell(onTap: onTap, child: _contentWidget);
-
-  Widget get _contentWidget =>
-    Container(decoration: _contentDecoration, child:
-      ClipRRect(borderRadius: _contentBorderRadius, child:
-        Padding(padding: const EdgeInsets.all(16), child:
-          Row(children: [
-            Expanded(child:
-              Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start, children: [
-                Text(survey.title, style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),),
-                // Build more details here
-              ],)
-            ),
-            Padding(padding: const EdgeInsets.only(left: 8), child:
-                Styles().images.getImage('chevron-right-bold'),
-            )
-          ],)
-        )
-      ),
-    );
-
-  static Decoration get _contentDecoration => BoxDecoration(
-    color: Styles().colors.surface,
-    borderRadius: _contentBorderRadius,
-    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-    boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]
-  );
-
-  static BorderRadiusGeometry get _contentBorderRadius => BorderRadius.all(Radius.circular(8));
-
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: survey)));
+  }
 }
