@@ -5,7 +5,7 @@ import 'package:illinois/ui/academics/courses/UnitInfoPanel.dart';
 import 'package:illinois/ui/academics/courses/VideoPanel.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/SyrveyPanel.dart';
+import 'package:illinois/ui/surveys/SurveyPanel.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EssentialSkillsCoachWidgets {

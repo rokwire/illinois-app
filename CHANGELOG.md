@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 <!-- The next version number should be the version from pubspec.yaml - 6.1.0 -->
+### Added
+- Created Public Surveys UI / round 0 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
 ### Changed
 - Lookup mental health buildings by id and number [#4240](https://github.com/rokwire/illinois-app/issues/4240).
 - Always show CC button in onboarding video [#4226](https://github.com/rokwire/illinois-app/issues/4226).

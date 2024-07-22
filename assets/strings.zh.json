@@ -319,6 +319,8 @@
 	"panel.browse.section.radio_stations.description": "Listen to Illinois Public Media and student-run WPGU.",
 	"panel.browse.section.recent.title": "Recently Viewed",
  	"panel.browse.section.recent.description": "Revisit your recent app activity.",
+	"panel.browse.section.surveys.title": "Surveys",
+ 	"panel.browse.section.surveys.description": "Lorem ipsum sit dolor amet.",
 	"panel.browse.section.state_farm_center.title": "State Farm Center",
 	"panel.browse.section.state_farm_center.description": "去State Farm Center參加活動，獲得停車幫助並找到自己的路。",
 	"panel.browse.section.wallet.title": "錢包",
@@ -399,6 +401,8 @@
 	"panel.browse.entry.polls.recent_polls.title": "查看民意調查",
 
 	"panel.browse.entry.recent.recent_items.title": "最近瀏覽過的",
+
+	"panel.browse.entry.surveys.public_surveys.title": "Public Surveys",
 
 	"panel.browse.entry.state_farm_center.parking.title": "停車處",
 	"panel.browse.entry.state_farm_center.wayfinding.title": "尋路",
@@ -2283,6 +2287,12 @@
 	"panel.parking_lots.label.empty":"本次活动无停车场",
 	"panel.parking_lots.label.available_spots":"可用停车位: ",
 
+	"panel.public_surveys.home.header.title": "Public Surveys",
+	"panel.public_surveys.label.description.failed": "Failed to load public surveys.",
+ 	"panel.public_surveys.label.description.empty": "There are no available public surveys at the moment.",
+	"widget.home.public_surveys.button.all.title":"View All",
+ "widget.home.public_surveys.button.all.hint":"Tap to view all surveys",
+
 	"panel.bus_pass.header.title": "MTD 公交车票",
 	"panel.bus_pass.button.close.title": "关闭",
 	"panel.bus_pass.description.text": "上車時向巴士運營商展示此屏幕.",
@@ -3435,6 +3445,10 @@
 	"widget.home.recent_items.button.clear_all.title":"Clear All",
 	"widget.home.recent_items.button.clear_all.hint":"Tap to clear all items",
 	"widget.home.recent_items.prompt.clear_all.text":"Are you sure you want to CLEAR your browsing history?",
+
+	"widget.home.public_surveys.label.header.title":"Public Surveys",
+	"widget.home.public_surveys.label.description.failed": "Failed to load public surveys.",
+ "widget.home.public_surveys.label.description.empty": "There are no available public surveys at the moment.",
 
 	"widget.home.event2_feed.label.header.title":"All Events",
 	"widget.home.event2_feed.text.empty.description": "There are no events available.",
