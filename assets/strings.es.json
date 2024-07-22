@@ -2300,6 +2300,8 @@
     "panel.parking_lots.label.available_spots":"Lugares disponibles:",
 
     "panel.public_surveys.home.header.title": "Public Surveys",
+    "panel.public_surveys.label.description.failed": "Failed to load public surveys.",
+    "panel.public_surveys.label.description.empty": "There are no available public surveys at the moment.",
 
     "panel.bus_pass.header.title": "Pase de autobús MTD",
     "panel.bus_pass.button.close.title": "Cerrar",
@@ -3458,6 +3460,8 @@
     "widget.home.recent_items.prompt.clear_all.text":"Are you sure you want to CLEAR your browsing history>",
 
     "widget.home.public_surveys.label.header.title":"Public Surveys",
+    "widget.home.public_surveys.label.description.failed": "Failed to load public surveys.",
+    "widget.home.public_surveys.label.description.empty": "There are no available public surveys at the moment.",
 
     "widget.home.event2_feed.label.header.title":"Todos los Eventos",
     "widget.home.event2_feed.text.empty.description": "There are no events available.",
