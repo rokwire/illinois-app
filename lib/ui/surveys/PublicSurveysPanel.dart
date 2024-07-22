@@ -226,7 +226,7 @@ class _SurveyCard extends StatelessWidget {
             Expanded(child:
               Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start, children: [
                 Text(survey.title, style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),),
-
+                // Build more details here
               ],)
             ),
             Padding(padding: const EdgeInsets.only(left: 8), child:
