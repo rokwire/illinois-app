@@ -28,8 +28,8 @@ class PublicSurveyCard extends StatelessWidget {
         Padding(padding: const EdgeInsets.all(16), child:
           Row(children: [
             Expanded(child:
-              Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start, children: [
-                Text(survey.title, style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),),
+              Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: (displayMode == PublicSurveyCardDisplayMode.list) ? CrossAxisAlignment.start : CrossAxisAlignment.center, children: [
+                Text(survey.title, textAlign: (displayMode == PublicSurveyCardDisplayMode.list) ? TextAlign.left : TextAlign.center, style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),),
                 // Build more details here
               ],)
             ),
