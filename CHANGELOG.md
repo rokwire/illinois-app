@@ -5,8 +5,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+<!-- The next version number should be the version from pubspec.yaml - 6.1.0 -->
+### Changed
+- Lookup mental health buildings by id and number [#4240](https://github.com/rokwire/illinois-app/issues/4240).
+- Always show CC button in onboarding video [#4226](https://github.com/rokwire/illinois-app/issues/4226).
+
+## [6.0.27] - 2024-07-12
+- Added ability to clear end date and time in Create Event Panel [#4233](https://github.com/rokwire/illinois-app/issues/4233).
+
+## [6.0.26] - 2024-07-12
+### Changed
+- Disabled root tab animation [#4230](https://github.com/rokwire/illinois-app/issues/4230).
+- "Skip" rounded button to link button [#4226](https://github.com/rokwire/illinois-app/issues/4226).
+
+## [6.0.25] - 2024-07-11
 ### Added
 - Added ID instructions in WalletICardContentWidget [#4223](https://github.com/rokwire/illinois-app/issues/4223).
+- Added Illini Cash option in Wallet panel [#4225](https://github.com/rokwire/illinois-app/issues/4225).
+### Changed
+- Launch new Wallet panel with proper selection instead of obsolete card panels [#4224](https://github.com/rokwire/illinois-app/issues/4224).
 
 ## [6.0.24] - 2024-07-10
 ### Changed

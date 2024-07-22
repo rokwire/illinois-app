@@ -167,7 +167,7 @@ PODS:
   - ReachabilitySwift (5.0.0)
   - record (0.0.1):
     - Flutter
-  - rokwire_plugin (1.7.0):
+  - rokwire_plugin (1.8.0):
     - Flutter
   - SeosMobileKeysSDK-Debug (7.7.5):
     - BerTlv
@@ -408,7 +408,7 @@ SPEC CHECKSUMS:
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   record: cae05d8dd3cdb1dea3511b20e5a5811a1ae00d0d
-  rokwire_plugin: 22a806088e143433a9f47ff4ca6acfdf67feec4e
+  rokwire_plugin: a5f02f3b3034208386b38618f12fcbfa9bc678fc
   SeosMobileKeysSDK-Debug: 41dc15710ad56f340a9ef3e82d987623c289d9ce
   SeosMobileKeysSDK-Release: add079b6221cd9d42b4c088407b2f8f365c0cd53
   share: 0b2c3e82132f5888bccca3351c504d0003b3b410

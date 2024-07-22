@@ -457,6 +457,7 @@
 	"panel.wallet.content_type.illini_id_faqs.label": "Illini ID FAQs",
 	"panel.wallet.content_type.bus_pass.label": "Bus Pass",
 	"panel.wallet.content_type.meal_plan.label": "Meal Plan",
+	"panel.wallet.content_type.illini_cash.label": "Illini Cash",
 	"panel.wallet.content_type.add_illini_cash.label": "Add Illini Cash",
 
 	"panel.search.label.search_for":"搜索",
@@ -1283,6 +1284,8 @@
 	"panel.event2.create.label.cost.description": " (eg: $10, 建议捐款额)",
 	"panel.event2.create.button.confirm_url.title": "确认链接",
 	"panel.event2.create.button.confirm_url.hint": "",
+	"panel.event2.create.button.clear_end_datetime.title": "Clear End Date and Time",
+ "panel.event2.create.button.clear_end_datetime.hint": "",
 	"panel.event2.create.confirm_url.empty.message": "请输入网页链接。",
 	"panel.event2.create.confirm_url.invalid.message": "请输入可用的网页链接。",
 	"panel.event2.create.confirm_url.failed.message": "無法確認网页链接。",

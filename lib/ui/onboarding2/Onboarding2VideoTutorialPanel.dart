@@ -26,14 +26,15 @@ import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:video_player/video_player.dart';
 
@@ -81,7 +82,6 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
           _currentCaptionText = _controller!.value.caption.text;
           _ccEnabled = true;
           _showCc(true);
-          _startCcHidingTimer();
           if (mounted && (ModalRoute.of(context)?.isCurrent ?? false)) {
             _playVideo();// Automatically play video after initialization
           }
@@ -163,7 +163,6 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
 
   @override
   Widget build(BuildContext context) {
-    double buttonWidth = MediaQuery.of(context).textScaler.scale(120);
     return Scaffold(
         backgroundColor: Styles().colors.blackTransparent06,
         body: SafeArea(
@@ -173,13 +172,12 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
             Row(children: [
               Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, top: 11, right: 20, bottom: 27), onTap: _onTapBack)
             ]),
-            Padding(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                child: IntrinsicHeight(
-                    child: Stack(children: [
-                  Align(child: SizedBox(width: buttonWidth, child: RoundedButton(label: _buttonLabel, fontSize: 16, onTap: _onTapSkip))),
-                  Positioned(bottom: 0, top: 0, right: 0, child: Center(child: _buildCcButton()))
-                ])))
+            Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Row(children: [
+              Expanded(child: Stack(children: [
+                Align(alignment: (_isPortrait ? Alignment.center : Alignment.centerLeft), child: LinkButton(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), title: _buttonLabel, onTap: _onTapSkip, textColor: Styles().colors.white)),
+                Align(alignment: Alignment.centerRight, child: _buildCcButton())
+              ]))
+            ]))
           ])
         ])));
   }
@@ -254,31 +252,23 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     }
     if (_isPlaying) {
       _pauseVideo();
-      _showCc(true);
     } else {
       _playVideo();
-      _startCcHidingTimer();
     }
     setState(() {});
   }
 
   void _showCc(bool ccVisible) {
-    _ccVisible = ccVisible;
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  void _startCcHidingTimer() {
-    Timer(Duration(seconds: 5), () => _showCc(false));
+    setStateIfMounted((){
+      _ccVisible = ccVisible;
+    });
   }
 
   void _onTapCc() {
-    _ccEnabled = !_ccEnabled;
-    _currentCaptionText = _ccEnabled ? _controller?.value.caption.text : null;
-    if (mounted) {
-      setState(() {});
-    }
+    setStateIfMounted((){
+      _ccEnabled = !_ccEnabled;
+      _currentCaptionText = _ccEnabled ? _controller?.value.caption.text : null;
+    });
   }
 
   void _checkVideoStateChanged() {
@@ -291,10 +281,9 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
         if (_isPlayerInitialized) {
           bool videoEnded = (_controller!.value.position == _controller!.value.duration);
           if (_isVideoEnded != videoEnded) {
-            _isVideoEnded = videoEnded;
-          }
-          if (videoEnded) {
-            _showCc(true);
+            setStateIfMounted((){
+              _isVideoEnded = videoEnded;
+            });
           }
         }
       }
@@ -323,6 +312,8 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
         ? Localization().getStringEx('panel.onboarding2.video.button.continue.title', 'Continue')
         : Localization().getStringEx('panel.onboarding2.video.button.skip.title', 'Skip');
   }
+
+  bool get _isPortrait => (MediaQuery.of(context).orientation == Orientation.portrait);
 
   // NotificationsListener
 

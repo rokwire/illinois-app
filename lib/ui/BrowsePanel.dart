@@ -49,14 +49,11 @@ import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
-import 'package:illinois/ui/wallet/WalletAddIlliniCashPanel.dart';
-import 'package:illinois/ui/wallet/WalletIlliniCashPanel.dart';
-import 'package:illinois/ui/wallet/WalletMealPlanPanel.dart';
+import 'package:illinois/ui/wallet/WalletHomePanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/apphelp/AppHelpVideoTutorialListPanel.dart';
 import 'package:illinois/ui/apphelp/AppHelpVideoTutorialPanel.dart';
 import 'package:illinois/ui/wallet/WalletICardHomePanel.dart';
-import 'package:illinois/ui/wallet/WalletMTDBusPassPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -869,16 +866,6 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.all,)));
   }
 
-  void _onTapIlliniCash(BuildContext context) {
-    Analytics().logSelect(target: "Illini Cash");
-    WalletIlliniCashPanel.present(context);
-  }
-
-  void _onTapAddIlliniCash(BuildContext context) {
-    Analytics().logSelect(target: "Add Illini Cash");
-    WalletAddIlliniCashPanel.present(context);
-  }
-
   void _onTapCampusGuide(BuildContext context) {
     Analytics().logSelect(target: "Campus Guide");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
@@ -1039,19 +1026,29 @@ class _BrowseEntry extends StatelessWidget {
     CreateStadiumPollPanel.present(context);
   }
 
+  void _onTapIlliniCash(BuildContext context) {
+    Analytics().logSelect(target: "Illini Cash");
+    WalletHomePanel.present(context, contentType: WalletContentType.illiniCash);
+  }
+
+  void _onTapAddIlliniCash(BuildContext context) {
+    Analytics().logSelect(target: "Add Illini Cash");
+    WalletHomePanel.present(context, contentType: WalletContentType.addIlliniCash);
+  }
+
   void _onTapMealPlan(BuildContext context) {
     Analytics().logSelect(target: "Meal Plan");
-    WalletMealPlanPanel.present(context);
+    WalletHomePanel.present(context, contentType: WalletContentType.mealPlan);
   }
 
   void _onTapBusPass(BuildContext context) {
     Analytics().logSelect(target: "Bus Pass");
-    WalletMTDBusPassPanel.present(context);
+    WalletHomePanel.present(context, contentType: WalletContentType.busPass);
   }
 
   void _onTapIlliniId(BuildContext context) {
     Analytics().logSelect(target: "Illini ID");
-    WalletICardHomeContentPanel.present(context, content: WalletICardContent.i_card);
+    WalletHomePanel.present(context, contentType: WalletContentType.illiniId);
   }
 
   void _onTapLibraryCard(BuildContext context) {

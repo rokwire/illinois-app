@@ -770,6 +770,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       onToggleExpanded: _onToggleDateAndTimeSection,
     ),
     body: _buildDateAndTimeSectionBody(),
+    bodyPadding: _hasEndDateOrTime ? const EdgeInsets.only(left: 16, right: 16, top: 16) : Event2CreatePanel.sectionBodyContentPadding,
     expanded: _dateTimeSectionExpanded,
   );
 
@@ -803,9 +804,20 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       semanticsDateLabel: Localization().getStringEx("panel.create_event.date_time.end_date.title", "END DATE"),
       semanticsTimeLabel: Localization().getStringEx("panel.create_event.date_time.end_time.title",'END TIME'),
       dateLabel: Localization().getStringEx("panel.create_event.date_time.end_date.title", "END DATE"),
-      dateRequired: (_endDate != null) || (_endTime != null),
+      dateRequired: (_endDate == null) && (_endTime != null),
       timeLabel: Localization().getStringEx("panel.create_event.date_time.end_time.title","END TIME"),
-      timeRequired: (_endDate != null) || (_endTime != null),
+      timeRequired: (_endDate != null) && (_endTime == null),
+    ),
+
+    Visibility(visible: _hasEndDateOrTime, child:
+      Align(alignment: Alignment.bottomRight, child:
+        LinkButton(
+          title: Localization().getStringEx('panel.event2.create.button.clear_end_datetime.title', 'Clear End Date and Time'),
+          hint: Localization().getStringEx('panel.event2.create.button.clear_end_datetime.hint', ''),
+          onTap: _onClearEndDateTime,
+          padding: const EdgeInsets.symmetric(vertical: 12),
+        ),
+      ),
     ),
     
     //Padding(padding: EdgeInsets.only(bottom: 12)),
@@ -814,7 +826,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   ]);
 
-  
+  bool get _hasEndDateOrTime =>
+    ((_endDate != null) || (_endTime != null));
+
+
   Widget _buildTimeZoneDropdown(){
     return Semantics(container: true, child:
       Row(children: <Widget>[
@@ -1017,6 +1032,16 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
           _errorMap = _buildErrorMap();
         });
       }
+    });
+  }
+
+  void _onClearEndDateTime() {
+    Analytics().logSelect(target: "Clear End Date and Time");
+    Event2CreatePanel.hideKeyboard(context);
+    setState(() {
+      _endDate = null;
+      _endTime = null;
+      _errorMap = _buildErrorMap();
     });
   }
 
