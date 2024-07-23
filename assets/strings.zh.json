@@ -2290,6 +2290,8 @@
 	"panel.public_surveys.home.header.title": "Public Surveys",
 	"panel.public_surveys.label.description.failed": "Failed to load public surveys.",
  	"panel.public_surveys.label.description.empty": "There are no available public surveys at the moment.",
+	"panel.public_surveys.content_type.all": "All Surveys",
+ 	"panel.public_surveys.content_type.completed": "Completed Surveys",
 
 	"panel.bus_pass.header.title": "MTD 公交车票",
 	"panel.bus_pass.button.close.title": "关闭",
