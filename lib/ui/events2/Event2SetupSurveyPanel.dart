@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:neom/ext/Event2.dart';
 import 'package:neom/ext/Survey.dart';
 import 'package:neom/service/Analytics.dart';
-import 'package:neom/ui/SyrveyPanel.dart';
+import 'package:neom/ui/surveys/SurveyPanel.dart';
 import 'package:neom/ui/events2/Event2CreatePanel.dart';
 import 'package:neom/ui/events2/Event2Widgets.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';

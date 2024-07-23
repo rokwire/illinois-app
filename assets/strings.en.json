@@ -320,6 +320,8 @@
     "panel.browse.section.radio_stations.description": "Listen to Illinois Public Media and student-run WPGU.",
     "panel.browse.section.recent.title": "Recently Viewed",
     "panel.browse.section.recent.description": "Revisit your recent app activity.",
+    "panel.browse.section.surveys.title": "Surveys",
+    "panel.browse.section.surveys.description": "Lorem ipsum sit dolor amet.",
     "panel.browse.section.state_farm_center.title": "State Farm Center",
     "panel.browse.section.state_farm_center.description": "Going to an event at State Farm Center? Get help parking and finding your way around.",
     "panel.browse.section.wallet.title": "Wallet",
@@ -399,6 +401,8 @@
     "panel.browse.entry.polls.recent_polls.title": "View Polls",
 
     "panel.browse.entry.recent.recent_items.title": "Recently Viewed",
+
+    "panel.browse.entry.surveys.public_surveys.title": "Public Surveys",
 
     "panel.browse.entry.state_farm_center.parking.title": "Parking",
     "panel.browse.entry.state_farm_center.wayfinding.title": "Wayfinding",
@@ -2295,6 +2299,10 @@
     "panel.parking_lots.label.empty":"No parking lots available for this event",
     "panel.parking_lots.label.available_spots":"Available Spots: ",
 
+    "panel.public_surveys.home.header.title": "Public Surveys",
+    "panel.public_surveys.label.description.failed": "Failed to load public surveys.",
+    "panel.public_surveys.label.description.empty": "There are no available public surveys at the moment.",
+
     "panel.bus_pass.header.title": "MTD Bus Pass",
     "panel.bus_pass.button.close.title": "close",
     "panel.bus_pass.description.text": "Show this screen to the bus operator as you board.",
@@ -3465,6 +3473,12 @@
     "widget.home.recent_items.button.clear_all.title":"Clear All",
     "widget.home.recent_items.button.clear_all.hint":"Tap to clear all items",
     "widget.home.recent_items.prompt.clear_all.text":"Are you sure you want to CLEAR your browsing history?",
+
+    "widget.home.public_surveys.label.header.title":"Public Surveys",
+    "widget.home.public_surveys.label.description.failed": "Failed to load public surveys.",
+    "widget.home.public_surveys.label.description.empty": "There are no available public surveys at the moment.",
+    "widget.home.public_surveys.button.all.title":"View All",
+    "widget.home.public_surveys.button.all.hint":"Tap to view all surveys",
 
     "widget.home.groups.my.label.header.title":"My Groups",
     "widget.home.groups.all.label.header.title":"All Groups",

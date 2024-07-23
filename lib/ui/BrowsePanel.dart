@@ -49,6 +49,7 @@ import 'package:neom/ui/polls/CreatePollPanel.dart';
 import 'package:neom/ui/polls/CreateStadiumPollPanel.dart';
 import 'package:neom/ui/polls/PollsHomePanel.dart';
 import 'package:neom/ui/research/ResearchProjectsHomePanel.dart';
+import 'package:neom/ui/surveys/PublicSurveysPanel.dart';
 import 'package:neom/ui/wallet/WalletHomePanel.dart';
 import 'package:neom/ui/notifications/NotificationsHomePanel.dart';
 import 'package:neom/ui/apphelp/AppHelpVideoTutorialListPanel.dart';
@@ -636,6 +637,8 @@ class _BrowseEntry extends StatelessWidget {
 
       case "recent.recent_items":            _onTapRecentItems(context); break;
 
+      case "surveys.public_surveys":         _onTapPublicSurveys(context); break;
+
       case "state_farm_center.parking":      _onTapParking(context); break;
       case "state_farm_center.wayfinding":   _onTapStateFarmWayfinding(context); break;
       case "state_farm_center.create_stadium_poll": _onTapCreateStadiumPoll(context); break;
@@ -1005,6 +1008,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapRecentItems(BuildContext context) {
     Analytics().logSelect(target: "Recent Items");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => HomeRecentItemsPanel()));
+  }
+
+  void _onTapPublicSurveys(BuildContext context) {
+    Analytics().logSelect(target: "Public Surveys");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => PublicSurveysPanel()));
   }
 
   void _onTapParking(BuildContext context) {

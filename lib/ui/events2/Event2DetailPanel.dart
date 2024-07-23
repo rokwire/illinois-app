@@ -14,7 +14,7 @@ import 'package:neom/model/RecentItem.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/RecentItems.dart';
-import 'package:neom/ui/SyrveyPanel.dart';
+import 'package:neom/ui/surveys/SurveyPanel.dart';
 import 'package:neom/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:neom/ui/events2/Event2CreatePanel.dart';
 import 'package:neom/ui/events2/Event2HomePanel.dart';

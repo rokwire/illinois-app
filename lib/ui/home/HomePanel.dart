@@ -45,6 +45,7 @@ import 'package:neom/ui/home/HomeEvent2Widget.dart';
 import 'package:neom/ui/home/HomeFavoritesWidget.dart';
 import 'package:neom/ui/home/HomeInboxWidget.dart';
 import 'package:neom/ui/home/HomeLaundryWidget.dart';
+import 'package:neom/ui/home/HomePublicSurveysWidget.dart';
 import 'package:neom/ui/home/HomeRecentPollsWidget.dart';
 import 'package:neom/ui/home/HomeResearchProjectsWidget.dart';
 import 'package:neom/ui/home/HomeStateFarmCenterWidget.dart';
@@ -189,6 +190,15 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeRecentItemsWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeRecentItemsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+    else if (code == 'public_surveys') {
+      if (title) {
+        return HomePublicSurveysWidget.title;
+      } else if (handle) {
+        return HomePublicSurveysWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomePublicSurveysWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'campus_highlights') {

@@ -488,7 +488,10 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
       result = <WellnessBuilding>[];
       for(Map<String, dynamic> guideEntry in guideEntries) {
         if (Guide().isEntryMentalHeatlh(guideEntry)) {
-          Building? building = Building.findInList(buildings, id: JsonUtils.stringValue(Guide().entryValue(guideEntry, 'map_building_id')));
+          Building? building = Building.findInList(buildings,
+            id: JsonUtils.stringValue(Guide().entryValue(guideEntry, 'map_building_id')),
+            number: JsonUtils.stringValue(Guide().entryValue(guideEntry, 'map_building_number')),
+          );
           if (building != null) {
             result.add(WellnessBuilding(building: building, guideEntry: guideEntry));
           }

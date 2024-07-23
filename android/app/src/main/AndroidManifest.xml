@@ -31,8 +31,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <!-- Use zxing 3.3.0 because we have minSdk < 24 -->
     <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
-    <!-- save_in_gallery flutter plugin -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- Gal: For supporting API <= 29 :Gal-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
 
@@ -70,7 +70,8 @@
         android:label="@string/app_name"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:allowBackup"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:requestLegacyExternalStorage="true"> <!-- Gal: For saving to album in API 29 :Gal-->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${mapsApiKey}"/>

@@ -371,10 +371,10 @@ class Building with Explore {
     return jsonList;
   }
 
-  static Building? findInList(List<Building>? values, {String? id}) {
+  static Building? findInList(List<Building>? values, { String? id, String? number }) {
     if (values != null) {
       for (Building value in values) {
-        if ((id != null) && (value.id == id)) {
+        if (((id != null) && (value.id == id)) || ((number != null) && (value.number == number))) {
           return value;
         }
       }

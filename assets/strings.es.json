@@ -319,6 +319,8 @@
     "panel.browse.section.radio_stations.description": "Listen to Illinois Public Media and student-run WPGU.",
     "panel.browse.section.recent.title": "Recently Viewed",
     "panel.browse.section.recent.description": "Revisit your recent app activity.",
+    "panel.browse.section.surveys.title": "Surveys",
+    "panel.browse.section.surveys.description": "Lorem ipsum sit dolor amet.",
     "panel.browse.section.state_farm_center.title": "State Farm Center",
     "panel.browse.section.state_farm_center.description": "Ir a un evento en State Farm Center, obtener ayuda para estacionar y orientarse.",
     "panel.browse.section.wallet.title": "Cartera",
@@ -399,6 +401,8 @@
     "panel.browse.entry.polls.recent_polls.title": "Ver encuestas",
 
     "panel.browse.entry.recent.recent_items.title": "Visto recientemente",
+
+    "panel.browse.entry.surveys.public_surveys.title": "Public Surveys",
 
     "panel.browse.entry.state_farm_center.parking.title": "Estacionamiento",
     "panel.browse.entry.state_farm_center.wayfinding.title": "Orientación",
@@ -2295,6 +2299,12 @@
     "panel.parking_lots.label.empty":"No hay estacionamientos disponibles para este evento",
     "panel.parking_lots.label.available_spots":"Lugares disponibles:",
 
+    "panel.public_surveys.home.header.title": "Public Surveys",
+    "panel.public_surveys.label.description.failed": "Failed to load public surveys.",
+    "panel.public_surveys.label.description.empty": "There are no available public surveys at the moment.",
+    "widget.home.public_surveys.button.all.title":"View All",
+    "widget.home.public_surveys.button.all.hint":"Tap to view all surveys",
+
     "panel.bus_pass.header.title": "Pase de autobús MTD",
     "panel.bus_pass.button.close.title": "Cerrar",
     "panel.bus_pass.description.text": "Muestra esta pantalla al operador del autobús mientras subes.",
@@ -3450,6 +3460,10 @@
     "widget.home.recent_items.button.clear_all.title":"Clear All",
     "widget.home.recent_items.button.clear_all.hint":"Tap to clear all items",
     "widget.home.recent_items.prompt.clear_all.text":"Are you sure you want to CLEAR your browsing history>",
+
+    "widget.home.public_surveys.label.header.title":"Public Surveys",
+    "widget.home.public_surveys.label.description.failed": "Failed to load public surveys.",
+    "widget.home.public_surveys.label.description.empty": "There are no available public surveys at the moment.",
 
     "widget.home.event2_feed.label.header.title":"Todos los Eventos",
     "widget.home.event2_feed.text.empty.description": "There are no events available.",

@@ -5,7 +5,7 @@ import 'package:neom/ui/academics/courses/UnitInfoPanel.dart';
 import 'package:neom/ui/academics/courses/VideoPanel.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:neom/ui/SyrveyPanel.dart';
+import 'package:neom/ui/surveys/SurveyPanel.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EssentialSkillsCoachWidgets {

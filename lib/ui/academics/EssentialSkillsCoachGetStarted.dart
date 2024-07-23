@@ -15,7 +15,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/service/Config.dart';
-import 'package:neom/ui/SyrveyPanel.dart';
+import 'package:neom/ui/surveys/SurveyPanel.dart';
 import 'package:neom/ui/academics/EssentialSkillsResults.dart';
 import 'package:neom/ui/widgets/AccessWidgets.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';

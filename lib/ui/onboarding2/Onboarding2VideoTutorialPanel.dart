@@ -28,6 +28,7 @@ import 'package:neom/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:neom/ui/widgets/LinkButton.dart';
 import 'package:neom/ui/widgets/VideoPlayButton.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -81,7 +82,6 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
           _currentCaptionText = _controller!.value.caption.text;
           _ccEnabled = true;
           _showCc(true);
-          _startCcHidingTimer();
           if (mounted && (ModalRoute.of(context)?.isCurrent ?? false)) {
             _playVideo();// Automatically play video after initialization
           }
@@ -252,31 +252,23 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     }
     if (_isPlaying) {
       _pauseVideo();
-      _showCc(true);
     } else {
       _playVideo();
-      _startCcHidingTimer();
     }
     setState(() {});
   }
 
   void _showCc(bool ccVisible) {
-    _ccVisible = ccVisible;
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  void _startCcHidingTimer() {
-    Timer(Duration(seconds: 5), () => _showCc(false));
+    setStateIfMounted((){
+      _ccVisible = ccVisible;
+    });
   }
 
   void _onTapCc() {
-    _ccEnabled = !_ccEnabled;
-    _currentCaptionText = _ccEnabled ? _controller?.value.caption.text : null;
-    if (mounted) {
-      setState(() {});
-    }
+    setStateIfMounted((){
+      _ccEnabled = !_ccEnabled;
+      _currentCaptionText = _ccEnabled ? _controller?.value.caption.text : null;
+    });
   }
 
   void _checkVideoStateChanged() {
@@ -289,10 +281,9 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
         if (_isPlayerInitialized) {
           bool videoEnded = (_controller!.value.position == _controller!.value.duration);
           if (_isVideoEnded != videoEnded) {
-            _isVideoEnded = videoEnded;
-          }
-          if (videoEnded) {
-            _showCc(true);
+            setStateIfMounted((){
+              _isVideoEnded = videoEnded;
+            });
           }
         }
       }
