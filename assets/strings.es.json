@@ -2302,8 +2302,6 @@
     "panel.public_surveys.home.header.title": "Public Surveys",
     "panel.public_surveys.label.description.failed": "Failed to load public surveys.",
     "panel.public_surveys.label.description.empty": "There are no available public surveys at the moment.",
-    "widget.home.public_surveys.button.all.title":"View All",
-    "widget.home.public_surveys.button.all.hint":"Tap to view all surveys",
 
     "panel.bus_pass.header.title": "Pase de autobús MTD",
     "panel.bus_pass.button.close.title": "Cerrar",
@@ -3435,6 +3433,10 @@
     "widget.voter.rv_alert.vote_early.text": "Estás en el %s y puedes votar temprano",
     "widget.voter.rv_alert.vote_now.text": "Estás en el %s y puedes votar ahora.",
 
+    "widget.public_survey.label.completed_suffix": " (Completed)",
+    "widget.public_survey.label.estimated_completion_time.one": "A minute to complete",
+    "widget.public_survey.label.estimated_completion_time.more": "{{estimated_completion_time}} minutes to complete",
+
     "widget.home.campus_reminders.label.title": "Recordatorios de Campus",
     "widget.home.campus_reminders.text.empty.description": "No hay recordatorios de campus activos.",
     "widget.home.campus_reminders.button.all.title": "Ver todo",
@@ -3464,6 +3466,8 @@
     "widget.home.public_surveys.label.header.title":"Public Surveys",
     "widget.home.public_surveys.label.description.failed": "Failed to load public surveys.",
     "widget.home.public_surveys.label.description.empty": "There are no available public surveys at the moment.",
+    "widget.home.public_surveys.button.all.title":"View All",
+    "widget.home.public_surveys.button.all.hint":"Tap to view all surveys",
 
     "widget.home.event2_feed.label.header.title":"Todos los Eventos",
     "widget.home.event2_feed.text.empty.description": "There are no events available.",

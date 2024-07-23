@@ -293,6 +293,7 @@
 
     "widget.label.medium.fat": { "font_family": "bold", "size": 18.0, "color": "fillColorSecondary"},
     "widget.label.regular.fat": { "font_family": "bold", "size": 16.0, "color": "fillColorSecondary"},
+    "widget.label.regular.variant.fat": { "extends": "widget.label.regular.fat", "color": "fillColorSecondaryVariant" },
     "widget.label.regular.thin": { "font_family": "regular", "size": 16.0, "color": "fillColorSecondary"},
     "widget.label.small.fat": { "font_family": "bold", "size": 14.0, "color": "fillColorSecondary"},
     "widget.label.small.fat.spaced": { "extends": "widget.label.small.fat", "letter_spacing": 1.0},
