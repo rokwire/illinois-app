@@ -22,7 +22,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
-import 'dart:io' show Platform;
+import 'package:universal_io/io.dart' show Platform;
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
 
 class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPanel {

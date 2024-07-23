@@ -18,6 +18,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/model/Appointment.dart';
 import 'package:neom/service/Gateway.dart';
@@ -50,7 +51,7 @@ class Appointments with Service implements NotificationsListener {
   static const String _appointmentRemindersNotificationsEnabledKey = 'edu.illinois.rokwire.settings.inbox.notification.appointments.reminders.notifications.enabled';
   
   DateTime? _pausedDateTime;
-  late Directory _appDocDir;
+  Directory? _appDocDir;
 
   static const String _upcomingAppointmentsCacheDocName = "upcoming_appointments.json";
   static const String _pastAppointmentsCacheDocName = "past_appointments.json";
@@ -90,7 +91,7 @@ class Appointments with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
-    _appDocDir = await getApplicationDocumentsDirectory();
+    _appDocDir = kIsWeb ? null : (await getApplicationDocumentsDirectory());
 
     await Future.wait([
       _initAppointments(timeSource: AppointmentsTimeSource.upcoming).then((appts) => _upcomingAppointments = appts),
@@ -201,7 +202,7 @@ class Appointments with Service implements NotificationsListener {
 
   Future<void> refreshAppointments() => _updateAllAppointments();
 
-  File _getAppointmentsCacheFile({required AppointmentsTimeSource timeSource}) {
+  File? _getAppointmentsCacheFile({required AppointmentsTimeSource timeSource}) {
     late String docName;
     switch (timeSource) {
       case AppointmentsTimeSource.past:
@@ -211,16 +212,16 @@ class Appointments with Service implements NotificationsListener {
         docName = _upcomingAppointmentsCacheDocName;
         break;
     }
-    return File(join(_appDocDir.path, docName));
+    return (_appDocDir != null) ? File(join(_appDocDir!.path, docName)) : null;
   }
 
   Future<String?> _loadAppointmentsStringFromCache({required AppointmentsTimeSource timeSource}) async {
-    File appointmentsFile = _getAppointmentsCacheFile(timeSource: timeSource);
-    return await appointmentsFile.exists() ? await appointmentsFile.readAsString() : null;
+    File? appointmentsFile = _getAppointmentsCacheFile(timeSource: timeSource);
+    return (appointmentsFile != null) && (await appointmentsFile.exists()) ? await appointmentsFile.readAsString() : null;
   }
 
   Future<void> _saveAppointmentsStringToCache(String? value, AppointmentsTimeSource timeSource) async {
-    await _getAppointmentsCacheFile(timeSource: timeSource).writeAsString(value ?? '', flush: true);
+    await _getAppointmentsCacheFile(timeSource: timeSource)?.writeAsString(value ?? '', flush: true);
   }
 
   Future<List<Appointment>?> _loadAppointmentsFromCache({required AppointmentsTimeSource timeSource}) async {
@@ -350,15 +351,15 @@ class Appointments with Service implements NotificationsListener {
     }
   }
 
-  File _getAccountCacheFile() => File(join(_appDocDir.path, _accountCacheDocName));
+  File? _getAccountCacheFile() => (_appDocDir != null) ? File(join(_appDocDir!.path, _accountCacheDocName)) : null;
 
   Future<String?> _loadAccountStringFromCache() async {
-    File accountFile = _getAccountCacheFile();
-    return await accountFile.exists() ? await accountFile.readAsString() : null;
+    File? accountFile = _getAccountCacheFile();
+    return (accountFile != null) && (await accountFile.exists()) ? await accountFile.readAsString() : null;
   }
 
   Future<void> _saveAccountStringToCache(String? value) async {
-    await _getAccountCacheFile().writeAsString(value ?? '', flush: true);
+    await _getAccountCacheFile()?.writeAsString(value ?? '', flush: true);
   }
 
   Future<AppointmentsAccount?> _loadAccountFromCache() async {

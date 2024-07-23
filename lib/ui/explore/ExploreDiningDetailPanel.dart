@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
@@ -48,6 +47,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_tab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
+import 'package:universal_io/io.dart';
 
 class ExploreDiningDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Dining? dining;
@@ -264,7 +264,9 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
       return null;
     }
     Map<String, dynamic>? onlineOrderPlatformDetails;
-    if (Platform.isAndroid) {
+    if (kIsWeb) {
+      onlineOrderPlatformDetails = onlineOrder['web'];
+    } else if (Platform.isAndroid) {
       onlineOrderPlatformDetails = onlineOrder['android'];
     } else if (Platform.isIOS) {
       onlineOrderPlatformDetails = onlineOrder['ios'];

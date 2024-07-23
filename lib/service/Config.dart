@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:universal_io/io.dart';
 
 class Config extends rokwire.Config {
 

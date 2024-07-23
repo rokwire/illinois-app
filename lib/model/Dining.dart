@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:io';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -26,8 +24,7 @@ import 'package:neom/service/Dinings.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-
-
+import 'package:universal_io/io.dart';
 
 //////////////////////////////
 /// Dining
