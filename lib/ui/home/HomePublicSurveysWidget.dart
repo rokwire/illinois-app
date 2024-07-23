@@ -113,7 +113,7 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomePublicSurveysWidget.title,
-      titleIconKey: 'campus-tools',
+      titleIconKey: 'survey',
       child: _widgetContent,
     );
   }
