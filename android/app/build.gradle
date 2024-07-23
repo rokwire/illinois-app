@@ -60,7 +60,13 @@ repositories{
 }
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
+
+    namespace 'edu.illinois.rokwire'
+
+    buildFeatures {
+        buildConfig = true
+    }
 
     lintOptions {
         disable 'InvalidPackage'
@@ -82,7 +88,7 @@ android {
     defaultConfig {
         applicationId "edu.illinois.rokwire"
         minSdkVersion 23
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

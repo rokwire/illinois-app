@@ -76,11 +76,6 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin flutter_local_notifications, com.dexterous.flutterlocalnotifications.FlutterLocalNotificationsPlugin", e);
     }
     try {
-      flutterEngine.getPlugins().add(new com.whelksoft.flutter_native_timezone.FlutterNativeTimezonePlugin());
-    } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin flutter_native_timezone, com.whelksoft.flutter_native_timezone.FlutterNativeTimezonePlugin", e);
-    }
-    try {
       flutterEngine.getPlugins().add(new io.endigo.plugins.pdfviewflutter.PDFViewFlutterPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin flutter_pdfview, io.endigo.plugins.pdfviewflutter.PDFViewFlutterPlugin", e);
@@ -91,14 +86,19 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin flutter_plugin_android_lifecycle, io.flutter.plugins.flutter_plugin_android_lifecycle.FlutterAndroidLifecyclePlugin", e);
     }
     try {
+      flutterEngine.getPlugins().add(new net.wolverinebeach.flutter_timezone.FlutterTimezonePlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin flutter_timezone, net.wolverinebeach.flutter_timezone.FlutterTimezonePlugin", e);
+    }
+    try {
       flutterEngine.getPlugins().add(new io.github.ponnamkarthik.toast.fluttertoast.FlutterToastPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin fluttertoast, io.github.ponnamkarthik.toast.fluttertoast.FlutterToastPlugin", e);
     }
     try {
-      flutterEngine.getPlugins().add(new carnegietechnologies.gallery_saver.GallerySaverPlugin());
+      flutterEngine.getPlugins().add(new studio.midoridesign.gal.GalPlugin());
     } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin gallery_saver, carnegietechnologies.gallery_saver.GallerySaverPlugin", e);
+      Log.e(TAG, "Error registering plugin gal, studio.midoridesign.gal.GalPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new com.baseflow.geolocator.GeolocatorPlugin());
