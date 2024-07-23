@@ -4,12 +4,12 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/surveys/PublicSurveyCard.dart';
-import 'package:illinois/ui/surveys/SurveyPanel.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/ui/surveys/PublicSurveyCard.dart';
+import 'package:neom/ui/surveys/SurveyPanel.dart';
+import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';

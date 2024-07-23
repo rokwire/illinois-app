@@ -4,18 +4,18 @@ import 'dart:math';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
-import 'package:illinois/ui/home/HomePanel.dart';
-import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/surveys/PublicSurveyCard.dart';
-import 'package:illinois/ui/surveys/PublicSurveysPanel.dart';
-import 'package:illinois/ui/surveys/SurveyPanel.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
-import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/Config.dart';
+import 'package:neom/ui/home/HomePanel.dart';
+import 'package:neom/ui/home/HomeWidgets.dart';
+import 'package:neom/ui/surveys/PublicSurveyCard.dart';
+import 'package:neom/ui/surveys/PublicSurveysPanel.dart';
+import 'package:neom/ui/surveys/SurveyPanel.dart';
+import 'package:neom/ui/widgets/LinkButton.dart';
+import 'package:neom/ui/widgets/SemanticsWidgets.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/survey.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -62,7 +62,7 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
 
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
     ]);
 
     if (widget.updateController != null) {
@@ -85,8 +85,8 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
 
   @override
   void onNotification(String name, param) {
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
     else if (name == Connectivity.notifyStatusChanged) {
       _refresh().then((_) {
@@ -95,7 +95,7 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }
