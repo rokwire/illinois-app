@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Upgrade Android app to target API level 34 and upgrade plugin version to match that requirement [#4245](https://github.com/rokwire/illinois-app/issues/4245).
+### Added
+- Clear all Assistant messages [#4129](https://github.com/rokwire/illinois-app/issues/4129).
 
 ## [6.1.0] - 2024-07-22
 ### Added
