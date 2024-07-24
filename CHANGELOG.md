@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Lookup mental health buildings by id and number [#4240](https://github.com/rokwire/illinois-app/issues/4240).
 - Always show CC button in onboarding video [#4226](https://github.com/rokwire/illinois-app/issues/4226).
 - Upgrade Android app to target API level 34 and upgrade plugin version to match that requirement [#4245](https://github.com/rokwire/illinois-app/issues/4245).
+### Added
+- Clear all Assistant messages [#4129](https://github.com/rokwire/illinois-app/issues/4129).
 
 ## [6.0.27] - 2024-07-12
 - Added ability to clear end date and time in Create Event Panel [#4233](https://github.com/rokwire/illinois-app/issues/4233).
