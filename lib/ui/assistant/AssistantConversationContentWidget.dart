@@ -67,6 +67,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Map<String, String>? _userContext;
 
   late StreamSubscription _streamSubscription;
+  bool _loading = false;
   TextEditingController _negativeFeedbackController = TextEditingController();
   FocusNode _negativeFeedbackFocusNode = FocusNode();
 
@@ -159,14 +160,17 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                 child: Stack(children: [
                 Padding(padding: EdgeInsets.only(bottom: _scrollContentPaddingBottom), child: RefreshIndicator(
                     onRefresh: _onPullToRefresh,
-                    child: SingleChildScrollView(
-                      controller: _scrollController,
-                        physics: AlwaysScrollableScrollPhysics(),
-                        child: Padding(padding: EdgeInsets.all(16), child:
-                        Container(
+                    child: Stack(alignment: Alignment.center, children: [
+                      SingleChildScrollView(
+                          controller: _scrollController,
+                          physics: AlwaysScrollableScrollPhysics(),
+                          child: Padding(padding: EdgeInsets.all(16), child:
+                          Container(
                               child: Semantics(/*liveRegion: true, */child:
                               Column(children:
-                                _buildContentList()))))))),
+                              _buildContentList()))))),
+                      Visibility(visible: _loading, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary))
+                    ]))),
                 Positioned(bottom: _chatBarPaddingBottom, left: 0, right: 0, child: Container(key: _chatBarKey, color: Styles().colors.surface, child: SafeArea(child: _buildChatBar())))
           ]));
   }
@@ -955,9 +959,24 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   void _clearAllMessages() {
-    //TBD: DD - implement when we have a backend API
-    AppAlert.showMessage(context, 'Not implemented, yet.');
-    Assistant().removeAllMessages();
+    if (_loading) {
+      return;
+    }
+    setStateIfMounted(() {
+      _loading = true;
+    });
+    Assistant().removeAllMessages().then((succeeded) {
+      setStateIfMounted(() {
+        _loading = false;
+      });
+      late String msg;
+      if (succeeded) {
+        msg = Localization().getStringEx('panel.assistant.messages.delete.succeeded.msg', 'Successfully removed all messages.');
+      } else {
+        msg = Localization().getStringEx('panel.assistant.messages.delete.failed.msg', 'Failed to clear all messages.');
+      }
+      AppAlert.showMessage(context, msg);
+    });
   }
 
   void _scrollToBottomIfNeeded() {
