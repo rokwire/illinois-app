@@ -236,6 +236,9 @@ class Config extends rokwire.Config {
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;
 
+  @override
+  String? get appId => kIsWeb ? 'com.rokmetro.university.neom' : super.appId;
+
   // Upgrade
 
   @override

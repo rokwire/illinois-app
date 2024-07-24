@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/service/Config.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:neom/ui/profile/ProfileLoginPhoneOrEmailPanel.dart';
@@ -515,7 +516,7 @@ class _ProfileLoginPasskeyPanelState extends State<ProfileLoginPasskeyPanel> {
     else if (onContinue != null) {
       onContinue();
     }
-    else if (!Auth2().hasPasskeyForPlatform && mounted) {
+    else if (!Config().isDebugWeb && !Auth2().hasPasskeyForPlatform && mounted) {
       // direct user to link a passkey if no passkey has been linked for the current platform
       setState(() {
         _link = true;
