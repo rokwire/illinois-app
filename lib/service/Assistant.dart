@@ -125,8 +125,19 @@ class Assistant with Service implements NotificationsListener, ContentItemCatego
     }
   }
 
-  void removeAllMessages() {
-    //TBD: DD - implement when we have a backend API
+  Future<bool> removeAllMessages() async {
+    bool succeeded = false;
+    if (_isEnabled) {
+      String url = '${Config().aiProxyUrl}/messages';
+      Response? response = await Network().delete(url, auth: Auth2());
+      succeeded = (response?.statusCode == 200);
+      if (succeeded) {
+        await _loadMessages();
+      } else {
+        Log.e('Failed to delete assistant messages. Reason: ${response?.statusCode}, ${response?.body}');
+      }
+    }
+    return succeeded;
   }
 
   Future<void> _loadMessages() async {

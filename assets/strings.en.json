@@ -445,6 +445,8 @@
     "panel.assistant.inaccurate.description.disclaimer": "The Illinois Assistant may display inaccurate information.\nPlease double-check its responses.",
     "panel.assistant.label.queries.limit.title": "Sorry, you are out of questions for today. Please check back tomorrow to ask more questions!",
     "panel.assistant.label.error.title": "Sorry, something went wrong. For the best results, please restart the app and try your question again.",
+    "panel.assistant.messages.delete.succeeded.msg": "Successfully removed all messages.",
+    "panel.assistant.messages.delete.failed.msg": "Failed to clear all messages.",
     "panel.assistant.button.context.title": "Context",
     "panel.assistant.dialog.context.title": "User Context",
     "panel.assistant.dialog.context.button.add.title": "Add",
