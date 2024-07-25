@@ -445,6 +445,8 @@
     "panel.assistant.inaccurate.description.disclaimer": "El Asistente de Illinois puede mostrar información inexacta.\nPor favor, vuelva a verificar sus respuestas.",
     "panel.assistant.label.queries.limit.title": "Perdón. Has agotado tus preguntas para hoy. Vuelve mañana para ¡hacer más preguntas!",
     "panel.assistant.label.error.title": "Perdón, algo salió mal. Para obtener mejores resultados, reinicie la aplicación y vuelva a intentar responder su pregunta.",
+    "panel.assistant.messages.delete.succeeded.msg": "Se eliminaron todos los mensajes con éxito.",
+    "panel.assistant.messages.delete.failed.msg": "No se pudieron borrar todos los mensajes.",
     "panel.assistant.button.context.title": "Contexto",
     "panel.assistant.dialog.context.title": "Contexto del Usuario",
     "panel.assistant.dialog.context.button.add.title": "Agregar",
