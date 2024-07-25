@@ -58,7 +58,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: RootHeaderBar(title: Localization().getStringEx("panel.public_surveys.home.header.title", "Public Surveys"), leading: RootHeaderBarLeading.Back,),
+    appBar: RootHeaderBar(title: Localization().getStringEx("panel.public_surveys.home.header.title", "Surveys"), leading: RootHeaderBarLeading.Back,),
     body: _scaffoldContent,
     backgroundColor: Styles().colors.background,
     bottomNavigationBar: uiuc.TabBar(),
@@ -89,12 +89,12 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
       return _blankContent;
     }
     else if (_contentList == null) {
-      return _messageContent(Localization().getStringEx('panel.public_surveys.label.description.failed', 'Failed to load public surveys.'),
+      return _messageContent(Localization().getStringEx('panel.public_surveys.label.description.failed', 'Failed to load surveys.'),
         title: Localization().getStringEx('panel.events2.home.message.failed.title', 'Failed')
       );
     }
     else if (_contentList?.length == 0) {
-      return _messageContent(Localization().getStringEx('panel.public_surveys.label.description.empty', 'There are no available public surveys at the moment.'),);
+      return _messageContent(Localization().getStringEx('panel.public_surveys.label.description.empty', 'There are no available surveys at the moment.'),);
     }
     else {
       return _surveysList;

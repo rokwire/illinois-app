@@ -403,7 +403,7 @@
 
     "panel.browse.entry.recent.recent_items.title": "Recently Viewed",
 
-    "panel.browse.entry.surveys.public_surveys.title": "Public Surveys",
+    "panel.browse.entry.surveys.public_surveys.title": "Surveys",
 
     "panel.browse.entry.state_farm_center.parking.title": "Parking",
     "panel.browse.entry.state_farm_center.wayfinding.title": "Wayfinding",
@@ -2302,9 +2302,9 @@
     "panel.parking_lots.label.empty":"No parking lots available for this event",
     "panel.parking_lots.label.available_spots":"Available Spots: ",
 
-    "panel.public_surveys.home.header.title": "Public Surveys",
-    "panel.public_surveys.label.description.failed": "Failed to load public surveys.",
-    "panel.public_surveys.label.description.empty": "There are no available public surveys at the moment.",
+    "panel.public_surveys.home.header.title": "Surveys",
+    "panel.public_surveys.label.description.failed": "Failed to load surveys.",
+    "panel.public_surveys.label.description.empty": "There are no available surveys at the moment.",
     "panel.public_surveys.content_type.all": "All Surveys",
     "panel.public_surveys.content_type.completed": "Completed Surveys",
 
@@ -3483,9 +3483,9 @@
     "widget.home.recent_items.button.clear_all.hint":"Tap to clear all items",
     "widget.home.recent_items.prompt.clear_all.text":"Are you sure you want to CLEAR your browsing history?",
 
-    "widget.home.public_surveys.label.header.title":"Public Surveys",
-    "widget.home.public_surveys.label.description.failed": "Failed to load public surveys.",
-    "widget.home.public_surveys.label.description.empty": "There are no available public surveys at the moment.",
+    "widget.home.public_surveys.label.header.title":"Surveys",
+    "widget.home.public_surveys.label.description.failed": "Failed to load surveys.",
+    "widget.home.public_surveys.label.description.empty": "There are no available surveys at the moment.",
     "widget.home.public_surveys.button.all.title":"View All",
     "widget.home.public_surveys.button.all.hint":"Tap to view all surveys",
 
