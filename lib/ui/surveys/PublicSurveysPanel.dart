@@ -145,7 +145,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
         CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),),),),);
 
   Widget get _contentTypeDropdownWidget => Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child: RibbonButton(
-    progress: ((_dataActivity == _DataActivity.init) || (_dataActivity == _DataActivity.refresh)),
+    progress: (_dataActivity == _DataActivity.refresh),
     textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
     backgroundColor: Styles().colors.white,
     borderRadius: BorderRadius.all(Radius.circular(5)),
