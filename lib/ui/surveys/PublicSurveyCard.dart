@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/survey.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 enum PublicSurveyCardDisplayMode { list, page }
@@ -25,22 +26,74 @@ class PublicSurveyCard extends StatelessWidget {
   Widget get _contentWidget =>
     Container(decoration: contentDecoration, child:
       ClipRRect(borderRadius: contentBorderRadius, child:
-        Padding(padding: const EdgeInsets.all(16), child:
-          Row(children: [
-            Expanded(child:
-              Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: (displayMode == PublicSurveyCardDisplayMode.list) ? CrossAxisAlignment.start : CrossAxisAlignment.center, children: [
-                Text(survey.title, textAlign: (displayMode == PublicSurveyCardDisplayMode.list) ? TextAlign.left : TextAlign.center, style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),),
-                // Build more details here
-              ],)
-            ),
-            if (displayMode == PublicSurveyCardDisplayMode.list)
-              Padding(padding: const EdgeInsets.only(left: 8), child:
-                  Styles().images.getImage('chevron-right-bold'),
-              )
-          ],)
+        Padding(padding: _contentPadding, child:
+          _displayContentWidget,
         )
       ),
     );
+
+  Widget get _displayContentWidget {
+    switch (displayMode) {
+      case PublicSurveyCardDisplayMode.list: return _listContentWidget;
+      case PublicSurveyCardDisplayMode.page: return _pageContentWidget;
+    }
+  }
+
+  Widget get _listContentWidget => Row(children: [
+    Expanded(child:
+      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+        _titleWidget,
+        if (_estimatedCompletionTime > 0)
+          _estimatedCompletionTimeWidget
+      ],)
+    ),
+    Padding(padding: const EdgeInsets.only(left: 8), child:
+      Styles().images.getImage('chevron-right-bold'),
+    ),
+  ],);
+
+  Widget get _pageContentWidget => Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+    _titleWidget,
+    Container(padding: const EdgeInsets.only(top: 16), alignment: Alignment.centerRight, child:
+      _estimatedCompletionTimeWidget,
+    ),
+  ],);
+
+  Widget get _titleWidget =>
+    RichText(textAlign: TextAlign.left, text: TextSpan(children:<InlineSpan>[
+      TextSpan(text: survey.title, style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),),
+      if (survey.completed == true)
+        TextSpan(
+          text: Localization().getStringEx('widget.public_survey.label.completed_suffix', ' (Completed)'),
+          style: Styles().textStyles.getTextStyle('widget.label.regular.variant.fat'),
+        ),
+    ]));
+  
+  Widget get _estimatedCompletionTimeWidget =>
+    Text(_estimatedCompletionTimeText, style: Styles().textStyles.getTextStyle('widget.info.small.medium_fat'),);
+
+  String get _estimatedCompletionTimeText {
+    if (_estimatedCompletionTime > 1) {
+      final String _valueMacro = '{{estimated_completion_time}}';
+      return Localization().getStringEx('widget.public_survey.label.estimated_completion_time.more', '$_valueMacro minutes to complete').
+        replaceAll(_valueMacro, _estimatedCompletionTime.toString());
+    }
+    else if (_estimatedCompletionTime == 1) {
+      return Localization().getStringEx('widget.public_survey.label.estimated_completion_time.one', 'A minute to complete');
+    }
+    else {
+      return '';
+    }
+  }
+
+  int get _estimatedCompletionTime => survey.estimatedCompletionTime ?? 0;
+
+  EdgeInsets get _contentPadding {
+    switch (displayMode) {
+      case PublicSurveyCardDisplayMode.list: return const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
+      case PublicSurveyCardDisplayMode.page: return const EdgeInsets.symmetric(horizontal: 16, vertical: 12);
+    }
+  }
 
   static Decoration get contentDecoration => BoxDecoration(
     color: Styles().colors.surface,
