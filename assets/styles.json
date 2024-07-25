@@ -749,7 +749,7 @@
     "reminder": {"src": "images/icon-reminder.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "courses": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "pick better icon"},
     "checklist": {"src": "0xf03a", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 20, "todo": "same as todo"},
-    "survey": {"src": "0xf772", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20, "todo": "same as todo"},
+    "survey": {"src": "images/survey-check.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "pick better icon"},
     "laundry": {"src": "0xf898", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
     "transit": {"src": "images/location.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "pick better icon"},
     "inbox": {"src": "images/icon-reminder.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
