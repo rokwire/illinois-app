@@ -33,7 +33,7 @@ class HomePublicSurveysWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home.public_surveys.label.header.title', 'Public Surveys');
+  static String get title => Localization().getStringEx('widget.home.public_surveys.label.header.title', 'Surveys');
 
   @override
   State<StatefulWidget> createState() => _HomePublicSurveysWidgetState();
@@ -113,7 +113,7 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomePublicSurveysWidget.title,
-      titleIconKey: 'campus-tools',
+      titleIconKey: 'survey',
       child: _widgetContent,
     );
   }
@@ -134,12 +134,12 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
     else if (_contentList == null) {
       return HomeMessageCard(
         title: Localization().getStringEx('panel.events2.home.message.failed.title', 'Failed'),
-        message: Localization().getStringEx("widget.home.public_surveys.label.description.failed", "Failed to load public surveys."),
+        message: Localization().getStringEx("widget.home.public_surveys.label.description.failed", "Failed to load surveys."),
       );
     }
     else if (_contentList?.length == 0) {
       return HomeMessageCard(
-        message: Localization().getStringEx("widget.home.public_surveys.label.description.empty", "There are no available public surveys at the moment."),
+        message: Localization().getStringEx("widget.home.public_surveys.label.description.empty", "There are no available surveys at the moment."),
       );
     }
     else {

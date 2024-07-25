@@ -320,7 +320,7 @@
 	"panel.browse.section.recent.title": "Recently Viewed",
  	"panel.browse.section.recent.description": "Revisit your recent app activity.",
 	"panel.browse.section.surveys.title": "Surveys",
- 	"panel.browse.section.surveys.description": "Lorem ipsum sit dolor amet.",
+	"panel.browse.section.surveys.description": "Participate in surveys available to you.",
 	"panel.browse.section.state_farm_center.title": "State Farm Center",
 	"panel.browse.section.state_farm_center.description": "去State Farm Center參加活動，獲得停車幫助並找到自己的路。",
 	"panel.browse.section.wallet.title": "錢包",
@@ -402,7 +402,7 @@
 
 	"panel.browse.entry.recent.recent_items.title": "最近瀏覽過的",
 
-	"panel.browse.entry.surveys.public_surveys.title": "Public Surveys",
+	"panel.browse.entry.surveys.public_surveys.title": "Surveys",
 
 	"panel.browse.entry.state_farm_center.parking.title": "停車處",
 	"panel.browse.entry.state_farm_center.wayfinding.title": "尋路",
@@ -2289,11 +2289,11 @@
 	"panel.parking_lots.label.empty":"本次活动无停车场",
 	"panel.parking_lots.label.available_spots":"可用停车位: ",
 
-	"panel.public_surveys.home.header.title": "Public Surveys",
-	"panel.public_surveys.label.description.failed": "Failed to load public surveys.",
- 	"panel.public_surveys.label.description.empty": "There are no available public surveys at the moment.",
-	"widget.home.public_surveys.button.all.title":"View All",
- "widget.home.public_surveys.button.all.hint":"Tap to view all surveys",
+	"panel.public_surveys.home.header.title": "Surveys",
+	"panel.public_surveys.label.description.failed": "Failed to load surveys.",
+ 	"panel.public_surveys.label.description.empty": "There are no available surveys at the moment.",
+	"panel.public_surveys.content_type.all": "All Surveys",
+ 	"panel.public_surveys.content_type.completed": "Completed Surveys",
 
 	"panel.bus_pass.header.title": "MTD 公交车票",
 	"panel.bus_pass.button.close.title": "关闭",
@@ -3422,6 +3422,10 @@
 	"widget.voter.rv_alert.vote_early.text": "您在 %s，可以提前投票",
 	"widget.voter.rv_alert.vote_now.text": "您正在 %s 上，現在可以投票",
 
+	"widget.public_survey.label.completed_suffix": " (Completed)",
+	"widget.public_survey.label.estimated_completion_time.one": "A minute to complete",
+ 	"widget.public_survey.label.estimated_completion_time.more": "{{estimated_completion_time}} minutes to complete",
+
 	"widget.home.campus_reminders.label.campus_reminders":"校园提醒",
 	"widget.home.campus_reminders.text.empty.description": "沒有有效的校園提醒。",
 	"widget.home.campus_reminders.button.all.title": "查看全部",
@@ -3448,9 +3452,11 @@
 	"widget.home.recent_items.button.clear_all.hint":"Tap to clear all items",
 	"widget.home.recent_items.prompt.clear_all.text":"Are you sure you want to CLEAR your browsing history?",
 
-	"widget.home.public_surveys.label.header.title":"Public Surveys",
-	"widget.home.public_surveys.label.description.failed": "Failed to load public surveys.",
- "widget.home.public_surveys.label.description.empty": "There are no available public surveys at the moment.",
+	"widget.home.public_surveys.label.header.title":"Surveys",
+	"widget.home.public_surveys.label.description.failed": "Failed to load surveys.",
+	"widget.home.public_surveys.label.description.empty": "There are no available surveys at the moment.",
+	"widget.home.public_surveys.button.all.title":"View All",
+	"widget.home.public_surveys.button.all.hint":"Tap to view all surveys",
 
 	"widget.home.event2_feed.label.header.title":"All Events",
 	"widget.home.event2_feed.text.empty.description": "There are no events available.",
