@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Survey.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/SyrveyPanel.dart';
+import 'package:illinois/ui/surveys/SurveyPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';

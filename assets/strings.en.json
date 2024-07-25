@@ -320,6 +320,8 @@
     "panel.browse.section.radio_stations.description": "Listen to Illinois Public Media and student-run WPGU.",
     "panel.browse.section.recent.title": "Recently Viewed",
     "panel.browse.section.recent.description": "Revisit your recent app activity.",
+    "panel.browse.section.surveys.title": "Surveys",
+    "panel.browse.section.surveys.description": "Participate in surveys available to you.",
     "panel.browse.section.state_farm_center.title": "State Farm Center",
     "panel.browse.section.state_farm_center.description": "Going to an event at State Farm Center? Get help parking and finding your way around.",
     "panel.browse.section.wallet.title": "Wallet",
@@ -401,6 +403,8 @@
 
     "panel.browse.entry.recent.recent_items.title": "Recently Viewed",
 
+    "panel.browse.entry.surveys.public_surveys.title": "Surveys",
+
     "panel.browse.entry.state_farm_center.parking.title": "Parking",
     "panel.browse.entry.state_farm_center.wayfinding.title": "Wayfinding",
     "panel.browse.entry.state_farm_center.create_stadium_poll.title": "Create Stadium Poll",
@@ -442,6 +446,8 @@
     "panel.assistant.inaccurate.description.disclaimer": "The Illinois Assistant may display inaccurate information.\nPlease double-check its responses.",
     "panel.assistant.label.queries.limit.title": "Sorry, you are out of questions for today. Please check back tomorrow to ask more questions!",
     "panel.assistant.label.error.title": "Sorry, something went wrong. For the best results, please restart the app and try your question again.",
+    "panel.assistant.messages.delete.succeeded.msg": "Successfully removed all messages.",
+    "panel.assistant.messages.delete.failed.msg": "Failed to clear all messages.",
     "panel.assistant.button.context.title": "Context",
     "panel.assistant.dialog.context.title": "User Context",
     "panel.assistant.dialog.context.button.add.title": "Add",
@@ -2296,6 +2302,12 @@
     "panel.parking_lots.label.empty":"No parking lots available for this event",
     "panel.parking_lots.label.available_spots":"Available Spots: ",
 
+    "panel.public_surveys.home.header.title": "Surveys",
+    "panel.public_surveys.label.description.failed": "Failed to load surveys.",
+    "panel.public_surveys.label.description.empty": "There are no available surveys at the moment.",
+    "panel.public_surveys.content_type.all": "All Surveys",
+    "panel.public_surveys.content_type.completed": "Completed Surveys",
+
     "panel.bus_pass.header.title": "MTD Bus Pass",
     "panel.bus_pass.button.close.title": "close",
     "panel.bus_pass.description.text": "Show this screen to the bus operator as you board.",
@@ -3432,6 +3444,10 @@
     "widget.voter.rv_alert.vote_early.text": "You are at the %s and can vote early",
     "widget.voter.rv_alert.vote_now.text": "You are at the %s and can vote now",
 
+    "widget.public_survey.label.completed_suffix": " (Completed)",
+    "widget.public_survey.label.estimated_completion_time.one": "A minute to complete",
+    "widget.public_survey.label.estimated_completion_time.more": "{{estimated_completion_time}} minutes to complete",
+
     "widget.home.campus_reminders.label.campus_reminders": "Campus Reminders",
     "widget.home.campus_reminders.text.empty.description": "There are no active Campus Reminders.",
     "widget.home.campus_reminders.button.all.title": "View All",
@@ -3466,6 +3482,12 @@
     "widget.home.recent_items.button.clear_all.title":"Clear All",
     "widget.home.recent_items.button.clear_all.hint":"Tap to clear all items",
     "widget.home.recent_items.prompt.clear_all.text":"Are you sure you want to CLEAR your browsing history?",
+
+    "widget.home.public_surveys.label.header.title":"Surveys",
+    "widget.home.public_surveys.label.description.failed": "Failed to load surveys.",
+    "widget.home.public_surveys.label.description.empty": "There are no available surveys at the moment.",
+    "widget.home.public_surveys.button.all.title":"View All",
+    "widget.home.public_surveys.button.all.hint":"Tap to view all surveys",
 
     "widget.home.groups.my.label.header.title":"My Groups",
     "widget.home.groups.all.label.header.title":"All Groups",

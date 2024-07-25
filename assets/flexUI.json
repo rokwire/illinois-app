@@ -14,7 +14,7 @@
 				"state_farm_center", "app_help", "video_tutorials",
 				"gies_checklist", "new_student_checklist", "safer", "student_courses", "canvas_courses",
 				"campus_highlights", "campus_safety_resources",
-				"recent_items", "my_news", "my_appointments", "my_mtd_stops", "my_mtd_destinations"
+				"recent_items", "public_surveys", "my_news", "my_appointments", "my_mtd_stops", "my_mtd_destinations"
 			],
 			"home.system": ["tout", "welcome_video", "welcome_message", "emergency", "voter_registration", "connect"],
 			"home.connect": ["netid", "phone_or_email"],
@@ -26,7 +26,7 @@
 
 			"home.twitter.account": ["gies", "", "news", "canvas"],
 			
-			"browse": ["academics", "app_help", "appointments", "athletics", "safer", "campus_guide", "dinings", "events", "feeds", "laundry", "groups", "mtd", "my", "inbox", "polls", "radio_stations", "recent", "research_projects", "state_farm_center", "wallet", "wellness"],
+			"browse": ["academics", "app_help", "appointments", "athletics", "safer", "campus_guide", "dinings", "events", "feeds", "laundry", "groups", "mtd", "my", "inbox", "polls", "radio_stations", "recent", "surveys", "research_projects", "state_farm_center", "wallet", "wellness"],
 			"browse.academics": ["gies_checklist", "new_student_checklist", "skills_self_evaluation", "essential_skills_coach", "student_courses", "canvas_courses", "campus_reminders", "wellness_todo", "appointments", "my_illini"],
 			"browse.appointments": ["appointments"],
 			"browse.app_help": ["faqs", "feedback", "review", "video_tutorials"],
@@ -44,6 +44,7 @@
 			"browse.polls": ["create_poll", "recent_polls"],
 			"browse.radio_stations": ["will_radio", "willfm_radio", "willhd_radio", "wpgufm_radio"],
 			"browse.recent": ["recent_items"],
+			"browse.surveys": ["public_surveys"],
 			"browse.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
 			"browse.wallet": ["illini_cash_card", "add_illini_cash", "meal_plan_card", "bus_pass_card", "illini_id_card", "library_card"],
 			"browse.wellness": ["wellness_resources", "wellness_mental_health", "wellness_success_team","wellness_rings", "my_appointments", "wellness_tips", "wellness_health_screener", "wellness_podcast", "wellness_struggling"],

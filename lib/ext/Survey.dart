@@ -20,10 +20,10 @@ extension SurveyExt on Survey {
 extension Event2SurveysExt on Surveys {
 
   Future<List<Survey>?> loadEvent2SurveyTemplates() =>
-    loadSurveys(types: [Survey.templateSurveyPrefix + Event2.followUpSurveyType]);
+    loadSurveys(SurveysQueryParam.fromType(Survey.templateSurveyPrefix + Event2.followUpSurveyType));
 
   Future<Survey?> loadEvent2Survey(String eventId) async {
-    List<Survey>? surveys = await loadSurveys(calendarEventID: eventId);
+    List<Survey>? surveys = await loadSurveys(SurveysQueryParam.fromCalendarEventID(eventId));
     return (0 < (surveys?.length ?? 0)) ? surveys?.first : null;
   }
 
