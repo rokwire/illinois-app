@@ -13,6 +13,7 @@ import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
 
@@ -29,7 +30,7 @@ class PublicSurveysPanel extends StatefulWidget {
 
 enum _DataActivity { init, refresh, extend }
 
-class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
+class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements NotificationsListener  {
 
   late PublicSurveysContentType _selectedContentType;
   bool _contentTypeDropdownExpanded = false;
@@ -45,6 +46,10 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      Surveys.notifySurveyResponseCreated,
+      Surveys.notifySurveyResponseDeleted,
+    ]);
     _selectedContentType = widget.selectedType;
     _scrollController.addListener(_scrollListener);
     _init();
@@ -53,7 +58,15 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     super.dispose();
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if ((name == Surveys.notifySurveyResponseCreated) ||(name == Surveys.notifySurveyResponseDeleted)) {
+      _refresh();
+    }
   }
 
   @override
@@ -129,7 +142,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
 
   Widget get _blankContent => Container();
 
-  Widget _messageContent(String message, { String? title }) =>
+  Widget _messageContent(String message, { String? title }) => Center(child:
     Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: _screenHeight / 6), child:
       Column(children: [
         (title != null) ? Padding(padding: EdgeInsets.only(bottom: 12), child:
@@ -137,7 +150,8 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
         ) : Container(),
         Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
       ],),
-    );
+    )
+  );
 
   Widget get _extendingIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
     Align(alignment: Alignment.center, child:

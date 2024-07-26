@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased - Illinois
 
+## [6.1.3] - 2024-07-26
+- Minor fixes in Public Surveys UI [#4243](https://github.com/rokwire/illinois-app/issues/4243).
+
 ## [6.1.2] - 2024-07-25
 - Updated Public Surveys UI / round 1 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
 
