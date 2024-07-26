@@ -17,6 +17,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
+import 'package:neom/service/Config.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/ui/assistant/AssistantConversationContentWidget.dart';
 import 'package:neom/ui/assistant/AssistantFaqsContentWidget.dart';
@@ -44,7 +45,7 @@ class AssistantHomePanel extends StatefulWidget {
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(
           context, Localization().getStringEx('panel.assistant.offline.label', 'The Illinois Assistant is not available while offline.'));
-    } else if (!Auth2().isOidcLoggedIn) {
+    } else if (!Auth2().isLoggedIn) {
       AppAlert.showMessage(
           context,
           Localization().getStringEx('panel.assistant.logged_out.label',
@@ -123,7 +124,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
   Widget _buildSheet(BuildContext context) {
     return Column(children: [
       Container(
-          color: Styles().colors.white,
+          color: Styles().colors.gradientColorPrimary,
           child: Row(children: [
             Expanded(
                 child: Semantics(container: true,
@@ -131,7 +132,11 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
                     padding: EdgeInsets.only(left: 16),
                     child: Text(Localization().getStringEx('panel.assistant.header.title', 'Illinois Assistant'),
                         style: Styles().textStyles.getTextStyle("widget.label.medium.fat"))))),
-            Visibility(visible: (_selectedContent == AssistantContent.conversation), child: LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14)),
+            Visibility(visible: (_selectedContent == AssistantContent.conversation) && !Config().assistantComingSoon, child: LinkButton(
+              onTap: _onTapClearAll,
+              title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'),
+              textStyle: Styles().textStyles.getTextStyle('widget.description.regular.light.underline'),
+            )),
             Semantics(
                 label: Localization().getStringEx('dialog.close.title', 'Close'),
                 hint: Localization().getStringEx('dialog.close.hint', ''),
@@ -158,7 +163,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
                       padding: EdgeInsets.only(left: 16, top: 16, right: 16),
                       child: Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), focused: true, container: true, child: RibbonButton(
                           textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-                          backgroundColor: Styles().colors.white,
+                          backgroundColor: Styles().colors.gradientColorPrimary,
                           borderRadius: BorderRadius.all(Radius.circular(5)),
                           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                           rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
@@ -198,7 +203,8 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
 
   Widget _buildContentItem(AssistantContent contentItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors.gradientColorPrimary,
+        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentItemName(contentItem),

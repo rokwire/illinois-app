@@ -335,7 +335,6 @@
     "panel.browse.entry.academics.gies_canvas_courses.title": "Mis cursos Gies Canvas",
     "panel.browse.entry.academics.canvas_courses.title": "Mis cursos de lienzo",
     "panel.browse.entry.academics.student_courses.title": "Mis cursos",
-    "panel.browse.entry.academics.my_illini.title": "myIllini",
     "panel.browse.entry.academics.campus_reminders.title": "Recordatorios del campus",
     "panel.browse.entry.academics.wellness_todo.title": "Lista de quehaceres",
     "panel.browse.entry.academics.due_date_catalog.title": "Catálogo de fecha de vencimiento",
@@ -1452,7 +1451,7 @@
     "panel.event2.detail.linked_events.recurrence.failed.message": "Error al cargar las horas disponibles.",
     "panel.event2.detail.linked_events.recurrence.empty.message": "No hay próximas horas disponibles.",
     "panel.event2.detail.register.succeeded": "You're registered!",
-    "panel.event2.detail.register.succeeded.star.prompt": "You're registered! Would vou like to add this event to <span style='color:{{star_color}};'><b>\u2605</b></span> My Events?",
+    "panel.event2.detail.register.succeeded.star.prompt": "You're registered! Would you like to add this event to <span style='color:{{star_color}};'><b>\u2605</b></span> My Events?",
     "panel.event2.detail.unregister.succeeded": "You are no longer registered for this event.",
 
     "panel.event2.detail.take_attendance.title": "Pasar la Lista",

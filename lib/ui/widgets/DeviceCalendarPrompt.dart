@@ -44,7 +44,7 @@ class _DeviceCalendarPromptState extends State<DeviceCalendarPrompt>{
             children: <Widget>[
                 Padding( padding: EdgeInsets.all(8),
                   child: Text(widget.prompt,
-                    style: Styles().textStyles.getTextStyle("widget.message.light.medium.thin"),
+                    style: Styles().textStyles.getTextStyle("widget.message.medium.thin"),
                     textAlign: TextAlign.center,
                   ),
                 ),

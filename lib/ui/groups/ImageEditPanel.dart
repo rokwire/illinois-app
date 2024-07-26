@@ -165,7 +165,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
               padding: EdgeInsets.all(15.0),
               child: Text(
                 "Image Source",
-                style: Styles().textStyles.getTextStyle("widget.title.small"),
+                style: Styles().textStyles.getTextStyle("widget.title.dark.small"),
               ),
             ),
             Padding(
@@ -350,7 +350,7 @@ class AppDialogButtonState extends State<AppDialogButton> {
       onPressed: widget.onPressed,
       child: Text(
         widget.buttonTitle,
-        style: Styles().textStyles.getTextStyle("widget.button.light.title.regular.thin")
+        style: Styles().textStyles.getTextStyle("widget.button.title.regular.thin")
       ),
     );
   }

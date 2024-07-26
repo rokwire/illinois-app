@@ -255,7 +255,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         Padding(
             padding: EdgeInsets.symmetric(horizontal: 32),
             child: Text(_getEmptyMembersMessage(), textAlign: TextAlign.center,
-                style: Styles().textStyles.getTextStyle('widget.group.members.title'))),
+                style: Styles().textStyles.getTextStyle('widget.group.members.light.title'))),
         Container(height: MediaQuery.of(context).size.height / 4)
       ]));
     } else {

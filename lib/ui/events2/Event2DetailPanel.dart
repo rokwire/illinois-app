@@ -281,7 +281,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     ],) : Container();
 
   Widget get _titleContentWidget =>
-    Text(_event?.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'));
+    Text(_event?.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.dark.large.extra_fat'));
 
   Widget get _sponsorWidget => StringUtils.isNotEmpty(_event?.sponsor) ? Padding(padding: EdgeInsets.only(top: 8), child:
     Row(children: [
@@ -968,7 +968,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       else {
         Event2Popup.showPrompt(context,
           title: Localization().getStringEx("dialog.success.title", "Success"),
-          messageHtml: Localization().getStringEx("panel.event2.detail.register.succeeded.star.prompt", "You're registered! Would vou like to add this event to <span style='color:{{star_color}};'><b>\u2605</b></span> My Events?").replaceAll('{{star_color}}', ColorUtils.toHex(Styles().colors.fillColorSecondary)),
+          messageHtml: Localization().getStringEx("panel.event2.detail.register.succeeded.star.prompt", "You're registered! Would you like to add this event to <span style='color:{{star_color}};'><b>\u2605</b></span> My Events?").replaceAll('{{star_color}}', ColorUtils.toHex(Styles().colors.fillColorSecondary)),
           positiveButtonTitle: Localization().getStringEx("dialog.yes.title", "Yes"),
           negativeButtonTitle: Localization().getStringEx("dialog.no.title", "No"),
         ).then((bool? result) {

@@ -5,7 +5,8 @@ class SurveyPanel extends rokwire.SurveyPanel{
 
   SurveyPanel({required super.survey, super.surveyDataKey, super.inputEnabled, super.backgroundColor,
     super.dateTaken, super.showResult, super.onComplete, super.initPanelDepth, super.defaultResponses,
-    super.summarizeResultRules, super.summarizeResultRulesWidget, super.headerBar, super.tabBar, super.offlineWidget});
+    super.summarizeResultRules, super.summarizeResultRulesWidget, super.headerBar, super.tabBar,
+    super.offlineWidget, super.textStyles});
 
   @override
   PreferredSizeWidget? buildHeaderBar(String? title) => HeaderBar(title: title);

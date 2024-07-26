@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:neom/model/Assistant.dart';
 import 'package:neom/service/Assistant.dart';
 import 'package:neom/service/Auth2.dart';
+import 'package:neom/service/Config.dart';
 import 'package:neom/service/FirebaseMessaging.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/service/IlliniCash.dart';
@@ -151,6 +152,10 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Widget build(BuildContext context) {
     super.build(context);
 
+    if (Config().assistantComingSoon) {
+      return _comingSoon();
+    }
+
     Widget? accessWidget = AccessCard.builder(resource: resourceName);
     _scrollToBottomIfNeeded();
 
@@ -173,6 +178,20 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                     ]))),
                 Positioned(bottom: _chatBarPaddingBottom, left: 0, right: 0, child: Container(key: _chatBarKey, color: Styles().colors.surface, child: SafeArea(child: _buildChatBar())))
           ]));
+  }
+
+  Widget _comingSoon() {
+    return Padding(
+      padding: const EdgeInsets.all(32.0),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 56.0),
+          child: Text(Localization().getStringEx('panel.assistant.coming_soon.message', '{{app_title}} Assistant\nComing Soon!').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+            style: Styles().textStyles.getTextStyle('widget.title.light.large.fat'),
+            textAlign: TextAlign.center,),
+        ),
+      ),
+    );
   }
 
   List<Widget> _buildContentList() {
@@ -631,14 +650,14 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                 Localization()
                     .getStringEx('panel.assistant.label.queries.remaining.title', "{{query_limit}} questions remaining today")
                     .replaceAll('{{query_limit}}', _queryLimit.toString()),
-                style: Styles().textStyles.getTextStyle('widget.title.small'))
+                style: Styles().textStyles.getTextStyle('widget.title.dark.small'))
           ]),
           Padding(
               padding: EdgeInsets.only(top: 5),
               child: Text(
                   Localization().getStringEx('panel.assistant.inaccurate.description.disclaimer',
                       'The Illinois Assistant may display inaccurate information.\nPlease double-check its responses.'),
-                  style: Styles().textStyles.getTextStyle('widget.info.tiny'),
+                  style: Styles().textStyles.getTextStyle('widget.info.dark.tiny'),
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 5))

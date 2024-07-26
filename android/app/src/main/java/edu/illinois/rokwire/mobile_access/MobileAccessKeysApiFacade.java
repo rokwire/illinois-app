@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.illinois.rokwire.mobile_access;
+package com.rokmetro.university.neom.mobile_access;
 
 import android.Manifest;
 import android.app.Activity;
@@ -65,7 +65,7 @@ import java.util.Map;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import edu.illinois.rokwire.Constants;
+import com.rokmetro.university.neom.Constants;
 import edu.illinois.rokwire.rokwire_plugin.Utils;
 import io.flutter.plugin.common.PluginRegistry;
 

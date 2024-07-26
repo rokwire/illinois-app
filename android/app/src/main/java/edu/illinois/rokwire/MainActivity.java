@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.illinois.rokwire;
+package com.rokmetro.university.neom;
 
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
@@ -41,7 +41,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import edu.illinois.rokwire.mobile_access.MobileAccessPlugin;
+import com.rokmetro.university.neom.mobile_access.MobileAccessPlugin;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodCall;
