@@ -15,6 +15,7 @@
  */
 
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -889,8 +890,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   void _onConfigChanged(dynamic env) {
-    if (env is rokwire.ConfigEnvironment) {
-      _confirmConfigChange(env);
+    if (!kIsWeb) {
+      if (env is rokwire.ConfigEnvironment) {
+        _confirmConfigChange(env);
+      }
     }
   }
 
