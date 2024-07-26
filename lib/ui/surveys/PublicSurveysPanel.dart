@@ -146,9 +146,9 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
     Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: _screenHeight / 6), child:
       Column(children: [
         (title != null) ? Padding(padding: EdgeInsets.only(bottom: 12), child:
-          Text(title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat'),)
+          Text(title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.light.medium.fat'),)
         ) : Container(),
-        Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
+        Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle((title != null) ? 'widget.item.light.regular.thin' : 'widget.item.light.medium.fat'),),
       ],),
     )
   );
@@ -161,7 +161,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
   Widget get _contentTypeDropdownWidget => Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child: RibbonButton(
     progress: (_dataActivity == _DataActivity.refresh),
     textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-    backgroundColor: Styles().colors.white,
+    backgroundColor: Styles().colors.surface,
     borderRadius: BorderRadius.all(Radius.circular(5)),
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     rightIconKey: (_contentTypeDropdownExpanded == true) ? 'chevron-up' : 'chevron-down',
@@ -193,7 +193,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
   }
 
   Widget _dropdownListItem(PublicSurveysContentType contentType) => RibbonButton(
-    backgroundColor: Styles().colors.white,
+    backgroundColor: Styles().colors.surface,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     rightIconKey: null,
     label: publicSurveysContentTypeDisplayName(contentType),
