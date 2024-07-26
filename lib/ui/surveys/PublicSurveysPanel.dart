@@ -142,7 +142,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
 
   Widget get _blankContent => Container();
 
-  Widget _messageContent(String message, { String? title }) =>
+  Widget _messageContent(String message, { String? title }) => Center(child:
     Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: _screenHeight / 6), child:
       Column(children: [
         (title != null) ? Padding(padding: EdgeInsets.only(bottom: 12), child:
@@ -150,7 +150,8 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
         ) : Container(),
         Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
       ],),
-    );
+    )
+  );
 
   Widget get _extendingIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
     Align(alignment: Alignment.center, child:
