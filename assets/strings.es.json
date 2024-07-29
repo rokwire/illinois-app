@@ -1180,6 +1180,8 @@
     "panel.explore_detail.label.ask_dietician": "Consulta con un Dietista",
     "panel.explore_detail.label.ask_dietician_descr": "Escribe tu pregunta para nuestros dietistas:",
 
+    "panel.explore_building_detail.detail.fllor_plan_and_amenities": "Floor Plans & Amenities",
+
     "panel.events_schedule.header.title": "Calendario de eventos",
     "panel.events_schedule.tab.title.saved": "Guardado",
     "panel.events_schedule.empty.events": "No hay eventos",
