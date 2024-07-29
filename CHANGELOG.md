@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Contact us: Share an Idea [#4248](https://github.com/rokwire/illinois-app/issues/4248).
 ### Added
 - Added "Floor Plans & Amenities" detail entry to ExploreBuildingDetailPanel [#4254](https://github.com/rokwire/illinois-app/issues/4254).
+- Underline "preferred name instructions" link [#4249](https://github.com/rokwire/illinois-app/issues/4249).
 ### Fixed
 - Fixed background color of Event2DetailPanel [#4250](https://github.com/rokwire/illinois-app/issues/4250).
 
