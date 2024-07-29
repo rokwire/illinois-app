@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Underline "preferred name instructions" link [#4249](https://github.com/rokwire/illinois-app/issues/4249).
 ### Fixed
 - Fixed background color of Event2DetailPanel [#4250](https://github.com/rokwire/illinois-app/issues/4250).
+- Fixed VoiceRecorder permissions requested when dialog is shown [#4247](https://github.com/rokwire/illinois-app/issues/4247).
 
 ## [6.0.28] - 2024-07-25
 ### Changed

@@ -200,6 +200,9 @@ class _ProfileSoundRecorderDialogState extends State<_ProfileSoundRecorderDialog
       notifyChanged: (fn) =>setStateIfMounted(fn)
     );
     _controller.init();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+        _controller.requestPermission();
+    });
     super.initState();
   }
 
@@ -444,7 +447,6 @@ class _ProfileSoundRecorderController {
   }
 
   void startRecording() async {
-
     try {
       Log.d("START RECODING");
       if (await _audioRecord.hasPermission()) {
@@ -525,6 +527,8 @@ class _ProfileSoundRecorderController {
         _audio = null;
       });
   }
+
+  Future<bool> requestPermission() async => _audioRecord.hasPermission();
 
   Future<void> _deleteRecord() async {
     if (_audioRecordPath?.isNotEmpty == true) {
