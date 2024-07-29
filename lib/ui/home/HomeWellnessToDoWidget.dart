@@ -10,6 +10,7 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/utils/AudioUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -154,6 +155,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
       source: widget.runtimeType.toString(),
       item: item);
     item.isCompleted = !item.isCompleted;
+    _playCheckingOffSound();
     Wellness().updateToDoItem(item).then((success) {
       if (!success) {
         AppAlert.showDialogResult(context, Localization().getStringEx('widget.home.wellness.todo.items.completed.failed.msg', 'Failed to update To-Do item.'));
@@ -243,5 +245,9 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
     } else if (name == Wellness.notifyToDoItemsDeleted) {
       _refreshItems();
     }
+  }
+
+  void _playCheckingOffSound(){
+    ResourceAudioSound('media/wellness-todo-check-off.m4a').play();
   }
 }

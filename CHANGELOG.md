@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added "Floor Plans & Amenities" detail entry to ExploreBuildingDetailPanel [#4254](https://github.com/rokwire/illinois-app/issues/4254).
 - Underline "preferred name instructions" link [#4249](https://github.com/rokwire/illinois-app/issues/4249).
+- Play Checking off sound for To-Do List item [#2258](https://github.com/rokwire/illinois-app/issues/2258).
 ### Fixed
 - Fixed background color of Event2DetailPanel [#4250](https://github.com/rokwire/illinois-app/issues/4250).
 - Fixed VoiceRecorder permissions requested when dialog is shown [#4247](https://github.com/rokwire/illinois-app/issues/4247).
