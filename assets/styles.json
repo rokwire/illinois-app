@@ -774,6 +774,7 @@
     "feedback": {"src": "images/icon-feedback.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "posts": {"src": "0xf3e5", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
     "reply": {"src": "0xf3e5", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
+    "floorplan": {"src": "0xf279", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
     "location": {"src": "images/location.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "size"},
     "time": {"src": "images/icon-time.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "clear":  {"src": "0xf057", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 24},

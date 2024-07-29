@@ -1180,6 +1180,8 @@
 	"panel.explore_detail.label.ask_dietician": "向营养师提问",
 	"panel.explore_detail.label.ask_dietician_descr": "键入您的问题:",
 
+	"panel.explore_building_detail.detail.fllor_plan_and_amenities": "Floor Plans & Amenities",
+
 	"panel.events_schedule.header.title": "活動時間表",
 	"panel.events_schedule.tab.title.saved": "已保存",
 	"panel.events_schedule.empty.events": "没有活动",
