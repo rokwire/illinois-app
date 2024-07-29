@@ -781,7 +781,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   void _onTapRefreshToken() {
     Auth2Token? token = Auth2().token;
     if (token != null) {
-      Auth2().refreshToken(token).then((token) {
+      Auth2().refreshToken(token: token).then((token) {
         AppAlert.showDialogResult(context, (token != null) ? "Token refreshed successfully" : "Failed to refresh token");
       });
     }
