@@ -143,14 +143,17 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body:
-      Column(children: <Widget>[
-        Expanded(child: _content),
-      ])
+    return Scaffold(
+      body: _scaffoldContent,
+      backgroundColor: Styles().colors.background,
     );
   }
 
-  Widget get _content => _eventLoading ? _loadingContent : _eventContent;
+  Widget get _scaffoldContent => Column(children: <Widget>[
+    Expanded(child: _panelContent),
+  ]);
+
+  Widget get _panelContent => _eventLoading ? _loadingContent : _eventContent;
 
   Widget get _loadingContent {
       return Center(child:
