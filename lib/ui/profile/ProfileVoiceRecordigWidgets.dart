@@ -6,6 +6,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/utils/AudioUtils.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path/path.dart' as Path;
 import 'package:path_provider/path_provider.dart';
@@ -131,7 +132,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
   void _prepareAudioPlayer() async {
     Log.d("AUDIO PREPARING");
     if(_hasStoredPronouncement) {
-      await _audioPlayer.setAudioSource(_BytesAudioSource(_storedAudioPronouncement!));
+      await _audioPlayer.setAudioSource(Uint8ListAudioSource(_storedAudioPronouncement!));
     }
   }
 
@@ -559,7 +560,7 @@ class _ProfileSoundRecorderController {
 
   Duration? get playerTime => _playerTimer;
 
-  AudioSource? get _audioSource => _haveAudio ? _BytesAudioSource(_audio!) : null;
+  AudioSource? get _audioSource => _haveAudio ? Uint8ListAudioSource(_audio!) : null;
 
   bool get _haveAudio => CollectionUtils.isNotEmpty(_audio);
 
@@ -631,20 +632,3 @@ class _ProfileNamePronouncementConfirmDeleteDialog extends StatelessWidget {
     );
 }
 
-class _BytesAudioSource extends StreamAudioSource{
-  final Uint8List _data;
-
-  _BytesAudioSource(this._data);
-
-  @override
-  Future<StreamAudioResponse> request([int? start, int? end]) async {
-    // Returning the stream audio response with the parameters
-    return StreamAudioResponse(
-      sourceLength: _data.length,
-      contentLength: (end ?? _data.length) - (start ?? 0),
-      offset: start ?? 0,
-      stream: Stream.fromIterable([_data.sublist(start ?? 0, end)]),
-      contentType: 'audio/mp4',
-    );
-  }
-}
