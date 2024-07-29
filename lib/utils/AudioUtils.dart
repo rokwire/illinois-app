@@ -34,17 +34,17 @@ class ResourceAudioSound {
       if (resourceData != null) {
         _audioPlayer = AudioPlayer();
         _audioPlayer?.playerStateStream.listen((PlayerState playerState) {
-          debugPrint("AudioPlayer state changed: ${playerState.processingState}");
+          //debugPrint("AudioPlayer state changed: ${playerState.processingState}");
           if (playerState.processingState == ProcessingState.completed) {
             _audioPlayer = null;
           }
         },
         onError: (error) {
-          debugPrint("AudioPlayer error: $error");
+          //debugPrint("AudioPlayer error: $error");
           _audioPlayer = null;
         },
         onDone: () {
-          debugPrint("AudioPlayer done.");
+          //debugPrint("AudioPlayer done.");
           _audioPlayer = null;
         });
         await _audioPlayer?.setAudioSource(Uint8ListAudioSource(Uint8List.sublistView(resourceData)));
