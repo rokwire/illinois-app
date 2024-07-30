@@ -3442,6 +3442,7 @@
     "widget.public_survey.label.completed_suffix": " (Completed)",
     "widget.public_survey.label.estimated_completion_time.one": "A minute to complete",
     "widget.public_survey.label.estimated_completion_time.more": "{{estimated_completion_time}} minutes to complete",
+    "widget.public_survey.label.detail.ends": "Ends: {{end_date}}",
 
     "widget.home.campus_reminders.label.title": "Recordatorios de Campus",
     "widget.home.campus_reminders.text.empty.description": "No hay recordatorios de campus activos.",
@@ -3471,7 +3472,9 @@
 
     "widget.home.public_surveys.label.header.title":"Surveys",
     "widget.home.public_surveys.label.description.failed": "Failed to load surveys.",
+    "widget.home.public_surveys.label.description.offline": "Surveys are not available while offline",
     "widget.home.public_surveys.label.description.empty": "There are no available surveys at the moment.",
+    "widget.home.public_surveys.label.description.logged_out": "You need to be logged in to access surveys. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
     "widget.home.public_surveys.button.all.title":"View All",
     "widget.home.public_surveys.button.all.hint":"Tap to view all surveys",
 
@@ -4081,6 +4084,9 @@
     "model.device_calendar.message.add.event.failed": "Failed to add event to Calendar",
     "model.device_calendar.message.add.event.failed.permission.denied": "Permission denined to add event to Calendar",
 
+    "model.public_survey.label.detail.ends.1": "(Ends {{end_date}})",
+    "model.public_survey.label.detail.ends.2": "(Ends on {{end_date}})",
+
     "logic.date_time.greeting.morning": "Buenos días",
     "logic.date_time.greeting.afternoon": "Buenas tardes",
     "logic.date_time.greeting.evening": "Buena noches",
@@ -4106,6 +4112,7 @@
     "common.label.other": "Otro",
     "common.label.county": "Condado",
     "common.label.read_more": "Leer mas",
+    "common.label.failed": "Failed",
 
     "common.message.offline":"Parece que estás desconectado",
     "common.message.logged_out":"No has iniciado sesión",

@@ -16,6 +16,7 @@ import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -47,6 +48,7 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
   bool? _lastPageLoaded;
   _DataActivity? _dataActivity;
   Map<String, GlobalKey> _cardKeys = <String, GlobalKey>{};
+  Set<String> _activitySurveyIds = <String>{};
   DateTime? _pausedDateTime;
 
   PageController? _pageController;
@@ -61,7 +63,10 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
     super.initState();
 
     NotificationService().subscribe(this, [
+      Surveys.notifySurveyResponseCreated,
+      Surveys.notifySurveyResponseDeleted,
       Connectivity.notifyStatusChanged,
+      Auth2.notifyLoginChanged,
       AppLivecycle.notifyStateChanged,
     ]);
 
@@ -88,7 +93,10 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
     if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
-    else if (name == Connectivity.notifyStatusChanged) {
+    else if ((name == Connectivity.notifyStatusChanged) ||
+             (name == Auth2.notifyLoginChanged) ||
+             (name == Surveys.notifySurveyResponseCreated) ||
+             (name == Surveys.notifySurveyResponseDeleted)) {
       _refresh().then((_) {
         setStateIfMounted();
       });
@@ -122,8 +130,13 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
     if (Connectivity().isOffline) {
       return HomeMessageCard(
         title: Localization().getStringEx("common.message.offline", "You appear to be offline"),
-        message: Localization().getStringEx("widget.home.athletics_events.text.offline", "Athletics Events are not available while offline"),
+        message: Localization().getStringEx("widget.home.public_surveys.label.description.offline", "Surveys are not available while offline"),
       );
+    }
+    else if (!Auth2().isLoggedIn) {
+      return HomeMessageCard(
+        title: Localization().getStringEx("common.message.logged_out", "You are not logged in"),
+        message: Localization().getStringEx("widget.home.public_surveys.label.description.logged_out", "You need to be logged in to access surveys. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings."),);
     }
     else if (_dataActivity == _DataActivity.init) {
       return HomeProgressWidget();
@@ -133,7 +146,7 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
     }
     else if (_contentList == null) {
       return HomeMessageCard(
-        title: Localization().getStringEx('panel.events2.home.message.failed.title', 'Failed'),
+        title: Localization().getStringEx('common.label.failed', 'Failed'),
         message: Localization().getStringEx("widget.home.public_surveys.label.description.failed", "Failed to load surveys."),
       );
     }
@@ -161,7 +174,7 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
 
   Widget get _singleSurveyContent =>
     Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8), child:
-      PublicSurveyCard.pageCard(_contentList!.first, onTap: () => _onSurvey(_contentList!.first),)
+      PublicSurveyCard.pageCard(_contentList!.first, hasActivity: _activitySurveyIds.contains(_contentList!.first.id), onTap: () => _onSurvey(_contentList!.first),)
     );
 
   double get _pageHeight {
@@ -187,7 +200,7 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
       pages.add(Padding(
         key: _cardKeys[survey.id] ??= GlobalKey(),
         padding: EdgeInsets.only(right: _pageSpacing, bottom: _pageBottomPadding),
-        child: PublicSurveyCard.pageCard(survey, onTap: () => _onSurvey(survey),)
+        child: PublicSurveyCard.pageCard(survey, hasActivity: _activitySurveyIds.contains(survey.id), onTap: () => _onSurvey(survey),)
       ),);
     }
 
@@ -236,7 +249,7 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
   }
 
   Future<void> _refresh() async {
-    if (Connectivity().isOnline && (_dataActivity != _DataActivity.init) && (_dataActivity != _DataActivity.refresh)) {
+    if (Connectivity().isOnline && Auth2().isLoggedIn && (_dataActivity != _DataActivity.init) && (_dataActivity != _DataActivity.refresh)) {
       setStateIfMounted(() {
         _dataActivity = _DataActivity.refresh;
       });
@@ -292,11 +305,35 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
 
   void _onSurvey(Survey survey) {
     Analytics().logSelect(target: 'Survey: ${survey.title}');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: survey)));
+    if (survey.completed != true) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: survey)));
+    }
+    else if (!_activitySurveyIds.contains(survey.id)) {
+      setState(() {
+        _activitySurveyIds.add(survey.id);
+      });
+      Surveys().loadUserSurveyResponses(surveyIDs: <String>[survey.id]).then((List<SurveyResponse>? result) {
+        if (mounted && (_activitySurveyIds.contains(survey.id))) {
+          setState(() {
+            _activitySurveyIds.remove(survey.id);
+          });
+          SurveyResponse? surveyResponse = (result?.isNotEmpty == true) ? result?.first : null;
+          if (surveyResponse != null) {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: surveyResponse.survey, inputEnabled: false, dateTaken: surveyResponse.dateTaken, showResult: true)));
+          }
+          else {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: survey)));
+          }
+        }
+      });
+    }
   }
 
   void _onSeeAll() {
     Analytics().logSelect(target: "View All", source: '${widget.runtimeType}' );
+    setState(() {
+      _activitySurveyIds.clear();
+    });
     Navigator.push(context, CupertinoPageRoute(builder: (context) => PublicSurveysPanel()));
   }
 }
