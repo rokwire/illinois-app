@@ -4089,6 +4089,9 @@
     "model.device_calendar.message.add.event.failed": "Failed to add event to calendar.",
     "model.device_calendar.message.add.event.failed.permission.denied": "Permission denied to add event to calendar.",
 
+    "model.public_survey.label.detail.ends.1": "(Ends {{end_date}})",
+    "model.public_survey.label.detail.ends.2": "(Ends on {{end_date}})",
+
     "logic.date_time.greeting.morning": "Good morning",
     "logic.date_time.greeting.afternoon": "Good afternoon",
     "logic.date_time.greeting.evening": "Good evening",
