@@ -15,7 +15,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/survey.dart';
