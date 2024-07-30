@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/survey.dart';
@@ -119,10 +120,12 @@ class _SurveyResponsesPanelState extends State<SurveyResponsesPanel>  {
     setState(() {});
   }
 
+  Survey? get _survey => _surveyResponses.isNotEmpty ? _surveyResponses.first.survey : null;
+
   // HeaderBar
 
   PreferredSizeWidget get _headerBar => HeaderBar(
-    title: Localization().getStringEx('panel.event2.survey.responses.header.title', '{{event_name}} Survey Responses').replaceAll('{{event_name}}', widget.eventName ?? 'Event'),
+    title: Localization().getStringEx('panel.survey.responses.header.title', '{{survey_name}} Survey Responses').replaceAll('{{survey_name}}', widget.eventName ?? _survey?.title ?? ''),
     onLeading: _onHeaderBarBack,
   );
 
