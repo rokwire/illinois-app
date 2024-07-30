@@ -62,6 +62,8 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
     super.initState();
 
     NotificationService().subscribe(this, [
+      Surveys.notifySurveyResponseCreated,
+      Surveys.notifySurveyResponseDeleted,
       Connectivity.notifyStatusChanged,
       Auth2.notifyLoginChanged,
       AppLivecycle.notifyStateChanged,
@@ -91,7 +93,9 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
       _onAppLivecycleStateChanged(param);
     }
     else if ((name == Connectivity.notifyStatusChanged) ||
-             (name == Auth2.notifyLoginChanged)) {
+             (name == Auth2.notifyLoginChanged) ||
+             (name == Surveys.notifySurveyResponseCreated) ||
+             (name == Surveys.notifySurveyResponseDeleted)) {
       _refresh().then((_) {
         setStateIfMounted();
       });
