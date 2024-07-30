@@ -32,7 +32,7 @@ extension SurveyExt on Survey {
 
       int daysDiff = dateTimeMidnightLocal.difference(nowMidnightLocal).inDays;
       switch(daysDiff) {
-        case 0: return Localization().getStringEx('model.explore.date_time.today', 'Today');;
+        case 0: return Localization().getStringEx('model.explore.date_time.today', 'Today');
         case 1: return Localization().getStringEx('model.explore.date_time.tomorrow', 'Tomorrow');
         default: return DateFormat(format).format(dateTime);
       }
