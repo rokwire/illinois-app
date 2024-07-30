@@ -9,16 +9,17 @@ enum PublicSurveyCardDisplayMode { list, page }
 class PublicSurveyCard extends StatelessWidget {
   final Survey survey;
   final PublicSurveyCardDisplayMode displayMode;
+  final bool hasActivity;
   final void Function()? onTap;
 
   // ignore: unused_element
-  PublicSurveyCard(this.survey, { super.key, required this.displayMode, this.onTap });
+  PublicSurveyCard(this.survey, { super.key, required this.displayMode, this.hasActivity = false, this.onTap });
 
-  factory PublicSurveyCard.listCard(Survey survey, { Key? key, void Function()? onTap }) =>
-    PublicSurveyCard(survey, key: key, displayMode: PublicSurveyCardDisplayMode.list, onTap : onTap);
+  factory PublicSurveyCard.listCard(Survey survey, { Key? key, void Function()? onTap, bool hasActivity = false }) =>
+    PublicSurveyCard(survey, key: key, displayMode: PublicSurveyCardDisplayMode.list, hasActivity: hasActivity, onTap : onTap);
 
-  factory PublicSurveyCard.pageCard(Survey survey, { Key? key, void Function()? onTap }) =>
-    PublicSurveyCard(survey, key: key, displayMode: PublicSurveyCardDisplayMode.page, onTap : onTap);
+  factory PublicSurveyCard.pageCard(Survey survey, { Key? key, bool hasActivity = false, void Function()? onTap }) =>
+    PublicSurveyCard(survey, key: key, displayMode: PublicSurveyCardDisplayMode.page, hasActivity: hasActivity, onTap : onTap);
 
   @override
   Widget build(BuildContext context) =>
@@ -48,14 +49,18 @@ class PublicSurveyCard extends StatelessWidget {
       ],)
     ),
     Padding(padding: const EdgeInsets.only(left: 8), child:
-      Styles().images.getImage('chevron-right-bold'),
+      hasActivity ? activityIndicator : chevronIcon
     ),
   ],);
 
   Widget get _pageContentWidget {
     List<Widget> detailsWidgets = _detailsWidgets;
     return Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-      _titleWidget,
+      Row(children: [
+        Expanded(child: _titleWidget),
+        if (hasActivity)
+          activityIndicator
+      ],),
       Container(padding: EdgeInsets.only(top: (0 < detailsWidgets.length) ? 16 : 32), alignment: Alignment.centerRight, child:
         Column(crossAxisAlignment: CrossAxisAlignment.end, children: detailsWidgets,)
       ),
@@ -116,6 +121,12 @@ class PublicSurveyCard extends StatelessWidget {
       return null;
     }
   }
+
+  Widget get chevronIcon => Styles().images.getImage('chevron-right-bold') ?? Container();
+
+  Widget get activityIndicator => SizedBox(width: 18, height: 18, child:
+    CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,)
+  );
 
   EdgeInsets get _contentPadding {
     switch (displayMode) {

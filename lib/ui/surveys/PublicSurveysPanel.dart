@@ -38,6 +38,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
   List<Survey>? _contentList;
   bool? _lastPageLoaded;
   _DataActivity? _dataActivity;
+  Set<String> _activitySurveyIds = <String>{};
 
   static const int _contentPageLength = 16;
   final Color _dropdownShadowColor = Color(0x99000000);
@@ -118,7 +119,10 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
     List<Widget> cardsList = <Widget>[];
     for (Survey survey in _contentList!) {
       cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child:
-        PublicSurveyCard.listCard(survey, onTap: () => _onSurvey(survey),),
+        PublicSurveyCard.listCard(survey,
+          hasActivity: _activitySurveyIds.contains(survey.id),
+          onTap: () => _onSurvey(survey),
+        ),
       ),);
     }
     if (_dataActivity == _DataActivity.extend) {
@@ -288,7 +292,28 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
 
   void _onSurvey(Survey survey) {
     Analytics().logSelect(target: 'Survey: ${survey.title}');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: survey)));
+    if (survey.completed != true) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: survey)));
+    }
+    else if (!_activitySurveyIds.contains(survey.id)) {
+      setState(() {
+        _activitySurveyIds.add(survey.id);
+      });
+      Surveys().loadUserSurveyResponses(surveyIDs: <String>[survey.id]).then((List<SurveyResponse>? result) {
+        if (mounted) {
+          setState(() {
+            _activitySurveyIds.remove(survey.id);
+          });
+          SurveyResponse? surveyResponse = (result?.isNotEmpty == true) ? result?.first : null;
+          if (surveyResponse != null) {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: surveyResponse.survey, inputEnabled: false, dateTaken: surveyResponse.dateTaken, showResult: true)));
+          }
+          else {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: survey)));
+          }
+        }
+      });
+    }
   }
 
   void _onContentTypeDropdown() {

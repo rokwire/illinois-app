@@ -48,6 +48,7 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
   bool? _lastPageLoaded;
   _DataActivity? _dataActivity;
   Map<String, GlobalKey> _cardKeys = <String, GlobalKey>{};
+  Set<String> _activitySurveyIds = <String>{};
   DateTime? _pausedDateTime;
 
   PageController? _pageController;
@@ -173,7 +174,7 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
 
   Widget get _singleSurveyContent =>
     Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8), child:
-      PublicSurveyCard.pageCard(_contentList!.first, onTap: () => _onSurvey(_contentList!.first),)
+      PublicSurveyCard.pageCard(_contentList!.first, hasActivity: _activitySurveyIds.contains(_contentList!.first.id), onTap: () => _onSurvey(_contentList!.first),)
     );
 
   double get _pageHeight {
@@ -199,7 +200,7 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
       pages.add(Padding(
         key: _cardKeys[survey.id] ??= GlobalKey(),
         padding: EdgeInsets.only(right: _pageSpacing, bottom: _pageBottomPadding),
-        child: PublicSurveyCard.pageCard(survey, onTap: () => _onSurvey(survey),)
+        child: PublicSurveyCard.pageCard(survey, hasActivity: _activitySurveyIds.contains(survey.id), onTap: () => _onSurvey(survey),)
       ),);
     }
 
@@ -304,11 +305,35 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
 
   void _onSurvey(Survey survey) {
     Analytics().logSelect(target: 'Survey: ${survey.title}');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: survey)));
+    if (survey.completed != true) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: survey)));
+    }
+    else if (!_activitySurveyIds.contains(survey.id)) {
+      setState(() {
+        _activitySurveyIds.add(survey.id);
+      });
+      Surveys().loadUserSurveyResponses(surveyIDs: <String>[survey.id]).then((List<SurveyResponse>? result) {
+        if (mounted && (_activitySurveyIds.contains(survey.id))) {
+          setState(() {
+            _activitySurveyIds.remove(survey.id);
+          });
+          SurveyResponse? surveyResponse = (result?.isNotEmpty == true) ? result?.first : null;
+          if (surveyResponse != null) {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: surveyResponse.survey, inputEnabled: false, dateTaken: surveyResponse.dateTaken, showResult: true)));
+          }
+          else {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: survey)));
+          }
+        }
+      });
+    }
   }
 
   void _onSeeAll() {
     Analytics().logSelect(target: "View All", source: '${widget.runtimeType}' );
+    setState(() {
+      _activitySurveyIds.clear();
+    });
     Navigator.push(context, CupertinoPageRoute(builder: (context) => PublicSurveysPanel()));
   }
 }
