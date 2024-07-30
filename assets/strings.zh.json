@@ -3456,7 +3456,9 @@
 
 	"widget.home.public_surveys.label.header.title":"Surveys",
 	"widget.home.public_surveys.label.description.failed": "Failed to load surveys.",
+	"widget.home.public_surveys.label.description.offline": "Surveys are not available while offline",
 	"widget.home.public_surveys.label.description.empty": "There are no available surveys at the moment.",
+	"widget.home.public_surveys.label.description.logged_out": "You need to be logged in to access surveys. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
 	"widget.home.public_surveys.button.all.title":"View All",
 	"widget.home.public_surveys.button.all.hint":"Tap to view all surveys",
 
@@ -4085,6 +4087,7 @@
 	"common.label.other": "其他",
 	"common.label.county": "County",
 	"common.label.read_more": "Read more",
+	"common.label.failed": "Failed",
 
 	"common.message.offline":"你还没联网。",
 	"common.message.logged_out":"您未登入。",

@@ -16,6 +16,7 @@ import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -62,6 +63,7 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
 
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
+      Auth2.notifyLoginChanged,
       AppLivecycle.notifyStateChanged,
     ]);
 
@@ -88,7 +90,8 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
     if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
-    else if (name == Connectivity.notifyStatusChanged) {
+    else if ((name == Connectivity.notifyStatusChanged) ||
+             (name == Auth2.notifyLoginChanged)) {
       _refresh().then((_) {
         setStateIfMounted();
       });
@@ -122,8 +125,13 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
     if (Connectivity().isOffline) {
       return HomeMessageCard(
         title: Localization().getStringEx("common.message.offline", "You appear to be offline"),
-        message: Localization().getStringEx("widget.home.athletics_events.text.offline", "Athletics Events are not available while offline"),
+        message: Localization().getStringEx("widget.home.public_surveys.label.description.offline", "Surveys are not available while offline"),
       );
+    }
+    else if (!Auth2().isLoggedIn) {
+      return HomeMessageCard(
+        title: Localization().getStringEx("common.message.logged_out", "You are not logged in"),
+        message: Localization().getStringEx("widget.home.public_surveys.label.description.logged_out", "You need to be logged in to access surveys. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings."),);
     }
     else if (_dataActivity == _DataActivity.init) {
       return HomeProgressWidget();
@@ -133,7 +141,7 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
     }
     else if (_contentList == null) {
       return HomeMessageCard(
-        title: Localization().getStringEx('panel.events2.home.message.failed.title', 'Failed'),
+        title: Localization().getStringEx('common.label.failed', 'Failed'),
         message: Localization().getStringEx("widget.home.public_surveys.label.description.failed", "Failed to load surveys."),
       );
     }
@@ -236,7 +244,7 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
   }
 
   Future<void> _refresh() async {
-    if (Connectivity().isOnline && (_dataActivity != _DataActivity.init) && (_dataActivity != _DataActivity.refresh)) {
+    if (Connectivity().isOnline && Auth2().isLoggedIn && (_dataActivity != _DataActivity.init) && (_dataActivity != _DataActivity.refresh)) {
       setStateIfMounted(() {
         _dataActivity = _DataActivity.refresh;
       });
