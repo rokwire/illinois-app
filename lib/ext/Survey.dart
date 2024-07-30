@@ -1,7 +1,11 @@
+import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/survey.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:timezone/timezone.dart';
 
 extension SurveyExt on Survey {
   String? get displayTitle {
@@ -14,6 +18,26 @@ extension SurveyExt on Survey {
     else {
       return null;
     }
+  }
+
+  String? get displayEndTime => displayTime(endDate);
+
+  static String? displayTime(DateTime? dateTime, { String format = 'MMM d' }) {
+    if (dateTime != null) {
+      TZDateTime nowLocal = DateTimeLocal.nowLocalTZ();
+      TZDateTime nowMidnightLocal = TZDateTimeUtils.dateOnly(nowLocal);
+
+      TZDateTime dateTimeLocal = dateTime.toLocalTZ();
+      TZDateTime dateTimeMidnightLocal = TZDateTimeUtils.dateOnly(dateTimeLocal);
+
+      int daysDiff = dateTimeMidnightLocal.difference(nowMidnightLocal).inDays;
+      switch(daysDiff) {
+        case 0: return Localization().getStringEx('model.explore.date_time.today', 'Today');;
+        case 1: return Localization().getStringEx('model.explore.date_time.tomorrow', 'Tomorrow');
+        default: return DateFormat(format).format(dateTime);
+      }
+    }
+    return null;
   }
 }
 

@@ -3449,6 +3449,7 @@
     "widget.public_survey.label.completed_suffix": " (Completed)",
     "widget.public_survey.label.estimated_completion_time.one": "A minute to complete",
     "widget.public_survey.label.estimated_completion_time.more": "{{estimated_completion_time}} minutes to complete",
+    "widget.public_survey.label.detail.ends": "Ends: {{end_date}}",
 
     "widget.home.campus_reminders.label.campus_reminders": "Campus Reminders",
     "widget.home.campus_reminders.text.empty.description": "There are no active Campus Reminders.",

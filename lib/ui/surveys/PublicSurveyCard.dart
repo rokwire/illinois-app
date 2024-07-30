@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Survey.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -43,8 +44,7 @@ class PublicSurveyCard extends StatelessWidget {
     Expanded(child:
       Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
         _titleWidget,
-        if (_estimatedCompletionTime > 0)
-          _estimatedCompletionTimeWidget
+        ..._detailsWidgets,
       ],)
     ),
     Padding(padding: const EdgeInsets.only(left: 8), child:
@@ -52,12 +52,22 @@ class PublicSurveyCard extends StatelessWidget {
     ),
   ],);
 
-  Widget get _pageContentWidget => Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-    _titleWidget,
-    Container(padding: const EdgeInsets.only(top: 16), alignment: Alignment.centerRight, child:
+  Widget get _pageContentWidget {
+    List<Widget> detailsWidgets = _detailsWidgets;
+    return Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+      _titleWidget,
+      Container(padding: EdgeInsets.only(top: (0 < detailsWidgets.length) ? 16 : 32), alignment: Alignment.centerRight, child:
+        Column(crossAxisAlignment: CrossAxisAlignment.end, children: detailsWidgets,)
+      ),
+    ],);
+  }
+
+  List<Widget> get _detailsWidgets => <Widget>[
+    if (_hasEstimatedCompletionTime)
       _estimatedCompletionTimeWidget,
-    ),
-  ],);
+    if (_hasEndDate)
+      _endDateWidget,
+  ];
 
   Widget get _titleWidget =>
     RichText(textAlign: TextAlign.left, text: TextSpan(children:<InlineSpan>[
@@ -68,6 +78,8 @@ class PublicSurveyCard extends StatelessWidget {
           style: Styles().textStyles.getTextStyle('widget.label.regular.variant.fat'),
         ),
     ]));
+
+  bool get _hasEstimatedCompletionTime => (_estimatedCompletionTime > 0);
   
   Widget get _estimatedCompletionTimeWidget =>
     Text(_estimatedCompletionTimeText, style: Styles().textStyles.getTextStyle('widget.info.small.medium_fat'),);
@@ -87,6 +99,26 @@ class PublicSurveyCard extends StatelessWidget {
   }
 
   int get _estimatedCompletionTime => survey.estimatedCompletionTime ?? 0;
+
+  bool get _hasEndDate => (survey.endDate != null);
+
+  Widget get _endDateWidget =>
+    Text(_endDateText ?? '', style: Styles().textStyles.getTextStyle('widget.info.small.medium_fat'),);
+
+  String? get _endDateText {
+    String? displayEndTime = survey.displayEndTime;
+    if (displayEndTime != null) {
+      final String _valueMacro = '{{end_date}}';
+      return Localization().getStringEx('widget.public_survey.label.detail.ends', 'Ends: $_valueMacro').
+        replaceAll(_valueMacro, displayEndTime);
+    }
+    else {
+      return null;
+    }
+  }
+
+
+  //"widget.public_survey.label.detail.ends": "Ends: {{end_date}}"
 
   EdgeInsets get _contentPadding {
     switch (displayMode) {
