@@ -1191,6 +1191,8 @@
     "panel.explore_detail.label.ask_dietician": "Ask a Dietitian",
     "panel.explore_detail.label.ask_dietician_descr": "Type your question to our dietitians:",
 
+    "panel.explore_building_detail.detail.fllor_plan_and_amenities": "Floor Plans & Amenities",
+
     "panel.events_schedule.header.title": "Event Schedule",
     "panel.events_schedule.tab.title.saved": "Saved",
     "panel.events_schedule.empty.events": "No events",
@@ -1655,7 +1657,7 @@
     "panel.settings.privacy_statement.label.title": "Privacy Statement",
 
     "panel.settings.contacts.button.help_desk.title": "CONTACT HELP DESK",
-    "panel.settings.contacts.button.share_feedback.title": "SHARE FEEDBACK & IDEAS",
+    "panel.settings.contacts.button.share_idea.title": "SHARE AN IDEA",
     "panel.settings.contacts.button.develop_code.title": "DEVELOP CODE WITH ROKWIRE",
     "panel.settings.partners.button.help_desk.title": "PARTNER WITH US",
     "panel.settings.review.button.help_desk.title": "REVIEW APP",
@@ -3456,6 +3458,7 @@
     "widget.public_survey.label.completed_suffix": " (Completed)",
     "widget.public_survey.label.estimated_completion_time.one": "A minute to complete",
     "widget.public_survey.label.estimated_completion_time.more": "{{estimated_completion_time}} minutes to complete",
+    "widget.public_survey.label.detail.ends": "Ends: {{end_date}}",
 
     "widget.home.campus_reminders.label.campus_reminders": "Campus Reminders",
     "widget.home.campus_reminders.text.empty.description": "There are no active Campus Reminders.",
@@ -3494,7 +3497,9 @@
 
     "widget.home.public_surveys.label.header.title":"Surveys",
     "widget.home.public_surveys.label.description.failed": "Failed to load surveys.",
+    "widget.home.public_surveys.label.description.offline": "Surveys are not available while offline",
     "widget.home.public_surveys.label.description.empty": "There are no available surveys at the moment.",
+    "widget.home.public_surveys.label.description.logged_out": "You need to be logged in to access surveys. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
     "widget.home.public_surveys.button.all.title":"View All",
     "widget.home.public_surveys.button.all.hint":"Tap to view all surveys",
 
@@ -4093,6 +4098,9 @@
     "model.device_calendar.message.add.event.failed": "Failed to add event to calendar.",
     "model.device_calendar.message.add.event.failed.permission.denied": "Permission denied to add event to calendar.",
 
+    "model.public_survey.label.detail.ends.1": "(Ends {{end_date}})",
+    "model.public_survey.label.detail.ends.2": "(Ends on {{end_date}})",
+
     "logic.date_time.greeting.morning": "Good morning",
     "logic.date_time.greeting.afternoon": "Good afternoon",
     "logic.date_time.greeting.evening": "Good evening",
@@ -4118,6 +4126,7 @@
     "common.label.other": "Other",
     "common.label.county": "County",
     "common.label.read_more": "Read more",
+    "common.label.failed": "Failed",
 
     "common.message.offline":"You appear to be offline",
     "common.message.logged_out":"You are not signed in",

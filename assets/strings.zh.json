@@ -1184,6 +1184,8 @@
 	"panel.explore_detail.label.ask_dietician": "向营养师提问",
 	"panel.explore_detail.label.ask_dietician_descr": "键入您的问题:",
 
+	"panel.explore_building_detail.detail.fllor_plan_and_amenities": "Floor Plans & Amenities",
+
 	"panel.events_schedule.header.title": "活動時間表",
 	"panel.events_schedule.tab.title.saved": "已保存",
 	"panel.events_schedule.empty.events": "没有活动",
@@ -1635,7 +1637,7 @@
 	"panel.settings.privacy_statement.label.title":"隐私声明",
 
 	"panel.settings.contacts.button.help_desk.title": "CONTACT HELP DESK",
-	"panel.settings.contacts.button.share_feedback.title": "SHARE FEEDBACK & IDEAS",
+	"panel.settings.contacts.button.share_idea.title": "SHARE AN IDEA",
 	"panel.settings.contacts.button.develop_code.title": "DEVELOP CODE WITH ROKWIRE",
 	"panel.settings.partners.button.help_desk.title": "PARTNER WITH US",
 	"panel.settings.review.button.help_desk.title": "REVIEW APP",
@@ -3425,6 +3427,7 @@
 	"widget.public_survey.label.completed_suffix": " (Completed)",
 	"widget.public_survey.label.estimated_completion_time.one": "A minute to complete",
  	"widget.public_survey.label.estimated_completion_time.more": "{{estimated_completion_time}} minutes to complete",
+	"widget.public_survey.label.detail.ends": "Ends: {{end_date}}",
 
 	"widget.home.campus_reminders.label.campus_reminders":"校园提醒",
 	"widget.home.campus_reminders.text.empty.description": "沒有有效的校園提醒。",
@@ -3454,7 +3457,9 @@
 
 	"widget.home.public_surveys.label.header.title":"Surveys",
 	"widget.home.public_surveys.label.description.failed": "Failed to load surveys.",
+	"widget.home.public_surveys.label.description.offline": "Surveys are not available while offline",
 	"widget.home.public_surveys.label.description.empty": "There are no available surveys at the moment.",
+	"widget.home.public_surveys.label.description.logged_out": "You need to be logged in to access surveys. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
 	"widget.home.public_surveys.button.all.title":"View All",
 	"widget.home.public_surveys.button.all.hint":"Tap to view all surveys",
 
@@ -4058,6 +4063,9 @@
 	"model.device_calendar.message.add.event.failed": "Failed to add event to Calendar",
 	"model.device_calendar.message.add.event.failed.permission.denied": "Permission denined to add event to Calendar",
 
+	"model.public_survey.label.detail.ends.1": "(Ends {{end_date}})",
+ "model.public_survey.label.detail.ends.2": "(Ends on {{end_date}})",
+
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",
 	"logic.date_time.greeting.evening": "晚上好",
@@ -4083,6 +4091,7 @@
 	"common.label.other": "其他",
 	"common.label.county": "County",
 	"common.label.read_more": "Read more",
+	"common.label.failed": "Failed",
 
 	"common.message.offline":"你还没联网。",
 	"common.message.logged_out":"您未登入。",

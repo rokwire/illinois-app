@@ -15,25 +15,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pre-demo issues [#2](https://github.com/rokmetro/neom-app/issues/2)
 
 ## Unreleased - Illinois
+### Added
+- Show survey end time, if exists [#4243](https://github.com/rokwire/illinois-app/issues/4243).
+### Changed
+- Show user survey result, if exists [#4243](https://github.com/rokwire/illinois-app/issues/4243).
 
 ## [6.1.3] - 2024-07-26
+### Changed
 - Minor fixes in Public Surveys UI [#4243](https://github.com/rokwire/illinois-app/issues/4243).
 
 ## [6.1.2] - 2024-07-25
+### Changed
 - Updated Public Surveys UI / round 1 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
 
 ## [6.1.1] - 2024-07-24
-### Changed
-- Upgrade Android app to target API level 34 and upgrade plugin version to match that requirement [#4245](https://github.com/rokwire/illinois-app/issues/4245).
-### Added
-- Clear all Assistant messages [#4129](https://github.com/rokwire/illinois-app/issues/4129).
+- N/A
 
 ## [6.1.0] - 2024-07-22
 ### Added
 - Created Public Surveys UI / round 0 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
+
+## [6.0.29] - 2024-07-29
+### Changed
+- Contact us: Share an Idea [#4248](https://github.com/rokwire/illinois-app/issues/4248).
+### Added
+- Added "Floor Plans & Amenities" detail entry to ExploreBuildingDetailPanel [#4254](https://github.com/rokwire/illinois-app/issues/4254).
+- Underline "preferred name instructions" link [#4249](https://github.com/rokwire/illinois-app/issues/4249).
+- Play Checking off sound for To-Do List item [#2258](https://github.com/rokwire/illinois-app/issues/2258).
+### Fixed
+- Fixed background color of Event2DetailPanel [#4250](https://github.com/rokwire/illinois-app/issues/4250).
+- Fixed VoiceRecorder permissions requested when dialog is shown [#4247](https://github.com/rokwire/illinois-app/issues/4247).
+
+## [6.0.28] - 2024-07-25
 ### Changed
 - Lookup mental health buildings by id and number [#4240](https://github.com/rokwire/illinois-app/issues/4240).
 - Always show CC button in onboarding video [#4226](https://github.com/rokwire/illinois-app/issues/4226).
+- Upgrade Android app to target API level 34 and upgrade plugin version to match that requirement [#4245](https://github.com/rokwire/illinois-app/issues/4245).
+### Added
+- Clear all Assistant messages [#4129](https://github.com/rokwire/illinois-app/issues/4129).
 
 ## [6.0.27] - 2024-07-12
 - Added ability to clear end date and time in Create Event Panel [#4233](https://github.com/rokwire/illinois-app/issues/4233).

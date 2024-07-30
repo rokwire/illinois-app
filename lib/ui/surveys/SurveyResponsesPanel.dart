@@ -24,17 +24,17 @@ import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/widget_builders/survey.dart';
 import 'package:rokwire_plugin/ui/widgets/scroll_pager.dart';
 
-class Event2SurveyResponsesPanel extends StatefulWidget {
+class SurveyResponsesPanel extends StatefulWidget {
   final String? surveyId;
   final String? eventName;
 
-  Event2SurveyResponsesPanel({Key? key, this.surveyId, this.eventName}) : super(key: key);
+  SurveyResponsesPanel({Key? key, this.surveyId, this.eventName}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _Event2SurveyResponsesPanelState();
+  State<StatefulWidget> createState() => _SurveyResponsesPanelState();
 }
 
-class _Event2SurveyResponsesPanelState extends State<Event2SurveyResponsesPanel>  {
+class _SurveyResponsesPanelState extends State<SurveyResponsesPanel>  {
 
   List<SurveyResponse> _surveyResponses = [];
 
@@ -119,10 +119,12 @@ class _Event2SurveyResponsesPanelState extends State<Event2SurveyResponsesPanel>
     setState(() {});
   }
 
+  Survey? get _survey => _surveyResponses.isNotEmpty ? _surveyResponses.first.survey : null;
+
   // HeaderBar
 
   PreferredSizeWidget get _headerBar => HeaderBar(
-    title: Localization().getStringEx('panel.event2.survey.responses.header.title', '{{event_name}} Survey Responses').replaceAll('{{event_name}}', widget.eventName ?? 'Event'),
+    title: Localization().getStringEx('panel.survey.responses.header.title', '{{survey_name}} Survey Responses').replaceAll('{{survey_name}}', widget.eventName ?? _survey?.title ?? ''),
     onLeading: _onHeaderBarBack,
   );
 
