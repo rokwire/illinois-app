@@ -106,7 +106,7 @@ class PublicSurveyCard extends StatelessWidget {
     Text(_endDateText ?? '', style: Styles().textStyles.getTextStyle('widget.info.small.medium_fat'),);
 
   String? get _endDateText {
-    String? displayEndTime = survey.displayEndTime;
+    String? displayEndTime = survey.displayEndDate;
     if (displayEndTime != null) {
       final String _valueMacro = '{{end_date}}';
       return Localization().getStringEx('widget.public_survey.label.detail.ends', 'Ends: $_valueMacro').
@@ -116,9 +116,6 @@ class PublicSurveyCard extends StatelessWidget {
       return null;
     }
   }
-
-
-  //"widget.public_survey.label.detail.ends": "Ends: {{end_date}}"
 
   EdgeInsets get _contentPadding {
     switch (displayMode) {

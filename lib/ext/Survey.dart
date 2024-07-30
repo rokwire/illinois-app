@@ -20,17 +20,13 @@ extension SurveyExt on Survey {
     }
   }
 
-  String? get displayEndTime => displayTime(endDate);
+  String? get displayEndDate => displayDate(endDate);
 
-  static String? displayTime(DateTime? dateTime, { String format = 'MMM d' }) {
+  int? get endDateDiff => (endDate != null) ? displayDateDiff(endDate!) : null;
+
+  static String? displayDate(DateTime? dateTime, { String format = 'MMM d' }) {
     if (dateTime != null) {
-      TZDateTime nowLocal = DateTimeLocal.nowLocalTZ();
-      TZDateTime nowMidnightLocal = TZDateTimeUtils.dateOnly(nowLocal);
-
-      TZDateTime dateTimeLocal = dateTime.toLocalTZ();
-      TZDateTime dateTimeMidnightLocal = TZDateTimeUtils.dateOnly(dateTimeLocal);
-
-      int daysDiff = dateTimeMidnightLocal.difference(nowMidnightLocal).inDays;
+      int daysDiff = displayDateDiff(dateTime);
       switch(daysDiff) {
         case 0: return Localization().getStringEx('model.explore.date_time.today', 'Today');
         case 1: return Localization().getStringEx('model.explore.date_time.tomorrow', 'Tomorrow');
@@ -39,6 +35,17 @@ extension SurveyExt on Survey {
     }
     return null;
   }
+
+  static int displayDateDiff(DateTime dateTime) {
+    TZDateTime nowLocal = DateTimeLocal.nowLocalTZ();
+    TZDateTime nowMidnightLocal = TZDateTimeUtils.dateOnly(nowLocal);
+
+    TZDateTime dateTimeLocal = dateTime.toLocalTZ();
+    TZDateTime dateTimeMidnightLocal = TZDateTimeUtils.dateOnly(dateTimeLocal);
+
+    return dateTimeMidnightLocal.difference(nowMidnightLocal).inDays;
+  }
+
 }
 
 extension Event2SurveysExt on Surveys {
