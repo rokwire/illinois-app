@@ -191,7 +191,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
     }
   }
 
-  Future<dynamic> _loadStudentSummary() async {
+  Future<dynamic> loadStudentSummaryEx() async {
     String? uin = Auth2().uin;
     String? firstName = Auth2().account?.authType?.uiucUser?.firstName;
     String? lastName = Auth2().account?.authType?.uiucUser?.lastName;
@@ -201,17 +201,21 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
       String analyticsUrl = "${Config().illiniCashBaseUrl}/StudentSummary/${Analytics.LogAnonymousUin}/${Analytics.LogAnonymousFirstName}/${Analytics.LogAnonymousLastName}";
       Response? response;
       try { response = await Network().get(url, analyticsUrl: analyticsUrl, auth: this); } on Exception catch(e) { print(e.toString()); }
-      int responseCode = response?.statusCode ?? -1;
-      if ((response != null) && responseCode >= 200 && responseCode <= 301) {
-        String responseString = response.body;
-        return IlliniStudentSummary.fromJson(JsonUtils.decodeMap(responseString)); // request succeeded
-      }
-      else {
-        return null; // request failed, eligible not determined
-      }
+      return response;
     }
     else {
       return false; // eligible not available
+    }
+  }
+
+  Future<dynamic> _loadStudentSummary() async {
+    dynamic result = await loadStudentSummaryEx();
+    if (result is Response) {
+      return ((result.statusCode >= 200) && (result.statusCode <= 301)) ?
+         IlliniStudentSummary.fromJson(JsonUtils.decodeMap(result.body)) : null; // "request succeeded" vs "request failed, eligible not determined"
+    }
+    else {
+      return result; // eligible not available
     }
   }
 

@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -50,17 +52,47 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       _ProfileStoredDataWidget(
         title: Localization().getStringEx('panel.profile.stored_data.core_account.title', "Core Account"),
-        dataProvider: _coreAccountData,
+        dataProvider: _provideCoreAccountJson,
+        updateController: _updateController,
+      ),
+      _ProfileStoredDataWidget(
+        title: Localization().getStringEx('panel.profile.stored_data.notifications_user.title', "Notifications User"),
+        dataProvider: _provideNotificationsUserJson,
+        updateController: _updateController,
+      ),
+      _ProfileStoredDataWidget(
+        title: Localization().getStringEx('panel.profile.stored_data.i_card.title', "iCard"),
+        dataProvider: _provideICardJson,
+        updateController: _updateController,
+      ),
+      _ProfileStoredDataWidget(
+        title: Localization().getStringEx('panel.profile.stored_data.student_summary.title', "Student Summary"),
+        dataProvider: _provideStudentSummaryJson,
         updateController: _updateController,
       ),
     ]),
   );
 
-  Future<String?> _coreAccountData() async =>
+  Future<String?> _provideCoreAccountJson() async =>
     _provideResponseData(await Auth2().loadAccountEx());
 
-  String? _provideResponseData(Response? response) => (response?.statusCode == 200) ?
-    JsonUtils.encode(JsonUtils.decode(response?.body), prettify: true) : null;
+  Future<String?> _provideNotificationsUserJson() async =>
+    _provideResponseData(await Inbox().loadUserInfoEx());
+
+  Future<String?> _provideICardJson() async =>
+    _provideResponseData(await Auth2().loadAuthCardEx());
+
+  Future<String?> _provideStudentSummaryJson() async =>
+    _provideResponseData(await _provideStudentSummaryResponse());
+
+  Future<Response?> _provideStudentSummaryResponse() async {
+    dynamic result = await IlliniCash().loadStudentSummaryEx();
+    return (result is Response) ? result : null;
+  }
+
+  String? _provideResponseData(Response? response) => ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) ?
+    JsonUtils.encode(JsonUtils.decode(response.body), prettify: true) : null;
+
 
   Future<void> _onRefresh() async {
     _updateController.add(ProfileStoredDataPanel.notifyRefresh);

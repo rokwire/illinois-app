@@ -2160,6 +2160,9 @@
 
 	"panel.profile.stored_data.header.title": "My Stored Data",
 	"panel.profile.stored_data.core_account.title": "Core Account",
+	"panel.profile.stored_data.notifications_user.title": "Notifications User",
+	"panel.profile.stored_data.i_card.title": "iCard",
+	"panel.profile.stored_data.student_summary.title": "Student Summary",
 
 	"widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data.",
 	"widget.profile.stored_data.copied.succeeded.message": "Copied to your clipboard!",
