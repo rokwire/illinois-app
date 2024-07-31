@@ -158,7 +158,8 @@ class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
           readOnly: true,
           controller: _textController,
           decoration: InputDecoration(
-            border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)),
+            border: _textBorder,
+            focusedBorder: _textBorder,
             contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8)
           ),
           style: (_providedData != null) ? Styles().textStyles.getTextStyle('widget.input_field.text.regular') : Styles().textStyles.getTextStyle('widget.item.small.thin.italic'),
@@ -188,8 +189,10 @@ class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
 
       ],),
     ]),
-
   );
+
+  InputBorder get _textBorder =>
+    OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0));
 
   Future<void> _refresh() async {
     if (mounted) {
