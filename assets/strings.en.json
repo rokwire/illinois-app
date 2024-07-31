@@ -2172,6 +2172,9 @@
     "panel.profile_info.picture.delete.confirmation.msg": "Are you sure you want to remove this profile picture?",
 
     "panel.profile.stored_data.header.title": "My Stored Data",
+    "panel.profile.stored_data.core_account.title": "Core Account",
+
+    "widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data.",
 
     "panel.create_poll.header.title": "Create a Poll",
     "panel.create_poll.description": "People can vote through the {{app_title}} app by asking you for the four-digit poll number.",

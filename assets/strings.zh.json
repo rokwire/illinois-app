@@ -2159,6 +2159,9 @@
 	"panel.profile_info.picture.delete.confirmation.msg": "您确定要移除此个人资料图像？",
 
 	"panel.profile.stored_data.header.title": "My Stored Data",
+	"panel.profile.stored_data.core_account.title": "Core Account",
+
+	"widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data.",
 
 	"panel.create_poll.header.title": "创建快速投票",
 	"panel.create_poll.description": "人們可以通過{{app_title}}應用程序向您詢問 4 位投票號碼來投票。",

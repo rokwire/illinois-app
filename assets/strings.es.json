@@ -2171,6 +2171,9 @@
     "panel.profile_info.picture.delete.confirmation.msg": "¿Estás seguro/a que deseas eliminar esta imagen de perfil?",
 
     "panel.profile.stored_data.header.title": "My Stored Data",
+    "panel.profile.stored_data.core_account.title": "Core Account",
+
+    "widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data.",
 
     "panel.create_poll.header.title": "Crear una encuesta rápida",
     "panel.create_poll.description": "Las personas pueden votar a través de la aplicación de {{app_title}} pidiéndole el número de encuesta de 4 dígitos.",
