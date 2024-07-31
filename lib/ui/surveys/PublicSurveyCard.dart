@@ -87,7 +87,7 @@ class PublicSurveyCard extends StatelessWidget {
   bool get _hasEstimatedCompletionTime => (_estimatedCompletionTime > 0);
   
   Widget get _estimatedCompletionTimeWidget =>
-    Text(_estimatedCompletionTimeText, style: Styles().textStyles.getTextStyle('widget.info.small.medium_fat'),);
+    Text(_estimatedCompletionTimeText, style: Styles().textStyles.getTextStyle('widget.info.dark.small'),);
 
   String get _estimatedCompletionTimeText {
     if (_estimatedCompletionTime > 1) {

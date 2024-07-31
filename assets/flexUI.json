@@ -7,7 +7,7 @@
 			"home": [
 				"all_groups", "my_groups", "event_feed", "my_events",
 				"all_notifications", "unread_notifications",
-				"new_student_checklist", "recent_items", "public_surveys"
+				"recent_items", "public_surveys"
 			],
 			"home.system": ["tout", "connect"],
 			"home.connect": ["phone_or_email"],
@@ -17,7 +17,6 @@
 			"browse.events": ["event_feed", "my_events"],
 			"browse.groups": ["all_groups", "my_groups"],
 			"browse.inbox": ["all_notifications", "unread_notifications"],
-			"browse.recent": ["recent_items"],
 			"browse.surveys": ["public_surveys"],
 
 			"settings": ["contact", "favorites", "notifications"],
@@ -29,15 +28,6 @@
 			"authenticate.connected.password": ["info", "disconnect", "login"],
 			"authenticate.connected.passkey": ["info", "disconnect", "login"],
 
-			"academics": ["skills_self_evaluation", "essential_skills_coach"],
-			"academics.skills_self_evaluation.features": ["authentication"],
-			"academics.essential_skills_coach.features": ["authentication"],
-
-			"wellness": ["daily_tips", "rings", "appointments", "health_screener", "podcast", "resources", "mental_health", "success_team", "struggling"],
-			"wellness.appointments.features": ["authentication", "netid_login"],
-			"wellness.health_screener": ["history"],
-			"wellness.health_screener.features": ["student", "authentication"],
-
 			"assistant.features": [],
 
 			"polls.features": ["authentication", "netid_login"],
@@ -46,10 +36,6 @@
 			"explore.map":  ["events2", "buildings"],
 	
 			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
-
-			"assessments": ["settings"],
-			"assessments.settings": ["skills_self_evaluation"],
-			"assessments.settings.skills_self_evaluation": ["save"],
 
 			"calendar": ["settings"],
 			"calendar.settings": ["add", "prompt"],
@@ -71,14 +57,25 @@
 		},
 		"rules": {
 			"roles" : {
-				"onboarding.login_netid"                   : ["student", "OR", "employee"],
-				"onboarding.login_phone"                   : ["NOT", ["employee", "OR", "student"]],
-				"onboarding.verify_phone"                  : ["NOT", ["employee", "OR", "student"]],
-				"onboarding.confirm_phone"                 : ["NOT", ["employee", "OR", "student"]],
+				"onboarding.login_netid"                   	: ["student", "OR", "employee"],
+				"onboarding.login_phone"                   	: ["NOT", ["employee", "OR", "student"]],
+				"onboarding.verify_phone"                  	: ["NOT", ["employee", "OR", "student"]],
+				"onboarding.confirm_phone"                 	: ["NOT", ["employee", "OR", "student"]],
 	
-				"onboarding.sport_prefs"                   : ["fan"],
+				"onboarding.sport_prefs"                   	: ["fan"],
 
-				"features.student"                         : ["student"]
+				"features.student"                         	: ["student"],
+
+				"home.all_groups" 							: [["student", "OR", "faculty"], "OR", "staff"],
+				"home.my_groups" 							: [["student", "OR", "faculty"], "OR", "staff"],
+				"home.event_feed" 							: [["student", "OR", "faculty"], "OR", "staff"],
+				"home.my_events" 							: [["student", "OR", "faculty"], "OR", "staff"],
+				"home.all_notifications" 					: [["student", "OR", "faculty"], "OR", "staff"],
+				"home.unread_notifications" 				: [["student", "OR", "faculty"], "OR", "staff"],
+
+				"browse.events" 							: [["student", "OR", "faculty"], "OR", "staff"],
+				"browse.groups" 							: [["student", "OR", "faculty"], "OR", "staff"],
+				"browse.inbox" 								: [["student", "OR", "faculty"], "OR", "staff"]
 			},
 			"groups": {
 				"home.twitter.account.canvas"             : ["${config.settings.groups.canvas}", "AND", ["NOT", "${config.settings.groups.gies}"]],

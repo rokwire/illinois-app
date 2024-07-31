@@ -5,6 +5,7 @@ import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/survey_panel.dart' as rokwire;
+import 'package:rokwire_plugin/ui/widgets/survey.dart';
 class SurveyPanel extends rokwire.SurveyPanel{
 
   SurveyPanel({required super.survey, super.surveyDataKey, super.inputEnabled, super.backgroundColor,
@@ -12,10 +13,36 @@ class SurveyPanel extends rokwire.SurveyPanel{
     super.summarizeResultRules, super.summarizeResultRulesWidget, super.headerBar, super.tabBar,
     super.offlineWidget, super.textStyles});
 
+  factory SurveyPanel.defaultStyles({required dynamic survey, String? surveyDataKey, bool inputEnabled = true,
+    DateTime? dateTaken, bool showResult = false, Function(dynamic)? onComplete, int initPanelDepth = 0, Map<String, dynamic>? defaultResponses,
+    bool summarizeResultRules = false, Widget? summarizeResultRulesWidget, PreferredSizeWidget? headerBar, Widget? tabBar,
+    Widget? offlineWidget}) {
+    return SurveyPanel(
+      survey: survey,
+      surveyDataKey: surveyDataKey,
+      inputEnabled: inputEnabled,
+      dateTaken: dateTaken,
+      showResult: showResult,
+      onComplete: onComplete,
+      initPanelDepth: initPanelDepth,
+      defaultResponses: defaultResponses,
+      summarizeResultRules: summarizeResultRules,
+      summarizeResultRulesWidget: summarizeResultRulesWidget,
+      headerBar: headerBar,
+      tabBar: tabBar,
+      offlineWidget: offlineWidget,
+      backgroundColor: defaultBackgroundColor,
+      textStyles: defaultTextStyles,
+    );
+  }
+
   @override
   PreferredSizeWidget? buildHeaderBar(String? title) => ((survey is Survey) && ((survey as Survey).endDate != null)) ?
     HeaderBar(titleWidget: _SurveyHeaderBarTitleWidget(survey as Survey, title: title),) :
     HeaderBar(title: title);
+
+  static Color? get defaultBackgroundColor => Styles().colors.surface;
+  static SurveyWidgetTextStyles get defaultTextStyles => SurveyWidgetTextStyles.withDefaults(horizontalMultipleChoiceOption: Styles().textStyles.getTextStyle('widget.item.small.thin'));
 }
 
 class _SurveyHeaderBarTitleWidget extends StatelessWidget {

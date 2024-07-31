@@ -22,7 +22,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
-import 'package:rokwire_plugin/ui/widgets/survey.dart';
 
 class HomePublicSurveysWidget extends StatefulWidget {
   final String? favoriteId;
@@ -308,11 +307,7 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
   void _onSurvey(Survey survey) {
     Analytics().logSelect(target: 'Survey: ${survey.title}');
     if (survey.completed != true) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(
-        survey: survey,
-        backgroundColor: Styles().colors.surface,
-        textStyles: SurveyWidgetTextStyles.withDefaults(horizontalMultipleChoiceOption: Styles().textStyles.getTextStyle('widget.item.small.thin')),
-      )));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel.defaultStyles(survey: survey)));
     }
     else if (!_activitySurveyIds.contains(survey.id)) {
       setState(() {
@@ -325,10 +320,10 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
           });
           SurveyResponse? surveyResponse = (result?.isNotEmpty == true) ? result?.first : null;
           if (surveyResponse != null) {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: surveyResponse.survey, inputEnabled: false, dateTaken: surveyResponse.dateTaken, showResult: true)));
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel.defaultStyles(survey: surveyResponse.survey, inputEnabled: false, dateTaken: surveyResponse.dateTaken, showResult: true)));
           }
           else {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: survey)));
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel.defaultStyles(survey: survey)));
           }
         }
       });

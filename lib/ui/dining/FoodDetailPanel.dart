@@ -315,7 +315,7 @@ class _FactItem extends StatelessWidget {
                 child: Text(
                 StringUtils.isNotEmpty(value) ? value! : "",
                 textAlign: TextAlign.right,
-                style: Styles().textStyles.getTextStyle("widget.detail.light.small"),
+                style: Styles().textStyles.getTextStyle("widget.detail.small"),
               )),
             ],
           ),

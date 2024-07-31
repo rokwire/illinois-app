@@ -293,7 +293,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
   void _onSurvey(Survey survey) {
     Analytics().logSelect(target: 'Survey: ${survey.title}');
     if (survey.completed != true) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: survey)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel.defaultStyles(survey: survey)));
     }
     else if (!_activitySurveyIds.contains(survey.id)) {
       setState(() {
@@ -306,10 +306,10 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
           });
           SurveyResponse? surveyResponse = (result?.isNotEmpty == true) ? result?.first : null;
           if (surveyResponse != null) {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: surveyResponse.survey, inputEnabled: false, dateTaken: surveyResponse.dateTaken, showResult: true)));
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel.defaultStyles(survey: surveyResponse.survey, inputEnabled: false, dateTaken: surveyResponse.dateTaken, showResult: true)));
           }
           else {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: survey)));
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel.defaultStyles(survey: survey)));
           }
         }
       });
