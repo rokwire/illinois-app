@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pre-demo issues [#2](https://github.com/rokmetro/neom-app/issues/2)
 
 ## Unreleased - Illinois
+
+## [6.1.4] - 2024-07-30
 ### Added
 - Show survey end time, if exists [#4243](https://github.com/rokwire/illinois-app/issues/4243).
 ### Changed
