@@ -1901,6 +1901,8 @@
     "panel.settings.privacy_center.button.manage_privacy.title":"Administre y comprenda su privacidad",
     "panel.settings.privacy_center.button.manage_privacy.hint":"",
     "panel.settings.privacy_center.button.privacy_policy.title":"Declaracion de privacidad",
+    "panel.settings.privacy_center.button.stored_data.title":"My Stored Data",
+    "panel.settings.privacy_center.button.stored_data.hint":"See everything we know about you.",
     "panel.settings.privacy_center.button.delete_data.title":"Borrar mi cuenta",
     "panel.settings.privacy_center.label.delete.description":"Esto eliminará toda su información personal que se compartió y almacenó dentro de la aplicación.",
     "panel.settings.privacy_center.label.delete_message.title":"¿Eliminar tu cuenta?",
@@ -2167,6 +2169,8 @@
     "panel.profile_info.picture.upload.failed.msg":"No se pudo cargar la imagen de perfil. Por favor, inténtelo de nuevo más tarde.",
     "panel.profile_info.picture.delete.failed.msg":"Error al eliminar la foto de perfil. Por favor, inténtelo de nuevo más tarde.",
     "panel.profile_info.picture.delete.confirmation.msg": "¿Estás seguro/a que deseas eliminar esta imagen de perfil?",
+
+    "panel.profile.stored_data.header.title": "My Stored Data",
 
     "panel.create_poll.header.title": "Crear una encuesta rápida",
     "panel.create_poll.description": "Las personas pueden votar a través de la aplicación de {{app_title}} pidiéndole el número de encuesta de 4 dígitos.",

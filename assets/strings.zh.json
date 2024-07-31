@@ -1888,6 +1888,8 @@
 	"panel.settings.privacy_center.button.manage_privacy.title":"管理并了解您的隐私",
 	"panel.settings.privacy_center.button.manage_privacy.hint":"",
 	"panel.settings.privacy_center.button.privacy_policy.title":"隐私声明",
+	"panel.settings.privacy_center.button.stored_data.title":"My Stored Data",
+	"panel.settings.privacy_center.button.stored_data.hint":"See everything we know about you.",
 	"panel.settings.privacy_center.button.delete_data.title":"刪除我的賬戶",
 	"panel.settings.privacy_center.label.delete.description":"这将删除应用程序中共享和存储的所有个人信息.",
 	"panel.settings.privacy_center.label.delete_message.title":"刪除您的帳戶？",
@@ -2155,6 +2157,8 @@
 	"panel.profile_info.picture.upload.failed.msg":"上传个人资料图像失败，请稍后再试",
 	"panel.profile_info.picture.delete.failed.msg":"无法删除图像，请稍后再试。",
 	"panel.profile_info.picture.delete.confirmation.msg": "您确定要移除此个人资料图像？",
+
+	"panel.profile.stored_data.header.title": "My Stored Data",
 
 	"panel.create_poll.header.title": "创建快速投票",
 	"panel.create_poll.description": "人們可以通過{{app_title}}應用程序向您詢問 4 位投票號碼來投票。",

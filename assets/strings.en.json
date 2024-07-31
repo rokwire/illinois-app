@@ -1902,6 +1902,8 @@
     "panel.settings.privacy_center.button.manage_privacy.title":"Manage and Understand Your Privacy",
     "panel.settings.privacy_center.button.manage_privacy.hint":"",
     "panel.settings.privacy_center.button.privacy_policy.title":"Privacy Statement",
+    "panel.settings.privacy_center.button.stored_data.title":"My Stored Data",
+    "panel.settings.privacy_center.button.stored_data.hint":"See everything we know about you.",
     "panel.settings.privacy_center.button.delete_data.title":"Delete My Account",
     "panel.settings.privacy_center.label.delete.description":"This will delete all of your personal information that was shared and stored within the app.",
     "panel.settings.privacy_center.label.delete_message.title":"Delete your account?",
@@ -2168,6 +2170,8 @@
     "panel.profile_info.picture.upload.failed.msg":"Failed to upload profile picture. Please try again later.",
     "panel.profile_info.picture.delete.failed.msg":"Failed to delete profile picture. Please try again later.",
     "panel.profile_info.picture.delete.confirmation.msg": "Are you sure you want to remove this profile picture?",
+
+    "panel.profile.stored_data.header.title": "My Stored Data",
 
     "panel.create_poll.header.title": "Create a Poll",
     "panel.create_poll.description": "People can vote through the {{app_title}} app by asking you for the four-digit poll number.",
