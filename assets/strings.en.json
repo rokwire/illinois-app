@@ -2175,6 +2175,7 @@
     "panel.profile.stored_data.core_account.title": "Core Account",
 
     "widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data.",
+    "widget.profile.stored_data.copied.succeeded.message": "Copied to your clipboard!",
 
     "panel.create_poll.header.title": "Create a Poll",
     "panel.create_poll.description": "People can vote through the {{app_title}} app by asking you for the four-digit poll number.",

@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -55,10 +56,11 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
     ]),
   );
 
-  Future<String?> _coreAccountData() async {
-    Response? response = await Auth2().loadAccountEx();
-    return (response?.statusCode == 200) ? JsonUtils.encode(JsonUtils.decode(response?.body), prettify: true) : null;
-  }
+  Future<String?> _coreAccountData() async =>
+    _provideResponseData(await Auth2().loadAccountEx());
+
+  String? _provideResponseData(Response? response) => (response?.statusCode == 200) ?
+    JsonUtils.encode(JsonUtils.decode(response?.body), prettify: true) : null;
 
   Future<void> _onRefresh() async {
     _updateController.add(ProfileStoredDataPanel.notifyRefresh);
@@ -183,5 +185,10 @@ class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
   }
 
   void _onCopy() {
+    if (_providedData != null) {
+      Clipboard.setData(ClipboardData(text: _providedData ?? '')).then((_) {
+        AppToast.showMessage(Localization().getStringEx('widget.profile.stored_data.copied.succeeded.message', 'Copied to your clipboard!'));
+      });
+    }
   }
 }

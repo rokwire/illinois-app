@@ -2174,6 +2174,7 @@
     "panel.profile.stored_data.core_account.title": "Core Account",
 
     "widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data.",
+    "widget.profile.stored_data.copied.succeeded.message": "Copied to your clipboard!",
 
     "panel.create_poll.header.title": "Crear una encuesta rápida",
     "panel.create_poll.description": "Las personas pueden votar a través de la aplicación de {{app_title}} pidiéndole el número de encuesta de 4 dígitos.",

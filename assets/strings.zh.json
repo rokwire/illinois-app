@@ -2162,6 +2162,7 @@
 	"panel.profile.stored_data.core_account.title": "Core Account",
 
 	"widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data.",
+	"widget.profile.stored_data.copied.succeeded.message": "Copied to your clipboard!",
 
 	"panel.create_poll.header.title": "创建快速投票",
 	"panel.create_poll.description": "人們可以通過{{app_title}}應用程序向您詢問 4 位投票號碼來投票。",
