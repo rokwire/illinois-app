@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -8,12 +10,15 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileStoredDataPanel extends StatefulWidget {
+  static const String notifyRefresh  = "edu.illinois.rokwire.home.refresh";
 
   @override
   State<StatefulWidget> createState() => _ProfileStoredDataPanelState();
 }
 
 class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
+
+  final StreamController<String> _updateController = StreamController.broadcast();
 
   @override
   void initState() {
@@ -40,11 +45,12 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
     ),
   );
 
-  Widget get _panelContent => Padding(padding: EdgeInsets.all(16), child:
+  Widget get _panelContent => Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       _ProfileStoredDataWidget(
         title: Localization().getStringEx('panel.profile.stored_data.core_account.title', "Core Account"),
         dataProvider: _coreAccountData,
+        updateController: _updateController,
       ),
     ]),
   );
@@ -55,7 +61,7 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
   }
 
   Future<void> _onRefresh() async {
-
+    _updateController.add(ProfileStoredDataPanel.notifyRefresh);
   }
 }
 
@@ -64,10 +70,18 @@ typedef _StoreDataProvider = Future<String?> Function();
 class _ProfileStoredDataWidget extends StatefulWidget {
   final String? title;
   final _StoreDataProvider dataProvider;
+  final StreamController<String>? updateController;
   final EdgeInsetsGeometry margin;
 
-  // ignore: unused_element
-  _ProfileStoredDataWidget({super.key, required this.dataProvider, this.title, this.margin = const EdgeInsets.symmetric(horizontal: 16, vertical: 4) });
+  _ProfileStoredDataWidget({
+    // ignore: unused_element
+    super.key,
+    this.title,
+    required this.dataProvider,
+    this.updateController,
+    // ignore: unused_element
+    this.margin = const EdgeInsets.symmetric(horizontal: 16, vertical: 4)
+  });
 
   @override
   State<StatefulWidget> createState() => _ProfileStoredDataWidgetState();
@@ -80,17 +94,14 @@ class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
 
   @override
   void initState() {
-    _providingData = true;
 
-    widget.dataProvider().then((String? data) {
-      if (mounted) {
-        setState(() {
-          _providedData = data;
-          _providingData = false;
-        });
-        _textController.text = data ?? Localization().getStringEx('widget.profile.stored_data.retrieve.failed.message', 'Failed to retrieve data');
+    widget.updateController?.stream.listen((String command) {
+      if (command == ProfileStoredDataPanel.notifyRefresh) {
+        _refresh();
       }
     });
+
+    _init();
     super.initState();
   }
 
@@ -146,6 +157,31 @@ class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
 
   );
 
-  void _onCopy() {
+  Future<void> _refresh() async {
+    if (mounted) {
+      setState(() {
+        _providedData = null;
+      });
+      _textController.text = '';
+      await _init();
+    }
+  }
+
+  Future<void> _init() async {
+    setState(() {
+      _providingData = true;
+    });
+    widget.dataProvider().then((String? data) {
+      if (mounted) {
+        setState(() {
+          _providedData = data;
+          _providingData = false;
+        });
+        _textController.text = data ?? Localization().getStringEx('widget.profile.stored_data.retrieve.failed.message', 'Failed to retrieve data');
       }
+    });
+  }
+
+  void _onCopy() {
+  }
 }
