@@ -46,6 +46,11 @@ extension SurveyExt on Survey {
     return dateTimeMidnightLocal.difference(nowMidnightLocal).inDays;
   }
 
+  bool get isCompleted => (stats?.isSurveyCompleted == true);
+}
+
+extension SurveyStatsExt on SurveyStats {
+  bool get isSurveyCompleted => (complete > 0) && (total == complete);
 }
 
 extension Event2SurveysExt on Surveys {
