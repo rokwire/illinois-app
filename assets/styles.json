@@ -65,6 +65,7 @@
     "blackTransparent038"                   :"#61000000",
     "redTransparent01"                      :"#F4FF3643",
     "blueShade900"                          :"#0D47A1FF",
+    "deepOrange"                            :"#FF5722",
 
     "mediumGray"                            :"#717372",
     "mediumGray1"                           :"#535353",
@@ -132,7 +133,8 @@
     "usage" : "Styles().textStyles.getTextStyle()",
 
     "header_bar": { "font_family": "extra_bold", "size": 16.0, "color": "textColorPrimary"},
-    "header_bar_detail": { "font_family": "medium", "size": 12.0, "color": "lightGray"},
+    "header_bar.detail": { "font_family": "medium", "size": 12.0, "color": "lightGray"},
+    "header_bar.detail.highlighted.fat": { "extends": "header_bar.detail", "font_family": "bold", "color": "deepOrange"},
 
     "widget.text.fat": { "font_family": "bold"},
     "widget.text.semi_fat": { "font_family": "semi_bold"},

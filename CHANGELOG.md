@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased - Illinois
 
+### Changed
+- Mark completed surveys [#4243](https://github.com/rokwire/illinois-app/issues/4243).
+
 ## [6.1.4] - 2024-07-30
 ### Added
 - Show survey end time, if exists [#4243](https://github.com/rokwire/illinois-app/issues/4243).
