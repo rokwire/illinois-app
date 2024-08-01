@@ -2171,6 +2171,7 @@
     "panel.profile_info.picture.delete.confirmation.msg": "¿Estás seguro/a que deseas eliminar esta imagen de perfil?",
 
     "panel.profile.stored_data.header.title": "My Stored Data",
+    "panel.profile.stored_data.button.copy_all.title": "Copy All",
     "panel.profile.stored_data.core_account.title": "Core Account",
     "panel.profile.stored_data.notifications_user.title": "Notifications User",
     "panel.profile.stored_data.i_card.title": "iCard",

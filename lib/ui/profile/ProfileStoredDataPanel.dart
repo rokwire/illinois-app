@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -19,9 +20,19 @@ class ProfileStoredDataPanel extends StatefulWidget {
   State<StatefulWidget> createState() => _ProfileStoredDataPanelState();
 }
 
+typedef _StoredDataProvider = Future<String?> Function();
+
+enum _StoredDataType {
+  coreAccount,
+  notificationsUser,
+  iCard,
+  studentSummary,
+}
+
 class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
 
   final StreamController<String> _updateController = StreamController.broadcast();
+  final Map<_StoredDataType, GlobalKey> _storedDataKeys = <_StoredDataType, GlobalKey>{};
 
   @override
   void initState() {
@@ -35,7 +46,13 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: HeaderBar(title: Localization().getStringEx("panel.profile.stored_data.header.title", "My Stored Data"),),
+    appBar: HeaderBar(
+      title: Localization().getStringEx("panel.profile.stored_data.header.title", "My Stored Data"),
+      actions: [HeaderBarActionTextButton(
+        title: Localization().getStringEx("panel.profile.stored_data.button.copy_all.title", "Copy All"),
+        onTap: _onCopyAll,
+      )],
+    ),
     body: _scaffoldContent,
     backgroundColor: Styles().colors.background,
   );
@@ -51,21 +68,25 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
   Widget get _panelContent => Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.coreAccount] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.core_account.title', "Core Account"),
         dataProvider: _provideCoreAccountJson,
         updateController: _updateController,
       ),
       _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.notificationsUser] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.notifications_user.title', "Notifications User"),
         dataProvider: _provideNotificationsUserJson,
         updateController: _updateController,
       ),
       _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.iCard] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.i_card.title', "iCard"),
         dataProvider: _provideICardJson,
         updateController: _updateController,
       ),
       _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.studentSummary] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.student_summary.title', "Student Summary"),
         dataProvider: _provideStudentSummaryJson,
         updateController: _updateController,
@@ -93,17 +114,35 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
   String? _provideResponseData(Response? response) => ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) ?
     JsonUtils.encode(JsonUtils.decode(response.body), prettify: true) : null;
 
-
   Future<void> _onRefresh() async {
     _updateController.add(ProfileStoredDataPanel.notifyRefresh);
   }
+
+  void _onCopyAll() {
+    Analytics().logSelect(target: 'Copy All');
+
+    String combinedJson = "";
+    for (_StoredDataType dataType in _StoredDataType.values) {
+      GlobalKey? dataTypeKey = _storedDataKeys[dataType];
+      State<StatefulWidget>? state = dataTypeKey?.currentState;
+      _ProfileStoredDataWidgetState? dataTypeState = (state is _ProfileStoredDataWidgetState) ? state : null;
+      if (dataTypeState != null) {
+        if (dataTypeState.widget.title != null) {
+          combinedJson += '\n// ${dataTypeState.widget.title}\n';
+        }
+        combinedJson += dataTypeState._providedData ?? 'NA\n';
+      }
+    }
+    Clipboard.setData(ClipboardData(text: combinedJson)).then((_) {
+      AppToast.showMessage(Localization().getStringEx('panel.profile.stored_data.copied_all.succeeded.message', 'Copied everything to your clipboard!'));
+    });
+  }
 }
 
-typedef _StoreDataProvider = Future<String?> Function();
 
 class _ProfileStoredDataWidget extends StatefulWidget {
   final String? title;
-  final _StoreDataProvider dataProvider;
+  final _StoredDataProvider dataProvider;
   final StreamController<String>? updateController;
   final EdgeInsetsGeometry margin;
 
@@ -220,6 +259,7 @@ class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
   }
 
   void _onCopy() {
+    Analytics().logSelect(target: 'Copy All');
     if (_providedData != null) {
       Clipboard.setData(ClipboardData(text: _providedData ?? '')).then((_) {
         AppToast.showMessage(Localization().getStringEx('widget.profile.stored_data.copied.succeeded.message', 'Copied to your clipboard!'));
