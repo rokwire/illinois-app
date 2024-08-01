@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
@@ -27,6 +28,7 @@ enum _StoredDataType {
   notificationsUser,
   iCard,
   studentSummary,
+  canvasUser,
 }
 
 class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
@@ -91,6 +93,12 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         dataProvider: _provideStudentSummaryJson,
         updateController: _updateController,
       ),
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.canvasUser] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.canvas_user.title', "Canvas User"),
+        dataProvider: _provideCanvasUserJson,
+        updateController: _updateController,
+      ),
     ]),
   );
 
@@ -105,6 +113,9 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
 
   Future<String?> _provideStudentSummaryJson() async =>
     _provideResponseData(await _provideStudentSummaryResponse());
+
+  Future<String?> _provideCanvasUserJson() async =>
+    _provideResponseData(await Canvas().loadSelfUserEx());
 
   Future<Response?> _provideStudentSummaryResponse() async {
     dynamic result = await IlliniCash().loadStudentSummaryEx();
