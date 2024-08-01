@@ -100,7 +100,7 @@ class Event2FilterCommandButton extends StatelessWidget {
 
   static BoxDecoration get defaultContentDecoration => BoxDecoration(
     color: Styles().colors.surface,
-    border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
+    border: Border.all(color: Styles().colors.textDisabled, width: 1),
     borderRadius: BorderRadius.circular(16),
   );
 
@@ -938,15 +938,15 @@ class Event2Popup {
     showDialog(context: context, builder: (BuildContext context) => AlertDialog(
       surfaceTintColor: Styles().colors.surface,
       content: Column(mainAxisSize: MainAxisSize.min, children: [
-        (title != null) ? Text(title, style: Styles().textStyles.getTextStyle("widget.card.title.light.regular.fat"),) : Container(),
+        (title != null) ? Text(title, style: Styles().textStyles.getTextStyle("widget.card.title.regular.fat"),) : Container(),
         (message != null) ? Padding(padding: (title != null) ? EdgeInsets.only(top: 12) : EdgeInsets.zero, child:
-          Text(message, style: Styles().textStyles.getTextStyle("widget.card.title.light.small"),),
+          Text(message, style: Styles().textStyles.getTextStyle("widget.card.title.small"),),
         ) : Container()
       ],),
       actions: <Widget>[
         TextButton(
           child: Text(Localization().getStringEx("dialog.ok.title", "OK"), style:
-            Styles().textStyles.getTextStyle("widget.button.title.medium.fat")
+            Styles().textStyles.getTextStyle("widget.button.title.medium.fat.dark")
           ),
           onPressed: () {
             Analytics().logAlert(text: message, selection: "OK");
@@ -972,15 +972,15 @@ class Event2Popup {
       surfaceTintColor: Styles().colors.surface,
       content: Column(mainAxisSize: MainAxisSize.min, children: [
         (title != null) ?
-          Text(title, style: titleTextStyle ?? Styles().textStyles.getTextStyle("widget.card.title.light.regular.fat"),)
+          Text(title, style: titleTextStyle ?? Styles().textStyles.getTextStyle("widget.card.title.regular.fat"),)
         : Container(),
         (message != null) ? Padding(padding: EdgeInsets.only(top: 12), child:
-          Text(message, style: messageTextStyle ?? Styles().textStyles.getTextStyle("widget.message.light.regular.semi_fat"),),
+          Text(message, style: messageTextStyle ?? Styles().textStyles.getTextStyle("widget.message.regular.semi_fat"),),
         ) : Container(),
         (messageHtml != null) ? Padding(padding: EdgeInsets.only(top: 12), child:
           HtmlWidget(
             messageHtml,
-            textStyle:  messageTextStyle ?? Styles().textStyles.getTextStyle("widget.message.light.regular.semi_fat"),
+            textStyle:  messageTextStyle ?? Styles().textStyles.getTextStyle("widget.message.regular.semi_fat"),
             customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
           )
         ) : Container(),
@@ -989,7 +989,7 @@ class Event2Popup {
       actions: <Widget>[
         TextButton(
           child: Text(positiveButtonTitle ?? Localization().getStringEx("dialog.ok.title", "OK"), style:
-            Styles().textStyles.getTextStyle("widget.button.title.medium.fat")
+            Styles().textStyles.getTextStyle("widget.button.title.medium.fat.dark")
           ),
           onPressed: () {
             Analytics().logAlert(text: message, selection: positiveAnalyticsTitle ?? positiveButtonTitle ?? "OK");
@@ -998,7 +998,7 @@ class Event2Popup {
         ),
         TextButton(
           child: Text(negativeButtonTitle ?? Localization().getStringEx("dialog.cancel.title", "Cancel"), style:
-            Styles().textStyles.getTextStyle("widget.button.title.medium.fat")
+            Styles().textStyles.getTextStyle("widget.button.title.medium.fat.dark")
           ),
           onPressed: () {
             Analytics().logAlert(text: message, selection: negativeAnalyticsTitle ?? negativeButtonTitle ?? "Cancel");

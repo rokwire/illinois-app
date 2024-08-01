@@ -56,7 +56,7 @@ class _AssistantFaqsContentWidgetState extends State<AssistantFaqsContentWidget>
                       _launchUrl(url);
                       return true;
                     },
-                    textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
+                    textStyle: Styles().textStyles.getTextStyle('widget.detail.light.regular'),
                     customStylesBuilder: (element) {
                       if (element.localName == "h3") {
                         String fontFamilyName = Styles().textStyles.getTextStyle('widget.detail.regular.fat')?.fontFamily.toString() ?? '';

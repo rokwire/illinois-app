@@ -11,7 +11,7 @@ description: NEOM U client application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.3.4+10
+version: 0.4.1+12
 
 publish_to: none
 
@@ -132,8 +132,10 @@ flutter:
   assets:
   - images/
   - assets/
+  - media/
   - app/images/
   - app/assets/
+  - app/media/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

@@ -27,12 +27,12 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
         _buildLinkButton(label: Localization().getStringEx("panel.settings.contacts.button.help_desk.title", "CONTACT HELP DESK"),
             onTap: _onFeedback,
             borderRadius: _topRounding),
-        _buildLinkButton(label: Localization().getStringEx("panel.settings.contacts.button.share_feedback.title", "SHARE FEEDBACK & IDEAS"),
-            onTap: _onFeedback),
+        _buildLinkButton(label: Localization().getStringEx("panel.settings.contacts.button.share_idea.title", "SHARE AN IDEA"),
+            onTap: _onIdea),
         // _buildLinkButton(label: Localization().getStringEx("panel.settings.contacts.button.develop_code.title", "DEVELOP CODE WITH ROKWIRE"),
         //     onTap: _onFeedback),
         // _buildLinkButton(label: Localization().getStringEx("panel.settings.partners.button.help_desk.title", "PARTNER WITH US"),
-        //   onTap: _onFeedback),
+        //   onTap: _onIdea),
         _buildLinkButton(label: Localization().getStringEx("panel.settings.review.button.help_desk.title", "REVIEW APP"),
             onTap: _onReviewClicked,
             borderRadius: _bottomRounding,),
@@ -131,6 +131,10 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
     String feedbackUrl = "${Config().feedbackUrl}?email=$email&phone=$phone&name=$name";
 
     _processUrl(feedbackUrl);
+  }
+
+  void _onIdea() {
+    _processUrl(Config().ideaUrl);
   }
 
   void _processUrl(String? url) {

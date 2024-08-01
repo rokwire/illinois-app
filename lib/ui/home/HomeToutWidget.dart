@@ -261,8 +261,12 @@ class _InfoDialog extends StatelessWidget {
                       StringUtils.ensureNotEmpty(contentHtml),
                       onTapUrl : (url) {_onTapLink(context ,url); return true;},
                       textStyle:  Styles().textStyles.getTextStyle("widget.dialog.message.medium.fat"),
-                      customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.surface)} : null
-                  )
+                      customStylesBuilder: (element) => (element.localName == "a")
+                                ? {
+                                    "color": ColorUtils.toHex(Styles().colors.surface),
+                                    "text-decoration-color": ColorUtils.toHex(Styles().colors.fillColorSecondary)
+                                  }
+                                : null)
                     //Text('Illinois app uses your first name from Student Self-Service. You can change your preferred name under Personal Information and Preferred First Name',
                     //  style: TextStyle(color: Styles().colors.surface, fontSize: 16, fontFamily: Styles().fontFamilies.bold,),
                     //)

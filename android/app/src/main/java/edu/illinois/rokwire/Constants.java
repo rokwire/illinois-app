@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.illinois.rokwire;
+package com.rokmetro.university.neom;
 
 public class Constants {
 

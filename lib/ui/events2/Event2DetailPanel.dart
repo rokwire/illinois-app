@@ -22,7 +22,7 @@ import 'package:neom/ui/widgets/QrCodePanel.dart';
 import 'package:neom/ui/events2/Event2SetupAttendancePanel.dart';
 import 'package:neom/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:neom/ui/events2/Event2SetupSurveyPanel.dart';
-import 'package:neom/ui/events2/Event2SurveyResponsesPanel.dart';
+import 'package:neom/ui/surveys/SurveyResponsesPanel.dart';
 import 'package:neom/ui/events2/Event2Widgets.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
@@ -143,15 +143,17 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body:
-      Column(children: <Widget>[
-        Expanded(child: _content),
-      ]),
+    return Scaffold(
+      body: _scaffoldContent,
       backgroundColor: Styles().colors.surface,
     );
   }
 
-  Widget get _content => _eventLoading ? _loadingContent : _eventContent;
+  Widget get _scaffoldContent => Column(children: <Widget>[
+    Expanded(child: _panelContent),
+  ]);
+
+  Widget get _panelContent => _eventLoading ? _loadingContent : _eventContent;
 
   Widget get _loadingContent {
       return Center(child:
@@ -281,7 +283,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     ],) : Container();
 
   Widget get _titleContentWidget =>
-    Text(_event?.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'));
+    Text(_event?.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.dark.large.extra_fat'));
 
   Widget get _sponsorWidget => StringUtils.isNotEmpty(_event?.sponsor) ? Padding(padding: EdgeInsets.only(top: 8), child:
     Row(children: [
@@ -968,7 +970,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       else {
         Event2Popup.showPrompt(context,
           title: Localization().getStringEx("dialog.success.title", "Success"),
-          messageHtml: Localization().getStringEx("panel.event2.detail.register.succeeded.star.prompt", "You're registered! Would vou like to add this event to <span style='color:{{star_color}};'><b>\u2605</b></span> My Events?").replaceAll('{{star_color}}', ColorUtils.toHex(Styles().colors.fillColorSecondary)),
+          messageHtml: Localization().getStringEx("panel.event2.detail.register.succeeded.star.prompt", "You're registered! Would you like to add this event to <span style='color:{{star_color}};'><b>\u2605</b></span> My Events?").replaceAll('{{star_color}}', ColorUtils.toHex(Styles().colors.fillColorSecondary)),
           positiveButtonTitle: Localization().getStringEx("dialog.yes.title", "Yes"),
           negativeButtonTitle: Localization().getStringEx("dialog.no.title", "No"),
         ).then((bool? result) {
@@ -1147,7 +1149,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   void _onSettingSurveyResponses() {
     Analytics().logSelect(target: "Event Survey Responses");
-    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => Event2SurveyResponsesPanel(
+    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => SurveyResponsesPanel(
       surveyId: _survey?.id,
       eventName: _event?.name,
     )));

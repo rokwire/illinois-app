@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.illinois.rokwire.mobile_access;
+package com.rokmetro.university.neom.mobile_access;
 
 import android.annotation.TargetApi;
 import android.app.Notification;
@@ -25,7 +25,7 @@ import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
-import edu.illinois.rokwire.R;
+import com.rokmetro.university.neom.R;
 
 import static androidx.core.app.NotificationCompat.VISIBILITY_SECRET;
 import static java.util.Objects.requireNonNull;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.illinois.rokwire.mobile_access;
+package com.rokmetro.university.neom.mobile_access;
 
 import android.content.Context;
 
@@ -36,8 +36,8 @@ import com.hid.origo.api.hce.OrigoNfcConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.illinois.rokwire.BuildConfig;
-import edu.illinois.rokwire.Constants;
+import com.rokmetro.university.neom.BuildConfig;
+import com.rokmetro.university.neom.Constants;
 import edu.illinois.rokwire.rokwire_plugin.Utils;
 
 public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {

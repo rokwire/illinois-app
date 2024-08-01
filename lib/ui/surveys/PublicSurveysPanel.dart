@@ -13,6 +13,7 @@ import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
 
@@ -29,7 +30,7 @@ class PublicSurveysPanel extends StatefulWidget {
 
 enum _DataActivity { init, refresh, extend }
 
-class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
+class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements NotificationsListener  {
 
   late PublicSurveysContentType _selectedContentType;
   bool _contentTypeDropdownExpanded = false;
@@ -37,6 +38,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
   List<Survey>? _contentList;
   bool? _lastPageLoaded;
   _DataActivity? _dataActivity;
+  Set<String> _activitySurveyIds = <String>{};
 
   static const int _contentPageLength = 16;
   final Color _dropdownShadowColor = Color(0x99000000);
@@ -45,6 +47,10 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      Surveys.notifySurveyResponseCreated,
+      Surveys.notifySurveyResponseDeleted,
+    ]);
     _selectedContentType = widget.selectedType;
     _scrollController.addListener(_scrollListener);
     _init();
@@ -53,7 +59,15 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     super.dispose();
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if ((name == Surveys.notifySurveyResponseCreated) ||(name == Surveys.notifySurveyResponseDeleted)) {
+      _refresh();
+    }
   }
 
   @override
@@ -105,7 +119,10 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
     List<Widget> cardsList = <Widget>[];
     for (Survey survey in _contentList!) {
       cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child:
-        PublicSurveyCard.listCard(survey, onTap: () => _onSurvey(survey),),
+        PublicSurveyCard.listCard(survey,
+          hasActivity: _activitySurveyIds.contains(survey.id),
+          onTap: () => _onSurvey(survey),
+        ),
       ),);
     }
     if (_dataActivity == _DataActivity.extend) {
@@ -129,15 +146,16 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
 
   Widget get _blankContent => Container();
 
-  Widget _messageContent(String message, { String? title }) =>
+  Widget _messageContent(String message, { String? title }) => Center(child:
     Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: _screenHeight / 6), child:
       Column(children: [
         (title != null) ? Padding(padding: EdgeInsets.only(bottom: 12), child:
-          Text(title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat'),)
+          Text(title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.light.medium.fat'),)
         ) : Container(),
-        Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
+        Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle((title != null) ? 'widget.item.light.regular.thin' : 'widget.item.light.medium.fat'),),
       ],),
-    );
+    )
+  );
 
   Widget get _extendingIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
     Align(alignment: Alignment.center, child:
@@ -147,7 +165,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
   Widget get _contentTypeDropdownWidget => Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child: RibbonButton(
     progress: (_dataActivity == _DataActivity.refresh),
     textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-    backgroundColor: Styles().colors.white,
+    backgroundColor: Styles().colors.surface,
     borderRadius: BorderRadius.all(Radius.circular(5)),
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     rightIconKey: (_contentTypeDropdownExpanded == true) ? 'chevron-up' : 'chevron-down',
@@ -179,7 +197,7 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
   }
 
   Widget _dropdownListItem(PublicSurveysContentType contentType) => RibbonButton(
-    backgroundColor: Styles().colors.white,
+    backgroundColor: Styles().colors.surface,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     rightIconKey: null,
     label: publicSurveysContentTypeDisplayName(contentType),
@@ -274,7 +292,28 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel>  {
 
   void _onSurvey(Survey survey) {
     Analytics().logSelect(target: 'Survey: ${survey.title}');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: survey)));
+    if (survey.completed != true) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel.defaultStyles(survey: survey)));
+    }
+    else if (!_activitySurveyIds.contains(survey.id)) {
+      setState(() {
+        _activitySurveyIds.add(survey.id);
+      });
+      Surveys().loadUserSurveyResponses(surveyIDs: <String>[survey.id]).then((List<SurveyResponse>? result) {
+        if (mounted) {
+          setState(() {
+            _activitySurveyIds.remove(survey.id);
+          });
+          SurveyResponse? surveyResponse = (result?.isNotEmpty == true) ? result?.first : null;
+          if (surveyResponse != null) {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel.defaultStyles(survey: surveyResponse.survey, inputEnabled: false, dateTaken: surveyResponse.dateTaken, showResult: true)));
+          }
+          else {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel.defaultStyles(survey: survey)));
+          }
+        }
+      });
+    }
   }
 
   void _onContentTypeDropdown() {

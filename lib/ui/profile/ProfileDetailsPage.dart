@@ -294,8 +294,8 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
   }
 
   Widget _buildPasskeyLoginInfoContent(){
-    return
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+    return Padding(padding: widget.horzMargin,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Semantics(label: Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), header: true, excludeSemantics: true, child:
           Padding(padding: EdgeInsets.only(bottom: 8), child:
             Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), textAlign: TextAlign.left, style: _formFieldLabelTextStyle)
@@ -308,7 +308,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 8),
               decoration: BoxDecoration(color: Styles().colors.surface, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
-//          height: 48,
+      //          height: 48,
               child: TextField(
                   controller: _nameController,
                   textCapitalization: TextCapitalization.words,
@@ -330,7 +330,8 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
               title: Localization().getStringEx("panel.profile_info.email.title", "Email Address"),
               value: Auth2().emails.first),
       ],
-      );
+      ),
+    );
   }
 
   //AccountManagementOptions

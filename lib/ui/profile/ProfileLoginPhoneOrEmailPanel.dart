@@ -173,7 +173,7 @@ class _ProfileLoginPhoneOrEmailPanelState extends State<ProfileLoginPhoneOrEmail
                       Visibility(visible: StringUtils.isNotEmpty(_validationErrorDetails), child:
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: Styles().textStyles.getTextStyle("widget.detail.light.small"), textAlign: TextAlign.center,),
+                          child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: Styles().textStyles.getTextStyle("widget.detail.small"), textAlign: TextAlign.center,),
                         ),
                       ),
                     ],),

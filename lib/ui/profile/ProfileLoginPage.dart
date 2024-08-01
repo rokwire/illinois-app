@@ -13,7 +13,6 @@ import 'package:neom/ui/profile/ProfileLoginPhoneOrEmailPanel.dart';
 import 'package:neom/ui/settings/SettingsWidgets.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/utils/AppUtils.dart';
-import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
@@ -108,7 +107,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
     contentList.add(_buildAppInfo());
 
     return Padding(padding: widget.margin, child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList)
+      Column(crossAxisAlignment: CrossAxisAlignment.center, children: contentList)
     );
   }
 

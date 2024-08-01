@@ -62,3 +62,4 @@ firebase_options.dart
 # App Branding
 /app/assets/
 /app/images/
+/app/media/
