@@ -31,10 +31,10 @@ enum _StoredDataType {
   coreAccount,
 
   // rokwire.illinois.edu/notifications
-  notificationsUser,
+  notificationsAccount,
 
   // rokwire.illinois.edu/lms
-  canvasUser,
+  canvasAccount,
 
   // rokwire.illinois.edu/calendar
   myEvents,
@@ -97,15 +97,15 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         updateController: _updateController,
       ),
       _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.notificationsUser] ??= GlobalKey(),
+        key: _storedDataKeys[_StoredDataType.notificationsAccount] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.notifications_user.title', "Notifications Account"),
-        dataProvider: _provideNotificationsUserJson,
+        dataProvider: _provideNotificationsAccountJson,
         updateController: _updateController,
       ),
       _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.canvasUser] ??= GlobalKey(),
+        key: _storedDataKeys[_StoredDataType.canvasAccount] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.canvas_user.title', "Canvas Account"),
-        dataProvider: _provideCanvasUserJson,
+        dataProvider: _provideCanvasAccountJson,
         updateController: _updateController,
       ),
       _ProfileStoredDataWidget(
@@ -144,10 +144,10 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
   Future<String?> _provideCoreAccountJson() async =>
     _provideResponseData(await Auth2().loadAccountResponse());
 
-  Future<String?> _provideNotificationsUserJson() async =>
+  Future<String?> _provideNotificationsAccountJson() async =>
     _provideResponseData(await Inbox().loadUserInfoResponse());
 
-  Future<String?> _provideCanvasUserJson() async =>
+  Future<String?> _provideCanvasAccountJson() async =>
     _provideResponseData(await Canvas().loadSelfUserResponse());
 
   Future<String?> _provideMyEventsJson() async =>
