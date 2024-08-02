@@ -1,11 +1,11 @@
 {
-    "name": "illinois_app",
-    "short_name": "illinois_app",
+    "name": "NEOM U",
+    "short_name": "NEOM U",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "NEOM U web app",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
