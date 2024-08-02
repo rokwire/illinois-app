@@ -11,6 +11,7 @@ import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -37,6 +38,12 @@ enum _StoredDataType {
 
   // rokwire.illinois.edu/calendar
   myEvents,
+  linkedEvents, // TBD: registered or attended events
+
+  // rokwire.illinois.edu/gr
+  myGroups,
+  myGroupsPosts, // TBD: all my posts and messages in all groups
+  myGroupsStats,
 
   // icard.uillinois.edu
   iCard,
@@ -108,6 +115,18 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         updateController: _updateController,
       ),
       _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.myGroups] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.my_groups.title', "My Groups"),
+        dataProvider: _provideMyGroupsJson,
+        updateController: _updateController,
+      ),
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.myGroupsStats] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.my_groups_stats.title', "My Groups Stats"),
+        dataProvider: _provideMyGroupsStatsJson,
+        updateController: _updateController,
+      ),
+      _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.iCard] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.i_card.title', "iCard"),
         dataProvider: _provideICardJson,
@@ -138,6 +157,12 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
     types: { Event2TypeFilter.admin },
     timeFilter: null,
   ));
+
+  Future<String?> _provideMyGroupsJson() async =>
+    _provideResponseData(await Groups().loadUserGroupsResponse());
+
+  Future<String?> _provideMyGroupsStatsJson() async =>
+    _provideResponseData(await Groups().loadUserStatsResponse());
 
   Future<String?> _provideICardJson() async =>
     _provideResponseData(await Auth2().loadAuthCardResponse());
