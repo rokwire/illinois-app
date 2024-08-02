@@ -18,7 +18,6 @@ import 'package:flutter/foundation.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:universal_io/io.dart';
 
 class Config extends rokwire.Config {
 
@@ -39,6 +38,9 @@ class Config extends rokwire.Config {
   factory Config({rokwire.ConfigEnvironment? defaultEnvironment}) => ((rokwire.Config.instance is Config) ? (rokwire.Config.instance as Config) : (rokwire.Config.instance = Config.internal(defaultEnvironment: defaultEnvironment)));
 
   // Getters: compound entries
+
+  @override
+  String? get coreUrl => 'http://localhost:5000/core';
 
   Map<String, dynamic> get thirdPartyServices  => JsonUtils.mapValue(content['thirdPartyServices']) ?? {};
 
@@ -168,7 +170,7 @@ class Config extends rokwire.Config {
   String? get canvasStoreUrl {
     dynamic storeUrlEntry = JsonUtils.mapValue(canvas['store_url']);
     if (storeUrlEntry is Map) {
-      return storeUrlEntry[Platform.operatingSystem.toLowerCase()];
+      return storeUrlEntry[Config().operatingSystem];
     } else if (storeUrlEntry is String) {
       return storeUrlEntry;
     }
