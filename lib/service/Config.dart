@@ -39,9 +39,6 @@ class Config extends rokwire.Config {
 
   // Getters: compound entries
 
-  @override
-  String? get coreUrl => 'http://localhost:5000/core';
-
   Map<String, dynamic> get thirdPartyServices  => JsonUtils.mapValue(content['thirdPartyServices']) ?? {};
 
   Map<String, dynamic> get secretIlliniCash => JsonUtils.mapValue(secretKeys['illini_cash']) ?? {};
