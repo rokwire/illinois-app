@@ -196,7 +196,6 @@
     "widget.message.light.regular": {"font_family": "regular", "size": 16.0, "color": "mediumGray"},
     "widget.message.light.regular.fat": {"font_family": "regular", "size": 16.0, "color": "textLight"},
     "widget.message.light.variant.small": {"font_family": "regular", "size": 14.0, "color": "mediumGray2"},
-    "widget.message.dark.regular": {"font_family": "regular", "size": 16.0, "color": "textDark"},
 
     "widget.title.extra_huge": {"font_family": "regular", "size": 36.0, "color": "textPrimary"},
     "widget.title.extra_huge.fat": {"font_family": "bold", "size": 36.0, "color": "textPrimary"},

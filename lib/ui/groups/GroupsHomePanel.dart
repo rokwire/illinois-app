@@ -457,7 +457,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           child: RichText(
               textAlign: TextAlign.left,
               text: TextSpan(
-                  style: Styles().textStyles.getTextStyle("widget.message.dark.regular"),
+                  style: Styles().textStyles.getTextStyle("widget.message.light.regular"),
                   children:[
                     TextSpan(text:Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not a member of any group. To join or create a group, see .")),
                     TextSpan(text: Localization().getStringEx("panel.groups_home.label.my_groups.empty.link.all_groups", "All Groups"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
