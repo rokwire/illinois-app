@@ -2167,6 +2167,8 @@
 	"panel.profile.stored_data.my_events.title": "My Events",
 	"panel.profile.stored_data.my_groups.title": "My Groups",
 	"panel.profile.stored_data.my_groups_stats.title": "My Groups Stats",
+	"panel.profile.stored_data.my_polls.title": "My Polls",
+ "panel.profile.stored_data.participated_polls.title": "Participated Polls",
 	"panel.profile.stored_data.i_card.title": "My iCard",
 	"panel.profile.stored_data.student_summary.title": "My Student Summary",
 
