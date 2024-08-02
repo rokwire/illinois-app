@@ -103,22 +103,22 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
   );
 
   Future<String?> _provideCoreAccountJson() async =>
-    _provideResponseData(await Auth2().loadAccountEx());
+    _provideResponseData(await Auth2().loadAccountResponse());
 
   Future<String?> _provideNotificationsUserJson() async =>
-    _provideResponseData(await Inbox().loadUserInfoEx());
+    _provideResponseData(await Inbox().loadUserInfoResponse());
 
   Future<String?> _provideICardJson() async =>
-    _provideResponseData(await Auth2().loadAuthCardEx());
+    _provideResponseData(await Auth2().loadAuthCardResponse());
 
   Future<String?> _provideStudentSummaryJson() async =>
     _provideResponseData(await _provideStudentSummaryResponse());
 
   Future<String?> _provideCanvasUserJson() async =>
-    _provideResponseData(await Canvas().loadSelfUserEx());
+    _provideResponseData(await Canvas().loadSelfUserResponse());
 
   Future<Response?> _provideStudentSummaryResponse() async {
-    dynamic result = await IlliniCash().loadStudentSummaryEx();
+    dynamic result = await IlliniCash().loadStudentSummaryResponse();
     return (result is Response) ? result : null;
   }
 

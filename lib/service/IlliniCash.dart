@@ -191,7 +191,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
     }
   }
 
-  Future<dynamic> loadStudentSummaryEx() async {
+  Future<dynamic> loadStudentSummaryResponse() async {
     String? uin = Auth2().uin;
     String? firstName = Auth2().account?.authType?.uiucUser?.firstName;
     String? lastName = Auth2().account?.authType?.uiucUser?.lastName;
@@ -209,7 +209,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
   }
 
   Future<dynamic> _loadStudentSummary() async {
-    dynamic result = await loadStudentSummaryEx();
+    dynamic result = await loadStudentSummaryResponse();
     if (result is Response) {
       return ((result.statusCode >= 200) && (result.statusCode <= 301)) ?
          IlliniStudentSummary.fromJson(JsonUtils.decodeMap(result.body)) : null; // "request succeeded" vs "request failed, eligible not determined"

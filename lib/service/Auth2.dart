@@ -286,7 +286,7 @@ class Auth2 extends rokwire.Auth2 {
     return AuthCard.fromJson(JsonUtils.decodeMap(await _loadAuthCardStringFromCache()));
   }
 
-  Future<Response?> loadAuthCardEx() async =>
+  Future<Response?> loadAuthCardResponse() async =>
     _loadAuthCardFromNetEx(uin: account?.authType?.uiucUser?.uin, accessToken : uiucToken?.accessToken);
 
   Future<Response?> _loadAuthCardFromNetEx({String? uin, String? accessToken}) async =>

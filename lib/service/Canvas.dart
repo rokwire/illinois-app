@@ -271,7 +271,7 @@ class Canvas with Service implements NotificationsListener {
 
   // Canvas Self User
 
-  Future<http.Response?> loadSelfUserEx() async {
+  Future<http.Response?> loadSelfUserResponse() async {
     if (_isAvailable) {
       return _useCanvasApi?
         Network().get(_masquerade('${Config().canvasUrl}/api/v1/users/self'), headers: _canvasAuthHeaders) :
@@ -283,7 +283,7 @@ class Canvas with Service implements NotificationsListener {
   }
 
   Future<Map<String, dynamic>?> loadSelfUser() async {
-    http.Response? response = await loadSelfUserEx();
+    http.Response? response = await loadSelfUserResponse();
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
