@@ -9,6 +9,8 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -24,11 +26,23 @@ class ProfileStoredDataPanel extends StatefulWidget {
 typedef _StoredDataProvider = Future<String?> Function();
 
 enum _StoredDataType {
+  // rokwire.illinois.edu/core
   coreAccount,
+
+  // rokwire.illinois.edu/notifications
   notificationsUser,
-  iCard,
-  studentSummary,
+
+  // rokwire.illinois.edu/lms
   canvasUser,
+
+  // rokwire.illinois.edu/calendar
+  myEvents,
+
+  // icard.uillinois.edu
+  iCard,
+
+  // housing.illinois.edu
+  studentSummary,
 }
 
 class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
@@ -77,8 +91,20 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
       ),
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.notificationsUser] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.notifications_user.title', "Notifications User"),
+        title: Localization().getStringEx('panel.profile.stored_data.notifications_user.title', "Notifications Account"),
         dataProvider: _provideNotificationsUserJson,
+        updateController: _updateController,
+      ),
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.canvasUser] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.canvas_user.title', "Canvas Account"),
+        dataProvider: _provideCanvasUserJson,
+        updateController: _updateController,
+      ),
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.myEvents] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.my_events.title', "My Events"),
+        dataProvider: _provideMyEventsJson,
         updateController: _updateController,
       ),
       _ProfileStoredDataWidget(
@@ -93,12 +119,6 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         dataProvider: _provideStudentSummaryJson,
         updateController: _updateController,
       ),
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.canvasUser] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.canvas_user.title', "Canvas User"),
-        dataProvider: _provideCanvasUserJson,
-        updateController: _updateController,
-      ),
     ]),
   );
 
@@ -108,14 +128,22 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
   Future<String?> _provideNotificationsUserJson() async =>
     _provideResponseData(await Inbox().loadUserInfoResponse());
 
+  Future<String?> _provideCanvasUserJson() async =>
+    _provideResponseData(await Canvas().loadSelfUserResponse());
+
+  Future<String?> _provideMyEventsJson() async =>
+    _provideResponseData(await _provideMyEventsResponse());
+
+  Future<Response?> _provideMyEventsResponse() => Events2().loadEventsResponse(Events2Query(
+    types: { Event2TypeFilter.admin },
+    timeFilter: null,
+  ));
+
   Future<String?> _provideICardJson() async =>
     _provideResponseData(await Auth2().loadAuthCardResponse());
 
   Future<String?> _provideStudentSummaryJson() async =>
     _provideResponseData(await _provideStudentSummaryResponse());
-
-  Future<String?> _provideCanvasUserJson() async =>
-    _provideResponseData(await Canvas().loadSelfUserResponse());
 
   Future<Response?> _provideStudentSummaryResponse() async {
     dynamic result = await IlliniCash().loadStudentSummaryResponse();
