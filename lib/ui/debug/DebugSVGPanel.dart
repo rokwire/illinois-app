@@ -15,16 +15,20 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pinch_zoom/pinch_zoom.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:jovial_svg/jovial_svg.dart';
 
 class DebugSVGPanel extends StatefulWidget{
   _DebugSVGPanelState createState() => _DebugSVGPanelState();
 }
 
 class _DebugSVGPanelState extends State<DebugSVGPanel>{
+
+  static const String svgAssetName = 'images/building-example.svg';
 
   @override
   void initState() {
@@ -41,15 +45,21 @@ class _DebugSVGPanelState extends State<DebugSVGPanel>{
     return Scaffold(
       backgroundColor: Styles().colors.surface,
       appBar: HeaderBar(title: "SVG Test",),
-      body: PinchZoom(maxScale: 12, child: _svgPictureWidget),
+      body: PinchZoom(maxScale: 12, child:
+        _scalableImageWidget
+      ),
     );
   }
 
+  // ignore: unused_element
   Widget get _svgPictureWidget =>
-    SvgPicture.asset(
-      'images/building-example.svg',
-      semanticsLabel: 'Building Example'
-    );
+    SvgPicture.asset(svgAssetName, semanticsLabel: 'Building Example');
+
+  // ignore: unused_element
+  Widget get _scalableImageWidget => ScalableImageWidget.fromSISource(
+    fit: BoxFit.contain,
+    si: ScalableImageSource.fromSvg(rootBundle, svgAssetName),
+  );
 }
 
 

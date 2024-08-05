@@ -66,6 +66,7 @@ dependencies:
   fl_chart: ^0.68.0
   record: ^4.4.4
   flutter_svg: ^2.0.10+1
+  jovial_svg: 1.1.22
   font_awesome_flutter: '>= 4.7.0' # comment if published plugin is used
 
   rokwire_plugin:
