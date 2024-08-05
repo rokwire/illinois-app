@@ -93,7 +93,7 @@ android {
     
     defaultConfig {
         applicationId "com.rokmetro.university.neom"
-        minSdkVersion 23
+        minSdkVersion 28
         targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

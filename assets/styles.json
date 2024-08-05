@@ -819,6 +819,9 @@
     "panel.canvas.item.regular":  {"font_family": "regular", "size": 16.0, "color": "textSurfaceAccent"},
     "panel.canvas.item.regular.fat":  {"font_family": "bold", "size": 16.0, "color": "textSurfaceAccent"},
 
+    "panel.survey.creation.item.medium": { "font_family": "medium", "size": 16.0, "color": "textDark"},
+    "panel.survey.creation.button.large.fat": { "font_family": "bold", "size": 20.0, "color": "textDark"},
+
     "common.title.secondary": {"font_family": "regular", "size": 14.0, "color": "textDark"},
     "common.body": {"font_family": "regular", "size": 14.0, "color": "textDark"},
     "common.body.italic": {"extends": "common.body", "font_family": "regular_italic"},
