@@ -21,6 +21,7 @@ import 'package:flutter/services.dart';
 import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CustomCourses.dart';
+import 'package:illinois/ui/debug/DebugSVGPanel.dart';
 import 'package:illinois/ui/debug/mobile_access/DebugMobileAccessHomePanel.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
@@ -485,6 +486,16 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                       onTap: _onTapHttpProxy
                     )
                   ),
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
+                    label: "SVG Test",
+                    backgroundColor: Styles().colors.background,
+                    fontSize: 16.0,
+                    textColor: Styles().colors.fillColorPrimary,
+                    borderColor: Styles().colors.fillColorPrimary,
+                    onTap: _onTapSVGTest
+                  )
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
@@ -953,6 +964,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     if(Config().configEnvironment == rokwire.ConfigEnvironment.dev) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHttpProxyPanel()));
     }
+  }
+
+  void _onTapSVGTest() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugSVGPanel()));
   }
 
   void _onTapCrash(){
