@@ -30,6 +30,7 @@ class _DebugSVGPanelState extends State<DebugSVGPanel>{
 
   static const String svgAssetName = 'images/building-example.svg';
   //static const String svgAssetName = 'images/building-example-optimized.svg';
+  //static const String svgAssetName = 'images/building-example-fixed.svg';
 
   @override
   void initState() {
