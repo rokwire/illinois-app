@@ -71,8 +71,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   TextEditingController _negativeFeedbackController = TextEditingController();
   FocusNode _negativeFeedbackFocusNode = FocusNode();
 
-  bool _keyboardVisible = false;
-
   @override
   void initState() {
     super.initState();
@@ -943,19 +941,18 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   @override
   void didChangeMetrics() {
-      bool keyboardCurrentlyVisible = MediaQuery.of(context).viewInsets.bottom > 0;
-      if(_keyboardVisible != keyboardCurrentlyVisible){
-          _onKeyboardVisibilityChanged(_keyboardVisible = keyboardCurrentlyVisible);
-      }
+    _checkKeyboardVisible.then((visible){
+          _onKeyboardVisibilityChanged(visible);
+      });
   }
 
   void _onKeyboardVisibilityChanged(bool visible) {
-    if(visible) {
       setStateIfMounted(() {
         _shouldScrollToBottom = true;
-        _shouldSemanticFocusToLastBubble = false; //We want to keep the semantics focus on the textField
+        if(visible) {
+          _shouldSemanticFocusToLastBubble = false; //We want to keep the semantics focus on the textField
+        }
       });
-    }
   }
 
   void _clearAllMessages() {
@@ -996,8 +993,10 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   double get _chatBarPaddingBottom {
-    return _negativeFeedbackFocusNode.hasFocus ? 0 : MediaQuery.of(context).viewInsets.bottom;
+    return _hideChatBar ? 0 : _keyboardHeight;
   }
+
+  double get _keyboardHeight => MediaQuery.of(context).viewInsets.bottom;
 
   double get _chatBarHeight {
     RenderObject? chatBarRenderBox = _chatBarKey.currentContext?.findRenderObject();
@@ -1005,7 +1004,22 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     return chatBarHeight ?? 0;
   }
 
-  double get _scrollContentPaddingBottom => _chatBarHeight + _chatBarPaddingBottom;
+  double get _scrollContentPaddingBottom => _keyboardHeight + (_hideChatBar ? 0 : _chatBarHeight);
+
+  bool get _hideChatBar => _negativeFeedbackFocusNode.hasFocus && _keyboardHeight > 0;
+
+  Future<bool> get _checkKeyboardVisible async {
+    final checkPosition = () => (MediaQuery.of(context).viewInsets.bottom);
+    //Check if the position of the keyboard is still changing
+    final double position = checkPosition();
+    final double secondPosition = await Future.delayed(Duration(milliseconds: 100), () => checkPosition());
+
+    if(position == secondPosition){ //Animation is finished
+      return position > 0;
+    } else {
+      return _checkKeyboardVisible; //Check again
+    }
+  }
 
   static List<String>? buildContentCodes() {
     List<String>? codes = JsonUtils.listStringsValue(FlexUI()['assistant']);
