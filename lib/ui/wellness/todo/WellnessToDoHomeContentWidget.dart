@@ -25,6 +25,7 @@ import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessManageToDoCategoriesPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/utils/AudioUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -862,6 +863,7 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
     );
     widget.item.isCompleted = !widget.item.isCompleted;
     AppSemantics.announceCheckBoxStateChange(context, widget.item.isCompleted , widget.item.name);
+    _playCheckingOffSound();
     _setLoading(true);
     if(widget.item.id != null){
       Wellness().updateToDoItem(widget.item).then((success) {
@@ -889,6 +891,10 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
   void _onTapEdit(WellnessToDoItem item) {
     Analytics().logSelect(target: "Edit Item", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(item: item)));
+  }
+
+  void _playCheckingOffSound(){
+    ResourceAudioSound('media/wellness-todo-check-off.m4a').play();
   }
 
   void _setLoading(bool loading) {

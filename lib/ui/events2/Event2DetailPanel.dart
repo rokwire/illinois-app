@@ -20,7 +20,7 @@ import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupAttendancePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
-import 'package:illinois/ui/events2/Event2SurveyResponsesPanel.dart';
+import 'package:illinois/ui/surveys/SurveyResponsesPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -142,14 +142,17 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body:
-      Column(children: <Widget>[
-        Expanded(child: _content),
-      ])
+    return Scaffold(
+      body: _scaffoldContent,
+      backgroundColor: Styles().colors.background,
     );
   }
 
-  Widget get _content => _eventLoading ? _loadingContent : _eventContent;
+  Widget get _scaffoldContent => Column(children: <Widget>[
+    Expanded(child: _panelContent),
+  ]);
+
+  Widget get _panelContent => _eventLoading ? _loadingContent : _eventContent;
 
   Widget get _loadingContent {
       return Center(child:
@@ -1145,7 +1148,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   void _onSettingSurveyResponses() {
     Analytics().logSelect(target: "Event Survey Responses");
-    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => Event2SurveyResponsesPanel(
+    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => SurveyResponsesPanel(
       surveyId: _survey?.id,
       eventName: _event?.name,
     )));

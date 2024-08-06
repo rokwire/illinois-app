@@ -27,7 +27,7 @@
     "textVariant"                           :"#ff494949",
     "textBackground"                        :"#404040",
     "textbackgroundVariant"                 :"#404040",
-    "textbackgroundVariant2"                 :"#e7e7e7",
+    "textbackgroundVariant2"                :"#e7e7e7",
 
     "accentColor1"                          :"#E84A27",
     "accentColor2"                          :"#5FA7A3",
@@ -52,6 +52,7 @@
     "blackTransparent038"                   :"#61000000",
     "redTransparent01"                      :"#F4FF4336",
     "blueShade900"                          :"#0D47A1FF",
+    "deepOrange"                            :"#FF5722",
 
     "mediumGray"                            :"#717372",
     "mediumGray1"                           :"#535353",
@@ -119,6 +120,8 @@
     "usage" : "Styles().textStyles.getTextStyle()",
 
     "header_bar": { "font_family": "extra_bold", "size": 16.0, "color": "textColorPrimary"},
+    "header_bar.detail": { "font_family": "medium", "size": 12.0, "color": "lightGray"},
+    "header_bar.detail.highlighted.fat": { "extends": "header_bar.detail", "font_family": "bold", "color": "deepOrange"},
 
     "widget.text.fat": { "font_family": "bold"},
     "widget.text.semi_fat": { "font_family": "semi_bold"},
@@ -776,6 +779,7 @@
     "feedback": {"src": "images/icon-feedback.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "posts": {"src": "0xf3e5", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
     "reply": {"src": "0xf3e5", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
+    "floorplan": {"src": "0xf279", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
     "location": {"src": "images/location.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "size"},
     "time": {"src": "images/icon-time.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "clear":  {"src": "0xf057", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 24},
