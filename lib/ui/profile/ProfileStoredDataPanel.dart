@@ -10,6 +10,7 @@ import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CustomCourses.dart';
+import 'package:illinois/service/Identity.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -60,6 +61,11 @@ enum _StoredDataType {
   // rokwire.illinois.edu/surveys
   mySurveys,
   participatedSurveys,
+
+  // rokwire.illinois.edu/identity
+  myStudentId,
+  myStudentClassification,
+  myMobileCredentials,
 
   // rokwire.illinois.edu/appointments
   myAppointments,
@@ -112,6 +118,7 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
 
   Widget get _panelContent => Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      // rokwire.illinois.edu/core
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.coreAccount] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.core_account.title', "Core Account"),
@@ -119,6 +126,7 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         updateController: _updateController,
       ),
 
+      // rokwire.illinois.edu/notifications
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.notificationsAccount] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.notifications_user.title', "Notifications Account"),
@@ -126,6 +134,7 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         updateController: _updateController,
       ),
 
+      // rokwire.illinois.edu/lms
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.canvasAccount] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.canvas_user.title', "Canvas Account"),
@@ -145,6 +154,7 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         updateController: _updateController,
       ),
 
+      // rokwire.illinois.edu/calendar
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.myEvents] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.my_events.title', "My Events"),
@@ -152,13 +162,13 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         updateController: _updateController,
       ),
 
+      // rokwire.illinois.edu/gr
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.myGroups] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.my_groups.title', "My Groups"),
         dataProvider: _provideMyGroupsJson,
         updateController: _updateController,
       ),
-
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.myGroupsStats] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.my_groups_stats.title', "My Groups Stats"),
@@ -166,13 +176,13 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         updateController: _updateController,
       ),
 
+      // rokwire.illinois.edu/polls
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.myPools] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.my_polls.title', "My Polls"),
         dataProvider: _provideMyPollsJson,
         updateController: _updateController,
       ),
-
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.participatedPolls] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.participated_polls.title', "Participated Polls"),
@@ -180,13 +190,13 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         updateController: _updateController,
       ),
 
+      // rokwire.illinois.edu/surveys
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.mySurveys] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.my_surveys.title', "My Surveys"),
         dataProvider: _provideMySurveysJson,
         updateController: _updateController,
       ),
-
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.participatedSurveys] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.participated_surveys.title', "Participated Surveys"),
@@ -194,6 +204,27 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         updateController: _updateController,
       ),
 
+      // rokwire.illinois.edu/identity
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.myStudentId] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.my_student_id.title', "My Student ID"),
+        dataProvider: _provideMyStudentIdJson,
+        updateController: _updateController,
+      ),
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.myStudentClassification] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.my_student_classification.title', "My Student Classification"),
+        dataProvider: _provideMyStudentClassificationJson,
+        updateController: _updateController,
+      ),
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.myMobileCredentials] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.my_mobile_credentials.title', "My Mobile Credentials"),
+        dataProvider: _provideMyMobileCredentialsJson,
+        updateController: _updateController,
+      ),
+
+      // rokwire.illinois.edu/appointments
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.myAppointments] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.my_appointments.title', "My Appointments"),
@@ -201,6 +232,7 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         updateController: _updateController,
       ),
 
+      // icard.uillinois.edu
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.iCard] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.i_card.title', "iCard"),
@@ -208,6 +240,7 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         updateController: _updateController,
       ),
 
+      // housing.illinois.edu
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.studentSummary] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.student_summary.title', "Student Summary"),
@@ -217,10 +250,13 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
     ]),
   );
 
+  // rokwire.illinois.edu/core
   Future<String?> _provideCoreAccountJson() async          => _provideResponseData(await Auth2().loadAccountResponse());
 
+  // rokwire.illinois.edu/notifications
   Future<String?> _provideNotificationsAccountJson() async => _provideResponseData(await Inbox().loadUserInfoResponse());
 
+  // rokwire.illinois.edu/lms
   Future<String?> _provideCanvasAccountJson() async        => _provideResponseData(await Canvas().loadSelfUserResponse());
 
   //Future<String?> _provideCustomCoursesJson() async        => _provideResponseData(await CustomCourses().loadUserCoursesResponse());
@@ -262,14 +298,17 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
     return (userCoursesJson != null) ? UserCourse.listFromJson(userCoursesJson) : null;
   }
 
+  // rokwire.illinois.edu/calendar
   Future<String?> _provideMyEventsJson() async             => _provideResponseData(await Events2().loadEventsResponse(Events2Query(
     types: { Event2TypeFilter.admin },
     timeFilter: null,
   )));
 
+  // rokwire.illinois.edu/gr
   Future<String?> _provideMyGroupsJson() async             => _provideResponseData(await Groups().loadUserGroupsResponse());
   Future<String?> _provideMyGroupsStatsJson() async        => _provideResponseData(await Groups().loadUserStatsResponse());
 
+  // rokwire.illinois.edu/polls
   Future<String?> _provideMyPollsJson() async              => _provideResponseData(await Polls().getPollsResponse(PollFilter(
     myPolls: true
   )));
@@ -277,19 +316,30 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
       respondedPolls: true
   )));
 
+  // rokwire.illinois.edu/surveys
   Future<String?> _provideMySurveysJson() async            => _provideResponseData(await Surveys().loadCreatorSurveysRequest());
   Future<String?> _provideParticipatedSurveysJson() async  => _provideResponseData(await Surveys().loadUserSurveyResponsesResponse());
 
+  // rokwire.illinois.edu/identity
+  Future<String?> _provideMyStudentIdJson() async          => _provideResponseData(await Identity().loadStudentIdResponse());
+  Future<String?> _provideMyStudentClassificationJson() async => _provideResponseData(await Identity().loadStudentClassificationResponse());
+  Future<String?> _provideMyMobileCredentialsJson() async  => _provideResponseData(await Identity().loadMobileCredentialResponse());
+
+  // rokwire.illinois.edu/appointments
   Future<String?> _provideMyAppointmentsJson() async       => _provideResponseData(await Appointments().loadAppointmentseResponse());
 
+  // icard.uillinois.edu
   Future<String?> _provideICardJson() async                => _provideResponseData(await Auth2().loadAuthCardResponse());
 
+  // housing.illinois.edu
   Future<String?> _provideStudentSummaryJson() async       => _provideResponseData(await _provideStudentSummaryResponse());
 
   Future<Response?> _provideStudentSummaryResponse() async {
     dynamic result = await IlliniCash().loadStudentSummaryResponse();
     return (result is Response) ? result : null;
   }
+
+  // Implementation
 
   String? _provideResponseData(Response? response) => ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) ?
     (JsonUtils.encode(JsonUtils.decode(response.body), prettify: true) ?? response.body) : null;
