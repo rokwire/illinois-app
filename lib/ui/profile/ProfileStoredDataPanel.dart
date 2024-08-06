@@ -317,7 +317,7 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
   )));
 
   // rokwire.illinois.edu/surveys
-  Future<String?> _provideMySurveysJson() async            => _provideResponseData(await Surveys().loadCreatorSurveysRequest());
+  Future<String?> _provideMySurveysJson() async            => _provideResponseData(await Surveys().loadCreatorSurveysResponse());
   Future<String?> _provideParticipatedSurveysJson() async  => _provideResponseData(await Surveys().loadUserSurveyResponsesResponse());
 
   // rokwire.illinois.edu/identity
