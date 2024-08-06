@@ -17,6 +17,7 @@ import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileStoredDataPanel extends StatefulWidget {
@@ -50,6 +51,10 @@ enum _StoredDataType {
   // rokwire.illinois.edu/polls
   myPools,
   participatedPolls,
+
+  // rokwire.illinois.edu/surveys
+  mySurveys,
+  participatedSurveys,
 
   // icard.uillinois.edu
   iCard,
@@ -145,6 +150,18 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         updateController: _updateController,
       ),
       _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.mySurveys] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.my_surveys.title', "My Surveys"),
+        dataProvider: _provideMySurveysJson,
+        updateController: _updateController,
+      ),
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.participatedSurveys] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.participated_surveys.title', "Participated Surveys"),
+        dataProvider: _provideParticipatedSurveysJson,
+        updateController: _updateController,
+      ),
+      _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.iCard] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.i_card.title', "iCard"),
         dataProvider: _provideICardJson,
@@ -159,48 +176,37 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
     ]),
   );
 
-  Future<String?> _provideCoreAccountJson() async =>
-    _provideResponseData(await Auth2().loadAccountResponse());
+  Future<String?> _provideCoreAccountJson() async          => _provideResponseData(await Auth2().loadAccountResponse());
 
-  Future<String?> _provideNotificationsAccountJson() async =>
-    _provideResponseData(await Inbox().loadUserInfoResponse());
+  Future<String?> _provideNotificationsAccountJson() async => _provideResponseData(await Inbox().loadUserInfoResponse());
 
-  Future<String?> _provideCanvasAccountJson() async =>
-    _provideResponseData(await Canvas().loadSelfUserResponse());
+  Future<String?> _provideCanvasAccountJson() async        => _provideResponseData(await Canvas().loadSelfUserResponse());
 
-  Future<String?> _provideMyEventsJson() async =>
-    _provideResponseData(await _provideMyEventsResponse());
-
-  Future<Response?> _provideMyEventsResponse() => Events2().loadEventsResponse(Events2Query(
+  Future<String?> _provideMyEventsJson() async             => _provideResponseData(await Events2().loadEventsResponse(Events2Query(
     types: { Event2TypeFilter.admin },
     timeFilter: null,
-  ));
+  )));
 
-  Future<String?> _provideMyGroupsJson() async =>
-    _provideResponseData(await Groups().loadUserGroupsResponse());
+  Future<String?> _provideMyGroupsJson() async             => _provideResponseData(await Groups().loadUserGroupsResponse());
+  Future<String?> _provideMyGroupsStatsJson() async        => _provideResponseData(await Groups().loadUserStatsResponse());
 
-  Future<String?> _provideMyGroupsStatsJson() async =>
-    _provideResponseData(await Groups().loadUserStatsResponse());
-
-  Future<String?> _provideMyPollsJson() async =>
-    _provideResponseData(await _provideMyPollsResponse());
-
-  Future<Response?> _provideMyPollsResponse() => Polls().getPollsResponse(PollFilter(
+  Future<String?> _provideMyPollsJson() async              => _provideResponseData(await Polls().getPollsResponse(PollFilter(
     myPolls: true
-  ));
-
-  Future<String?> _provideParticipatedPollsJson() async =>
-    _provideResponseData(await _provideParticipatedPollsResponse());
-
-  Future<Response?> _provideParticipatedPollsResponse() => Polls().getPollsResponse(PollFilter(
+  )));
+  Future<String?> _provideParticipatedPollsJson() async    => _provideResponseData(await Polls().getPollsResponse(PollFilter(
       respondedPolls: true
-  ));
+  )));
 
-  Future<String?> _provideICardJson() async =>
-    _provideResponseData(await Auth2().loadAuthCardResponse());
+  //Future<String?> _provideMySurveysJson() async            => _provideResponseData(await Surveys().loadCreatorSurveysRequest());
+  Future<String?> _provideMySurveysJson() async {
+    Response? r = await Surveys().loadCreatorSurveysRequest();
+    return _provideResponseData(r);
+  }
+  Future<String?> _provideParticipatedSurveysJson() async  => _provideResponseData(await Surveys().loadUserSurveyResponsesResponse());
 
-  Future<String?> _provideStudentSummaryJson() async =>
-    _provideResponseData(await _provideStudentSummaryResponse());
+  Future<String?> _provideICardJson() async                => _provideResponseData(await Auth2().loadAuthCardResponse());
+
+  Future<String?> _provideStudentSummaryJson() async       => _provideResponseData(await _provideStudentSummaryResponse());
 
   Future<Response?> _provideStudentSummaryResponse() async {
     dynamic result = await IlliniCash().loadStudentSummaryResponse();
