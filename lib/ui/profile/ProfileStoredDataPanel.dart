@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/IlliniCash.dart';
@@ -55,6 +56,9 @@ enum _StoredDataType {
   // rokwire.illinois.edu/surveys
   mySurveys,
   participatedSurveys,
+
+  // rokwire.illinois.edu/appointments
+  myAppointments,
 
   // icard.uillinois.edu
   iCard,
@@ -107,66 +111,84 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         dataProvider: _provideCoreAccountJson,
         updateController: _updateController,
       ),
+
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.notificationsAccount] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.notifications_user.title', "Notifications Account"),
         dataProvider: _provideNotificationsAccountJson,
         updateController: _updateController,
       ),
+
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.canvasAccount] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.canvas_user.title', "Canvas Account"),
         dataProvider: _provideCanvasAccountJson,
         updateController: _updateController,
       ),
+
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.myEvents] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.my_events.title', "My Events"),
         dataProvider: _provideMyEventsJson,
         updateController: _updateController,
       ),
+
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.myGroups] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.my_groups.title', "My Groups"),
         dataProvider: _provideMyGroupsJson,
         updateController: _updateController,
       ),
+
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.myGroupsStats] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.my_groups_stats.title', "My Groups Stats"),
         dataProvider: _provideMyGroupsStatsJson,
         updateController: _updateController,
       ),
+
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.myPools] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.my_polls.title', "My Polls"),
         dataProvider: _provideMyPollsJson,
         updateController: _updateController,
       ),
+
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.participatedPolls] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.participated_polls.title', "Participated Polls"),
         dataProvider: _provideParticipatedPollsJson,
         updateController: _updateController,
       ),
+
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.mySurveys] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.my_surveys.title', "My Surveys"),
         dataProvider: _provideMySurveysJson,
         updateController: _updateController,
       ),
+
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.participatedSurveys] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.participated_surveys.title', "Participated Surveys"),
         dataProvider: _provideParticipatedSurveysJson,
         updateController: _updateController,
       ),
+
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.myAppointments] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.my_appointments.title', "My Appointments"),
+        dataProvider: _provideMyAppointmentsJson,
+        updateController: _updateController,
+      ),
+
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.iCard] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.i_card.title', "iCard"),
         dataProvider: _provideICardJson,
         updateController: _updateController,
       ),
+
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.studentSummary] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.student_summary.title', "Student Summary"),
@@ -199,6 +221,8 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
 
   Future<String?> _provideMySurveysJson() async            => _provideResponseData(await Surveys().loadCreatorSurveysRequest());
   Future<String?> _provideParticipatedSurveysJson() async  => _provideResponseData(await Surveys().loadUserSurveyResponsesResponse());
+
+  Future<String?> _provideMyAppointmentsJson() async       => _provideResponseData(await Appointments().loadAppointmentseResponse());
 
   Future<String?> _provideICardJson() async                => _provideResponseData(await Auth2().loadAuthCardResponse());
 
