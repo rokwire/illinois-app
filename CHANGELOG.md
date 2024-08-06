@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Mark completed surveys [#4243](https://github.com/rokwire/illinois-app/issues/4243).
+### Fixed
+-Fixed AssistantContentPanel scrollable size when writing negative feedback [#4267](https://github.com/rokwire/illinois-app/issues/4267).
 
 ## [6.1.4] - 2024-07-30
 ### Added
