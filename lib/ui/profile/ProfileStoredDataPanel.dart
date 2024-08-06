@@ -197,11 +197,7 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
       respondedPolls: true
   )));
 
-  //Future<String?> _provideMySurveysJson() async            => _provideResponseData(await Surveys().loadCreatorSurveysRequest());
-  Future<String?> _provideMySurveysJson() async {
-    Response? r = await Surveys().loadCreatorSurveysRequest();
-    return _provideResponseData(r);
-  }
+  Future<String?> _provideMySurveysJson() async            => _provideResponseData(await Surveys().loadCreatorSurveysRequest());
   Future<String?> _provideParticipatedSurveysJson() async  => _provideResponseData(await Surveys().loadUserSurveyResponsesResponse());
 
   Future<String?> _provideICardJson() async                => _provideResponseData(await Auth2().loadAuthCardResponse());
