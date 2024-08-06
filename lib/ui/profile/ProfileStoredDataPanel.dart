@@ -4,10 +4,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
+import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -39,6 +41,8 @@ enum _StoredDataType {
 
   // rokwire.illinois.edu/lms
   canvasAccount,
+  customCourses,
+  customCoursesHistory,
 
   // rokwire.illinois.edu/calendar
   myEvents,
@@ -71,6 +75,9 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
 
   final StreamController<String> _updateController = StreamController.broadcast();
   final Map<_StoredDataType, GlobalKey> _storedDataKeys = <_StoredDataType, GlobalKey>{};
+
+  List<UserCourse>? _userCourses;
+  Set<Completer<Response?>>? _userCoursesListeners;
 
   @override
   void initState() {
@@ -123,6 +130,18 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         key: _storedDataKeys[_StoredDataType.canvasAccount] ??= GlobalKey(),
         title: Localization().getStringEx('panel.profile.stored_data.canvas_user.title', "Canvas Account"),
         dataProvider: _provideCanvasAccountJson,
+        updateController: _updateController,
+      ),
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.customCourses] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.custom_courses.title', "My Canvas Courses"),
+        dataProvider: _provideCustomCoursesJson,
+        updateController: _updateController,
+      ),
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.customCoursesHistory] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.custom_courses_history.title', "My Canvas Courses Content"),
+        dataProvider: _provideCustomCoursesHistoryJson,
         updateController: _updateController,
       ),
 
@@ -204,6 +223,45 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
 
   Future<String?> _provideCanvasAccountJson() async        => _provideResponseData(await Canvas().loadSelfUserResponse());
 
+  //Future<String?> _provideCustomCoursesJson() async        => _provideResponseData(await CustomCourses().loadUserCoursesResponse());
+  Future<String?> _provideCustomCoursesJson() async {
+    Response? response;
+    if (_userCoursesListeners != null) {
+      Completer<Response?> completer = Completer<Response?>();
+      _userCoursesListeners?.add(completer);
+      response = await completer.future;
+    }
+    else {
+      Set<Completer<Response?>> completers = <Completer<Response?>>{};
+      _userCoursesListeners = completers;
+      response = await CustomCourses().loadUserCoursesResponse();
+      _userCourses = _buildUserCourses(response);
+      _userCoursesListeners = null;
+      for (Completer<Response?> completer in completers) {
+        completer.complete();
+      }
+    }
+    return _provideResponseData(response);
+  }
+
+  //Future<String?> _provideCustomCoursesHistoryJson() async => _provideResponseData(await CustomCourses().loadUserContentHistoryResponse());
+  Future<String?> _provideCustomCoursesHistoryJson() async {
+    if (_userCoursesListeners != null) {
+      Completer<Response?> completer = Completer<Response?>();
+      _userCoursesListeners?.add(completer);
+      await completer.future;
+    }
+    Response? response = await CustomCourses().loadUserContentHistoryResponse(ids: _userCoursesIds);
+    return _provideResponseData(response);
+  }
+
+  List<String> get _userCoursesIds => List<String>.from(_userCourses?.map((UserCourse course) => course.id) ?? []);
+
+  List<UserCourse>? _buildUserCourses(Response? response) {
+    List<dynamic>? userCoursesJson = (response?.statusCode == 200) ? JsonUtils.decodeList(response?.body) : null;
+    return (userCoursesJson != null) ? UserCourse.listFromJson(userCoursesJson) : null;
+  }
+
   Future<String?> _provideMyEventsJson() async             => _provideResponseData(await Events2().loadEventsResponse(Events2Query(
     types: { Event2TypeFilter.admin },
     timeFilter: null,
@@ -234,7 +292,7 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
   }
 
   String? _provideResponseData(Response? response) => ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) ?
-    JsonUtils.encode(JsonUtils.decode(response.body), prettify: true) : null;
+    (JsonUtils.encode(JsonUtils.decode(response.body), prettify: true) ?? response.body) : null;
 
   Future<void> _onRefresh() async {
     _updateController.add(ProfileStoredDataPanel.notifyRefresh);

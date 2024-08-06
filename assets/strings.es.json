@@ -2176,6 +2176,8 @@
     "panel.profile.stored_data.core_account.title": "My Core Account",
     "panel.profile.stored_data.notifications_user.title": "My Notifications Account",
     "panel.profile.stored_data.canvas_user.title": "My Canvas Account",
+    "panel.profile.stored_data.custom_courses.title": "My Canvas Courses",
+    "panel.profile.stored_data.custom_courses_history.title": "My Canvas Courses Content",
     "panel.profile.stored_data.my_events.title": "My Events",
     "panel.profile.stored_data.my_groups.title": "My Groups",
     "panel.profile.stored_data.my_groups_stats.title": "My Groups Stats",

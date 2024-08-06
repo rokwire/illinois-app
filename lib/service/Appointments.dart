@@ -232,13 +232,15 @@ class Appointments with Service implements NotificationsListener {
     //return await AppBundle.loadString('assets/appointments.json');
     if (StringUtils.isNotEmpty(Config().appointmentsUrl) && Auth2().isLoggedIn) {
       String url = "${Config().appointmentsUrl}/services/appointments";
-      switch (timeSource) {
-        case AppointmentsTimeSource.upcoming:
-          url += '?start-date=${DateTime.now().toUtc().millisecondsSinceEpoch}&order=asc';
-          break;
-        case AppointmentsTimeSource.past:
-          url += '?end-date=${DateTime.now().toUtc().millisecondsSinceEpoch}&order=desc';
-          break;
+      if (timeSource != null) {
+        switch (timeSource) {
+          case AppointmentsTimeSource.upcoming:
+            url += '?start-date=${DateTime.now().toUtc().millisecondsSinceEpoch}&order=asc';
+            break;
+          case AppointmentsTimeSource.past:
+            url += '?end-date=${DateTime.now().toUtc().millisecondsSinceEpoch}&order=desc';
+            break;
+        }
       }
       return Network().get(url, auth: Auth2());
     }
