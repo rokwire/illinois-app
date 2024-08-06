@@ -28,10 +28,6 @@ class DebugSVGPanel extends StatefulWidget{
 
 class _DebugSVGPanelState extends State<DebugSVGPanel>{
 
-  static const String svgAssetName = 'images/building-example.svg';
-  //static const String svgAssetName = 'images/building-example-optimized.svg';
-  //static const String svgAssetName = 'images/building-example-fixed.svg';
-
   @override
   void initState() {
     super.initState();
@@ -55,13 +51,26 @@ class _DebugSVGPanelState extends State<DebugSVGPanel>{
 
   // ignore: unused_element
   Widget get _svgPictureWidget =>
-    SvgPicture.asset(svgAssetName, semanticsLabel: 'Building Example');
+    SvgPicture.asset(_svgAssetName, semanticsLabel: 'Building Example');
 
   // ignore: unused_element
   Widget get _scalableImageWidget => ScalableImageWidget.fromSISource(
     fit: BoxFit.contain,
-    si: ScalableImageSource.fromSvg(rootBundle, svgAssetName),
+    si: ScalableImageSource.fromSvg(rootBundle, _svgAssetName),
   );
+
+  // ignore: unused_element
+  static const String _svgAssetName = 'images/building-example.svg';
+
+  // ignore: unused_element
+  static const String _svgOptimizedAssetName = 'images/building-example-optimized.svg';
+
+  // ignore: unused_element
+  static const String _svgFixedAssetName = 'images/building-example-fixed.svg';
+
+  // ignore: unused_element
+  static const String _svgFixedOptimizedAssetName = 'images/building-example-fixed-optimized.svg';
+
 }
 
 
