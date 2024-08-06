@@ -237,6 +237,9 @@ class Config extends rokwire.Config {
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;
 
   @override
+  bool get enableLogging => false;
+
+  @override
   String? get appId => kIsWeb ? 'com.rokmetro.university.${super.appId}' : super.appId;
 
   // Upgrade

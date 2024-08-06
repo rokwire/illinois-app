@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:io';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
@@ -37,6 +36,7 @@ import 'package:neom/service/Config.dart';
 import 'package:http/http.dart' as http;
 import 'package:neom/service/Auth2.dart';
 import 'package:uuid/uuid.dart';
+import 'package:universal_io/io.dart';
 
 enum AppointmentsTimeSource { upcoming, past }
 

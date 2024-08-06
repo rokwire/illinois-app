@@ -15,7 +15,6 @@
  */
 
 import 'dart:core';
-import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +36,7 @@ import 'package:neom/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
+import 'package:universal_io/io.dart';
 
 class Canvas with Service implements NotificationsListener {
 

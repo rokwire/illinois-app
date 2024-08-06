@@ -15,7 +15,7 @@ import 'package:rokwire_plugin/service/Log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'dart:io';
+import 'package:universal_io/io.dart';
 
 
 class ProfileNamePronouncementWidget extends StatefulWidget {

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:neom/model/Dining.dart';
 import 'package:rokwire_plugin/model/explore.dart';
@@ -30,6 +29,7 @@ import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:universal_io/io.dart';
 
 
 class Dinings with Service implements ContentItemCategoryClient{

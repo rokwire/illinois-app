@@ -1,6 +1,5 @@
 
 import 'dart:collection';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -25,7 +24,6 @@ import 'package:neom/ui/events2/Event2TimeRangePanel.dart';
 import 'package:neom/ui/events2/Event2Widgets.dart';
 import 'package:neom/ui/explore/ExploreMapPanel.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
-import 'package:neom/ui/widgets/LinkButton.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -39,6 +37,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:universal_io/io.dart';
 
 class Event2HomePanel extends StatefulWidget {
 

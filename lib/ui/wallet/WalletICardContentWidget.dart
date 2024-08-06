@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:expandable_page_view/expandable_page_view.dart';
@@ -45,6 +44,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:universal_io/io.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
 class WalletICardContentWidget extends StatefulWidget {

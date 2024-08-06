@@ -1,6 +1,5 @@
 
 import 'dart:collection';
-import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:collection/collection.dart';
@@ -63,6 +62,7 @@ import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:timezone/timezone.dart';
+import 'package:universal_io/io.dart';
 
 enum ExploreMapType { Events2, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MTDDestinations, MentalHealth, StateFarmWayfinding }
 

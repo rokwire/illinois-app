@@ -1,7 +1,6 @@
 
 import 'dart:async';
 import 'dart:core';
-import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -23,6 +22,7 @@ import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:universal_io/io.dart';
 
 class StudentCourses with Service implements NotificationsListener {
 

@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/ext/Group.dart';
@@ -46,6 +43,7 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:universal_io/io.dart';
 
 class GroupCreatePanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
