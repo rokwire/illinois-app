@@ -12,6 +12,7 @@ import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/service/Identity.dart';
 import 'package:illinois/service/IlliniCash.dart';
+import 'package:illinois/service/Occupations.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -69,6 +70,9 @@ enum _StoredDataType {
 
   // rokwire.illinois.edu/appointments
   myAppointments,
+
+  // rokwire.illinois.edu/occupations
+  myOccupationMatches,
 
   // icard.uillinois.edu
   iCard,
@@ -236,6 +240,14 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         updateController: _updateController,
       ),
 
+      // rokwire.illinois.edu/occupations
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.myOccupationMatches] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.my_occupation_matches.title', "My Occupation Matches"),
+        dataProvider: _provideMyOccupationMatchesJson,
+        updateController: _updateController,
+      ),
+
       // icard.uillinois.edu
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.iCard] ??= GlobalKey(),
@@ -358,6 +370,9 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
 
   // rokwire.illinois.edu/appointments
   Future<String?> _provideMyAppointmentsJson() async       => _provideResponseData(await Appointments().loadAppointmentseResponse());
+
+  // rokwire.illinois.edu/occupations
+  Future<String?> _provideMyOccupationMatchesJson() async  => _provideResponseData(await Occupations().getAllOccupationMatchesResponse());
 
   // icard.uillinois.edu
   Future<String?> _provideICardJson() async                => _provideResponseData(await Auth2().loadAuthCardResponse());
