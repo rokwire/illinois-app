@@ -140,214 +140,72 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
 
   Widget get _panelContent => Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      // rokwire.illinois.edu/core
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.coreAccount] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.core_account.title', "Core Account"),
-        dataProvider: _provideCoreAccountJson,
-        updateController: _updateController,
-      ),
-
-      // rokwire.illinois.edu/notifications
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.notificationsAccount] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.notifications_user.title', "Notifications Account"),
-        dataProvider: _provideNotificationsAccountJson,
-        updateController: _updateController,
-      ),
-
-      // rokwire.illinois.edu/lms
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.canvasAccount] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.canvas_user.title', "Canvas Account"),
-        dataProvider: _provideCanvasAccountJson,
-        updateController: _updateController,
-      ),
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.customCourses] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.custom_courses.title', "My Canvas Courses"),
-        dataProvider: _provideCustomCoursesJson,
-        updateController: _updateController,
-      ),
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.customCoursesHistory] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.custom_courses_history.title', "My Canvas Courses Content"),
-        dataProvider: _provideCustomCoursesHistoryJson,
-        updateController: _updateController,
-      ),
-
-      // rokwire.illinois.edu/calendar
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.myEvents] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.my_events.title', "My Events"),
-        dataProvider: _provideMyEventsJson,
-        updateController: _updateController,
-      ),
-
-      // rokwire.illinois.edu/gr
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.myGroups] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.my_groups.title', "My Groups"),
-        dataProvider: _provideMyGroupsJson,
-        updateController: _updateController,
-      ),
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.myGroupsStats] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.my_groups_stats.title', "My Groups Stats"),
-        dataProvider: _provideMyGroupsStatsJson,
-        updateController: _updateController,
-      ),
-
-      // rokwire.illinois.edu/polls
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.myPools] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.my_polls.title', "My Polls"),
-        dataProvider: _provideMyPollsJson,
-        updateController: _updateController,
-      ),
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.participatedPolls] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.participated_polls.title', "Participated Polls"),
-        dataProvider: _provideParticipatedPollsJson,
-        updateController: _updateController,
-      ),
-
-      // rokwire.illinois.edu/surveys
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.mySurveys] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.my_surveys.title', "My Surveys"),
-        dataProvider: _provideMySurveysJson,
-        updateController: _updateController,
-      ),
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.participatedSurveys] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.participated_surveys.title', "Participated Surveys"),
-        dataProvider: _provideParticipatedSurveysJson,
-        updateController: _updateController,
-      ),
-
-      // rokwire.illinois.edu/identity
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.myStudentId] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.my_student_id.title', "My Student ID"),
-        dataProvider: _provideMyStudentIdJson,
-        updateController: _updateController,
-      ),
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.myStudentClassification] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.my_student_classification.title', "My Student Classification"),
-        dataProvider: _provideMyStudentClassificationJson,
-        updateController: _updateController,
-      ),
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.myMobileCredentials] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.my_mobile_credentials.title', "My Mobile Credentials"),
-        dataProvider: _provideMyMobileCredentialsJson,
-        updateController: _updateController,
-      ),
-
-      // rokwire.illinois.edu/rewards
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.myRewardsBalance] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.my_rewards_balance.title', "My Rewards Balance"),
-        dataProvider: _provideMyRewardsBalanceJson,
-        updateController: _updateController,
-      ),
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.myRewardsHistory] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.my_rewards_history.title', "My Rewards History"),
-        dataProvider: _provideMyRewardsHistoryJson,
-        updateController: _updateController,
-      ),
-
-      // rokwire.illinois.edu/wellness
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.myWellnessToDoCategories] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.my_wellness_todo_categories.title', "My Wellness ToDo Categories"),
-        dataProvider: _provideMyWellnessToDoCategoriesJson,
-        updateController: _updateController,
-      ),
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.myWellnessToDoItems] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.my_wellness_todo_items.title', "My Wellness ToDo Items"),
-        dataProvider: _provideMyWellnessToDoItemsJson,
-        updateController: _updateController,
-      ),
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.myWellnessRingsRecords] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.my_wellness_rings_records.title', "My Wellness Rigns Records"),
-        dataProvider: _provideMyWellnessRingsRecordsJson,
-        updateController: _updateController,
-      ),
-
-      // rokwire.illinois.edu/appointments
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.myAppointments] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.my_appointments.title', "My Appointments"),
-        dataProvider: _provideMyAppointmentsJson,
-        updateController: _updateController,
-      ),
-
-      // rokwire.illinois.edu/occupations
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.myOccupationMatches] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.my_occupation_matches.title', "My Occupation Matches"),
-        dataProvider: _provideMyOccupationMatchesJson,
-        updateController: _updateController,
-      ),
-
-      // icard.uillinois.edu
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.iCard] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.i_card.title', "iCard"),
-        dataProvider: _provideICardJson,
-        updateController: _updateController,
-      ),
-
-      // housing.illinois.edu
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.studentSummary] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.student_summary.title', "Student Summary"),
-        dataProvider: _provideStudentSummaryJson,
-        updateController: _updateController,
-      ),
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.illiniCashBalance] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.illini_cash_balance.title', "Illini Cash Balance"),
-        dataProvider: _provideIlliniCashBalanceJson,
-        updateController: _updateController,
-      ),
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.illiniCashTransactions] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.illini_cash_transactions.title', "Illini Cash Transactions"),
-        hint: Localization().getStringEx('panel.profile.stored_data.label.this_year', " (this year)"),
-        dataProvider: _provideIlliniCashTransactionsJson,
-        updateController: _updateController,
-      ),
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.mealPlanTransactions] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.meal_plan_transactions.title', "Meal Plan Transactions"),
-        hint: Localization().getStringEx('panel.profile.stored_data.label.this_year', " (this year)"),
-        dataProvider: _provideMealPlanTransactionsJson,
-        updateController: _updateController,
-      ),
-      _ProfileStoredDataWidget(
-        key: _storedDataKeys[_StoredDataType.cafeCreditTransactions] ??= GlobalKey(),
-        title: Localization().getStringEx('panel.profile.stored_data.cafe_credit_transactions.title', "Cafe Credit Transactions"),
-        hint: Localization().getStringEx('panel.profile.stored_data.label.this_year', " (this year)"),
-        dataProvider: _provideCafeCreditTransactionsJson,
-        updateController: _updateController,
-      ),
+      ..._coreContent,
+      ..._notificationsContent,
+      ..._lmsContent,
+      ..._calendarContent,
+      ..._groupsContent,
+      ..._pollsContent,
+      ..._surveysContent,
+      ..._identityContent,
+      ..._rewardsContent,
+      ..._wellnessContent,
+      ..._appointmentsContent,
+      ..._occupationsContent,
+      ..._icardContent,
+      ..._housingContent,
     ]),
   );
 
   // rokwire.illinois.edu/core
+
+  List<Widget> get _coreContent => <Widget>[
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.coreAccount] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.core_account.title', "Core Account"),
+      dataProvider: _provideCoreAccountJson,
+      updateController: _updateController,
+    ),
+  ];
+
   Future<String?> _provideCoreAccountJson() async          => _provideResponseData(await Auth2().loadAccountResponse());
 
   // rokwire.illinois.edu/notifications
+
+  List<Widget> get _notificationsContent => <Widget>[
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.notificationsAccount] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.notifications_user.title', "Notifications Account"),
+      dataProvider: _provideNotificationsAccountJson,
+      updateController: _updateController,
+    ),
+  ];
+
   Future<String?> _provideNotificationsAccountJson() async => _provideResponseData(await Inbox().loadUserInfoResponse());
 
   // rokwire.illinois.edu/lms
+
+  List<Widget> get _lmsContent => <Widget>[
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.canvasAccount] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.canvas_user.title', "Canvas Account"),
+      dataProvider: _provideCanvasAccountJson,
+      updateController: _updateController,
+    ),
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.customCourses] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.custom_courses.title', "My Canvas Courses"),
+      dataProvider: _provideCustomCoursesJson,
+      updateController: _updateController,
+    ),
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.customCoursesHistory] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.custom_courses_history.title', "My Canvas Courses Content"),
+      dataProvider: _provideCustomCoursesHistoryJson,
+      updateController: _updateController,
+    ),
+  ];
+
   Future<String?> _provideCanvasAccountJson() async        => _provideResponseData(await Canvas().loadSelfUserResponse());
 
   //Future<String?> _provideCustomCoursesJson() async        => _provideResponseData(await CustomCourses().loadUserCoursesResponse());
@@ -390,16 +248,58 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
   }
 
   // rokwire.illinois.edu/calendar
+
+  List<Widget> get _calendarContent => <Widget>[
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.myEvents] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.my_events.title', "My Events"),
+      dataProvider: _provideMyEventsJson,
+      updateController: _updateController,
+    ),
+  ];
+
   Future<String?> _provideMyEventsJson() async             => _provideResponseData(await Events2().loadEventsResponse(Events2Query(
     types: { Event2TypeFilter.admin },
     timeFilter: null,
   )));
 
   // rokwire.illinois.edu/gr
+
+  List<Widget> get _groupsContent => <Widget>[
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.myGroups] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.my_groups.title', "My Groups"),
+      dataProvider: _provideMyGroupsJson,
+      updateController: _updateController,
+    ),
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.myGroupsStats] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.my_groups_stats.title', "My Groups Stats"),
+      dataProvider: _provideMyGroupsStatsJson,
+      updateController: _updateController,
+    ),
+  ];
+
   Future<String?> _provideMyGroupsJson() async             => _provideResponseData(await Groups().loadUserGroupsResponse());
   Future<String?> _provideMyGroupsStatsJson() async        => _provideResponseData(await Groups().loadUserStatsResponse());
 
   // rokwire.illinois.edu/polls
+
+  List<Widget> get _pollsContent => <Widget>[
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.myPools] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.my_polls.title', "My Polls"),
+      dataProvider: _provideMyPollsJson,
+      updateController: _updateController,
+    ),
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.participatedPolls] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.participated_polls.title', "Participated Polls"),
+      dataProvider: _provideParticipatedPollsJson,
+      updateController: _updateController,
+    ),
+  ];
+
   Future<String?> _provideMyPollsJson() async              => _provideResponseData(await Polls().getPollsResponse(PollFilter(
     myPolls: true
   )));
@@ -408,33 +308,176 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
   )));
 
   // rokwire.illinois.edu/surveys
+
+  List<Widget> get _surveysContent => <Widget>[
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.mySurveys] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.my_surveys.title', "My Surveys"),
+      dataProvider: _provideMySurveysJson,
+      updateController: _updateController,
+    ),
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.participatedSurveys] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.participated_surveys.title', "Participated Surveys"),
+      dataProvider: _provideParticipatedSurveysJson,
+      updateController: _updateController,
+    ),
+  ];
+
   Future<String?> _provideMySurveysJson() async            => _provideResponseData(await Surveys().loadCreatorSurveysResponse());
   Future<String?> _provideParticipatedSurveysJson() async  => _provideResponseData(await Surveys().loadUserSurveyResponsesResponse());
 
   // rokwire.illinois.edu/identity
+
+  List<Widget> get _identityContent => <Widget>[
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.myStudentId] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.my_student_id.title', "My Student ID"),
+      dataProvider: _provideMyStudentIdJson,
+      updateController: _updateController,
+    ),
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.myStudentClassification] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.my_student_classification.title', "My Student Classification"),
+      dataProvider: _provideMyStudentClassificationJson,
+      updateController: _updateController,
+    ),
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.myMobileCredentials] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.my_mobile_credentials.title', "My Mobile Credentials"),
+      dataProvider: _provideMyMobileCredentialsJson,
+      updateController: _updateController,
+    ),
+  ];
+
   Future<String?> _provideMyStudentIdJson() async          => _provideResponseData(await Identity().loadStudentIdResponse());
   Future<String?> _provideMyStudentClassificationJson() async => _provideResponseData(await Identity().loadStudentClassificationResponse());
   Future<String?> _provideMyMobileCredentialsJson() async  => _provideResponseData(await Identity().loadMobileCredentialResponse());
 
   // rokwire.illinois.edu/rewards
+
+  List<Widget> get _rewardsContent => <Widget>[
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.myRewardsBalance] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.my_rewards_balance.title', "My Rewards Balance"),
+      dataProvider: _provideMyRewardsBalanceJson,
+      updateController: _updateController,
+    ),
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.myRewardsHistory] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.my_rewards_history.title', "My Rewards History"),
+      dataProvider: _provideMyRewardsHistoryJson,
+      updateController: _updateController,
+    ),
+  ];
+
   Future<String?> _provideMyRewardsBalanceJson() async     => _provideResponseData(await Rewards().loadBalanceResponse());
   Future<String?> _provideMyRewardsHistoryJson() async     => _provideResponseData(await Rewards().loadHistoryResponse());
 
   // rokwire.illinois.edu/wellness
+
+  List<Widget> get _wellnessContent => <Widget>[
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.myWellnessToDoCategories] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.my_wellness_todo_categories.title', "My Wellness ToDo Categories"),
+      dataProvider: _provideMyWellnessToDoCategoriesJson,
+      updateController: _updateController,
+    ),
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.myWellnessToDoItems] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.my_wellness_todo_items.title', "My Wellness ToDo Items"),
+      dataProvider: _provideMyWellnessToDoItemsJson,
+      updateController: _updateController,
+    ),
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.myWellnessRingsRecords] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.my_wellness_rings_records.title', "My Wellness Rigns Records"),
+      dataProvider: _provideMyWellnessRingsRecordsJson,
+      updateController: _updateController,
+    ),
+  ];
+
   Future<String?> _provideMyWellnessToDoCategoriesJson() async => _provideResponseData(await Wellness().loadToDoCategoriesResponse());
   Future<String?> _provideMyWellnessToDoItemsJson() async  => _provideResponseData(await Wellness().loadToDoItemsResponse());
   Future<String?> _provideMyWellnessRingsRecordsJson() async => _provideResponseData(await WellnessRings().requestRingRecordsResponse());
 
   // rokwire.illinois.edu/appointments
+
+  List<Widget> get _appointmentsContent => <Widget>[
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.myAppointments] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.my_appointments.title', "My Appointments"),
+      dataProvider: _provideMyAppointmentsJson,
+      updateController: _updateController,
+    ),
+  ];
+
   Future<String?> _provideMyAppointmentsJson() async       => _provideResponseData(await Appointments().loadAppointmentseResponse());
 
   // rokwire.illinois.edu/occupations
+
+  List<Widget> get _occupationsContent => <Widget>[
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.myOccupationMatches] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.my_occupation_matches.title', "My Occupation Matches"),
+      dataProvider: _provideMyOccupationMatchesJson,
+      updateController: _updateController,
+    ),
+  ];
+
   Future<String?> _provideMyOccupationMatchesJson() async  => _provideResponseData(await Occupations().getAllOccupationMatchesResponse());
 
   // icard.uillinois.edu
+
+  List<Widget> get _icardContent => <Widget>[
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.iCard] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.i_card.title', "iCard"),
+      dataProvider: _provideICardJson,
+      updateController: _updateController,
+    ),
+  ];
+
   Future<String?> _provideICardJson() async                => _provideResponseData(await Auth2().loadAuthCardResponse());
 
   // housing.illinois.edu
+
+  List<Widget> get _housingContent => <Widget>[
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.studentSummary] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.student_summary.title', "Student Summary"),
+      dataProvider: _provideStudentSummaryJson,
+      updateController: _updateController,
+    ),
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.illiniCashBalance] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.illini_cash_balance.title', "Illini Cash Balance"),
+      dataProvider: _provideIlliniCashBalanceJson,
+      updateController: _updateController,
+    ),
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.illiniCashTransactions] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.illini_cash_transactions.title', "Illini Cash Transactions"),
+      hint: Localization().getStringEx('panel.profile.stored_data.label.this_year', " (this year)"),
+      dataProvider: _provideIlliniCashTransactionsJson,
+      updateController: _updateController,
+    ),
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.mealPlanTransactions] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.meal_plan_transactions.title', "Meal Plan Transactions"),
+      hint: Localization().getStringEx('panel.profile.stored_data.label.this_year', " (this year)"),
+      dataProvider: _provideMealPlanTransactionsJson,
+      updateController: _updateController,
+    ),
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.cafeCreditTransactions] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.cafe_credit_transactions.title', "Cafe Credit Transactions"),
+      hint: Localization().getStringEx('panel.profile.stored_data.label.this_year', " (this year)"),
+      dataProvider: _provideCafeCreditTransactionsJson,
+      updateController: _updateController,
+    ),
+  ];
+
   Future<String?> _provideStudentSummaryJson() async       => _provideResponseData(await _provideStudentSummaryResponse());
   Future<String?> _provideIlliniCashBalanceJson() async    => _provideResponseData(await IlliniCash().loadBalanceRequest());
   Future<String?> _provideIlliniCashTransactionsJson() async => _provideResponseData(await IlliniCash().loadTransactionHistoryResponse(DateTime(DateTime.now().year), DateTime.now()));
