@@ -14,6 +14,8 @@ import 'package:illinois/service/Identity.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Occupations.dart';
 import 'package:illinois/service/Rewards.dart';
+import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/service/WellnessRings.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -72,6 +74,11 @@ enum _StoredDataType {
   // rokwire.illinois.edu/rewards
   myRewardsBalance,
   myRewardsHistory,
+
+  // rokwire.illinois.edu/wellness
+  myWellnessToDoCategories,
+  myWellnessToDoItems,
+  myWellnessRingsRecords,
 
   // rokwire.illinois.edu/appointments
   myAppointments,
@@ -253,6 +260,26 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         updateController: _updateController,
       ),
 
+      // rokwire.illinois.edu/wellness
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.myWellnessToDoCategories] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.my_wellness_todo_categories.title', "My Wellness ToDo Categories"),
+        dataProvider: _provideMyWellnessToDoCategoriesJson,
+        updateController: _updateController,
+      ),
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.myWellnessToDoItems] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.my_wellness_todo_items.title', "My Wellness ToDo Items"),
+        dataProvider: _provideMyWellnessToDoItemsJson,
+        updateController: _updateController,
+      ),
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.myWellnessRingsRecords] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.my_wellness_rings_records.title', "My Wellness Rigns Records"),
+        dataProvider: _provideMyWellnessRingsRecordsJson,
+        updateController: _updateController,
+      ),
+
       // rokwire.illinois.edu/appointments
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.myAppointments] ??= GlobalKey(),
@@ -390,8 +417,13 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
   Future<String?> _provideMyMobileCredentialsJson() async  => _provideResponseData(await Identity().loadMobileCredentialResponse());
 
   // rokwire.illinois.edu/rewards
-  Future<String?> _provideMyRewardsBalanceJson() async       => _provideResponseData(await Rewards().loadBalanceResponse());
-  Future<String?> _provideMyRewardsHistoryJson() async       => _provideResponseData(await Rewards().loadHistoryResponse());
+  Future<String?> _provideMyRewardsBalanceJson() async     => _provideResponseData(await Rewards().loadBalanceResponse());
+  Future<String?> _provideMyRewardsHistoryJson() async     => _provideResponseData(await Rewards().loadHistoryResponse());
+
+  // rokwire.illinois.edu/wellness
+  Future<String?> _provideMyWellnessToDoCategoriesJson() async => _provideResponseData(await Wellness().loadToDoCategoriesResponse());
+  Future<String?> _provideMyWellnessToDoItemsJson() async  => _provideResponseData(await Wellness().loadToDoItemsResponse());
+  Future<String?> _provideMyWellnessRingsRecordsJson() async => _provideResponseData(await WellnessRings().requestRingRecordsResponse());
 
   // rokwire.illinois.edu/appointments
   Future<String?> _provideMyAppointmentsJson() async       => _provideResponseData(await Appointments().loadAppointmentseResponse());
