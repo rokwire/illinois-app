@@ -6,7 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Fixed
--Fixed AssistantContentPanel scrollable size when writing negative feedback [#4267](https://github.com/rokwire/illinois-app/issues/4267).
+- Fixed AssistantContentPanel scrollable size when writing negative feedback [#4267](https://github.com/rokwire/illinois-app/issues/4267).
+### Changed
+- Make Academics/Skills Self Evaluation available to any logged users [#4270](https://github.com/rokwire/illinois-app/issues/4270).
 
 ## [6.0.29] - 2024-07-29
 ### Changed

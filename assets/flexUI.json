@@ -64,7 +64,7 @@
 	
 			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "academics_events", "appointments", "todo_list", "skills_self_evaluation", "essential_skills_coach", "my_illini", "skills_dashboard"],
 			"academics.appointments.features": ["authentication", "netid_login"],
-			"academics.skills_self_evaluation.features": ["authentication", "netid_login"],
+			"academics.skills_self_evaluation.features": ["authentication", "login"],
 			"academics.essential_skills_coach.features": ["authentication", "netid_login"],
 
 			"wellness": ["daily_tips", "rings", "appointments", "health_screener", "podcast", "resources", "mental_health", "success_team", "struggling"],
@@ -96,7 +96,7 @@
 			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 			
 			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
-				"gies", "new_student", "canvas", "safer", "mtd_bus_pass", "student", "netid_login", "assistant", "assistant_personalization"],
+				"gies", "new_student", "canvas", "safer", "mtd_bus_pass", "student", "login", "netid_login", "assistant", "assistant_personalization"],
 
 			"attributes": ["groups", "events"],
 			"attributes.groups": ["rso"],
@@ -200,7 +200,10 @@
 
 				"onboarding.research_questionnaire"       : { "shibbolethLoggedIn": true },
 
+				"features.login"                          : { "loggedIn": true },
 				"features.netid_login"                    : { "shibbolethLoggedIn": true },
+				"features.email_login"                    : { "emailLoggedIn": true },
+				"features.phone_login"                    : { "phoneLoggedIn": true },
 
 				"attributes.groups.rso"                   : [{ "accountPermission": "${config.settings.auth.permissions.rso_group_admin}" }, "OR", { "accountRole": "${config.settings.auth.roles.rso_group_admin}" }]
 			},
