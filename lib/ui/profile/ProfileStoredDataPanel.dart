@@ -13,6 +13,7 @@ import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/service/Identity.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Occupations.dart';
+import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Rewards.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/service/WellnessRings.dart';
@@ -95,6 +96,9 @@ enum _StoredDataType {
   illiniCashTransactions,
   mealPlanTransactions,
   cafeCreditTransactions,
+
+  // recent_items
+  recentItems
 }
 
 class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
@@ -154,6 +158,7 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
       ..._occupationsContent,
       ..._icardContent,
       ..._housingContent,
+      ...recentItemsContent,
     ]),
   );
 
@@ -445,33 +450,33 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
   List<Widget> get _housingContent => <Widget>[
     _ProfileStoredDataWidget(
       key: _storedDataKeys[_StoredDataType.studentSummary] ??= GlobalKey(),
-      title: Localization().getStringEx('panel.profile.stored_data.student_summary.title', "Student Summary"),
+      title: Localization().getStringEx('panel.profile.stored_data.student_summary.title', "My Student Summary"),
       dataProvider: _provideStudentSummaryJson,
       updateController: _updateController,
     ),
     _ProfileStoredDataWidget(
       key: _storedDataKeys[_StoredDataType.illiniCashBalance] ??= GlobalKey(),
-      title: Localization().getStringEx('panel.profile.stored_data.illini_cash_balance.title', "Illini Cash Balance"),
+      title: Localization().getStringEx('panel.profile.stored_data.illini_cash_balance.title', "My Illini Cash Balance"),
       dataProvider: _provideIlliniCashBalanceJson,
       updateController: _updateController,
     ),
     _ProfileStoredDataWidget(
       key: _storedDataKeys[_StoredDataType.illiniCashTransactions] ??= GlobalKey(),
-      title: Localization().getStringEx('panel.profile.stored_data.illini_cash_transactions.title', "Illini Cash Transactions"),
+      title: Localization().getStringEx('panel.profile.stored_data.illini_cash_transactions.title', "My Illini Cash Transactions"),
       hint: Localization().getStringEx('panel.profile.stored_data.label.this_year', " (this year)"),
       dataProvider: _provideIlliniCashTransactionsJson,
       updateController: _updateController,
     ),
     _ProfileStoredDataWidget(
       key: _storedDataKeys[_StoredDataType.mealPlanTransactions] ??= GlobalKey(),
-      title: Localization().getStringEx('panel.profile.stored_data.meal_plan_transactions.title', "Meal Plan Transactions"),
+      title: Localization().getStringEx('panel.profile.stored_data.meal_plan_transactions.title', "My Meal Plan Transactions"),
       hint: Localization().getStringEx('panel.profile.stored_data.label.this_year', " (this year)"),
       dataProvider: _provideMealPlanTransactionsJson,
       updateController: _updateController,
     ),
     _ProfileStoredDataWidget(
       key: _storedDataKeys[_StoredDataType.cafeCreditTransactions] ??= GlobalKey(),
-      title: Localization().getStringEx('panel.profile.stored_data.cafe_credit_transactions.title', "Cafe Credit Transactions"),
+      title: Localization().getStringEx('panel.profile.stored_data.cafe_credit_transactions.title', "My Cafe Credit Transactions"),
       hint: Localization().getStringEx('panel.profile.stored_data.label.this_year', " (this year)"),
       dataProvider: _provideCafeCreditTransactionsJson,
       updateController: _updateController,
@@ -489,6 +494,19 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
     return (result is Response) ? result : null;
   }
   
+  // recent_items
+
+  List<Widget> get recentItemsContent => <Widget>[
+    _ProfileStoredDataWidget(
+      key: _storedDataKeys[_StoredDataType.recentItems] ??= GlobalKey(),
+      title: Localization().getStringEx('panel.profile.stored_data.recent_items.title', "My Recently Viewed"),
+      dataProvider: _provideRecentItemsJson,
+      updateController: _updateController,
+    ),
+  ];
+
+  Future<String?> _provideRecentItemsJson() async => RecentItems.loadRecentItemsSource();
+
   // Implementation
 
   String? _provideResponseData(Response? response) => ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) ?

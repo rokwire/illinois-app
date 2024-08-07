@@ -137,7 +137,8 @@ class Storage extends rokwire.Storage {
 
   // Recent Items - backward compatability
   static const String recentItemsKey  = '_recent_items_json_string';
-  List<dynamic>? get recentItems => JsonUtils.decode(getStringWithName(recentItemsKey));
+  String? get recentItemsSource => getStringWithName(recentItemsKey);
+  List<dynamic>? get recentItems => JsonUtils.decodeList(recentItemsSource);
 //set recentItems(List<dynamic>? recentItems) => setStringWithName(recentItemsKey, JsonUtils.encode(recentItems));
 
   String get recentItemsEnabledKey => 'edu.illinois.rokwire.recent_items.enabled';
