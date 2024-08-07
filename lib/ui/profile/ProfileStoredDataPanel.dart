@@ -434,7 +434,7 @@ class _ProfileStoredDataWidget extends StatefulWidget {
     required this.dataProvider,
     this.updateController,
     // ignore: unused_element
-    this.margin = const EdgeInsets.symmetric(horizontal: 16, vertical: 4)
+    this.margin = const EdgeInsets.symmetric(horizontal: 16, vertical: 12)
   });
 
   @override
