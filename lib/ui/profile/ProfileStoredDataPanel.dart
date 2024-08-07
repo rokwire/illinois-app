@@ -13,6 +13,7 @@ import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/service/Identity.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Occupations.dart';
+import 'package:illinois/service/Rewards.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -67,6 +68,10 @@ enum _StoredDataType {
   myStudentId,
   myStudentClassification,
   myMobileCredentials,
+
+  // rokwire.illinois.edu/rewards
+  myRewardsBalance,
+  myRewardsHistory,
 
   // rokwire.illinois.edu/appointments
   myAppointments,
@@ -234,6 +239,20 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         updateController: _updateController,
       ),
 
+      // rokwire.illinois.edu/rewards
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.myRewardsBalance] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.my_rewards_balance.title', "My Rewards Balance"),
+        dataProvider: _provideMyRewardsBalanceJson,
+        updateController: _updateController,
+      ),
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.myRewardsHistory] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.my_rewards_history.title', "My Rewards History"),
+        dataProvider: _provideMyRewardsHistoryJson,
+        updateController: _updateController,
+      ),
+
       // rokwire.illinois.edu/appointments
       _ProfileStoredDataWidget(
         key: _storedDataKeys[_StoredDataType.myAppointments] ??= GlobalKey(),
@@ -369,6 +388,10 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
   Future<String?> _provideMyStudentIdJson() async          => _provideResponseData(await Identity().loadStudentIdResponse());
   Future<String?> _provideMyStudentClassificationJson() async => _provideResponseData(await Identity().loadStudentClassificationResponse());
   Future<String?> _provideMyMobileCredentialsJson() async  => _provideResponseData(await Identity().loadMobileCredentialResponse());
+
+  // rokwire.illinois.edu/rewards
+  Future<String?> _provideMyRewardsBalanceJson() async       => _provideResponseData(await Rewards().loadBalanceResponse());
+  Future<String?> _provideMyRewardsHistoryJson() async       => _provideResponseData(await Rewards().loadHistoryResponse());
 
   // rokwire.illinois.edu/appointments
   Future<String?> _provideMyAppointmentsJson() async       => _provideResponseData(await Appointments().loadAppointmentseResponse());

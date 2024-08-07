@@ -2177,6 +2177,8 @@
 	"panel.profile.stored_data.my_student_id.title": "My Student ID",
 	"panel.profile.stored_data.my_student_classification.title": "My Student Classification",
 	"panel.profile.stored_data.my_mobile_credentials.title": "My Mobile Credentials",
+	"panel.profile.stored_data.my_rewards_balance.title": "My Rewards Balance",
+	"panel.profile.stored_data.my_rewards_history.title": "My Rewards History",
 	"panel.profile.stored_data.my_appointments.title": "My Appointments",
 	"panel.profile.stored_data.my_occupation_matches.title": "My Occupation Matches",
 	"panel.profile.stored_data.i_card.title": "My iCard",
