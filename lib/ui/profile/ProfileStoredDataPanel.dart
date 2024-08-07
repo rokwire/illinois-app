@@ -75,6 +75,10 @@ enum _StoredDataType {
 
   // housing.illinois.edu
   studentSummary,
+  illiniCashBalance,
+  illiniCashTransactions,
+  mealPlanTransactions,
+  cafeCreditTransactions,
 }
 
 class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
@@ -247,6 +251,33 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
         dataProvider: _provideStudentSummaryJson,
         updateController: _updateController,
       ),
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.illiniCashBalance] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.illini_cash_balance.title', "Illini Cash Balance"),
+        dataProvider: _provideIlliniCashBalanceJson,
+        updateController: _updateController,
+      ),
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.illiniCashTransactions] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.illini_cash_transactions.title', "Illini Cash Transactions"),
+        hint: Localization().getStringEx('panel.profile.stored_data.label.this_year', " (this year)"),
+        dataProvider: _provideIlliniCashTransactionsJson,
+        updateController: _updateController,
+      ),
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.mealPlanTransactions] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.meal_plan_transactions.title', "Meal Plan Transactions"),
+        hint: Localization().getStringEx('panel.profile.stored_data.label.this_year', " (this year)"),
+        dataProvider: _provideMealPlanTransactionsJson,
+        updateController: _updateController,
+      ),
+      _ProfileStoredDataWidget(
+        key: _storedDataKeys[_StoredDataType.cafeCreditTransactions] ??= GlobalKey(),
+        title: Localization().getStringEx('panel.profile.stored_data.cafe_credit_transactions.title', "Cafe Credit Transactions"),
+        hint: Localization().getStringEx('panel.profile.stored_data.label.this_year', " (this year)"),
+        dataProvider: _provideCafeCreditTransactionsJson,
+        updateController: _updateController,
+      ),
     ]),
   );
 
@@ -333,12 +364,16 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
 
   // housing.illinois.edu
   Future<String?> _provideStudentSummaryJson() async       => _provideResponseData(await _provideStudentSummaryResponse());
+  Future<String?> _provideIlliniCashBalanceJson() async    => _provideResponseData(await IlliniCash().loadBalanceRequest());
+  Future<String?> _provideIlliniCashTransactionsJson() async => _provideResponseData(await IlliniCash().loadTransactionHistoryResponse(DateTime(DateTime.now().year), DateTime.now()));
+  Future<String?> _provideMealPlanTransactionsJson() async => _provideResponseData(await IlliniCash().loadMealPlanTransactionHistoryResponse(DateTime(DateTime.now().year), DateTime.now()));
+  Future<String?> _provideCafeCreditTransactionsJson() async => _provideResponseData(await IlliniCash().loadCafeCreditTransactionHistoryResponse(DateTime(DateTime.now().year), DateTime.now()));
 
   Future<Response?> _provideStudentSummaryResponse() async {
     dynamic result = await IlliniCash().loadStudentSummaryResponse();
     return (result is Response) ? result : null;
   }
-
+  
   // Implementation
 
   String? _provideResponseData(Response? response) => ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) ?
@@ -372,6 +407,7 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
 
 class _ProfileStoredDataWidget extends StatefulWidget {
   final String? title;
+  final String? hint;
   final _StoredDataProvider dataProvider;
   final StreamController<String>? updateController;
   final EdgeInsetsGeometry margin;
@@ -379,7 +415,7 @@ class _ProfileStoredDataWidget extends StatefulWidget {
   _ProfileStoredDataWidget({
     // ignore: unused_element
     super.key,
-    this.title,
+    this.title, this.hint,
     required this.dataProvider,
     this.updateController,
     // ignore: unused_element
@@ -415,50 +451,63 @@ class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
   }
 
   @override
-  Widget build(BuildContext context) => Padding(padding: widget.margin, child:
-    Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-      if (StringUtils.isNotEmpty(widget.title))
-        Padding(padding: EdgeInsets.only(bottom: 4),
-          child: Text(widget.title ?? '', style: Styles().textStyles.getTextStyle('widget.title.small.fat'),),
-        ),
-      Stack(children: [
-        TextField(
-          maxLines: 5,
-          readOnly: true,
-          controller: _textController,
-          decoration: InputDecoration(
-            border: _textBorder,
-            focusedBorder: _textBorder,
-            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8)
-          ),
-          style: (_providedData != null) ? Styles().textStyles.getTextStyle('widget.input_field.text.regular') : Styles().textStyles.getTextStyle('widget.item.small.thin.italic'),
-        ),
-
-        Visibility(visible: _providingData, child:
-          Positioned.fill(child:
-            Align(alignment: Alignment.center, child:
-              SizedBox(height: 24, width: 24, child:
-                CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3),
-              ),
+  Widget build(BuildContext context) {
+    Widget? headingWidget = _buildHeadingWidget();
+    return Padding(padding: widget.margin, child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+        if (headingWidget != null)
+          Padding(padding: EdgeInsets.only(bottom: 4), child: headingWidget,),
+        Stack(children: [
+          TextField(
+            maxLines: 5,
+            readOnly: true,
+            controller: _textController,
+            decoration: InputDecoration(
+              border: _textBorder,
+              focusedBorder: _textBorder,
+              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8)
             ),
+            style: (_providedData != null) ? Styles().textStyles.getTextStyle('widget.input_field.text.regular') : Styles().textStyles.getTextStyle('widget.item.small.thin.italic'),
           ),
-        ),
 
-        Visibility(visible: !_providingData && StringUtils.isNotEmpty(_providedData), child:
-          Positioned.fill(child:
-            Align(alignment: Alignment.topRight, child:
-              InkWell(onTap: _onCopy, child:
-                Padding(padding: EdgeInsets.all(12), child:
-                  Styles().images.getImage('copy', excludeFromSemantics: true),
+          Visibility(visible: _providingData, child:
+            Positioned.fill(child:
+              Align(alignment: Alignment.center, child:
+                SizedBox(height: 24, width: 24, child:
+                  CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3),
                 ),
               ),
             ),
           ),
-        ),
 
-      ],),
-    ]),
-  );
+          Visibility(visible: !_providingData && StringUtils.isNotEmpty(_providedData), child:
+            Positioned.fill(child:
+              Align(alignment: Alignment.topRight, child:
+                InkWell(onTap: _onCopy, child:
+                  Padding(padding: EdgeInsets.all(12), child:
+                    Styles().images.getImage('copy', excludeFromSemantics: true),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+        ],),
+      ]),
+    );
+  }
+
+  Widget? _buildHeadingWidget() {
+    List<InlineSpan> spans = <InlineSpan>[
+      if (StringUtils.isNotEmpty(widget.title))
+        TextSpan(text: widget.title, style: Styles().textStyles.getTextStyle('widget.title.small.fat')),
+      if (StringUtils.isNotEmpty(widget.hint))
+        TextSpan(text: widget.hint, style: Styles().textStyles.getTextStyle('widget.title.small.semi_fat.light')),
+    ];
+    return spans.isNotEmpty ? RichText(
+      text: TextSpan(style: Styles().textStyles.getTextStyle('widget.title.small.fat'), children: spans)
+    ) : null;
+  }
 
   InputBorder get _textBorder =>
     OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0));

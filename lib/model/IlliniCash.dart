@@ -270,6 +270,17 @@ class IlliniCashTransaction extends BaseTransaction {
       amount: amountString,
     );
   }
+
+  static List<IlliniCashTransaction>? listFromJson(List<dynamic>? jsonList) {
+    List<IlliniCashTransaction>? result;
+    if (jsonList != null) {
+      result = <IlliniCashTransaction>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, IlliniCashTransaction.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
 }
 
 //////////////////////////////
@@ -292,6 +303,17 @@ class MealPlanTransaction extends BaseTransaction{
       location: json['Location'],
       amount: json['Amount'],
     );
+  }
+
+  static List<MealPlanTransaction>? listFromJson(List<dynamic>? jsonList) {
+    List<MealPlanTransaction>? result;
+    if (jsonList != null) {
+      result = <MealPlanTransaction>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, MealPlanTransaction.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
   }
 }
 
@@ -317,5 +339,16 @@ class CafeCreditTransaction extends BaseTransaction{
       location: json['Location'],
       amount: amountString,
     );
+  }
+
+  static List<CafeCreditTransaction>? listFromJson(List<dynamic>? jsonList) {
+    List<CafeCreditTransaction>? result;
+    if (jsonList != null) {
+      result = <CafeCreditTransaction>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CafeCreditTransaction.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
   }
 }

@@ -2174,6 +2174,7 @@
     "panel.profile.stored_data.header.title": "My Stored Data",
     "panel.profile.stored_data.button.copy_all.title": "Copy All",
     "panel.profile.stored_data.copied_all.succeeded.message": "Copied everything to your clipboard!",
+    "panel.profile.stored_data.label.this_year": " (this year)",
     "panel.profile.stored_data.core_account.title": "My Core Account",
     "panel.profile.stored_data.notifications_user.title": "My Notifications Account",
     "panel.profile.stored_data.canvas_user.title": "My Canvas Account",
@@ -2192,6 +2193,10 @@
     "panel.profile.stored_data.my_appointments.title": "My Appointments",
     "panel.profile.stored_data.i_card.title": "My iCard",
     "panel.profile.stored_data.student_summary.title": "My Student Summary",
+    "panel.profile.stored_data.illini_cash_balance.title": "My Illini Cash Balance",
+    "panel.profile.stored_data.illini_cash_transactions.title": "My Illini Cash Transactions",
+    "panel.profile.stored_data.meal_plan_transactions.title": "My Meal Plan Transactions",
+    "panel.profile.stored_data.cafe_credit_transactions.title": "My Cafe Credit Transactions",
 
     "widget.profile.stored_data.retrieve.failed.message": "Failed to retrieve data.",
     "widget.profile.stored_data.copied.succeeded.message": "Copied to your clipboard!",
