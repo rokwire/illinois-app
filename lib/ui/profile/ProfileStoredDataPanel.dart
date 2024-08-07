@@ -118,9 +118,11 @@ class _ProfileStoredDataPanelState extends State<ProfileStoredDataPanel> {
 
   Widget get _scaffoldContent => SafeArea(child:
     RefreshIndicator(onRefresh: _onRefresh, child:
-      SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
-        _panelContent,
-      )
+      Scrollbar(child:
+        SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
+          _panelContent,
+        ),
+      ),
     ),
   );
 
