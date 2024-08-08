@@ -2683,6 +2683,7 @@
     "panel.manage_members.field.search.title": "Búsqueda",
     "panel.manage_members.button.search.clear.title": "Claro",
     "panel.manage_members.button.search.title": "Búsqueda",
+    "panel.manage_members.button.approve_all.title": "Approve All",
     "panel.manage_members.member.status.all.label": "Todos",
     "panel.manage_members.member.status.all.project.label": "Todos",
     "panel.manage_members.member.status.admin.label": "Administrador",

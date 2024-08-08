@@ -279,24 +279,40 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     }
 
     return Column(children: <Widget>[
-        SectionRibbonHeader(title: _getSectionHeading(), titleIconKey: 'person-circle'),
-        _buildMembersSearch(),
-        _buildDateUpdatedFields(),
+        // SectionRibbonHeader(title: _getSectionHeading(), titleIconKey: 'person-circle'),
+        // _buildMembersSearch(),
         Visibility(visible: 1 < CollectionUtils.length(_sortedMemberStatusList), child:
           Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
-            RibbonButton(
+          RibbonButton(
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
               backgroundColor: Styles().colors.white,
               borderRadius: BorderRadius.all(Radius.circular(5)),
               border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-                rightIconKey: _statusValuesVisible ? 'chevron-up' : 'chevron-down',
-                label: _memberStatusToString(_selectedMemberStatus),
+              rightIconKey: _statusValuesVisible ? 'chevron-up' : 'chevron-down',
+              label: _memberStatusToString(_selectedMemberStatus),
               onTap: _onTapRibbonButton))),
-      Stack(children: [
-        Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16), child: contentWidget),
-        Visibility(visible: _statusValuesVisible, child: _buildStatusDismissLayer()),
-        Visibility(visible: _statusValuesVisible, child: _buildStatusValuesWidget()),
-      ])
+        Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+          Row(
+            children: [
+              Expanded(child: _buildDateUpdatedFields()),
+              Padding(padding: EdgeInsets.only(right: 16), child:
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _buildApproveAllButton(),
+                    _buildSearchButton()
+                  ],
+                )
+              )
+            ],
+          )
+        ),
+        Stack(children: [
+          Padding(padding: EdgeInsets.only(top: 0, left: 16, right: 16), child: contentWidget),
+          Visibility(visible: _statusValuesVisible, child: _buildStatusDismissLayer()),
+          Visibility(visible: _statusValuesVisible, child: _buildStatusValuesWidget()),
+        ])
     ]);
   }
 
@@ -366,6 +382,32 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     );
   }
 
+  Widget _buildApproveAllButton() {
+    return GestureDetector(
+        onTap: _onTapApproveAll,
+        child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: Text(Localization().getStringEx("panel.manage_members.button.approve_all.title", 'Approve All'),
+                style: Styles().textStyles.getTextStyle('panel.group.button.leave.title')
+            )));
+  }
+
+  Widget _buildSearchButton(){
+    return  Semantics(
+      label: Localization().getStringEx('panel.manage_members.button.search.title', 'Search'),
+      hint: Localization().getStringEx('panel.manage_members.button.search.hint', ''),
+      button: true,
+      excludeSemantics: true,
+      child: Padding(
+        padding: EdgeInsets.only(left: 8),
+        child: GestureDetector(
+          onTap: _onTapSearch,
+          child: Styles().images.getImage('search', excludeFromSemantics: true),
+        ),
+      ),
+    );
+  }
+
   Widget _buildDateUpdatedFields() {
     if (!_isAdmin) {
       return Container();
@@ -378,14 +420,14 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         Visibility(visible: showSynced,
           child: Semantics(container: true, child:
             Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Last sync:'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))),
-              Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))
+              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Last sync:'), style: Styles().textStyles.getTextStyle('widget.detail.small.fat'))),
+              Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('widget.detail.small'))
         ]))),
         Visibility(visible: showUpdated,
           child: Semantics(container: true,
             child: Padding(padding: EdgeInsets.only(top: 5), child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Last updated:'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))),
-              Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('panel.group.detail.fat'))
+              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Last updated:'), style: Styles().textStyles.getTextStyle('widget.detail.small.fat'))),
+              Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('widget.detail.small'))
         ]))))
     ]))));
   }
@@ -435,6 +477,10 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
       _searchTextValue = "";
       _reloadMembers();
     }
+  }
+
+  void _onTapApproveAll(){
+    //TBD Load and then approve all
   }
 
   void _scrollListener() {
@@ -521,21 +567,6 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   void _updateState() {
     if (mounted) {
       setState(() {});
-    }
-  }
-
-  String _getSectionHeading() {
-    switch (_selectedMemberStatus) {
-      case GroupMemberStatus.admin:
-        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.admins", "Principal Investigators") : Localization().getStringEx("panel.manage_members.label.admins", "Admins");
-      case GroupMemberStatus.member:
-        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.members", "Participants") : Localization().getStringEx("panel.manage_members.label.members", "Members");
-      case GroupMemberStatus.pending:
-        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.requests", "Requests") : Localization().getStringEx("panel.manage_members.label.requests", "Requests");
-      case GroupMemberStatus.rejected:
-        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.members", "Participants") : Localization().getStringEx("panel.manage_members.label.members", "Members");
-      default: // All
-        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.members", "Participants") : Localization().getStringEx("panel.manage_members.label.members", "Members");
     }
   }
 
