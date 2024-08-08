@@ -2669,6 +2669,7 @@
 	"panel.manage_members.field.search.title": "搜索",
 	"panel.manage_members.button.search.clear.title": "清除",
 	"panel.manage_members.button.search.title": "搜索",
+	"panel.manage_members.button.approve_all.title": "Approve All",
 	"panel.manage_members.member.status.all.label": "全部",
 	"panel.manage_members.member.status.all.project.label": "全部",
 	"panel.manage_members.member.status.admin.label": "行政",
