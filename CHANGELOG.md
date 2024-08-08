@@ -5,12 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Make Academics/Skills Self Evaluation available to any logged users [#4270](https://github.com/rokwire/illinois-app/issues/4270).
 
 ## [6.1.5] - 2024-08-06
 ### Changed
 - Mark completed surveys [#4243](https://github.com/rokwire/illinois-app/issues/4243).
 ### Fixed
--Fixed AssistantContentPanel scrollable size when writing negative feedback [#4267](https://github.com/rokwire/illinois-app/issues/4267).
+- Fixed AssistantContentPanel scrollable size when writing negative feedback [#4267](https://github.com/rokwire/illinois-app/issues/4267).
 
 ## [6.1.4] - 2024-07-30
 ### Added
@@ -32,6 +34,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [6.1.0] - 2024-07-22
 ### Added
 - Created Public Surveys UI / round 0 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
+
+## [6.0.30] - 2024-08-07
+### Fixed
+- Fixed AssistantContentPanel scrollable size when writing negative feedback [#4267](https://github.com/rokwire/illinois-app/issues/4267).
+### Changed
+- Make Academics/Skills Self Evaluation available to any logged users [#4270](https://github.com/rokwire/illinois-app/issues/4270).
 
 ## [6.0.29] - 2024-07-29
 ### Changed

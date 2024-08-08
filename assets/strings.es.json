@@ -3962,7 +3962,7 @@
     "widget.access.auth.unsatisfied.title": "Regístrate para acceder %s",
     "widget.access.auth.unsatisfied.button.label": "Iniciar sesión",
     "widget.access.roles.features.student.unsatisfied.message": "%s actualmente solo está disponible para estudiantes",
-    "widget.access.auth.features.login.unsatisfied.message": "Iniciar sesión",
+    "widget.access.auth.features.login.unsatisfied.message": "Sign in with your NetID, mobile phone or email",
     "widget.access.auth.features.netid_login.unsatisfied.message": "Inicie sesión con su NetID",
     "widget.access.auth.features.email_login.unsatisfied.message": "Inicia sesión con tu correo electrónico",
     "widget.access.auth.features.phone_login.unsatisfied.message": "Inicia sesión con tu teléfono",
