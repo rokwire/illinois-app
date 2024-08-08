@@ -102,7 +102,8 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       Content(),
       Analytics(),
       FirebaseMessaging(),
-      LocalNotifications(),
+      if (!kIsWeb)
+        LocalNotifications(),
       // Sports(),
       // LiveStats(),
       RecentItems(),
@@ -292,8 +293,6 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
       return OnboardingUpgradePanel(availableVersion:_upgradeAvailableVersion);
     }
     else if (!Storage().onBoardingPassed! || !Auth2().isLoggedIn) {
-      // print('onboarding passed: ${Storage().onBoardingPassed!}');
-      // print('logged in: ${Auth2().isLoggedIn}');
       return ProfileLoginPasskeyPanel(onboardingContext: _onboardingContext,);
     }
     // else if ((Storage().privacyUpdateVersion == null) || (AppVersion.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0)) {

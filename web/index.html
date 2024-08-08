@@ -34,11 +34,6 @@
   <title>NEOM U</title>
   <link rel="manifest" href="manifest.json">
 
-
-  <!-- Google Maps API -->
-  <script src="https://maps.googleapis.com/maps/api/js?key={GOOGLE_MAPS_API_KEY_HERE}&libraries=drawing">
-  </script>
-
   <!-- Toastify CSS -->
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
@@ -54,6 +49,9 @@
   <script src="webauthn.js" defer></script>
 </head>
 <body>
+  <div class="center">
+    <div class="dot-flashing center-horizontal"></div>
+  </div>
   <script>
     window.addEventListener('load', function(ev) {
       // Download main.dart.js
@@ -69,6 +67,14 @@
       });
     });
   </script>
-  <script src="flutter_bootstrap.js" async></script>
+  <script src="flutter_bootstrap.js" async>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('firebase-messaging-sw.js', {
+          scope: '/firebase-cloud-messaging-push-scope',
+        });
+      });
+    }
+  </script>
 </body>
 </html>

@@ -242,6 +242,9 @@ class Config extends rokwire.Config {
   @override
   String? get appId => kIsWeb ? 'com.rokmetro.university.${super.appId}' : super.appId;
 
+  @override
+  bool get supportsAnonymousAuth => false;
+
   // Upgrade
 
   @override
