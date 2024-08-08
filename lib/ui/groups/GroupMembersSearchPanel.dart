@@ -29,7 +29,6 @@ class _GroupMembersSearchState extends State<GroupMembersSearchPanel> implements
   ScrollController? _scrollController;
   int _loadingProgress = 0;
   bool _isLoadingMembers = false;
-  String? _searchLabel;
 
   String? _searchTextValue;
   TextEditingController _searchEditingController = TextEditingController();
@@ -40,8 +39,7 @@ class _GroupMembersSearchState extends State<GroupMembersSearchPanel> implements
     _searchFocus = FocusNode();
     _scrollController = ScrollController();
     _scrollController!.addListener(_scrollListener);
-    _searchLabel = _defaultSearchLabelValue;
-    // _reloadMembers();
+    _reloadMembers();
     super.initState();
   }
 
@@ -112,7 +110,7 @@ class _GroupMembersSearchState extends State<GroupMembersSearchPanel> implements
     }
     return Padding(padding: EdgeInsets.only(top: 0), child:
       Column(
-
+        crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
           _buildMembersSearch(),
           _buildSearchLabel(),
@@ -192,9 +190,16 @@ class _GroupMembersSearchState extends State<GroupMembersSearchPanel> implements
             style: Styles().textStyles.getTextStyle("widget.title.large"),
             children: <TextSpan>[
               TextSpan(
-                text: _searchLabel,
-                style: Styles().textStyles.getTextStyle("widget.title.large.semi_fat"),)
+                text: "Searching ",
+              ),
+              TextSpan(
+                text: _defaultSearchLabelValue,
+                style: Styles().textStyles.getTextStyle("widget.title.large.semi_fat"),),
+              TextSpan(
+                text: widget.selectedMemberStatus == null? "" : " only",
+              ),
             ],
+
           ),
         ));
   }
@@ -207,7 +212,6 @@ class _GroupMembersSearchState extends State<GroupMembersSearchPanel> implements
     if(!_searchFocus.hasFocus){
       FocusScope.of(context).requestFocus(_searchFocus);
     }
-
     String? initialSearchTextValue = _searchTextValue;
     _searchTextValue = _searchEditingController.text.toString();
     String? currentSearchTextValue = _searchTextValue;
@@ -306,7 +310,7 @@ class _GroupMembersSearchState extends State<GroupMembersSearchPanel> implements
     return (_loadingProgress > 0);
   }
 
-  String get _defaultSearchLabelValue => "Searching  ${_memberStatusToString(widget.selectedMemberStatus)} ${widget.selectedMemberStatus == null? "": "only"}";
+  String get _defaultSearchLabelValue => _memberStatusToString(widget.selectedMemberStatus);
 
   String get _emptyMembersMessage {
     switch (widget.selectedMemberStatus) {
@@ -323,7 +327,7 @@ class _GroupMembersSearchState extends State<GroupMembersSearchPanel> implements
     }
   }
 
-  String? _memberStatusToString(GroupMemberStatus? status) {
+  String _memberStatusToString(GroupMemberStatus? status) {
     switch (status) {
       case GroupMemberStatus.admin:
         return _isResearchProject ? Localization().getStringEx('', 'principal investigators') : Localization().getStringEx('', 'admins');
@@ -334,7 +338,7 @@ class _GroupMembersSearchState extends State<GroupMembersSearchPanel> implements
       case GroupMemberStatus.rejected:
         return _isResearchProject ? Localization().getStringEx('', 'rejected participants') : Localization().getStringEx('', 'rejected members');
       default:
-        return _isResearchProject ? Localization().getStringEx('', 'all participants') : Localization().getStringEx('panel.manage_members.member.status.all.label', 'all members');
+        return _isResearchProject ? Localization().getStringEx('', 'all participants') : Localization().getStringEx('', 'all members');
     }
   }
 }
