@@ -37,6 +37,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Created Public Surveys UI / round 0 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
 
+## [6.0.31] - 2024-08-08
+### Fixed
+- GroupsMembersPanel cleanup [#4268](https://github.com/rokwire/illinois-app/issues/4268).
+- Hide "Floor Plans & Amenities" detail entry in ExploreBuildingDetailPanel for this release [#4254](https://github.com/rokwire/illinois-app/issues/4254).
+- Play Checking off sound only when To-Do List item is toggled on [#2258](https://github.com/rokwire/illinois-app/issues/2258).
+
 ## [6.0.30] - 2024-08-07
 ### Fixed
 - Fixed AssistantContentPanel scrollable size when writing negative feedback [#4267](https://github.com/rokwire/illinois-app/issues/4267).

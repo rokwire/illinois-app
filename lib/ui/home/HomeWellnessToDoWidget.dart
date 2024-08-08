@@ -155,7 +155,9 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
       source: widget.runtimeType.toString(),
       item: item);
     item.isCompleted = !item.isCompleted;
-    _playCheckingOffSound();
+    if (item.isCompleted) {
+      _playCheckingOffSound();
+    }
     Wellness().updateToDoItem(item).then((success) {
       if (!success) {
         AppAlert.showDialogResult(context, Localization().getStringEx('widget.home.wellness.todo.items.completed.failed.msg', 'Failed to update To-Do item.'));

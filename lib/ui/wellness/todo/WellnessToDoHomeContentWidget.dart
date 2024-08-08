@@ -863,7 +863,9 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
     );
     widget.item.isCompleted = !widget.item.isCompleted;
     AppSemantics.announceCheckBoxStateChange(context, widget.item.isCompleted , widget.item.name);
-    _playCheckingOffSound();
+    if (widget.item.isCompleted) {
+      _playCheckingOffSound();
+    }
     _setLoading(true);
     if(widget.item.id != null){
       Wellness().updateToDoItem(widget.item).then((success) {
