@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
+import 'package:illinois/ui/groups/GroupMembersSearchPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -31,7 +32,6 @@ import 'package:illinois/ui/groups/GroupMemberPanel.dart';
 import 'package:illinois/ui/groups/GroupPendingMemberPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -70,7 +70,6 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   bool _switchToAllIfNoPendingMembers = false;
 
   String? _searchTextValue;
-  TextEditingController _searchEditingController = TextEditingController();
   late FocusNode _searchFocus;
 
   @override
@@ -266,9 +265,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         }
         late Widget memberCard;
         if (member.status == GroupMemberStatus.pending) {
-          memberCard = _PendingMemberCard(member: member, group: _group);
+          memberCard = PendingMemberCard(member: member, group: _group);
         } else {
-          memberCard = _GroupMemberCard(member: member, group: _group);
+          memberCard = GroupMemberCard(member: member, group: _group);
         }
         members.add(memberCard);
       }
@@ -279,8 +278,6 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     }
 
     return Column(children: <Widget>[
-        // SectionRibbonHeader(title: _getSectionHeading(), titleIconKey: 'person-circle'),
-        // _buildMembersSearch(),
         Visibility(visible: 1 < CollectionUtils.length(_sortedMemberStatusList), child:
           Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
           RibbonButton(
@@ -316,80 +313,15 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     ]);
   }
 
-  Widget _buildMembersSearch() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Container(
-        padding: EdgeInsets.only(left: 16),
-        color: Colors.white,
-        height: 48,
-        child: Row(
-          children: <Widget>[
-            Flexible(
-                child:
-                Semantics(
-                  label: Localization().getStringEx('panel.manage_members.field.search.title', 'Search'),
-                  hint: Localization().getStringEx('panel.manage_members.field.search.hint', ''),
-                  textField: true,
-                  excludeSemantics: true,
-                  child: TextField(
-                    // Do not allow searching when drop-down values are visible
-                    enabled: !_statusValuesVisible,
-                    readOnly: _statusValuesVisible,
-                    controller: _searchEditingController,
-                    onChanged: (text) => _onSearchTextChanged(text),
-                    onSubmitted: (_) => _onTapSearch(),
-                    autofocus: false,
-                    focusNode: _searchFocus,
-                    cursorColor: Styles().colors.fillColorSecondary,
-                    keyboardType: TextInputType.text,
-                    style:  Styles().textStyles.getTextStyle('widget.group.members.search'),
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                    ),
-                  ),
-                )
-            ),
-            Semantics(
-                label: Localization().getStringEx('panel.manage_members.button.search.clear.title', 'Clear'),
-                hint: Localization().getStringEx('panel.manage_members.button.search.clear.hint', ''),
-                button: true,
-                excludeSemantics: true,
-                child: Padding(
-                  padding: EdgeInsets.all(12),
-                  child: GestureDetector(
-                    onTap: _onTapClearSearch,
-                    child: Styles().images.getImage('clear', excludeFromSemantics: true),
-                  ),
-                )
-            ),
-            Semantics(
-              label: Localization().getStringEx('panel.manage_members.button.search.title', 'Search'),
-              hint: Localization().getStringEx('panel.manage_members.button.search.hint', ''),
-              button: true,
-              excludeSemantics: true,
-              child: Padding(
-                padding: EdgeInsets.all(12),
-                child: GestureDetector(
-                  onTap: _onTapSearch,
-                  child: Styles().images.getImage('search', excludeFromSemantics: true),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildApproveAllButton() {
-    return GestureDetector(
+    return Visibility(visible: _isAdmin, child:
+      GestureDetector(
         onTap: _onTapApproveAll,
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: Text(Localization().getStringEx("panel.manage_members.button.approve_all.title", 'Approve All'),
                 style: Styles().textStyles.getTextStyle('panel.group.button.leave.title')
-            )));
+            ))));
   }
 
   Widget _buildSearchButton(){
@@ -399,7 +331,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
       button: true,
       excludeSemantics: true,
       child: Padding(
-        padding: EdgeInsets.only(left: 8),
+        padding: EdgeInsets.only(left: 8, top: 8, bottom: 8),
         child: GestureDetector(
           onTap: _onTapSearch,
           child: Styles().images.getImage('search', excludeFromSemantics: true),
@@ -439,44 +371,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     _reloadGroupContent();
   }
 
-  void _onSearchTextChanged(String text) {
-    // implement if needed
-  }
-
-  void _onTapSearch() {
-    if (_statusValuesVisible) {
-      // Do not try to search when drop down values are visible.
-      return;
-    }
-
-    if(!_searchFocus.hasFocus){
-      FocusScope.of(context).requestFocus(_searchFocus);
-    }
-
-    String? initialSearchTextValue = _searchTextValue;
-    _searchTextValue = _searchEditingController.text.toString();
-    String? currentSearchTextValue = _searchTextValue;
-    if (!(StringUtils.isEmpty(initialSearchTextValue) && StringUtils.isEmpty(currentSearchTextValue))) {
-      FocusScope.of(context).unfocus();
-      _reloadMembers();
-    }
-  }
-
-  void _onTapClearSearch() {
-    if (_statusValuesVisible) {
-      // Do not try to clear search when drop down values are visible.
-      return;
-    }
-
-    if(_searchFocus.hasFocus){
-      _searchFocus.unfocus();
-    }
-
-    if (StringUtils.isNotEmpty(_searchTextValue)) {
-      _searchEditingController.text = "";
-      _searchTextValue = "";
-      _reloadMembers();
-    }
+  void _onTapSearch(){
+    Analytics().logSelect(target: "Group Members Search", attributes: _group?.analyticsAttributes);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersSearchPanel(group: _group, selectedMemberStatus: _selectedMemberStatus)));
   }
 
   void _onTapApproveAll(){
@@ -613,10 +510,10 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   }
 }
 
-class _PendingMemberCard extends StatelessWidget {
+class PendingMemberCard extends StatelessWidget {
   final Member? member;
   final Group? group;
-  _PendingMemberCard({required this.member, this.group});
+  PendingMemberCard({required this.member, this.group});
 
   @override
   Widget build(BuildContext context) {
@@ -667,10 +564,10 @@ class _PendingMemberCard extends StatelessWidget {
   }
 }
 
-class _GroupMemberCard extends StatelessWidget {
+class GroupMemberCard extends StatelessWidget {
   final Member? member;
   final Group? group;
-  _GroupMemberCard({required this.member, required this.group});
+  GroupMemberCard({required this.member, required this.group});
 
   @override
   Widget build(BuildContext context) {
