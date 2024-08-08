@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/ui/groups/GroupMembersPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -36,6 +37,13 @@ class _GroupMembersSearchState extends State<GroupMembersSearchPanel> implements
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      Groups.notifyGroupMembershipApproved,
+      Groups.notifyGroupMembershipRejected,
+      Groups.notifyGroupMembershipRemoved,
+      FirebaseMessaging.notifyGroupsNotification,
+    ]);
+
     _searchFocus = FocusNode();
     _scrollController = ScrollController();
     _scrollController!.addListener(_scrollListener);
@@ -50,9 +58,22 @@ class _GroupMembersSearchState extends State<GroupMembersSearchPanel> implements
     super.dispose();
   }
 
-  @override
   void onNotification(String name, param) {
-    // TODO: implement onNotification
+    bool reloadMembers = false;
+    if ((name == Groups.notifyGroupMembershipApproved) ||
+        (name == Groups.notifyGroupMembershipRejected) ||
+        (name == Groups.notifyGroupMembershipRemoved)) {
+      Group? group = (param is Group) ? param : null;
+      reloadMembers = (group?.id != null) && (group?.id == widget.group?.id);
+    }
+    else if (name == FirebaseMessaging.notifyGroupsNotification) {
+      String? groupId = (param is Map) ? JsonUtils.stringValue(param['entity_id']) : null;
+      reloadMembers = (groupId != null) && (groupId == widget.group?.id);
+    }
+
+    if (reloadMembers) {
+      _reloadMembers();
+    }
   }
 
   @override
