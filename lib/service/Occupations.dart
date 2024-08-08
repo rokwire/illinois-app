@@ -17,20 +17,13 @@ class Occupations /* with Service */ {
 
   Occupations._internal();
 
+  Future<Response?> getAllOccupationMatchesResponse() async => enabled ?
+    Network().get('${Config().occupationsUrl}/user-match-results', auth: Auth2()) : null;
+
   Future<List<OccupationMatch>?> getAllOccupationMatches() async {
-    if (enabled) {
-      String url = '${Config().occupationsUrl}/user-match-results';
-      Response? response = await Network().get(url, auth: Auth2());
-      int responseCode = response?.statusCode ?? -1;
-      String? responseBody = response?.body;
-      if (responseCode == 200) {
-        Map<String, dynamic>? responseMap = JsonUtils.decodeMap(responseBody);
-        if (responseMap != null) {
-          return OccupationMatch.listFromJson(responseMap['matches']);
-        }
-      }
-    }
-    return null;
+    Response? response = await getAllOccupationMatchesResponse();
+    Map<String, dynamic>? responseMap = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
+    return (responseMap != null) ? OccupationMatch.listFromJson(JsonUtils.listValue(responseMap['matches'])) : null;
   }
 
   Future<Occupation?> getOccupation({required String occupationCode}) async {

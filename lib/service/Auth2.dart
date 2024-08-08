@@ -286,16 +286,19 @@ class Auth2 extends rokwire.Auth2 {
     return AuthCard.fromJson(JsonUtils.decodeMap(await _loadAuthCardStringFromCache()));
   }
 
-  Future<String?> _loadAuthCardStringFromNet({String? uin, String? accessToken}) async {
-    String? url = Config().iCardUrl;
-    if (StringUtils.isNotEmpty(url) &&  StringUtils.isNotEmpty(uin) && StringUtils.isNotEmpty(accessToken)) {
-      Response? response = await Network().post(url, headers: {
+  Future<Response?> loadAuthCardResponse() async =>
+    _loadAuthCardFromNetEx(uin: account?.authType?.uiucUser?.uin, accessToken : uiucToken?.accessToken);
+
+  Future<Response?> _loadAuthCardFromNetEx({String? uin, String? accessToken}) async =>
+    (StringUtils.isNotEmpty(Config().iCardUrl) &&  StringUtils.isNotEmpty(uin) && StringUtils.isNotEmpty(accessToken)) ?
+      Network().post(Config().iCardUrl, headers: {
         'UIN': uin,
         'access_token': accessToken
-      });
-      return (response?.statusCode == 200) ? response!.body : null;
-    }
-    return null;
+      }) : null;
+
+  Future<String?> _loadAuthCardStringFromNet({String? uin, String? accessToken}) async {
+    Response? response = await _loadAuthCardFromNetEx(uin: uin, accessToken: accessToken);
+    return (response?.statusCode == 200) ? response?.body : null;
   }
 
   Future<void> _refreshAuthCardIfNeeded() async {
@@ -325,6 +328,7 @@ class Auth2 extends rokwire.Auth2 {
     }
     return authCard;
   }
+
 
   // Auth Picture
 

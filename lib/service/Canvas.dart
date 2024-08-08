@@ -271,19 +271,19 @@ class Canvas with Service implements NotificationsListener {
 
   // Canvas Self User
 
-  Future<Map<String, dynamic>?> loadSelfUser() async {
-    if (!_isAvailable) {
+  Future<http.Response?> loadSelfUserResponse() async {
+    if (_isAvailable) {
+      return _useCanvasApi?
+        Network().get(_masquerade('${Config().canvasUrl}/api/v1/users/self'), headers: _canvasAuthHeaders) :
+        Network().get('${Config().lmsUrl}/users/self', auth: Auth2());
+    }
+    else {
       return null;
     }
-    String? url;
-    http.Response? response = await Network().get(url, auth: Auth2());
-    if (_useCanvasApi) {
-      url = _masquerade('${Config().canvasUrl}/api/v1/users/self');
-      response = await Network().get(url, headers: _canvasAuthHeaders);
-    } else {
-      url = '${Config().lmsUrl}/users/self';
-      response = await Network().get(url, auth: Auth2());
-    }
+  }
+
+  Future<Map<String, dynamic>?> loadSelfUser() async {
+    http.Response? response = await loadSelfUserResponse();
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
