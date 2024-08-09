@@ -59,7 +59,7 @@ class _ExploreBuildingDetailPanelState extends ExploreBuildingDetailPanelState<E
             ),
           ],),
         ),
-        Visibility(visible: StringUtils.isNotEmpty(_building!.fullAddress), child:
+        Visibility(visible: _canLocation(), child:
           InkWell(onTap: _onLocation, child:
             Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10), child:
               Row(children: [
@@ -67,7 +67,7 @@ class _ExploreBuildingDetailPanelState extends ExploreBuildingDetailPanelState<E
                   Styles().images.getImage('location', excludeFromSemantics: true),
                   ),
                 Expanded(child:
-                  Text(_building!.fullAddress ?? '', style: Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline")
+                  Text(_building?.fullAddress ?? '', style: Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline")
                   ),
                 )
               ],),
@@ -81,6 +81,9 @@ class _ExploreBuildingDetailPanelState extends ExploreBuildingDetailPanelState<E
     Analytics().logSelect(target: "Location Directions");
     _building!.launchDirections();
   }
+
+  bool _canLocation() =>
+      StringUtils.isNotEmpty(_building?.fullAddress);
 }
 
 abstract class ExploreBuildingDetailPanelState<T extends StatefulWidget> extends State<T> {
