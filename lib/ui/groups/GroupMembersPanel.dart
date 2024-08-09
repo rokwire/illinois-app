@@ -21,9 +21,11 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/ui/groups/GroupMembersSearchPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/service/Log.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -377,7 +379,28 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   }
 
   void _onTapApproveAll(){
-    //TBD Load and then approve all
+    AppAlert.showConfirmationDialog(  buildContext: context,
+        message: Localization()
+            .getStringEx('', 'Do you want to approve all pending user requests?'),
+        positiveCallback: _onTapConfirmApproveAll);
+  }
+
+  _onTapConfirmApproveAll(){
+    _increaseProgress();
+    Groups().loadMembers(groupId: widget.groupId, statuses: [GroupMemberStatus.pending]).then((members) {
+      if(CollectionUtils.isNotEmpty(members)){
+        List<String>? pendingUserIds = MemberExt.extractMemberIds(members);
+        Groups().acceptMembershipMulti(group: _group, ids: pendingUserIds).then((success){
+          if(success){
+            Log.d("Successfully approved all");
+          } else {
+            AppAlert.showDialogResult(context, Localization().getStringEx("", 'Failed to approve  all pending user requests'));
+          }
+        });
+      } else {
+        //No members to approve
+      }
+    }).whenComplete(() => _decreaseProgress());
   }
 
   void _scrollListener() {
