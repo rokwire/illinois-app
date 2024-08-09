@@ -23,6 +23,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 extension GroupExt on Group {
@@ -273,7 +274,11 @@ extension GroupSettingsExt on GroupSettings{
       GroupSettings(
         memberInfoPreferences: MemberInfoPreferences(allowMemberInfo: false, viewMemberNetId: false, viewMemberName: false, viewMemberEmail: false),
         memberPostPreferences: MemberPostPreferences(allowSendPost: false, sendPostToSpecificMembers: false, sendPostToAll: false, sendPostToAdmins: false, sendPostReplies: false, sendPostReactions: false)
-      ); 
+      );
   }
+}
+
+extension MemberExt on Member{
+    static List<String>? extractMemberIds(List<Member>? members) => CollectionUtils.isNotEmpty(members)? List.generate(members!.length, (index) => members[index].id??"") : null;
 }
 
