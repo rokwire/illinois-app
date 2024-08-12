@@ -40,6 +40,11 @@
   <!-- Toastify JS -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
+  <script>
+    // The value below is injected by flutter build, do not touch.
+    const serviceWorkerVersion = {{flutter_service_worker_version}};
+  </script>
+
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
   <script src="webauthn.js" defer></script>
@@ -51,8 +56,8 @@
   <script src="flutter_bootstrap.js" async>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
-        navigator.serviceWorker.register('firebase-messaging-sw.js', {
-          scope: '/firebase-cloud-messaging-push-scope',
+        navigator.serviceWorker.register('/neom/firebase-messaging-sw.js', {
+          scope: '/neom/firebase-cloud-messaging-push-scope',
         });
       });
     }
