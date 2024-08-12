@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Added confirmation prompt before clearing assistant history [#4281](https://github.com/rokwire/illinois-app/issues/4281).
+
 ## [6.0.32] - 2024-08-09
 ### Added
 - Hook Groups.acceptMembershipMulti [#4268](https://github.com/rokwire/illinois-app/issues/4268).

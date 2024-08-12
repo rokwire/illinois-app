@@ -215,7 +215,15 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> implements Noti
 
   void _onTapClearAll() {
     Analytics().logSelect(target: 'Clear All', source: widget.runtimeType.toString());
-    _clearMessagesNotifier.sink.add(1);
+    AppAlert.showConfirmationDialog(buildContext: context,
+      message: Localization().getStringEx('panel.assistant.clear_all.confirm_prompt.text', 'Are you sure you want to clear your Illinois Assistant history? This action cannot be undone.'),
+      positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
+      negativeButtonLabel: Localization().getStringEx('dialog.cancel.title', 'Cancel'),
+    ).then((value) {
+      if (mounted && (value == true)) {
+        _clearMessagesNotifier.sink.add(1);
+      }
+    });
   }
 
   void _onTapClose() {
