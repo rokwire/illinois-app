@@ -41,6 +41,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Created Public Surveys UI / round 0 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
 
+## [6.0.33] - 2024-08-12
+### Added
+- Added confirmation prompt before clearing assistant history [#4281](https://github.com/rokwire/illinois-app/issues/4281).
+
 ## [6.0.32] - 2024-08-09
 ### Added
 - Hook Groups.acceptMembershipMulti [#4268](https://github.com/rokwire/illinois-app/issues/4268).
