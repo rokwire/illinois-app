@@ -29,7 +29,7 @@ dependencies:
   cupertino_icons: ^1.0.4
   intl: ^0.19.0
   http: ^0.13.3
-  flutter_widget_from_html: ^0.9.1
+  flutter_widget_from_html: ^0.15.1
   geolocator: ^9.0.2
   url_launcher: ^6.0.10
   xml: ^6.3.0
@@ -41,7 +41,7 @@ dependencies:
   path_provider: ^2.0.4
   share: ^2.0.4
   qr_flutter: ^4.0.0
-  webview_flutter: ^3.0.4
+  webview_flutter: ^4.8.0
   app_settings: ^5.1.1
   currency_text_input_formatter: ^2.1.5
   flutter_multi_formatter: ^2.4.1
