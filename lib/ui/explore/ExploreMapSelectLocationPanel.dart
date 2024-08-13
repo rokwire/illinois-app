@@ -1,5 +1,4 @@
 
-import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 
@@ -42,6 +41,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:universal_io/io.dart';
 
 class ExploreMapSelectLocationPanel extends StatefulWidget {
 

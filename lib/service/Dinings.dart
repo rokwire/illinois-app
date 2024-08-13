@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:neom/model/Dining.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:neom/service/Config.dart';
@@ -29,6 +29,7 @@ import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:universal_io/io.dart';
 
 
 class Dinings with Service implements ContentItemCategoryClient{
@@ -115,11 +116,11 @@ class Dinings with Service implements ContentItemCategoryClient{
   }
 
   Future<void> _cleanDinigsCacheFile() async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String configFilePath = join(appDocDir.path, _olddiningsFileName);
-    File diningsCacheFile = File(configFilePath);
-    bool exist = await diningsCacheFile.exists();
-    if(exist){
+    Directory? appDocDir = kIsWeb ? null : await getApplicationDocumentsDirectory();
+    String? configFilePath = (appDocDir != null) ? join(appDocDir.path, _olddiningsFileName) : null;
+    File? diningsCacheFile = (configFilePath != null) ? File(configFilePath) : null;
+    bool exist = (diningsCacheFile != null) && (await diningsCacheFile.exists());
+    if (exist) {
       await diningsCacheFile.delete();
     }
   }

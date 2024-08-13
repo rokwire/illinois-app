@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/service/Config.dart';
 import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:neom/ui/profile/ProfileLoginPasskeyPanel.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
@@ -270,7 +271,7 @@ class _ProfileLoginCodePanelState extends State<ProfileLoginCodePanel> {
     else if (widget.onFinish != null) {
       widget.onFinish?.call();
     }
-    else if (!Auth2().isPasskeyLinked || !Auth2().hasPasskeyForPlatform) {
+    else if (!Config().isDebugWeb && (!Auth2().isPasskeyLinked || !Auth2().hasPasskeyForPlatform)) {
       // direct user to link a passkey if no passkey has been linked for the current platform
       Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) {
         return ProfileLoginPasskeyPanel(link: true, onboardingContext: widget.onboardingContext,);

@@ -15,7 +15,6 @@
  */
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +24,7 @@ import 'package:neom/model/wellness/WellnessToDo.dart' as wellness;
 import 'package:neom/model/wellness/WellnessRing.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/service/IlliniCash.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/polls.dart';
@@ -53,6 +53,7 @@ import 'package:uuid/uuid.dart';
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
+import 'package:universal_io/io.dart';
 
 class Analytics extends rokwire.Analytics implements NotificationsListener {
 
@@ -658,7 +659,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
           analyticsEvent[LogStdAppVersionName] = super.appVersion;
         }
         else if (attributeName == LogStdOSName) {
-          analyticsEvent[LogStdOSName] = Platform.operatingSystem;
+          analyticsEvent[LogStdOSName] = Config().operatingSystem;
         }
         else if (attributeName == LogStdOSVersionName) {
           analyticsEvent[LogStdOSVersionName] = super.osVersion; // Platform.operatingSystemVersion;

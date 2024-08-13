@@ -1,8 +1,8 @@
 
 
 import 'dart:collection';
-import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:neom/model/MTD.dart';
@@ -15,13 +15,14 @@ import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:universal_io/io.dart';
 
 class MTD with Service implements NotificationsListener {
 
   static const String notifyStopsChanged = 'edu.illinois.rokwire.mtd.stops.changed';
   static const String _mtdStopsName = "mtdStops.json";
 
-  late Directory _appDocDir;
+  Directory? _appDocDir;
   DateTime? _pausedDateTime;
   
   MTDStops? _stops;
@@ -49,7 +50,7 @@ class MTD with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
-    _appDocDir = await getApplicationDocumentsDirectory();
+    _appDocDir = kIsWeb ? null : await getApplicationDocumentsDirectory();
     
     // Init stops
     _stops = await _loadStopsFromCache();
@@ -116,15 +117,15 @@ class MTD with Service implements NotificationsListener {
 
   Future<void> refreshStops() => _updateStops();
 
-  File _getStopsCacheFile() => File(join(_appDocDir.path, _mtdStopsName));
+  File? _getStopsCacheFile() => (_appDocDir != null) ? File(join(_appDocDir!.path, _mtdStopsName)) : null;
 
   Future<String?> _loadStopsStringFromCache() async {
-    File stopsFile = _getStopsCacheFile();
-    return await stopsFile.exists() ? await stopsFile.readAsString() : null;
+    File? stopsFile = _getStopsCacheFile();
+    return (await stopsFile?.exists() == true) ? await stopsFile!.readAsString() : null;
   }
 
   Future<void> _saveStopsStringToCache(String? value) async {
-    await _getStopsCacheFile().writeAsString(value ?? '', flush: true);
+    await _getStopsCacheFile()?.writeAsString(value ?? '', flush: true);
   }
 
   Future<MTDStops?> _loadStopsFromCache() async {

@@ -27,7 +27,8 @@
 /build/
 
 # Web related
-lib/generated_plugin_registrant.dart
+/web/sqflite_sw.js
+/web/sqlite3.wasm
 
 # Symbolication related
 app.*.symbols

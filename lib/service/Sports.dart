@@ -15,8 +15,8 @@
  */
 
 import 'dart:async';
-import 'dart:io';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:neom/model/sport/Team.dart';
@@ -39,6 +39,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:universal_io/io.dart';
 
 class Sports with Service implements NotificationsListener {
 
@@ -152,9 +153,9 @@ class Sports with Service implements NotificationsListener {
 
   static Future<File?> _getCacheFile(String fileName) async {
     try {
-      Directory appDocDir = await getApplicationDocumentsDirectory();
-      String cacheFilePath = join(appDocDir.path, fileName);
-      return File(cacheFilePath);
+      Directory? appDocDir = kIsWeb ? null : await getApplicationDocumentsDirectory();
+      String? cacheFilePath = (appDocDir != null) ? join(appDocDir.path, fileName) : null;
+      return (cacheFilePath != null) ? File(cacheFilePath) : null;
     }
     catch(e) { print(e.toString()); }
     return null;

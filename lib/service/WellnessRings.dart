@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/model/wellness/WellnessRing.dart';
 import 'package:neom/service/Auth2.dart';
@@ -14,6 +14,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:http/http.dart' as http;
+import 'package:universal_io/io.dart';
 
 enum WellnessRingsStatus {unknown, initializing, initialized, failed}
 
@@ -546,11 +547,11 @@ class WellnessRings with Service implements NotificationsListener{
     return status == WellnessRingsStatus.initialized;
   }
 
-  //Cashe
-  Future<File> _getCacheFile() async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String cacheFilePath = join(appDocDir.path, _cacheFileName);
-    return File(cacheFilePath);
+  // Cache
+  Future<File?> _getCacheFile() async {
+    Directory? appDocDir = kIsWeb ? null : await getApplicationDocumentsDirectory();
+    String? cacheFilePath = (appDocDir != null) ? join(appDocDir.path, _cacheFileName) : null;
+    return (cacheFilePath != null) ? File(cacheFilePath) : null;
   }
 
   Future<String?> _loadContentStringFromCache() async {

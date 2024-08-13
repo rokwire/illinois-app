@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:neom/model/sport/SportDetails.dart';
@@ -29,6 +27,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 
 import 'package:url_launcher/url_launcher.dart';
+import 'package:universal_io/io.dart';
 
 class AthleticsRosterDetailPanel extends StatefulWidget{
   final SportDefinition? sport;

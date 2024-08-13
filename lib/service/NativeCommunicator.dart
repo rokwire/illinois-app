@@ -16,9 +16,12 @@
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:neom/service/Config.dart';
 import 'package:rokwire_plugin/service/service.dart';
+import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class NativeCommunicator with Service {
   
@@ -59,6 +62,10 @@ class NativeCommunicator with Service {
 
 
   Future<void> _nativeInit() async {
+    if (kIsWeb) {
+      debugPrint('WEB: init - not implemented.');
+      return;
+    }
     try {
       await _platformChannel.invokeMethod('init', { "config": Config().content });
     } on PlatformException catch (e) {
@@ -67,6 +74,10 @@ class NativeCommunicator with Service {
   }
 
   Future<void> dismissLaunchScreen() async {
+    if (kIsWeb) {
+      debugPrint('WEB: dismissLaunchScreen - not implemented.');
+      return;
+    }
     try {
       await _platformChannel.invokeMethod('dismissLaunchScreen');
     } on PlatformException catch (e) {
@@ -75,16 +86,22 @@ class NativeCommunicator with Service {
   }
 
   Future<void> setLaunchScreenStatus(String? status) async {
-    try {
-      await _platformChannel.invokeMethod('setLaunchScreenStatus', {
-        'status': status
-      });
-    } on PlatformException catch (e) {
-      print(e.message);
+    if (kIsWeb) {
+      AppToast.showMessage(StringUtils.ensureNotEmpty(status), textColor: Styles().colors.black);
+    } else {
+      try {
+        await _platformChannel.invokeMethod('setLaunchScreenStatus', {'status': status});
+      } on PlatformException catch (e) {
+        print(e.message);
+      }
     }
   }
 
   Future<List<DeviceOrientation>?> enabledOrientations(List<DeviceOrientation> orientationsList) async {
+    if (kIsWeb) {
+      debugPrint('WEB: enabledOrientations - not implemented');
+      return null;
+    }
     List<DeviceOrientation>? result;
     try {
       dynamic inputStringsList = _deviceOrientationListToStringList(orientationsList);
@@ -109,6 +126,10 @@ class NativeCommunicator with Service {
   }
 
   Future<String?> getDeepLinkScheme() async {
+    if (kIsWeb) {
+      debugPrint('WEB: deepLinkScheme - not implemented.');
+      return null;
+    }
     String? result;
     try {
       result = await _platformChannel.invokeMethod('deepLinkScheme');

@@ -5,7 +5,6 @@ import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/survey_panel.dart' as rokwire;
-import 'package:rokwire_plugin/ui/widgets/survey.dart';
 class SurveyPanel extends rokwire.SurveyPanel{
 
   SurveyPanel({required super.survey, super.surveyDataKey, super.inputEnabled, super.backgroundColor,
@@ -31,8 +30,6 @@ class SurveyPanel extends rokwire.SurveyPanel{
       headerBar: headerBar,
       tabBar: tabBar,
       offlineWidget: offlineWidget,
-      backgroundColor: defaultBackgroundColor,
-      textStyles: defaultTextStyles,
     );
   }
 
@@ -40,9 +37,6 @@ class SurveyPanel extends rokwire.SurveyPanel{
   PreferredSizeWidget? buildHeaderBar(String? title) => ((survey is Survey) && _SurveyHeaderBarTitleWidget.surveyHasDetails(survey)) ?
     HeaderBar(titleWidget: _SurveyHeaderBarTitleWidget(survey as Survey, title: title),) :
     HeaderBar(title: title);
-
-  static Color? get defaultBackgroundColor => Styles().colors.surface;
-  static SurveyWidgetTextStyles get defaultTextStyles => SurveyWidgetTextStyles.withDefaults(horizontalMultipleChoiceOption: Styles().textStyles.getTextStyle('widget.item.small.thin'));
 }
 
 class _SurveyHeaderBarTitleWidget extends StatelessWidget {

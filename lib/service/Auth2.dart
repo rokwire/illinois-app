@@ -1,8 +1,7 @@
 
 import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:neom/model/Auth2.dart';
@@ -19,6 +18,7 @@ import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:universal_io/io.dart';
 
 
 class Auth2 extends rokwire.Auth2 {
@@ -250,10 +250,10 @@ class Auth2 extends rokwire.Auth2 {
 
   String get authCardName => _authCardName;
 
-  Future<File> _getAuthCardCacheFile() async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String cacheFilePath = join(appDocDir.path, authCardName);
-    return File(cacheFilePath);
+  Future<File?> _getAuthCardCacheFile() async {
+    Directory? appDocDir = kIsWeb ? null : await getApplicationDocumentsDirectory();
+    String? cacheFilePath = (appDocDir != null) ? join(appDocDir.path, authCardName) : null;
+    return (cacheFilePath != null) ? File(cacheFilePath) : null;
   }
 
   Future<String?> _loadAuthCardStringFromCache() async {
@@ -330,10 +330,10 @@ class Auth2 extends rokwire.Auth2 {
 
   String get authPictureName => _authPictureName;
 
-  Future<File> _getAuthPictureCacheFile() async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String cacheFilePath = join(appDocDir.path, authPictureName);
-    return File(cacheFilePath);
+  Future<File?> _getAuthPictureCacheFile() async {
+    Directory? appDocDir = kIsWeb ? null : await getApplicationDocumentsDirectory();
+    String? cacheFilePath = (appDocDir != null) ? join(appDocDir.path, authPictureName) : null;
+    return (cacheFilePath != null) ? File(cacheFilePath) : null;
   }
 
   Future<Uint8List?> _loadAuthPictureFromCache() async {
@@ -392,10 +392,10 @@ class Auth2 extends rokwire.Auth2 {
 
   String get authVoiceRecordName => _authVoiceRecordName;
 
-  Future<File> _getAuthVoiceRecordCacheFile() async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String cacheFilePath = join(appDocDir.path, authVoiceRecordName);
-    return File(cacheFilePath);
+  Future<File?> _getAuthVoiceRecordCacheFile() async {
+    Directory? appDocDir = kIsWeb ? null : await getApplicationDocumentsDirectory();
+    String? cacheFilePath = (appDocDir != null) ? join(appDocDir.path, authVoiceRecordName) : null;
+    return (cacheFilePath != null) ? File(cacheFilePath) : null;
   }
 
   Future<Uint8List?> _loadAuthVoiceRecordFromCache() async {

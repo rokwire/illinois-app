@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-import 'dart:io';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:neom/service/Dinings.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-
-
 
 //////////////////////////////
 /// Dining
@@ -813,8 +810,8 @@ class DiningFeedback {
 
   static DiningFeedback? fromJson(Map<String, dynamic>?json) {
     return (json != null) ? DiningFeedback(
-      feedbackUrl: JsonUtils.stringValue(json['feedback_url~${Platform.operatingSystem}']) ?? JsonUtils.stringValue(json['feedback_url']),
-      dieticianUrl: JsonUtils.stringValue(json['dietician_url~${Platform.operatingSystem}']) ?? JsonUtils.stringValue(json['dietician_url']),
+      feedbackUrl: JsonUtils.stringValue(json['feedback_url~${Config().operatingSystem}']) ?? JsonUtils.stringValue(json['feedback_url']),
+      dieticianUrl: JsonUtils.stringValue(json['dietician_url~${Config().operatingSystem}']) ?? JsonUtils.stringValue(json['dietician_url']),
     ) : null;
   }
 

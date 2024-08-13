@@ -1,9 +1,9 @@
 
 import 'dart:async';
 import 'dart:core';
-import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
@@ -22,6 +22,7 @@ import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:universal_io/io.dart';
 
 class StudentCourses with Service implements NotificationsListener {
 
@@ -33,7 +34,7 @@ class StudentCourses with Service implements NotificationsListener {
   static const String _courseDebugContentName = "course.debug.content.json";
   static const String _requireAdaSetting = 'edu.illinois.rokwire.settings.student_course.require_ada';
 
-  late Directory _appDocDir;
+  Directory? _appDocDir;
   
   List<StudentCourseTerm>? _terms;
   List<StudentCourse>? _debugCourses;
@@ -68,7 +69,7 @@ class StudentCourses with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
-    _appDocDir = await getApplicationDocumentsDirectory();
+    _appDocDir = kIsWeb ? null : await getApplicationDocumentsDirectory();
     _selectedTermId = Storage().selectedCourseTermId;
     
     // Init terms
@@ -133,15 +134,15 @@ class StudentCourses with Service implements NotificationsListener {
 
   List<StudentCourseTerm>? get terms => _terms;
 
-  File _getTermsCacheFile() => File(join(_appDocDir.path, _courseTermsName));
+  File? _getTermsCacheFile() => (_appDocDir != null) ? File(join(_appDocDir!.path, _courseTermsName)) : null;
 
   Future<String?> _loadTermsStringFromCache() async {
-    File termsFile = _getTermsCacheFile();
-    return await termsFile.exists() ? await termsFile.readAsString() : null;
+    File? termsFile = _getTermsCacheFile();
+    return (await termsFile?.exists() == true) ? await termsFile!.readAsString() : null;
   }
 
   Future<void> _saveTermsStringToCache(String? regionsString) async {
-    await _getTermsCacheFile().writeAsString(regionsString ?? '', flush: true);
+    await _getTermsCacheFile()?.writeAsString(regionsString ?? '', flush: true);
   }
 
   Future<List<StudentCourseTerm>?> _loadTermsFromCache() async {
@@ -300,17 +301,17 @@ class StudentCourses with Service implements NotificationsListener {
   }
   
   Future<String?> getDebugCoursesRawContent() async {
-    File rawContentFile = File(join(_appDocDir.path, _courseDebugContentName));
-    return await rawContentFile.exists() ? await rawContentFile.readAsString() : null;
+    File? rawContentFile = (_appDocDir != null) ? File(join(_appDocDir!.path, _courseDebugContentName)) : null;
+    return (await rawContentFile?.exists() == true) ? await rawContentFile!.readAsString() : null;
   }
 
   Future<void> setDebugCoursesRawContent(String? value) async{
-    File rawContentFile = File(join(_appDocDir.path, _courseDebugContentName));
+    File? rawContentFile = (_appDocDir != null) ? File(join(_appDocDir!.path, _courseDebugContentName)) : null;
     if ((value != null) && value.isNotEmpty) {
-      await rawContentFile.writeAsString(value, flush: true);
+      await rawContentFile?.writeAsString(value, flush: true);
     }
     else {
-      await rawContentFile.delete();
+      await rawContentFile?.delete();
     }
     if (useDebugCoursesContent) {
       _applyDebugCourseRawContent(value);

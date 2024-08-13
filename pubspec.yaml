@@ -29,7 +29,7 @@ dependencies:
   cupertino_icons: ^1.0.4
   intl: ^0.19.0
   http: ^0.13.3
-  flutter_widget_from_html: ^0.9.1
+  flutter_widget_from_html: ^0.15.1
   geolocator: ^9.0.2
   url_launcher: ^6.0.10
   xml: ^6.3.0
@@ -41,14 +41,14 @@ dependencies:
   path_provider: ^2.0.4
   share: ^2.0.4
   qr_flutter: ^4.0.0
-  webview_flutter: ^2.0.13
+  webview_flutter: ^4.8.0
   app_settings: ^5.1.1
   currency_text_input_formatter: ^2.1.5
   flutter_multi_formatter: ^2.4.1
   pinch_zoom: ^1.0.0
   uuid: ^3.0.5
   expandable_page_view: ^1.0.10
-  package_info: ^2.0.2
+  package_info_plus: ^8.0.0
   device_calendar: ^4.3.2
   image_cropping: ^0.0.11
   dropdown_button2: ^2.1.3
@@ -67,6 +67,9 @@ dependencies:
 #  font_awesome_flutter: '>= 4.7.0' # comment if published plugin is used
   record: ^4.4.4
 
+  # Below are the plugins imported alongside web integration
+  universal_io: ^2.2.2
+
   rokwire_plugin:
     # When depending on this package from a real application you should use:
     #   rokwire_plugin: ^x.y.z
@@ -75,12 +78,12 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: plugin
 
-  # google_maps_flutter: ^2.2.5
+  # google_maps_flutter: ^2.5.0
   google_maps_flutter:
     git:
       url: https://github.com/rokwire/packages.git
       path: packages/google_maps_flutter/google_maps_flutter
-      ref: google_maps_flutter/add-poi-click-callback-60695
+      ref: google_maps_flutter/add-poi-tap-callback-2.5.0
 
 # google_maps_flutter:
 #   git:
@@ -109,9 +112,10 @@ dev_dependencies:
     sdk: flutter
 
 # comment the override below if published plugin is used
-#dependency_overrides:
+dependency_overrides:
 #  font_awesome_flutter:
 #    path: plugin/plugins/font_awesome_flutter
+  chewie: ^1.8.1 # Resolving transitive dependency issues (web). This is in conflict with package_info_plus and flutter_widget_from_html.
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

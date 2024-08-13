@@ -179,7 +179,7 @@
 	"defaults": {
 		"favorites": {
 			"content": {
-				"home": ["event_feed", "my_groups"]
+				"home": ["event_feed", "my_groups", "public_surveys"]
 			},
 			"rules": {
 			}

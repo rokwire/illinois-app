@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
@@ -169,7 +167,7 @@ class Config extends rokwire.Config {
   String? get canvasStoreUrl {
     dynamic storeUrlEntry = JsonUtils.mapValue(canvas['store_url']);
     if (storeUrlEntry is Map) {
-      return storeUrlEntry[Platform.operatingSystem.toLowerCase()];
+      return storeUrlEntry[Config().operatingSystem];
     } else if (storeUrlEntry is String) {
       return storeUrlEntry;
     }
@@ -237,6 +235,15 @@ class Config extends rokwire.Config {
 
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;
+
+  @override
+  bool get enableLogging => false;
+
+  @override
+  String? get appId => kIsWeb ? 'com.rokmetro.university.${super.appId}' : super.appId;
+
+  @override
+  bool get supportsAnonymousAuth => false;
 
   // Upgrade
 

@@ -102,7 +102,8 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       Content(),
       Analytics(),
       FirebaseMessaging(),
-      LocalNotifications(),
+      if (!kIsWeb)
+        LocalNotifications(),
       // Sports(),
       // LiveStats(),
       RecentItems(),

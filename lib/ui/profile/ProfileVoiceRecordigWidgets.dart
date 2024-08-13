@@ -1,6 +1,4 @@
-
-import 'dart:typed_data';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
@@ -17,7 +15,7 @@ import 'package:rokwire_plugin/service/Log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'dart:io';
+import 'package:universal_io/io.dart';
 
 
 class ProfileNamePronouncementWidget extends StatefulWidget {
@@ -565,9 +563,9 @@ class _ProfileSoundRecorderController {
   bool get _haveAudio => CollectionUtils.isNotEmpty(_audio);
 
   Future<String?> get _constructFilePath async {
-    Directory dir = await getApplicationDocumentsDirectory();
+    Directory? dir = kIsWeb ? null : await getApplicationDocumentsDirectory();
 
-    return dir.existsSync() ? Path.join(dir.path, "tmp_audio.m4a") : null;
+    return (dir?.existsSync() == true) ? Path.join(dir!.path, "tmp_audio.m4a") : null;
   }
 
   Future<Uint8List?> getFileAsBytes(String? filePath) async{
