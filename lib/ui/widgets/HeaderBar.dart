@@ -448,7 +448,7 @@ class HeaderBarActionTextButton extends StatelessWidget {
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
             Column(mainAxisSize: MainAxisSize.min, children: [
               Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: enabled ? Styles().colors.white : Styles().colors.whiteTransparent06, width: 1.5, ))),
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: enabled ? Styles().colors.surface : Styles().colors.surface.withAlpha(153), width: 1.5, ))),
                 child: Text(title ?? '',
                   style: Styles().textStyles.getTextStyle(enabled ? "widget.heading.regular.fat" : "widget.heading.regular.fat.disabled"),
                   semanticsLabel: "",
