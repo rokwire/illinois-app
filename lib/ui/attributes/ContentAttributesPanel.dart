@@ -385,13 +385,13 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     List<Widget> actions = <Widget>[];
     if (!_isOnboardingMode) {
       if (_canApply) {
-        actions.add(_buildHeaderBarButton(
+        actions.add(HeaderBarActionTextButton(
           title:  Localization().getStringEx('dialog.apply.title', 'Apply'),
           onTap: _onTapApply,
         ));
       }
       else if (_canClear) {
-        actions.add(_buildHeaderBarButton(
+        actions.add(HeaderBarActionTextButton(
           title:  Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
           onTap: _onTapClear,
         ));
@@ -399,28 +399,6 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     }
     return actions;
   }
-
-  Widget _buildHeaderBarButton({String? title, void Function()? onTap}) =>
-    Semantics(label: title, button: true, child:
-      InkWell(onTap: onTap, child:
-        Align(alignment: Alignment.center, child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-            Column(mainAxisSize: MainAxisSize.min, children: [
-              Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.surface, width: 1.5, ))),
-                child: Text(title ?? '',
-                  style: Styles().textStyles.getTextStyle("widget.heading.regular.fat.light"),
-                  semanticsLabel: "",
-                ),
-              ),
-            ],)
-          ),
-        ),
-        //Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
-        //  Text(title ?? '', style: Styles().textStyles.getTextStyle('panel.athletics.home.button.underline'))
-        //),
-      ),
-    );
 
   Widget _buildImageBackground() => Positioned.fill(child:
     Styles().images.getImage(widget.bgImageKey, excludeFromSemantics: true, fit: BoxFit.cover) ?? Container()

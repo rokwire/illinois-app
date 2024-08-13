@@ -135,7 +135,7 @@ class CustomCourses with Service implements NotificationsListener {
 
 	// UserCourses
 
-  Future<List<UserCourse>?> loadUserCourses({List<String>? ids, List<String>? names, List<String>? keys}) async {
+  Future<http.Response?> loadUserCoursesResponse({List<String>? ids, List<String>? names, List<String>? keys}) async {
     if (Auth2().isLoggedIn && _isLmsAvailable) {
       Map<String, String> queryParams = {};
       if (CollectionUtils.isNotEmpty(ids)) {
@@ -152,23 +152,28 @@ class CustomCourses with Service implements NotificationsListener {
       if (queryParams.isNotEmpty) {
         url = UrlUtils.addQueryParameters(url, queryParams);
       }
-      http.Response? response = await Network().get(url, auth: Auth2());
-      String? responseString = response?.statusCode == 200 ? response?.body : null;
-      List<dynamic>? userCourseList = JsonUtils.decodeList(responseString);
-
-      if (userCourseList != null) {
-        List<UserCourse> userCourses = UserCourse.listFromJson(userCourseList);
-        _userCourses ??= {};
-        for (UserCourse uc in userCourses) {
-          if (uc.course?.key != null) {
-            _userCourses![uc.course!.key!] = uc;
-          }
-        }
-        return userCourses;
-      }
-
-      debugPrint('Failed to load user courses from net. Reason: $url ${response?.statusCode} $responseString');
+      return Network().get(url, auth: Auth2());
     }
+    return null;
+  }
+
+  Future<List<UserCourse>?> loadUserCourses({List<String>? ids, List<String>? names, List<String>? keys}) async {
+    http.Response? response = await loadUserCoursesResponse(ids: ids, names: names, keys: keys);
+    String? responseString = response?.statusCode == 200 ? response?.body : null;
+    List<dynamic>? userCourseList = JsonUtils.decodeList(responseString);
+
+    if (userCourseList != null) {
+      List<UserCourse> userCourses = UserCourse.listFromJson(userCourseList);
+      _userCourses ??= {};
+      for (UserCourse uc in userCourses) {
+        if (uc.course?.key != null) {
+          _userCourses![uc.course!.key!] = uc;
+        }
+      }
+      return userCourses;
+    }
+
+    debugPrint('Failed to load user courses from net. Reason: ${response?.request?.url.toString()} ${response?.statusCode} $responseString');
     return null;
   }
 
@@ -307,7 +312,7 @@ class CustomCourses with Service implements NotificationsListener {
   // User history
 
   // use this to load user content history items
-  Future<List<UserContent>?> loadUserContentHistory({List<String>? ids}) async {
+  Future<http.Response?> loadUserContentHistoryResponse({List<String>? ids}) async {
     if (Auth2().isLoggedIn && _isLmsAvailable) {
       Map<String, String> queryParams = {};
       if (CollectionUtils.isNotEmpty(ids)) {
@@ -317,14 +322,14 @@ class CustomCourses with Service implements NotificationsListener {
       if (queryParams.isNotEmpty) {
         url = UrlUtils.addQueryParameters(url, queryParams);
       }
-      http.Response? response = await Network().get(url, auth: Auth2());
-      String? responseString = response?.statusCode == 200 ? response?.body : null;
-      if (responseString != null) {
-        List<dynamic>? responseList = JsonUtils.decodeList(responseString);
-        return UserContent.listFromJson(responseList);
-      }
+      return Network().get(url, auth: Auth2());
     }
     return null;
+  }
+
+  Future<List<UserContent>?> loadUserContentHistory({List<String>? ids}) async {
+    http.Response? response = await loadUserContentHistoryResponse(ids:ids);
+    return (response?.statusCode == 200) ? UserContent.listFromJson(JsonUtils.decodeList(response?.body)) : null;
   }
 
   // NotificationsListener

@@ -228,30 +228,36 @@ class Appointments with Service implements NotificationsListener {
     return Appointment.listFromJson(JsonUtils.decodeList(await _loadAppointmentsStringFromCache(timeSource: timeSource)));
   }
 
-  Future<String?> _loadAppointmentsStringFromNet({required AppointmentsTimeSource timeSource}) async {
+  Future<http.Response?> loadAppointmentseResponse({AppointmentsTimeSource? timeSource}) async {
     //TMP: assets shortcut
     //return await AppBundle.loadString('assets/appointments.json');
     if (StringUtils.isNotEmpty(Config().appointmentsUrl) && Auth2().isLoggedIn) {
       String url = "${Config().appointmentsUrl}/services/appointments";
-      switch (timeSource) {
-        case AppointmentsTimeSource.upcoming:
-          url += '?start-date=${DateTime.now().toUtc().millisecondsSinceEpoch}&order=asc';
-          break;
-        case AppointmentsTimeSource.past:
-          url += '?end-date=${DateTime.now().toUtc().millisecondsSinceEpoch}&order=desc';
-          break;
+      if (timeSource != null) {
+        switch (timeSource) {
+          case AppointmentsTimeSource.upcoming:
+            url += '?start-date=${DateTime.now().toUtc().millisecondsSinceEpoch}&order=asc';
+            break;
+          case AppointmentsTimeSource.past:
+            url += '?end-date=${DateTime.now().toUtc().millisecondsSinceEpoch}&order=desc';
+            break;
+        }
       }
-      http.Response? response = await Network().get(url, auth: Auth2());
-      int? responseCode = response?.statusCode;
-      String? responseString = response?.body;
-      if (responseCode == 200) {
-        return responseString;
-      } else {
-        debugPrint('Failed to load appointments ($url) from net. Reason: $responseCode, $responseString');
-        return null;
-      }
+      return Network().get(url, auth: Auth2());
     }
     return null;
+  }
+
+  Future<String?> _loadAppointmentsStringFromNet({required AppointmentsTimeSource timeSource}) async {
+    http.Response? response = await loadAppointmentseResponse(timeSource: timeSource);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      return responseString;
+    } else {
+      debugPrint('Failed to load appointments ($url) from net. Reason: $responseCode, $responseString');
+      return null;
+    }
   }
 
   Future<List<Appointment>?> _initAppointments({required AppointmentsTimeSource timeSource}) async {

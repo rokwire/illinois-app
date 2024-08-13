@@ -130,42 +130,19 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     LinkedHashSet<dynamic> emptySelection = widget.emptySelection;
 
     if ((multipleSelection || multipleValueGroups) && !DeepCollectionEquality().equals(widget.selection ?? emptySelection, _selection)) {
-      actions.add(_buildHeaderBarButton(
+      actions.add(HeaderBarActionTextButton(
         title:  Localization().getStringEx('dialog.apply.title', 'Apply'),
         onTap: _onTapApply,
       ));
     }
     else if (canClearSelection && (0 < (widget.attributeValues?.length ?? 0)) && !DeepCollectionEquality().equals(widget.selection ?? emptySelection, emptySelection)) {
-      actions.add(_buildHeaderBarButton(
+      actions.add(HeaderBarActionTextButton(
         title:  Localization().getStringEx('dialog.clear.title', 'Clear'),
         onTap: _onTapClear,
       ));
     }
 
     return actions;
-  }
-
-  Widget _buildHeaderBarButton({String? title, void Function()? onTap}) {
-    return Semantics(label: title, button: true, child:
-      InkWell(onTap: onTap, child:
-        Align(alignment: Alignment.center, child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-            Column(mainAxisSize: MainAxisSize.min, children: [
-              Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.surface, width: 1.5, ))),
-                child: Text(title ?? '',
-                  style: Styles().textStyles.getTextStyle("widget.heading.regular.fat"),
-                  semanticsLabel: '',
-                ),
-              ),
-            ],)
-          ),
-        ),
-        //Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
-        //  Text(title ?? '', style: Styles().textStyles.getTextStyle('panel.athletics.home.button.underline'))
-        //),
-      ),
-    );
   }
 
   Widget _buildListItem(BuildContext context, int index) {

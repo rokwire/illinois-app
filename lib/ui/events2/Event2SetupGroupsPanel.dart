@@ -108,30 +108,8 @@ class _Event2SetupGroupsState extends State<Event2SetupGroups> {
   );
 
   List<Widget>? get _barActions => _canApply ? <Widget>[
-    _buildHeaderBarButton(title:  Localization().getStringEx('dialog.apply.title', 'Apply'), onTap: _onApply),
+    HeaderBarActionTextButton(title:  Localization().getStringEx('dialog.apply.title', 'Apply'), onTap: _onApply),
   ] : null;
-
-  Widget _buildHeaderBarButton({String? title, void Function()? onTap}) =>
-    Semantics(label: title, button: true, child:
-      InkWell(onTap: onTap, child:
-        Align(alignment: Alignment.center, child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-            Column(mainAxisSize: MainAxisSize.min, children: [
-              Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.surface, width: 1.5, ))),
-                child: Text(title ?? '',
-                  style: Styles().textStyles.getTextStyle("widget.heading.regular.fat"),
-                  semanticsLabel: "",
-                ),
-              ),
-            ],)
-          ),
-        ),
-        //Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
-        //  Text(title ?? '', style: Styles().textStyles.getTextStyle('panel.athletics.home.button.underline'))
-        //),
-      ),
-    );
 
   double get _screenHeight => MediaQuery.of(context).size.height;
 

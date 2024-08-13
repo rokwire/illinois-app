@@ -24,6 +24,7 @@ import 'package:neom/model/wellness/WellnessBuilding.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/Gateway.dart';
 import 'package:neom/service/Guide.dart';
+import 'package:neom/service/Identity.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -145,13 +146,15 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
 
   // ToDo List
 
+  Future<http.Response?> loadToDoCategoriesResponse() async => isEnabled ?
+    Network().get('${Config().wellnessUrl}/user/todo_categories', auth: Auth2()) : null;
+
   Future<List<WellnessToDoCategory>?> loadToDoCategories() async {
     if (!isEnabled) {
       Log.w('Failed to load wellness todo categories. Missing wellness url.');
       return null;
     }
-    String url = '${Config().wellnessUrl}/user/todo_categories';
-    http.Response? response = await Network().get(url, auth: Auth2());
+    http.Response? response = await loadToDoCategoriesResponse();
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -287,33 +290,19 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
+  Future<http.Response?> loadToDoItemsResponse({int? offset, int? limit}) async => isEnabled ?
+    Network().get('${Config().wellnessUrl}/user/todo_entries', auth: Auth2()) : null;
+
   Future<List<WellnessToDoItem>?> loadToDoItems(int? limit, int? offset,) async {
     if (!isEnabled) {
       Log.w('Failed to load wellness todo items. Missing wellness url.');
       return null;
     }
-    String url = '${Config().wellnessUrl}/user/todo_entries';
-    http.Response? response = await Network().get(url, auth: Auth2());
+    http.Response? response = await loadToDoItemsResponse(offset: offset, limit: limit);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
-    if (url.isNotEmpty) {
-      Map<String, String> queryParams = {};
-      if (limit != null) {
-        queryParams['limit'] = limit.toString();
-      }
-      if (offset != null) {
-        queryParams['offset'] = offset.toString();
-      }
-
-      // if (startDate != null) {
-      //   String? startDateFormatted = AppDateTime().dateTimeLocalToJson(startDate);
-      //   queryParams['start_date'] = startDateFormatted!;
-      // }
-
-    }
     if (responseCode == 200) {
       List<WellnessToDoItem>? items = WellnessToDoItem.listFromJson(JsonUtils.decodeList(responseString));
-
       return items;
     } else {
       Log.w('Failed to load wellness todo items. Response:\n$responseCode: $responseString');
@@ -370,10 +359,8 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
   }
 
   Future<List<SuccessTeamMember?>> getAcademicAdvisors() async {
-    String classificationUrl = '${Config().identityUrl}/studentclassification';
-    http.Response? classificationResponse = await Network().get(classificationUrl, auth: Auth2(), headers: {'External-Authorization': Auth2().uiucToken?.accessToken});
-    Map<String, dynamic>? responseMap = (classificationResponse?.statusCode == 200) ? JsonUtils.decodeMap(classificationResponse?.body) : null;
-    String? departmentCode = (responseMap != null) ? JsonUtils.stringValue(responseMap['DepartmentCode']) : null;
+    Map<String, dynamic>? studentClassificationMap = await Identity().loadStudentClassification();
+    String? departmentCode = (studentClassificationMap != null) ? JsonUtils.stringValue(studentClassificationMap['DepartmentCode']) : null;
     if ((departmentCode != null) && departmentCode.isNotEmpty) {
       String url = '${Config().gatewayUrl}/successteam/advisors?id=${Auth2().uin}&unitid=${departmentCode}';
       http.Response? response = await Network().get(url, auth: Auth2(), headers: {'External-Authorization': Auth2().uiucToken?.accessToken});
@@ -394,7 +381,6 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
       }
     }
     else {
-      Log.w('Failed to load student classification. Response:\n${classificationResponse?.statusCode}: ${classificationResponse?.body}');
       return [];
     }
   }

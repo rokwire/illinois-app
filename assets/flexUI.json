@@ -147,7 +147,10 @@
 
 				"onboarding.research_questionnaire"       : { "shibbolethLoggedIn": true },
 
+				"features.login"                          : { "loggedIn": true },
 				"features.netid_login"                    : { "shibbolethLoggedIn": true },
+				"features.email_login"                    : { "emailLoggedIn": true },
+				"features.phone_login"                    : { "phoneLoggedIn": true },
 
 				"attributes.groups.rso"                   : [{ "accountPermission": "${config.settings.auth.permissions.rso_group_admin}" }, "OR", { "accountRole": "${config.settings.auth.roles.rso_group_admin}" }]
 			},

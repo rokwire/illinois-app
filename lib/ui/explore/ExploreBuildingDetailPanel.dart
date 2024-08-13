@@ -31,7 +31,7 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
               Column(children: <Widget>[
                 _buildTitle(),
                 _buildLocation(),
-                _buildFloorPlansAndAmenities(),
+                // _buildFloorPlansAndAmenities(),
               ],)
             ),
           ),
@@ -65,6 +65,7 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
       ),
     );
 
+  // ignore: unused_element
   Widget _buildFloorPlansAndAmenities() =>
     Visibility(visible: _canFloorPlansAndAmenities(), child:
       InkWell(onTap: _onFloorPlansAndAmenities, child:

@@ -37,12 +37,15 @@ class Identity /* with Service */ {
 
   // Mobile Credential
 
+  Future<Response?> loadMobileCredentialResponse() async =>
+    StringUtils.isNotEmpty(Config().identityUrl) ? Network().get("${Config().identityUrl}/mobilecredential", auth: Auth2(), headers: _externalAuthorizationHeader) : null;
+
   Future<MobileCredential?> loadMobileCredential() async {
     if (StringUtils.isEmpty(Config().identityUrl)) {
       Log.e('Identity: Failed to load mobile credential - missing identity url.');
       return null;
     }
-    Response? response = await Network().get("${Config().identityUrl}/mobilecredential", auth: Auth2(), headers: _externalAuthorizationHeader);
+    Response? response = await loadMobileCredentialResponse();
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -72,18 +75,42 @@ class Identity /* with Service */ {
 
   // Student id
 
+  Future<Response?> loadStudentIdResponse() async =>
+      StringUtils.isNotEmpty(Config().identityUrl) ? Network().get("${Config().identityUrl}/studentid", auth: Auth2(), headers: _externalAuthorizationHeader) : null;
+
   Future<StudentId?> loadStudentId() async {
     if (StringUtils.isEmpty(Config().identityUrl)) {
       Log.e('Identity: loadStudentId - missing identity url.');
       return null;
     }
-    Response? response = await Network().get("${Config().identityUrl}/studentid", auth: Auth2(), headers: _externalAuthorizationHeader);
+    Response? response = await loadStudentIdResponse();
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
       return StudentId.fromJson(JsonUtils.decodeMap(responseString));
     } else {
       Log.e('Identity: Failed to load student id. Reason ($responseCode): $responseString');
+      return null;
+    }
+  }
+
+  // Student classification
+
+  Future<Response?> loadStudentClassificationResponse() async =>
+    StringUtils.isNotEmpty(Config().identityUrl) ? Network().get("${Config().identityUrl}/studentclassification", auth: Auth2(), headers: _externalAuthorizationHeader) : null;
+
+  Future<Map<String, dynamic>?> loadStudentClassification() async {
+    if (StringUtils.isEmpty(Config().identityUrl)) {
+      Log.e('Identity: loadStudentId - missing identity url.');
+      return null;
+    }
+    Response? response = await loadStudentClassificationResponse();
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      return JsonUtils.decodeMap(responseString);
+    } else {
+      Log.e('Identity: Failed to load student classification. Reason ($responseCode): $responseString');
       return null;
     }
   }

@@ -20,6 +20,7 @@ import 'package:flutter/services.dart';
 import 'package:neom/service/IlliniCash.dart';
 import 'package:neom/service/OnCampus.dart';
 import 'package:neom/ui/groups/ImageEditPanel.dart';
+import 'package:neom/ui/profile/ProfileStoredDataPanel.dart';
 import 'package:neom/ui/profile/ProfileVoiceRecordigWidgets.dart';
 import 'package:neom/ui/settings/SettingsWidgets.dart';
 import 'package:neom/utils/AppUtils.dart';
@@ -106,8 +107,12 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
       Column(children: <Widget>[
         _buildProfilePicture(),
         _buildInfoContent(),
+        _buildSpacing(24),
         _buildAccountManagementOptions(),
-        _buildDeleteMyAccount()
+        _buildSpacing(12),
+        _buildMyStoredData(),
+        _buildDeleteMyAccount(),
+        _buildSpacing(12),
       ]),
     );
   }
@@ -351,7 +356,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
       contentWidget = _buildPhoneOrEmailAccountManagementOptions();
     }
     
-    return (contentWidget != null) ? Padding(padding: EdgeInsets.only(top: 25, left: widget.margin.left, right: widget.margin.right), child: contentWidget) : Container();
+    return (contentWidget != null) ? Padding(padding: _buttonPadding, child: contentWidget) : Container();
   }
 
   Widget _buildShibbolethAccountManagementOptions() {
@@ -666,20 +671,46 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> implements Noti
         ]);
   }
 
+  Widget _buildSpacing(double height) {
+    return Container(height: height,);
+  }
+
+  EdgeInsetsGeometry get _buttonPadding =>
+      EdgeInsets.only(top: 6, bottom: 6, left: widget.margin.left, right: widget.margin.right);
+
+  Widget _buildMyStoredData() {
+    return Padding(padding: _buttonPadding, child:
+      RoundedButton(
+        label: Localization().getStringEx("panel.settings.privacy_center.button.stored_data.title", "My Stored Data"),
+        hint: Localization().getStringEx("panel.settings.privacy_center.button.stored_data.hint", "See everything we know about you."),
+        textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+        backgroundColor: Styles().colors.background,
+        borderColor: Styles().colors.fillColorSecondary,
+        borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+        onTap: _onTapStoredData,
+      )
+    );
+  }
+
   Widget _buildDeleteMyAccount() {
-    return Padding(padding: EdgeInsets.only(top: 24, bottom: 12, left: widget.margin.left, right: widget.margin.right), child:
-    RoundedButton(
+    return Padding(padding: _buttonPadding, child:
+      RoundedButton(
+        label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Delete My Account"),
+        hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
+        textStyle: Styles().textStyles.getTextStyle("widget.error.regular"),
         backgroundColor: Styles().colors.surface,
         borderColor: Styles().colors.alert,
         borderWidth: 1,
-        textStyle: Styles().textStyles.getTextStyle('widget.error.regular'),
-        label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Delete My Account"),
-        hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
+        borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
         onTap: _onTapDeleteData
       )
     );
   }
 
+  void _onTapStoredData() {
+    Analytics().logSelect(target: "My Stored Data");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ProfileStoredDataPanel()));
+  }
 
   void _onTapDeleteData() async {
     final String groupsSwitchTitle = Localization().getStringEx('panel.settings.privacy_center.delete_account.contributions.delete.msg', 'Please delete all my contributions.');

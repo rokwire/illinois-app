@@ -49,13 +49,15 @@ class Rewards with Service {
 
   // APIs
 
+  Future<http.Response?> loadBalanceResponse() async => StringUtils.isNotEmpty(Config().rewardsUrl) ?
+    Network().get('${Config().rewardsUrl}/user/balance', auth: Auth2()) : null;
+
   Future<int?> loadBalance() async {
     if (StringUtils.isEmpty(Config().rewardsUrl)) {
       Log.w('Rewards ballance failed to load. Missing rewards url.');
       return null;
     }
-    String url = '${Config().rewardsUrl}/user/balance';
-    http.Response? response = await Network().get(url, auth: Auth2());
+    http.Response? response = await loadBalanceResponse();
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -67,13 +69,15 @@ class Rewards with Service {
     }
   }
 
+  Future<http.Response?> loadHistoryResponse() async => StringUtils.isNotEmpty(Config().rewardsUrl) ?
+    Network().get('${Config().rewardsUrl}/user/history', auth: Auth2()) : null;
+
   Future<List<RewardHistoryEntry>?> loadHistory() async {
     if (StringUtils.isEmpty(Config().rewardsUrl)) {
       Log.w('Rewards history failed to load. Missing rewards url.');
       return null;
     }
-    String url = '${Config().rewardsUrl}/user/history';
-    http.Response? response = await Network().get(url, auth: Auth2());
+    http.Response? response = await loadHistoryResponse();
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {

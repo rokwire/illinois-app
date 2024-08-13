@@ -193,7 +193,7 @@ class _AccessContent extends StatelessWidget {
       switch (ruleType) {
         case 'roles': message += sprintf(Localization().getStringEx('widget.access.$messageKey.unsatisfied.message', '%s is currently only available to ${(rule as List).join(' ')}'), [resourceName]); break;
         case 'privacy': message += Localization().getStringEx('widget.access.$messageKey.unsatisfied.message', 'Update your privacy level to at least ') + rule.toString(); break;
-        case 'auth': message += Localization().getStringEx('widget.access.$messageKey.unsatisfied.message', 'Sign in'); break;
+        case 'auth': message += Localization().getStringEx('widget.access.$messageKey.unsatisfied.message', 'Sign in with your NetID, mobile phone or email'); break;
       }
       stepNum++;
 

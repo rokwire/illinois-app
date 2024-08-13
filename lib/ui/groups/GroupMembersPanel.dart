@@ -19,10 +19,13 @@ import 'package:flutter/material.dart';
 import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/service/FirebaseMessaging.dart';
+import 'package:neom/ui/groups/GroupMembersSearchPanel.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:neom/ext/Group.dart';
 import 'package:neom/service/Analytics.dart';
+import 'package:rokwire_plugin/service/Log.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -31,7 +34,6 @@ import 'package:neom/ui/groups/GroupMemberPanel.dart';
 import 'package:neom/ui/groups/GroupPendingMemberPanel.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -70,7 +72,6 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   bool _switchToAllIfNoPendingMembers = false;
 
   String? _searchTextValue;
-  TextEditingController _searchEditingController = TextEditingController();
   late FocusNode _searchFocus;
 
   @override
@@ -266,9 +267,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         }
         late Widget memberCard;
         if (member.status == GroupMemberStatus.pending) {
-          memberCard = _PendingMemberCard(member: member, group: _group);
+          memberCard = PendingMemberCard(member: member, group: _group);
         } else {
-          memberCard = _GroupMemberCard(member: member, group: _group);
+          memberCard = GroupMemberCard(member: member, group: _group);
         }
         members.add(memberCard);
       }
@@ -279,88 +280,63 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     }
 
     return Column(children: <Widget>[
-        SectionRibbonHeader(title: _getSectionHeading(), titleIconKey: 'person-circle'),
-        _buildMembersSearch(),
-        _buildDateUpdatedFields(),
         Visibility(visible: 1 < CollectionUtils.length(_sortedMemberStatusList), child:
           Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
-            RibbonButton(
+          RibbonButton(
               textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
               backgroundColor: Styles().colors.surface,
               borderRadius: BorderRadius.all(Radius.circular(5)),
               border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-                rightIconKey: _statusValuesVisible ? 'chevron-up' : 'chevron-down',
-                label: _memberStatusToString(_selectedMemberStatus),
+              rightIconKey: _statusValuesVisible ? 'chevron-up' : 'chevron-down',
+              label: _memberStatusToString(_selectedMemberStatus),
               onTap: _onTapRibbonButton))),
-      Stack(children: [
-        Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16), child: contentWidget),
-        Visibility(visible: _statusValuesVisible, child: _buildStatusDismissLayer()),
-        Visibility(visible: _statusValuesVisible, child: _buildStatusValuesWidget()),
-      ])
+        Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+          Row(
+            children: [
+              Expanded(child: _buildDateUpdatedFields()),
+              Padding(padding: EdgeInsets.only(right: 16), child:
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _buildApproveAllButton(),
+                    _buildSearchButton()
+                  ],
+                )
+              )
+            ],
+          )
+        ),
+        Stack(children: [
+          Padding(padding: EdgeInsets.only(top: 0, left: 16, right: 16), child: contentWidget),
+          Visibility(visible: _statusValuesVisible, child: _buildStatusDismissLayer()),
+          Visibility(visible: _statusValuesVisible, child: _buildStatusValuesWidget()),
+        ])
     ]);
   }
 
-  Widget _buildMembersSearch() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Container(
-        padding: EdgeInsets.only(left: 16),
-        color: Colors.white,
-        height: 48,
-        child: Row(
-          children: <Widget>[
-            Flexible(
-                child:
-                Semantics(
-                  label: Localization().getStringEx('panel.manage_members.field.search.title', 'Search'),
-                  hint: Localization().getStringEx('panel.manage_members.field.search.hint', ''),
-                  textField: true,
-                  excludeSemantics: true,
-                  child: TextField(
-                    // Do not allow searching when drop-down values are visible
-                    enabled: !_statusValuesVisible,
-                    readOnly: _statusValuesVisible,
-                    controller: _searchEditingController,
-                    onChanged: (text) => _onSearchTextChanged(text),
-                    onSubmitted: (_) => _onTapSearch(),
-                    autofocus: false,
-                    focusNode: _searchFocus,
-                    cursorColor: Styles().colors.fillColorSecondary,
-                    keyboardType: TextInputType.text,
-                    style:  Styles().textStyles.getTextStyle('widget.group.members.search'),
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                    ),
-                  ),
-                )
-            ),
-            Semantics(
-                label: Localization().getStringEx('panel.manage_members.button.search.clear.title', 'Clear'),
-                hint: Localization().getStringEx('panel.manage_members.button.search.clear.hint', ''),
-                button: true,
-                excludeSemantics: true,
-                child: Padding(
-                  padding: EdgeInsets.all(12),
-                  child: GestureDetector(
-                    onTap: _onTapClearSearch,
-                    child: Styles().images.getImage('clear', excludeFromSemantics: true),
-                  ),
-                )
-            ),
-            Semantics(
-              label: Localization().getStringEx('panel.manage_members.button.search.title', 'Search'),
-              hint: Localization().getStringEx('panel.manage_members.button.search.hint', ''),
-              button: true,
-              excludeSemantics: true,
-              child: Padding(
-                padding: EdgeInsets.all(12),
-                child: GestureDetector(
-                  onTap: _onTapSearch,
-                  child: Styles().images.getImage('search', excludeFromSemantics: true),
-                ),
-              ),
-            ),
-          ],
+  Widget _buildApproveAllButton() {
+    return Visibility(visible: _isAdmin, child:
+      GestureDetector(
+        onTap: _onTapApproveAll,
+        child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: Text(Localization().getStringEx("panel.manage_members.button.approve_all.title", 'Approve All'),
+                style: Styles().textStyles.getTextStyle('panel.group.button.leave.title')
+            ))));
+  }
+
+  Widget _buildSearchButton(){
+    return  Semantics(
+      label: Localization().getStringEx('panel.manage_members.button.search.title', 'Search'),
+      hint: Localization().getStringEx('panel.manage_members.button.search.hint', ''),
+      button: true,
+      excludeSemantics: true,
+      child: Padding(
+        padding: EdgeInsets.only(left: 8, top: 8, bottom: 8),
+        child: GestureDetector(
+          onTap: _onTapSearch,
+          child: Styles().images.getImage('search', excludeFromSemantics: true),
         ),
       ),
     );
@@ -378,14 +354,14 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         Visibility(visible: showSynced,
           child: Semantics(container: true, child:
             Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Last sync:'), style: Styles().textStyles.getTextStyle('panel.group.detail.light.fat'))),
-              Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('panel.group.detail.light.fat'))
+              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Last sync:'), style: Styles().textStyles.getTextStyle('widget.detail.small.fat'))),
+              Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('widget.detail.small'))
         ]))),
         Visibility(visible: showUpdated,
           child: Semantics(container: true,
             child: Padding(padding: EdgeInsets.only(top: 5), child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Last updated:'), style: Styles().textStyles.getTextStyle('panel.group.detail.light.fat'))),
-              Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('panel.group.detail.light.fat'))
+              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Last updated:'), style: Styles().textStyles.getTextStyle('widget.detail.small.fat'))),
+              Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('widget.detail.small'))
         ]))))
     ]))));
   }
@@ -397,44 +373,34 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     _reloadGroupContent();
   }
 
-  void _onSearchTextChanged(String text) {
-    // implement if needed
+  void _onTapSearch(){
+    Analytics().logSelect(target: "Group Members Search", attributes: _group?.analyticsAttributes);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersSearchPanel(group: _group, selectedMemberStatus: _selectedMemberStatus)));
   }
 
-  void _onTapSearch() {
-    if (_statusValuesVisible) {
-      // Do not try to search when drop down values are visible.
-      return;
-    }
-
-    if(!_searchFocus.hasFocus){
-      FocusScope.of(context).requestFocus(_searchFocus);
-    }
-
-    String? initialSearchTextValue = _searchTextValue;
-    _searchTextValue = _searchEditingController.text.toString();
-    String? currentSearchTextValue = _searchTextValue;
-    if (!(StringUtils.isEmpty(initialSearchTextValue) && StringUtils.isEmpty(currentSearchTextValue))) {
-      FocusScope.of(context).unfocus();
-      _reloadMembers();
-    }
+  void _onTapApproveAll(){
+    AppAlert.showConfirmationDialog(  buildContext: context,
+        message: Localization()
+            .getStringEx('', 'Do you want to approve all pending user requests?'),
+        positiveCallback: _onTapConfirmApproveAll);
   }
 
-  void _onTapClearSearch() {
-    if (_statusValuesVisible) {
-      // Do not try to clear search when drop down values are visible.
-      return;
-    }
-
-    if(_searchFocus.hasFocus){
-      _searchFocus.unfocus();
-    }
-
-    if (StringUtils.isNotEmpty(_searchTextValue)) {
-      _searchEditingController.text = "";
-      _searchTextValue = "";
-      _reloadMembers();
-    }
+  _onTapConfirmApproveAll(){
+    _increaseProgress();
+    Groups().loadMembers(groupId: widget.groupId, statuses: [GroupMemberStatus.pending]).then((members) {
+      if(CollectionUtils.isNotEmpty(members)){
+        List<String>? pendingUserIds = MemberExt.extractMemberIds(members);
+        Groups().acceptMembershipMulti(group: _group, ids: pendingUserIds).then((success){
+          if(success){
+            Log.d("Successfully approved all");
+          } else {
+            AppAlert.showDialogResult(context, Localization().getStringEx("", 'Failed to approve  all pending user requests'));
+          }
+        });
+      } else {
+        //No members to approve
+      }
+    }).whenComplete(() => _decreaseProgress());
   }
 
   void _scrollListener() {
@@ -524,21 +490,6 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     }
   }
 
-  String _getSectionHeading() {
-    switch (_selectedMemberStatus) {
-      case GroupMemberStatus.admin:
-        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.admins", "Principal Investigators") : Localization().getStringEx("panel.manage_members.label.admins", "Admins");
-      case GroupMemberStatus.member:
-        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.members", "Participants") : Localization().getStringEx("panel.manage_members.label.members", "Members");
-      case GroupMemberStatus.pending:
-        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.requests", "Requests") : Localization().getStringEx("panel.manage_members.label.requests", "Requests");
-      case GroupMemberStatus.rejected:
-        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.members", "Participants") : Localization().getStringEx("panel.manage_members.label.members", "Members");
-      default: // All
-        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.members", "Participants") : Localization().getStringEx("panel.manage_members.label.members", "Members");
-    }
-  }
-
   String _getEmptyMembersMessage() {
     switch (_selectedMemberStatus) {
       case GroupMemberStatus.admin:
@@ -582,10 +533,10 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   }
 }
 
-class _PendingMemberCard extends StatelessWidget {
+class PendingMemberCard extends StatelessWidget {
   final Member? member;
   final Group? group;
-  _PendingMemberCard({required this.member, this.group});
+  PendingMemberCard({required this.member, this.group});
 
   @override
   Widget build(BuildContext context) {
@@ -636,10 +587,10 @@ class _PendingMemberCard extends StatelessWidget {
   }
 }
 
-class _GroupMemberCard extends StatelessWidget {
+class GroupMemberCard extends StatelessWidget {
   final Member? member;
   final Group? group;
-  _GroupMemberCard({required this.member, required this.group});
+  GroupMemberCard({required this.member, required this.group});
 
   @override
   Widget build(BuildContext context) {
