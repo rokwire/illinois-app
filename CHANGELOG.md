@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Polished query limit display and update in assistant panel [#4288](https://github.com/rokwire/illinois-app/issues/4288).
 - MembersPanel: Approve all visible only for All and Pending memberStatus [#4268](https://github.com/rokwire/illinois-app/issues/4268).
+### Fixed
+- Cleanup and bug fixes in Notifications Prefs panel [#4287](https://github.com/rokwire/illinois-app/issues/4287).
 
 ## [6.0.34] - 2024-08-13
 ### Added
