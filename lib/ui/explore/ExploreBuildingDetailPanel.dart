@@ -105,10 +105,4 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
     Analytics().logSelect(target: "Floor Plans & Amenities");
     // TODO: present the relevant UI
   }
-
-
-  void _onBack(BuildContext context) {
-    Analytics().logSelect(target: "Back");
-    Navigator.of(context).pop();
-  }
 }
