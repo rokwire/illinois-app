@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.0.35] - 2024-08-14
 ### Changed
 - Polished query limit display and update in assistant panel [#4288](https://github.com/rokwire/illinois-app/issues/4288).
 - MembersPanel: Approve all visible only for All and Pending memberStatus [#4268](https://github.com/rokwire/illinois-app/issues/4268).
