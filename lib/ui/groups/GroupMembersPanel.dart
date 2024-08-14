@@ -316,7 +316,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   }
 
   Widget _buildApproveAllButton() {
-    return Visibility(visible: _isAdmin, child:
+    return Visibility(visible: _isApproveAllVisible, child:
       GestureDetector(
         onTap: _onTapApproveAll,
         child: Padding(
@@ -531,6 +531,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   bool get _isResearchProject {
     return _group?.researchProject == true;
   }
+
+  bool get _isApproveAllVisible => _isAdmin
+        && (_selectedMemberStatus == null /*All*/ || _selectedMemberStatus == GroupMemberStatus.pending);
 }
 
 class PendingMemberCard extends StatelessWidget {

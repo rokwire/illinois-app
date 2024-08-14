@@ -318,7 +318,7 @@ class Appointments with Service implements NotificationsListener {
 
   // Appointments Account
 
-  void changeAccountPreferences({bool? newAppointment, bool? morningReminder, bool? nightReminder}) {
+  Future<void> changeAccountPreferences({bool? newAppointment, bool? morningReminder, bool? nightReminder}) async {
     if (_account != null) {
       bool changed = false;
       if (newAppointment != null) {
@@ -334,7 +334,7 @@ class Appointments with Service implements NotificationsListener {
         changed = true;
       }
       if (changed) {
-        _updateAccountPreferences();
+        await _updateAccountPreferences();
       }
     }
   }
