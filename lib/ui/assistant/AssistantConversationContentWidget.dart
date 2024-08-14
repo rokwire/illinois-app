@@ -62,7 +62,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   bool _loadingResponse = false;
   Message? _feedbackMessage;
 
-  int? _queryLimit = 5;
+  int? _queryLimit;
+  bool _evaluatingQueryLimit = false;
 
   Map<String, String>? _userContext;
 
@@ -533,7 +534,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   Widget _buildChatBar() {
-    bool enabled = (_queryLimit == null) || (_queryLimit! > 0);
+    int? queryLimit = _queryLimit;
+    bool enabled = (queryLimit == null) || (queryLimit > 0);
     return Semantics(container: true,
         child: Material(
           color: Styles().colors.surface,
@@ -608,7 +610,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   Widget _buildQueryLimit() {
-    if (_queryLimit == null) {
+    int? queryLimit = _queryLimit;
+    if ((queryLimit == null) && !_evaluatingQueryLimit) {
       return Container();
     }
     return Semantics(container: true,
@@ -617,18 +620,25 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Row(mainAxisSize: MainAxisSize.min, children: [
             Container(
-                height: 10,
-                width: 10,
-                decoration: BoxDecoration(
-                    color: (_queryLimit ?? 0) > 0
-                        ? Styles().colors.saferLocationWaitTimeColorGreen
-                        : Styles().colors.saferLocationWaitTimeColorRed,
-                    shape: BoxShape.circle)),
+                height: _evaluatingQueryLimit ? 12 : 10,
+                width: _evaluatingQueryLimit ? 12 : 10,
+                decoration: _evaluatingQueryLimit ? null : BoxDecoration(
+                  color: ((queryLimit ?? 0) > 0)
+                      ? Styles().colors.saferLocationWaitTimeColorGreen
+                      : Styles().colors.saferLocationWaitTimeColorRed,
+                  shape: BoxShape.circle),
+                child: _evaluatingQueryLimit ? CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Styles().colors.fillColorSecondary,
+                ) : null,
+            ),
             SizedBox(width: 8),
-            Text(
+            Text(_evaluatingQueryLimit ?
+                Localization()
+                    .getStringEx('panel.assistant.label.queries.evaluating.title', "Evaluating remaining questions today") :
                 Localization()
                     .getStringEx('panel.assistant.label.queries.remaining.title', "{{query_limit}} questions remaining today")
-                    .replaceAll('{{query_limit}}', _queryLimit.toString()),
+                    .replaceAll('{{query_limit}}', queryLimit.toString()),
                 style: Styles().textStyles.getTextStyle('widget.title.small'))
           ]),
           Padding(
@@ -810,8 +820,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       _shouldSemanticFocusToLastBubble = true;
     });
 
-    int? limit = _queryLimit;
-    if (limit != null && limit <= 0) {
+    int? queryLimit = _queryLimit;
+    if ((queryLimit != null) && (queryLimit <= 0)) {
       setState(() {
         Assistant().addMessage(Message(
             content: Localization().getStringEx(
@@ -831,12 +841,10 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       setState(() {
         if (response != null) {
           Assistant().addMessage(response);
-          if (_queryLimit != null) {
-            if (response.queryLimit != null) {
-              _queryLimit = response.queryLimit;
-            } else {
-              _queryLimit = _queryLimit! - 1;
-            }
+          if (response.queryLimit != null) {
+            _queryLimit = response.queryLimit;
+          } else if (_queryLimit != null) {
+            _queryLimit = _queryLimit! - 1;
           }
         } else {
           Assistant().addMessage(Message(
@@ -930,13 +938,18 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   Future<void> _onPullToRefresh() async {
-    Assistant().getQueryLimit().then((limit) {
-      if (limit != null) {
-        setStateIfMounted(() {
+    if (mounted && (_evaluatingQueryLimit == false)) {
+      setState((){
+        _evaluatingQueryLimit = true;
+      });
+      int? limit = await Assistant().getQueryLimit();
+      if (mounted && (limit != null)) {
+        setState(() {
           _queryLimit = limit;
+          _evaluatingQueryLimit = false;
         });
       }
-    });
+    }
   }
 
   @override
