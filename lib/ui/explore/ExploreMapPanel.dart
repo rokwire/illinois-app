@@ -64,6 +64,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:timezone/timezone.dart';
 
+import 'ExploreBuildingsSearchPanel.dart';
+
 enum ExploreMapType { Events2, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MTDDestinations, MentalHealth, StateFarmWayfinding }
 
 class ExploreMapPanel extends StatefulWidget {
@@ -364,6 +366,11 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
             Visibility(visible: (_selectedMapType == ExploreMapType.Events2), child:
               Padding(padding: EdgeInsets.only(top: 8, bottom: 2), child:
                 _buildEvents2HeaderBar(),
+              ),
+            ),
+            Visibility(visible: (_selectedMapType == ExploreMapType.Buildings), child:
+              Padding(padding: EdgeInsets.only(top: 8, bottom: 2), child:
+                _buildBuildingsHeaderBar(),
               ),
             ),
             Expanded(child:
@@ -837,7 +844,20 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     Navigator.of(context).pop();
   }
 
+  Widget _buildBuildingsHeaderBar() => Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+    Event2ImageCommandButton(Styles().images.getImage('search'),
+        label: Localization().getStringEx('panel.events2.home.bar.button.search.title', 'Search'),
+        hint: Localization().getStringEx('panel.events2.home.bar.button.search.hint', 'Tap to search events'),
+        contentPadding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 8),
+        onTap: _onBuildingsSearch
+    ),
+  ],);
   // Events2 - Data
+
+  void _onBuildingsSearch() {
+    Analytics().logSelect(target: 'Search');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreBuildingsSearchPanel()));
+  }
 
   Widget _buildEvents2HeaderBar() => Column(children: [
     _buildEvents2CommandButtons(),
