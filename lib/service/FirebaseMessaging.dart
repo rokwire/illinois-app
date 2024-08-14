@@ -154,7 +154,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     _athleticsUpdatesNewsNotificationSetting    : 'edu.illinois.rokwire.settings.inbox.notification.athletic_updates.news.enabled',
     _athleticsUpdatesNotificationKey            : 'edu.illinois.rokwire.settings.inbox.notification.athletic_updates.main.notifications.enabled',
     _groupUpdatesNotificationKey                : 'edu.illinois.rokwire.settings.inbox.notification.group.main.notifications.enabled',
-    _pauseNotificationKey                       : 'edu.illinois.rokwire.settings.inbox.notification.event_reminders.enabled',
+    _pauseNotificationKey                       : 'edu.illinois.rokwire.settings.inbox.notification.notifications.enabled',
   };
 
   static const Map<String, bool> _defaultNotificationSettings = {

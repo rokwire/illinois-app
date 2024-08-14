@@ -444,6 +444,7 @@
     "panel.assistant.label.feedback.negative.prompt.title": "Can you briefly explain the issue(s) with the response?",
     "panel.assistant.button.submit.title": "Submit",
     "panel.assistant.label.queries.remaining.title": "{{query_limit}} questions remaining today",
+    "panel.assistant.label.queries.evaluating.title": "Evaluating remaining questions today",
     "panel.assistant.inaccurate.description.disclaimer": "The NEOM U Assistant may display inaccurate information.\nPlease double-check its responses.",
     "panel.assistant.label.queries.limit.title": "Sorry, you are out of questions for today. Please check back tomorrow to ask more questions!",
     "panel.assistant.label.error.title": "Sorry, something went wrong. For the best results, please restart the app and try your question again.",

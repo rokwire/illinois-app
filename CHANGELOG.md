@@ -25,14 +25,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [6.1.6] - 2024-08-00
 ### Added
 - Added My Stored Data in Profile [#4264](https://github.com/rokwire/illinois-app/issues/4264).
-### Changed
-- Make Academics/Skills Self Evaluation available to any logged users [#4270](https://github.com/rokwire/illinois-app/issues/4270).
 
 ## [6.1.5] - 2024-08-06
 ### Changed
 - Mark completed surveys [#4243](https://github.com/rokwire/illinois-app/issues/4243).
-### Fixed
-- Fixed AssistantContentPanel scrollable size when writing negative feedback [#4267](https://github.com/rokwire/illinois-app/issues/4267).
 
 ## [6.1.4] - 2024-07-30
 ### Added
@@ -54,6 +50,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [6.1.0] - 2024-07-22
 ### Added
 - Created Public Surveys UI / round 0 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
+
+## [6.0.35] - 2024-08-14
+### Changed
+- Polished query limit display and update in assistant panel [#4288](https://github.com/rokwire/illinois-app/issues/4288).
+- MembersPanel: Approve all visible only for All and Pending memberStatus [#4268](https://github.com/rokwire/illinois-app/issues/4268).
+### Fixed
+- Cleanup and bug fixes in Notifications Prefs panel [#4287](https://github.com/rokwire/illinois-app/issues/4287).
+
+## [6.0.34] - 2024-08-13
+### Added
+- Added bulding tout image in building detail panel [#4254](https://github.com/rokwire/illinois-app/issues/4254).
 
 ## [6.0.33] - 2024-08-12
 ### Added

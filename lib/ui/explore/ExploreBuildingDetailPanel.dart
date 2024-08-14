@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:neom/ext/Explore.dart';
 import 'package:neom/model/StudentCourse.dart';
 import 'package:neom/service/Analytics.dart';
+import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
@@ -17,33 +18,38 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
   Widget build(BuildContext context) =>
     Scaffold(
       body: _buildContent(context),
-      backgroundColor: Styles().colors.surface,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar()
     );
 
-  Widget _buildContent(BuildContext context) =>
-    SafeArea(child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        _buildBack(onTap: () => _onBack(context)),
-        Expanded(child:
-          SingleChildScrollView(child:
-            Padding(padding:EdgeInsets.only(right: 20, left: 20), child:
-              Column(children: <Widget>[
+  Widget _buildContent(BuildContext context) => Column(children: <Widget>[
+    Expanded(child:
+      CustomScrollView(slivers: <Widget>[
+        SliverToutHeaderBar(
+          flexImageUrl:  building.imageURL,
+          flexRightToLeftTriangleColor: Styles().colors.background,
+          flexLeftToRightTriangleColor: Colors.transparent,
+        ),
+        SliverList(delegate:
+          SliverChildListDelegate([
+            Padding(padding: EdgeInsets.all(16), child:
+              Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
                 _buildTitle(),
                 _buildLocation(),
                 // _buildFloorPlansAndAmenities(),
-              ],)
+              ])
             ),
-          ),
+          ], addSemanticIndexes:false)
         ),
-      ],),
-    );
+      ]),
+    ),
+  ]);
 
   Widget _buildTitle() =>
     Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
       Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         Expanded(child:
-          Text(building.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.extra_large.spaced")),
+          Text(building.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.large.fat")),
         ),
       ],),
     );
@@ -84,22 +90,6 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
       ),
     );
 
-  Widget _buildBack({void Function()? onTap}) =>
-    Semantics(
-      label: Localization().getStringEx('headerbar.back.title', 'Back'),
-      hint: Localization().getStringEx('headerbar.back.hint', ''),
-      button: true,
-      child:
-        InkWell(onTap: onTap, child:
-          SizedBox(width: 48, height: 48, child:
-            Center(child:
-              Styles().images.getImage('chevron-left-bold', excludeFromSemantics: true
-            ),
-          ),
-        ),
-      ),
-    );
-
   bool _canLocation() =>
     StringUtils.isNotEmpty(building.fullAddress);
 
@@ -114,11 +104,5 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
   void _onFloorPlansAndAmenities() {
     Analytics().logSelect(target: "Floor Plans & Amenities");
     // TODO: present the relevant UI
-  }
-
-
-  void _onBack(BuildContext context) {
-    Analytics().logSelect(target: "Back");
-    Navigator.of(context).pop();
   }
 }

@@ -443,6 +443,7 @@
 	"panel.assistant.label.feedback.negative.prompt.title": "您能否簡單解釋一下回覆中的問題？",
 	"panel.assistant.button.submit.title": "提交",
 	"panel.assistant.label.queries.remaining.title": "今日问题余额 {{query_limit}} 个",
+	"panel.assistant.label.queries.evaluating.title": "Evaluating remaining questions today",
 	"panel.assistant.inaccurate.description.disclaimer": "伊利諾伊州助理可能會顯示不準確的資訊。\n請仔細檢查其答案。",
 	"panel.assistant.label.queries.limit.title": "抱歉，您今天的提问次数已用完。请明天再回来提问！",
 	"panel.assistant.label.error.title": "抱歉，出了一些問題。為了獲得最佳結果，請重新啟動應用程式並再次嘗試您的問題。",

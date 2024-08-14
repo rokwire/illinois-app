@@ -442,6 +442,7 @@
     "panel.assistant.label.feedback.negative.prompt.title": "¿Puede explicar brevemente los problemas con la respuesta?",
     "panel.assistant.button.submit.title": "Entregar",
     "panel.assistant.label.queries.remaining.title": "{{query_limit}} preguntas quedan hoy",
+    "panel.assistant.label.queries.evaluating.title": "Evaluating remaining questions today",
     "panel.assistant.inaccurate.description.disclaimer": "El Asistente de Illinois puede mostrar información inexacta.\nPor favor, vuelva a verificar sus respuestas.",
     "panel.assistant.label.queries.limit.title": "Perdón. Has agotado tus preguntas para hoy. Vuelve mañana para ¡hacer más preguntas!",
     "panel.assistant.label.error.title": "Perdón, algo salió mal. Para obtener mejores resultados, reinicie la aplicación y vuelva a intentar responder su pregunta.",
