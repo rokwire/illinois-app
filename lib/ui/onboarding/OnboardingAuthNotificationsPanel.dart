@@ -55,89 +55,93 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
         body: SwipeDetector(
             onSwipeLeft: () => _goNext(context) ,
             onSwipeRight: () => _goBack(context),
-            child: Expanded(child:
-              SingleChildScrollView(child:
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
-                      Onboarding2TitleWidget(),
-                    ),
-                    Container(
-                      constraints: BoxConstraints(maxWidth: Config().webContentMaxWidth),
-                      child: Column(
-                        crossAxisAlignment: kIsWeb ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-                        children: [
-                          Semantics(
-                              label: titleText,
-                              hint: Localization().getStringEx('panel.onboarding.notifications.label.title.hint', 'Header 1'),
-                              excludeSemantics: true,
-                              child: Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      titleText,
-                                      style: Styles().textStyles.getTextStyle('panel.onboarding2.notifications.heading.title'),
-                                    ),
-                                  )
-                              )
-                          ),
-                          Container(height: 12,),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24),
-                            child: Align(
-                                alignment: Alignment.topCenter,
-                                child: Text(
-                                  Localization().getStringEx('panel.onboarding.notifications.label.description', 'Get notified about your “starred” groups and events.'),
-                                  style: Styles().textStyles.getTextStyle('widget.title.large'),
-                                )),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                SlantedWidget(
-                                  color: Styles().colors.fillColorSecondary,
-                                  child: RibbonButton(
-                                    label: Localization().getStringEx('panel.onboarding.notifications.button.allow.title', 'Receive Notifications'),
-                                    textAlign: TextAlign.center,
-                                    hint: Localization().getStringEx('panel.onboarding.notifications.button.allow.hint', ''),
-                                    textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.large.fat'),
-                                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                                    backgroundColor: Styles().colors.fillColorSecondary,
-                                    onTap: () => _onReceiveNotifications(context),
-                                    rightIconKey: null,
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Analytics().logSelect(target: 'Not right now') ;
-                                    return _goNext(context);
-                                  },
-                                  child: Semantics(
-                                      label:notRightNow,
-                                      hint:Localization().getStringEx('panel.onboarding.notifications.button.dont_allow.hint', ''),
-                                      button: true,
-                                      excludeSemantics: true,
-                                      child:Padding(
-                                          padding: EdgeInsets.symmetric(vertical: 20),
-                                          child: Text(
-                                            notRightNow,
-                                            style: Styles().textStyles.getTextStyle('widget.button.title.medium.underline.highlight'),
-                                          )
+            child: Column(
+              children: [
+                Expanded(child:
+                  SingleChildScrollView(child:
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
+                          Onboarding2TitleWidget(),
+                        ),
+                        Container(
+                          constraints: BoxConstraints(maxWidth: Config().webContentMaxWidth),
+                          child: Column(
+                            crossAxisAlignment: kIsWeb ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+                            children: [
+                              Semantics(
+                                  label: titleText,
+                                  hint: Localization().getStringEx('panel.onboarding.notifications.label.title.hint', 'Header 1'),
+                                  excludeSemantics: true,
+                                  child: Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                                      child: Align(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          titleText,
+                                          style: Styles().textStyles.getTextStyle('panel.onboarding2.notifications.heading.title'),
+                                        ),
                                       )
-                                  ),
-                                )
-                              ],
-                            ),
+                                  )
+                              ),
+                              Container(height: 12,),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24),
+                                child: Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Text(
+                                      Localization().getStringEx('panel.onboarding.notifications.label.description', 'Get notified about your “starred” groups and events.'),
+                                      style: Styles().textStyles.getTextStyle('widget.title.large'),
+                                    )),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    SlantedWidget(
+                                      color: Styles().colors.fillColorSecondary,
+                                      child: RibbonButton(
+                                        label: Localization().getStringEx('panel.onboarding.notifications.button.allow.title', 'Receive Notifications'),
+                                        textAlign: TextAlign.center,
+                                        hint: Localization().getStringEx('panel.onboarding.notifications.button.allow.hint', ''),
+                                        textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.large.fat'),
+                                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                        backgroundColor: Styles().colors.fillColorSecondary,
+                                        onTap: () => _onReceiveNotifications(context),
+                                        rightIconKey: null,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Analytics().logSelect(target: 'Not right now') ;
+                                        return _goNext(context);
+                                      },
+                                      child: Semantics(
+                                          label:notRightNow,
+                                          hint:Localization().getStringEx('panel.onboarding.notifications.button.dont_allow.hint', ''),
+                                          button: true,
+                                          excludeSemantics: true,
+                                          child:Padding(
+                                              padding: EdgeInsets.symmetric(vertical: 20),
+                                              child: Text(
+                                                notRightNow,
+                                                style: Styles().textStyles.getTextStyle('widget.button.title.medium.underline.highlight'),
+                                              )
+                                          )
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ]
                           ),
-                        ]
-                      ),
-                    )
-                ]),
-            ))
+                        )
+                    ]),
+                )),
+              ],
+            )
         ));
   }
 
