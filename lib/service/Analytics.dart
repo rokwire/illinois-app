@@ -241,7 +241,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAuthLoginNetIdActionName        = "login_netid";
   static const String   LogAuthLoginCodeActionName         = "login_code";
   static const String   LogAuthLoginPasswordActionName     = "login_password";
-  static const String   LogAuthLoginPasskeyActionName      = "login_password";
+  static const String   LogAuthLoginPasskeyActionName      = "login_passkey";
   static const String   LogAuthLogoutActionName            = "logout";
   static const String   LogAuthResult                      = "result";
 
@@ -527,7 +527,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     }
   }
 
-  // App Naviagtion Service
+  // App Navigation Service
 
   void _onAppNavigationEvent(Map<String, dynamic> param) {
     AppNavigationEvent? event = param[AppNavigation.notifyParamEvent];
@@ -560,7 +560,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         Animation<double>? animation = (animationController != null) ? Tween<double>(begin: 0, end: 500).animate(animationController) : null;
         panel = ((App.instance?.currentContext != null) && (animation != null)) ? route.pageBuilder(App.instance!.currentContext!, animation, animation) : null;
       }
-      else {
+      else if (route != null && route is! DialogRoute) {
         // _ModalBottomSheetRoute presented by showModalBottomSheet
         WidgetBuilder? builder = (route as dynamic).builder;
         panel = ((builder != null) && (App.instance?.currentContext != null)) ? builder(App.instance!.currentContext!) : null;

@@ -183,9 +183,11 @@ class Auth2 extends rokwire.Auth2 {
       await _loadAuthPictureFromNet(accountId: account.id, token: token) : null;
     await _saveAuthPictureToCache(_authPicture);
 
-    _authVoiceRecord = StringUtils.isNotEmpty(account.id) && StringUtils.isNotEmpty(token.accessToken) ?
-    await _loadAuthVoiceRecordFromNet(accountId: account.id, token: token) : null;
-    await _saveAuthVoiceRecordToCache(_authVoiceRecord);
+    if (Config().authVoiceRecordEnabled) {
+      _authVoiceRecord = StringUtils.isNotEmpty(account.id) && StringUtils.isNotEmpty(token.accessToken) ?
+      await _loadAuthVoiceRecordFromNet(accountId: account.id, token: token) : null;
+      await _saveAuthVoiceRecordToCache(_authVoiceRecord);
+    }
 
     await super.applyLogin(account, token, scope: scope, params: params);
     
