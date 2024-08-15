@@ -175,7 +175,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
             child: Padding(
               padding: EdgeInsets.only(left: 16, right: 16, bottom: 24),
               child: Text(_resultsInfoText!,
-                style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
+                style: Styles().textStyles.getTextStyle("widget.item.light.regular.thin")
               ),
             ),
           ),

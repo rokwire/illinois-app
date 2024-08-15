@@ -153,19 +153,19 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 Container(height: 16,),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5), child:
-                  Text(StringUtils.isNotEmpty(userUuid) ? 'Uuid: $userUuid' : "unknown uuid"),
+                  Text(StringUtils.isNotEmpty(userUuid) ? 'Uuid: $userUuid' : "unknown uuid", style: Styles().textStyles.getTextStyle('widget.detail.dark.small'),),
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5), child:
-                  Text(StringUtils.isNotEmpty(pid) ? 'PID: $pid' : "unknown pid"),
+                  Text(StringUtils.isNotEmpty(pid) ? 'PID: $pid' : "unknown pid", style: Styles().textStyles.getTextStyle('widget.detail.dark.small')),
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5), child:
-                  Text('Firebase: $firebaseProjectId'),
+                  Text('Firebase: $firebaseProjectId', style: Styles().textStyles.getTextStyle('widget.detail.dark.small')),
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5), child:
-                  Text('GeoFence: $_geoFenceStatus'),
+                  Text('GeoFence: $_geoFenceStatus', style: Styles().textStyles.getTextStyle('widget.detail.dark.small')),
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5), child:
-                  Text('Beacon: $_beaconsStatus'),
+                  Text('Beacon: $_beaconsStatus', style: Styles().textStyles.getTextStyle('widget.detail.dark.small')),
                 ),
                 
                 Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent),),
@@ -183,11 +183,18 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 Container(color: Colors.white, child:
                   Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 16), child:
                     TextFormField(
+                      style: Styles().textStyles.getTextStyle('widget.detail.regular'),
                       controller: _mapThresholdDistanceController,
                       keyboardType: TextInputType.number,
                       validator: _validateThresoldDistance,
                       decoration: InputDecoration(
-                      border: OutlineInputBorder(), hintText: "Enter map threshold distance in meters", labelText: 'Threshold Distance (meters)')
+                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.background)),
+                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.background)),
+                        hintText: "Enter map threshold distance in meters",
+                        hintStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
+                        labelText: 'Threshold Distance (meters)',
+                        labelStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
+                      )
                     ),
                   )
                 ),
@@ -196,11 +203,18 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 Container(color: Colors.white, child:
                   Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5), child:
                     TextFormField(
+                      style: Styles().textStyles.getTextStyle('widget.detail.regular'),
                       controller: _geoFenceRegionRadiusController,
                       keyboardType: TextInputType.number,
                       validator: _validateGeoFenceRegionRadius,
                       decoration: InputDecoration(
-                      border: OutlineInputBorder(), hintText: "Enter geo fence region radius in meters", labelText: 'Geo Fence Region Radius (meters)')
+                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.background)),
+                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.background)),
+                        hintText: "Enter geo fence region radius in meters",
+                        hintStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
+                        labelText: 'Geo Fence Region Radius (meters)',
+                        labelStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
+                      )
                     ),
                   )
                 ),
@@ -233,17 +247,14 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
 
-                Visibility(
-                  visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
-                  child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child: _buildSurveyCreation()),
-                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child: _buildSurveyCreation()),
 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
                 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   Row(children: <Widget>[
                     Expanded(child:
-                      Text('Sport Offset: $sportOffset'),
+                      Text('Sport Offset: $sportOffset', style: Styles().textStyles.getTextStyle('widget.detail.regular')),
                     ),
                     RoundedButton(
                       label: "Edit",
@@ -269,7 +280,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   Row(children: [
                     Expanded(child:
-                      Text("Last App Review: $lastAppReviewTime"),
+                      Text("Last App Review: $lastAppReviewTime", style: Styles().textStyles.getTextStyle('widget.detail.regular')),
                     ),
                     RoundedButton(
                       label: "Clear",
@@ -541,12 +552,13 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   Widget _buildSurveyCreation() {
-    List<Widget> userSurveyEntries = [];
+    List<Widget> publicSurveyEntries = [];
+    List<Widget> privateSurveyEntries = [];
     for (Survey survey in _userSurveys ?? []) {
-      userSurveyEntries.add(Padding(
+      Widget surveyEntry = Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
         child: Row(children: [
-          Expanded(flex: 2, child: Text(survey.title)),
+          Expanded(flex: 2, child: Text(survey.title, style: Styles().textStyles.getTextStyle('widget.detail.regular'))),
           Expanded(child: RoundedButton(
             label: 'Edit',
             backgroundColor: Styles().colors.surface,
@@ -559,10 +571,18 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
             onTap: () => _onTapCreateSurvey(survey: survey),
           )),
         ],),
-      ));
+      );
+      if (survey.public == true) {
+        publicSurveyEntries.add(surveyEntry);
+      } else {
+        privateSurveyEntries.add(surveyEntry);
+      }
     }
-    return Column(children: [
-      ...userSurveyEntries,
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text("Public:", style: Styles().textStyles.getTextStyle('widget.detail.dark.regular.fat')),
+      ...publicSurveyEntries,
+      Text("Private:", style: Styles().textStyles.getTextStyle('widget.detail.dark.regular.fat')),
+      ...privateSurveyEntries,
       Padding(padding: const EdgeInsets.only(top: 16), child: RoundedButton(
         label: 'Create New Survey',
         backgroundColor: Styles().colors.surface,
@@ -600,7 +620,8 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   void _loadUserSurveys() async {
     if (Auth2().isLoggedIn) {
-      Surveys().loadCreatorSurveys().then((surveyList) {
+      //TODO: implement paginated UI for this once there are enough surveys to make it useful
+      Surveys().loadSurveys(SurveysQueryParam(limit: 20)).then((surveyList) {
         if (mounted) {
           setState(() {
             _userSurveys = surveyList;

@@ -144,7 +144,7 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
             )
           ),
           Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
-            Text(_resultsCountLabel, style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
+            Text(_resultsCountLabel, style: Styles().textStyles.getTextStyle("widget.item.light.regular.thin"),
             ),
           ),
         ],),

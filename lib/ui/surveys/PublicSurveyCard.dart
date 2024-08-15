@@ -108,7 +108,7 @@ class PublicSurveyCard extends StatelessWidget {
   bool get _hasEndDate => (survey.endDate != null);
 
   Widget get _endDateWidget =>
-    Text(_endDateText ?? '', style: Styles().textStyles.getTextStyle('widget.info.small.medium_fat'),);
+    Text(_endDateText ?? '', style: Styles().textStyles.getTextStyle('widget.info.dark.small.medium_fat'),);
 
   String? get _endDateText {
     String? displayEndTime = survey.displayEndDate;

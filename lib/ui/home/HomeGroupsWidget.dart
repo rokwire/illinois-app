@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
@@ -126,7 +127,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
       _sortGroups(groups);
       if (mounted) {
         setState(() {
-          _groups = groups;
+          _groups = _visibleGroups(groups);
           _groupCardKeys.clear();
         });
       }
@@ -137,9 +138,9 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
     Groups().loadGroups(contentType: widget.contentType).then((List<Group>? groupsList) {
       List<Group>? groups = ListUtils.from(groupsList);
       _sortGroups(groups);
-      if (mounted && !DeepCollectionEquality().equals(_groups, groups)) {
+      if (mounted && !DeepCollectionEquality().equals(_groups, _visibleGroups(groups))) {
         setState(() {
-          _groups = groups;
+          _groups = _visibleGroups(groups);
           _pageViewKey = UniqueKey();
           _groupCardKeys.clear();
           // _pageController = null;
@@ -155,7 +156,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
       _sortGroups(userGroups);
       if (mounted) {
         setState(() {
-          _groups = userGroups;
+          _groups = _visibleGroups(userGroups);
           _groupCardKeys.clear();
         });
       }
@@ -167,60 +168,78 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: widget._title,
       titleIconKey: 'groups',
-      child: _buildContent(),
+      child: CollectionUtils.isEmpty(_groups) ? _buildEmpty() : _buildContent(),
     );
   }
 
 
   Widget _buildContent() {
     Widget? contentWidget;
-    List<Group>? visibleGroups = _visibleGroups(_groups);
-    int visibleCount = visibleGroups?.length ?? 0;
+    int visibleCount = _groups?.length ?? 0;
+    int pageCount = visibleCount ~/ _cardsPerPage;
 
-    if (1 < visibleCount) {
-      List<Widget> pages = <Widget>[];
-      for (Group group in visibleGroups!) {
+    List<Widget> pages = <Widget>[];
+    for (int index = 0; index < pageCount + 1; index++) {
+      List<Widget> pageCards = [];
+      for (int groupIndex = 0; groupIndex < _cardsPerPage; groupIndex++) {
+        if (index * _cardsPerPage + groupIndex >= _groups!.length) {
+          break;
+        }
+        Group group = _groups![index * _cardsPerPage + groupIndex];
         GlobalKey groupKey = (_groupCardKeys[group.id!] ??= GlobalKey());
-        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: _pageBottomPadding), child:
+        pageCards.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: _pageBottomPadding), child:
           Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ child:
-            GroupCard(key: groupKey, group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
+            Container(
+              constraints: BoxConstraints(maxWidth: _cardWidth),
+              child: GroupCard(key: groupKey, group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,)
+            ),
         )));
       }
-
-      if (_pageController == null) {
-        double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-        _pageController = PageController(viewportFraction: pageViewport);
+      if (_cardsPerPage > 1 && pageCards.length > 1) {
+        pages.add(Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: pageCards,
+        ));
+      } else {
+        pages.addAll(pageCards);
       }
-
-      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-        ExpandablePageView(
-          key: _pageViewKey,
-          controller: _pageController,
-          estimatedPageSize: _pageHeight,
-          allowImplicitScrolling: true,
-          children: pages,
-        ),
-      );
-    }
-    else if (visibleCount == 1) {
-      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: _pageSpacing), child:
-        Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ child:
-          GroupCard(group: visibleGroups!.first, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
-      ));
     }
 
-    return (contentWidget != null) ? Column(children: [
+    if (_pageController == null) {
+      double screenWidth = MediaQuery.of(context).size.width;
+      double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+      _pageController = PageController(viewportFraction: pageViewport);
+    }
+
+    contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+      ExpandablePageView(
+        key: _pageViewKey,
+        controller: _pageController,
+        estimatedPageSize: _pageHeight,
+        allowImplicitScrolling: true,
+        children: pages,
+      ),
+    );
+
+    return Column(children: [
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
-        LinkButton(
+      AccessibleViewPagerNavigationButtons(
+        controller: _pageController,
+        pagesCount: () {
+          if ((_groups?.length ?? 0) == _cardsPerPage) {
+          return 1;
+          }
+          return (_groups?.length ?? 0) ~/ _cardsPerPage + 1;
+        },
+        centerWidget: LinkButton(
           title: Localization().getStringEx('widget.home.groups.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.groups.button.all.hint', 'Tap to view all groups'),
           textStyle: Styles().textStyles.getTextStyle('widget.description.regular.light.underline'),
           onTap: _onSeeAll,
         ),
       ),
-    ],) : _buildEmpty();
+    ],);
 
   }
 
@@ -279,6 +298,25 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
     }
 
     return minContentHeight ?? 0;
+  }
+
+  double get _cardWidth {
+    double screenWidth = MediaQuery.of(context).size.width;
+    return (screenWidth - 2 * _cardsPerPage * _pageSpacing) / _cardsPerPage;
+  }
+
+  int get _cardsPerPage {
+    ScreenType screenType = ScreenUtils.getType(context);
+    switch (screenType) {
+      case ScreenType.desktop:
+        return min(5, (_groups?.length ?? 1));
+      case ScreenType.tablet:
+        return min(3, (_groups?.length ?? 1));
+      case ScreenType.phone:
+        return 1;
+      default:
+        return 1;
+    }
   }
 
   void _onSeeAll() {

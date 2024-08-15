@@ -149,7 +149,7 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
                 child: Padding(
                   padding: EdgeInsets.only(left: 16, right: 16, bottom: 24),
                   child: Text(getResultsInfoText()!,
-                    style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
+                    style: Styles().textStyles.getTextStyle("widget.item.light.regular.thin")
                   ),
                 ),
               ),

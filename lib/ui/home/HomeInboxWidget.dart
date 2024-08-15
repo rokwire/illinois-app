@@ -240,42 +240,59 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
   Widget _buildMessagesContent() {
     Widget contentWidget;
     List<Widget> pages = <Widget>[];
+    int messagesCount = _messages?.length ?? 0;
+    int pageCount = messagesCount ~/ _cardsPerPage;
 
-    if (1 < (_messages?.length ?? 0)) {
-
-      for (InboxMessage message in _messages!) {
-        pages.add(Padding(key: _contentKeys[message.messageId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
-          InboxMessageCard(message: message, onTap: () => _onTapMessage(message)),
+    for (int index = 0; index < pageCount + 1; index++) {
+      List<Widget> pageCards = [];
+      for (int messageIndex = 0; messageIndex < _cardsPerPage; messageIndex++) {
+        if (index * _cardsPerPage + messageIndex >= _messages!.length) {
+          break;
+        }
+        InboxMessage message = _messages![index * _cardsPerPage + messageIndex];
+        pageCards.add(Padding(key: _contentKeys[message.messageId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
+          Container(constraints: BoxConstraints(maxWidth: _cardWidth), child: InboxMessageCard(message: message, onTap: () => _onTapMessage(message))),
         ));
       }
-
-      if (_pageController == null) {
-        double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-        _pageController = PageController(viewportFraction: pageViewport);
+      if (_cardsPerPage > 1 && pageCards.length > 1) {
+        pages.add(Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: pageCards,
+        ));
+      } else {
+        pages.addAll(pageCards);
       }
+    }
 
-      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-        ExpandablePageView(
-          key: _pageViewKey,
-          controller: _pageController,
-          estimatedPageSize: _pageHeight,
-          onPageChanged: _onPageChanged,
-          allowImplicitScrolling: true,
-          children: pages,
-        ),
-      );
+    if (_pageController == null) {
+      double screenWidth = MediaQuery.of(context).size.width;
+      double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+      _pageController = PageController(viewportFraction: pageViewport);
     }
-    else {
-      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
-        InboxMessageCard(message: _messages!.first, onTap: () => _onTapMessage(_messages!.first))
-      );
-    }
+
+    contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+      ExpandablePageView(
+        key: _pageViewKey,
+        controller: _pageController,
+        estimatedPageSize: _pageHeight,
+        onPageChanged: _onPageChanged,
+        allowImplicitScrolling: true,
+        children: pages,
+      ),
+    );
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length, centerWidget:
-        LinkButton(
+      AccessibleViewPagerNavigationButtons(
+        controller: _pageController,
+        pagesCount: () {
+          if ((_messages?.length ?? 0) == _cardsPerPage) {
+            return 1;
+          }
+          return (_messages?.length ?? 0) ~/ _cardsPerPage + 1;
+        },
+        centerWidget: LinkButton(
           title: Localization().getStringEx('widget.home.inbox.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.inbox.button.all.hint', 'Tap to view all notifications'),
           textStyle: Styles().textStyles.getTextStyle('widget.description.regular.light.underline'),
@@ -302,6 +319,25 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
     }
 
     return minContentHeight ?? 0;
+  }
+
+  double get _cardWidth {
+    double screenWidth = MediaQuery.of(context).size.width;
+    return (screenWidth - 2 * _cardsPerPage * _pageSpacing) / _cardsPerPage;
+  }
+
+  int get _cardsPerPage {
+    ScreenType screenType = ScreenUtils.getType(context);
+    switch (screenType) {
+      case ScreenType.desktop:
+        return min(5, (_messages?.length ?? 1));
+      case ScreenType.tablet:
+        return min(3, (_messages?.length ?? 1));
+      case ScreenType.phone:
+        return 1;
+      default:
+        return 1;
+    }
   }
 
   void _onTapMessageLink(String? url) {

@@ -233,6 +233,8 @@ class Config extends rokwire.Config {
   bool get assistantEnabled         => JsonUtils.boolValue(settings['assistant_enabled']) ?? true;
   bool get assistantComingSoon      => JsonUtils.boolValue(settings['assistant_coming_soon']) ?? true;
 
+  double get webContentMaxWidth        => JsonUtils.doubleValue(settings['web_content_max_width']) ?? 800.0;
+
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;
 

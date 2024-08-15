@@ -389,6 +389,7 @@
     "widget.info.small.fat": { "font_family": "bold", "size": 14.0, "color": "textPrimary"},
     "widget.info.tiny": { "font_family": "regular", "size": 12.0, "color": "textPrimary"},
     "widget.info.dark.small": { "font_family": "regular", "size": 14.0, "color": "textDark"},
+    "widget.info.dark.small.medium_fat": { "font_family": "medium", "size": 14.0, "color": "textDark"},
     "widget.info.dark.tiny": { "font_family": "regular", "size": 12.0, "color": "textDark"},
 
     "widget.tab.selected": {"font_family": "extra_bold", "size": 16.0, "color": "textPrimary"},

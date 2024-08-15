@@ -99,19 +99,22 @@ class _ProfileLoginPasskeyPanelState extends State<ProfileLoginPasskeyPanel> {
   Widget _buildContent(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          _buildText(),
-          if (StringUtils.isNotEmpty(_responseMessage))
-            _buildContentWidget(context),
-          _buildPrimaryActionButton(),
-          Container(height: 16),
-          _buildSignUpButton(),
-          // _buildSkipButton(context),
-        ],
+      child: Container(
+        constraints: BoxConstraints(maxWidth: Config().webContentMaxWidth),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: kIsWeb ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+          children: <Widget>[
+            _buildText(),
+            if (StringUtils.isNotEmpty(_responseMessage))
+              _buildContentWidget(context),
+            _buildPrimaryActionButton(),
+            Container(height: 16),
+            _buildSignUpButton(),
+            // _buildSkipButton(context),
+          ],
+        ),
       ),
     );
   }
@@ -182,6 +185,7 @@ class _ProfileLoginPasskeyPanelState extends State<ProfileLoginPasskeyPanel> {
       ),
       margin: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 32.0),
       padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 8.0),
+      constraints: BoxConstraints(maxWidth: Config().webContentMaxWidth),
       child: Column(
         // mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -391,7 +395,7 @@ class _ProfileLoginPasskeyPanelState extends State<ProfileLoginPasskeyPanel> {
 
   void _onTapSignUp() {
     Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) {
-      return ProfileLoginPhoneOrEmailPanel(/*onFinish: () => _next(context), identifier: _identifierController.text*/);
+      return ProfileLoginPhoneOrEmailPanel(onboardingContext: widget.onboardingContext,);
     }));
   }
 
@@ -509,8 +513,8 @@ class _ProfileLoginPasskeyPanelState extends State<ProfileLoginPasskeyPanel> {
 
   void _next(BuildContext context) {
     // Hook this panels to Onboarding2
-    Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
-    Function? onContinueEx = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueActionEx"] : null;
+    Function? onContinue = widget.onboardingContext?["onContinueAction"];
+    Function? onContinueEx = widget.onboardingContext?["onContinueActionEx"];
     if (onContinueEx != null) {
       onContinueEx(this);
     }

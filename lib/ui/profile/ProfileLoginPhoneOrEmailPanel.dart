@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/Config.dart';
 import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:neom/ui/profile/ProfileLoginCodePanel.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
@@ -9,18 +10,25 @@ import 'package:neom/ui/widgets/SlantedWidget.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class ProfileLoginPhoneOrEmailPanel extends StatefulWidget {
+class ProfileLoginPhoneOrEmailPanel extends StatefulWidget with OnboardingPanel {
+  @override
+  final Map<String, dynamic>? onboardingContext;
+
   final SettingsLoginPhoneOrEmailMode mode;
   final bool? link;
   final String? identifier;
   final void Function()? onFinish;
 
-  ProfileLoginPhoneOrEmailPanel({this.mode = SettingsLoginPhoneOrEmailMode.both, this.link, this.identifier, this.onFinish });
+  ProfileLoginPhoneOrEmailPanel({this.onboardingContext, this.mode = SettingsLoginPhoneOrEmailMode.both, this.link, this.identifier, this.onFinish });
 
   _ProfileLoginPhoneOrEmailPanelState createState() => _ProfileLoginPhoneOrEmailPanelState();
+
+  @override
+  bool get onboardingCanDisplay => !Auth2().isLoggedIn;
 }
 
 class _ProfileLoginPhoneOrEmailPanelState extends State<ProfileLoginPhoneOrEmailPanel>  {
@@ -110,95 +118,105 @@ class _ProfileLoginPhoneOrEmailPanelState extends State<ProfileLoginPhoneOrEmail
         body: Column(children: <Widget>[
           Expanded(child:
             SingleChildScrollView(scrollDirection: Axis.vertical, child:
-              Column(children:[
-                Stack(
-                  children: [
-                    Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
-                      Onboarding2TitleWidget(),
-                    ),
-                    Positioned(
-                      top: 32,
-                      left: 0,
-                      child: Onboarding2BackButton(padding: const EdgeInsets.all(16.0,),
-                          onTap:() {
-                            Analytics().logSelect(target: "Back");
-                            Navigator.pop(context);
-                          }),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-                  child: Row(children: [ Expanded(child:
-                    Text(description, style:  Styles().textStyles.getTextStyle("widget.description.medium.light"),)
-                  )],),
-                ),
-                const SizedBox(height: 32),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Row(children: [ Expanded(child:
-                    Text(headingTitle, style: Styles().textStyles.getTextStyle("widget.title.light.medium.fat"),)
-                  )],),
-                ),
-                Container(height: 8),
-                Semantics(label: headingTitle, hint: headingHint, textField: true, excludeSemantics: true,
-                  value: _phoneOrEmailController?.text,
-                  child: Container(
-                    color: Styles().colors.background,
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: TextField(
-                      controller: _phoneOrEmailController,
-                      readOnly: widget.identifier != null,
-                      autofocus: false,
-                      autocorrect: false,
-                      onSubmitted: (_) => _clearErrorMsg,
-                      cursorColor: Styles().colors.textDark,
-                      keyboardType: keyboardType,
-                      scrollPadding: EdgeInsets.only(bottom: 120),
-                      style: Styles().textStyles.getTextStyle("widget.input_field.text.medium"),
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Styles().colors.surface,
-                        border: OutlineInputBorder(),
+              Column(
+                children:[
+                  Stack(
+                    children: [
+                      Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
+                        Onboarding2TitleWidget(),
                       ),
-                    ),
+                      Positioned(
+                        top: 32,
+                        left: 0,
+                        child: Onboarding2BackButton(padding: const EdgeInsets.all(16.0,),
+                            onTap:() {
+                              Analytics().logSelect(target: "Back");
+                              Navigator.pop(context);
+                            }),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 16),
-                Visibility(visible: StringUtils.isNotEmpty(_validationErrorMsg), child:
-                  Padding(key: _validationErrorKey, padding: EdgeInsets.symmetric(vertical: 16), child:
-                    Column(children: [
-                      Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: Styles().textStyles.getTextStyle("panel.settings.error.text"), textAlign: TextAlign.center,),
-                      Visibility(visible: StringUtils.isNotEmpty(_validationErrorDetails), child:
+                  const SizedBox(height: 16),
+                  Container(
+                    constraints: BoxConstraints(maxWidth: Config().webContentMaxWidth),
+                    child: Column(
+                      crossAxisAlignment: kIsWeb ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+                      children: [
                         Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: Styles().textStyles.getTextStyle("widget.detail.small"), textAlign: TextAlign.center,),
+                          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+                          child: Row(children: [ Expanded(child:
+                          Text(description, style:  Styles().textStyles.getTextStyle("widget.description.medium.light"),)
+                          )],),
                         ),
-                      ),
-                    ],),
+                        const SizedBox(height: 32),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                          child: Row(children: [ Expanded(child:
+                          Text(headingTitle, style: Styles().textStyles.getTextStyle("widget.title.light.medium.fat"),)
+                          )],),
+                        ),
+                        Container(height: 8),
+                        Semantics(label: headingTitle, hint: headingHint, textField: true, excludeSemantics: true,
+                          value: _phoneOrEmailController?.text,
+                          child: Container(
+                            color: Styles().colors.background,
+                            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                            child: TextField(
+                              controller: _phoneOrEmailController,
+                              readOnly: widget.identifier != null,
+                              autofocus: false,
+                              autocorrect: false,
+                              onSubmitted: (_) => _clearErrorMsg,
+                              cursorColor: Styles().colors.textDark,
+                              keyboardType: keyboardType,
+                              scrollPadding: EdgeInsets.only(bottom: 120),
+                              style: Styles().textStyles.getTextStyle("widget.input_field.text.medium"),
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Styles().colors.surface,
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Visibility(visible: StringUtils.isNotEmpty(_validationErrorMsg), child:
+                        Padding(key: _validationErrorKey, padding: EdgeInsets.symmetric(vertical: 16), child:
+                        Column(children: [
+                          Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: Styles().textStyles.getTextStyle("panel.settings.error.text"), textAlign: TextAlign.center,),
+                          Visibility(visible: StringUtils.isNotEmpty(_validationErrorDetails), child:
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: Styles().textStyles.getTextStyle("widget.detail.small"), textAlign: TextAlign.center,),
+                          ),
+                          ),
+                        ],),
+                        ),
+                        ),
+                        Container(height: 24),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                          child: SlantedWidget(
+                            color: Styles().colors.fillColorSecondary,
+                            child: RibbonButton(
+                              label: buttonProceedTitle,
+                              hint: buttonProceedHint,
+                              textAlign: TextAlign.center,
+                              backgroundColor: Styles().colors.fillColorSecondary,
+                              textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.large.fat'),
+                              onTap: _onTapProceed,
+                              // rightIcon: proceedRightIcon,
+                              rightIconKey: null,
+                              progress: _isLoading,
+                              progressColor: Styles().colors.textLight,
+                            ),
+                          ),
+                        ),
+                      ]
+                    )
                   ),
-                ),
-                Container(height: 24),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: SlantedWidget(
-                    color: Styles().colors.fillColorSecondary,
-                    child: RibbonButton(
-                      label: buttonProceedTitle,
-                      hint: buttonProceedHint,
-                      textAlign: TextAlign.center,
-                      backgroundColor: Styles().colors.fillColorSecondary,
-                      textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.large.fat'),
-                      onTap: _onTapProceed,
-                      // rightIcon: proceedRightIcon,
-                      rightIconKey: null,
-                      progress: _isLoading,
-                      progressColor: Styles().colors.textLight,
-                    ),
-                  ),
-                ),
-              ]),
+                ]
+              ),
             ),
           ),
           Container(height: 16,)
@@ -282,7 +300,9 @@ class _ProfileLoginPhoneOrEmailPanelState extends State<ProfileLoginPhoneOrEmail
       setState(() { _isLoading = false; });
 
       if (result == Auth2RequestCodeResult.succeeded) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => ProfileLoginCodePanel(identifier: phoneNumber, linkIdentifier: widget.link, onFinish: widget.onFinish)));
+        Navigator.push(context, CupertinoPageRoute(
+          builder: (context) => ProfileLoginCodePanel(onboardingContext: widget.onboardingContext, identifier: phoneNumber, linkIdentifier: widget.link, onFinish: widget.onFinish)
+        ));
       } else if (result == Auth2RequestCodeResult.failedAccountExist) {
         setErrorMsg(Localization().getStringEx("panel.settings.link.phone.label.failed.exists", "An account is already using this phone number."),
             details: Localization().getStringEx("panel.settings.link.phone.label.failed.exists.detail", "1. You will need to sign in to the other account with this phone number.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login."));
@@ -321,7 +341,9 @@ class _ProfileLoginPhoneOrEmailPanelState extends State<ProfileLoginPhoneOrEmail
 
   void _onEmailInitiated(BuildContext context, String? email, Auth2RequestCodeResult result) {
     if (result == Auth2RequestCodeResult.succeeded) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ProfileLoginCodePanel(identifier: email, defaultIdentifierType: Auth2Identifier.typeEmail, linkIdentifier: widget.link, onFinish: widget.onFinish)));
+      Navigator.push(context, CupertinoPageRoute(
+        builder: (context) => ProfileLoginCodePanel(onboardingContext: widget.onboardingContext, identifier: email, defaultIdentifierType: Auth2Identifier.typeEmail, linkIdentifier: widget.link, onFinish: widget.onFinish)
+      ));
     } else if (result == Auth2RequestCodeResult.failedAccountExist) {
       setErrorMsg(Localization().getStringEx('panel.settings.profile.error.email.exists', 'The email address you selected is already in use. Please pick a different one.'));
     } else if (result == Auth2RequestCodeResult.failed) {

@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/ui/widgets/SlantedWidget.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:neom/service/Onboarding2.dart';
@@ -71,10 +72,10 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
               Semantics(
-                label: Localization().getStringEx('panel.onboarding2.roles.label.title', 'Who Are You?').toLowerCase(),
+                label: Localization().getStringEx('panel.onboarding2.roles.label.title', 'WHO ARE YOU?').toLowerCase(),
                 hint: Localization().getStringEx('panel.onboarding2.roles.label.title.hint', 'Header 1').toLowerCase(),
                 excludeSemantics: true,
-                child: Text(Localization().getStringEx('panel.onboarding2.roles.label.title', 'Who Are You?'),
+                child: Text(Localization().getStringEx('panel.onboarding2.roles.label.title', 'WHO ARE YOU?'),
                   style: Styles().textStyles.getTextStyle("widget.title.extra_large.extra_fat"),
                 ),
               ),
@@ -106,10 +107,12 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
         
         !_allowNext? Container():
          Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 10, bottom: 20), child:
-            RoundedButton(
+            SlantedWidget(
+              color: Styles().colors.fillColorSecondary,
+              child: RoundedButton(
                 label: Localization().getStringEx('panel.onboarding2.roles.button.continue.title', 'Continue'),
                 hint: Localization().getStringEx('panel.onboarding2.roles.button.continue.hint', ''),
-                textStyle: _allowNext ? Styles().textStyles.getTextStyle("widget.button.title.medium.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.medium.fat.variant"),
+                textStyle: _allowNext ? Styles().textStyles.getTextStyle("widget.button.light.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat.variant"),
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 enabled: _allowNext,
                 progress: _updating,
@@ -118,6 +121,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
                     ? Styles().colors.fillColorSecondary
                     : Styles().colors.fillColorPrimaryTransparent03),
                 onTap: () => _onGoNext()),
+            ),
         )
 
       ],),),

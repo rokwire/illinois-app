@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/service/Config.dart';
 import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
+import 'package:neom/ui/widgets/SlantedWidget.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:neom/service/FlexUI.dart';
@@ -54,50 +57,59 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles().colors.background,
-      body: SafeArea(child: Column( children: <Widget>[
-        Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
-          Onboarding2TitleWidget(),
-        ),
-        Padding(padding: EdgeInsets.symmetric(vertical: 8.0),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Semantics(
-              label: Localization().getStringEx('panel.onboarding.roles.label.title', 'Who Are You?').toLowerCase(),
-              hint: Localization().getStringEx('panel.onboarding.roles.label.title.hint', 'Header 1').toLowerCase(),
-              excludeSemantics: true,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text(Localization().getStringEx('panel.onboarding.roles.label.title', 'Who Are You?'),
-                  style: Styles().textStyles.getTextStyle('panel.onboarding2.roles.heading.title'),
+      body: SafeArea(child: Column(
+        crossAxisAlignment: kIsWeb ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+        children: <Widget>[
+          Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
+            Onboarding2TitleWidget(),
+          ),
+          Padding(padding: EdgeInsets.symmetric(vertical: 8.0),
+            child: Column(children: <Widget>[
+              Semantics(
+                label: Localization().getStringEx('panel.onboarding.roles.label.title', 'WHO ARE YOU?').toLowerCase(),
+                hint: Localization().getStringEx('panel.onboarding.roles.label.title.hint', 'Header 1').toLowerCase(),
+                excludeSemantics: true,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text(Localization().getStringEx('panel.onboarding.roles.label.title', 'WHO ARE YOU?'),
+                    style: Styles().textStyles.getTextStyle('panel.onboarding2.roles.heading.title'),
+                  ),
                 ),
               ),
-            ),
-            Padding(padding: EdgeInsets.only(top: 8, left: 16.0, right: 16.0),
-              child: Text(Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
-                style: Styles().textStyles.getTextStyle('widget.title.light.regular.thin'),
+              Padding(padding: EdgeInsets.only(top: 8, left: 16.0, right: 16.0),
+                child: Text(Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
+                  style: Styles().textStyles.getTextStyle('widget.title.light.regular.thin'),
+                ),
+              )
+            ],),
+          ),
+
+          Expanded(child: SingleChildScrollView(child: Padding(padding: EdgeInsets.only(left: 16, right: 8, ), child:
+            RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton, textScaler: MediaQuery.of(context).textScaler,),
+          ),),),
+
+          Padding(padding: EdgeInsets.all(24), child:
+            Container(
+              constraints: BoxConstraints(maxWidth: Config().webContentMaxWidth),
+              child: SlantedWidget(
+                color: Styles().colors.fillColorSecondary,
+                child: RoundedButton(
+                  label: Localization().getStringEx('panel.onboarding.roles.button.continue.title', 'Continue'),
+                  hint: Localization().getStringEx('panel.onboarding.roles.button.continue.hint', ''),
+                  textStyle: _allowNext ? Styles().textStyles.getTextStyle("widget.button.light.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat.variant"),
+                  enabled: _allowNext,
+                  backgroundColor: _allowNext ? Styles().colors.fillColorSecondary : Styles().colors.background,
+                  borderColor: (_allowNext
+                      ? Styles().colors.fillColorSecondary
+                      : Styles().colors.textMedium),
+                  progress: _updating,
+                  onTap: () => _onExploreClicked()),
               ),
-            )
-          ],),
-        ),
+            ),
+          )
 
-        Expanded(child: SingleChildScrollView(child: Padding(padding: EdgeInsets.only(left: 16, right: 8, ), child:
-          RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton, textScaler: MediaQuery.of(context).textScaler,),
-        ),),),        
-
-        Padding(padding: EdgeInsets.all(24), child:
-          RoundedButton(
-            label: Localization().getStringEx('panel.onboarding.roles.button.continue.title', 'Continue'),
-            hint: Localization().getStringEx('panel.onboarding.roles.button.continue.hint', ''),
-            textStyle: _allowNext ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat.variant"),
-            enabled: _allowNext,
-            backgroundColor: _allowNext ? Styles().colors.fillColorSecondary : Styles().colors.background,
-            borderColor: (_allowNext
-                ? Styles().colors.fillColorSecondary
-                : Styles().colors.textMedium),
-            progress: _updating,
-            onTap: () => _onExploreClicked()),
-        )
-
-      ],),),
+        ],
+      ),),
     );
   }
 

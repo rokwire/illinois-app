@@ -693,7 +693,7 @@
     "panel.onboarding.location.label.access_granted":"You have already granted access to this app.",
     "panel.onboarding.location.label.access_denied":"You have already denied access to this app.",
 
-    "panel.onboarding.notifications.label.title":"Event info when you need it",
+    "panel.onboarding.notifications.label.title":"EVENT INFO WHEN YOU NEED IT",
     "panel.onboarding.notifications.label.title.hint":"Header 1",
     "panel.onboarding.notifications.label.description":"Get notified about events you have starred.",
     "panel.onboarding.notifications.button.allow.title":"Receive Notifications",
@@ -703,7 +703,7 @@
     "panel.onboarding.notifications.label.access_granted":"You have already granted access to this app.",
     "panel.onboarding.notifications.label.access_denied":"You have already denied access to this app.",
 
-    "panel.onboarding.roles.label.title":"Who Are You?",
+    "panel.onboarding.roles.label.title":"WHO ARE YOU?",
     "panel.onboarding.roles.label.title.hint":"Header 1",
     "panel.onboarding.roles.label.description":"Please check all that apply to create a personalized experience for you",
     "panel.onboarding.roles.label.description2": "I am a...",
@@ -807,7 +807,7 @@
     "panel.onboarding2.video.button.continue.title": "Continue",
     "panel.onboarding2.video.missing.msg": "Missing video",
 
-    "panel.onboarding2.roles.label.title": "Who Are You?",
+    "panel.onboarding2.roles.label.title": "WHO ARE YOU?",
     "panel.onboarding2.roles.label.title.hint": "Header 1",
     "panel.onboarding2.roles.label.description": "Please check all that apply to create a personalized experience for you",
     "panel.onboarding2.roles.label.description2": "I am a...",

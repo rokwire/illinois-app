@@ -22,6 +22,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomePublicSurveysWidget extends StatefulWidget {
   final String? favoriteId;
@@ -158,8 +159,15 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
     else {
       return Column(children: [
         _surveysContent,
-        AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => _contentList?.length ?? 0, centerWidget:
-          LinkButton(
+        AccessibleViewPagerNavigationButtons(
+          controller: _pageController,
+          pagesCount: () {
+            if ((_contentList?.length ?? 0) == _cardsPerPage) {
+              return 1;
+            }
+            return (_contentList?.length ?? 0) ~/ _cardsPerPage + 1;
+          },
+          centerWidget: LinkButton(
             title: Localization().getStringEx('widget.home.groups.button.all.title', 'View All'),
             hint: Localization().getStringEx('widget.home.groups.button.all.hint', 'Tap to view all groups'),
             textStyle: Styles().textStyles.getTextStyle('widget.description.regular.light.underline'),
@@ -175,7 +183,10 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
 
   Widget get _singleSurveyContent =>
     Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8), child:
-      PublicSurveyCard.pageCard(_contentList!.first, hasActivity: _activitySurveyIds.contains(_contentList!.first.id), onTap: () => _onSurvey(_contentList!.first),)
+      Container(
+        constraints: BoxConstraints(maxWidth: _cardWidth),
+        child: PublicSurveyCard.pageCard(_contentList!.first, hasActivity: _activitySurveyIds.contains(_contentList!.first.id), onTap: () => _onSurvey(_contentList!.first),)
+      )
     );
 
   double get _pageHeight {
@@ -191,18 +202,56 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
     return minContentHeight ?? 0;
   }
 
+  double get _cardWidth {
+    double screenWidth = MediaQuery.of(context).size.width;
+    return (screenWidth - 2 * _cardsPerPage * _pageSpacing) / _cardsPerPage;
+  }
+
+  int get _cardsPerPage {
+    ScreenType screenType = ScreenUtils.getType(context);
+    switch (screenType) {
+      case ScreenType.desktop:
+        return min(5, (_contentList?.length ?? 1));
+      case ScreenType.tablet:
+        return min(3, (_contentList?.length ?? 1));
+      case ScreenType.phone:
+        return 1;
+      default:
+        return 1;
+    }
+  }
+
   Widget get _multipleSurveysContent {
 
     List<Widget> pages = <Widget>[];
 
-    int pagesCount = _contentList?.length ?? 0;
-    for (int index = 0; index < pagesCount; index++) {
-      Survey survey = _contentList![index];
-      pages.add(Padding(
-        key: _cardKeys[survey.id] ??= GlobalKey(),
-        padding: EdgeInsets.only(right: _pageSpacing, bottom: _pageBottomPadding),
-        child: PublicSurveyCard.pageCard(survey, hasActivity: _activitySurveyIds.contains(survey.id), onTap: () => _onSurvey(survey),)
-      ),);
+    int cardCount = _contentList?.length ?? 0;
+    int pageCount = cardCount ~/ _cardsPerPage;
+    for (int index = 0; index < pageCount + 1; index++) {
+      List<Widget> pageCards = [];
+      for (int cardIndex = 0; cardIndex < _cardsPerPage; cardIndex++) {
+        if (index * _cardsPerPage + cardIndex >= _contentList!.length) {
+          break;
+        }
+        Survey survey = _contentList![index * _cardsPerPage + cardIndex];
+        pageCards.add(Padding(
+          key: _cardKeys[survey.id] ??= GlobalKey(),
+          padding: EdgeInsets.only(right: _pageSpacing, bottom: _pageBottomPadding),
+          child: Container(
+            constraints: BoxConstraints(maxWidth: _cardWidth),
+            child: PublicSurveyCard.pageCard(survey, hasActivity: _activitySurveyIds.contains(survey.id), onTap: () => _onSurvey(survey),)
+          )
+        ),);
+      }
+      if (_cardsPerPage > 1 && pageCards.length > 1) {
+        pages.add(Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: pageCards,
+        ));
+      } else {
+        pages.addAll(pageCards);
+      }
     }
 
     if (_dataActivity == _DataActivity.extend) {

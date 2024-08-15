@@ -687,7 +687,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(onTap: () => _onTapCard(context), child:
-      Padding(padding: widget.margin, child: Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
+      Padding(padding: widget.margin, child: Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
         Stack(children: [
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             _buildHeading(),
@@ -3141,7 +3141,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
     Column(children: <Widget>[
       Container(
         decoration: BoxDecoration(
-            color: widget.enabled == true ? Styles().colors.white : null,
+            color: widget.enabled == true ? Styles().colors.surface : null,
             border: Border.all(color: /*widget.enabled == true ? Styles().colors.mediumGray2 :*/ Styles().colors.surfaceAccent, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))
         ),

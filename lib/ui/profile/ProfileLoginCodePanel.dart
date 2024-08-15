@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
@@ -99,16 +100,20 @@ class _ProfileLoginCodePanelState extends State<ProfileLoginCodePanel> {
   Widget _buildContent(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          _buildText(),
-          Container(height: 48),
-          _buildContentWidget(),
-          Container(height: 24),
-          _buildPrimaryActionButton(),
-        ],
+      child: Container(
+        constraints: BoxConstraints(maxWidth: Config().webContentMaxWidth),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: kIsWeb ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+          children: <Widget>[
+            _buildText(),
+            Container(height: 48),
+            _buildContentWidget(),
+            Container(height: 24),
+            _buildPrimaryActionButton(),
+          ],
+        ),
       ),
     );
   }
@@ -165,7 +170,7 @@ class _ProfileLoginCodePanelState extends State<ProfileLoginCodePanel> {
   }
 
   Widget _buildContentWidget() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    return Column(children: [
       Visibility(
         visible: StringUtils.isNotEmpty(_errorMessage),
         child: Padding(
@@ -260,8 +265,8 @@ class _ProfileLoginCodePanelState extends State<ProfileLoginCodePanel> {
 
   void _next() {
     // Hook this panels to Onboarding2
-    Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
-    Function? onContinueEx = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueActionEx"] : null;
+    Function? onContinue = widget.onboardingContext?["onContinueAction"];
+    Function? onContinueEx = widget.onboardingContext?["onContinueActionEx"];
     if (onContinueEx != null) {
       onContinueEx(this);
     }

@@ -295,55 +295,75 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
     
     Widget contentWidget;
     int eventsCount = _events?.length ?? 0;
-    if ((_hasMoreEvents != false) || (1 < eventsCount)) {
+    int pageCount = eventsCount ~/ _cardsPerPage;
 
-      List<Widget> pages = <Widget>[];
-      for (int index = 0; index < eventsCount; index++) {
-        Event2 event = _events![index];
+    List<Widget> pages = <Widget>[];
+    for (int index = 0; index < pageCount + 1; index++) {
+      List<Widget> pageCards = [];
+      for (int eventIndex = 0; eventIndex < _cardsPerPage; eventIndex++) {
+        if (index * _cardsPerPage + eventIndex >= _events!.length) {
+          break;
+        }
+        Event2 event = _events![index * _cardsPerPage + eventIndex];
         String contentKey = "${event.id}-$index";
-        pages.add(Padding(
+        pageCards.add(Padding(
           key: _contentKeys[contentKey] ??= GlobalKey(),
           padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8),
-          child: Event2Card(event, displayMode: Event2CardDisplayMode.page, userLocation: _currentLocation, onTap: () => _onTapEvent2(event),)));
-      }
-
-      if (_hasMoreEvents != false) {
-        pages.add(Padding(
-          key: _contentKeys[_progressContentKey] ??= GlobalKey(),
-          padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8),
-          child: HomeProgressWidget(
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 36),
-          ),
+          child: Container(
+            constraints: BoxConstraints(maxWidth: _cardWidth),
+            child: Event2Card(event, displayMode: Event2CardDisplayMode.page, userLocation: _currentLocation, onTap: () => _onTapEvent2(event),)
+          )
         ));
       }
-
-      if (_pageController == null) {
-        double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-        _pageController = PageController(viewportFraction: pageViewport);
+      if (_cardsPerPage > 1 && pageCards.length > 1) {
+        pages.add(Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: pageCards,
+        ));
+      } else {
+        pages.addAll(pageCards);
       }
+    }
 
-      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-        ExpandablePageView(
-          key: _pageViewKey,
-          controller: _pageController,
-          estimatedPageSize: _pageHeight,
-          allowImplicitScrolling: true,
-          children: pages,
-          onPageChanged: _onPageChanged,
+    if (_hasMoreEvents != false) {
+      pages.add(Padding(
+        key: _contentKeys[_progressContentKey] ??= GlobalKey(),
+        padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8),
+        child: HomeProgressWidget(
+          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 36),
         ),
-      );
+      ));
     }
-    else {
-      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-        Event2Card(_events!.first, displayMode: Event2CardDisplayMode.page, userLocation: _currentLocation, onTap: () => _onTapEvent2(_events!.first))
-      );
+
+    if (_pageController == null) {
+      double screenWidth = MediaQuery.of(context).size.width;
+      double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+      _pageController = PageController(viewportFraction: pageViewport);
     }
+
+    contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+      ExpandablePageView(
+        key: _pageViewKey,
+        controller: _pageController,
+        estimatedPageSize: _pageHeight,
+        allowImplicitScrolling: true,
+        children: pages,
+        onPageChanged: _onPageChanged,
+      ),
+    );
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => (_events?.length ?? 0), centerWidget:
-        LinkButton(
+      AccessibleViewPagerNavigationButtons(
+        controller: _pageController,
+        pagesCount: () {
+          if ((_events?.length ?? 0) == _cardsPerPage) {
+            return 1;
+          }
+          return (_events?.length ?? 0) ~/ _cardsPerPage + 1;
+        },
+        centerWidget: LinkButton(
           title: Localization().getStringEx('widget.home.event2_feed.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.event2_feed.button.all.hint', 'Tap to view all events'),
           textStyle: Styles().textStyles.getTextStyle('widget.description.regular.light.underline'),
@@ -362,6 +382,25 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
       }
     }
     return minContentHeight ?? 0;
+  }
+
+  double get _cardWidth {
+    double screenWidth = MediaQuery.of(context).size.width;
+    return (screenWidth - 2 * _cardsPerPage * _pageSpacing) / _cardsPerPage;
+  }
+
+  int get _cardsPerPage {
+    ScreenType screenType = ScreenUtils.getType(context);
+    switch (screenType) {
+      case ScreenType.desktop:
+        return min(5, (_events?.length ?? 1));
+      case ScreenType.tablet:
+        return min(3, (_events?.length ?? 1));
+      case ScreenType.phone:
+        return 1;
+      default:
+        return 1;
+    }
   }
 
   void _onVisibilityChanged(VisibilityInfo info) {
