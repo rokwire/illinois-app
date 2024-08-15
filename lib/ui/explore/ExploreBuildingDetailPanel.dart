@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -14,45 +15,47 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
   ExploreBuildingDetailPanel({Key? key, required this.building}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) =>
+    Scaffold(
       body: _buildContent(context),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar()
     );
-  }
 
-  Widget _buildContent(BuildContext context) {
-    return SafeArea(child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        _buildBack(onTap: () => _onBack(context)),
-        Expanded(child:
-          SingleChildScrollView(child:
-            Padding(padding:EdgeInsets.only(right: 20, left: 20), child:
-              Column(children: <Widget>[
+  Widget _buildContent(BuildContext context) => Column(children: <Widget>[
+    Expanded(child:
+      CustomScrollView(slivers: <Widget>[
+        SliverToutHeaderBar(
+          flexImageUrl:  building.imageURL,
+          flexRightToLeftTriangleColor: Styles().colors.background,
+          flexLeftToRightTriangleColor: Colors.transparent,
+        ),
+        SliverList(delegate:
+          SliverChildListDelegate([
+            Padding(padding: EdgeInsets.all(16), child:
+              Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
                 _buildTitle(),
                 _buildLocation(),
-              ],)
+                // _buildFloorPlansAndAmenities(),
+              ])
             ),
-          ),
+          ], addSemanticIndexes:false)
         ),
-      ],),
-    );
-  }
+      ]),
+    ),
+  ]);
 
-  Widget _buildTitle(){
-    return Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+  Widget _buildTitle() =>
+    Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
       Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         Expanded(child:
-          Text(building.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.extra_large.spaced")),
+          Text(building.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.large.fat")),
         ),
       ],),
     );
-  }
 
-  Widget _buildLocation(){
-
-    return Visibility(visible: StringUtils.isNotEmpty(building.fullAddress), child:
+  Widget _buildLocation() =>
+    Visibility(visible: _canLocation(), child:
       InkWell(onTap: _onLocation, child:
         Padding(padding: EdgeInsets.symmetric(vertical: 10, ), child:
           Row(children: [
@@ -67,32 +70,39 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
         ),
       ),
     );
-  }
 
-  Widget _buildBack({void Function()? onTap}){
-    return Semantics(
-      label: Localization().getStringEx('headerbar.back.title', 'Back'),
-      hint: Localization().getStringEx('headerbar.back.hint', ''),
-      button: true,
-      child:
-        InkWell(onTap: onTap, child:
-          SizedBox(width: 48, height: 48, child:
-            Center(child:
-              Styles().images.getImage('chevron-left-bold', excludeFromSemantics: true
+  // ignore: unused_element
+  Widget _buildFloorPlansAndAmenities() =>
+    Visibility(visible: _canFloorPlansAndAmenities(), child:
+      InkWell(onTap: _onFloorPlansAndAmenities, child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 10, ), child:
+          Row(children: [
+            Padding(padding: EdgeInsets.only(right: 6), child:
+              Styles().images.getImage('floorplan', excludeFromSemantics: true),
             ),
-          ),
+            Expanded(child:
+              Text(Localization().getStringEx('panel.explore_building_detail.detail.fllor_plan_and_amenities', 'Floor Plans & Amenities'), style:
+                Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline")
+              ),
+            )
+          ],),
         ),
       ),
     );
-  }
+
+  bool _canLocation() =>
+    StringUtils.isNotEmpty(building.fullAddress);
 
   void _onLocation() {
     Analytics().logSelect(target: "Location Directions");
     building.launchDirections();
   }
 
-  void _onBack(BuildContext context) {
-    Analytics().logSelect(target: "Back");
-    Navigator.of(context).pop();
+  bool _canFloorPlansAndAmenities() =>
+    true; // TODO: control when detail item should be viisble
+
+  void _onFloorPlansAndAmenities() {
+    Analytics().logSelect(target: "Floor Plans & Amenities");
+    // TODO: present the relevant UI
   }
 }

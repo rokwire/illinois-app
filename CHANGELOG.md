@@ -6,6 +6,62 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [6.0.36] - 2024-08-15
+### Changed
+- Hide entire section content in Event2Card when sub-events fail to load or if they are empty [#4283](https://github.com/rokwire/illinois-app/issues/4283).
+### Fixed
+- Fixed navigation in MTD Bus Pass when bus pass load fails [#4297](https://github.com/rokwire/illinois-app/issues/4297).
+
+## [6.0.35] - 2024-08-14
+### Changed
+- Polished query limit display and update in assistant panel [#4288](https://github.com/rokwire/illinois-app/issues/4288).
+- MembersPanel: Approve all visible only for All and Pending memberStatus [#4268](https://github.com/rokwire/illinois-app/issues/4268).
+### Fixed
+- Cleanup and bug fixes in Notifications Prefs panel [#4287](https://github.com/rokwire/illinois-app/issues/4287).
+
+## [6.0.34] - 2024-08-13
+### Added
+- Added bulding tout image in building detail panel [#4254](https://github.com/rokwire/illinois-app/issues/4254).
+
+## [6.0.33] - 2024-08-12
+### Added
+- Added confirmation prompt before clearing assistant history [#4281](https://github.com/rokwire/illinois-app/issues/4281).
+
+## [6.0.32] - 2024-08-09
+### Added
+- Hook Groups.acceptMembershipMulti [#4268](https://github.com/rokwire/illinois-app/issues/4268).
+
+## [6.0.31] - 2024-08-08
+### Fixed
+- GroupsMembersPanel cleanup [#4268](https://github.com/rokwire/illinois-app/issues/4268).
+- Hide "Floor Plans & Amenities" detail entry in ExploreBuildingDetailPanel for this release [#4254](https://github.com/rokwire/illinois-app/issues/4254).
+- Play Checking off sound only when To-Do List item is toggled on [#2258](https://github.com/rokwire/illinois-app/issues/2258).
+
+## [6.0.30] - 2024-08-07
+### Fixed
+- Fixed AssistantContentPanel scrollable size when writing negative feedback [#4267](https://github.com/rokwire/illinois-app/issues/4267).
+### Changed
+- Make Academics/Skills Self Evaluation available to any logged users [#4270](https://github.com/rokwire/illinois-app/issues/4270).
+
+## [6.0.29] - 2024-07-29
+### Changed
+- Contact us: Share an Idea [#4248](https://github.com/rokwire/illinois-app/issues/4248).
+### Added
+- Added "Floor Plans & Amenities" detail entry to ExploreBuildingDetailPanel [#4254](https://github.com/rokwire/illinois-app/issues/4254).
+- Underline "preferred name instructions" link [#4249](https://github.com/rokwire/illinois-app/issues/4249).
+- Play Checking off sound for To-Do List item [#2258](https://github.com/rokwire/illinois-app/issues/2258).
+### Fixed
+- Fixed background color of Event2DetailPanel [#4250](https://github.com/rokwire/illinois-app/issues/4250).
+- Fixed VoiceRecorder permissions requested when dialog is shown [#4247](https://github.com/rokwire/illinois-app/issues/4247).
+
+## [6.0.28] - 2024-07-25
+### Changed
+- Lookup mental health buildings by id and number [#4240](https://github.com/rokwire/illinois-app/issues/4240).
+- Always show CC button in onboarding video [#4226](https://github.com/rokwire/illinois-app/issues/4226).
+- Upgrade Android app to target API level 34 and upgrade plugin version to match that requirement [#4245](https://github.com/rokwire/illinois-app/issues/4245).
+### Added
+- Clear all Assistant messages [#4129](https://github.com/rokwire/illinois-app/issues/4129).
+
 ## [6.0.27] - 2024-07-12
 - Added ability to clear end date and time in Create Event Panel [#4233](https://github.com/rokwire/illinois-app/issues/4233).
 
