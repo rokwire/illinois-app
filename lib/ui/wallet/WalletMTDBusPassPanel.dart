@@ -105,7 +105,8 @@ class WalletMTDBusPassPanel extends StatelessWidget {
 
 class WalletMTDBusPassContentWidget extends StatefulWidget with WalletHomeContentWidget {
   final bool expandHeight;
-  WalletMTDBusPassContentWidget({super.key, this.expandHeight = true});
+  final bool canClose;
+  WalletMTDBusPassContentWidget({super.key, this.expandHeight = true, this.canClose = true});
 
   @override
   State<StatefulWidget> createState() => _WalletMTDBusPassContentWidgetState();
@@ -343,7 +344,9 @@ class _WalletMTDBusPassContentWidgetState extends State<WalletMTDBusPassContentW
             Localization().getStringEx("panel.bus_pass.error.duplicate.text", "This MTD bus pass has already been displayed on another device.\n\nOnly one device can display the MTD bus pass per Illini ID.") :
             Localization().getStringEx("panel.bus_pass.error.default.text", "Unable to load bus pass");
           AppAlert.showDialogResult(context, message,).then((result){
-            Navigator.pop(context);
+            if (widget.canClose) {
+              Navigator.pop(context);
+            }
           });
         }
       }
