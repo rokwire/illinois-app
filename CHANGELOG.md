@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Hide entire section content in Event2Card when sub-events fail to load or if they are empty [#4283](https://github.com/rokwire/illinois-app/issues/4283).
+### Fixed
+- Fixed navigation in MTD Bus Pass when bus pass load fails [#4297](https://github.com/rokwire/illinois-app/issues/4297).
 
 ## [6.0.35] - 2024-08-14
 ### Changed
