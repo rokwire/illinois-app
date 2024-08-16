@@ -315,7 +315,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
           )
         ));
       }
-      if (_cardsPerPage > 1 && pageCards.length > 1) {
+      if (_cardsPerPage > 1) {
         pages.add(Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,

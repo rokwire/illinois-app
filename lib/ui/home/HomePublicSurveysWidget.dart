@@ -243,7 +243,7 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
           )
         ),);
       }
-      if (_cardsPerPage > 1 && pageCards.length > 1) {
+      if (_cardsPerPage > 1) {
         pages.add(Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,

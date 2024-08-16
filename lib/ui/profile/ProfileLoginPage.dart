@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/Config.dart';
 import 'package:neom/service/FirebaseMessaging.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/ui/profile/ProfileHomePanel.dart';
@@ -15,7 +16,6 @@ import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -442,24 +442,27 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> implements Notifica
     return Dialog(
       backgroundColor: Styles().colors.background,
       child: Padding(padding: EdgeInsets.all(18), child:
-        Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Text(Localization().getStringEx("panel.settings.home.logout.title", "{{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-            style: Styles().textStyles.getTextStyle("widget.title.light.extra_large"),
-          ),
-          Padding(padding: EdgeInsets.symmetric(vertical: 26), child:
-            Text(Localization().getStringEx("panel.settings.home.logout.message", _promptEn), textAlign: TextAlign.left,
-              style: Styles().textStyles.getTextStyle("widget.message.light.medium")
+        Container(
+          constraints: BoxConstraints(maxWidth: Config().webContentMaxWidth),
+          child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+            Text(Localization().getStringEx("panel.settings.home.logout.title", "{{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+              style: Styles().textStyles.getTextStyle("widget.title.light.extra_large"),
             ),
-          ),
-          Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-            TextButton(onPressed: _onConfirmLogout, child:
-              Text(Localization().getStringEx("panel.settings.home.logout.button.yes", "Yes"))
+            Padding(padding: EdgeInsets.symmetric(vertical: 26), child:
+              Text(Localization().getStringEx("panel.settings.home.logout.message", _promptEn), textAlign: TextAlign.left,
+                style: Styles().textStyles.getTextStyle("widget.message.light.medium")
+              ),
             ),
-            TextButton(onPressed: _onRejectLogout, child:
-              Text(Localization().getStringEx("panel.settings.home.logout.no", "No"))
-            )
+            Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+              TextButton(onPressed: _onConfirmLogout, child:
+                Text(Localization().getStringEx("panel.settings.home.logout.button.yes", "Yes"))
+              ),
+              TextButton(onPressed: _onRejectLogout, child:
+                Text(Localization().getStringEx("panel.settings.home.logout.no", "No"))
+              )
+            ],),
           ],),
-        ],),
+        ),
       ),
     );
   }
