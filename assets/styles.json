@@ -196,6 +196,7 @@
     "widget.message.light.regular": {"font_family": "regular", "size": 16.0, "color": "mediumGray"},
     "widget.message.light.regular.fat": {"font_family": "regular", "size": 16.0, "color": "textLight"},
     "widget.message.light.variant.small": {"font_family": "regular", "size": 14.0, "color": "mediumGray2"},
+    "widget.message.light.large.fat": {"font_family": "bold", "size": 20.0, "color": "textLight"},
 
     "widget.title.extra_huge": {"font_family": "regular", "size": 36.0, "color": "textPrimary"},
     "widget.title.extra_huge.fat": {"font_family": "bold", "size": 36.0, "color": "textPrimary"},
@@ -565,7 +566,7 @@
     "widget.group.input_field.detail": {"extends": "widget.detail.regular"},
 
     "widget.group.members.title": {"extends": "widget.title.large.fat", "color": "textDark"},
-    "widget.group.members.light.title": {"extends": "widget.title.large.fat", "color": "testPrimary"},
+    "widget.group.members.light.title": {"extends": "widget.title.large.fat", "color": "textLight"},
     "widget.group.members.card.title": {"extends": "widget.title.large.fat", "color": "textDark"},
     "widget.group.members.search": {"extends": "widget.input_field.text.regular"},
     "widget.group.members.selected_entry": {"font_family": "bold", "size": 18.0, "decoration": "underline", "color": "textPrimary"},
@@ -1135,6 +1136,7 @@
     "role-prospective-student": {"src": "images/role-prospective-student.png", "type": "flutter.asset", "size": 64},
     "role-faculty": {"src": "images/role-faculty.png", "type": "flutter.asset", "size": 64},
     "role-staff": {"src": "images/role-staff.png", "type": "flutter.asset", "size": 64},
+    "role-debug": {"src": "images/debug-white.png", "type": "flutter.asset", "size": 64, "color": "fillColorSecondary"},
     "role-visitor": {"src": "images/icon-persona-visitor-normal.png", "type": "flutter.asset"},
     "role-athletics": {"src": "images/icon-persona-athletics-normal.png", "type": "flutter.asset"},
     "role-employee": {"src": "images/icon-persona-employee-normal.png", "type": "flutter.asset"},

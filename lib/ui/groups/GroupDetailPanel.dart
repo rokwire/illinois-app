@@ -817,7 +817,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         Expanded(
           child: Center(
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 32),
-              child: Text(_isResearchProject ? 'Failed to load project data.' : Localization().getStringEx("panel.group_detail.label.error_message", 'Failed to load group data.'),  style:  Styles().textStyles.getTextStyle('widget.message.large.fat'),)
+              child: Text(_isResearchProject ? 'Failed to load project data.' : Localization().getStringEx("panel.group_detail.label.error_message", 'Failed to load group data.'),  style:  Styles().textStyles.getTextStyle('widget.message.light.large.fat'),)
             ),
           ),
         ),

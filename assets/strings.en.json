@@ -823,6 +823,8 @@
     "panel.onboarding2.roles.button.staff.hint": "",
     "panel.onboarding2.roles.button.prospective_staff.title": "Prospective Staff",
     "panel.onboarding2.roles.button.prospective_staff.hint": "",
+    "panel.onboarding2.roles.button.debug.title": "Debug",
+    "panel.onboarding2.roles.button.debug.hint": "",
     "panel.onboarding2.roles.button.fan.title": "Athletics Fan",
     "panel.onboarding2.roles.button.fan.hint": "",
     "panel.onboarding2.roles.button.alumni.title": "Alumni",

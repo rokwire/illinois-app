@@ -2792,7 +2792,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
             label: group.title,
             toggled: _selectedGroupIds.contains(group.id),
             onTap: () => _onTapGroup(group.id!),
-            textStyle:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat")
+            textStyle:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat.dark")
         ));
       }
 
@@ -3127,7 +3127,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
     return Row(crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(padding: EdgeInsets.only(top: 16), child:
-          Text("Schedule: ", style: Styles().textStyles.getTextStyle('widget.group.members.title'),)),
+          Text("Schedule: ", style: Styles().textStyles.getTextStyle('widget.group.members.light.title'),)),
         Expanded(child: _buildDropdown())
     ]);
   }
@@ -3160,7 +3160,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
                   Expanded(child:
                     Semantics ( label: title, child:
                       RichText(text:
-                        TextSpan(text: title, style: Styles().textStyles.getTextStyle("widget.title.medium.fat"), semanticsLabel: "", children: required ? <InlineSpan>[
+                        TextSpan(text: title, style: Styles().textStyles.getTextStyle("widget.title.dark.medium.fat"), semanticsLabel: "", children: required ? <InlineSpan>[
                           TextSpan(text: ' *', style: Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
                   ] : null),
                   ))
@@ -3287,7 +3287,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
       if (name.startsWith('US/')) {
         menuItems.add(DropdownMenuItem<Location>(
           value: location,
-          child: Semantics(label: name, excludeSemantics: true, container:true, child: Text(name,)),
+          child: Semantics(label: name, excludeSemantics: true, container:true, child: Text(name, style: headingTextStype)),
         ));
       }
     });
@@ -3321,7 +3321,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
           ] : null),
       ));
 
-  static TextStyle? get headingTextStype => Styles().textStyles.getTextStyle("widget.title.small.fat.spaced");
+  static TextStyle? get headingTextStype => Styles().textStyles.getTextStyle("widget.title.dark.small.fat.spaced");
 
   static const EdgeInsetsGeometry dropdownButtonContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
   static const EdgeInsetsGeometry sectionHeadingContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 14);

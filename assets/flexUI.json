@@ -6,8 +6,7 @@
 
 			"home": [
 				"all_groups", "my_groups", "event_feed", "my_events",
-				"all_notifications", "unread_notifications",
-				"recent_items", "public_surveys"
+				"all_notifications", "unread_notifications", "public_surveys"
 			],
 			"home.system": ["tout", "connect"],
 			"home.connect": ["phone_or_email"],
@@ -32,15 +31,9 @@
 
 			"polls.features": ["authentication", "netid_login"],
 
-			"explore.list": ["events"],
-			"explore.map":  ["events2", "buildings"],
-	
 			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
 
-			"calendar": ["settings"],
-			"calendar.settings": ["add", "prompt"],
-
-			"roles": ["student", "prospective_student", "faculty", "prospective_faculty", "staff", "prospective_staff"],
+			"roles": ["student", "prospective_student", "faculty", "prospective_faculty", "staff", "prospective_staff", "debug"],
 
 			"onboarding":["login_passkey", "login_code", "roles", "notifications_auth"],
 
@@ -66,16 +59,16 @@
 
 				"features.student"                         	: ["student"],
 
-				"home.all_groups" 							: [["student", "OR", "faculty"], "OR", "staff"],
-				"home.my_groups" 							: [["student", "OR", "faculty"], "OR", "staff"],
-				"home.event_feed" 							: [["student", "OR", "faculty"], "OR", "staff"],
-				"home.my_events" 							: [["student", "OR", "faculty"], "OR", "staff"],
-				"home.all_notifications" 					: [["student", "OR", "faculty"], "OR", "staff"],
-				"home.unread_notifications" 				: [["student", "OR", "faculty"], "OR", "staff"],
+				"home.all_groups" 							: ["debug"],
+				"home.my_groups" 							: ["debug"],
+				"home.event_feed" 							: ["debug"],
+				"home.my_events" 							: ["debug"],
+				"home.all_notifications" 					: ["debug"],
+				"home.unread_notifications" 				: ["debug"],
 
-				"browse.events" 							: [["student", "OR", "faculty"], "OR", "staff"],
-				"browse.groups" 							: [["student", "OR", "faculty"], "OR", "staff"],
-				"browse.inbox" 								: [["student", "OR", "faculty"], "OR", "staff"]
+				"browse.events" 							: ["debug"],
+				"browse.groups" 							: ["debug"],
+				"browse.inbox" 								: ["debug"]
 			},
 			"groups": {
 				"home.twitter.account.canvas"             : ["${config.settings.groups.canvas}", "AND", ["NOT", "${config.settings.groups.gies}"]],

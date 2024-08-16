@@ -15,7 +15,9 @@
  */
 
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/service/Auth2.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -151,6 +153,21 @@ class RoleGridButton extends TileToggleButton {
         hint: Localization().getStringEx('panel.onboarding2.roles.button.prospective_staff.hint', ''),
         iconKey: 'role-prospective-student',
         selectedIconKey:  'role-prospective-student',
+        selectedBackgroundColor: Styles().colors.surface,
+        selected: (selected == true),
+        data: role,
+        sortOrder: sortOrder,
+        onTap: onTap,
+        textScaler: textScaler ?? TextScaler.noScaling,
+        margin: margin,
+      );
+    }
+    else if (role == UserRole.debug && (kDebugMode || Auth2().isDebugManager)) {
+      return RoleGridButton(
+        title: Localization().getStringEx('panel.onboarding2.roles.button.debug.title', 'Debug'),
+        hint: Localization().getStringEx('panel.onboarding2.roles.button.debug.hint', ''),
+        iconKey: 'role-debug',
+        selectedIconKey:  'role-debug',
         selectedBackgroundColor: Styles().colors.surface,
         selected: (selected == true),
         data: role,
