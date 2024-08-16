@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased - NEOM
+
+## [0.4.3] - 2024-08-16
+### Changed
+- Added "Debug" user role - only show surveys to all other roles
+### Fixed
+- Firebase Messaging exception on web for iOS
+- Failing logout API calls
+- Text color fixes
+
 ## [0.4.2] - 2024-08-14
 ### Added
 - NEOM web deployment [#3](https://github.com/rokmetro/neom-app/issues/3)
