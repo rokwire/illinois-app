@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased - NEOM
 
+## [0.4.4] = 2024-08-19
+### Added
+- Added enter key listener to email/phone and code panels
+### Changed
+- Updated list of available user roles
+### Fixed
+- Survey question follow up issues on web
+- Numeric survey question styling
+- Fix valid user roles checking during onboarding
+
 ## [0.4.3] - 2024-08-16
 ### Changed
 - Added "Debug" user role - only show surveys to all other roles
