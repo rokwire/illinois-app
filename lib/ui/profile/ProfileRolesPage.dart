@@ -61,13 +61,13 @@ class _ProfileRolesPageState extends State<ProfileRolesPage> {
   Widget build(BuildContext context) {
     return Container(color: Styles().colors.background, padding: widget.margin,  child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Padding(padding: EdgeInsets.only(top: 16, left: 4, right: 4), child:
-          Text(Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
-            style: Styles().textStyles.getTextStyle("widget.item.light.small.thin")
-          ),
-        ),
+        // Padding(padding: EdgeInsets.only(top: 16, left: 4, right: 4), child:
+        //   Text(Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
+        //     style: Styles().textStyles.getTextStyle("widget.item.light.small.thin")
+        //   ),
+        // ),
         Padding(padding: EdgeInsets.only(top: 10,  left: 4, right: 4), child:
-          Text(Localization().getStringEx('panel.onboarding.roles.label.description2', 'I am a...'),
+          Text(Localization().getStringEx('panel.onboarding.roles.label.description2', 'I am part of the following ERI Sector...'),
             style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat")
           ),
         ),

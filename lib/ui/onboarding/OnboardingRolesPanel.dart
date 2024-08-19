@@ -18,6 +18,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
+import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/ui/widgets/SlantedWidget.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -27,14 +28,14 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/ui/widgets/RoleGridButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class OnboardingRolesPanel extends StatefulWidget with OnboardingPanel {
   final Map<String, dynamic>? onboardingContext;
   OnboardingRolesPanel({this.onboardingContext});
 
   @override
-  bool get onboardingCanDisplay => Auth2().prefs?.roles?.isEmpty ?? true;
+  bool get onboardingCanDisplay => !(ListUtils.contains(Auth2().prefs?.roles, UserRole.values) ?? false);
 
   @override
   _OnboardingRoleSelectionPanelState createState() =>
@@ -45,7 +46,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
   Set<UserRole>? _selectedRoles;
   bool _updating = false;
 
-  bool get _allowNext => _selectedRoles != null && _selectedRoles!.isNotEmpty;
+  bool get _allowNext => ListUtils.contains(_selectedRoles, UserRole.values) ?? false;
 
   @override
   void initState() {
@@ -64,24 +65,35 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
             Onboarding2TitleWidget(),
           ),
           Padding(padding: EdgeInsets.symmetric(vertical: 8.0),
-            child: Column(children: <Widget>[
-              Semantics(
-                label: Localization().getStringEx('panel.onboarding.roles.label.title', 'WHO ARE YOU?').toLowerCase(),
-                hint: Localization().getStringEx('panel.onboarding.roles.label.title.hint', 'Header 1').toLowerCase(),
-                excludeSemantics: true,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text(Localization().getStringEx('panel.onboarding.roles.label.title', 'WHO ARE YOU?'),
-                    style: Styles().textStyles.getTextStyle('panel.onboarding2.roles.heading.title'),
+            child: Container(
+              constraints: BoxConstraints(maxWidth: Config().webContentMaxWidth),
+              child: Column(children: <Widget>[
+                Semantics(
+                  label: Localization().getStringEx('panel.onboarding.roles.label.title', 'WHO ARE YOU?').toLowerCase(),
+                  hint: Localization().getStringEx('panel.onboarding.roles.label.title.hint', 'Header 1').toLowerCase(),
+                  excludeSemantics: true,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(Localization().getStringEx('panel.onboarding.roles.label.title', 'WHO ARE YOU?'),
+                      style: Styles().textStyles.getTextStyle('panel.onboarding2.roles.heading.title'),
+                    ),
                   ),
                 ),
-              ),
-              Padding(padding: EdgeInsets.only(top: 8, left: 16.0, right: 16.0),
-                child: Text(Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
-                  style: Styles().textStyles.getTextStyle('widget.title.light.regular.thin'),
+                // Padding(padding: EdgeInsets.only(top: 8, left: 16.0, right: 16.0),
+                //   child: Text(Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
+                //     style: Styles().textStyles.getTextStyle('widget.title.light.regular.thin'),
+                //   ),
+                // ),
+                Padding(
+                  padding: EdgeInsets.only(top: 8, left: 16.0, right: 16.0),
+                  child: Text(
+                    Localization().getStringEx('panel.onboarding.roles.label.description2', 'I am part of the following ERI Sector...'),
+                    style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat"),
+                    textAlign: TextAlign.start,
+                  ),
                 ),
-              )
-            ],),
+              ],),
+            ),
           ),
 
           Expanded(child: SingleChildScrollView(child: Padding(padding: EdgeInsets.only(left: 16, right: 8, ), child:
@@ -92,18 +104,18 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
             Container(
               constraints: BoxConstraints(maxWidth: Config().webContentMaxWidth),
               child: SlantedWidget(
-                color: Styles().colors.fillColorSecondary,
-                child: RoundedButton(
+                color: _allowNext ? Styles().colors.fillColorSecondary : Styles().colors.textMedium,
+                child: RibbonButton(
                   label: Localization().getStringEx('panel.onboarding.roles.button.continue.title', 'Continue'),
                   hint: Localization().getStringEx('panel.onboarding.roles.button.continue.hint', ''),
-                  textStyle: _allowNext ? Styles().textStyles.getTextStyle("widget.button.light.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat.variant"),
-                  enabled: _allowNext,
-                  backgroundColor: _allowNext ? Styles().colors.fillColorSecondary : Styles().colors.background,
-                  borderColor: (_allowNext
-                      ? Styles().colors.fillColorSecondary
-                      : Styles().colors.textMedium),
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.light.title.large.fat"),
+                  textAlign: TextAlign.center,
+                  backgroundColor: _allowNext ? Styles().colors.fillColorSecondary : Styles().colors.textMedium,
                   progress: _updating,
-                  onTap: () => _onExploreClicked()),
+                  progressColor: Styles().colors.textLight,
+                  onTap: _allowNext ? () => _onExploreClicked() : null,
+                  rightIconKey: null,
+                ),
               ),
             ),
           )

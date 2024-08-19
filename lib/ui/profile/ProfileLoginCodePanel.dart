@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:neom/ui/profile/ProfileLoginPasskeyPanel.dart';
@@ -54,6 +55,7 @@ class ProfileLoginCodePanel extends StatefulWidget with OnboardingPanel {
 
 class _ProfileLoginCodePanelState extends State<ProfileLoginCodePanel> {
   final TextEditingController _codeController = TextEditingController();
+  FocusNode _proceedFocusNode = FocusNode();
 
   String? _identifier;
   String? _errorMessage;
@@ -154,17 +156,26 @@ class _ProfileLoginCodePanelState extends State<ProfileLoginCodePanel> {
   }
 
   Widget _buildPrimaryActionButton() {
-    return SlantedWidget(
-      color: Styles().colors.fillColorSecondary,
-      child: RibbonButton(
-        label: Localization().getStringEx("panel.settings.confirm_identifier.button.confirm.label", "Confirm"),
-        textAlign: TextAlign.center,
-        backgroundColor: Styles().colors.fillColorSecondary,
-        textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.large.fat'),
-        onTap: () => _primaryButtonAction(context),
-        progress: _isLoading,
-        progressColor: Styles().colors.textLight,
-        rightIconKey: null,
+    return KeyboardListener(
+      focusNode: _proceedFocusNode,
+      autofocus: false,
+      onKeyEvent: (event) {
+        if (event.logicalKey == LogicalKeyboardKey.enter) {
+          _primaryButtonAction(context);
+        }
+      },
+      child: SlantedWidget(
+        color: Styles().colors.fillColorSecondary,
+        child: RibbonButton(
+          label: Localization().getStringEx("panel.settings.confirm_identifier.button.confirm.label", "Confirm"),
+          textAlign: TextAlign.center,
+          backgroundColor: Styles().colors.fillColorSecondary,
+          textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.large.fat'),
+          onTap: () => _primaryButtonAction(context),
+          progress: _isLoading,
+          progressColor: Styles().colors.textLight,
+          rightIconKey: null,
+        ),
       ),
     );
   }
@@ -192,8 +203,11 @@ class _ProfileLoginCodePanelState extends State<ProfileLoginCodePanel> {
         value: _codeController.text,
         child: TextField(
           controller: _codeController,
-          autofocus: false,
+          autofocus: kIsWeb,
           onSubmitted: (_) => _clearErrorMessage(),
+          onEditingComplete: ScreenUtils.isPhone(context) ? null : () {
+            _proceedFocusNode.requestFocus();
+          },
           cursorColor: Styles().colors.fillColorSecondary,
           keyboardType: TextInputType.number,
           style: Styles().textStyles.getTextStyle('widget.description.regular'),

@@ -85,17 +85,17 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
         ),
 
         Container(height: 6,),
-        Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Text(Localization().getStringEx('panel.onboarding2.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
-            textAlign: TextAlign.start,
-            style: Styles().textStyles.getTextStyle("panel.onboarding2.roles.description")
-          ),
-        ),
+        // Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        //   child: Text(Localization().getStringEx('panel.onboarding2.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
+        //     textAlign: TextAlign.start,
+        //     style: Styles().textStyles.getTextStyle("panel.onboarding2.roles.description")
+        //   ),
+        // ),
 
         Padding(
-          padding: EdgeInsets.only(bottom:  10, left: 20, right: 20),
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Text(
-              Localization().getStringEx('panel.onboarding2.roles.label.description2', 'I am a...'),
+              Localization().getStringEx('panel.onboarding2.roles.label.description2', 'I am part of the following ERI Sector...'),
               style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat"),
             textAlign: TextAlign.start,
           ),

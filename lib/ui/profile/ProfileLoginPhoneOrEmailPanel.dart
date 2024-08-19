@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/ui/onboarding2/Onboarding2Widgets.dart';
@@ -38,6 +39,7 @@ class _ProfileLoginPhoneOrEmailPanelState extends State<ProfileLoginPhoneOrEmail
   String? _validationErrorMsg;
   String? _validationErrorDetails;
   GlobalKey _validationErrorKey = GlobalKey();
+  FocusNode _proceedFocusNode = FocusNode();
 
   bool _isLoading = false;
 
@@ -164,9 +166,12 @@ class _ProfileLoginPhoneOrEmailPanelState extends State<ProfileLoginPhoneOrEmail
                             child: TextField(
                               controller: _phoneOrEmailController,
                               readOnly: widget.identifier != null,
-                              autofocus: false,
+                              autofocus: kIsWeb,
                               autocorrect: false,
                               onSubmitted: (_) => _clearErrorMsg,
+                              onEditingComplete: ScreenUtils.isPhone(context) ? null : () {
+                                _proceedFocusNode.requestFocus();
+                              },
                               cursorColor: Styles().colors.textDark,
                               keyboardType: keyboardType,
                               scrollPadding: EdgeInsets.only(bottom: 120),
@@ -181,34 +186,43 @@ class _ProfileLoginPhoneOrEmailPanelState extends State<ProfileLoginPhoneOrEmail
                         ),
                         const SizedBox(height: 16),
                         Visibility(visible: StringUtils.isNotEmpty(_validationErrorMsg), child:
-                        Padding(key: _validationErrorKey, padding: EdgeInsets.symmetric(vertical: 16), child:
-                        Column(children: [
-                          Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: Styles().textStyles.getTextStyle("panel.settings.error.text"), textAlign: TextAlign.center,),
-                          Visibility(visible: StringUtils.isNotEmpty(_validationErrorDetails), child:
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: Styles().textStyles.getTextStyle("widget.detail.small"), textAlign: TextAlign.center,),
+                          Padding(key: _validationErrorKey, padding: EdgeInsets.symmetric(vertical: 16), child:
+                            Column(children: [
+                              Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: Styles().textStyles.getTextStyle("panel.settings.error.text"), textAlign: TextAlign.center,),
+                              Visibility(visible: StringUtils.isNotEmpty(_validationErrorDetails), child:
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: Styles().textStyles.getTextStyle("widget.detail.small"), textAlign: TextAlign.center,),
+                              ),
+                              ),
+                            ],),
                           ),
-                          ),
-                        ],),
-                        ),
                         ),
                         Container(height: 24),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                          child: SlantedWidget(
-                            color: Styles().colors.fillColorSecondary,
-                            child: RibbonButton(
-                              label: buttonProceedTitle,
-                              hint: buttonProceedHint,
-                              textAlign: TextAlign.center,
-                              backgroundColor: Styles().colors.fillColorSecondary,
-                              textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.large.fat'),
-                              onTap: _onTapProceed,
-                              // rightIcon: proceedRightIcon,
-                              rightIconKey: null,
-                              progress: _isLoading,
-                              progressColor: Styles().colors.textLight,
+                          child: KeyboardListener(
+                            focusNode: _proceedFocusNode,
+                            autofocus: false,
+                            onKeyEvent: (event) {
+                              if (event.logicalKey == LogicalKeyboardKey.enter) {
+                                _onTapProceed();
+                              }
+                            },
+                            child: SlantedWidget(
+                              color: Styles().colors.fillColorSecondary,
+                              child: RibbonButton(
+                                label: buttonProceedTitle,
+                                hint: buttonProceedHint,
+                                textAlign: TextAlign.center,
+                                backgroundColor: Styles().colors.fillColorSecondary,
+                                textStyle: Styles().textStyles.getTextStyle('widget.button.light.title.large.fat'),
+                                onTap: _onTapProceed,
+                                // rightIcon: proceedRightIcon,
+                                rightIconKey: null,
+                                progress: _isLoading,
+                                progressColor: Styles().colors.textLight,
+                              ),
                             ),
                           ),
                         ),

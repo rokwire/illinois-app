@@ -83,7 +83,7 @@ class _ProfileLoginPasskeyPanelState extends State<ProfileLoginPasskeyPanel> {
     return SafeArea(
       child: Scaffold(
           backgroundColor: Styles().colors.background,
-          body: _link ? _buildPasskeyInfo() : SingleChildScrollView(
+          body: _link ? Align(alignment: AlignmentDirectional.center, child: _buildPasskeyInfo()) : SingleChildScrollView(
             child: Column(children: [
                 Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child:
                   Onboarding2TitleWidget()
