@@ -420,7 +420,7 @@ class _ProfileSoundRecorderController {
   final Function(void Function()) notifyChanged;
   final Uint8List? initialAudio;
 
-  late Record _audioRecord;
+  late AudioRecorder _audioRecorder;
   late AudioPlayer _audioPlayer;
   Duration? _playerTimer;
   String? _audioRecordPath = ""; //The path of the tmp audio Record so we can delete it.
@@ -430,7 +430,7 @@ class _ProfileSoundRecorderController {
   _ProfileSoundRecorderController({required this.notifyChanged, this.initialAudio});
 
   void init() {
-    _audioRecord = Record();
+    _audioRecorder = AudioRecorder();
     _audioPlayer = AudioPlayer();
     _audioPlayer.positionStream.listen((elapsedDuration) {
       notifyChanged(() => _playerTimer = elapsedDuration);
@@ -443,17 +443,17 @@ class _ProfileSoundRecorderController {
 
   void dispose() {
     _deleteRecord(); //clean the tmp file
-    _audioRecord.dispose();
+    _audioRecorder.dispose();
     _audioPlayer.dispose();
   }
 
   void startRecording() async {
     try {
       Log.d("START RECODING");
-      if (await _audioRecord.hasPermission()) {
+      if (await _audioRecorder.hasPermission()) {
         notifyChanged(() => _recording = true);
-        await _audioRecord.start(path: await _constructFilePath);
-        _recording = await _audioRecord.isRecording();
+        await _audioRecorder.start(const RecordConfig(), path: await _constructFilePath);
+        _recording = await _audioRecorder.isRecording();
       }
     } catch (e, stackTrace) {
       Log.d("START RECODING: ${e} - ${stackTrace}");
@@ -463,8 +463,8 @@ class _ProfileSoundRecorderController {
   Future<void> stopRecording() async {
     Log.d("STOP RECODING");
     try {
-      String? path = await _audioRecord.stop();
-      _recording = await _audioRecord.isRecording();
+      String? path = await _audioRecorder.stop();
+      _recording = await _audioRecorder.isRecording();
       var audioBytes = await getFileAsBytes(path);
       notifyChanged(() {
         _audio = audioBytes;
@@ -529,7 +529,7 @@ class _ProfileSoundRecorderController {
       });
   }
 
-  Future<bool> requestPermission() async => _audioRecord.hasPermission();
+  Future<bool> requestPermission() async => _audioRecorder.hasPermission();
 
   Future<void> _deleteRecord() async {
     if (_audioRecordPath?.isNotEmpty == true) {
@@ -564,10 +564,9 @@ class _ProfileSoundRecorderController {
 
   bool get _haveAudio => CollectionUtils.isNotEmpty(_audio);
 
-  Future<String?> get _constructFilePath async {
+  Future<String> get _constructFilePath async {
     Directory dir = await getApplicationDocumentsDirectory();
-
-    return dir.existsSync() ? Path.join(dir.path, "tmp_audio.m4a") : null;
+    return Path.join(dir.path, "tmp_audio.m4a");
   }
 
   Future<Uint8List?> getFileAsBytes(String? filePath) async{
