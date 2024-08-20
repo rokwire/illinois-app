@@ -147,14 +147,14 @@ class _ProfileLoginPhoneOrEmailPanelState extends State<ProfileLoginPhoneOrEmail
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
                           child: Row(children: [ Expanded(child:
-                          Text(description, style:  Styles().textStyles.getTextStyle("widget.description.medium.light"),)
+                            Text(description, style:  Styles().textStyles.getTextStyle("widget.description.medium.light"),)
                           )],),
                         ),
                         const SizedBox(height: 32),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 24.0),
                           child: Row(children: [ Expanded(child:
-                          Text(headingTitle, style: Styles().textStyles.getTextStyle("widget.title.light.medium.fat"),)
+                            Text(headingTitle, style: Styles().textStyles.getTextStyle("widget.title.light.medium.fat"),)
                           )],),
                         ),
                         Container(height: 8),
@@ -169,7 +169,7 @@ class _ProfileLoginPhoneOrEmailPanelState extends State<ProfileLoginPhoneOrEmail
                               autofocus: kIsWeb,
                               autocorrect: false,
                               onSubmitted: (_) => _clearErrorMsg,
-                              onEditingComplete: ScreenUtils.isPhone(context) ? null : () {
+                              onEditingComplete: () {
                                 _proceedFocusNode.requestFocus();
                               },
                               cursorColor: Styles().colors.textDark,

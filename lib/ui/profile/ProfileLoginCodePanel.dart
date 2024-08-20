@@ -205,7 +205,7 @@ class _ProfileLoginCodePanelState extends State<ProfileLoginCodePanel> {
           controller: _codeController,
           autofocus: kIsWeb,
           onSubmitted: (_) => _clearErrorMessage(),
-          onEditingComplete: ScreenUtils.isPhone(context) ? null : () {
+          onEditingComplete: () {
             _proceedFocusNode.requestFocus();
           },
           cursorColor: Styles().colors.fillColorSecondary,
