@@ -25,7 +25,7 @@
     "textSurfaceAccent"                     :"#FFFFFF",
     "textVariant"                           :"#ff494949",
     "textBackground"                        :"#bfbfbf",
-    "textbackgroundVariant"                 :"#bfbfbf",
+    "textBackgroundVariant"                 :"#bfbfbf",
 
     "textPrimary"                           :"#FFFFFF",
     "textAccent"                            :"#D29E01",
