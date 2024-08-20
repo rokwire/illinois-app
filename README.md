@@ -3,7 +3,7 @@ The official mobile app of NEOM U. Powered by the [Rokwire Platform](https://rok
 
 ## Requirements
 
-### [Flutter](https://flutter.dev/docs/get-started/install) v3.22.2
+### [Flutter](https://flutter.dev/docs/get-started/install) v3.24.0
 
 ### [Android Studio](https://developer.android.com/studio) 2021.3.1+
 

@@ -158,7 +158,7 @@ public final class GeneratedPluginRegistrant {
     try {
       flutterEngine.getPlugins().add(new com.llfbandit.record.RecordPlugin());
     } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin record, com.llfbandit.record.RecordPlugin", e);
+      Log.e(TAG, "Error registering plugin record_android, com.llfbandit.record.RecordPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new edu.illinois.rokwire.rokwire_plugin.RokwirePlugin());

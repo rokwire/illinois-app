@@ -22,7 +22,7 @@ class UnitInfoPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) => _saveProgress(context, didPop),
+      onPopInvokedWithResult: (bool didPop, Object? result) => _saveProgress(context, didPop),
       child: Scaffold(
         appBar: HeaderBar(
           title: Localization().getStringEx("panel.essential_skills_coach.unit_info.header.title", "Unit Information"),

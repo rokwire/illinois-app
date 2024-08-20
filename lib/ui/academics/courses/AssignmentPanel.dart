@@ -137,7 +137,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
     }
     return PopScope(
       canPop: false,
-      onPopInvoked: _saveProgress,
+      onPopInvokedWithResult: (bool didPop, Object? result) => _saveProgress(didPop),
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: HeaderBar(

@@ -618,12 +618,18 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   List<Widget> get _linkedEventsPagerWidget {
     Event2Grouping? linkedGroupingQuery = _event.linkedEventsGroupingQuery;
     return (linkedGroupingQuery != null) ? <Widget>[
-      Container(color: Styles().colors.surfaceAccent, height: 1,),
-      Padding(padding: const EdgeInsets.symmetric(vertical: 16), child:
-        LinkedEvents2Pager(linkedGroupingQuery, userLocation: widget.userLocation)
-      )
+      LinkedEvents2Pager(linkedGroupingQuery, contentBuilder: _linkedEventsPagerBuilder, userLocation: widget.userLocation)
     ] : <Widget>[];
   }
+
+  Widget _linkedEventsPagerBuilder(LinkedEvents2PagerContentStatus state, {required Widget child}) =>
+    ((state == LinkedEvents2PagerContentStatus.loading) || (state == LinkedEvents2PagerContentStatus.content)) ?
+      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Container(color: Styles().colors.surfaceAccent, height: 1,),
+        Padding(padding: const EdgeInsets.symmetric(vertical: 16), child:
+          child
+        )
+      ],) : Container();
 
   void _onFavorite() {
     Analytics().logSelect(target: "Favorite: ${_event.name}");
@@ -699,14 +705,19 @@ enum Event2CardDisplayMode { list, page, link, cardLink }
 // LinkedEvents2Pager
 //
 
+enum LinkedEvents2PagerContentStatus { loading, error, empty, content }
+typedef LinkedEvents2PagerContentBuilder = Widget Function(LinkedEvents2PagerContentStatus state, { required Widget child } );
+
 class LinkedEvents2Pager extends StatefulWidget {
   final Event2Grouping linkedGroupingQuery;
+  final LinkedEvents2PagerContentBuilder? contentBuilder;
   final Position? userLocation;
-  LinkedEvents2Pager(this.linkedGroupingQuery, {super.key, this.userLocation });
+  LinkedEvents2Pager(this.linkedGroupingQuery, {super.key, this.contentBuilder, this.userLocation });
 
   @override
   State<StatefulWidget> createState() => _LinkedEvents2PagerState();
 }
+
 
 class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
 
@@ -740,23 +751,26 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
   @override
   Widget build(BuildContext context) {
     if (_loadingEvents) {
-      return _progressContent;
+      return _buildContnet(LinkedEvents2PagerContentStatus.loading, contentWidget: _progressContent);
     }
     else if (_events == null) {
-      return _buildMessageContent(
+      return _buildContnet(LinkedEvents2PagerContentStatus.error, contentWidget: _buildMessageContent(
         title: Localization().getStringEx('panel.events2.home.message.failed.title', 'Failed'),
         message: _eventsErrorText ?? Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred')
-      );
+      ));
     }
     else if (_events?.length == 0) {
-      return _buildMessageContent(
+      return _buildContnet(LinkedEvents2PagerContentStatus.empty, contentWidget: _buildMessageContent(
         message: Localization().getStringEx('widget.home.event2_feed.text.empty.description', 'There are no events available.')
-      );
+      ));
     }
     else {
-      return _eventsPager;
+      return _buildContnet(LinkedEvents2PagerContentStatus.content, contentWidget: _eventsPager);
     }
   }
+
+  Widget _buildContnet(LinkedEvents2PagerContentStatus state, { required Widget contentWidget }) =>
+    (widget.contentBuilder != null) ? widget.contentBuilder!(state, child: contentWidget) : contentWidget;
 
   Widget get _eventsPager {
 

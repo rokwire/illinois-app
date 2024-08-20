@@ -44,6 +44,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased - Illinois
 
+### Changed
+- Upgraded Fluuter to 3.24.0 [#4302](https://github.com/rokwire/illinois-app/issues/4302).
+- Upgraded outdated Flutter plugins [#4302](https://github.com/rokwire/illinois-app/issues/4302).
+
 ## [6.1.6] - 2024-08-00
 ### Added
 - Added My Stored Data in Profile [#4264](https://github.com/rokwire/illinois-app/issues/4264).
@@ -72,6 +76,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [6.1.0] - 2024-07-22
 ### Added
 - Created Public Surveys UI / round 0 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
+
+## [6.0.36] - 2024-08-15
+### Changed
+- Hide entire section content in Event2Card when sub-events fail to load or if they are empty [#4283](https://github.com/rokwire/illinois-app/issues/4283).
+### Fixed
+- Fixed navigation in MTD Bus Pass when bus pass load fails [#4297](https://github.com/rokwire/illinois-app/issues/4297).
 
 ## [6.0.35] - 2024-08-14
 ### Changed

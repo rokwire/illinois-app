@@ -18,7 +18,7 @@ class PopScopeFix extends StatelessWidget {
   @override
   Widget build(BuildContext context) => PopScope(
     canPop: false,
-    onPopInvoked: (bool didPop) => _onPopInvoked(context, didPop),
+    onPopInvokedWithResult: (bool didPop, Object? result) => _onPopInvoked(context, didPop),
     child: Platform.isIOS ?
       BackGestureDetector(onBack: () => _onBack(context), child: child,) :
       child,

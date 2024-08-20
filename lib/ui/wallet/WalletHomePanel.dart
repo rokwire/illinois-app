@@ -185,7 +185,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
     switch(_selectedContentType!) {
       case WalletContentType.illiniId:      return WalletICardContentWidget(key: _contentPageKey);
       case WalletContentType.illiniIdFaqs:  return WalletICardFaqsContentWidget(key: _contentPageKey);
-      case WalletContentType.busPass:       return WalletMTDBusPassContentWidget(key: _contentPageKey, expandHeight: false,);
+      case WalletContentType.busPass:       return WalletMTDBusPassContentWidget(key: _contentPageKey, expandHeight: false, canClose: false,);
       case WalletContentType.mealPlan:      return WalletMealPlanContentWidget(key: _contentPageKey, headerHeight: 82,);
       case WalletContentType.illiniCash:    return WalletIlliniCashContentWidget(key: _contentPageKey, headerHeight: 88);
       case WalletContentType.addIlliniCash: return WalletAddIlliniCashContentWidget(key: _contentPageKey, topOffset: 82, hasCancel: false,);
