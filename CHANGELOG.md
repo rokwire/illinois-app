@@ -4,7 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased - NEOM
+## Unreleased - NEOM U
+
+## [0.4.5] = 2024-08-20
+### Added
+- Added public, start date, end date, estimated completion time fields to survey creation tool
+### Changed
+- Match styling between numeric survey questions and horizontal multiple choice questions
+### Fixed
+- Yes/No survey questions defaulting to "No" response
+- Incorrect survey card message when no surveys available
 
 ## [0.4.4] = 2024-08-19
 ### Added
