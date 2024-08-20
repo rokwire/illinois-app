@@ -273,8 +273,8 @@ class _ProfileSoundRecorderDialogState extends State<_ProfileSoundRecorderDialog
                                     label: Localization().getStringEx("", "Reset"),
                                     onTap: _onTapReset,
                                     enabled: _resetEnabled,
-                                    borderColor: _resetEnabled ? null : Styles().colors.disabledTextColor,
-                                    textColor: _resetEnabled ? null : Styles().colors.disabledTextColor,
+                                    borderColor: _resetEnabled ? null : Styles().colors.textDisabled,
+                                    textColor: _resetEnabled ? null : Styles().colors.textDisabled,
                                   ),
                                   Container(width: 16,),
                                   SmallRoundedButton( rightIcon: Container(),
@@ -283,8 +283,8 @@ class _ProfileSoundRecorderDialogState extends State<_ProfileSoundRecorderDialog
                                     progress: _loading,
                                     onTap: _onTapSave,
                                     enabled: _saveEnabled,
-                                    borderColor: _saveEnabled ? null : Styles().colors.disabledTextColor,
-                                    textColor: _saveEnabled ? null : Styles().colors.disabledTextColor,
+                                    borderColor: _saveEnabled ? null : Styles().colors.textDisabled,
+                                    textColor: _saveEnabled ? null : Styles().colors.textDisabled,
                                   ),
                               ],),
                             ),
@@ -450,8 +450,11 @@ class _ProfileSoundRecorderController {
       Log.d("START RECODING");
       if (await _audioRecorder.hasPermission()) {
         notifyChanged(() => _recording = true);
-        await _audioRecorder.start(const RecordConfig(), path: await _constructFilePath);
-        _recording = await _audioRecorder.isRecording();
+        String? path = await _constructFilePath;
+        if (path != null) {
+          await _audioRecorder.start(const RecordConfig(), path: path);
+          _recording = await _audioRecorder.isRecording();
+        }
       }
     } catch (e, stackTrace) {
       Log.d("START RECODING: ${e} - ${stackTrace}");
@@ -562,7 +565,7 @@ class _ProfileSoundRecorderController {
 
   bool get _haveAudio => CollectionUtils.isNotEmpty(_audio);
 
-  Future<String> get _constructFilePath async {
+  Future<String?> get _constructFilePath async {
     Directory? dir = kIsWeb ? null : await getApplicationDocumentsDirectory();
     return (dir?.existsSync() == true) ? Path.join(dir!.path, "tmp_audio.m4a") : null;
   }

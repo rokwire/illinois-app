@@ -168,10 +168,10 @@
 @import permission_handler_apple;
 #endif
 
-#if __has_include(<record/RecordPlugin.h>)
-#import <record/RecordPlugin.h>
+#if __has_include(<record_darwin/RecordPlugin.h>)
+#import <record_darwin/RecordPlugin.h>
 #else
-@import record;
+@import record_darwin;
 #endif
 
 #if __has_include(<rokwire_plugin/RokwirePlugin.h>)
