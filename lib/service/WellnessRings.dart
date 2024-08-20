@@ -682,7 +682,7 @@ class WellnessRings with Service implements NotificationsListener{
 
 //BB APIS RING RECORDS
 
-  Future<List<WellnessRingRecord>?> _requestGetRingRecord({String? ringId, DateTime? startPeriod, DateTime? endPeriod}) async { //TBD Change on backend to avoid multiple requests
+  Future<http.Response?> requestRingRecordsResponse({String? ringId, DateTime? startPeriod, DateTime? endPeriod}) async {
     //TBD ENABLED
 
     String url = (ringId != null)
@@ -690,7 +690,7 @@ class WellnessRings with Service implements NotificationsListener{
       : '${Config().wellnessUrl}/user/all_rings_records';
 
     String params = "";
-    
+
     if(startPeriod != null){
       params += params.isNotEmpty ? "&" : "";
       params += "start_date=${startPeriod.millisecondsSinceEpoch.toString()}";
@@ -703,7 +703,12 @@ class WellnessRings with Service implements NotificationsListener{
 
     url += params.isNotEmpty ? "?$params" : "";
 
-    http.Response? response = await Network().get(url, auth: Auth2());
+    return Network().get(url, auth: Auth2());
+  }
+
+  Future<List<WellnessRingRecord>?> _requestGetRingRecord({String? ringId, DateTime? startPeriod, DateTime? endPeriod}) async { //TBD Change on backend to avoid multiple requests
+
+    http.Response? response = await requestRingRecordsResponse(ringId: ringId, startPeriod: startPeriod, endPeriod: endPeriod);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {

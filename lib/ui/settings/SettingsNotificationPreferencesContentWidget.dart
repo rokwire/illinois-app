@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
@@ -40,6 +41,10 @@ class SettingsNotificationPreferencesContentWidget extends StatefulWidget{
 
 class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsNotificationPreferencesContentWidget> implements NotificationsListener{
   bool _notificationsAuthorized = false;
+
+  bool _newAppointmentProgress = false;
+  bool _morningReminderProgress = false;
+  bool _nightReminderProgress = false;
 
   @override
   void initState() {
@@ -118,7 +123,8 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           label: Localization().getStringEx("panel.settings.notifications.appointments.new", "New MyMcKinley Appointment"),
           toggled: (Appointments().account?.notificationsAppointmentNew == true),
           onTap: _appointmentsNotificationsEnabled ? _onNewAppointmentToggled : (){},
-          textStyle: _appointmentsNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
+          textStyle: _appointmentsNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.disabled"),
+          progress: _newAppointmentProgress,
     ));
     widgets.add(_CustomToggleButton(
           enabled: _appointmentsNotificationsEnabled,
@@ -126,7 +132,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           label: Localization().getStringEx("panel.settings.notifications.appointments.reminders", "Appointment Reminders"),
           toggled: Appointments().reminderNotificationsEnabled,
           onTap: _appointmentsNotificationsEnabled ? _onAppointmentRemindersToggled : (){},
-          textStyle: _appointmentsNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
+          textStyle: _appointmentsNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.disabled"),
     ));
     widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
       _CustomToggleButton(
@@ -135,7 +141,8 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           label: Localization().getStringEx("panel.settings.notifications.appointments.reminders.morning_of.label", "Morning Of (8:00 AM)"),
           toggled: (Appointments().account?.notificationsAppointmentReminderMorning ?? false),
           onTap: Appointments().reminderNotificationsEnabled ? _onAppointmentRemindersMorningToggled : (){},
-          textStyle: _appointmentRemindersSubNotificationsEnabled ?  Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+          textStyle: _appointmentRemindersSubNotificationsEnabled ?  Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled"),
+          progress: _morningReminderProgress,
     ),
       _CustomToggleButton(
           enabled: _appointmentRemindersSubNotificationsEnabled,
@@ -143,7 +150,8 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           label: Localization().getStringEx("panel.settings.notifications.appointments.reminders.night_before.label", "Night Before (9:00 PM)"),
           toggled: (Appointments().account?.notificationsAppointmentReminderNight ?? false),
           onTap: Appointments().reminderNotificationsEnabled ? _onAppointmentRemindersNightToggled : (){},
-          textStyle: _appointmentRemindersSubNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+          textStyle: _appointmentRemindersSubNotificationsEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.disabled"),
+          progress: _nightReminderProgress,
       )
     ]))))]));
     widgets.add(Row(children: [
@@ -300,7 +308,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
       return;
     }
     Analytics().logSelect(target: "New Appointment");
-    Appointments().changeAccountPreferences(newAppointment: !(Appointments().account?.notificationsAppointmentNew ?? false));
+    _changeAppointmentsAccountPrefs(newAppointment: !(Appointments().account?.notificationsAppointmentNew ?? false));
   }
 
   void _onAppointmentRemindersToggled() {
@@ -310,7 +318,10 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
     Analytics().logSelect(target: "Appointment Reminders");
     Appointments().reminderNotificationsEnabled = !Appointments().reminderNotificationsEnabled;
     if (!Appointments().reminderNotificationsEnabled) {
-      Appointments().changeAccountPreferences(morningReminder: false, nightReminder: false);
+      _changeAppointmentsAccountPrefs(
+        morningReminder: (Appointments().account?.notificationsAppointmentReminderMorning == true) ? false : null,
+        nightReminder: (Appointments().account?.notificationsAppointmentReminderNight == true) ? false : null,
+      );
     }
   }
 
@@ -319,7 +330,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
       return;
     }
     Analytics().logSelect(target: "Appointment Reminders: Morning Of");
-    Appointments().changeAccountPreferences(morningReminder: !(Appointments().account?.notificationsAppointmentReminderMorning ?? false));
+    _changeAppointmentsAccountPrefs(morningReminder: !(Appointments().account?.notificationsAppointmentReminderMorning ?? false));
   }
 
   void _onAppointmentRemindersNightToggled() {
@@ -327,7 +338,30 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
       return;
     }
     Analytics().logSelect(target: "Appointment Reminders: Night Before");
-    Appointments().changeAccountPreferences(nightReminder: !(Appointments().account?.notificationsAppointmentReminderNight ?? false));
+    _changeAppointmentsAccountPrefs(nightReminder: !(Appointments().account?.notificationsAppointmentReminderNight ?? false));
+  }
+
+  void _changeAppointmentsAccountPrefs({bool? newAppointment, bool? morningReminder, bool? nightReminder}) {
+    setStateIfMounted((){
+      _setAppointmentsAccountPrefsProgress(true, newAppointment: newAppointment, morningReminder: morningReminder, nightReminder: nightReminder);
+    });
+    Appointments().changeAccountPreferences(newAppointment: newAppointment, morningReminder: morningReminder, nightReminder: nightReminder).then((_){
+      setStateIfMounted((){
+        _setAppointmentsAccountPrefsProgress(false, newAppointment: newAppointment, morningReminder: morningReminder, nightReminder: nightReminder);
+      });
+    });
+  }
+
+  void _setAppointmentsAccountPrefsProgress(bool value, {bool? newAppointment, bool? morningReminder, bool? nightReminder}) {
+    if (newAppointment != null) {
+      _newAppointmentProgress = value;
+    }
+    if (morningReminder != null) {
+      _morningReminderProgress = value;
+    }
+    if (nightReminder != null) {
+      _nightReminderProgress = value;
+    }
   }
 
   void _onEventRemindersToggled() {
@@ -438,7 +472,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
   }
 
   bool get _appointmentRemindersSubNotificationsEnabled {
-    return Appointments().reminderNotificationsEnabled;
+    return _appointmentsNotificationsEnabled && Appointments().reminderNotificationsEnabled;
   }
 
   String? get _notificationsStatus{
@@ -482,6 +516,7 @@ class _CustomToggleButton extends ToggleRibbonButton {
     BorderRadius? borderRadius,
     TextStyle? textStyle,
     this.enabled,
+    super.progress,
   }) : super(
     label: label,
     toggled: (toggled == true),
@@ -489,8 +524,12 @@ class _CustomToggleButton extends ToggleRibbonButton {
     border: border,
     borderRadius: borderRadius,
     textStyle: textStyle,
+    progressPadding: const EdgeInsets.only(right: 24, left: 12), // Make sure progress indicator appears at the position of the toggle icon.
   );
 
   @override
   bool get toggled => (enabled == true) && super.toggled;
+
+  @override
+  Widget? get leftIcon => Container(height: 28,); // Just a vertical spacehoder to avoid shrinking when progress is on. RibbonButton needs serious cleanup.
 }

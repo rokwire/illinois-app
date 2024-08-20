@@ -121,24 +121,31 @@ class RecentItems with Service implements NotificationsListener {
 
   static Future<File?> get _recentItemsFile async {
     Directory? appDocDir = kIsWeb ? null : await getApplicationDocumentsDirectory();
-    String? cacheFilePath = (appDocDir != null) ? join(appDocDir.path, _cacheFileName) : null;
+    String? cacheFilePath = (appDocDir != null) ?  join(appDocDir.path, _cacheFileName) : null;
     return (cacheFilePath != null) ? File(cacheFilePath) : null;
   }
 
-  static Future<Queue<RecentItem>?> _loadRecentItems() async {
+  static Future<String?> loadRecentItemsSource() async {
     File? cacheFile = await _recentItemsFile;
     if (await cacheFile?.exists() == true) {
       String jsonString = await cacheFile!.readAsString();
-      return RecentItem.queueFromJson(JsonUtils.decodeList(jsonString));
+      return jsonString;
     }
-    // backward compatability
-    return RecentItem.queueFromJson(Storage().recentItems);
+    else {
+      // backward compatability
+      return Storage().recentItemsSource;
+    }
+  }
+
+  static Future<Queue<RecentItem>?> _loadRecentItems() async {
+    return RecentItem.queueFromJson(JsonUtils.decodeList(await loadRecentItemsSource()));
   }
 
   static Future<void> _saveRecentItems(Queue<RecentItem>? recentItems) async {
     File? cacheFile = await _recentItemsFile;
-    String? jsonString = JsonUtils.encode(RecentItem.queueToJson(recentItems));
-    await cacheFile?.writeAsString(jsonString ?? '', flush: true);
-
+    if (cacheFile != null) {
+      String? jsonString = JsonUtils.encode(RecentItem.queueToJson(recentItems));
+      await cacheFile.writeAsString(jsonString ?? '', flush: true);
+    }
   }
 }

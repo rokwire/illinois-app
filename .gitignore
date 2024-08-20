@@ -57,3 +57,4 @@ keys.properties
 # App Branding
 /app/assets/
 /app/images/
+/app/media/
