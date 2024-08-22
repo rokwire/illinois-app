@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/FlexUI.dart';
 import 'package:neom/service/MobileAccess.dart';
 import 'package:neom/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:neom/ui/home/HomeCustomizeFavoritesPanel.dart';
@@ -315,8 +316,6 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
 
   SettingsContent? _getSettingsValueFromCode(String? code) {
     switch (code) {
-      case "interests":
-        return SettingsContent.interests;
       case "food":
         return SettingsContent.food_filters;
       case "sports":
