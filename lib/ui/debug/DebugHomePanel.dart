@@ -42,7 +42,6 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/debug/DebugCreateInboxMessagePanel.dart';
 import 'package:illinois/ui/debug/DebugInboxUserInfoPanel.dart';
 import 'package:illinois/ui/debug/DebugGuidePanel.dart';
-import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/debug/DebugStylesPanel.dart';
 import 'package:illinois/ui/debug/DebugHttpProxyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -315,16 +314,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
 
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
-                  RoundedButton(
-                    label: "Create Event",
-                    backgroundColor: Styles().colors.background,
-                    fontSize: 16.0,
-                    textColor: Styles().colors.fillColorPrimary,
-                    borderColor: Styles().colors.fillColorPrimary,
-                    onTap: _onCreateEventClicked
-                  ),
-                ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "Create Message",
@@ -787,10 +776,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     else {
       AppAlert.showDialogResult(context, "No token to refresh");
     }
-  }
-
-  void _onCreateEventClicked() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel()));
   }
 
   void _onTapCreateSurvey({Survey? survey}) {

@@ -17,11 +17,9 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
-import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
@@ -182,15 +180,7 @@ extension FavoriteExt on Favorite {
 
 
   void favoriteLaunchDetail(BuildContext context) {
-    if (this is Event) {
-      if ((this as Event).isComposite) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: this as Event)));
-      }
-      else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: this as Event,)));
-      }
-    }
-    else if (this is Event2) {
+    if (this is Event2) {
       Event2 event2 = (this as Event2);
       if (event2.hasGame) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event2.game, event: event2)));
