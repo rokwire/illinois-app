@@ -5,6 +5,8 @@ import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/ext/Explore.dart';
@@ -191,6 +193,13 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
         markers: _targetMarkers ?? const <Marker>{},
         indoorViewEnabled: true,
       //trafficEnabled: true,
+        // This fixes #4306. The gestureRecognizers parameter is needed because of PopScopeFix wrapper in RootPanel,
+        // which uses BackGestureDetector in iOS, that disables scroll, pan and zoom of the map view.
+        gestureRecognizers: <Factory<OneSequenceGestureRecognizer>> {
+          Factory<OneSequenceGestureRecognizer>(
+            () => EagerGestureRecognizer(),
+          ),
+        },
       ),
     );
   }
