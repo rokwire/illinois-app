@@ -1040,6 +1040,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
           setStateIfMounted(() {
             _event2SearchText = event2SearchText;
           });
+          if ((event2SearchText != null) && event2SearchText.isNotEmpty) {
+            Analytics().logSearch(event2SearchText);
+          }
           _initExplores();
         }
       }

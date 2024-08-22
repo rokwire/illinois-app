@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Upgraded outdated Flutter plugins [#4302](https://github.com/rokwire/illinois-app/issues/4302).
 ### Fixed
 - Fixed GoogleMap scrolling and zooming on iOS [#4306](https://github.com/rokwire/illinois-app/issues/4306).
+### Fixed
+- Created search analytics event [#4305](https://github.com/rokwire/illinois-app/issues/4305).
 
 ## [6.1.6] - 2024-08-00
 ### Added
