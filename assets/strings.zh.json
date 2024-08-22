@@ -2906,18 +2906,6 @@
 	"panel.project_settings.button.delete.title": "删除此群组",
 	"panel.project_detail.group.delete.failed.msg": "无法删除此计划。",
 
-	"panel.group.tags.header.title": "群组标签",
-	"panel.group.tags.button.done.title": "完成",
-	"panel.group.tags.list.search.label": "搜寻",
-	"panel.group.tags.list.selected.label": "已选择",
-	"panel.group.tags.list.all.label": "所有标签",
-	"panel.group.tags.search.field.label": "搜寻标签",
-	"panel.group.tags.search.field.hint": "输入您要找的标签",
-	"panel.group.tags.search.cancel.label": "取消",
-	"panel.group.tags.search.cancel.hint": "清除搜寻筛选器",
-	"panel.group.tags.search.button.title": "搜寻",
-	"panel.group.tags.search.button.hint": "筛选标签",
-
 	"panel.group.attributes.attributes.header.title": "群组属性",
 	"panel.group.attributes.attributes.header.description": "选择一个或多个属性来描述此群组。",
 	"panel.group.attributes.filters.header.title": "群组筛选器",

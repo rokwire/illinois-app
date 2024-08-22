@@ -2925,18 +2925,6 @@
     "panel.project_settings.button.delete.title": "Delete this Group",
     "panel.project_detail.group.delete.failed.msg": "Failed to delete project.",
 
-    "panel.group.tags.header.title": "Group Tags",
-    "panel.group.tags.button.done.title": "Done",
-    "panel.group.tags.list.search.label": "SEARCH",
-    "panel.group.tags.list.selected.label": "SELECTED",
-    "panel.group.tags.list.all.label": "ALL TAGS",
-    "panel.group.tags.search.field.label": "Search for tags",
-    "panel.group.tags.search.field.hint": "Type the tag you are looking for",
-    "panel.group.tags.search.cancel.label": "Cancel",
-    "panel.group.tags.search.cancel.hint": "Clear the search filter",
-    "panel.group.tags.search.button.title": "Search",
-    "panel.group.tags.search.button.hint": "Filter tags",
-
     "panel.group.attributes.attributes.header.title": "Group Attributes",
     "panel.group.attributes.attributes.header.description": "Choose at least one attribute to describe this group",
     "panel.group.attributes.filters.header.title": "Group Filters",
