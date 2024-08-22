@@ -23,7 +23,6 @@ import 'package:rokwire_plugin/model/group.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:neom/ui/groups/GroupFindEventPanel.dart';
 import 'package:neom/ui/groups/GroupWidgets.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -259,7 +258,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
 
   void _addEvent({required int stepIndex}) {
     Analytics().logSelect(target: 'Connect event');
-    GroupMembershipStep step = _steps[stepIndex];
+    /* TBD GroupMembershipStep step = _steps[stepIndex];
     if (step.eventIds == null) {
       step.eventIds = <String>[];
     }
@@ -276,7 +275,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
         }
       }
       setState(() {});
-    });
+    }); */
   }
 
   void _removeEvent({int? stepIndex, int? eventIndex}) {

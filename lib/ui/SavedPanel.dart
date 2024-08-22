@@ -17,7 +17,6 @@
 import 'dart:collection';
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:neom/ext/Favorite.dart';
@@ -50,10 +49,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
-import 'package:neom/ui/events/CompositeEventsDetailPanel.dart';
-import 'package:neom/ui/explore/ExploreDetailPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
-import 'package:neom/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -537,11 +533,9 @@ class _SavedItem extends StatelessWidget {
   
   _SavedItem(this.favorite, {Key ? key}) : super(key: key);
 
-  Event? get _favoriteEvent => (favorite is Event) ? (favorite as Event) : null;
-
   @override
   Widget build(BuildContext context) {
-    return  (_favoriteEvent?.isComposite ?? false) ? _buildCompositEventCard(context) : _buildFavoriteCard(context);
+    return  _buildFavoriteCard(context);
   }
 
   Widget _buildFavoriteCard(BuildContext context) {
@@ -604,23 +598,8 @@ class _SavedItem extends StatelessWidget {
         )),);
   }
 
-  Widget _buildCompositEventCard(BuildContext context) {
-      return ExploreCard(explore: favorite as Event, showTopBorder: true, horizontalPadding: 0, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        onTap:() => _onTapCompositeEvent(context));
-  }
-
   void _onTapFavorite(BuildContext context) {
     Analytics().logSelect(target: favorite.favoriteTitle);
     favorite.favoriteLaunchDetail(context);
-  }
-
-  void _onTapCompositeEvent(BuildContext context) {
-    Analytics().logSelect(target: favorite.favoriteTitle);
-    if (_favoriteEvent?.isComposite ?? false) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: _favoriteEvent)));
-    }
-    else {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDetailPanel(explore: _favoriteEvent)));
-    }
   }
 }

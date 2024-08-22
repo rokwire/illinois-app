@@ -567,6 +567,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
     String searchText = _searchTextController.text.trim();
     if (searchText.isNotEmpty) {
       FocusScope.of(context).requestFocus(FocusNode());
+      Analytics().logSearch(searchText);
       _search(searchText);
     }
   }

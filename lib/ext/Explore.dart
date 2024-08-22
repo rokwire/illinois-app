@@ -13,12 +13,10 @@ import 'package:neom/model/wellness/WellnessBuilding.dart';
 import 'package:neom/service/StudentCourses.dart';
 import 'package:neom/ui/academics/StudentCourses.dart';
 import 'package:neom/ui/athletics/AthleticsGameDetailPanel.dart';
-import 'package:neom/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:neom/ui/events2/Event2DetailPanel.dart';
 import 'package:neom/ui/explore/ExploreBuildingDetailPanel.dart';
 import 'package:neom/ui/explore/ExploreDetailPanel.dart';
 import 'package:neom/ui/explore/ExploreDiningDetailPanel.dart';
-import 'package:neom/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:neom/ui/guide/GuideDetailPanel.dart';
 import 'package:neom/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:neom/ui/mtd/MTDStopDeparturesPanel.dart';
@@ -314,18 +312,7 @@ extension ExploreExt on Explore {
 
   void exploreLaunchDetail(BuildContext context, { Core.Position? initialLocationData }) {
     Route? route;
-    if (this is Event) {
-      if ((this as Event).isGameEvent) {
-        route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(gameId: (this as Event).speaker, sportName: (this as Event).registrationLabel,),);
-      }
-      else if ((this as Event).isComposite) {
-        route = CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: this as Event),);
-      }
-      else {
-        route = CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: this as Event, initialLocationData: initialLocationData),);
-      }
-    }
-    else if (this is Event2) {
+    if (this is Event2) {
         Event2 event2 = (this as Event2);
         if (event2.hasGame) {
           route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event2.game));

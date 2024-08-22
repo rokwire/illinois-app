@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/FirebaseMessaging.dart';
 import 'package:neom/ui/groups/GroupMembersPanel.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
@@ -230,6 +231,7 @@ class _GroupMembersSearchState extends State<GroupMembersSearchPanel> implements
   }
 
   void _onTapSearch() {
+    Analytics().logSelect(target: "Search");
     if(!_searchFocus.hasFocus){
       FocusScope.of(context).requestFocus(_searchFocus);
     }
@@ -238,6 +240,7 @@ class _GroupMembersSearchState extends State<GroupMembersSearchPanel> implements
     String? currentSearchTextValue = _searchTextValue;
     if (!(StringUtils.isEmpty(initialSearchTextValue) && StringUtils.isEmpty(currentSearchTextValue))) {
       FocusScope.of(context).unfocus();
+      Analytics().logSearch(currentSearchTextValue ?? '');
       _reloadMembers();
     }
   }

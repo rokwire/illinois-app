@@ -18,7 +18,6 @@ import 'package:flutter/semantics.dart';
 import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Appointments.dart';
 import 'package:neom/service/MTD.dart';
-import 'package:neom/ui/explore/ExploreSearchPanel.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -34,7 +33,6 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:neom/service/Sports.dart';
 import 'package:neom/service/Storage.dart';
-import 'package:neom/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:neom/ui/widgets/Filters.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
@@ -73,26 +71,6 @@ class ExplorePanel extends StatefulWidget with AnalyticsInfo{
   final Group? browseGroup;
 
   ExplorePanel({required this.exploreType, this.initialFilter, this.browseGroup });
-
-  static Future<void> presentDetailPanel(BuildContext context, {String? eventId}) async {
-    List<Event>? events = (eventId != null) ? await Events().loadEventsByIds([eventId]) : null;
-    Event? event = ((events != null) && (0 < events.length)) ? events.first : null;
-    //Explore explore = (eventId != null) ? await Events().getEventById(eventId) : null;
-    //Event event = (explore is Event) ? explore : null;
-    if (event != null) {
-      if (event.isComposite) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: event)));
-      }
-      else if (event.isGameEvent) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-            AthleticsGameDetailPanel(gameId: event.speaker, sportName: event.registrationLabel,)));
-      }
-      else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-          ExploreDetailPanel(explore: event)));
-      }
-    }
-  }
 
   @override
   ExplorePanelState createState() => ExplorePanelState();
@@ -669,23 +647,7 @@ class ExplorePanelState extends State<ExplorePanel>
     return HeaderBar(
       title: _headerBarListTitle(widget.exploreType),
       sortKey: _ExploreSortKey.headerBar,
-      actions: (widget.exploreType == ExploreType.Events) ? <Widget>[_buildSearchHeaderButton()] : null,
     );
-  }
-
-  Widget _buildSearchHeaderButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.search.title', 'Search'), hint: Localization().getStringEx('headerbar.search.hint', ''), button: true, excludeSemantics: true, child:
-      InkWell(onTap: _onTapSearch, child:
-        Padding(padding: EdgeInsets.all(16), child:
-          Styles().images.getImage('search', excludeFromSemantics: true),
-        )
-      )
-    );
-  }
-
-  void _onTapSearch() {
-    Analytics().logSelect(target: "Search");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreSearchPanel(browseGroup: widget.browseGroup, analyticsFeature: widget.analyticsFeature,)));
   }
 
   Widget _buildContent() {
@@ -996,17 +958,7 @@ class ExplorePanelState extends State<ExplorePanel>
   void _onExploreTap(Explore explore) {
     Analytics().logSelect(target: explore.exploreTitle);
 
-    Event? event = (explore is Event) ? explore : null;
-
-    if (event?.isComposite ?? false) {
-      Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: event, browseGroup: widget.browseGroup,)));
-    }
-    else if (event?.isGameEvent ?? false) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-          AthleticsGameDetailPanel(gameId: event!.speaker, sportName: event.registrationLabel,)));
-    }
-    else if (explore is Game) {
+    if (explore is Game) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: explore)));
     }
     else {

@@ -57,7 +57,7 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 flutter_ios_podfile_setup
 
 def applibs
-    pod 'GoogleMaps', '7.2.0'
+#   pod 'GoogleMaps', '7.2.0'
     pod 'ZXingObjC', '3.6.4'
 
 #   pod 'SeosMobileKeysSDK', :path => '../../libs/hid-origo/ios/Debug/SeosMobileKeysSDK.podspec'

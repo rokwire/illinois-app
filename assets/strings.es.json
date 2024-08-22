@@ -1774,7 +1774,6 @@
     "widget.laundry.room.status.offline.text": "Desconectada",
 
     "panel.settings.home.header.settings.label": "Ajustes",
-    "panel.settings.home.settings.sections.interests.label": "Mis Intereses",
     "panel.settings.home.settings.sections.food_filter.label": "Mi Filtro de Comida",
     "panel.settings.home.settings.sections.sports.label": "Mis Equipos Deportivos",
     "panel.settings.home.settings.sections.calendar.label": "Configuración de Mi Calendario",
@@ -2919,18 +2918,6 @@
     "panel.project_settings.membership.button.question.title": "Preguntas de Reclutamiento",
     "panel.project_settings.button.delete.title": "Eliminar este Grupo",
     "panel.project_detail.group.delete.failed.msg": "Error al eliminar el proyecto.",
-
-    "panel.group.tags.header.title": "Etiquetas del Grupo",
-    "panel.group.tags.button.done.title": "Listo",
-    "panel.group.tags.list.search.label": "BUSCAR",
-    "panel.group.tags.list.selected.label": "SELECCIONADO",
-    "panel.group.tags.list.all.label": "TODAS LAS ETIQUETAS",
-    "panel.group.tags.search.field.label": "Buscar las etiquetas",
-    "panel.group.tags.search.field.hint": "escribe la etiqueta que buscas",
-    "panel.group.tags.search.cancel.label": "Cancelar",
-    "panel.group.tags.search.cancel.hint": "limpiar el filtro de búsqueda",
-    "panel.group.tags.search.button.title": "Buscar",
-    "panel.group.tags.search.button.hint": "filtrar etiquetas",
 
     "panel.group.attributes.attributes.header.title": "Atributos del Grupo",
     "panel.group.attributes.attributes.header.description": "Elige uno o más atributos que ayuden a describir este grupo",

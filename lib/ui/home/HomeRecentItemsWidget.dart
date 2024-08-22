@@ -29,7 +29,6 @@ import 'package:neom/service/FlexUI.dart';
 import 'package:neom/service/Storage.dart';
 import 'package:neom/ui/events2/Event2DetailPanel.dart';
 import 'package:neom/ui/explore/ExploreDiningDetailPanel.dart';
-import 'package:neom/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:neom/ui/home/HomePanel.dart';
 import 'package:neom/ui/home/HomeWidgets.dart';
 import 'package:neom/ui/laundry/LaundryRoomDetailPanel.dart';
@@ -39,7 +38,6 @@ import 'package:neom/ui/widgets/LinkButton.dart';
 import 'package:neom/ui/widgets/SemanticsWidgets.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/event.dart';
 import 'package:neom/model/News.dart';
 import 'package:neom/model/RecentItem.dart';
 import 'package:neom/ext/Event2.dart';
@@ -54,7 +52,6 @@ import 'package:neom/service/RecentItems.dart';
 import 'package:neom/service/Guide.dart';
 import 'package:neom/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:neom/ui/athletics/AthleticsNewsArticlePanel.dart';
-import 'package:neom/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:neom/ui/guide/GuideDetailPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -585,10 +582,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
   static Widget _getDetailPanel(RecentItem item) {
     dynamic sourceItem = item.source;
 
-    if (sourceItem is Event) {
-      return sourceItem.isComposite ? CompositeEventsDetailPanel(parentEvent: sourceItem) : ExploreEventDetailPanel(event: sourceItem,);
-    }
-    else if (sourceItem is Event2) {
+    if (sourceItem is Event2) {
       if (sourceItem.hasGame) {
         return AthleticsGameDetailPanel(game: sourceItem.game,);
       } else {

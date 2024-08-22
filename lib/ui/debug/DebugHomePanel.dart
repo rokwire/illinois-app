@@ -42,7 +42,6 @@ import 'package:neom/service/Storage.dart';
 import 'package:neom/ui/debug/DebugCreateInboxMessagePanel.dart';
 import 'package:neom/ui/debug/DebugInboxUserInfoPanel.dart';
 import 'package:neom/ui/debug/DebugGuidePanel.dart';
-import 'package:neom/ui/events/CreateEventPanel.dart';
 import 'package:neom/ui/debug/DebugStylesPanel.dart';
 import 'package:neom/ui/debug/DebugHttpProxyPanel.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
@@ -326,16 +325,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
 
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
-                  RoundedButton(
-                    label: "Create Event",
-                    backgroundColor: Styles().colors.surface,
-                    fontSize: 16.0,
-                    textColor: Styles().colors.fillColorPrimary,
-                    borderColor: Styles().colors.fillColorPrimary,
-                    onTap: _onCreateEventClicked
-                  ),
-                ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "Create Message",
@@ -818,10 +807,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     else {
       AppAlert.showDialogResult(context, "No token to refresh");
     }
-  }
-
-  void _onCreateEventClicked() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel()));
   }
 
   void _onTapCreateSurvey({Survey? survey}) {

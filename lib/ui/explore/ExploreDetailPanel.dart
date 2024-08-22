@@ -24,14 +24,11 @@ import 'package:neom/model/sport/Game.dart';
 import 'package:neom/model/Appointment.dart';
 import 'package:neom/ui/academics/StudentCourses.dart';
 import 'package:neom/ui/athletics/AthleticsGameDetailPanel.dart';
-import 'package:neom/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:neom/ui/explore/ExploreBuildingDetailPanel.dart';
 import 'package:neom/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:neom/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:neom/ui/appointments/AppointmentDetailPanel.dart';
-import 'package:rokwire_plugin/model/event.dart';
 import 'package:neom/ui/explore/ExploreDiningDetailPanel.dart';
-import 'package:neom/ui/explore/ExploreEventDetailPanel.dart';
 
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:neom/model/Dining.dart';
@@ -47,18 +44,7 @@ class ExploreDetailPanel extends StatelessWidget with AnalyticsInfo {
   ExploreDetailPanel({this.explore, this.initialLocationData, this.browseGroup});
 
   static Widget? contentPanel({Explore? explore, Position? initialLocationData, Group? browseGroup}) {
-    if (explore is Event) {
-      if (explore.isGameEvent) {
-        return AthleticsGameDetailPanel(gameId: explore.speaker, sportName: explore.registrationLabel,);
-      }
-      else if (explore.isComposite) {
-        return CompositeEventsDetailPanel(parentEvent: explore);
-      }
-      else {
-        return ExploreEventDetailPanel(event: explore, initialLocationData: initialLocationData, browseGroup: browseGroup);
-      }
-    }
-    else if (explore is Dining) {
+    if (explore is Dining) {
       return ExploreDiningDetailPanel(dining: explore, initialLocationData: initialLocationData);
     }
     else if (explore is LaundryRoom) {

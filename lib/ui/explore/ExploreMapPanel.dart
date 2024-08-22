@@ -1,9 +1,10 @@
 
 import 'dart:collection';
 import 'dart:math' as math;
-import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -451,6 +452,13 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         markers: _targetMarkers ?? const <Marker>{},
         indoorViewEnabled: true,
       //trafficEnabled: true,
+        // This fixes #4306. The gestureRecognizers parameter is needed because of PopScopeFix wrapper in RootPanel,
+        // which uses BackGestureDetector in iOS, that disables scroll, pan and zoom of the map view.
+        gestureRecognizers: <Factory<OneSequenceGestureRecognizer>> {
+          Factory<OneSequenceGestureRecognizer>(
+            () => EagerGestureRecognizer(),
+          ),
+        },
       ),
     );
   }
@@ -1042,6 +1050,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
           setStateIfMounted(() {
             _event2SearchText = event2SearchText;
           });
+          if ((event2SearchText != null) && event2SearchText.isNotEmpty) {
+            Analytics().logSearch(event2SearchText);
+          }
           _initExplores();
         }
       }
