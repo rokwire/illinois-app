@@ -110,7 +110,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyProfileWhoAreYouNotification               = "$notifyBase.profile.who_are_you";
   static const String notifyProfileLoginNotification                        = "$notifyBase.profile.login";
   static const String notifySettingsSectionsNotification               = "$notifyBase.settings.sections";  //TBD deprecate and delete. Use profile.login instead
-  static const String notifySettingsInterestsNotification              = "$notifyBase.settings.interests";
   static const String notifySettingsFoodFiltersNotification            = "$notifyBase.settings.food_filters";
   static const String notifySettingsSportsNotification                 = "$notifyBase.settings.sports";
   static const String notifySettingsFavoritesNotification              = "$notifyBase.settings.favorites";
@@ -259,7 +258,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeProfileWhoAreYou = 'profile.who_are_you';
   static const String payloadTypeProfileLogin = 'profile.login';
   static const String payloadTypeSettingsSections = 'settings.sections';
-  static const String payloadTypeSettingsInterests = 'settings.interests';
   static const String payloadTypeSettingsFoodFilters = 'settings.food_filters';
   static const String payloadTypeSettingsSports = 'settings.sports';
   static const String payloadTypeSettingsFavorites = 'settings.favorites';
@@ -587,12 +585,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
     else if (type == payloadTypeSettingsSections) { //TBD deprecate. Use payloadTypeProfileLogin instead
       NotificationService().notify(notifySettingsSectionsNotification, data);
-    }
-    else if (type == payloadTypeSettingsInterests) {
-      NotificationService().notify(notifySettingsInterestsNotification, data);
-    }
-    else if (type == payloadTypeSettingsInterests) {
-      NotificationService().notify(notifySettingsInterestsNotification, data);
     }
     else if (type == payloadTypeSettingsFoodFilters) {
       NotificationService().notify(notifySettingsFoodFiltersNotification, data);
