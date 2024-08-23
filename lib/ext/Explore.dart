@@ -13,12 +13,10 @@ import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
-import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
@@ -314,18 +312,7 @@ extension ExploreExt on Explore {
 
   void exploreLaunchDetail(BuildContext context, { Core.Position? initialLocationData }) {
     Route? route;
-    if (this is Event) {
-      if ((this as Event).isGameEvent) {
-        route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(gameId: (this as Event).speaker, sportName: (this as Event).registrationLabel,),);
-      }
-      else if ((this as Event).isComposite) {
-        route = CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: this as Event),);
-      }
-      else {
-        route = CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: this as Event, initialLocationData: initialLocationData),);
-      }
-    }
-    else if (this is Event2) {
+    if (this is Event2) {
         Event2 event2 = (this as Event2);
         if (event2.hasGame) {
           route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event2.game));

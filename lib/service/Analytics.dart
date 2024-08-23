@@ -163,6 +163,11 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAlertTextName                   = "text";
   static const String   LogAlertSelectionName              = "selection";
 
+  // Search Event
+  // {  "event" : { "name":"search", "page":"...", "term":"..." }}
+  static const String   LogSearchEventName                 = "search";
+  static const String   LogSearchTermName                  = "term";
+
   // Http Response Event
   // "event" : { "name":"http_response", "http_request_url":"...", "http_request_method":"...", "http_response_code":... }
   static const String   LogHttpResponseEventName           = "http_response";
@@ -843,6 +848,22 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       LogEventName          : LogAlertEventName,
       LogAlertTextName      : text,
       LogAlertSelectionName : selection,
+    };
+
+    // Add optional attribute, if applied
+    if (attributes != null) {
+      event.addAll(attributes);
+    }
+
+    // Log the event
+    logEvent(event);
+  }
+
+  void logSearch(String term, { Map<String, dynamic>? attributes }) {
+    // Build event data
+    Map<String, dynamic> event = {
+      LogEventName          : LogSearchEventName,
+      LogSearchTermName     : term,
     };
 
     // Add optional attribute, if applied

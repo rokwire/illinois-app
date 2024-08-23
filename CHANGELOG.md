@@ -5,11 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [6.1.7] - 2024-08-22
 ### Changed
 - Upgraded Fluuter to 3.24.0 [#4302](https://github.com/rokwire/illinois-app/issues/4302).
 - Upgraded outdated Flutter plugins [#4302](https://github.com/rokwire/illinois-app/issues/4302).
+### Fixed
+- Fixed GoogleMap scrolling and zooming on iOS [#4306](https://github.com/rokwire/illinois-app/issues/4306).
+### Added
+- Created search analytics event [#4305](https://github.com/rokwire/illinois-app/issues/4305).
 
-## [6.1.6] - 2024-08-00
+## [6.1.6] - 2024-08-08
 ### Added
 - Added My Stored Data in Profile [#4264](https://github.com/rokwire/illinois-app/issues/4264).
 
