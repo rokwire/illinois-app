@@ -143,7 +143,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
   @override
   Future<bool> refreshNetworkAuthTokenIfNeeded(BaseResponse? response, dynamic token) async {
     if ((response?.statusCode == 401) && (token is Auth2Token) && (Auth2().token == token)) {
-      return (await Auth2().refreshToken(token) != null);
+      return (await Auth2().refreshToken(token: token) != null);
     }
     return false;
   }
