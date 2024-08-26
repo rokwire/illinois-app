@@ -1455,7 +1455,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   static String? _exploreItemName(ExploreMapType? exploreItem) {
     switch (exploreItem) {
-      case ExploreMapType.Events2:             return Localization().getStringEx('panel.explore.button.events2.title', 'All Events');
+      case ExploreMapType.Events2:             return Localization().getStringEx('panel.explore.button.events2.title', 'Events');
       case ExploreMapType.Dining:              return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining');
       case ExploreMapType.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.title', 'Laundry');
       case ExploreMapType.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.title', 'Campus Buildings');
