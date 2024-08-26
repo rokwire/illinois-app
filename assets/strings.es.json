@@ -1732,6 +1732,7 @@
     "panel.laundry_detail.out_of_service.label": "FUERA DE SERVICIO",
     "panel.laundry_detail.in_use.label": "En Uso",
     "panel.laundry_detail.in_use.with_minutes.label": "En uso con %d minutos restantes",
+    "panel.laundry_detail.unknown.label": "Unknown",
 
     "panel.laundry.request_issue.header.title": "Lavadero",
     "panel.laundry.request_issue.machine_id.enter.label": "Ingresa la ID de la máquina",
