@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.1.8] - 2024-08-28
+### Changed
+- Acknowledged unknown laundry room appliance status [#4311](https://github.com/rokwire/illinois-app/issues/4311).
+- Hide Laundries from Map panel [#4312](https://github.com/rokwire/illinois-app/issues/4312).
+- Rename "All Events" to "Events" in Map panel [#4312](https://github.com/rokwire/illinois-app/issues/4312).
+
 ## [6.1.7] - 2024-08-22
 ### Changed
 - Upgraded Fluuter to 3.24.0 [#4302](https://github.com/rokwire/illinois-app/issues/4302).

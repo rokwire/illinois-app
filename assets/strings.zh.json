@@ -1010,7 +1010,7 @@
 	"panel.explore.header.appointments.title":"MyMcKinley 预约",
 	"panel.explore.button.events.title":"活动",
 	"panel.explore.button.events.hint":"",
-	"panel.explore.button.events2.title":"All Events",
+	"panel.explore.button.events2.title":"活动",
 	"panel.explore.button.events2.hint":"",
 	"panel.explore.button.dining.title":"校园餐饮",
 	"panel.explore.button.dining.hint":"",
@@ -1723,6 +1723,7 @@
 	"panel.laundry_detail.out_of_service.label": "中止服務",
 	"panel.laundry_detail.in_use.label": "正在使用",
 	"panel.laundry_detail.in_use.with_minutes.label": "正在使用中, 剩餘 %d 分鐘",
+	"panel.laundry_detail.unknown.label": "Unknown",
 
 	"panel.laundry.request_issue.header.title": "洗衣店",
 	"panel.laundry.request_issue.machine_id.enter.label": "請輸入機器ID",
