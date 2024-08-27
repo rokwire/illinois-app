@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [6.1.7] - 2024-08-22
 ### Changed
-- Upgraded Fluuter to 3.24.0 [#4302](https://github.com/rokwire/illinois-app/issues/4302).
+- Upgraded Flutter to 3.24.0 [#4302](https://github.com/rokwire/illinois-app/issues/4302).
 - Upgraded outdated Flutter plugins [#4302](https://github.com/rokwire/illinois-app/issues/4302).
 ### Fixed
 - Fixed GoogleMap scrolling and zooming on iOS [#4306](https://github.com/rokwire/illinois-app/issues/4306).
