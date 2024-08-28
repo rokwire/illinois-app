@@ -360,7 +360,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(
               Localization().getStringEx(
-                  'panel.assistant.label.feedback.negative.prompt.title', 'Can you briefly explain the issue(s) with the response?'),
+                  'panel.assistant.label.feedback.negative.prompt.title', 'Please provide additional information on the issue(s).'),
               style: Styles().textStyles.getTextStyle('widget.message.regular.fat')),
           Padding(
               padding: EdgeInsets.only(top: 10),
@@ -412,7 +412,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
           Assistant().addMessage(Message(
               content: Localization().getStringEx(
                   'panel.assistant.label.feedback.disclaimer.prompt.title',
-                  'Thank you for providing feedback!'),
+                  'Thanks for your feedback!'),
               user: false, feedbackResponseType: FeedbackResponseType.positive));
           _shouldScrollToBottom = true;
           _shouldSemanticFocusToLastBubble = true;
@@ -425,7 +425,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
           Assistant().addMessage(Message(
               content: Localization().getStringEx(
                   'panel.assistant.label.feedback.disclaimer.prompt.title',
-                  'Thank you for providing feedback!'),
+                  'Thanks for your feedback!'),
               user: false, feedbackResponseType: FeedbackResponseType.negative));
           _feedbackMessage = message;
           bad = true;
