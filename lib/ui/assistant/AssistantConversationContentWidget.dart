@@ -248,8 +248,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                                     TextSpan(
                                                         text: answer,
                                                         style: message.user
-                                                            ? Styles().textStyles.getTextStyle('widget.dialog.message.medium.thin')
-                                                            : Styles().textStyles.getTextStyle('widget.message.regular'))
+                                                            ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular')
+                                                            : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'))
                                                   ])),
                                           _buildNegativeFeedbackFormWidget(message),
                                           Visibility(
@@ -361,7 +361,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
           Text(
               Localization().getStringEx(
                   'panel.assistant.label.feedback.negative.prompt.title', 'Please provide additional information on the issue(s).'),
-              style: Styles().textStyles.getTextStyle('widget.message.regular.fat')),
+              style: Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.negative.description.regular.fat')),
           Padding(
               padding: EdgeInsets.only(top: 10),
               child: Container(
