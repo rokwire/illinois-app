@@ -293,7 +293,7 @@ String? roomStatusToString(LaundryRoomStatus? status) {
 
 // LaundryApplianceStatus
 
-enum LaundryApplianceStatus { available, in_use, out_of_service }
+enum LaundryApplianceStatus { available, in_use, out_of_service, unknown }
 
 LaundryApplianceStatus? applianceStatusFromString(String? applianceStatusString) {
   if (StringUtils.isEmpty(applianceStatusString)) {
@@ -306,6 +306,8 @@ LaundryApplianceStatus? applianceStatusFromString(String? applianceStatusString)
       return LaundryApplianceStatus.in_use;
     case 'out_of_service':
       return LaundryApplianceStatus.out_of_service;
+    case 'unknown':
+      return LaundryApplianceStatus.unknown;
     default:
       return null;
   }
