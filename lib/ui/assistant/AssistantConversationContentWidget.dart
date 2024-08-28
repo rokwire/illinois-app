@@ -372,7 +372,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                       child: TextField(
                           controller: _negativeFeedbackController,
                           focusNode: _negativeFeedbackFocusNode,
-                          maxLines: 5,
+                          maxLines: 2,
                           textCapitalization: TextCapitalization.sentences,
                           decoration: InputDecoration(border: InputBorder.none),
                           style: Styles().textStyles.getTextStyle('widget.title.regular'))))),
