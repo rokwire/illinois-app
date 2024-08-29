@@ -45,6 +45,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
 
   Position? _currentPosition;
   bool _processing = false;
+  bool _refreshing = false;
 
   @override
   void initState() {
@@ -95,24 +96,23 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx('panel.mtd_stops.home.header_bar.title', 'Bus Stops'), leading: RootHeaderBarLeading.Back,),
-      body: _buildPage(),
+      body: _buildScaffoldContent(),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
-  Widget _buildPage() {
+  Widget _buildScaffoldContent() {
     return Column(children: [
       _buildContentTypeDropdownButton(),
       Expanded(child:
         Stack(children: [
           Semantics( container: true,
             child: Column(children: [
-            Expanded(child: 
-              _processing ? _buildLoading() :
-                RefreshIndicator(onRefresh: _onPullToRefresh, child:
+            Expanded(child:
+              _processing ? _buildLoading() : RefreshIndicator(onRefresh: _onPullToRefresh, child:
                 _buildContent()
-                ),
+              ),
             ),
           ],)),
           _buildContentTypesDropdownContainer()
@@ -223,7 +223,10 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   // Content Widget
 
   Widget _buildContent() {
-    if (_stops == null) {
+    if (_refreshing) {
+      return Container();
+    }
+    else if (_stops == null) {
       return _buildStatus(_errorDisplayStatus);
     }
     else if (_stops!.isEmpty) {
@@ -257,13 +260,15 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
 
   Widget _buildStatus(String status) {
     double screenHeight = MediaQuery.of(context).size.height;
-    return Padding(padding: EdgeInsets.only(left: 32, right: 32, top: screenHeight / 5), child:
+    return SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
+      Padding(padding: EdgeInsets.only(left: 32, right: 32, top: screenHeight / 5), child:
         Row(children: [
           Expanded(child:
             Text(status ,style:
               Styles().textStyles.getTextStyle("widget.message.large"), textAlign: TextAlign.center,),
           ),
         ],)
+      ),
     );
   }
 
@@ -304,7 +309,13 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   }
 
   Future<void> _onPullToRefresh() async {
+    setStateIfMounted((){
+      _refreshing = true;
+    });
     await MTD().refreshStops();
+    setStateIfMounted((){
+      _refreshing = false;
+    });
   }
 
   List<MTDStop>? get _contentList {
