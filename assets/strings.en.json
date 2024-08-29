@@ -1015,7 +1015,7 @@
     "panel.explore.header.appointments.title":"MyMcKinley In-Person Appointments",
     "panel.explore.button.events.title":"Events",
     "panel.explore.button.events.hint":"",
-    "panel.explore.button.events2.title":"All Events",
+    "panel.explore.button.events2.title":"Events",
     "panel.explore.button.events2.hint":"",
     "panel.explore.button.dining.title":"Residence Hall Dining",
     "panel.explore.button.dining.hint":"",
@@ -1744,6 +1744,7 @@
     "panel.laundry_detail.out_of_service.label": "OUT OF SERVICE",
     "panel.laundry_detail.in_use.label": "In Use",
     "panel.laundry_detail.in_use.with_minutes.label": "In use with %d minutes remaining",
+    "panel.laundry_detail.unknown.label": "Unknown",
 
     "panel.laundry.request_issue.header.title": "Laundry",
     "panel.laundry.request_issue.machine_id.enter.label": "Please enter the Machine ID",
