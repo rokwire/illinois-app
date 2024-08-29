@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [6.0.38] - 2024-08-29
+### Fixed
+- Fixed MTD Bus Stops loading and processing [#4307](https://github.com/rokwire/illinois-app/issues/4307).
+
 ## [6.0.37] - 2024-08-28
 ### Fixed
 - Fixed GoogleMap scrolling and zooming on iOS [#4306](https://github.com/rokwire/illinois-app/issues/4306).
