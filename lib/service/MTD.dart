@@ -69,7 +69,7 @@ class MTD with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config()]);
+    return Set.from([Config(), Auth2()]);
   }
 
   // NotificationsListener
