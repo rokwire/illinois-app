@@ -1808,12 +1808,19 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   Future<void> _refreshExplores() async {
     Future<List<Explore>?> exploreTask = _loadExplores();
     List<Explore>? explores = await (_exploreTask = exploreTask);
-    if (mounted && (exploreTask == _exploreTask) && !DeepCollectionEquality().equals(_explores, explores)) {
-      await _buildMapContentData(explores, pinnedExplore: _pinnedMapExplore, updateCamera: false);
-      if (mounted && (exploreTask == _exploreTask)) {
+    if (mounted && (exploreTask == _exploreTask)) {
+      if (!DeepCollectionEquality().equals(_explores, explores)) {
+        await _buildMapContentData(explores, pinnedExplore: _pinnedMapExplore, updateCamera: false);
+        if (mounted && (exploreTask == _exploreTask)) {
+          setState(() {
+            _explores = explores;
+            _exploreProgress = false;
+            _exploreTask = null;
+          });
+        }
+      }
+      else {
         setState(() {
-          _explores = explores;
-          _exploreProgress = false;
           _exploreTask = null;
         });
       }
