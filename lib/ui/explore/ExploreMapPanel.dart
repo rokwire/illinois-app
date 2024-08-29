@@ -1878,8 +1878,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     if (MTD().stops == null) {
       await MTD().refreshStops();
     }
-    List<Explore> result = <Explore>[];
-    _collectBusStops(result, stops: MTD().stops?.stops);
+    List<Explore>? result;
+    if (MTD().stops != null) {
+      _collectBusStops(result = <Explore>[], stops: MTD().stops?.stops);
+    }
     return result;
   }
 
@@ -1941,28 +1943,29 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       _showMessagePopup(_failedContentMessage);
     }
     else if (_selectedMapType == ExploreMapType.Appointments) {
-      if (Storage().appointmentsCanDisplay != true) {
-        _showMessagePopup(Localization().getStringEx('panel.explore.hide.appointments.msg', 'There is nothing to display as you have chosen not to display any past or future appointments.'));
-      } else if (CollectionUtils.isEmpty(_explores)) {
+      if (CollectionUtils.isEmpty(_explores)) {
         _showMessagePopup(Localization().getStringEx('panel.explore.missing.appointments.msg','You currently have no upcoming in-person appointments linked within {{app_title}} app.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
+      }
+      else if (Storage().appointmentsCanDisplay != true) {
+        _showMessagePopup(Localization().getStringEx('panel.explore.hide.appointments.msg', 'There is nothing to display as you have chosen not to display any past or future appointments.'));
       }
     }
     else if (_selectedMapType == ExploreMapType.MTDStops) {
-      if (Storage().showMtdStopsMapInstructions != false) {
+      if (CollectionUtils.isEmpty(_explores)) {
+        _showMessagePopup(_emptyContentMessage);
+      }
+      else if (Storage().showMtdStopsMapInstructions != false) {
         _showOptionalMessagePopup(Localization().getStringEx("panel.explore.instructions.mtd_stops.msg", "Please tap a bus stop on the map to get bus schedules. Tap the star to save the bus stop as a favorite."), showPopupStorageKey: Storage().showMtdStopsMapInstructionsKey,
         );
       }
-      else if (CollectionUtils.isEmpty(_explores)) {
-        _showMessagePopup(Localization().getStringEx('panel.explore.missing.mtd_destinations.msg', 'You currently have no saved destinations. Please tap the location on the map that will be your destination. You can tap the Map to get Directions or Save the destination as a favorite.'),);
-      }
     }
     else if (_selectedMapType == ExploreMapType.MTDDestinations) {
-      if (Storage().showMtdDestinationsMapInstructions != false) {
+      if (CollectionUtils.isEmpty(_explores)) {
+        _showMessagePopup(Localization().getStringEx('panel.explore.missing.mtd_destinations.msg', 'You currently have no saved destinations. Please tap the location on the map that will be your destination. You can tap the Map to get Directions or Save the destination as a favorite.'),);
+      }
+      else if (Storage().showMtdDestinationsMapInstructions != false) {
         _showOptionalMessagePopup(Localization().getStringEx("panel.explore.instructions.mtd_destinations.msg", "Please tap a location on the map that will be your destination. Tap the star to save the destination as a favorite.",), showPopupStorageKey: Storage().showMtdDestinationsMapInstructionsKey
         );
-      }
-      else if (CollectionUtils.isEmpty(_explores)) {
-        _showMessagePopup(_emptyContentMessage);
       }
     }
     else if (CollectionUtils.isEmpty(_explores)) {
