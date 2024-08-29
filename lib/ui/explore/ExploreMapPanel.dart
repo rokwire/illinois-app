@@ -245,7 +245,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       applyStateIfMounted(() {
         _studentCourseTerms = StudentCourses().terms;
       });
-      if ((_selectedMapType == ExploreMapType.StudentCourse) && mounted) {
+      if ((_selectedMapType == ExploreMapType.StudentCourse) && (_exploreTask == null) && mounted) {
         _refreshExplores();
       }
     }
@@ -253,23 +253,23 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       applyStateIfMounted(() {
         _updateSelectedTermId();
       });
-      if ((_selectedMapType == ExploreMapType.StudentCourse) && mounted) {
+      if ((_selectedMapType == ExploreMapType.StudentCourse)  && (_exploreTask == null) && mounted) {
         _refreshExplores();
       }
     }
     else if (name == StudentCourses.notifyCachedCoursesChanged) {
       String? termId = param;
-      if ((_selectedMapType == ExploreMapType.StudentCourse) && mounted && ((termId == null) || (StudentCourses().displayTermId == termId))) {
+      if ((_selectedMapType == ExploreMapType.StudentCourse) && (_exploreTask == null) && mounted && ((termId == null) || (StudentCourses().displayTermId == termId))) {
         _refreshExplores();
       }
     }
     else if (name == MTD.notifyStopsChanged) {
-      if ((_selectedMapType == ExploreMapType.MTDStops) && mounted) {
+      if ((_selectedMapType == ExploreMapType.MTDStops) && (_exploreTask == null) && mounted) {
         _refreshExplores();
       }
     }
     else if (name == Appointments.notifyUpcomingAppointmentsChanged) {
-      if ((_selectedMapType == ExploreMapType.Appointments) && mounted) {
+      if ((_selectedMapType == ExploreMapType.Appointments) && (_exploreTask == null) && mounted) {
         _refreshExplores();
       }
     }
@@ -293,8 +293,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       }
     }
     else if (name == RootPanel.notifyTabChanged) {
-      if ((param == RootTab.Maps) && mounted &&
-          (CollectionUtils.isEmpty(_exploreTypes) || (_selectedMapType == ExploreMapType.Events2) || (_selectedMapType == ExploreMapType.Appointments)) // Do not refresh for other ExploreMapType types as they are rarely changed or fire notification for that
+      if ((param == RootTab.Maps) && (_exploreTask == null) && mounted &&
+          (CollectionUtils.isEmpty(_exploreTypes) || CollectionUtils.isEmpty(_explores) || (_selectedMapType == ExploreMapType.Events2) || (_selectedMapType == ExploreMapType.Appointments)) // Do not refresh for other ExploreMapType types as they are rarely changed or fire notification for that
       ) {
         _refreshExplores();
       }
@@ -1867,7 +1867,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     return await Wellness().loadMentalHealthBuildings();
   }
 
-  List<Explore>? _loadMTDStops() {
+  Future<List<Explore>?> _loadMTDStops() async {
+    if (MTD().stops == null) {
+      await MTD().refreshStops();
+    }
     List<Explore> result = <Explore>[];
     _collectBusStops(result, stops: MTD().stops?.stops);
     return result;
