@@ -70,7 +70,7 @@ class MTD with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config()]);
+    return Set.from([Config(), Auth2()]);
   }
 
   // NotificationsListener
@@ -147,7 +147,7 @@ class MTD with Service implements NotificationsListener {
   Future<void> _updateStops() async {
     String? stopsJsonString = await _loadStopsStringFromNet(changesetId: _stops?.changesetId);
     MTDStops? stops = MTDStops.fromJson(await JsonUtils.decodeMapAsync(stopsJsonString));
-    if ((stops != null) && (stops.changesetId != _stops?.changesetId)) {
+    if ((stops != null) && ((_stops == null) || ((stops.changesetId != null) && (stops.changesetId != _stops?.changesetId)))) {
       _stops = stops;
       _saveStopsStringToCache(stopsJsonString);
       NotificationService().notify(notifyStopsChanged);
