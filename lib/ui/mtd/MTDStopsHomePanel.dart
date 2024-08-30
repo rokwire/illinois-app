@@ -14,6 +14,7 @@ import 'package:neom/ui/mtd/MTDStopSearchPanel.dart';
 import 'package:neom/ui/mtd/MTDWidgets.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/ui/widgets/RibbonButton.dart';
+import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -43,7 +44,8 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   Set<String> _expanded = <String>{};
 
   Position? _currentPosition;
-  bool _processingLocation = false;
+  bool _processing = false;
+  bool _refreshing = false;
 
   @override
   void initState() {
@@ -59,18 +61,8 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     else {
       _selectedContentType = CollectionUtils.isNotEmpty(Auth2().account?.prefs?.getFavorites(MTDStop.favoriteKeyName)) ? MTDStopsContentType.my : MTDStopsContentType.all;
     }
-    
-    _processingLocation = true;
-    LocationServices().location.then((Position? position) {
-      _currentPosition = position;
-      if (mounted) {
-        setState(() {
-          _processingLocation = false;
-          _stops = _contentList;
-        });
-      }
-    });
 
+    _updateStops();
     super.initState();
   }
 
@@ -84,7 +76,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   @override
   void onNotification(String name, dynamic param) {
     if (name == MTD.notifyStopsChanged) {
-      if (mounted) {
+      if (mounted && !_processing) {
         setState(() {
           _stops = _contentList;
         });
@@ -104,24 +96,23 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx('panel.mtd_stops.home.header_bar.title', 'Bus Stops'), leading: RootHeaderBarLeading.Back,),
-      body: _buildPage(),
+      body: _buildScaffoldContent(),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
-  Widget _buildPage() {
+  Widget _buildScaffoldContent() {
     return Column(children: [
       _buildContentTypeDropdownButton(),
       Expanded(child:
         Stack(children: [
           Semantics( container: true,
             child: Column(children: [
-            Expanded(child: 
-              _processingLocation ? _buildLoading() :
-                RefreshIndicator(onRefresh: _onPullToRefresh, child:
+            Expanded(child:
+              _processing ? _buildLoading() : RefreshIndicator(onRefresh: _onPullToRefresh, child:
                 _buildContent()
-                ),
+              ),
             ),
           ],)),
           _buildContentTypesDropdownContainer()
@@ -232,7 +223,10 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   // Content Widget
 
   Widget _buildContent() {
-    if (_stops == null) {
+    if (_refreshing) {
+      return Container();
+    }
+    else if (_stops == null) {
       return _buildStatus(_errorDisplayStatus);
     }
     else if (_stops!.isEmpty) {
@@ -266,13 +260,15 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
 
   Widget _buildStatus(String status) {
     double screenHeight = MediaQuery.of(context).size.height;
-    return Padding(padding: EdgeInsets.only(left: 32, right: 32, top: screenHeight / 5), child:
+    return SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
+      Padding(padding: EdgeInsets.only(left: 32, right: 32, top: screenHeight / 5), child:
         Row(children: [
           Expanded(child:
             Text(status ,style:
               Styles().textStyles.getTextStyle("widget.message.large"), textAlign: TextAlign.center,),
           ),
         ],)
+      ),
     );
   }
 
@@ -294,9 +290,32 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
 
   // Content Data
 
+  Future<void> _updateStops() async {
+    setStateIfMounted(() {
+      _processing = true;
+    });
+    _currentPosition = await LocationServices().location;
+    if (mounted) {
+      if (MTD().stops == null) {
+        await MTD().refreshStops();
+      }
+      if (mounted) {
+        setState(() {
+          _processing = false;
+          _stops = _contentList;
+        });
+      }
+    }
+  }
 
   Future<void> _onPullToRefresh() async {
+    setStateIfMounted((){
+      _refreshing = true;
+    });
     await MTD().refreshStops();
+    setStateIfMounted((){
+      _refreshing = false;
+    });
   }
 
   List<MTDStop>? get _contentList {
@@ -343,15 +362,8 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   }
 
   void _onLocationServicesStatusChanged(LocationServicesStatus? status) {
-    if (FlexUI().isLocationServicesAvailable && !_processingLocation) {
-      LocationServices().location.then((Position? position) {
-        _currentPosition = position;
-        if (mounted) {
-          setState(() {
-            _stops = _contentList;
-          });
-        }
-      });
+    if (FlexUI().isLocationServicesAvailable && !_processing) {
+      _updateStops();
     }
   }
 }

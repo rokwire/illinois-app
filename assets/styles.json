@@ -603,6 +603,11 @@
     "widget.tab_bar.title.selected": {"font_family": "bold", "size": 12.0, "color": "fillColorSecondary"},
     "widget.tab_bar.title.not_selected": {"font_family": "bold", "size": 12.0, "color": "mediumGray"},
 
+    "widget.assistant.bubble.feedback.disclaimer.description.thin": {"font_family": "regular", "size": 12.0, "color": "fillColorPrimary", "height": 1.12},
+    "widget.assistant.bubble.message.user.regular": {"font_family": "regular", "size": 16.0, "color": "white", "height": 1.12},
+    "widget.assistant.bubble.feedback.disclaimer.main.regular": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimary", "height": 1.12},
+    "widget.assistant.bubble.feedback.negative.description.regular.fat": {"font_family": "bold", "size": 16.0, "color": "fillColorPrimary", "height": 1.12},
+
     "panel.event_schedule.title": {"extends": "widget.title.large.extra_fat"},
     "panel.event_schedule.category": {"extends": "widget.detail.regular.extra_fat"},
     "panel.event_schedule.map.description": {"font_family": "medium", "size": 16.0, "color": "blackTransparent038"},

@@ -52,14 +52,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pre-demo issues [#2](https://github.com/rokmetro/neom-app/issues/2)
 
 ## Unreleased - Illinois
-### Fixed
-- Android: crash on startup [#4320](https://github.com/rokwire/illinois-app/issues/4320).
 
 ## [6.1.8] - 2024-08-28
 ### Changed
 - Acknowledged unknown laundry room appliance status [#4311](https://github.com/rokwire/illinois-app/issues/4311).
 - Hide Laundries from Map panel [#4312](https://github.com/rokwire/illinois-app/issues/4312).
 - Rename "All Events" to "Events" in Map panel [#4312](https://github.com/rokwire/illinois-app/issues/4312).
+- Assistant Feedback UI [#4322](https://github.com/rokwire/illinois-app/issues/4322).
 
 ## [6.1.7] - 2024-08-22
 ### Changed
@@ -98,6 +97,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [6.1.0] - 2024-07-22
 ### Added
 - Created Public Surveys UI / round 0 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
+
+## [6.0.38] - 2024-08-29
+### Fixed
+- Fixed MTD Bus Stops loading and processing [#4307](https://github.com/rokwire/illinois-app/issues/4307).
+
+## [6.0.37] - 2024-08-28
+### Fixed
+- Android: crash on startup [#4320](https://github.com/rokwire/illinois-app/issues/4320).
 
 ## [6.0.36] - 2024-08-15
 ### Changed

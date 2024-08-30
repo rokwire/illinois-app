@@ -209,6 +209,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   Widget _buildChatBubble(Message message) {
+    bool isNegativeFeedbackFormVisible = (message.feedbackResponseType == FeedbackResponseType.negative);
     EdgeInsets bubblePadding = message.user ? EdgeInsets.only(left: 100.0) : EdgeInsets.only(right: 100);
     String answer = message.isAnswerUnknown
         ? Localization()
@@ -245,36 +246,41 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                             borderRadius: BorderRadius.circular(16.0),
                                             border: Border.all(color: Styles().colors.fillColorPrimary))
                                         : null,
-                                    child: Padding(
-                                        padding: const EdgeInsets.all(16.0),
-                                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                          message.example
-                                              ? Text(
-                                                  Localization().getStringEx('panel.assistant.label.example.eg.title', "eg. ") +
-                                                      message.content,
-                                                  style: message.user
-                                                      ? Styles().textStyles.getTextStyle('widget.title.regular')
-                                                      : Styles().textStyles.getTextStyle('widget.title.light.regular'))
-                                              : RichText(
-                                                  textAlign: TextAlign.start,
-                                                  text: TextSpan(children: [
-                                                    WidgetSpan(
-                                                        child: Visibility(
-                                                            visible: (message.isNegativeFeedbackMessage == true),
-                                                            child: Padding(
-                                                                padding: EdgeInsets.only(right: 6),
-                                                                child: Icon(Icons.thumb_down, size: 18, color: Styles().colors.white)))),
-                                                    TextSpan(
-                                                        text: answer,
-                                                        style: message.user
-                                                            ? Styles().textStyles.getTextStyle('widget.dialog.message.medium.thin')
-                                                            : Styles().textStyles.getTextStyle('widget.message.regular'))
-                                                  ])),
-                                          _buildNegativeFeedbackFormWidget(message),
-                                          Visibility(
-                                              visible: (message.feedbackResponseType == FeedbackResponseType.positive),
-                                              child: _buildFeedbackResponseDisclaimer())
-                                        ]))))))))
+                                    child: Stack(children: [
+                                      Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                            message.example
+                                                ? Text(
+                                                Localization().getStringEx('panel.assistant.label.example.eg.title', "eg. ") +
+                                                    message.content,
+                                                style: message.user
+                                                    ? Styles().textStyles.getTextStyle('widget.title.regular')
+                                                    : Styles().textStyles.getTextStyle('widget.title.light.regular'))
+                                                : RichText(
+                                                textAlign: TextAlign.start,
+                                                text: TextSpan(children: [
+                                                  WidgetSpan(
+                                                      child: Visibility(
+                                                          visible: (message.isNegativeFeedbackMessage == true),
+                                                          child: Padding(
+                                                              padding: EdgeInsets.only(right: 6),
+                                                              child: Icon(Icons.thumb_down, size: 18, color: Styles().colors.white)))),
+                                                  TextSpan(
+                                                      text: answer,
+                                                      style: message.user
+                                                          ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular')
+                                                          : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'))
+                                                ])),
+                                            Visibility(visible: isNegativeFeedbackFormVisible, child: _buildNegativeFeedbackFormWidget(message)),
+                                            Visibility(
+                                                visible: (message.feedbackResponseType == FeedbackResponseType.positive),
+                                                child: _buildFeedbackResponseDisclaimer())
+                                          ])),
+                                          Visibility(visible: isNegativeFeedbackFormVisible, child: Align(alignment: Alignment.centerRight, child: Padding(padding: EdgeInsets.only(left: 16, top: 8, right: 8, bottom: 16), child:
+                                            GestureDetector(onTap: () => _onTapCloseNegativeFeedbackForm(message), child: Styles().images.getImage('close-circle', excludeFromSemantics: true))
+                                          )))
+                                    ])))))))
               ])),
       _buildFeedbackAndSourcesExpandedWidget(message)
     ]);
@@ -373,39 +379,36 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   Widget _buildNegativeFeedbackFormWidget(Message message) {
-    bool isNegativeFeedbackForm = (message.feedbackResponseType == FeedbackResponseType.negative);
-    return Visibility(
-        visible: isNegativeFeedbackForm,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
-              Localization().getStringEx(
-                  'panel.assistant.label.feedback.negative.prompt.title', 'Can you briefly explain the issue(s) with the response?'),
-              style: Styles().textStyles.getTextStyle('widget.message.regular.fat')),
-          Padding(
-              padding: EdgeInsets.only(top: 10),
-              child: Container(
-                  decoration:
-                      BoxDecoration(border: Border.all(color: Styles().colors.surfaceAccent), borderRadius: BorderRadius.circular(12.0)),
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 16.0),
-                      child: TextField(
-                          controller: _negativeFeedbackController,
-                          focusNode: _negativeFeedbackFocusNode,
-                          maxLines: 5,
-                          textCapitalization: TextCapitalization.sentences,
-                          decoration: InputDecoration(border: InputBorder.none),
-                          style: Styles().textStyles.getTextStyle('widget.title.regular'))))),
-          Padding(
-              padding: EdgeInsets.only(top: 15),
-              child: RoundedButton(
-                  label: Localization().getStringEx('panel.assistant.button.submit.title', 'Submit'),
-                  contentWeight: 0.4,
-                  padding: EdgeInsets.symmetric(vertical: 8),
-                  fontSize: 16,
-                  onTap: () => _submitNegativeFeedbackMessage(
-                      systemMessage: message, negativeFeedbackExplanation: _negativeFeedbackController.text))),
-          _buildFeedbackResponseDisclaimer()
-        ]));
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(
+          Localization().getStringEx(
+              'panel.assistant.label.feedback.negative.prompt.title', 'Please provide additional information on the issue(s).'),
+          style: Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.negative.description.regular.fat')),
+      Padding(
+          padding: EdgeInsets.only(top: 10),
+          child: Container(
+              decoration:
+              BoxDecoration(border: Border.all(color: Styles().colors.surfaceAccent), borderRadius: BorderRadius.circular(12.0)),
+              child: Padding(
+                  padding: EdgeInsets.only(left: 16.0),
+                  child: TextField(
+                      controller: _negativeFeedbackController,
+                      focusNode: _negativeFeedbackFocusNode,
+                      maxLines: 2,
+                      textCapitalization: TextCapitalization.sentences,
+                      decoration: InputDecoration(border: InputBorder.none),
+                      style: Styles().textStyles.getTextStyle('widget.title.regular'))))),
+      Padding(
+          padding: EdgeInsets.only(top: 15),
+          child: RoundedButton(
+              label: Localization().getStringEx('panel.assistant.button.submit.title', 'Submit'),
+              contentWeight: 0.4,
+              padding: EdgeInsets.symmetric(vertical: 8),
+              fontSize: 16,
+              onTap: () => _submitNegativeFeedbackMessage(
+                  systemMessage: message, negativeFeedbackExplanation: _negativeFeedbackController.text))),
+      _buildFeedbackResponseDisclaimer()
+    ]);
   }
 
   Widget _buildFeedbackResponseDisclaimer() {
@@ -431,7 +434,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
           Assistant().addMessage(Message(
               content: Localization().getStringEx(
                   'panel.assistant.label.feedback.disclaimer.prompt.title',
-                  'Thank you for providing feedback!'),
+                  'Thanks for your feedback!'),
               user: false, feedbackResponseType: FeedbackResponseType.positive));
           _shouldScrollToBottom = true;
           _shouldSemanticFocusToLastBubble = true;
@@ -444,7 +447,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
           Assistant().addMessage(Message(
               content: Localization().getStringEx(
                   'panel.assistant.label.feedback.disclaimer.prompt.title',
-                  'Thank you for providing feedback!'),
+                  'Thanks for your feedback!'),
               user: false, feedbackResponseType: FeedbackResponseType.negative));
           _feedbackMessage = message;
           bad = true;
@@ -918,6 +921,14 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   void _onTapSourceLink(String source) {
     UrlUtils.launchExternal(source);
+  }
+
+  void _onTapCloseNegativeFeedbackForm(Message message) {
+    Assistant().removeMessage(message);
+    setStateIfMounted(() {
+      _negativeFeedbackController.text = '';
+      _feedbackMessage = null;
+    });
   }
 
   void _startListening() {
