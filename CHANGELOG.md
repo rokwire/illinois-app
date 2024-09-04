@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Do not preload radio station streams on startup [#4326](https://github.com/rokwire/illinois-app/issues/4326).
+### Changed
+- Enable plying radio station streams on iOS while the app is in background [#4326](https://github.com/rokwire/illinois-app/issues/4326).
 
 ## [6.0.38] - 2024-08-29
 ### Fixed
