@@ -96,6 +96,7 @@
 	<string>Cookies will be used to enhance your experience and improve our marketing efforts.</string>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>audio</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>

@@ -98,6 +98,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Created Public Surveys UI / round 0 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
 
+## [6.0.39] - 2024-09-04
+### Fixed
+- Do not preload radio station streams on startup [#4326](https://github.com/rokwire/illinois-app/issues/4326).
+### Changed
+- Enable plying radio station streams on iOS while the app is in background [#4326](https://github.com/rokwire/illinois-app/issues/4326).
+- WellnessToDoItemDetail hide Location and WorkDays fields [#3265](https://github.com/rokwire/illinois-app/issues/3265).
+
 ## [6.0.38] - 2024-08-29
 ### Fixed
 - Fixed MTD Bus Stops loading and processing [#4307](https://github.com/rokwire/illinois-app/issues/4307).

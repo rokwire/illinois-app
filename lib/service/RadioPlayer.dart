@@ -1,4 +1,5 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:neom/service/Config.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:just_audio/just_audio.dart';
@@ -10,8 +11,8 @@ enum RadioStation { will, willfm, willhd, wpgufm, }
 
 class RadioPlayer with Service implements NotificationsListener {
 
-  static const String notifyInitializeStatusChanged  = "edu.illinois.rokwire.wpgufmradio.initialize.status.changed";
-  static const String notifyPlayerStateChanged       = "edu.illinois.rokwire.wpgufmradio.player.state.changed";
+  static const String notifyCreateStatusChanged  = "edu.illinois.rokwire.wpgufmradio.create.status.changed";
+  static const String notifyPlayerStateChanged   = "edu.illinois.rokwire.wpgufmradio.player.state.changed";
 
   static String? radioStationUrl(RadioStation radioStation) {
     switch (radioStation) {
@@ -24,8 +25,7 @@ class RadioPlayer with Service implements NotificationsListener {
 
   AudioSession? _audioSession;
   Map<RadioStation, AudioPlayer> _audioPlayers = <RadioStation, AudioPlayer>{};
-  Map<RadioStation, PlayerState> _playerStates = <RadioStation, PlayerState>{};
-  bool _initalizing = false;
+  bool _isCreating = false;
 
   // Singleton Factory
 
@@ -42,15 +42,15 @@ class RadioPlayer with Service implements NotificationsListener {
   }
 
   @override
-  void destroyService() {
-    NotificationService().unsubscribe(this);
-    _destroy();
-  }
-
-  @override
   Future<void> initService() async {
     await super.initService();
     _init(); // initialize asynchronously
+  }
+
+  @override
+  void destroyService() {
+    NotificationService().unsubscribe(this);
+    _destroy();
   }
 
   @override
@@ -69,7 +69,7 @@ class RadioPlayer with Service implements NotificationsListener {
 
   // Implementation
 
-  bool get isInitializing => _initalizing;
+  bool get isCreating => _isCreating;
 
   bool get isPlaying {
     for (AudioPlayer audioPlayer in _audioPlayers.values) {
@@ -89,10 +89,9 @@ class RadioPlayer with Service implements NotificationsListener {
   }
 
   bool isStationEnabled(RadioStation radioStation) => StringUtils.isNotEmpty(radioStationUrl(radioStation));
-  bool isStationInitialized(RadioStation radioStation) => (_audioSession != null) && (_audioPlayers[radioStation] != null);
+  bool isStationCreated(RadioStation radioStation) => (_audioSession != null) && (_audioPlayers[radioStation] != null);
   bool isStationPlaying(RadioStation radioStation) => (_audioPlayers[radioStation]?.playing == true);
-
-  PlayerState? stationPlayerState(RadioStation radioStation) => _playerStates[radioStation];
+  PlayerState? stationState(RadioStation radioStation) => _audioPlayers[radioStation]?.playerState;
 
   void playStation(RadioStation radioStation) {
     AudioPlayer? audioPlayer = _audioPlayers[radioStation];
@@ -134,11 +133,11 @@ class RadioPlayer with Service implements NotificationsListener {
   // Accessories
 
   Future<void> _init() async {
-    _initalizing = true;
-    _audioSession = await _initAudioSession();
-    _audioPlayers = await _initAudioPlayers();
-    _initalizing = false;
-    NotificationService().notify(notifyInitializeStatusChanged);
+    _isCreating = true;
+    _audioSession = await _createAudioSession();
+    _audioPlayers = await _createAudioPlayers();
+    _isCreating = false;
+    NotificationService().notify(notifyCreateStatusChanged);
   }
 
   void _destroy() {
@@ -146,18 +145,18 @@ class RadioPlayer with Service implements NotificationsListener {
     _audioPlayers.clear();
   }
 
-  Future<AudioSession> _initAudioSession() async {
+  Future<AudioSession> _createAudioSession() async {
     AudioSession session = await AudioSession.instance;
     session.configure(const AudioSessionConfiguration.speech());
     return session;
   }
 
-  Future<Map<RadioStation, AudioPlayer>> _initAudioPlayers() async {
+  Future<Map<RadioStation, AudioPlayer>> _createAudioPlayers() async {
     Map<RadioStation, AudioPlayer> result = <RadioStation, AudioPlayer>{};
 
     List<Future<AudioPlayer?>> futures = <Future<AudioPlayer?>>[];
     for (RadioStation radioStation in RadioStation.values) {
-      futures.add(_initAudioPlayer(radioStation));
+      futures.add(_createAudioPlayer(radioStation));
     }
 
     List<AudioPlayer?> players = await Future.wait(futures);
@@ -172,7 +171,7 @@ class RadioPlayer with Service implements NotificationsListener {
     return result;
   }
 
-  Future<AudioPlayer?> _initAudioPlayer(RadioStation radioStation) async {
+  Future<AudioPlayer?> _createAudioPlayer(RadioStation radioStation) async {
     String? radioUrl = radioStationUrl(radioStation);
     if (radioUrl != null) {
       AudioPlayer player = AudioPlayer();
@@ -182,7 +181,7 @@ class RadioPlayer with Service implements NotificationsListener {
           _onPlayerState(radioStation, state);
         });
 
-        await player.setAudioSource(AudioSource.uri(Uri.parse(radioUrl)));
+        await player.setAudioSource(AudioSource.uri(Uri.parse(radioUrl)), preload: false);
 
         return player;
       } catch (e) {
@@ -194,25 +193,24 @@ class RadioPlayer with Service implements NotificationsListener {
   }
 
   void _onPlayerState(RadioStation radioStation, PlayerState state) {
-    _playerStates[radioStation] = state;
+    debugPrint("Radio ${radioStation} ${state.processingState} ${state.playing}");
     NotificationService().notify(notifyPlayerStateChanged, radioStation);
   }
 
   void _onConfigChnaged() {
     for (RadioStation radioStation in RadioStation.values) {
-      if (isStationEnabled(radioStation) && !isStationInitialized(radioStation)) {
-        _initAudioPlayer(radioStation).then((AudioPlayer? stationPlayer) {
+      if (isStationEnabled(radioStation) && !isStationCreated(radioStation)) {
+        _createAudioPlayer(radioStation).then((AudioPlayer? stationPlayer) {
           if (stationPlayer != null) {
             _audioPlayers[radioStation] = stationPlayer;
-            NotificationService().notify(notifyInitializeStatusChanged, radioStation);
+            NotificationService().notify(notifyCreateStatusChanged, radioStation);
           }
         });
       }
-      else if (!isStationEnabled(radioStation) && isStationInitialized(radioStation)) {
+      else if (!isStationEnabled(radioStation) && isStationCreated(radioStation)) {
         _audioPlayers[radioStation]?.dispose();
         _audioPlayers.remove(radioStation);
-        _playerStates.remove(radioStation);
-        NotificationService().notify(notifyInitializeStatusChanged, radioStation);
+        NotificationService().notify(notifyCreateStatusChanged, radioStation);
      }
     }
   }

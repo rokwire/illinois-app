@@ -5,6 +5,7 @@ import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/RadioPlayer.dart';
 import 'package:neom/ui/home/HomePanel.dart';
 import 'package:neom/ui/home/HomeWidgets.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -107,7 +108,7 @@ class _RadioControlState extends State<_RadioControl> implements NotificationsLi
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      RadioPlayer.notifyInitializeStatusChanged,
+      RadioPlayer.notifyCreateStatusChanged,
       RadioPlayer.notifyPlayerStateChanged,
     ]);
 
@@ -129,18 +130,50 @@ class _RadioControlState extends State<_RadioControl> implements NotificationsLi
 
   Widget _buildContentCard() {
     String? buttonTitle, iconKey;
-    if (RadioPlayer().isInitialized) {
-      buttonTitle = RadioPlayer().isStationPlaying(widget.radioStation) ? Localization().getStringEx('widget.home.radio.button.pause.title', 'Pause') :  Localization().getStringEx('widget.home.radio.button.play.title', 'Tune In');
-      iconKey = RadioPlayer().isStationPlaying(widget.radioStation) ? 'pause-circle-large' : 'play-circle-large';
-    }
-    else if (RadioPlayer().isInitializing) {
-      buttonTitle = Localization().getStringEx('widget.home.radio.button.initalize.title', 'Initializing');
-    }
-    else if (!RadioPlayer().isStationEnabled(widget.radioStation)) {
+    bool? progress;
+    if (!RadioPlayer().isStationEnabled(widget.radioStation)) {
       buttonTitle = Localization().getStringEx('widget.home.radio.button.not_available.title', 'Not Available');
     }
+    else if (RadioPlayer().isCreating) {
+      buttonTitle = Localization().getStringEx('widget.home.radio.button.initalize.title', 'Initializing');
+      progress = true;
+    }
+    else if (!RadioPlayer().isStationCreated(widget.radioStation)) {
+      buttonTitle = Localization().getStringEx('widget.home.radio.button.fail.title', 'Initialization Failed');
+    }
     else {
-      buttonTitle = Localization().getStringEx('widget.home.radio.button.fail.title', 'Initialization failed');
+      PlayerState? stationState = RadioPlayer().stationState(widget.radioStation);
+      switch (stationState?.processingState) {
+        case ProcessingState.idle:
+        case ProcessingState.ready:
+          buttonTitle = (stationState?.playing == true) ?
+            Localization().getStringEx('widget.home.radio.button.pause.title', 'Pause') :
+            Localization().getStringEx('widget.home.radio.button.play.title', 'Tune In');
+          iconKey = (stationState?.playing == true) ? 'pause-circle-large' : 'play-circle-large';
+          break;
+
+        case ProcessingState.loading:
+          buttonTitle = Localization().getStringEx('widget.home.radio.button.loading.title', 'Loading');
+          progress = true;
+          break;
+
+        case ProcessingState.buffering:
+          buttonTitle = Localization().getStringEx('widget.home.radio.button.buffering.title', 'Buffering');
+          progress = true;
+          break;
+
+          buttonTitle = Localization().getStringEx('widget.home.radio.button.play.title', 'Tune In');
+          iconKey = 'play-circle-large';
+          break;
+
+        case ProcessingState.completed:
+          buttonTitle = Localization().getStringEx('widget.home.radio.button.finished.title', 'Finished');
+          break;
+
+        default:
+          buttonTitle = Localization().getStringEx('widget.home.radio.button.unknown.title', 'Unknown');
+          break;
+      }
     }
 
     return GestureDetector(onTap: _onTapPlayPause, child:
@@ -169,14 +202,21 @@ class _RadioControlState extends State<_RadioControl> implements NotificationsLi
                           ),
                         ),
                       ),
-                      (iconKey != null) ? Semantics(button: true,
+                      if (iconKey != null)
+                        Semantics(button: true,
                           excludeSemantics: true,
                           label: buttonTitle,
                           hint: Localization().getStringEx('widget.home.radio.button.add_radio.hint', ''),
                           child:  IconButton(color: Styles().colors.fillColorPrimary,
                             icon: Styles().images.getImage(iconKey, excludeFromSemantics: true) ?? Container(),
                             onPressed: _onTapPlayPause)
-                      ) : Container(),
+                        ),
+                      if (progress == true)
+                        Padding(padding: const EdgeInsets.all(12), child:
+                          SizedBox(width: 28, height: 28, child:
+                            CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+                          ),
+                        ),
                     ]),
                   ),
                 ),
@@ -199,8 +239,8 @@ class _RadioControlState extends State<_RadioControl> implements NotificationsLi
 
   @override
   void onNotification(String name, dynamic param) {
-    if ((name == RadioPlayer.notifyInitializeStatusChanged) ||
-        (name == RadioPlayer.notifyPlayerStateChanged)) {
+    if (((name == RadioPlayer.notifyCreateStatusChanged) && (param == widget.radioStation)) ||
+        ((name == RadioPlayer.notifyPlayerStateChanged) && (param == widget.radioStation))) {
       if (mounted) {
         setState(() {});
       }

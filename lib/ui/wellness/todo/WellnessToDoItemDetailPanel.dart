@@ -456,7 +456,8 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   }
 
   Widget _buildWorkDaysContainer() {
-    return Padding(
+    return _hideWorkDays ? Container() :
+      Padding(
         padding: EdgeInsets.only(top: 17),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
@@ -508,7 +509,8 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   }
 
   Widget _buildLocationContainer() {
-    return Padding(
+    return _hideLocation ? Container() :
+      Padding(
         padding: EdgeInsets.only(top: 18),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
@@ -1084,6 +1086,10 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     }
     return stringList;
   }
+
+  bool get _hideLocation => true; //TBD remove field if we are not going to show it anymore
+
+  bool get _hideWorkDays => true; //TBD remove field if we are not going to show it anymore
 
   // Notifications Listener
 
