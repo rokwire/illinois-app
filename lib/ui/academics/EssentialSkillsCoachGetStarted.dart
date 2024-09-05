@@ -75,7 +75,7 @@ class _EssentialSkillsCoachGetStartedState extends State<EssentialSkillsCoachGet
       padding: EdgeInsets.only(top: 32, bottom: 32),
       child: Padding(padding: EdgeInsets.only(left: 24, right: 8), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Text(Localization().getStringEx('panel.essential_skills_coach.get_started.take_evaluation_header', 'Take the Essential Skills Self-Evaluation'), style: Styles().textStyles.getTextStyle('panel.essential_skills_coach.get_started.header'), textAlign: TextAlign.left,),
-        Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.time.description', '5 Minutes'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.time.description'), textAlign: TextAlign.left,),
+        Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.time.description', '10 Minutes'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.time.description'), textAlign: TextAlign.left,),
         Padding(padding: EdgeInsets.only(top: 24), child: _buildDescription()),
       ]),),
       decoration: BoxDecoration(

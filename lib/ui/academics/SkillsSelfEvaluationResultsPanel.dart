@@ -64,7 +64,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RootHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results.header.title', 'Skills Self-Evaluation'), leading: RootHeaderBarLeading.Back,),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results.header.title', 'Skills Self-Evaluation & Career Explorer'), leading: RootHeaderBarLeading.Back,),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child: SingleChildScrollView(
         child: SectionSlantHeader(
           headerWidget: _buildHeader(),
@@ -193,6 +193,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
 
             return Padding(padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
               child: Card(
+                color: Styles().colors.white,
                 child: InkWell(
                   onTap: () => _showScoreDescription(section),
                   child: Padding(padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16), child: Row(children: [

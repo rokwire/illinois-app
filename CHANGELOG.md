@@ -51,6 +51,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Created Public Surveys UI / round 0 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
 
+## [6.0.40] - 2024-09-05
+### Changed
+- Skill Self-Evaluation UI enhancements [#4331](https://github.com/rokwire/illinois-app/issues/4331).
+
 ## [6.0.39] - 2024-09-04
 ### Fixed
 - Do not preload radio station streams on startup [#4326](https://github.com/rokwire/illinois-app/issues/4326).
