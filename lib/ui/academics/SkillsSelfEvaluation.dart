@@ -20,6 +20,7 @@ import 'package:illinois/ui/SyrveyPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationInfoPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -117,7 +118,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
       padding: EdgeInsets.only(top: 32, bottom: 32),
       child: Padding(padding: EdgeInsets.only(left: 24, right: 8), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Flexible(child: Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.section.title', 'Skills Self Evaluation'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.header'), textAlign: TextAlign.left,)),
+          Flexible(child: Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.section.title', 'Skills Self-Evaluation & Career Explorer'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.header'), textAlign: TextAlign.left,)),
           IconButton(
             icon: Styles().images.getImage('more-white', excludeFromSemantics: true) ?? Container(),
             tooltip: Localization().getStringEx('panel.skills_self_evaluation.button.more.hint', 'Show more'),
@@ -125,7 +126,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
             padding: EdgeInsets.zero,
           ),
         ]),
-        Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.time.description', '5 Minutes'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.time.description'), textAlign: TextAlign.left,),
+        Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.time.description', '10 Minutes'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.time.description'), textAlign: TextAlign.left,),
         Padding(padding: EdgeInsets.only(top: 24), child: _buildDescription()),
         Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
           label: Localization().getStringEx("panel.skills_self_evaluation.get_started.button.label", 'Get Started'),
@@ -247,7 +248,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   void _onTapStartEvaluation() {
     Future? result = AccessDialog.show(context: context, resource: 'academics.skills_self_evaluation');
     if (Config().bessiSurveyID != null && result == null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _gotoResults, offlineWidget: _buildOfflineWidget(), tabBar: uiuc.TabBar(),)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _gotoResults, offlineWidget: _buildOfflineWidget(), tabBar: uiuc.TabBar(), headerBar: HeaderBar(title: Localization().getStringEx( "panel.skills_self_evaluation.survey.title", "Skills Self-Evaluation & Career Explorer",)),)));
     }
   }
 
