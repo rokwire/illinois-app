@@ -475,7 +475,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       case AcademicsContent.student_courses:
         return Localization().getStringEx('panel.academics.section.student_courses.label', 'My Courses');
       case AcademicsContent.skills_self_evaluation:
-        return Localization().getStringEx('panel.academics.section.skills_self_evaluation.label', 'Skills Self-Evaluation');
+        return Localization().getStringEx('panel.academics.section.skills_self_evaluation.label', 'Skills Self-Evaluation & Career Explorer');
       case AcademicsContent.essential_skills_coach:
         return Localization().getStringEx('panel.academics.section.essential_skills_coach.label', 'Essential Skills Coach');
       case AcademicsContent.todo_list:
