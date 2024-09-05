@@ -2,9 +2,10 @@
 import 'dart:collection';
 import 'dart:io';
 import 'dart:math' as math;
-import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -246,7 +247,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       applyStateIfMounted(() {
         _studentCourseTerms = StudentCourses().terms;
       });
-      if ((_selectedMapType == ExploreMapType.StudentCourse) && mounted) {
+      if ((_selectedMapType == ExploreMapType.StudentCourse) && (_exploreTask == null) && mounted) {
         _refreshExplores();
       }
     }
@@ -254,23 +255,23 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       applyStateIfMounted(() {
         _updateSelectedTermId();
       });
-      if ((_selectedMapType == ExploreMapType.StudentCourse) && mounted) {
+      if ((_selectedMapType == ExploreMapType.StudentCourse)  && (_exploreTask == null) && mounted) {
         _refreshExplores();
       }
     }
     else if (name == StudentCourses.notifyCachedCoursesChanged) {
       String? termId = param;
-      if ((_selectedMapType == ExploreMapType.StudentCourse) && mounted && ((termId == null) || (StudentCourses().displayTermId == termId))) {
+      if ((_selectedMapType == ExploreMapType.StudentCourse) && (_exploreTask == null) && mounted && ((termId == null) || (StudentCourses().displayTermId == termId))) {
         _refreshExplores();
       }
     }
     else if (name == MTD.notifyStopsChanged) {
-      if ((_selectedMapType == ExploreMapType.MTDStops) && mounted) {
+      if ((_selectedMapType == ExploreMapType.MTDStops) && (_exploreTask == null) && mounted) {
         _refreshExplores();
       }
     }
     else if (name == Appointments.notifyUpcomingAppointmentsChanged) {
-      if ((_selectedMapType == ExploreMapType.Appointments) && mounted) {
+      if ((_selectedMapType == ExploreMapType.Appointments) && (_exploreTask == null) && mounted) {
         _refreshExplores();
       }
     }
@@ -294,8 +295,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       }
     }
     else if (name == RootPanel.notifyTabChanged) {
-      if ((param == RootTab.Maps) && mounted &&
-          (CollectionUtils.isEmpty(_exploreTypes) || (_selectedMapType == ExploreMapType.Events2) || (_selectedMapType == ExploreMapType.Appointments)) // Do not refresh for other ExploreMapType types as they are rarely changed or fire notification for that
+      if ((param == RootTab.Maps) && (_exploreTask == null) && mounted &&
+          (CollectionUtils.isEmpty(_exploreTypes) || CollectionUtils.isEmpty(_explores) || (_selectedMapType == ExploreMapType.Events2) || (_selectedMapType == ExploreMapType.Appointments)) // Do not refresh for other ExploreMapType types as they are rarely changed or fire notification for that
       ) {
         _refreshExplores();
       }
@@ -448,6 +449,13 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         markers: _targetMarkers ?? const <Marker>{},
         indoorViewEnabled: true,
       //trafficEnabled: true,
+        // This fixes #4306. The gestureRecognizers parameter is needed because of PopScopeFix wrapper in RootPanel,
+        // which uses BackGestureDetector in iOS, that disables scroll, pan and zoom of the map view.
+        gestureRecognizers: <Factory<OneSequenceGestureRecognizer>> {
+          Factory<OneSequenceGestureRecognizer>(
+            () => EagerGestureRecognizer(),
+          ),
+        },
       ),
     );
   }
@@ -1467,7 +1475,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   static String? _exploreItemName(ExploreMapType? exploreItem) {
     switch (exploreItem) {
-      case ExploreMapType.Events2:             return Localization().getStringEx('panel.explore.button.events2.title', 'All Events');
+      case ExploreMapType.Events2:             return Localization().getStringEx('panel.explore.button.events2.title', 'Events');
       case ExploreMapType.Dining:              return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining');
       case ExploreMapType.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.title', 'Laundry');
       case ExploreMapType.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.title', 'Campus Buildings');
@@ -1820,12 +1828,19 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   Future<void> _refreshExplores() async {
     Future<List<Explore>?> exploreTask = _loadExplores();
     List<Explore>? explores = await (_exploreTask = exploreTask);
-    if (mounted && (exploreTask == _exploreTask) && !DeepCollectionEquality().equals(_explores, explores)) {
-      await _buildMapContentData(explores, pinnedExplore: _pinnedMapExplore, updateCamera: false);
-      if (mounted && (exploreTask == _exploreTask)) {
+    if (mounted && (exploreTask == _exploreTask)) {
+      if (!DeepCollectionEquality().equals(_explores, explores)) {
+        await _buildMapContentData(explores, pinnedExplore: _pinnedMapExplore, updateCamera: false);
+        if (mounted && (exploreTask == _exploreTask)) {
+          setState(() {
+            _explores = explores;
+            _exploreProgress = false;
+            _exploreTask = null;
+          });
+        }
+      }
+      else {
         setState(() {
-          _explores = explores;
-          _exploreProgress = false;
           _exploreTask = null;
         });
       }
@@ -1879,9 +1894,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     return await Wellness().loadMentalHealthBuildings();
   }
 
-  List<Explore>? _loadMTDStops() {
-    List<Explore> result = <Explore>[];
-    _collectBusStops(result, stops: MTD().stops?.stops);
+  Future<List<Explore>?> _loadMTDStops() async {
+    if (MTD().stops == null) {
+      await MTD().refreshStops();
+    }
+    List<Explore>? result;
+    if (MTD().stops != null) {
+      _collectBusStops(result = <Explore>[], stops: MTD().stops?.stops);
+    }
     return result;
   }
 
@@ -1943,28 +1963,29 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       _showMessagePopup(_failedContentMessage);
     }
     else if (_selectedMapType == ExploreMapType.Appointments) {
-      if (Storage().appointmentsCanDisplay != true) {
-        _showMessagePopup(Localization().getStringEx('panel.explore.hide.appointments.msg', 'There is nothing to display as you have chosen not to display any past or future appointments.'));
-      } else if (CollectionUtils.isEmpty(_explores)) {
+      if (CollectionUtils.isEmpty(_explores)) {
         _showMessagePopup(Localization().getStringEx('panel.explore.missing.appointments.msg','You currently have no upcoming in-person appointments linked within {{app_title}} app.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
+      }
+      else if (Storage().appointmentsCanDisplay != true) {
+        _showMessagePopup(Localization().getStringEx('panel.explore.hide.appointments.msg', 'There is nothing to display as you have chosen not to display any past or future appointments.'));
       }
     }
     else if (_selectedMapType == ExploreMapType.MTDStops) {
-      if (Storage().showMtdStopsMapInstructions != false) {
+      if (CollectionUtils.isEmpty(_explores)) {
+        _showMessagePopup(_emptyContentMessage);
+      }
+      else if (Storage().showMtdStopsMapInstructions != false) {
         _showOptionalMessagePopup(Localization().getStringEx("panel.explore.instructions.mtd_stops.msg", "Please tap a bus stop on the map to get bus schedules. Tap the star to save the bus stop as a favorite."), showPopupStorageKey: Storage().showMtdStopsMapInstructionsKey,
         );
       }
-      else if (CollectionUtils.isEmpty(_explores)) {
-        _showMessagePopup(Localization().getStringEx('panel.explore.missing.mtd_destinations.msg', 'You currently have no saved destinations. Please tap the location on the map that will be your destination. You can tap the Map to get Directions or Save the destination as a favorite.'),);
-      }
     }
     else if (_selectedMapType == ExploreMapType.MTDDestinations) {
-      if (Storage().showMtdDestinationsMapInstructions != false) {
+      if (CollectionUtils.isEmpty(_explores)) {
+        _showMessagePopup(Localization().getStringEx('panel.explore.missing.mtd_destinations.msg', 'You currently have no saved destinations. Please tap the location on the map that will be your destination. You can tap the Map to get Directions or Save the destination as a favorite.'),);
+      }
+      else if (Storage().showMtdDestinationsMapInstructions != false) {
         _showOptionalMessagePopup(Localization().getStringEx("panel.explore.instructions.mtd_destinations.msg", "Please tap a location on the map that will be your destination. Tap the star to save the destination as a favorite.",), showPopupStorageKey: Storage().showMtdDestinationsMapInstructionsKey
         );
-      }
-      else if (CollectionUtils.isEmpty(_explores)) {
-        _showMessagePopup(_emptyContentMessage);
       }
     }
     else if (CollectionUtils.isEmpty(_explores)) {

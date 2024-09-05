@@ -5,6 +5,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [6.0.39] - 2024-09-04
+### Fixed
+- Do not preload radio station streams on startup [#4326](https://github.com/rokwire/illinois-app/issues/4326).
+### Changed
+- Enable plying radio station streams on iOS while the app is in background [#4326](https://github.com/rokwire/illinois-app/issues/4326).
+- WellnessToDoItemDetail hide Location and WorkDays fields [#3265](https://github.com/rokwire/illinois-app/issues/3265).
+
+## [6.0.38] - 2024-08-29
+### Fixed
+- Fixed MTD Bus Stops loading and processing [#4307](https://github.com/rokwire/illinois-app/issues/4307).
+
+## [6.0.37] - 2024-08-28
+### Fixed
+- Fixed GoogleMap scrolling and zooming on iOS [#4306](https://github.com/rokwire/illinois-app/issues/4306).
+### Changed
+- Acknowledged unknown laundry room appliance status [#4311](https://github.com/rokwire/illinois-app/issues/4311).
+- Hide Laundries from Map panel [#4312](https://github.com/rokwire/illinois-app/issues/4312).
+- Rename "All Events" to "Events" in Map panel [#4312](https://github.com/rokwire/illinois-app/issues/4312).
+- Assistant Feedback UI [#4322](https://github.com/rokwire/illinois-app/issues/4322).
+
+## [6.0.36] - 2024-08-15
+### Changed
+- Hide entire section content in Event2Card when sub-events fail to load or if they are empty [#4283](https://github.com/rokwire/illinois-app/issues/4283).
+### Fixed
+- Fixed navigation in MTD Bus Pass when bus pass load fails [#4297](https://github.com/rokwire/illinois-app/issues/4297).
 
 ## [6.0.35] - 2024-08-14
 ### Changed

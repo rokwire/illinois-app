@@ -346,14 +346,19 @@ class _LaundryRoomApplianceItem extends StatelessWidget {
     switch (appliance.status) {
       case LaundryApplianceStatus.available:
         return Localization().getStringEx('panel.laundry_detail.available.label', 'Available');
-      case LaundryApplianceStatus.out_of_service:
-        return Localization().getStringEx('panel.laundry_detail.out_of_service.label', 'OUT OF SERVICE');
+
       case LaundryApplianceStatus.in_use:
         int? timeRemaining = appliance.timeRemainingInMins;
         return (timeRemaining != null)
-            ? sprintf(Localization().getStringEx('panel.laundry_detail.in_use.with_minutes.label', 'In Use with %d minutes remaining'),
-                [timeRemaining])
+            ? sprintf(Localization().getStringEx('panel.laundry_detail.in_use.with_minutes.label', 'In Use with %d minutes remaining'), [timeRemaining])
             : Localization().getStringEx('panel.laundry_detail.in_use.label', 'In Use');
+
+      case LaundryApplianceStatus.out_of_service:
+        return Localization().getStringEx('panel.laundry_detail.out_of_service.label', 'OUT OF SERVICE');
+
+      case LaundryApplianceStatus.unknown:
+        return Localization().getStringEx('panel.laundry_detail.unknown.label', 'Unknown');
+
       default:
         return null;
     }
