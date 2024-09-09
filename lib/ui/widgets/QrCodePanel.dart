@@ -73,6 +73,16 @@ class QrCodePanel extends StatefulWidget { //TBD localize
     description: Localization().getStringEx('panel.qr_code.group.description.label', 'Invite others to join this group by sharing a link or the QR code after saving it to your photo library.'),
   );
 
+  factory QrCodePanel.skillsSelfEvaluation({Key? key}) => QrCodePanel(
+    key: key,
+    deepLinkUrl: 'TBD:_implement',//TBD: DD - implement
+    saveFileName: 'skills self-evaluation',
+    saveWatermarkText: 'Skills Self-Evaluation',
+    saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
+    title: Localization().getStringEx('panel.qr_code.skills_self-evaluation.title', 'Share this feature'),
+    description: Localization().getStringEx('panel.qr_code.skills_self-evaluation.description.label', 'Invite others to view this feature by sharing a link or the QR code after saving it to your photo library.'),
+  );
+
   @override
   State<StatefulWidget> createState() => _QrCodePanelState();
 }
