@@ -71,7 +71,7 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
 
   @override
   Widget build(BuildContext context) =>
-      PopScopeFix(onBack: _onHeaderBarBack, child: _buildScaffoldContent());
+    PopScopeFix(onBack: _onHeaderBarBack, child: _buildScaffoldContent());
 
   Widget _buildScaffoldContent() =>
       Scaffold(
@@ -85,13 +85,10 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
       );
 
   Widget _buildPanelContent() =>
-      SingleChildScrollView(scrollDirection: Axis.vertical, controller: _scrollController, child:
+    SingleChildScrollView(scrollDirection: Axis.vertical, controller: _scrollController, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Container(color: Styles().colors.white, child:
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           _buildSearchBar(),
-          _buildCommandBar(),
-        ]),
         ),
         _buildResultContent()
       ],),
@@ -148,41 +145,6 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
       ),
       ),
       );
-
-  Widget _buildCommandBar() {
-    return StringUtils.isNotEmpty(_searchText) ?  Padding(padding: EdgeInsets.only(top: 8), child:
-    Column(children: [
-      _buildContentDescription(),
-    ],)
-    ) : Container();
-  }
-
-
-  Widget _buildContentDescription() {
-    List<InlineSpan> descriptionList = <InlineSpan>[];
-    TextStyle? boldStyle = Styles().textStyles.getTextStyle("widget.card.title.tiny.fat");
-    TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
-
-    descriptionList.add(TextSpan(text: 'Search: ', style: boldStyle,));
-    descriptionList.add(TextSpan(text: _searchText ?? '' , style: regularStyle,));
-    descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
-
-    return Padding(padding: EdgeInsets.only(top: 12), child:
-    Container(decoration: _contentDescriptionDecoration, padding: EdgeInsets.only(top: 12, bottom: 12, left: 16, right: 16), child:
-    Row(children: [ Expanded(child:
-    RichText(text: TextSpan(style: regularStyle, children: descriptionList))
-    ),],)
-    ));
-  }
-
-  Decoration get _contentDescriptionDecoration => BoxDecoration(
-      color: Styles().colors.white,
-      border: Border(
-        top: BorderSide(color: Styles().colors.disabledTextColor, width: 1),
-        bottom: BorderSide(color: Styles().colors.disabledTextColor, width: 1),
-      )
-  );
-
 
   Widget _buildResultContent() {
     if (_searching) {
