@@ -84,7 +84,7 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
     List<dynamic> codes = FlexUI()['assessments.settings'] ?? [];
     for (String code in codes) {
       if (code == 'skills_self_evaluation') {
-        contentList.add(_buildTitleWidget(Localization().getStringEx('panel.settings.home.assessments.skills_self_evaluation.title', 'Skills Self Evaluation')));
+        contentList.add(_buildTitleWidget(Localization().getStringEx('panel.settings.home.assessments.skills_self_evaluation.title', 'Skills Self-Evaluation & Career Explorer')));
         contentList.addAll(_buildAssessmentSettings('skills_self_evaluation', 'bessi'));
       } else if (code == 'health_screener') {
         contentList.add(_buildTitleWidget(Localization().getStringEx('panel.settings.home.assessments.health_screener.title', 'Health Screener')));
