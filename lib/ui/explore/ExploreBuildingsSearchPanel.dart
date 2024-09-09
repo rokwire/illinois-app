@@ -127,13 +127,13 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
   );
 
   Widget _buildSearchImageButton(String image, {String? label, String? hint, void Function()? onTap}) =>
-      Semantics(label: label, hint: hint, button: true, excludeSemantics: true, child:
+    Semantics(label: label, hint: hint, button: true, excludeSemantics: true, child:
       InkWell(onTap: onTap, child:
-      Padding(padding: EdgeInsets.all(12), child:
-      Styles().images.getImage(image, excludeFromSemantics: true),
+        Padding(padding: EdgeInsets.all(12), child:
+          Styles().images.getImage(image, excludeFromSemantics: true),
+        ),
       ),
-      ),
-      );
+    );
 
   Widget _buildResultContent() {
     if (_searching) {
@@ -166,16 +166,16 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
   }
 
   Widget _buildLoadingContent() => Padding(padding: EdgeInsets.only(left: 32, right: 32, top: _screenHeight / 4, bottom: 3 * _screenHeight / 4), child:
-  Center(child:
-  CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
-  ),
+    Center(child:
+      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+    ),
   );
 
   Widget _buildMessageContent(String message, { String? title }) =>
-      Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: _screenHeight / 6), child:
+    Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: _screenHeight / 6), child:
       Column(children: [
         (title != null) ? Padding(padding: EdgeInsets.only(bottom: 12), child:
-        Text(title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat'),)
+          Text(title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat'),)
         ) : Container(),
         Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
       ],),
