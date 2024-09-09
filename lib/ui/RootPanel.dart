@@ -27,6 +27,7 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/assistant/AssistantHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
@@ -210,6 +211,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       HomeFavoritesPanel.notifySelect,
       BrowsePanel.notifySelect,
       ExploreMapPanel.notifySelect,
+      SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation,
     ]);
 
     _tabs = _getTabs();
@@ -543,6 +545,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
+    }
+    else if (name == SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation) {
+      _onFirebaseAcademicsNotification(AcademicsContent.skills_self_evaluation);
     }
 
   }
@@ -1180,17 +1185,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onFirebaseAcademicsNotification(AcademicsContent content) {
-    int? academicsIndex = _getIndexByRootTab(RootTab.Academics);
-    if (academicsIndex != null) {
-      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-      int? lastTabIndex = _currentTabIndex;
-      _selectTab(academicsIndex);
-      if ((lastTabIndex != academicsIndex) && !AcademicsHomePanel.hasState) {
-        Widget? academicsWidget = _panels[RootTab.Academics];
-        AcademicsHomePanel? academicsPanel = (academicsWidget is AcademicsHomePanel) ? academicsWidget : null;
-        academicsPanel?.params[AcademicsHomePanel.contentItemKey] = content;
-      }
+    if (AcademicsHomePanel.hasState) {
       NotificationService().notify(AcademicsHomePanel.notifySelectContent, content);
+    } else {
+      AcademicsHomePanel.push(context, content);
     }
   }
 

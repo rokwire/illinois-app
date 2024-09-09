@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/service/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -71,6 +72,16 @@ class QrCodePanel extends StatefulWidget { //TBD localize
       saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.group.title', 'Share this group'),
     description: Localization().getStringEx('panel.qr_code.group.description.label', 'Invite others to join this group by sharing a link or the QR code after saving it to your photo library.'),
+  );
+
+  factory QrCodePanel.skillsSelfEvaluation({Key? key}) => QrCodePanel(
+    key: key,
+    deepLinkUrl: SkillsSelfEvaluation.skillsSelfEvaluationUrl,
+    saveFileName: 'skills self-evaluation',
+    saveWatermarkText: 'Skills Self-Evaluation',
+    saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
+    title: Localization().getStringEx('panel.qr_code.skills_self-evaluation.title', 'Share this feature'),
+    description: Localization().getStringEx('panel.qr_code.skills_self-evaluation.description.label', 'Invite others to view this feature by sharing a link or the QR code after saving it to your photo library.'),
   );
 
   @override

@@ -14,6 +14,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Occupations.dart';
 import 'package:illinois/ui/SyrveyPanel.dart';
@@ -23,6 +24,7 @@ import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
+import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -178,6 +180,13 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
         backgroundColor: Colors.transparent,
         onTap: _onTapSettings,
       ),
+      RibbonButton(
+        leftIconKey: "share",
+        label: Localization().getStringEx('panel.skills_self_evaluation.get_started.body.share.label', 'Share this feature'),
+        textStyle: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
+        backgroundColor: Colors.transparent,
+        onTap: _onTapShare,
+      ),
     ];
   }
 
@@ -272,6 +281,11 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
 
   void _onTapSettings() {
     SettingsHomeContentPanel.present(context, content: SettingsContent.assessments);
+  }
+
+  void _onTapShare() {
+    Analytics().logSelect(target: 'Share Skills Self-Evaluation');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.skillsSelfEvaluation()));
   }
 
   Widget _buildOfflineWidget() {

@@ -2652,6 +2652,8 @@
     "panel.qr_code.event_query.description": "Invite others to view this set of filtered events by sharing a link or the QR code after saving it to your photo library.",
     "panel.qr_code.group.title": "Share this group",
     "panel.qr_code.group.description.label": "Invite others to join this group by sharing a link or the QR code after saving it to your photo library.",
+    "panel.qr_code.skills_self-evaluation.title": "Comparte esta función",
+    "panel.qr_code.skills_self-evaluation.description.label": "Invita a otros a ver esta función compartiendo un enlace o el código QR después de guardarlo en tu biblioteca de fotos.",
 
     "panel.find_event.filter.tags.all": "Todas las Etiquetas",
     "panel.find_event.filter.tags.my": "Mis Etiquetas",
@@ -3116,6 +3118,7 @@
     "panel.skills_self_evaluation.get_started.body.save.dialog": "Sus resultados se guardarán para que los compare con resultados futuros.\n\nNingún dato de esta evaluación se compartirá con otras personas o sistemas ni se almacenará fuera de su cuenta de la aplicación de Illinois.",
     "panel.skills_self_evaluation.get_started.body.dont_save.label": "No guardar mis resultados",
     "panel.skills_self_evaluation.get_started.body.save.label": "Guardar mis resultados",
+    "panel.skills_self_evaluation.get_started.body.share.label": "Comparte esta característica",
     "panel.skills_self_evaluation.get_started.bottom_sheet.past_results.label": "Ver resultados anteriores",
     "panel.skills_self_evaluation.get_started.bottom_sheet.where_results_go.label": "¿A dónde van mis resultados?",
     "panel.skills_self_evaluation.get_started.bottom_sheet.how_results_determined.label": "¿Cómo se determinan mis resultados?",
