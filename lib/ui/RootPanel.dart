@@ -1188,7 +1188,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     if (AcademicsHomePanel.hasState) {
       NotificationService().notify(AcademicsHomePanel.notifySelectContent, content);
     } else {
-      AcademicsHomePanel.push(context, AcademicsContent.skills_self_evaluation);
+      AcademicsHomePanel.push(context, content);
     }
   }
 
