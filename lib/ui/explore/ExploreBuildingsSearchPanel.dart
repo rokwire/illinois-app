@@ -42,11 +42,11 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
   TextEditingController _searchTextController = TextEditingController();
   FocusNode _searchTextNode = FocusNode();
 
-  List<Building>? _buildings;
-
-  bool _searching = false;
-
   String? _searchText;
+  List<Building>? _buildings;
+  bool _searching = false;
+  bool _canClear = false;
+  bool _canSearch = false;
 
   @override
   void initState() {
@@ -86,24 +86,26 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
   Widget _buildSearchBar() => Container(decoration: _searchBarDecoration, padding: EdgeInsets.only(left: 16), child:
   Row(children: <Widget>[
     Expanded(child:
-    _buildSearchTextField()
+      _buildSearchTextField()
     ),
-    _buildSearchImageButton('close-circle',
-      label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
-      hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
-      onTap: _onTapClear,
-    ),
-    _buildSearchImageButton('search',
-      label: Localization().getStringEx('panel.search.button.search.title', 'Search'),
-      hint: Localization().getStringEx('panel.search.button.search.hint', ''),
-      onTap: _onTapSearch,
-    ),
+    if (_canClear)
+      _buildSearchImageButton('close-circle',
+        label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
+        hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
+        onTap: _onTapClear,
+      ),
+    if (_canSearch)
+      _buildSearchImageButton('search',
+        label: Localization().getStringEx('panel.search.button.search.title', 'Search'),
+        hint: Localization().getStringEx('panel.search.button.search.hint', ''),
+        onTap: _onTapSearch,
+      ),
   ],),
   );
 
   Decoration get _searchBarDecoration => BoxDecoration(
-      color: Styles().colors.white,
-      border: Border(bottom: BorderSide(color: Styles().colors.disabledTextColor, width: 1))
+    color: Styles().colors.white,
+    border: Border(bottom: BorderSide(color: Styles().colors.disabledTextColor, width: 1))
   );
 
   Widget _buildSearchTextField() => Semantics(
@@ -189,10 +191,19 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
   }
 
   void _onTextChanged(String text) {
-    if ((text.trim() != _searchText) && mounted) {
+    if ((_searchText != null) && (text.trim() != _searchText) && mounted) {
       setState(() {
         _searchText = null;
         _buildings = null;
+      });
+    }
+
+    bool canSearch = text.isNotEmpty;
+    bool canClear = text.isNotEmpty;
+    if ((_canSearch != canSearch) || (_canClear != canClear)) {
+      setState(() {
+        _canSearch = canSearch;
+        _canClear = canClear;
       });
     }
   }
@@ -208,13 +219,14 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
       setState(() {
         _searchText = null;
         _buildings = null;
+        _canSearch = false;
+        _canClear = false;
       });
     }
   }
 
   void _onTapSearch() {
     Analytics().logSelect(target: "Search");
-
     String searchText = _searchTextController.text.trim();
     if (searchText.isNotEmpty) {
       FocusScope.of(context).requestFocus(FocusNode());
