@@ -1037,6 +1037,8 @@
     "panel.explore.button.clear.hint":"Clear selected location",
     "panel.explore.label.dining_news.title":"Dining News",
     "panel.explore.label.locations.label.title":"Locations: ",
+    "panel.explore.button.search.buildings.title":"Search",
+    "panel.explore.button.search.buildings.hint":"Tap to search buildings",
 
     "panel.explore.button.events.display_type.all.label": "All Events",
     "panel.explore.button.events.display_type.multiple.label": "Multi-day events",

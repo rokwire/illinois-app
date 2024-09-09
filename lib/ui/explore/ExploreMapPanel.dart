@@ -854,8 +854,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   Widget _buildBuildingsHeaderBar() => Row(mainAxisAlignment: MainAxisAlignment.end, children: [
     Event2ImageCommandButton(Styles().images.getImage('search'),
-        label: Localization().getStringEx('panel.events2.home.bar.button.search.title', 'Search'),
-        hint: Localization().getStringEx('panel.events2.home.bar.button.search.hint', 'Tap to search events'),
+        label: Localization().getStringEx('panel.explore.button.search.buildings.title', 'Search'),
+        hint: Localization().getStringEx('panel.explore.button.search.buildings.hint', 'Tap to search buildings'),
         contentPadding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 8),
         onTap: _onBuildingsSearch
     ),
