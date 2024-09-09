@@ -47,10 +47,6 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
   TextEditingController _searchTextController = TextEditingController();
   FocusNode _searchTextNode = FocusNode();
 
-  Client? _searchClient;
-  Client? _refreshClient;
-  Client? _extendClient;
-
   List<Building>? _buildings;
   String? _buildingsErrorText;
   int? _totalBuildingsCount;
@@ -216,20 +212,10 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
           ExploreCard(explore: building, onTap: () => _onTapBuilding(building), showTopBorder: true),
       ),);
     }
-    if (_extendClient != null) {
-      cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child:
-      _extendIndicator
-      ));
-    }
     return Padding(padding: EdgeInsets.all(8), child:
     Column(children:  cardsList,)
     );
   }
-
-  Widget get _extendIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
-  Align(alignment: Alignment.center, child:
-  SizedBox(width: 24, height: 24, child:
-  CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),),),),);
 
   Widget _buildLoadingContent() => Padding(padding: EdgeInsets.only(left: 32, right: 32, top: _screenHeight / 4, bottom: 3 * _screenHeight / 4), child:
   Center(child:
