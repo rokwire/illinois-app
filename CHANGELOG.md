@@ -7,12 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Set background color for Career Explorer in Skills Self-Evaluation [#4331](https://github.com/rokwire/illinois-app/issues/4331).
+### Added
+- Share Skill Self-Evaluation feature [#4332](https://github.com/rokwire/illinois-app/issues/4332).
 
 ## [6.0.40] - 2024-09-05
 ### Changed
 - Skill Self-Evaluation UI enhancements [#4331](https://github.com/rokwire/illinois-app/issues/4331).
-### Added
-- Share Skill Self-Evaluation feature [#4332](https://github.com/rokwire/illinois-app/issues/4332).
 
 ## [6.0.39] - 2024-09-04
 ### Fixed
