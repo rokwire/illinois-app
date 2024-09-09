@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-import 'dart:collection';
-import 'dart:math';
-
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
+import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:rokwire_plugin/service/Log.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -34,8 +32,6 @@ import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-import '../../service/Config.dart';
-import 'ExploreCard.dart';
 
 class ExploreBuildingsSearchPanel extends StatefulWidget {
 
