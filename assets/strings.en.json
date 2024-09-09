@@ -2659,6 +2659,8 @@
     "panel.qr_code.event_query.description": "Invite others to view this set of filtered events by sharing a link or the QR code after saving it to your photo library.",
     "panel.qr_code.group.title": "Share this group",
     "panel.qr_code.group.description.label": "Invite others to join this group by sharing a link or the QR code after saving it to your photo library.",
+    "panel.qr_code.skills_self-evaluation.title": "Share this feature",
+    "panel.qr_code.skills_self-evaluation.description.label": "Invite others to view this feature by sharing a link or the QR code after saving it to your photo library.",
 
     "panel.find_event.filter.tags.all": "All Tags",
     "panel.find_event.filter.tags.my": "My Tags",
@@ -3123,6 +3125,7 @@
     "panel.skills_self_evaluation.get_started.body.save.dialog": "Your results will be saved for you to compare with future results.\n\nNo data from this assessment will be shared with other people or systems or stored outside of your Illinois app account.",
     "panel.skills_self_evaluation.get_started.body.dont_save.label": "Don't Save My Results",
     "panel.skills_self_evaluation.get_started.body.save.label": "Save My Results",
+    "panel.skills_self_evaluation.get_started.body.share.label": "Share this feature",
     "panel.skills_self_evaluation.get_started.bottom_sheet.past_results.label": "View past results",
     "panel.skills_self_evaluation.get_started.bottom_sheet.where_results_go.label": "Where do my results go?",
     "panel.skills_self_evaluation.get_started.bottom_sheet.how_results_determined.label": "How are my results determined?",

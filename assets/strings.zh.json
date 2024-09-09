@@ -2640,6 +2640,8 @@
 	"panel.qr_code.event_query.description": "Invite others to view this set of filtered events by sharing a link or the QR code after saving it to your photo library.",
 	"panel.qr_code.group.title": "Share this group",
 	"panel.qr_code.group.description.label": "Invite others to join this group by sharing a link or the QR code after saving it to your photo library.",
+	"panel.qr_code.skills_self-evaluation.title": "分享此功能",
+	"panel.qr_code.skills_self-evaluation.description.label": "將連結或二維碼儲存到您的照片庫後，透過分享連結或二維碼來邀請其他人查看此功能。",
 
 	"panel.find_event.filter.tags.all": "所有标签",
 	"panel.find_event.filter.tags.my": "我的标签",
@@ -3103,6 +3105,7 @@
 	"panel.skills_self_evaluation.get_started.body.save.dialog": "您的结果将被保存，以便您未来可以比较结果。\n\n此评估的任何数据皆不会与其他人或系统共享，也不会存储在您的Illinois应用程序帐户之外。",
 	"panel.skills_self_evaluation.get_started.body.dont_save.label": "不要保存我的结果",
 	"panel.skills_self_evaluation.get_started.body.save.label": "保存我的結果",
+	"panel.skills_self_evaluation.get_started.body.share.label": "分享此功能",
 	"panel.skills_self_evaluation.get_started.bottom_sheet.past_results.label": "查看過去的結果",
 	"panel.skills_self_evaluation.get_started.bottom_sheet.where_results_go.label": "我的結果去哪兒了？",
 	"panel.skills_self_evaluation.get_started.bottom_sheet.how_results_determined.label": "我的結果是如何確定的？",
