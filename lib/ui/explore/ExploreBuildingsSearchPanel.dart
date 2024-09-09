@@ -20,7 +20,6 @@ import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
-import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -44,7 +43,6 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
   FocusNode _searchTextNode = FocusNode();
 
   List<Building>? _buildings;
-  int? _totalBuildingsCount;
 
   bool _searching = false;
 
@@ -66,18 +64,14 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
 
   @override
   Widget build(BuildContext context) =>
-    PopScopeFix(onBack: _onHeaderBarBack, child: _buildScaffoldContent());
-
-  Widget _buildScaffoldContent() =>
-      Scaffold(
-        appBar: HeaderBar(
-          title: Localization().getStringEx('panel.search_building.header.title', 'Search'),
-          onLeading: _onHeaderBarBack,
-        ),
-        body: _buildPanelContent(),
-        backgroundColor: Styles().colors.background,
-        bottomNavigationBar: uiuc.TabBar(),
-      );
+    Scaffold(
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.search_building.header.title', 'Search'),
+      ),
+      body: _buildPanelContent(),
+      backgroundColor: Styles().colors.background,
+      bottomNavigationBar: uiuc.TabBar(),
+    );
 
   Widget _buildPanelContent() =>
     SingleChildScrollView(scrollDirection: Axis.vertical, controller: _scrollController, child:
@@ -198,7 +192,6 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
     if ((text.trim() != _searchText) && mounted) {
       setState(() {
         _searchText = null;
-        _totalBuildingsCount = null;
         _buildings = null;
       });
     }
@@ -214,7 +207,6 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
       _searchTextNode.requestFocus();
       setState(() {
         _searchText = null;
-        _totalBuildingsCount = null;
         _buildings = null;
       });
     }
@@ -228,10 +220,6 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
       FocusScope.of(context).requestFocus(FocusNode());
       _search(searchText);
     }
-  }
-  void _onHeaderBarBack() {
-    Analytics().logSelect(target: 'HeaderBar: Back');
-    Navigator.of(context).pop((0 < (_totalBuildingsCount ?? 0)) ? _searchText : null);
   }
 
   Future<void> _search(String searchText) async {
