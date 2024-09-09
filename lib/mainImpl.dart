@@ -30,6 +30,7 @@ import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/service/Questionnaire.dart';
+import 'package:illinois/service/SkillsSelfEvaluation.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/DeepLink.dart';
@@ -154,6 +155,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       SpeechToText(),
       Assistant(),
       MobileAccess(),
+      SkillsSelfEvaluation(),
     ]);
 
     ServiceError? serviceError = await illinois.Services().init();

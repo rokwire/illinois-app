@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/service/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -75,7 +76,7 @@ class QrCodePanel extends StatefulWidget { //TBD localize
 
   factory QrCodePanel.skillsSelfEvaluation({Key? key}) => QrCodePanel(
     key: key,
-    deepLinkUrl: 'TBD:_implement',//TBD: DD - implement
+    deepLinkUrl: SkillsSelfEvaluation.skillsSelfEvaluationUrl,
     saveFileName: 'skills self-evaluation',
     saveWatermarkText: 'Skills Self-Evaluation',
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
