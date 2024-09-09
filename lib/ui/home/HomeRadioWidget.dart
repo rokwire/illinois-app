@@ -162,10 +162,6 @@ class _RadioControlState extends State<_RadioControl> implements NotificationsLi
           progress = true;
           break;
 
-          buttonTitle = Localization().getStringEx('widget.home.radio.button.play.title', 'Tune In');
-          iconKey = 'play-circle-large';
-          break;
-
         case ProcessingState.completed:
           buttonTitle = Localization().getStringEx('widget.home.radio.button.finished.title', 'Finished');
           break;
