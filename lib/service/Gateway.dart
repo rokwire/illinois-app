@@ -31,7 +31,11 @@ class Gateway /* with Service */ {
 
   Future<List<Building>?> searchBuildings({required String text}) async {
     if (StringUtils.isNotEmpty(Config().gatewayUrl)) {
-      Response? response = await Network().get("${Config().gatewayUrl}/wayfinding/searchbuildings?name=$text&v=2", auth: Auth2(), headers: externalAuthorizationHeader);
+      String requestUrl = UrlUtils.buildWithQueryParameters("${Config().gatewayUrl}/wayfinding/searchbuildings", {
+        'name': text,
+        'v': '2'
+      });
+      Response? response = await Network().get(requestUrl, auth: Auth2(), headers: externalAuthorizationHeader);
       return (response?.statusCode == 200) ? Building.listFromJsonMap(JsonUtils.decodeMap(response?.body)) : null;
     }
     return null;
