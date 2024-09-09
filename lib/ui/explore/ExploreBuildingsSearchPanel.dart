@@ -16,19 +16,15 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:illinois/model/StudentCourse.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/widgets/PopScopeFix.dart';
-import 'package:rokwire_plugin/service/Log.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -246,30 +242,20 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
 
   Future<void> _search(String searchText) async {
     if (searchText.isNotEmpty) {
-
       setState(() {
         _searchText = searchText;
         _searching = true;
       });
-
-          String url = "${Config().gatewayUrl}/wayfinding/searchbuildings?name=${searchText}&v=2";
-          Response? response = await Network().get(url, auth: Auth2());
-          if (response?.statusCode == 200) {
-            try {
-              dynamic buildingsObject = JsonUtils.decodeMap(response!.body);
-              List<Building> buildings = buildingsObject.entries.map((entry) => Building.fromJson(entry.value)).toList().cast<Building>();
-              setState(() {
-                _buildings = buildings;
-            });
-            } catch (e) {
-              Log.w('Failed to load buildings. $e');
-            }
-          } else {
-          Log.w('Failed to search buildings. Error code: ${response?.statusCode}');
-          }
+      List<Building>? buildings = await Gateway().searchBuildings(text: searchText);
+      if (mounted) {
+        setState(() {
           _searching = false;
-        }
-
+          if (buildings != null) {
+            _buildings = buildings;
+          }
+        });
+      }
+    }
   }
 
 }
