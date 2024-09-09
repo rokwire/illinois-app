@@ -1185,17 +1185,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onFirebaseAcademicsNotification(AcademicsContent content) {
-    int? academicsIndex = _getIndexByRootTab(RootTab.Academics);
-    if (academicsIndex != null) {
-      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-      int? lastTabIndex = _currentTabIndex;
-      _selectTab(academicsIndex);
-      if ((lastTabIndex != academicsIndex) && !AcademicsHomePanel.hasState) {
-        Widget? academicsWidget = _panels[RootTab.Academics];
-        AcademicsHomePanel? academicsPanel = (academicsWidget is AcademicsHomePanel) ? academicsWidget : null;
-        academicsPanel?.params[AcademicsHomePanel.contentItemKey] = content;
-      }
+    if (AcademicsHomePanel.hasState) {
       NotificationService().notify(AcademicsHomePanel.notifySelectContent, content);
+    } else {
+      AcademicsHomePanel.push(context, AcademicsContent.skills_self_evaluation);
     }
   }
 
