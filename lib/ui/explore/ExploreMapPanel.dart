@@ -39,6 +39,7 @@ import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2SearchPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/explore/ExploreBuildingsSearchPanel.dart';
 import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
@@ -365,6 +366,11 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
             Visibility(visible: (_selectedMapType == ExploreMapType.Events2), child:
               Padding(padding: EdgeInsets.only(top: 8, bottom: 2), child:
                 _buildEvents2HeaderBar(),
+              ),
+            ),
+            Visibility(visible: (_selectedMapType == ExploreMapType.Buildings), child:
+              Padding(padding: EdgeInsets.only(top: 8, bottom: 2), child:
+                _buildBuildingsHeaderBar(),
               ),
             ),
             Expanded(child:
@@ -845,7 +851,20 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     Navigator.of(context).pop();
   }
 
+  Widget _buildBuildingsHeaderBar() => Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+    Event2ImageCommandButton(Styles().images.getImage('search'),
+        label: Localization().getStringEx('panel.explore.button.search.buildings.title', 'Search'),
+        hint: Localization().getStringEx('panel.explore.button.search.buildings.hint', 'Tap to search buildings'),
+        contentPadding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 8),
+        onTap: _onBuildingsSearch
+    ),
+  ],);
   // Events2 - Data
+
+  void _onBuildingsSearch() {
+    Analytics().logSelect(target: 'Search');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreBuildingsSearchPanel()));
+  }
 
   Widget _buildEvents2HeaderBar() => Column(children: [
     _buildEvents2CommandButtons(),
