@@ -44,7 +44,6 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
   FocusNode _searchTextNode = FocusNode();
 
   List<Building>? _buildings;
-  String? _buildingsErrorText;
   int? _totalBuildingsCount;
 
   bool _searching = false;
@@ -72,7 +71,7 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
   Widget _buildScaffoldContent() =>
       Scaffold(
         appBar: HeaderBar(
-          title: "Search",
+          title: Localization().getStringEx('panel.search_building.header.title', 'Search'),
           onLeading: _onHeaderBarBack,
         ),
         body: _buildPanelContent(),
@@ -149,14 +148,11 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
     else if (StringUtils.isEmpty(_searchText)) {
       return Container();
     }
-
     else if (_buildings == null) {
-      return _buildMessageContent(_buildingsErrorText ?? Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred'),
-          title: 'Failed'
-      );
+      return _buildMessageContent(Localization().getStringEx('panel.search_building.result.error.label', 'Failed to search buildings'),);
     }
     else if (_buildings?.length == 0) {
-      return _buildMessageContent("There are no buildings matching the search text.");
+      return _buildMessageContent(Localization().getStringEx('panel.search_building.result.error.label', 'There are no buildings matching the search text'));
     }
     else {
       return _buildListContent();
@@ -204,7 +200,6 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
         _searchText = null;
         _totalBuildingsCount = null;
         _buildings = null;
-        _buildingsErrorText = null;
       });
     }
   }
@@ -221,7 +216,6 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
         _searchText = null;
         _totalBuildingsCount = null;
         _buildings = null;
-        _buildingsErrorText = null;
       });
     }
   }
