@@ -119,6 +119,7 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
       onChanged: (text) => _onTextChanged(text),
       onSubmitted: (_) => _onTapSearch(),
       autofocus: true,
+      autocorrect: false,
       cursorColor: Styles().colors.fillColorSecondary,
       keyboardType: TextInputType.text,
       style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
