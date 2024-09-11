@@ -153,7 +153,7 @@ class _WalletMealPlanContentWidgetState extends State<WalletMealPlanContentWidge
   }
 
   Widget _buildBody() =>
-    Container(color: Styles().colors.fillColorPrimaryVariant, child:
+    Container(color: widget.backgroundColor, child:
       Column(crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           _buildContentHeader(),
@@ -178,9 +178,10 @@ class _WalletMealPlanContentWidgetState extends State<WalletMealPlanContentWidge
           ),
         ),
         if (_showHistory)
-          _buildMealPlanHistory(),
-        if (_showHistory)
-          _buildCafeCreditHistory(),
+          ...<Widget>[
+            _buildMealPlanHistory(),
+            _buildCafeCreditHistory(),
+          ],
       ],),
     );
 
@@ -203,7 +204,7 @@ class _WalletMealPlanContentWidgetState extends State<WalletMealPlanContentWidge
   Widget _buildContentHeader() =>
     Container(height: widget.headerHeight, color: Styles().colors.fillColorPrimaryVariant,);
 
-  Widget _buildSettingsHeader(String? title, String iconKey) => !Auth2().isLoggedIn ? Container() :
+  Widget _buildSettingsHeader(String? title, String iconKey) =>
     Semantics(label: title, header: true, excludeSemantics: true, child:
       Container(color: Styles().colors.fillColorPrimaryVariant, child:
         Align(alignment: Alignment.centerLeft, child:
@@ -304,10 +305,7 @@ class _WalletMealPlanContentWidgetState extends State<WalletMealPlanContentWidge
   }
 
   Widget _buildBalanceTableRow(bool loadingFlag, List<BaseTransaction>? transactionList) {
-    if (!Auth2().isLoggedIn) {
-      return Container();
-    }
-    else if (loadingFlag) {
+    if (loadingFlag) {
       return Padding(padding: EdgeInsets.only(top: 8), child:
         Container(color: Styles().colors.white, child:
           Row(children: [
@@ -352,6 +350,7 @@ class _WalletMealPlanContentWidgetState extends State<WalletMealPlanContentWidge
       String locationHeader = Localization().getStringEx('panel.settings.meal_plan.label.location', 'Location');
       String descriptionHeader = Localization().getStringEx('panel.settings.meal_plan.label.description', 'Description');
       String amountHeader = Localization().getStringEx('panel.settings.meal_plan.label.amount', 'Amount');
+
       List<Widget> dateWidgets =  [];
       List<Widget> locationWidgets =  [];
       List<Widget> descriptionWidgets =  [];
@@ -440,7 +439,7 @@ class _WalletMealPlanContentWidgetState extends State<WalletMealPlanContentWidge
         Padding(padding: EdgeInsets.all(8), child:
           Row(children: <Widget>[
             Expanded(child:
-              Text(text,maxLines: 1, textAlign: textAlign, style: (textStyle != null) ? textStyle: Styles().textStyles.getTextStyle("widget.item.small.thin"),),
+              Text(text,maxLines: 1, textAlign: textAlign, style: textStyle ?? Styles().textStyles.getTextStyle("widget.item.small.thin"),),
             ),
           ],),
         )
