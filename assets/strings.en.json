@@ -457,7 +457,10 @@
 
     "panel.wallet.header.title": "Wallet",
     "panel.wallet.offline.label": "The Wallet is not available while offline.",
+    "panel.wallet.offline.content_type.label": "{{content_type}} is not available while offline.",
     "panel.wallet.logged_out.label": "To access the Wallet, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.",
+    "panel.wallet.logged_out.content_type.label": "To access {{content_type}}, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.",
+    "panel.wallet.not_available.content_type.label": "{{content_type}} is not available.",
     "panel.wallet.content_type.illini_id.label": "Illini ID",
     "panel.wallet.content_type.illini_id_faqs.label": "Illini ID FAQs",
     "panel.wallet.content_type.bus_pass.label": "Bus Pass",
