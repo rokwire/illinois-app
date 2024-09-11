@@ -551,7 +551,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
     // TBD grouping
     _attributes = widget.event?.attributes;
-    _visibility = _event2VisibilityFromPrivate(widget.event?.private) ?? _Event2Visibility.public;
+    _visibility = _event2VisibilityFromAuthorizationContext(widget.event?.authorizationContext) ?? _Event2Visibility.public;
 
     //NA: canceled
     //NA: userRole
@@ -1632,9 +1632,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Analytics().logSelect(target: "Event Groups");
     Event2CreatePanel.hideKeyboard(context);
     Navigator.push<List<Group>>(context, CupertinoPageRoute(builder: (context) => Event2SetupGroups(selection: _eventGroups ?? <Group>[]))).then((List<Group>? selection) {
-      if ((selection != null) && mounted) {
-        setState(() {
+      if (selection != null) {
+        setStateIfMounted(() {
           _eventGroups = selection;
+          if (CollectionUtils.isNotEmpty(_eventGroups) && (_visibility == _Event2Visibility.registered_user)) {
+            _visibility = _Event2Visibility.group_member;
+          } else if (CollectionUtils.isEmpty(_eventGroups) && (_visibility == _Event2Visibility.group_member)) {
+            _visibility = _Event2Visibility.registered_user;
+          }
         });
       }
     });
@@ -1680,7 +1685,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
                     icon: Styles().images.getImage('chevron-down'),
                     isExpanded: true,
                     style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
-                    hint: Text(_event2VisibilityToDisplayString(_visibility, _isGroupEvent),),
+                    hint: Text(_event2VisibilityToDisplayString(_visibility)),
                     items: _buildVisibilityDropDownItems(),
                     onChanged: _onVisibilityChanged
                   ),
@@ -1696,10 +1701,15 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   List<DropdownMenuItem<_Event2Visibility>>? _buildVisibilityDropDownItems() {
     List<DropdownMenuItem<_Event2Visibility>> menuItems = <DropdownMenuItem<_Event2Visibility>>[];
     for (_Event2Visibility value in _Event2Visibility.values) {
-      menuItems.add(DropdownMenuItem<_Event2Visibility>(
-        value: value,
-        child: Text(_event2VisibilityToDisplayString(value, _isGroupEvent),),
-      ));
+      bool canShowValue = true;
+      if ((value == _Event2Visibility.registered_user) && _isGroupEvent) {
+        canShowValue = false;
+      } else if ((value == _Event2Visibility.group_member) && !_isGroupEvent) {
+        canShowValue = false;
+      }
+      if (canShowValue) {
+        menuItems.add(DropdownMenuItem<_Event2Visibility>(value: value, child: Text(_event2VisibilityToDisplayString(value))));
+      }
     }
     return menuItems;
   }
@@ -1707,8 +1717,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   void _onVisibilityChanged(_Event2Visibility? value) {
     Analytics().logSelect(target: "Visibility: $value");
     Event2CreatePanel.hideKeyboard(context);
-    if ((value != null) && mounted) {
-      setState(() {
+    if (value != null) {
+      setStateIfMounted(() {
         _visibility = value;
       });
     }
@@ -2123,7 +2133,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   DateTime? get _endDateTimeUtc =>
     (_endDate != null) ? DateTime.fromMillisecondsSinceEpoch(Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _endDate!, _endTime).millisecondsSinceEpoch) : null;
 
-  bool get _private => (_visibility == _Event2Visibility.private);
+  bool get _private => (_visibility != _Event2Visibility.public);
 
   bool get _isGroupEvent => CollectionUtils.isNotEmpty(_eventGroups);
 
@@ -2213,7 +2223,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         ((widget.event?.onlineDetails?.meetingPasscode ?? '') != _onlinePasscodeController.text) ||
 
         !DeepCollectionEquality().equals(widget.event?.attributes, _attributes) ||
-        ((_event2VisibilityFromPrivate(widget.event?.private) ?? _Event2Visibility.public) != _visibility) ||
+        ((_event2VisibilityFromAuthorizationContext(widget.event?.authorizationContext) ?? _Event2Visibility.public) != _visibility) ||
         ((widget.event?.free ?? true) != _free) ||
         ((widget.event?.cost ?? '') != _costController.text) ||
 
@@ -2242,8 +2252,21 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     }
   }
 
-  Event2 _createEventFromData() =>
-    Event2(
+  Event2 _createEventFromData() {
+    Event2AuthorizationContext? authorizationContext;
+    switch (_visibility) {
+      case _Event2Visibility.public:
+        authorizationContext = Event2AuthorizationContext.none();
+        break;
+      case _Event2Visibility.registered_user:
+        authorizationContext = Event2AuthorizationContext.registeredUser();
+        break;
+      case _Event2Visibility.group_member:
+        authorizationContext = Event2AuthorizationContext.groupMember(groupIds: _eventGroups?.map((group) => group.id!).toList());
+        break;
+    }
+
+    return Event2(
       id: widget.event?.id,
 
       name: Event2CreatePanel.textFieldValue(_titleController),
@@ -2263,7 +2286,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
       grouping: null, // TBD
       attributes: _attributes,
-      private: _private,
+      authorizationContext: authorizationContext,
       published: _published,
 
       canceled: widget.event?.canceled, // NA
@@ -2280,28 +2303,36 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       speaker: _speaker,
       contacts: _contacts,
     );
+  }
+
 }
 
 // _Event2Visibility
 
-enum _Event2Visibility { public, private }
+enum _Event2Visibility { public, group_member, registered_user }
 
-String _event2VisibilityToDisplayString(_Event2Visibility value, bool isGroupEvent) {
+String _event2VisibilityToDisplayString(_Event2Visibility value) {
   switch (value) {
     case _Event2Visibility.public:
       return Localization().getStringEx('model.event2.event_type.public', 'Public');
-    case _Event2Visibility.private:
-      return isGroupEvent
-          ? Localization().getStringEx('model.event2.event_type.group_members', 'Group Members Only')
-          : Localization().getStringEx('model.event2.event_type.private', 'Uploaded Guest List Only');
+    case _Event2Visibility.group_member:
+      return Localization().getStringEx('model.event2.event_type.group_members', 'Group Members Only');
+    case _Event2Visibility.registered_user:
+      return Localization().getStringEx('model.event2.event_type.private', 'Uploaded Guest List Only');
   }
 }
 
-_Event2Visibility? _event2VisibilityFromPrivate(bool? private) {
-  switch (private) {
-    case true: return _Event2Visibility.private;
-    case false: return _Event2Visibility.public;
-    default: return null;
+_Event2Visibility? _event2VisibilityFromAuthorizationContext(Event2AuthorizationContext? authorizationContext) {
+  if (authorizationContext == null) {
+    return _Event2Visibility.public;
+  } else {
+    if (authorizationContext.isGroupMember) {
+      return _Event2Visibility.group_member;
+    } else if (authorizationContext.isRegisteredUser) {
+      return _Event2Visibility.registered_user;
+    } else {
+      return _Event2Visibility.public;
+    }
   }
 }
 

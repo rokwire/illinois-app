@@ -436,7 +436,8 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     _detailSpacerWidget,
   ];
 
-  String get _privacyStatus => (_event?.private != true)
+  String get _privacyStatus =>
+      (_event?.isPublic == true)
     ? Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event')
     : (_eventProcessing
       ? '...'
@@ -1256,8 +1257,8 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         futures.add(Events2().loadEvent(_event?.grouping?.superEventId ?? ''));
       }
 
-      // We need to know whether event belongs to a group only for the provacy status text
-      int? groupIdsIndex = ((_event?.private == true) && (widget.group == null)) ? futures.length : null;
+      // We need to know whether event belongs to a group only for the privacy status text
+      int? groupIdsIndex = ((_event?.isPrivate == true) && (widget.group == null)) ? futures.length : null;
       if (groupIdsIndex != null) {
         futures.add(Groups().loadUserGroupsHavingEvent(eventId));
       }
@@ -1346,8 +1347,8 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
             futures.add(Events2().loadEvent(event.grouping?.superEventId ?? ''));
           }
 
-          // We need to know whether event belongs to a group only for the provacy status text
-          int? groupIdsIndex = ((_event?.private == true) && (widget.group == null)) ? futures.length : null;
+          // We need to know whether event belongs to a group only for the privacy status text
+          int? groupIdsIndex = ((_event?.isPrivate == true) && (widget.group == null)) ? futures.length : null;
           if (groupIdsIndex != null) {
             futures.add(Groups().loadUserGroupsHavingEvent(eventId));
           }

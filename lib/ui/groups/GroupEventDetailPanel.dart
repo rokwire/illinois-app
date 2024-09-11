@@ -753,7 +753,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   bool get isFavorite => Auth2().isFavorite(_event);
 
-  bool get _isPrivateGroupEvent => _event?.private ?? false;
+  bool get _isPrivateGroupEvent => (_event?.isPrivate == true);
 
   @override
   void onNotification(String name, param) {
