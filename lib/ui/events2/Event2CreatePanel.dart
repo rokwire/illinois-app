@@ -1927,38 +1927,16 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
     dynamic result;
     Event2 event = _createEventFromData();
-    Set<String> selectedGroupIds = Group.listToSetIds(_eventGroups) ?? <String>{};
     String? eventId = event.id;
     if (eventId == null) {
-      if (_eventGroups?.isNotEmpty != true) {
-        result = await Events2().createEvent(event);
-      }
-      else {
-        result = await _createEventForGroups(event, selectedGroupIds);
-      }
-    }
-    else {
+      result = await Events2().createEvent(event);
+    } else {
       bool eventModified = (event != widget.event);
       if (eventModified) {
         result = await Events2().updateEvent(event);
       }
       else {
         result = event;
-      }
-
-      if (mounted && (result is Event2) && !DeepCollectionEquality().equals(selectedGroupIds, _initialGroupIds)) {
-        dynamic groupsResult = await Groups().saveUserGroupsHavingEvent(eventId, groupIds: selectedGroupIds, previousGroupIds: _initialGroupIds);
-        if (!(groupsResult is Iterable) && mounted) {
-          Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.create.groups.update.failed.msg', 'Failed to update event groups')).then((_) {
-            if (eventModified) {
-              Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
-                event: result,
-                survey: null,
-              )));
-            }
-          });
-          return;
-        }
       }
     }
 
@@ -2056,11 +2034,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         Event2Popup.showErrorResult(context, result);
       }
     }
-  }
-
-  Future<dynamic> _createEventForGroups(Event2 source, Set<String> selectedGroupIds) async {
-    dynamic result = await Groups().createEventForGroupsV3(source, groupIds: selectedGroupIds);
-    return (result is CreateEventForGroupsV3Param) ? result.event : result;
   }
 
   Future<bool> _promptFavorite(Event2 event, {bool? surveySucceeded} ) async {
@@ -2253,19 +2226,22 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   Event2 _createEventFromData() {
+    List<String>? groupIds = _eventGroups?.map((group) => group.id!).toList();
     Event2AuthorizationContext? authorizationContext;
     Event2Context? event2Context;
     switch (_visibility) {
       case _Event2Visibility.public:
         authorizationContext = Event2AuthorizationContext.none();
+        if (CollectionUtils.isNotEmpty(groupIds)) {
+          event2Context = Event2Context.fromIdentifiers(identifiers: groupIds);
+        }
         break;
       case _Event2Visibility.registered_user:
         authorizationContext = Event2AuthorizationContext.registeredUser();
         break;
       case _Event2Visibility.group_member:
-        List<String>? ids = _eventGroups?.map((group) => group.id!).toList();
-        authorizationContext = Event2AuthorizationContext.groupMember(groupIds: ids);
-        event2Context = Event2Context.fromIdentifiers(identifiers: ids);
+        authorizationContext = Event2AuthorizationContext.groupMember(groupIds: groupIds);
+        event2Context = Event2Context.fromIdentifiers(identifiers: groupIds);
         break;
     }
 
