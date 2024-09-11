@@ -2254,6 +2254,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   Event2 _createEventFromData() {
     Event2AuthorizationContext? authorizationContext;
+    Event2Context? event2Context;
     switch (_visibility) {
       case _Event2Visibility.public:
         authorizationContext = Event2AuthorizationContext.none();
@@ -2262,7 +2263,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         authorizationContext = Event2AuthorizationContext.registeredUser();
         break;
       case _Event2Visibility.group_member:
-        authorizationContext = Event2AuthorizationContext.groupMember(groupIds: _eventGroups?.map((group) => group.id!).toList());
+        List<String>? ids = _eventGroups?.map((group) => group.id!).toList();
+        authorizationContext = Event2AuthorizationContext.groupMember(groupIds: ids);
+        event2Context = Event2Context.fromIdentifiers(identifiers: ids);
         break;
     }
 
@@ -2287,6 +2290,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       grouping: null, // TBD
       attributes: _attributes,
       authorizationContext: authorizationContext,
+      context: event2Context,
       published: _published,
 
       canceled: widget.event?.canceled, // NA
