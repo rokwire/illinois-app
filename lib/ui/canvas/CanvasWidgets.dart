@@ -21,9 +21,10 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class CanvasCourseCard extends StatefulWidget {
   final CanvasCourse course;
-  final bool isSmall;
+  final bool small;
+  final bool embedded;
 
-  CanvasCourseCard({required this.course, this.isSmall = false});
+  CanvasCourseCard({required this.course, this.small = false, this.embedded = false});
 
   @override
   State<CanvasCourseCard> createState() => _CanvasCourseCardState();
@@ -34,14 +35,14 @@ class CanvasCourseCard extends StatefulWidget {
 class _CanvasCourseCardState extends State<CanvasCourseCard> {
   @override
   Widget build(BuildContext context) {
-    final double cardHeight = CanvasCourseCard.height(context, isSmall: widget.isSmall);
+    final double cardHeight = CanvasCourseCard.height(context, isSmall: widget.small);
     final double cardHorizontalPadding = 16;
     return Container(
         height: cardHeight,
         decoration: BoxDecoration(
             color: Styles().colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(0, 0))]),
+            borderRadius: widget.embedded ? null : BorderRadius.all(Radius.circular(10)),
+            boxShadow: widget.embedded ? null : [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(0, 0))]),
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Expanded(
               child: Padding(
@@ -49,13 +50,13 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                     Expanded(
                         child: Text(StringUtils.ensureNotEmpty(widget.course.name),
-                            maxLines: (widget.isSmall ? 5 : 3),
+                            maxLines: (widget.small ? 5 : 3),
                             overflow: TextOverflow.ellipsis,
                             style: Styles().textStyles.getTextStyle('widget.canvas.card.title.regular')))
                   ]))),
-          Padding(
+          Visibility(visible: !widget.embedded, child: Padding(
               padding: EdgeInsets.only(right: cardHorizontalPadding),
-              child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true))
+              child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true)))
         ]));
   }
 }
