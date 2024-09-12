@@ -16,114 +16,47 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
-import 'package:illinois/service/Canvas.dart';
-import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class CanvasCourseCard extends StatefulWidget {
   final CanvasCourse course;
-  final bool isSmall;
+  final bool small;
+  final bool embedded;
 
-  CanvasCourseCard({required this.course, this.isSmall = false});
+  CanvasCourseCard({required this.course, this.small = false, this.embedded = false});
 
   @override
   State<CanvasCourseCard> createState() => _CanvasCourseCardState();
 
-  static double height(BuildContext context, { bool isSmall = false }) =>
-    MediaQuery.of(context).textScaler.scale(isSmall ? 130 : 92);
+  static double height(BuildContext context, {bool isSmall = false}) => MediaQuery.of(context).textScaler.scale(isSmall ? 130 : 92);
 }
 
 class _CanvasCourseCardState extends State<CanvasCourseCard> {
-  double? _currentScore;
-  bool _scoreLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadCourseScore();
-  }
-
-  void _loadCourseScore() {
-    _setScoreLoading(true);
-    Canvas().loadCourseGradeScore(widget.course.id!).then((score) {
-      _currentScore = score;
-      _setScoreLoading(false);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    final Color defaultColor = Colors.black;
-    final double cardHeight = CanvasCourseCard.height(context, isSmall: widget.isSmall);
-    final double cardInnerPadding = 10;
-    const double borderRadiusValue = 6;
+    final double cardHeight = CanvasCourseCard.height(context, isSmall: widget.small);
+    final double cardHorizontalPadding = 16;
     return Container(
         height: cardHeight,
         decoration: BoxDecoration(
-            borderRadius: (widget.isSmall ? BorderRadius.circular(borderRadiusValue) : null),
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))]),
+            color: Styles().colors.white,
+            borderRadius: widget.embedded ? null : BorderRadius.all(Radius.circular(10)),
+            boxShadow: widget.embedded ? null : [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(0, 0))]),
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Column(children: [
-            Expanded(
-                child: Container(
-                    decoration: BoxDecoration(
-                        color: defaultColor,
-                        borderRadius: (widget.isSmall ? BorderRadius.horizontal(left: Radius.circular(borderRadiusValue)) : null)),
-                    child: Center(
-                        child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: cardInnerPadding),
-                            child: Container(
-                                padding: EdgeInsets.symmetric(vertical: 2, horizontal: 6),
-                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Styles().colors.white),
-                                child: _buildGradeScoreWidget(courseColor: defaultColor))))))
-          ]),
           Expanded(
-              child: Column(children: [
-            Expanded(
-                child: Container(
-                    decoration: BoxDecoration(
-                        color: Styles().colors.white,
-                        borderRadius: (widget.isSmall ? BorderRadius.horizontal(right: Radius.circular(borderRadiusValue)) : null)),
-                    child: Padding(
-                        padding: EdgeInsets.all(cardInnerPadding),
-                        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                          Expanded(
-                              child: Text(StringUtils.ensureNotEmpty(widget.course.name),
-                                  maxLines: (widget.isSmall ? 5 : 3),
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Styles().textStyles.getTextStyle('widget.canvas.card.title.regular')))
-                        ]))))
-          ]))
+              child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: cardHorizontalPadding, vertical: 10),
+                  child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                    Expanded(
+                        child: Text(StringUtils.ensureNotEmpty(widget.course.name),
+                            maxLines: (widget.small ? 5 : 3),
+                            overflow: TextOverflow.ellipsis,
+                            style: Styles().textStyles.getTextStyle('widget.canvas.card.title.regular')))
+                  ]))),
+          Visibility(visible: !widget.embedded, child: Padding(
+              padding: EdgeInsets.only(right: cardHorizontalPadding),
+              child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true)))
         ]));
-  }
-
-  Widget _buildGradeScoreWidget({required Color courseColor}) {
-    if (_scoreLoading) {
-      double indicatorSize = 22;
-      return SizedBox(
-          width: indicatorSize,
-          height: indicatorSize,
-          child: Padding(padding: EdgeInsets.all(5), child: CircularProgressIndicator(strokeWidth: 1, color: courseColor)));
-    } else {
-      return Text(_formattedGradeScore, style: Styles().textStyles.getTextStyle('widget.canvas.card.grade.score')?.copyWith(color: courseColor));
-    }
-  }
-
-  String get _formattedGradeScore {
-    if (_currentScore == null) {
-      return 'N/A';
-    }
-    NumberFormat numFormatter = NumberFormat();
-    numFormatter.minimumFractionDigits = 0;
-    numFormatter.maximumFractionDigits = 2;
-    return numFormatter.format(_currentScore) + '%';
-  }
-
-  void _setScoreLoading(bool loading) {
-    _scoreLoading = loading;
-    if (mounted) {
-      setState(() {});
-    }
   }
 }
