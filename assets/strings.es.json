@@ -1190,8 +1190,8 @@
     "panel.explore_building_detail.detail.fllor_plan_and_amenities": "Floor Plans & Amenities",
 
     "panel.search_building.header.title": "Search",
-    "panel.search_building.result.error.label": "Failed to search buildings",
-    "panel.search_building.result.empty.label": "There are no buildings matching the search text",
+    "panel.search_building.result.error.label": "Failed to search buildings.",
+    "panel.search_building.result.empty.label": "No buildings found.",
 
     "panel.events_schedule.header.title": "Calendario de eventos",
     "panel.events_schedule.tab.title.saved": "Guardado",
