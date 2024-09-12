@@ -278,7 +278,18 @@ extension GroupSettingsExt on GroupSettings{
   }
 }
 
-extension MemberExt on Member{
-    static List<String>? extractMemberIds(List<Member>? members) => CollectionUtils.isNotEmpty(members)? List.generate(members!.length, (index) => members[index].id??"") : null;
+extension MemberExt on Member {
+  static List<String>? extractUserIds(List<Member>? members) {
+    List<String>? userIds;
+    if (members != null) {
+      userIds = <String>[];
+      for (Member member in members) {
+        if (member.userId != null) {
+          userIds.add(member.userId!);
+        }
+      }
+    }
+    return userIds;
+  }
 }
 

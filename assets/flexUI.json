@@ -232,7 +232,7 @@
 				"wallet.illini_id_faq"                    : false,
 				"explore.map.laundry"                     : false,
 				"wellness.podcast"                        : false,
-				"browse.wellness.wellness_podcast"        : false,
+				"wellness_podcast"                        : false,
 				"student_courses"                         : "${config.settings.studentCoursesEnabled}"
 			}
 		}
