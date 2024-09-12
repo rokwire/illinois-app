@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed Wallet panel presentation [#4348](https://github.com/rokwire/illinois-app/issues/4348).
+### Changed
+- Changed empty results message in buildings search [#4350](https://github.com/rokwire/illinois-app/issues/4350).
 
 ## [6.0.42] - 2024-09-11
 ### Changed

@@ -146,10 +146,10 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
       return Container();
     }
     else if (_buildings == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.search_building.result.error.label', 'Failed to search buildings'),);
+      return _buildMessageContent(Localization().getStringEx('panel.search_building.result.error.label', 'Failed to search buildings.'),);
     }
     else if (_buildings?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.search_building.result.error.label', 'There are no buildings matching the search text'));
+      return _buildMessageContent(Localization().getStringEx('panel.search_building.result.empty.label', 'No buildings found.'));
     }
     else {
       return _buildListContent();
