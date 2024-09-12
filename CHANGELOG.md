@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Changed empty results message in buildings search [#4350](https://github.com/rokwire/illinois-app/issues/4350).
 - Hide completion number under My Canvas Courses [#4346](https://github.com/rokwire/illinois-app/issues/4346).
+- Hide Healthy Illini Podcast [#4347](https://github.com/rokwire/illinois-app/issues/4347).
 
 ## [6.0.42] - 2024-09-11
 ### Changed
