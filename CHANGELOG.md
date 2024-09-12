@@ -5,8 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Fixed Wallet panel presentation [#4348](https://github.com/rokwire/illinois-app/issues/4348).
+### Changed
+- Changed empty results message in buildings search [#4350](https://github.com/rokwire/illinois-app/issues/4350).
+- Hide completion number under My Canvas Courses [#4346](https://github.com/rokwire/illinois-app/issues/4346).
+- Hide Healthy Illini Podcast [#4347](https://github.com/rokwire/illinois-app/issues/4347).
+
+## [6.0.42] - 2024-09-11
 ### Changed
 - Make "Add Illini Cash" functionality available for not logged in users [#4342](https://github.com/rokwire/illinois-app/issues/4342).
+- Wallet does not pre-load history transactions [#4341](https://github.com/rokwire/illinois-app/issues/4341).
 
 ## [6.0.41] - 2024-09-09
 ### Changed

@@ -78,7 +78,7 @@ class WalletHomePanel extends StatefulWidget {
           constraints: BoxConstraints(maxHeight: height, minHeight: height),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
           builder: (context) {
-            return WalletHomePanel._(contentType: contentType, contentTypes:contentTypes);
+            return WalletHomePanel._(contentType: contentType, contentTypes: contentTypes);
           });
     }
   }
@@ -98,13 +98,23 @@ class WalletHomePanel extends StatefulWidget {
   }
 
   static WalletContentType? getTargetContentType({ WalletContentType? contentType, List<WalletContentType>? contentTypes}) {
-    WalletContentType? resultContentType = contentType;
-    if ((resultContentType != null) && (contentTypes?.contains(resultContentType) == false)) {
-      resultContentType = Storage()._contentType;
+    WalletContentType? resultContentType = null;
+
+    if ((contentType != null) && ((contentTypes == null) || contentTypes.contains(contentType))) {
+      resultContentType = contentType;
     }
-    if ((resultContentType != null) && (contentTypes?.contains(resultContentType) == false)) {
-      resultContentType = (contentTypes?.isNotEmpty == true) ? contentTypes?.first : null;
+
+    if (resultContentType == null) {
+      WalletContentType? lastContentType = Storage()._contentType;
+      if ((lastContentType != null) && ((contentTypes == null) || contentTypes.contains(lastContentType))) {
+        resultContentType = lastContentType;
+      }
     }
+
+    if ((resultContentType == null) && (contentTypes != null) && contentTypes.isNotEmpty) {
+      resultContentType = contentTypes.first;
+    }
+
     return resultContentType;
   }
 }
@@ -125,7 +135,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
 
     _contentTypes = widget.contentTypes ?? WalletHomePanel.buildContentTypes();
     _selectedContentType = WalletHomePanel.getTargetContentType(contentType: widget.contentType, contentTypes: _contentTypes);
-    if ((widget.contentType != null) && (widget.contentType != _selectedContentType)) {
+    if ((widget.contentType != null) && (widget.contentType == _selectedContentType)) {
       Storage()._contentType = _selectedContentType;
     }
   }
@@ -211,13 +221,14 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
   }
 
   Widget? get _contentPage {
-    switch(_selectedContentType!) {
+    switch(_selectedContentType) {
       case WalletContentType.illiniId:      return WalletICardContentWidget(key: _contentPageKey);
       case WalletContentType.illiniIdFaqs:  return WalletICardFaqsContentWidget(key: _contentPageKey);
       case WalletContentType.busPass:       return WalletMTDBusPassContentWidget(key: _contentPageKey, expandHeight: false, canClose: false,);
       case WalletContentType.mealPlan:      return WalletMealPlanContentWidget(key: _contentPageKey, headerHeight: 82,);
       case WalletContentType.illiniCash:    return WalletIlliniCashContentWidget(key: _contentPageKey, headerHeight: 88);
       case WalletContentType.addIlliniCash: return WalletAddIlliniCashContentWidget(key: _contentPageKey, topOffset: 82, hasCancel: false,);
+      default: return null;
     }
   }
 

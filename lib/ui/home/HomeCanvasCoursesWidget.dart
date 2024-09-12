@@ -121,12 +121,13 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
   }
 
   Widget _buildCoursesContent() {
+    final double verticalPadding = 5;
 
     List<Widget> coursePages = <Widget>[];
     for (CanvasCourse course in _courses!) {
-      coursePages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
+      coursePages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, top: verticalPadding, bottom: verticalPadding), child:
         GestureDetector(onTap: () => _onTapCourse(course), child:
-          CanvasCourseCard(course: course, isSmall: true)
+          CanvasCourseCard(course: course, small: true)
         ),
       ),);
     }
@@ -137,8 +138,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
       _pageController = PageController(viewportFraction: pageViewport);
     }
 
-    double pageHeight = CanvasCourseCard.height(context, isSmall: true);
-
+    double pageHeight = CanvasCourseCard.height(context, isSmall: true) + (verticalPadding * verticalPadding);
 
     return Column(children: [
       Container(height: pageHeight, child:
