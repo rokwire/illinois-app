@@ -29,11 +29,14 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class AcademicsEventsContentWidget extends StatefulWidget {
+  class AcademicsEventsContentWidget extends StatefulWidget with AnalyticsInfo {
   AcademicsEventsContentWidget();
 
   @override
   State<AcademicsEventsContentWidget> createState() => _AcademicsEventsContentWidgetState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.AcademicsEvents;
 }
 
 class _AcademicsEventsContentWidgetState extends State<AcademicsEventsContentWidget> {
@@ -127,7 +130,7 @@ class _AcademicsEventsContentWidgetState extends State<AcademicsEventsContentWid
 
   void _onTapEvent(Event2 event) {
     Analytics().logSelect(target: 'Event: ${event.name}');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, analyticsFeature: AnalyticsFeature.AcademicsEvents,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, analyticsFeature: widget.analyticsFeature,)));
   }
 
   Future<void> _onRefresh() {
