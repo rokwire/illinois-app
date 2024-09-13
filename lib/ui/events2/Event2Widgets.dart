@@ -20,7 +20,6 @@ import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/events2.dart';
-import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -689,7 +688,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
 
   void _onTapRemoveGroupEvent() {
     Analytics().logSelect(target: 'Remove Group Event');
-    Groups().deleteEventForGroupV3(eventId: _event.id, groupId: widget.group?.id).then((bool value) {
+    Events2().deleteGroupEvent(eventId: _event.id!, groupId: widget.group!.id!).then((bool value) {
       if (value) {
         Navigator.of(context).pop();
       } else {
