@@ -454,10 +454,10 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       case AcademicsContent.essential_skills_coach:
         return EssentialSkillsCoachDashboardPanel();
       case AcademicsContent.todo_list:
-        return WellnessToDoHomeContentWidget();
+        return WellnessToDoHomeContentWidget(analyticsFeature: AnalyticsFeature.AcademicsToDoList,);
       case AcademicsContent.due_date_catalog:
         String? guideId = Guide().detailIdFromUrl(Config().dateCatalogUrl);
-        return (guideId != null) ? GuideDetailWidget(key: _dueDateCatalogKey, guideEntryId: guideId, headingColor: Styles().colors.background) : Container();
+        return (guideId != null) ? GuideDetailWidget(key: _dueDateCatalogKey, guideEntryId: guideId, headingColor: Styles().colors.background, analyticsFeature: AnalyticsFeature.AcademicsDueDateCatalog,) : Container();
       case AcademicsContent.appointments:
         return AcademicsAppointmentsContentWidget();
       default:
