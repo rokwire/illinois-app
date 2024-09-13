@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -121,7 +122,8 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
 
   void _onTapCourse(int courseId) {
     Analytics().logSelect(target: 'Canvas Course');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseHomePanel(courseId: courseId)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+      CanvasCourseHomePanel(courseId: courseId, analyticsFeature: AnalyticsFeature.AcademicsCanvasCourses)));
   }
 
   void _updateCourses() {
