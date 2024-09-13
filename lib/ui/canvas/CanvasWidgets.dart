@@ -29,7 +29,7 @@ class CanvasCourseCard extends StatefulWidget {
   @override
   State<CanvasCourseCard> createState() => _CanvasCourseCardState();
 
-  static double height(BuildContext context, {bool isSmall = false}) => MediaQuery.of(context).textScaler.scale(isSmall ? 130 : 92);
+  static double height(BuildContext context, {bool isSmall = false}) => MediaQuery.of(context).textScaler.scale(isSmall ? 65 : 92);
 }
 
 class _CanvasCourseCardState extends State<CanvasCourseCard> {
@@ -50,7 +50,7 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                     Expanded(
                         child: Text(StringUtils.ensureNotEmpty(widget.course.name),
-                            maxLines: (widget.small ? 5 : 3),
+                            maxLines: (widget.small ? 2 : 3),
                             overflow: TextOverflow.ellipsis,
                             style: Styles().textStyles.getTextStyle('widget.canvas.card.title.regular')))
                   ]))),
