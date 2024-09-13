@@ -15,6 +15,7 @@
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -35,7 +36,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 enum WalletContentType { illiniId, illiniIdFaqs, busPass, mealPlan, illiniCash, addIlliniCash }
 
-class WalletHomePanel extends StatefulWidget {
+class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
   final WalletContentType? contentType;
   final List<WalletContentType>? contentTypes;
 
@@ -45,12 +46,21 @@ class WalletHomePanel extends StatefulWidget {
     WalletContentType.mealPlan,
     WalletContentType.illiniCash,
   };
-
+  static Map<WalletContentType, AnalyticsFeature> contentTypeFeatures = {
+    WalletContentType.illiniId : AnalyticsFeature.WalletIlliniID,
+    WalletContentType.busPass : AnalyticsFeature.WalletBusPass,
+    WalletContentType.mealPlan : AnalyticsFeature.WalletMealPlan,
+    WalletContentType.illiniCash : AnalyticsFeature.WalletIlliniCash,
+    // Everything not mentioned here would go as AnalyticsFeature.Wallet
+  };
 
   WalletHomePanel._({this.contentType, this.contentTypes});
 
   @override
   _WalletHomePanelState createState() => _WalletHomePanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => contentTypeFeatures[contentType];
 
   static void present(BuildContext context, { WalletContentType? contentType }) {
     List<WalletContentType> contentTypes = buildContentTypes();
@@ -298,6 +308,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
         Storage()._contentType = _selectedContentType = contentType;
         _contentValuesVisible = false;
       });
+      Analytics().logPageWidget(_contentPage);
     }
   }
 
