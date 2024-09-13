@@ -318,7 +318,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     setState(() {
       _updatingEvents = true;
     });
-    Groups().loadGroupEvents(groupId: _groupId, limit: 3).then((Events2ListResult? eventsResult) {
+    Events2().loadGroupEvents(groupId: _groupId, limit: 3).then((Events2ListResult? eventsResult) {
       setStateIfMounted(() {
         _allEventsCount = eventsResult?.totalCount ?? 0;
         _groupEvents = eventsResult?.events;
@@ -328,7 +328,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _refreshEvents() {
-    Groups().loadGroupEvents(groupId: _groupId, limit: 3).then((Events2ListResult? eventsResult) {
+    Events2().loadGroupEvents(groupId: _groupId, limit: 3).then((Events2ListResult? eventsResult) {
       if (eventsResult != null) {
         setStateIfMounted(() {
           _allEventsCount = eventsResult.totalCount ?? 0;
