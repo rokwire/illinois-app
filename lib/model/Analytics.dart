@@ -23,7 +23,6 @@ class AnalyticsFeature {
 
   // Predefined Features
   static const AnalyticsFeature   Academics                      = AnalyticsFeature("Academics");
-  static const AnalyticsFeature   AcademicsAppointments          = AnalyticsFeature("Academics: Appointments", key: {"AcademicsAppointment"}, priority: 1);
   static const AnalyticsFeature   AcademicsEvents                = AnalyticsFeature("Academics: Speakers & Seminars", key: {"AcademicsEvents"}, priority: 1);
   static const AnalyticsFeature   AcademicsChecklist             = AnalyticsFeature("Academics: New Student Checklist", priority: -1);
   static const AnalyticsFeature   AcademicsGiesChecklist         = AnalyticsFeature("Academics: iDegrees New Student Checklist", priority: -1);
@@ -36,9 +35,9 @@ class AnalyticsFeature {
   static const AnalyticsFeature   AcademicsToDoList              = AnalyticsFeature("Academics: To-Do List", priority: -1);
   static const AnalyticsFeature   AcademicsDueDateCatalog        = AnalyticsFeature("Academics: Due Date Catalog", priority: -1);
   static const AnalyticsFeature   AcademicsMyIllini              = AnalyticsFeature("Academics: myIllini", priority: -1);
+  static const AnalyticsFeature   AcademicsAppointments          = AnalyticsFeature("Academics: Appointments", key: {"Appointment"}, priority: 1);
 
   static const AnalyticsFeature   AppHelp                        = AnalyticsFeature("App Help");
-  static const AnalyticsFeature   Appointments                   = AnalyticsFeature("Appointments", key: "Appointment");
   static const AnalyticsFeature   Athletics                      = AnalyticsFeature("Athletics", key: {"Athletic", "Sport"});
   static const AnalyticsFeature   Assistant                      = AnalyticsFeature("Assistant");
   static const AnalyticsFeature   Browse                         = AnalyticsFeature("Browse");
@@ -79,7 +78,6 @@ class AnalyticsFeature {
     Map,
 
     Academics,
-    AcademicsAppointments,
     AcademicsEvents,
     AcademicsChecklist,
     AcademicsGiesChecklist,
@@ -92,10 +90,10 @@ class AnalyticsFeature {
     AcademicsToDoList,
     AcademicsDueDateCatalog,
     AcademicsMyIllini,
+    AcademicsAppointments,
 
     Wellness,
 
-    Appointments,
     Athletics,
     Events,
     Groups,
