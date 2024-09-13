@@ -29,11 +29,14 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class CanvasCoursesContentWidget extends StatefulWidget {
+class CanvasCoursesContentWidget extends StatefulWidget with AnalyticsInfo {
   CanvasCoursesContentWidget();
 
   @override
   _CanvasCoursesContentWidgetState createState() => _CanvasCoursesContentWidgetState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.AcademicsCanvasCourses;
 }
 
 class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget> implements NotificationsListener {
@@ -123,7 +126,7 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
   void _onTapCourse(int courseId) {
     Analytics().logSelect(target: 'Canvas Course');
     Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-      CanvasCourseHomePanel(courseId: courseId, analyticsFeature: AnalyticsFeature.AcademicsCanvasCourses)));
+      CanvasCourseHomePanel(courseId: courseId, analyticsFeature: widget.analyticsFeature)));
   }
 
   void _updateCourses() {

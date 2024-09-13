@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -16,11 +17,14 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
-class StudentCoursesContentWidget extends StatefulWidget {
+class StudentCoursesContentWidget extends StatefulWidget with AnalyticsInfo {
   StudentCoursesContentWidget();
 
   @override
   State<StudentCoursesContentWidget> createState() => _StudentCoursesContentWidgetState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.AcademicsStudentCourses;
 }
 
 class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidget> implements NotificationsListener {
@@ -115,7 +119,7 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
     if (_courses != null) {
       for (StudentCourse course in _courses!) {
         courseWidgets.add(Padding(padding: EdgeInsets.only(top: (1 < courseWidgets.length) ? 8 : 0), child:
-          StudentCourseCard(course: course,),
+          StudentCourseCard(course: course, analyticsFeature: widget.analyticsFeature,),
         ));
 
       }
@@ -219,8 +223,9 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
 
 class StudentCourseCard extends StatelessWidget {
   final StudentCourse course;
+  final AnalyticsFeature? analyticsFeature;
   
-  StudentCourseCard({Key? key, required this.course}) : super(key: key);
+  StudentCourseCard({Key? key, required this.course, this.analyticsFeature}) : super(key: key);
 
   static double height(BuildContext context) =>
   MediaQuery.of(context).textScaler.scale(36 + 18 + (6 + 16) + 16 + (6 + 18) + (12 + 18));
@@ -308,7 +313,7 @@ class StudentCourseCard extends StatelessWidget {
 
   void _onCard(BuildContext context) {
     Analytics().logSelect(target: "Student Course: ${course.title}");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentCourseDetailPanel(course: course)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentCourseDetailPanel(course: course, analyticsFeature: analyticsFeature,)));
   }
 
 }
@@ -327,10 +332,11 @@ class StudentCoursesListPanel extends StatelessWidget {
   }
 }
 
-class StudentCourseDetailPanel extends StatelessWidget {
+class StudentCourseDetailPanel extends StatelessWidget with AnalyticsInfo {
   final StudentCourse? course;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  StudentCourseDetailPanel({Key? key, this.course}) : super(key: key);
+  StudentCourseDetailPanel({super.key, this.course, this.analyticsFeature});
 
   @override
   Widget build(BuildContext context) {
