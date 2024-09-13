@@ -1,6 +1,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -20,7 +21,7 @@ import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:share/share.dart';
 
-class QrCodePanel extends StatefulWidget { //TBD localize
+class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
   //final Event2? event;
   //const Event2QrCodePanel({required this.event});
 
@@ -33,6 +34,8 @@ class QrCodePanel extends StatefulWidget { //TBD localize
   final String? title;
   final String? description;
 
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
   const QrCodePanel({Key? key,
     required this.deepLinkUrl,
 
@@ -42,9 +45,11 @@ class QrCodePanel extends StatefulWidget { //TBD localize
 
     this.title,
     this.description,
+
+    this.analyticsFeature,
   });
 
-  factory QrCodePanel.fromEvent(Event2? event, {Key? key}) => QrCodePanel(
+  factory QrCodePanel.fromEvent(Event2? event, {Key? key, AnalyticsFeature? analyticsFeature }) => QrCodePanel(
     key: key,
     deepLinkUrl: Events2.eventDetailUrl(event),
       saveFileName: 'event - ${event?.name}',
@@ -52,9 +57,10 @@ class QrCodePanel extends StatefulWidget { //TBD localize
       saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.event.title', 'Share this event'),
     description: Localization().getStringEx('panel.qr_code.event.description', 'Invite others to view this event by sharing a link or the QR code after saving it to your photo library.'),
+    analyticsFeature: analyticsFeature,
   );
 
-  factory QrCodePanel.fromEventFilterParam(Event2FilterParam filterParam, {Key? key}) => QrCodePanel(
+  factory QrCodePanel.fromEventFilterParam(Event2FilterParam filterParam, {Key? key, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
     key: key,
     deepLinkUrl: Events2.eventsQueryUrl(filterParam.toUriParams()),
       saveFileName: "events ${DateFormat('yyyy-MM-dd HH.mm.ss').format(DateTime.now())}",
@@ -62,9 +68,10 @@ class QrCodePanel extends StatefulWidget { //TBD localize
       saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 32, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.event_query.title', 'Share this event set'),
     description: Localization().getStringEx('panel.qr_code.event_query.description', 'Invite others to view this set of filtered events by sharing a link or the QR code after saving it to your photo library.'),
+    analyticsFeature: analyticsFeature,
   );
 
-  factory QrCodePanel.fromGroup(Group? group, {Key? key}) => QrCodePanel(
+  factory QrCodePanel.fromGroup(Group? group, {Key? key, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
     key: key,
     deepLinkUrl: '${Groups().groupDetailUrl}?group_id=${group?.id}',
       saveFileName: 'group - ${group?.title}',
@@ -72,9 +79,10 @@ class QrCodePanel extends StatefulWidget { //TBD localize
       saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.group.title', 'Share this group'),
     description: Localization().getStringEx('panel.qr_code.group.description.label', 'Invite others to join this group by sharing a link or the QR code after saving it to your photo library.'),
+    analyticsFeature: analyticsFeature,
   );
 
-  factory QrCodePanel.skillsSelfEvaluation({Key? key}) => QrCodePanel(
+  factory QrCodePanel.skillsSelfEvaluation({Key? key, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
     key: key,
     deepLinkUrl: SkillsSelfEvaluation.skillsSelfEvaluationUrl,
     saveFileName: 'skills self-evaluation',
@@ -82,6 +90,7 @@ class QrCodePanel extends StatefulWidget { //TBD localize
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.skills_self-evaluation.title', 'Share this feature'),
     description: Localization().getStringEx('panel.qr_code.skills_self-evaluation.description.label', 'Invite others to view this feature by sharing a link or the QR code after saving it to your photo library.'),
+    analyticsFeature: analyticsFeature,
   );
 
   @override
