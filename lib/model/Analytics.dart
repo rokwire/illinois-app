@@ -22,47 +22,79 @@ import 'package:collection/collection.dart';
 class AnalyticsFeature {
 
   // Predefined Features
-  static const AnalyticsFeature   Academics                = AnalyticsFeature("Academics", key: {"Academic", "Course", "Assignment", "Canvas", "Gies", "Essential", "Skill"} );
-  static const AnalyticsFeature   AcademicsEvents          = AnalyticsFeature("Academics: Events", key: {"AcademicsEvents"}, priority: 1);
-  static const AnalyticsFeature   AppHelp                  = AnalyticsFeature("App Help");
-  static const AnalyticsFeature   Appointments             = AnalyticsFeature("Appointments", key: "Appointment");
-  static const AnalyticsFeature   Athletics                = AnalyticsFeature("Athletics", key: {"Athletic", "Sport"});
-  static const AnalyticsFeature   Assistant                = AnalyticsFeature("Assistant");
-  static const AnalyticsFeature   Browse                   = AnalyticsFeature("Browse");
-  static const AnalyticsFeature   Buildings                = AnalyticsFeature("Buildings", key: "Building", priority: -1); // e.g. WellnessBuilding => Wellness
-  static const AnalyticsFeature   Guide                    = AnalyticsFeature("Campus Guide", key: {"Campus", "Guide", "For Students"});
-  static const AnalyticsFeature   Debug                    = AnalyticsFeature("Debug", priority: 1);
-  static const AnalyticsFeature   Dining                   = AnalyticsFeature("Dining", key: {"Dining", "Food"});
-  static const AnalyticsFeature   Events                   = AnalyticsFeature("Events", key: "Event");
-  static const AnalyticsFeature   Favorites                = AnalyticsFeature("Favorites");
-  static const AnalyticsFeature   Feeds                    = AnalyticsFeature("Feeds");
-  static const AnalyticsFeature   Groups                   = AnalyticsFeature("Groups", key: "Group", priority: 1);
-  static const AnalyticsFeature   Home                     = AnalyticsFeature("Home", priority: -1); // e.g. Event2HomePanel => Event
-  static const AnalyticsFeature   Laundry                  = AnalyticsFeature("Laundry");
-  static const AnalyticsFeature   Map                      = AnalyticsFeature("Map");
-  static const AnalyticsFeature   MTD                      = AnalyticsFeature("MTD", key: {"MTD", "POI"});
-  static const AnalyticsFeature   Notifications            = AnalyticsFeature("Notifications");
-  static const AnalyticsFeature   Onboarding               = AnalyticsFeature("Onboarding");
-  static const AnalyticsFeature   Polls                    = AnalyticsFeature("Polls", key: "Poll", priority: -1);
-  static const AnalyticsFeature   Profile                  = AnalyticsFeature("Profile");
-  static const AnalyticsFeature   Recent                   = AnalyticsFeature("Recent");
-  static const AnalyticsFeature   ResearchProject          = AnalyticsFeature("Research at Illinois", key: "ResearchProject", priority: 1);
-  static const AnalyticsFeature   Settings                 = AnalyticsFeature("Settings", priority: -1);
-  static const AnalyticsFeature   StateFarmCenter          = AnalyticsFeature("StateFarm Center", key: {"StateFarm", "Parking", "StadiumPoll"});
-  static const AnalyticsFeature   Unknown                  = AnalyticsFeature("Unknown");
-  static const AnalyticsFeature   Wallet                   = AnalyticsFeature("Wallet");
-  static const AnalyticsFeature   WalletBusPass            = AnalyticsFeature("Wallet: Bus Pass", key: "BusPass", priority: 1);
-  static const AnalyticsFeature   WalletIlliniCash         = AnalyticsFeature("Wallet: Illini Cash", key: "IlliniCash", priority: 1);
-  static const AnalyticsFeature   WalletIlliniID           = AnalyticsFeature("Wallet: Illini ID", key: "ICard", priority: 1);
-  static const AnalyticsFeature   WalletMealPlan           = AnalyticsFeature("Wallet: Meal Plan", key: "MealPlan", priority: 1);
-  static const AnalyticsFeature   Wellness                 = AnalyticsFeature("Wellness");
+  static const AnalyticsFeature   Academics                      = AnalyticsFeature("Academics");
+  static const AnalyticsFeature   AcademicsAppointments          = AnalyticsFeature("Academics: Appointments", key: {"AcademicsAppointment"}, priority: 1);
+  static const AnalyticsFeature   AcademicsEvents                = AnalyticsFeature("Academics: Speakers & Seminars", key: {"AcademicsEvents"}, priority: 1);
+  static const AnalyticsFeature   AcademicsChecklist             = AnalyticsFeature("Academics: New Student Checklist", priority: -1);
+  static const AnalyticsFeature   AcademicsGiesChecklist         = AnalyticsFeature("Academics: iDegrees New Student Checklist", priority: -1);
+  static const AnalyticsFeature   AcademicsCanvasCourses         = AnalyticsFeature("Academics: Canvas Courses", key: {"CanvasCourse"}, priority: 1);
+  static const AnalyticsFeature   AcademicsGiesCanvasCourses     = AnalyticsFeature("Academics: Gies Canvas Courses", key: {"GiesCanvasCours"}, priority: 2);
+  static const AnalyticsFeature   AcademicsMedicineCourses       = AnalyticsFeature("Academics: College of Medicine Compliance", key: {"MedicineCourse"}, priority: 1);
+  static const AnalyticsFeature   AcademicsStudentCourses        = AnalyticsFeature("Academics: Courses", key: {"StudentCourse"}, priority: 1);
+  static const AnalyticsFeature   AcademicsSkillsSelfEvaluation  = AnalyticsFeature("Academics: Skills Self-Evaluation", key: {"SkillsSelfEvaluation"}, priority: 1);
+  static const AnalyticsFeature   AcademicsEssentialSkillsCoach  = AnalyticsFeature("Academics: Essential Skills Coach", key: {"EssentialSkillsCoach"}, priority: 1);
+  static const AnalyticsFeature   AcademicsToDoList              = AnalyticsFeature("Academics: To-Do List", priority: -1);
+  static const AnalyticsFeature   AcademicsDueDateCatalog        = AnalyticsFeature("Academics: Due Date Catalog", priority: -1);
+  static const AnalyticsFeature   AcademicsMyIllini              = AnalyticsFeature("Academics: myIllini", priority: -1);
+
+  static const AnalyticsFeature   AppHelp                        = AnalyticsFeature("App Help");
+  static const AnalyticsFeature   Appointments                   = AnalyticsFeature("Appointments", key: "Appointment");
+  static const AnalyticsFeature   Athletics                      = AnalyticsFeature("Athletics", key: {"Athletic", "Sport"});
+  static const AnalyticsFeature   Assistant                      = AnalyticsFeature("Assistant");
+  static const AnalyticsFeature   Browse                         = AnalyticsFeature("Browse");
+  static const AnalyticsFeature   Buildings                      = AnalyticsFeature("Buildings", key: "Building", priority: -1); // e.g. WellnessBuilding => Wellness
+  static const AnalyticsFeature   Guide                          = AnalyticsFeature("Campus Guide", key: {"Campus", "Guide", "For Students"});
+  static const AnalyticsFeature   Debug                          = AnalyticsFeature("Debug", priority: 1);
+  static const AnalyticsFeature   Dining                         = AnalyticsFeature("Dining", key: {"Dining", "Food"});
+  static const AnalyticsFeature   Events                         = AnalyticsFeature("Events", key: "Event");
+  static const AnalyticsFeature   Favorites                      = AnalyticsFeature("Favorites");
+  static const AnalyticsFeature   Feeds                          = AnalyticsFeature("Feeds");
+  static const AnalyticsFeature   Groups                         = AnalyticsFeature("Groups", key: "Group", priority: 1);
+  static const AnalyticsFeature   Home                           = AnalyticsFeature("Home", priority: -1); // e.g. Event2HomePanel => Event
+  static const AnalyticsFeature   Laundry                        = AnalyticsFeature("Laundry");
+  static const AnalyticsFeature   Map                            = AnalyticsFeature("Map");
+  static const AnalyticsFeature   MTD                            = AnalyticsFeature("MTD", key: {"MTD", "POI"});
+  static const AnalyticsFeature   Notifications                  = AnalyticsFeature("Notifications");
+  static const AnalyticsFeature   Onboarding                     = AnalyticsFeature("Onboarding");
+  static const AnalyticsFeature   Polls                          = AnalyticsFeature("Polls", key: "Poll", priority: -1);
+  static const AnalyticsFeature   Profile                        = AnalyticsFeature("Profile");
+  static const AnalyticsFeature   Recent                         = AnalyticsFeature("Recent");
+  static const AnalyticsFeature   ResearchProject                = AnalyticsFeature("Research at Illinois", key: "ResearchProject", priority: 1);
+  static const AnalyticsFeature   Settings                       = AnalyticsFeature("Settings", priority: -1);
+  static const AnalyticsFeature   StateFarmCenter                = AnalyticsFeature("StateFarm Center", key: {"StateFarm", "Parking", "StadiumPoll"});
+
+  static const AnalyticsFeature   Wallet                         = AnalyticsFeature("Wallet");
+  static const AnalyticsFeature   WalletBusPass                  = AnalyticsFeature("Wallet: Bus Pass", key: "BusPass", priority: 1);
+  static const AnalyticsFeature   WalletIlliniCash               = AnalyticsFeature("Wallet: Illini Cash", key: "IlliniCash", priority: 1);
+  static const AnalyticsFeature   WalletIlliniID                 = AnalyticsFeature("Wallet: Illini ID", key: "ICard", priority: 1);
+  static const AnalyticsFeature   WalletMealPlan                 = AnalyticsFeature("Wallet: Meal Plan", key: "MealPlan", priority: 1);
+
+  static const AnalyticsFeature   Wellness                       = AnalyticsFeature("Wellness");
+
+  static const AnalyticsFeature   Unknown                        = AnalyticsFeature("Unknown");
 
   static const List<AnalyticsFeature> _features = <AnalyticsFeature>[
     Favorites,
     Browse,
     Map,
+
     Academics,
+    AcademicsAppointments,
+    AcademicsEvents,
+    AcademicsChecklist,
+    AcademicsGiesChecklist,
+    AcademicsCanvasCourses,
+    AcademicsGiesCanvasCourses,
+    AcademicsMedicineCourses,
+    AcademicsStudentCourses,
+    AcademicsSkillsSelfEvaluation,
+    AcademicsEssentialSkillsCoach,
+    AcademicsToDoList,
+    AcademicsDueDateCatalog,
+    AcademicsMyIllini,
+
     Wellness,
+
     Appointments,
     Athletics,
     Events,

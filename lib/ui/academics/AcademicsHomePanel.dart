@@ -17,6 +17,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
@@ -52,7 +53,7 @@ enum AcademicsContent { events,
   todo_list, due_date_catalog, my_illini, appointments
 }
 
-class AcademicsHomePanel extends StatefulWidget {
+class AcademicsHomePanel extends StatefulWidget with AnalyticsInfo {
   static const String notifySelectContent = "edu.illinois.rokwire.academics.content.select";
   static const String contentItemKey = "content-item";
   static final String routeName = 'AcademicsHomePanel';
@@ -62,10 +63,29 @@ class AcademicsHomePanel extends StatefulWidget {
 
   final Map<String, dynamic> params = <String, dynamic>{};
 
+  static Map<AcademicsContent, AnalyticsFeature> contentAnalyticsFeatures = {
+    AcademicsContent.events:                 AnalyticsFeature.AcademicsEvents,
+    AcademicsContent.gies_checklist:         AnalyticsFeature.AcademicsGiesChecklist,
+    AcademicsContent.uiuc_checklist:         AnalyticsFeature.AcademicsChecklist,
+    AcademicsContent.canvas_courses:         AnalyticsFeature.AcademicsCanvasCourses,
+    AcademicsContent.gies_canvas_courses:    AnalyticsFeature.AcademicsGiesCanvasCourses,
+    AcademicsContent.medicine_courses:       AnalyticsFeature.AcademicsMedicineCourses,
+    AcademicsContent.student_courses:        AnalyticsFeature.AcademicsStudentCourses,
+    AcademicsContent.skills_self_evaluation: AnalyticsFeature.AcademicsSkillsSelfEvaluation,
+    AcademicsContent.essential_skills_coach: AnalyticsFeature.AcademicsEssentialSkillsCoach,
+    AcademicsContent.todo_list:              AnalyticsFeature.AcademicsToDoList,
+    AcademicsContent.due_date_catalog:       AnalyticsFeature.AcademicsDueDateCatalog,
+    AcademicsContent.my_illini:              AnalyticsFeature.AcademicsMyIllini,
+    AcademicsContent.appointments:           AnalyticsFeature.AcademicsAppointments,
+  };
+
   AcademicsHomePanel({this.content, this.rootTabDisplay = false});
 
   @override
   _AcademicsHomePanelState createState() => _AcademicsHomePanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => contentAnalyticsFeatures[content];
 
   static Future<void> push(BuildContext context, AcademicsContent content) =>
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: content), settings: RouteSettings(name: AcademicsHomePanel.routeName)));
@@ -314,18 +334,16 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     } else if (contentItem == AcademicsContent.due_date_catalog) {
       // Open Due Date Catalog in an external browser
       launchUrl = Config().dateCatalogUrl;
-    } else {
-      _selectedContent = _lastSelectedContent = contentItem;
     }
 
     if ((launchUrl != null) && (Guide().detailIdFromUrl(launchUrl) == null)) {
       _launchUrl(launchUrl);
     }
-    else {
-      _selectedContent = _lastSelectedContent = contentItem;
-    }
-    if (mounted) {
-      setState(() {});
+    else if (mounted) {
+      setState(() {
+        _selectedContent = _lastSelectedContent = contentItem;
+      });
+      Analytics().logPageWidget(_rawContentWidget);
     }
   }
 
@@ -420,9 +438,9 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       case AcademicsContent.events:
         return AcademicsEventsContentWidget();
       case AcademicsContent.gies_checklist:
-        return CheckListContentWidget(contentKey: CheckList.giesOnboarding);
+        return CheckListContentWidget(contentKey: CheckList.giesOnboarding, analyticsFeature: AnalyticsFeature.AcademicsGiesChecklist,);
       case AcademicsContent.uiuc_checklist:
-        return CheckListContentWidget(contentKey: CheckList.uiucOnboarding);
+        return CheckListContentWidget(contentKey: CheckList.uiucOnboarding, analyticsFeature: AnalyticsFeature.AcademicsChecklist,);
       case AcademicsContent.canvas_courses:
         return CanvasCoursesContentWidget();
       case AcademicsContent.gies_canvas_courses:
