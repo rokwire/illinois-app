@@ -46,11 +46,12 @@ class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
     WalletContentType.mealPlan,
     WalletContentType.illiniCash,
   };
-  static Map<WalletContentType, AnalyticsFeature> contentTypeFeatures = {
-    WalletContentType.illiniId : AnalyticsFeature.WalletIlliniID,
-    WalletContentType.busPass : AnalyticsFeature.WalletBusPass,
-    WalletContentType.mealPlan : AnalyticsFeature.WalletMealPlan,
-    WalletContentType.illiniCash : AnalyticsFeature.WalletIlliniCash,
+
+  static Map<WalletContentType, AnalyticsFeature> contentAnalyticsFeatures = {
+    WalletContentType.illiniId:   AnalyticsFeature.WalletIlliniID,
+    WalletContentType.busPass:    AnalyticsFeature.WalletBusPass,
+    WalletContentType.mealPlan:   AnalyticsFeature.WalletMealPlan,
+    WalletContentType.illiniCash: AnalyticsFeature.WalletIlliniCash,
     // Everything not mentioned here would go as AnalyticsFeature.Wallet
   };
 
@@ -60,7 +61,7 @@ class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
   _WalletHomePanelState createState() => _WalletHomePanelState();
 
   @override
-  AnalyticsFeature? get analyticsFeature => contentTypeFeatures[contentType];
+  AnalyticsFeature? get analyticsFeature => contentAnalyticsFeatures[contentType];
 
   static void present(BuildContext context, { WalletContentType? contentType }) {
     List<WalletContentType> contentTypes = buildContentTypes();
