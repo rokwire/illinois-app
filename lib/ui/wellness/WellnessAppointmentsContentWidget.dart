@@ -209,7 +209,7 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
     if (CollectionUtils.isNotEmpty(appointments)) {
       for (int i = 0; i < appointments!.length; i++) {
         Appointment appointment = appointments[i];
-        widgets.add(Padding(padding: EdgeInsets.only(top: 16), child: AppointmentCard(appointment: appointment)));
+        widgets.add(Padding(padding: EdgeInsets.only(top: 16), child: AppointmentCard(appointment: appointment, analyticsFeature: null /* TBD: AnalyticsFeature.WellnessAppointments */,)));
       }
     }
     return widgets;

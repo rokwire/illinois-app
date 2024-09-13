@@ -35,10 +35,12 @@ class AnalyticsFeature {
   static const AnalyticsFeature   AcademicsToDoList              = AnalyticsFeature("Academics: To-Do List", priority: -1);
   static const AnalyticsFeature   AcademicsDueDateCatalog        = AnalyticsFeature("Academics: Due Date Catalog", priority: -1);
   static const AnalyticsFeature   AcademicsMyIllini              = AnalyticsFeature("Academics: myIllini", priority: -1);
-  static const AnalyticsFeature   AcademicsAppointments          = AnalyticsFeature("Academics: Appointments", key: {"Appointment"}, priority: 1);
+  static const AnalyticsFeature   AcademicsCampusReminders       = AnalyticsFeature("Academics: Campus Reminders", priority: -1);
+  static const AnalyticsFeature   AcademicsAppointments          = AnalyticsFeature("Academics: Appointments", priority: -1);
 
   static const AnalyticsFeature   AppHelp                        = AnalyticsFeature("App Help");
   static const AnalyticsFeature   Athletics                      = AnalyticsFeature("Athletics", key: {"Athletic", "Sport"});
+  static const AnalyticsFeature   Appointments                   = AnalyticsFeature("Appointments");
   static const AnalyticsFeature   Assistant                      = AnalyticsFeature("Assistant");
   static const AnalyticsFeature   Browse                         = AnalyticsFeature("Browse");
   static const AnalyticsFeature   Buildings                      = AnalyticsFeature("Buildings", key: "Building", priority: -1); // e.g. WellnessBuilding => Wellness

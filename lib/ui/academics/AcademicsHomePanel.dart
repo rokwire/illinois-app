@@ -26,7 +26,7 @@ import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/academics/AcademicsAppointmentsContentWidget.dart';
+import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsEventsContentWidget.dart';
 import 'package:illinois/ui/academics/EssentialSkillsCoachDashboardPanel.dart';
 import 'package:illinois/ui/academics/MedicineCoursesContentWidget.dart';
@@ -459,7 +459,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         String? guideId = Guide().detailIdFromUrl(Config().dateCatalogUrl);
         return (guideId != null) ? GuideDetailWidget(key: _dueDateCatalogKey, guideEntryId: guideId, headingColor: Styles().colors.background, analyticsFeature: AnalyticsFeature.AcademicsDueDateCatalog,) : Container();
       case AcademicsContent.appointments:
-        return AcademicsAppointmentsContentWidget();
+        return AppointmentsContentWidget(analyticsFeature: AnalyticsFeature.AcademicsAppointments,);
       default:
         return Container();
     }

@@ -318,8 +318,11 @@ class StudentCourseCard extends StatelessWidget {
 
 }
 
-class StudentCoursesListPanel extends StatelessWidget {
+class StudentCoursesListPanel extends StatelessWidget with AnalyticsInfo {
   StudentCoursesListPanel();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.AcademicsStudentCourses;
 
   @override
   Widget build(BuildContext context) {
