@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed assistant microphone activity on iOS [#4364](https://github.com/rokwire/illinois-app/issues/4364).
+- Fixed AthleticsTeamPanel coaching staff heading textStyle [#4358](https://github.com/rokwire/illinois-app/issues/4358).
 
 ## [6.0.44] - 2024-09-13
 ### Changed
