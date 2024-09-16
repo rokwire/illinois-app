@@ -71,8 +71,8 @@ class AnalyticsFeature {
   static const AnalyticsFeature   WalletMealPlan                 = AnalyticsFeature("Wallet: Meal Plan", key: "MealPlan", priority: 1);
 
   static const AnalyticsFeature   Wellness                       = AnalyticsFeature("Wellness");
-  static const AnalyticsFeature   WellnessDailyTips              = AnalyticsFeature("Wellness: Tips", key: {"WellnessDailyTips"}, priority: 1);
-  static const AnalyticsFeature   WellnessRings                  = AnalyticsFeature("Wellness: Rings", key: {"WellnessRings"}, priority: 1);
+  static const AnalyticsFeature   WellnessDailyTips              = AnalyticsFeature("Wellness: Tips", key: {"WellnessDailyTip"}, priority: 1);
+  static const AnalyticsFeature   WellnessRings                  = AnalyticsFeature("Wellness: Rings", key: {"WellnessRing"}, priority: 1);
   static const AnalyticsFeature   WellnessToDo                   = AnalyticsFeature("Wellness: To Do", key: {"WellnessToDo"}, priority: 1);
   static const AnalyticsFeature   WellnessAppointments           = AnalyticsFeature("Wellness: Appointments", key: {"WellnessAppointments"}, priority: 1);
   static const AnalyticsFeature   WellnessHealthScreener         = AnalyticsFeature("Wellness: Health Screener", key: {"WellnessHealthScreener"}, priority: 1);
@@ -104,8 +104,6 @@ class AnalyticsFeature {
     AcademicsMyIllini,
     AcademicsAppointments,
 
-    Wellness,
-
     Athletics,
     Events,
     Groups,
@@ -126,6 +124,19 @@ class AnalyticsFeature {
     ResearchProject,
     StateFarmCenter,
     Onboarding,
+
+    Wellness,
+    WellnessDailyTips,
+    WellnessRings,
+    WellnessToDo,
+    WellnessAppointments,
+    WellnessHealthScreener,
+    WellnessResources,
+    WellnessMentalHealth,
+    WellnessSuccessTeam,
+    WellnessPodcast,
+    WellnessStruggling,
+
     Wallet,
     WalletBusPass,
     WalletIlliniCash,

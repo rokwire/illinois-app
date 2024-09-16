@@ -320,7 +320,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
       case WellnessContent.rings:
         return WellnessRingsHomeContentWidget();
       case WellnessContent.todo:
-        return WellnessToDoHomeContentWidget();
+        return WellnessToDoHomeContentWidget(analyticsFeature: AnalyticsFeature.WellnessToDo);
       case WellnessContent.appointments:
         return WellnessAppointmentsContentWidget();
       case WellnessContent.healthScreener:

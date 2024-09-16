@@ -213,16 +213,16 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
     String? videoUrl = Config().wellnessMentalHealthVideoUrl;
     if (StringUtils.isNotEmpty(videoUrl)) {
       String title = Localization().getStringEx('panel.wellness.sections.mental_health.video.title', 'Mental Health');
-      _video = Video(
-          videoUrl: videoUrl, ccUrl: Config().wellnessMentalHealthCcUrl, thumbUrl: Config().wellnessMentalHealthThumbUrl, title: title);
+      _video = Video(videoUrl: videoUrl, ccUrl: Config().wellnessMentalHealthCcUrl, thumbUrl: Config().wellnessMentalHealthThumbUrl, title: title);
     }
   }
 
   void _onTapVideo() {
     if (_video != null) {
-      Analytics().logSelect(
-          target: 'Mental Health Video', source: widget.runtimeType.toString(), attributes: _video!.analyticsAttributes);
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AppHelpVideoTutorialPanel(videoTutorial: _video!)));
+      Analytics().logSelect(target: 'Mental Health Video', source: widget.runtimeType.toString(), attributes: _video!.analyticsAttributes);
+      Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+        AppHelpVideoTutorialPanel(videoTutorial: _video!, analyticsFeature: AnalyticsFeature.WellnessMentalHealth,)
+      ));
     }
   }
 }
