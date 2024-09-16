@@ -53,12 +53,14 @@ class Event2DetailPanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
   final Position? userLocation;
   final Event2Selector2? eventSelector;
-  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.group, this.userLocation, this.eventSelector});
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
+  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.group, this.userLocation, this.eventSelector, this.analyticsFeature});
   
   @override
   State<StatefulWidget> createState() => _Event2DetailPanelState();
 
-  // AnalyticsPageAttributes
+  // AnalyticsInfo
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes => event?.analyticsAttributes;
@@ -942,6 +944,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       userLocation: _userLocation,
       eventSelector:  widget.eventSelector,
       superEvent: (_event?.isSuperEvent == true) ? _event : null,
+      analyticsFeature: widget.analyticsFeature,
     )));
   }
 
@@ -954,6 +957,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       Navigator.of(context).push(CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: _superEvent,
         userLocation: _userLocation,
         eventSelector:  widget.eventSelector,
+        analyticsFeature: widget.analyticsFeature,
       )));
     }
   }
@@ -1030,7 +1034,8 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     Analytics().logSelect(target: "Follow up survey");
     Survey displaySurvey = Survey.fromOther(_survey!);
     displaySurvey.replaceKey('event_name', _event?.name);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: displaySurvey, onComplete: _onCompleteSurvey)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+      SurveyPanel(survey: displaySurvey, onComplete: _onCompleteSurvey, analyticsFeature: widget.analyticsFeature,)));
   }
 
   void _onLogIn(){
@@ -1052,7 +1057,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   void _onPromote(){
     Analytics().logSelect(target: "Promote Event", attributes: _event?.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromEvent(_event)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromEvent(_event, analyticsFeature: widget.analyticsFeature,)));
   }
 
   void _onContactEmail(String? email){
@@ -1090,22 +1095,25 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   void _onSettingEditEvent(){
     Analytics().logSelect(target: "Edit event");
-    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel(event: _event, survey: _survey,))).then((Event2SetupSurveyParam? result) {
-      if (result != null) {
-        setStateIfMounted(() {
-          if (result.event != null) {
-            _event = result.event;
+    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) =>
+      Event2CreatePanel(event: _event, survey: _survey)))
+        .then((Event2SetupSurveyParam? result) {
+          if (result != null) {
+            setStateIfMounted(() {
+              if (result.event != null) {
+                _event = result.event;
+              }
+              _survey = result.survey;
+            });
           }
-          _survey = result.survey;
         });
-      }
-    });
   }
 
   void _onSettingEventRegistration(){
     Analytics().logSelect(target: "Event Registration");
     Navigator.push<dynamic>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(
       event: _event,
+      analyticsFeature: widget.analyticsFeature,
     ))).then((dynamic event) {
       if (event is Event2) {
           setStateIfMounted(() {
@@ -1135,6 +1143,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         event: _event,
         survey: _survey,
       ),
+      analyticsFeature: widget.analyticsFeature,
     ).then((Event2SetupSurveyParam? surveyParam) {
       if (surveyParam != null) {
         setStateIfMounted(() {
@@ -1152,6 +1161,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => Event2SurveyResponsesPanel(
       surveyId: _survey?.id,
       eventName: _event?.name,
+      analyticsFeature: widget.analyticsFeature,
     )));
   }
 
@@ -1189,7 +1199,8 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   void _onTapTakeAttendance() {
     Analytics().logSelect(target: 'Take Attendance');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2AttendanceTakerPanel(_event)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+      Event2AttendanceTakerPanel(_event, analyticsFeature: widget.analyticsFeature,)));
   }
 
   //loading

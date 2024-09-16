@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -35,9 +36,11 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CanvasCourseCalendarPanel extends StatefulWidget {
+class CanvasCourseCalendarPanel extends StatefulWidget with AnalyticsInfo {
   final int courseId;
-  CanvasCourseCalendarPanel({required this.courseId});
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
+  CanvasCourseCalendarPanel({required this.courseId, this.analyticsFeature});
 
   @override
   _CanvasCourseCalendarPanelState createState() => _CanvasCourseCalendarPanelState();
@@ -267,7 +270,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
       String? url = event.assignment?.htmlUrl;
       if (StringUtils.isNotEmpty(url)) {
         if (UrlUtils.launchInternal(url)) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsFeature: widget.analyticsFeature,)));
         } else {
           Uri? uri = Uri.tryParse(url!);
           if (uri != null) {
@@ -277,7 +280,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
       }
     } else {
       Analytics().logSelect(target: 'Canvas Calendar -> Event');
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCalendarEventDetailPanel(eventId: event.id!)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCalendarEventDetailPanel(eventId: event.id!, analyticsFeature: widget.analyticsFeature,)));
     }
   }
 

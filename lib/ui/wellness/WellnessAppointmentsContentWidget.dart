@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
@@ -209,7 +210,7 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
     if (CollectionUtils.isNotEmpty(appointments)) {
       for (int i = 0; i < appointments!.length; i++) {
         Appointment appointment = appointments[i];
-        widgets.add(Padding(padding: EdgeInsets.only(top: 16), child: AppointmentCard(appointment: appointment)));
+        widgets.add(Padding(padding: EdgeInsets.only(top: 16), child: AppointmentCard(appointment: appointment, analyticsFeature: AnalyticsFeature.WellnessAppointments,)));
       }
     }
     return widgets;

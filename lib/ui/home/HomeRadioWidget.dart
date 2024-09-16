@@ -47,18 +47,34 @@ class HomeRadioWidget extends StatelessWidget {
   }
 
   bool get _isEnabled => RadioPlayer().isStationEnabled(radioStation);
+}
 
-  static void showPopup(BuildContext context, RadioStation radioStation) {
+class RadioPopupWidget extends StatefulWidget {
+  final RadioStation radioStation;
+
+  RadioPopupWidget(this.radioStation, { super.key });
+
+  static void show(BuildContext context, RadioStation radioStation) =>
     showDialog(context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return _buildPopup(context, radioStation);
-      },
+        barrierDismissible: true,
+        builder: (BuildContext context) => RadioPopupWidget(radioStation)
     );
+
+  @override
+  State<StatefulWidget> createState() => _RadioPopupWidgetState();
+}
+
+class _RadioPopupWidgetState extends State<RadioPopupWidget> {
+
+  @override
+  void initState() {
+    Analytics().logPageWidget(widget);
+    super.initState();
   }
 
-  static Widget _buildPopup(BuildContext context, RadioStation radioStation) {
-    return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
+  @override
+  Widget build(BuildContext context) =>
+    ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
       Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
         Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
           Container(color: Styles().colors.fillColorPrimary, child:
@@ -66,12 +82,12 @@ class HomeRadioWidget extends StatelessWidget {
               Expanded(child:
                 Padding(padding: EdgeInsets.all(8), child:
                   Center(child:
-                    Text(HomeRadioWidget.stationTitle(radioStation), style: Styles().textStyles.getTextStyle("widget.dialog.message.regular")),
+                    Text(HomeRadioWidget.stationTitle(widget.radioStation), style: Styles().textStyles.getTextStyle("widget.dialog.message.regular")),
                   ),
                 ),
               ),
-              Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), button: true, child:
-                InkWell(onTap : () => _onClosePopup(context, radioStation), child:
+              Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), button: true, child:
+                InkWell(onTap : () => _onClosePopup(context, widget.radioStation), child:
                   Padding(padding: EdgeInsets.all(16), child:
                     Styles().images.getImage('close-circle-white', excludeFromSemantics: true),
                   ),
@@ -79,11 +95,10 @@ class HomeRadioWidget extends StatelessWidget {
               ),
             ],),
           ),
-          _RadioControl(radioStation, borderRadius: BorderRadius.vertical(bottom: Radius.circular(6))),
+          _RadioControl(widget.radioStation, borderRadius: BorderRadius.vertical(bottom: Radius.circular(6))),
         ],),
       ),
     );
-  }
 
   static void _onClosePopup(BuildContext context, RadioStation radioStation) {
     Analytics().logSelect(target: 'Close', source: 'HomeRadioWidget(${radioStation.toString()})');

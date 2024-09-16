@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
@@ -39,9 +40,11 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
-class CanvasCourseHomePanel extends StatefulWidget {
+class CanvasCourseHomePanel extends StatefulWidget with AnalyticsInfo {
   final int? courseId;
-  CanvasCourseHomePanel({this.courseId});
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
+  CanvasCourseHomePanel({this.courseId, this.analyticsFeature});
 
   @override
   _CanvasCourseHomePanelState createState() => _CanvasCourseHomePanelState();
@@ -183,47 +186,47 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
 
   void _onTapAssignments() {
     Analytics().logSelect(target: 'Canvas Course -> Assignments');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseAssignmentsPanel(courseId: widget.courseId!)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseAssignmentsPanel(courseId: widget.courseId!, analyticsFeature: widget.analyticsFeature)));
   }
 
   void _onTapSyllabus() {
     Analytics().logSelect(target: 'Canvas Course -> Syllabus');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasSyllabusHtmlPanel(courseId: widget.courseId!)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasSyllabusHtmlPanel(courseId: widget.courseId!, analyticsFeature: widget.analyticsFeature,)));
   }
 
   void _onTapAnnouncements() {
     Analytics().logSelect(target: 'Canvas Course -> Announcements');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseAnnouncementsPanel(courseId: widget.courseId!)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseAnnouncementsPanel(courseId: widget.courseId!, analyticsFeature: widget.analyticsFeature)));
   }
 
   void _onTapFiles() {
     Analytics().logSelect(target: 'Canvas Course -> Files');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasFileSystemEntitiesListPanel(courseId: widget.courseId)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasFileSystemEntitiesListPanel(courseId: widget.courseId, analyticsFeature: widget.analyticsFeature)));
   }
 
   void _onTapCollaborations() {
     Analytics().logSelect(target: 'Canvas Course -> Collaborations');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseCollaborationsPanel(courseId: widget.courseId!)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseCollaborationsPanel(courseId: widget.courseId!, analyticsFeature: widget.analyticsFeature)));
   }
 
   void _onTapCalendar() {
     Analytics().logSelect(target: 'Canvas Course -> Calendar');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseCalendarPanel(courseId: widget.courseId!)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseCalendarPanel(courseId: widget.courseId!, analyticsFeature: widget.analyticsFeature)));
   }
 
   void _onTapNotifications() {
     Analytics().logSelect(target: 'Canvas Course -> Notifications');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasAccountNotificationsPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasAccountNotificationsPanel(analyticsFeature: widget.analyticsFeature,)));
   }
 
   void _onTapModules() {
     Analytics().logSelect(target: 'Canvas Course -> Modules');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseModulesPanel(courseId: widget.courseId!)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseModulesPanel(courseId: widget.courseId!, analyticsFeature: widget.analyticsFeature,)));
   }
 
   void _onTapFeedback() {
     Analytics().logSelect(target: 'Canvas Course -> Feedback');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasFeedbackPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasFeedbackPanel(analyticsFeature: widget.analyticsFeature,)));
   }
 
   void _loadCourse() {

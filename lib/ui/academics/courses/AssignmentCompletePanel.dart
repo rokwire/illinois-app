@@ -1,6 +1,7 @@
 
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -8,13 +9,14 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:sprintf/sprintf.dart';
 
 
-class AssignmentCompletePanel extends StatefulWidget {
+class AssignmentCompletePanel extends StatefulWidget with AnalyticsInfo {
   final int unitNumber;
   final int activityNumber;
   final int? pauses;
   final Color? color;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  const AssignmentCompletePanel({required this.unitNumber, required this.activityNumber, this.pauses, required this.color});
+  const AssignmentCompletePanel({required this.unitNumber, required this.activityNumber, this.pauses, required this.color, this.analyticsFeature});
 
 
   @override

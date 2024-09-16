@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -30,10 +31,11 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class AppointmentCard extends StatefulWidget {
+class AppointmentCard extends StatefulWidget with AnalyticsInfo {
   final Appointment appointment;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  AppointmentCard({Key? key, required this.appointment}) : super(key: key);
+  AppointmentCard({super.key, required this.appointment, this.analyticsFeature});
 
   @override
   _AppointmentCardState createState() => _AppointmentCardState();
@@ -207,7 +209,10 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
 
   void _onTapAppointmentCard() {
     Analytics().logSelect(target: 'Appointment Detail');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointment: widget.appointment)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(
+      appointment: widget.appointment,
+      analyticsFeature: widget.analyticsFeature,
+    )));
   }
 
   void _onTapCardImage(String? imageKey) {
