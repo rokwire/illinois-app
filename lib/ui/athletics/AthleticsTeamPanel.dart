@@ -340,7 +340,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                         child: Padding(
                             padding: EdgeInsets.only(left: 16, top: 16),
                             child: Text(Localization().getStringEx("panel.athletics_team.label.coaching_staff.title", 'Coaching Staff'),
-                                style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat")))),
+                                style: Styles().textStyles.getTextStyle("widget.title.large")))),
                     Padding(
                         padding: EdgeInsets.only(left: 16, top: 52, bottom: 32),
                         child: SingleChildScrollView(
