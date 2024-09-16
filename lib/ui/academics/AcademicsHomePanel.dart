@@ -54,14 +54,11 @@ enum AcademicsContent { events,
 }
 
 class AcademicsHomePanel extends StatefulWidget with AnalyticsInfo {
-  static const String notifySelectContent = "edu.illinois.rokwire.academics.content.select";
-  static const String contentItemKey = "content-item";
   static final String routeName = 'AcademicsHomePanel';
+  static const String notifySelectContent = "edu.illinois.rokwire.academics.content.select";
 
   final AcademicsContent? content;
   final bool rootTabDisplay;
-
-  final Map<String, dynamic> params = <String, dynamic>{};
 
   static Map<AcademicsContent, AnalyticsFeature> contentAnalyticsFeatures = {
     AcademicsContent.events:                 AnalyticsFeature.AcademicsEvents,
@@ -117,9 +114,9 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   void initState() {
     NotificationService().subscribe(this, [FlexUI.notifyChanged, Auth2.notifyLoginChanged, AcademicsHomePanel.notifySelectContent]);
     _contentValues = _buildContentValues();
-    _initSelectedContentItem();
-    if (_initialContentItem == AcademicsContent.my_illini) {
-      _onContentItem(_initialContentItem!);
+    _selectedContent = _initialSelection;
+    if (widget.content == AcademicsContent.my_illini) {
+      _onContentItem(widget.content!);
     }
     super.initState();
   }
@@ -273,18 +270,21 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     }
   }
 
-  void _initSelectedContentItem() {
-    AcademicsContent? initialContent = _ensureContent(_initialContentItem) ?? _ensureContent(_lastSelectedContent);
-    if (initialContent == null) {
-      if (_contentValues.contains(AcademicsContent.gies_checklist) && !_isCheckListCompleted(CheckList.giesOnboarding)) {
-        initialContent = AcademicsContent.gies_checklist;
-      } else if (_contentValues.contains(AcademicsContent.gies_canvas_courses)) {
-        initialContent = AcademicsContent.gies_canvas_courses;
-      } else if (_contentValues.contains(AcademicsContent.student_courses)) {
-        initialContent = AcademicsContent.student_courses;
-      }
+  AcademicsContent get _initialSelection {
+    AcademicsContent? initialContent = _ensureContent(widget.content) ?? _ensureContent(_lastSelectedContent);
+    if (initialContent != null) {
+      return initialContent;
     }
-    _selectedContent = initialContent ?? AcademicsContent.events;
+    else if (_contentValues.contains(AcademicsContent.gies_checklist) && !_isCheckListCompleted(CheckList.giesOnboarding)) {
+      return AcademicsContent.gies_checklist;
+    } else if (_contentValues.contains(AcademicsContent.gies_canvas_courses)) {
+      return AcademicsContent.gies_canvas_courses;
+    } else if (_contentValues.contains(AcademicsContent.student_courses)) {
+      return AcademicsContent.student_courses;
+    }
+    else {
+      return AcademicsContent.events;
+    }
   }
 
   AcademicsContent? _getContentValueFromCode(String? code) {
@@ -511,8 +511,6 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     contentItems ??= _contentValues;
     return ((contentItem != null) && (contentItem != AcademicsContent.my_illini) && contentItems.contains(contentItem)) ? contentItem : null;
   }
-
-  AcademicsContent? get _initialContentItem => widget.params[AcademicsHomePanel.contentItemKey] ?? widget.content;
 
   // NotificationsListener
 

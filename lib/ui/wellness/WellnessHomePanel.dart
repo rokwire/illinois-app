@@ -46,13 +46,11 @@ import 'package:url_launcher/url_launcher.dart';
 enum WellnessContent { dailyTips, rings, todo, appointments, healthScreener, resources, mentalHealth, successTeam, podcast, struggling, }
 
 class WellnessHomePanel extends StatefulWidget with AnalyticsInfo {
+  static final String routeName = 'AcademicsHomePanel';
   static const String notifySelectContent = "edu.illinois.rokwire.wellness.content.select";
-  static const String contentItemKey = "content-item";
 
   final WellnessContent? content;
   final bool rootTabDisplay;
-
-  final Map<String, dynamic> params = <String, dynamic>{};
 
   static Map<WellnessContent, AnalyticsFeature> contentAnalyticsFeatures = {
     WellnessContent.dailyTips:      AnalyticsFeature.WellnessDailyTips,
@@ -74,6 +72,9 @@ class WellnessHomePanel extends StatefulWidget with AnalyticsInfo {
 
   @override
   AnalyticsFeature? get analyticsFeature => contentAnalyticsFeatures[content];
+
+  static Future<void> push(BuildContext context, WellnessContent content) =>
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: content), settings: RouteSettings(name: WellnessHomePanel.routeName)));
 
   static bool get hasState {
     Set<NotificationsListener>? subscribers = NotificationService().subscribers(WellnessHomePanel.notifySelectContent);
@@ -106,7 +107,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     super.initState();
     NotificationService().subscribe(this, [FlexUI.notifyChanged, WellnessHomePanel.notifySelectContent]);
     _buildContentValues();
-    _selectedContent = _ensureContent(_initialContentItem) ?? (_lastSelectedContent ?? WellnessContent.dailyTips);
+    _selectedContent = _ensureContent(widget.content) ?? _ensureContent(_lastSelectedContent) ?? WellnessContent.dailyTips;
   }
 
   @override
@@ -311,8 +312,6 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     contentItems ??= _contentValues;
     return ((contentItem != null) && contentItems!.contains(contentItem)) ? contentItem : null;
   }
-
-  WellnessContent? get _initialContentItem => widget.params[WellnessHomePanel.contentItemKey] ?? widget.content;
 
   Widget get _contentWidget {
     switch (_selectedContent) {
