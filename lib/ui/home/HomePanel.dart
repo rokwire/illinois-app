@@ -353,7 +353,7 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: MTDStop.favoriteKeyName);
       }
     }
-    else if (code == 'my_mtd_destinations') {
+    else if (code == 'my_locations') {
       if (title) {
         return HomeFavoritesWidget.titleFromKey(favoriteKey: ExplorePOI.favoriteKeyName);
       } else if (handle) {
