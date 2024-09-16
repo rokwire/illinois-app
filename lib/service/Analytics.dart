@@ -827,6 +827,10 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       LogSelectFeatureName  : feature?.name,
     };
 
+    if (feature != null) {
+      event[LogSelectFeatureName] = feature.name;
+    }
+
     // Add optional attribute, if applied
     if (attributes != null) {
       event.addAll(attributes);
