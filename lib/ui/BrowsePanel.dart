@@ -600,7 +600,7 @@ class _BrowseEntry extends StatelessWidget {
 
       case "mtd.all_mtd_stops":              _onTapMTDStops(context); break;
       case "mtd.my_mtd_stops":               _onTapMyMTDStops(context); break;
-      case "mtd.my_mtd_destinations":        _onTapMyMTDDestinations(context); break;
+      case "mtd.my_locations":               _onTapMyLocations(context); break;
 
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
       case "campus_guide.campus_safety_resources": _onTapCampusSafetyResources(context); break;
@@ -957,8 +957,8 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.my,)));
   }
 
-  void _onTapMyMTDDestinations(BuildContext context) {
-    Analytics().logSelect(target: "My Destinations");
+  void _onTapMyLocations(BuildContext context) {
+    Analytics().logSelect(target: "My Locations");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [ExplorePOI.favoriteKeyName]); } ));
   }
 
