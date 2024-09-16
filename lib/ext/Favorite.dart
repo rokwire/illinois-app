@@ -249,7 +249,7 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.all)));
     }
     else if (lowerCaseKey == ExplorePOI.favoriteKeyName.toLowerCase()) {
-      NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapType.MTDDestinations);
+      NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapType.MyLocations);
     }
     else if (lowerCaseKey == GuideFavorite.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));

@@ -134,7 +134,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyMapStudentCoursesNotification,
       FirebaseMessaging.notifyMapAppointmentsNotification,
       FirebaseMessaging.notifyMapMtdStopsNotification,
-      FirebaseMessaging.notifyMapMtdDestinationsNotification,
+      FirebaseMessaging.notifyMapMyLocationsNotification,
       FirebaseMessaging.notifyMapMentalHealthNotification,
       FirebaseMessaging.notifyMapStateFarmWayfindingNotification,
       FirebaseMessaging.notifyAcademicsNotification,
@@ -368,8 +368,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyMapMtdStopsNotification) {
       _onFirebaseMapNotification(ExploreMapType.MTDStops);
     }
-    else if (name == FirebaseMessaging.notifyMapMtdDestinationsNotification) {
-      _onFirebaseMapNotification(ExploreMapType.MTDDestinations);
+    else if (name == FirebaseMessaging.notifyMapMyLocationsNotification) {
+      _onFirebaseMapNotification(ExploreMapType.MyLocations);
     }
     else if (name == FirebaseMessaging.notifyMapMentalHealthNotification) {
       _onFirebaseMapNotification(ExploreMapType.MentalHealth);
