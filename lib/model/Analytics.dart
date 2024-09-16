@@ -49,16 +49,17 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Dining                         = AnalyticsFeature("Dining", key: {"Dining", "Food"});
   static const AnalyticsFeature   Events                         = AnalyticsFeature("Events", key: "Event");
   static const AnalyticsFeature   Favorites                      = AnalyticsFeature("Favorites");
-  static const AnalyticsFeature   Feeds                          = AnalyticsFeature("Feeds");
   static const AnalyticsFeature   Groups                         = AnalyticsFeature("Groups", key: "Group", priority: 1);
   static const AnalyticsFeature   Home                           = AnalyticsFeature("Home", priority: -1); // e.g. Event2HomePanel => Event
   static const AnalyticsFeature   Laundry                        = AnalyticsFeature("Laundry");
   static const AnalyticsFeature   Map                            = AnalyticsFeature("Map");
   static const AnalyticsFeature   MTD                            = AnalyticsFeature("MTD", key: {"MTD", "POI"});
+  static const AnalyticsFeature   News                           = AnalyticsFeature("Illini News", key: {"DailyIllini", "Twitter"});
   static const AnalyticsFeature   Notifications                  = AnalyticsFeature("Notifications");
   static const AnalyticsFeature   Onboarding                     = AnalyticsFeature("Onboarding");
   static const AnalyticsFeature   Polls                          = AnalyticsFeature("Polls", key: "Poll", priority: -1);
   static const AnalyticsFeature   Profile                        = AnalyticsFeature("Profile");
+  static const AnalyticsFeature   Radio                          = AnalyticsFeature("Radio Stations", key: "Radio");
   static const AnalyticsFeature   Recent                         = AnalyticsFeature("Recent");
   static const AnalyticsFeature   ResearchProject                = AnalyticsFeature("Research at Illinois", key: "ResearchProject", priority: 1);
   static const AnalyticsFeature   Settings                       = AnalyticsFeature("Settings", priority: -1);
@@ -115,13 +116,14 @@ class AnalyticsFeature {
     AppHelp,
     Dining,
     Buildings,
-    Feeds,
     MTD,
+    News,
     Polls,
     Laundry,
     Recent,
     Debug,
     ResearchProject,
+    Radio,
     StateFarmCenter,
     Onboarding,
 

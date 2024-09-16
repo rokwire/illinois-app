@@ -906,7 +906,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapRadioStation(BuildContext context, RadioStation radioStation) {
     Analytics().logSelect(target: "Radio Station (${radioStation.toString()})");
-    HomeRadioWidget.showPopup(context, radioStation);
+    RadioPopupWidget.show(context, radioStation);
   }
 
   void _onTapAllGroups(BuildContext context) {
