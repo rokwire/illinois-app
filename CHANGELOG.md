@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed AthleticsTeamPanel news and schedule heading padding [#4359](https://github.com/rokwire/illinois-app/issues/4359).
 ### Changed
 - "MTD Destinations" renamed to "My Locations" [#4361](https://github.com/rokwire/illinois-app/issues/4361).
+- Analytics features updates [#4029](https://github.com/rokwire/illinois-app/issues/4029).
 
 ## [6.0.44] - 2024-09-13
 ### Changed
