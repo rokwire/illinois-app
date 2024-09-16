@@ -71,6 +71,16 @@ class AnalyticsFeature {
   static const AnalyticsFeature   WalletMealPlan                 = AnalyticsFeature("Wallet: Meal Plan", key: "MealPlan", priority: 1);
 
   static const AnalyticsFeature   Wellness                       = AnalyticsFeature("Wellness");
+  static const AnalyticsFeature   WellnessDailyTips              = AnalyticsFeature("Wellness: Tips", key: {"WellnessDailyTips"}, priority: 1);
+  static const AnalyticsFeature   WellnessRings                  = AnalyticsFeature("Wellness: Rings", key: {"WellnessRings"}, priority: 1);
+  static const AnalyticsFeature   WellnessToDo                   = AnalyticsFeature("Wellness: To Do", key: {"WellnessToDo"}, priority: 1);
+  static const AnalyticsFeature   WellnessAppointments           = AnalyticsFeature("Wellness: Appointments", key: {"WellnessAppointments"}, priority: 1);
+  static const AnalyticsFeature   WellnessHealthScreener         = AnalyticsFeature("Wellness: Health Screener", key: {"WellnessHealthScreener"}, priority: 1);
+  static const AnalyticsFeature   WellnessResources              = AnalyticsFeature("Wellness: Resources", key: {"WellnessResources"}, priority: 1);
+  static const AnalyticsFeature   WellnessMentalHealth           = AnalyticsFeature("Wellness: Mental Health", key: {"WellnessMentalHealth"}, priority: 1);
+  static const AnalyticsFeature   WellnessSuccessTeam            = AnalyticsFeature("Wellness: Success Team", key: {"WellnessSuccessTeam"}, priority: 1);
+  static const AnalyticsFeature   WellnessPodcast                = AnalyticsFeature("Wellness: Podcast", priority: -1);
+  static const AnalyticsFeature   WellnessStruggling             = AnalyticsFeature("Wellness: Struggling", priority: -1);
 
   static const AnalyticsFeature   Unknown                        = AnalyticsFeature("Unknown");
 

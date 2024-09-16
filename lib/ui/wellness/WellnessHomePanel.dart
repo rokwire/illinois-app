@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -42,9 +43,9 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-enum WellnessContent { dailyTips, rings, todo, appointments, healthScreener, podcast, resources, struggling, mentalHealth, successTeam }
+enum WellnessContent { dailyTips, rings, todo, appointments, healthScreener, resources, mentalHealth, successTeam, podcast, struggling, }
 
-class WellnessHomePanel extends StatefulWidget {
+class WellnessHomePanel extends StatefulWidget with AnalyticsInfo {
   static const String notifySelectContent = "edu.illinois.rokwire.wellness.content.select";
   static const String contentItemKey = "content-item";
 
@@ -53,10 +54,26 @@ class WellnessHomePanel extends StatefulWidget {
 
   final Map<String, dynamic> params = <String, dynamic>{};
 
+  static Map<WellnessContent, AnalyticsFeature> contentAnalyticsFeatures = {
+    WellnessContent.dailyTips:      AnalyticsFeature.WellnessDailyTips,
+    WellnessContent.rings:          AnalyticsFeature.WellnessRings,
+    WellnessContent.todo:           AnalyticsFeature.WellnessToDo,
+    WellnessContent.appointments:   AnalyticsFeature.WellnessAppointments,
+    WellnessContent.healthScreener: AnalyticsFeature.WellnessHealthScreener,
+    WellnessContent.resources:      AnalyticsFeature.WellnessResources,
+    WellnessContent.mentalHealth:   AnalyticsFeature.WellnessMentalHealth,
+    WellnessContent.successTeam:    AnalyticsFeature.WellnessSuccessTeam,
+    WellnessContent.podcast:        AnalyticsFeature.WellnessPodcast,
+    WellnessContent.struggling:     AnalyticsFeature.WellnessStruggling,
+  };
+
   WellnessHomePanel({this.content, this.rootTabDisplay = false});
 
   @override
   _WellnessHomePanelState createState() => _WellnessHomePanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => contentAnalyticsFeatures[content];
 
   static bool get hasState {
     Set<NotificationsListener>? subscribers = NotificationService().subscribers(WellnessHomePanel.notifySelectContent);
@@ -234,13 +251,16 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     else if (contentItem == WellnessContent.struggling) {
       launchUrl = Wellness().getResourceUrl(resourceId: 'where_to_start');
     }
+
     if ((launchUrl != null) && (Guide().detailIdFromUrl(launchUrl) == null)) {
       _launchUrl(launchUrl);
     }
-    else {
-      _selectedContent = _lastSelectedContent = contentItem;
+    else if (mounted) {
+      setState(() {
+        _selectedContent = _lastSelectedContent = contentItem;
+      });
+      Analytics().logPageWidget(_contentWidget);
     }
-    setStateIfMounted(() { });
   }
 
   void _changeSettingsContentValuesVisibility() {
@@ -306,18 +326,18 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         return WellnessAppointmentsContentWidget();
       case WellnessContent.healthScreener:
         return WellnessHealthScreenerHomeWidget(_contentScrollController);
-      case WellnessContent.podcast:
-        String? guideId = _loadWellcomeResourceGuideId('podcast');
-        return (guideId != null) ? GuideDetailWidget(key: _podcastKey, guideEntryId: guideId, headingColor: Styles().colors.background) : Container();
       case WellnessContent.resources:
         return WellnessResourcesContentWidget();
       case WellnessContent.mentalHealth:
         return WellnessMentalHealthContentWidget();
       case WellnessContent.successTeam:
         return WellnessSuccessTeamContentWidget();
+      case WellnessContent.podcast:
+        String? guideId = _loadWellcomeResourceGuideId('podcast');
+        return (guideId != null) ? GuideDetailWidget(key: _podcastKey, guideEntryId: guideId, headingColor: Styles().colors.background, analyticsFeature: AnalyticsFeature.WellnessPodcast,) : Container();
       case WellnessContent.struggling:
         String? guideId = _loadWellcomeResourceGuideId('where_to_start');
-        return (guideId != null) ? GuideDetailWidget(key: _strugglingKey, guideEntryId: guideId, headingColor: Styles().colors.background) : Container();
+        return (guideId != null) ? GuideDetailWidget(key: _strugglingKey, guideEntryId: guideId, headingColor: Styles().colors.background, analyticsFeature: AnalyticsFeature.WellnessStruggling) : Container();
       default:
         return Container();
     }
