@@ -19,6 +19,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
@@ -28,11 +29,14 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class AcademicsEventsContentWidget extends StatefulWidget {
+  class AcademicsEventsContentWidget extends StatefulWidget with AnalyticsInfo {
   AcademicsEventsContentWidget();
 
   @override
   State<AcademicsEventsContentWidget> createState() => _AcademicsEventsContentWidgetState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.AcademicsEvents;
 }
 
 class _AcademicsEventsContentWidgetState extends State<AcademicsEventsContentWidget> {
@@ -126,7 +130,7 @@ class _AcademicsEventsContentWidgetState extends State<AcademicsEventsContentWid
 
   void _onTapEvent(Event2 event) {
     Analytics().logSelect(target: 'Event: ${event.name}');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, analyticsFeature: widget.analyticsFeature,)));
   }
 
   Future<void> _onRefresh() {

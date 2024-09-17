@@ -134,7 +134,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyMapStudentCoursesNotification,
       FirebaseMessaging.notifyMapAppointmentsNotification,
       FirebaseMessaging.notifyMapMtdStopsNotification,
-      FirebaseMessaging.notifyMapMtdDestinationsNotification,
+      FirebaseMessaging.notifyMapMyLocationsNotification,
       FirebaseMessaging.notifyMapMentalHealthNotification,
       FirebaseMessaging.notifyMapStateFarmWayfindingNotification,
       FirebaseMessaging.notifyAcademicsNotification,
@@ -368,8 +368,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyMapMtdStopsNotification) {
       _onFirebaseMapNotification(ExploreMapType.MTDStops);
     }
-    else if (name == FirebaseMessaging.notifyMapMtdDestinationsNotification) {
-      _onFirebaseMapNotification(ExploreMapType.MTDDestinations);
+    else if (name == FirebaseMessaging.notifyMapMyLocationsNotification) {
+      _onFirebaseMapNotification(ExploreMapType.MyLocations);
     }
     else if (name == FirebaseMessaging.notifyMapMentalHealthNotification) {
       _onFirebaseMapNotification(ExploreMapType.MentalHealth);
@@ -1193,17 +1193,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onFirebaseWellnessNotification(WellnessContent content) {
-    int? wellnessIndex = _getIndexByRootTab(RootTab.Wellness);
-    if (wellnessIndex != null) {
-      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-      int? lastTabIndex = _currentTabIndex;
-      _selectTab(wellnessIndex);
-      if ((lastTabIndex != wellnessIndex) && !WellnessHomePanel.hasState) {
-        Widget? wellnessWidget = _panels[RootTab.Wellness];
-        WellnessHomePanel? wellnessPanel = (wellnessWidget is WellnessHomePanel) ? wellnessWidget : null;
-        wellnessPanel?.params[WellnessHomePanel.contentItemKey] = content;
-      }
+    if (WellnessHomePanel.hasState) {
       NotificationService().notify(WellnessHomePanel.notifySelectContent, content);
+    } else {
+      WellnessHomePanel.push(context, content);
     }
   }
 }

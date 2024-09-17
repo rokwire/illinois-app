@@ -70,7 +70,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyMapStudentCoursesNotification              = '$notifyBase.map.student_courses';
   static const String notifyMapAppointmentsNotification                = '$notifyBase.map.appointments';
   static const String notifyMapMtdStopsNotification                    = '$notifyBase.map.mtd_stops';
-  static const String notifyMapMtdDestinationsNotification             = '$notifyBase.map.mtd_destinations';
+  static const String notifyMapMyLocationsNotification                 = '$notifyBase.map.my_locations';
   static const String notifyMapMentalHealthNotification                = '$notifyBase.map.mental_health';
   static const String notifyMapStateFarmWayfindingNotification         = '$notifyBase.map.state_farm_wayfinding';
   static const String notifyAcademicsNotification                      = "$notifyBase.academics";
@@ -218,7 +218,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeMapStudentCourses = 'map.student_courses';
   static const String payloadTypeMapAppointments = 'map.appointments';
   static const String payloadTypeMapMtdStops = 'map.mtd_stops';
-  static const String payloadTypeMapMtdDestinations = 'map.mtd_destinations';
+  static const String payloadTypeMapMyLocations = 'map.my_locations';
   static const String payloadTypeMapMentalHealth = 'map.mental_health';
   static const String payloadTypeMapStateFarmWayfinding = 'map.state_farm_wayfinding';
   static const String payloadTypeAcademics = 'academics';
@@ -468,8 +468,8 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     else if (type == payloadTypeMapMtdStops) {
       NotificationService().notify(notifyMapMtdStopsNotification, data);
     }
-    else if (type == payloadTypeMapMtdDestinations) {
-      NotificationService().notify(notifyMapMtdDestinationsNotification, data);
+    else if (type == payloadTypeMapMyLocations) {
+      NotificationService().notify(notifyMapMyLocationsNotification, data);
     }
     else if (type == payloadTypeMapMentalHealth) {
       NotificationService().notify(notifyMapMentalHealthNotification, data);

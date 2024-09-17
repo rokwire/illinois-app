@@ -5,6 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Cleaned up switching to "Radio Stations" feature [#4029](https://github.com/rokwire/illinois-app/issues/4029).
+- Extended radio analytics notifications [#4029](https://github.com/rokwire/illinois-app/issues/4029).
+- Updated QRCodePanel descriptions [#4362](https://github.com/rokwire/illinois-app/issues/4362).
+
+## [6.0.45] - 2024-09-16
+### Fixed
+- Fixed assistant microphone activity on iOS [#4364](https://github.com/rokwire/illinois-app/issues/4364).
+- Fixed AthleticsTeamPanel coaching staff heading textStyle [#4358](https://github.com/rokwire/illinois-app/issues/4358).
+- Fixed AthleticsTeamPanel news and schedule heading padding [#4359](https://github.com/rokwire/illinois-app/issues/4359).
+### Changed
+- "MTD Destinations" renamed to "My Locations" [#4361](https://github.com/rokwire/illinois-app/issues/4361).
+- Analytics features updates [#4029](https://github.com/rokwire/illinois-app/issues/4029).
+- Do not log analytics target feature in select event if such does not exist [#4029](https://github.com/rokwire/illinois-app/issues/4029).
 
 ## [6.0.44] - 2024-09-13
 ### Changed
