@@ -824,7 +824,6 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       LogEventName          : LogSelectEventName,
       LogSelectTargetName   : target,
       LogSelectSourceName   : source,
-      LogSelectFeatureName  : feature?.name,
     };
 
     if (feature != null) {
