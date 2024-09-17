@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.0.46] - 2024-09-17
 ### Changed
 - Cleaned up switching to "Radio Stations" feature [#4029](https://github.com/rokwire/illinois-app/issues/4029).
 - Extended radio analytics notifications [#4029](https://github.com/rokwire/illinois-app/issues/4029).
