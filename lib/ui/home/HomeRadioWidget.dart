@@ -49,7 +49,7 @@ class HomeRadioWidget extends StatelessWidget {
   bool get _isEnabled => RadioPlayer().isStationEnabled(radioStation);
 }
 
-class RadioPopupWidget extends StatefulWidget {
+class RadioPopupWidget extends StatelessWidget {
   final RadioStation radioStation;
 
   RadioPopupWidget(this.radioStation, { super.key });
@@ -61,18 +61,6 @@ class RadioPopupWidget extends StatefulWidget {
     );
 
   @override
-  State<StatefulWidget> createState() => _RadioPopupWidgetState();
-}
-
-class _RadioPopupWidgetState extends State<RadioPopupWidget> {
-
-  @override
-  void initState() {
-    Analytics().logPageWidget(widget);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) =>
     ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
       Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
@@ -82,12 +70,12 @@ class _RadioPopupWidgetState extends State<RadioPopupWidget> {
               Expanded(child:
                 Padding(padding: EdgeInsets.all(8), child:
                   Center(child:
-                    Text(HomeRadioWidget.stationTitle(widget.radioStation), style: Styles().textStyles.getTextStyle("widget.dialog.message.regular")),
+                    Text(HomeRadioWidget.stationTitle(radioStation), style: Styles().textStyles.getTextStyle("widget.dialog.message.regular")),
                   ),
                 ),
               ),
               Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), button: true, child:
-                InkWell(onTap : () => _onClosePopup(context, widget.radioStation), child:
+                InkWell(onTap : () => _onClosePopup(context, radioStation), child:
                   Padding(padding: EdgeInsets.all(16), child:
                     Styles().images.getImage('close-circle-white', excludeFromSemantics: true),
                   ),
@@ -95,12 +83,19 @@ class _RadioPopupWidgetState extends State<RadioPopupWidget> {
               ),
             ],),
           ),
-          _RadioControl(widget.radioStation, borderRadius: BorderRadius.vertical(bottom: Radius.circular(6))),
+          _RadioControl(radioStation,
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(6)),
+            onInitState: _didInitRadioControl,
+          ),
         ],),
       ),
     );
 
-  static void _onClosePopup(BuildContext context, RadioStation radioStation) {
+  void _didInitRadioControl() {
+    Analytics().logPageWidget(this);
+  }
+
+  void _onClosePopup(BuildContext context, RadioStation radioStation) {
     Analytics().logSelect(target: 'Close', source: 'HomeRadioWidget(${radioStation.toString()})');
     Navigator.of(context).pop();
   }
@@ -110,9 +105,10 @@ class _RadioControl extends StatefulWidget {
 
   final RadioStation radioStation;
   final BorderRadius borderRadius;
+  final void Function()? onInitState;
 
 
-  const _RadioControl(this.radioStation, {Key? key, required this.borderRadius}) : super(key: key);
+  const _RadioControl(this.radioStation, {Key? key, required this.borderRadius, this.onInitState }) : super(key: key);
 
   @override
   State<_RadioControl> createState() => _RadioControlState();
@@ -127,6 +123,7 @@ class _RadioControlState extends State<_RadioControl> implements NotificationsLi
       RadioPlayer.notifyPlayerStateChanged,
     ]);
 
+    widget.onInitState?.call();
     super.initState();
   }
 
