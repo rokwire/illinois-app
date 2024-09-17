@@ -56,7 +56,7 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
       saveWatermarkText: event?.name,
       saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.event.title', 'Share this event'),
-    description: Localization().getStringEx('panel.qr_code.event.description', 'Invite others to view this event by sharing a link or the QR code after saving it to your photo library.'),
+    description: Localization().getStringEx('panel.qr_code.event.description', 'Want to invite other Illinois app users to view this event? Use one of the sharing options below.'),
     analyticsFeature: analyticsFeature,
   );
 
@@ -67,7 +67,7 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
       saveWatermarkText: filterParam.buildDescription().map((span) => span.toPlainText()).join(),
       saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 32, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.event_query.title', 'Share this event set'),
-    description: Localization().getStringEx('panel.qr_code.event_query.description', 'Invite others to view this set of filtered events by sharing a link or the QR code after saving it to your photo library.'),
+    description: Localization().getStringEx('panel.qr_code.event_query.description', 'Want to invite other Illinois app users to view this set of filtered events? Use one of the sharing options below.'),
     analyticsFeature: analyticsFeature,
   );
 
@@ -78,7 +78,7 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
       saveWatermarkText: group?.title,
       saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.group.title', 'Share this group'),
-    description: Localization().getStringEx('panel.qr_code.group.description.label', 'Invite others to join this group by sharing a link or the QR code after saving it to your photo library.'),
+    description: Localization().getStringEx('panel.qr_code.group.description.label', 'Want to invite other Illinois app users to view this group? Use one of the sharing options below.'),
     analyticsFeature: analyticsFeature,
   );
 
@@ -88,8 +88,8 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
     saveFileName: 'skills self-evaluation',
     saveWatermarkText: 'Skills Self-Evaluation',
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
-    title: Localization().getStringEx('panel.qr_code.skills_self-evaluation.title', 'Share this feature'),
-    description: Localization().getStringEx('panel.qr_code.skills_self-evaluation.description.label', 'Invite others to view this feature by sharing a link or the QR code after saving it to your photo library.'),
+    title: Localization().getStringEx('panel.qr_code.feature.title', 'Share this feature'),
+    description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),
     analyticsFeature: analyticsFeature,
   );
 
