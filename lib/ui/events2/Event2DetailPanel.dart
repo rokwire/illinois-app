@@ -1158,11 +1158,11 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   void _onSettingSurveyResponses() {
     Analytics().logSelect(target: "Event Survey Responses");
-    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => SurveyResponsesPanel(
-      surveyId: _survey?.id,
-      eventName: _event?.name,
-      analyticsFeature: widget.analyticsFeature,
-    )));
+    // Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => SurveyResponsesPanel(
+    //   surveyId: _survey?.id,
+    //   eventName: _event?.name,
+    //   analyticsFeature: widget.analyticsFeature,
+    // )));
   }
 
   void _onSettingDeleteEvent(){

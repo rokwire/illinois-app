@@ -66,7 +66,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:timezone/timezone.dart';
 
-enum ExploreMapType { Events2, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MyLocations, MentalHealth, StateFarmWayfinding }
+enum ExploreMapType { Events2, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MyLocations, MentalHealth, StateFarmWayfinding, CampusDestination }
 
 class ExploreMapPanel extends StatefulWidget {
   static const String notifySelect = "edu.illinois.rokwire.explore.map.select";
@@ -164,6 +164,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   Position? _currentLocation;
   Map<String, dynamic>? _mapStyles;
   DateTime? _pausedDateTime;
+  List<Map<String, String>> _campusDestinations = [
+    {
+      'name': 'Doris Kelley Christopher Illinois Extension Center Building Fund',
+      'address': '123 Main St, Urbana, IL',
+      'image': 'assets/placeholder.png', // Placeholder image path
+    },
+    // Add more destinations as needed
+  ];
 
   @override
   void initState() {
@@ -357,42 +365,42 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   Widget _buildScaffoldBody() {
     return Column(children: <Widget>[
-      Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0), child:
-        _buildExploreTypesDropDownButton(),
+      Padding(
+        padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
+        child: _buildExploreTypesDropDownButton(),
       ),
-      Expanded(child:
-        Stack(children: [
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Visibility(visible: (_selectedMapType == ExploreMapType.Events2), child:
-              Padding(padding: EdgeInsets.only(top: 8, bottom: 2), child:
-                _buildEvents2HeaderBar(),
-              ),
-            ),
-            Visibility(visible: (_selectedMapType == ExploreMapType.Buildings), child:
-              Padding(padding: EdgeInsets.only(top: 8, bottom: 2), child:
-                _buildBuildingsHeaderBar(),
-              ),
-            ),
-            Expanded(child:
-              Stack(children: [
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
-                    Wrap(children: _buildFilters()),
+      Expanded(
+        child: Stack(children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              // Some Visibility widgets...
+              Expanded(
+                child: Stack(children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Padding with filters...
+                      Expanded(
+                        child: Container(
+                          key: _mapContainerKey,
+                          color: Styles().colors.background,
+                          child: _buildContent(),
+                        ),
+                      ),
+                    ],
                   ),
-                  Expanded(child:
-                    Container(key: _mapContainerKey, color: Styles().colors.background, child:
-                      _buildContent(),
-                    ),
-                  ),
+                  _buildEventsDisplayTypesDropDownContainer(),
+                  _buildFilterValuesContainer(),
                 ]),
-                _buildEventsDisplayTypesDropDownContainer(),
-                _buildFilterValuesContainer()
-              ]),
-            ),
-          ]),
-          _buildExploreTypesDropDownContainer()
+              ),
+            ],
+          ),
+          _buildExploreTypesDropDownContainer(),
+          if (_selectedMapType == ExploreMapType.CampusDestination)
+            _buildCampusDestinationBottomSheet(),
         ]),
-      )
+      ),
     ]);
   }
 
@@ -489,6 +497,132 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     debugPrint('ExploreMap camera position: lat: ${cameraPosition.target.latitude} lng: ${cameraPosition.target.longitude} zoom: ${cameraPosition.zoom}' );
     _lastCameraPosition = cameraPosition;
   }
+
+  // Inside _ExploreMapPanelState
+
+  Widget _buildCampusDestinationBottomSheet() {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.1,
+      minChildSize: 0.1,
+      maxChildSize: 0.6,
+      builder: (BuildContext context, ScrollController scrollController) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 10.0,
+              ),
+            ],
+          ),
+          child: ListView(
+            controller: scrollController,
+            children: [
+              _buildBottomSheetHeader(),
+              ..._campusDestinations.map((destination) {
+                return _buildDestinationCard(destination);
+              }).toList(),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+
+
+  // Inside _ExploreMapPanelState
+
+  Widget _buildBottomSheetHeader() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min, // Add this line
+        children: [
+          // Title and Close Button
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Campus Destinations',
+                style: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  // Implement collapse functionality if needed
+                },
+              ),
+            ],
+          ),
+          // Filter Buttons
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildFilterButton('Open Now'),
+                _buildFilterButton('Near Me'),
+                _buildFilterButton('Photo Spots'),
+                _buildFilterButton('Donor Gift'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+  Widget _buildFilterButton(String label) {
+    return Padding(
+      padding: EdgeInsets.only(right: 8.0),
+      child: ElevatedButton(
+        onPressed: () {
+          // Implement filter functionality
+        },
+        child: Text(label),
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.blue,
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Inside _ExploreMapPanelState
+
+  Widget _buildDestinationCard(Map<String, String> destination) {
+    return Card(
+      margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: ListTile(
+        leading: Container(
+          width: 50.0,
+          height: 50.0,
+          color: Colors.grey[300], // Placeholder for image
+          child: Icon(Icons.image, color: Colors.grey),
+        ),
+        title: Text(destination['name'] ?? ''),
+        subtitle: Text(destination['address'] ?? ''),
+        onTap: () {
+          // Handle destination selection
+        },
+      ),
+    );
+  }
+
+
+
+
+
+
 
   void _onMapCameraIdle() {
     debugPrint('ExploreMap camera idle' );
@@ -598,7 +732,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
               Row(children: <Widget>[
                 SizedBox(width: buttonWidth, child:
                   RoundedButton(
-                    label: Localization().getStringEx('panel.explore.button.directions.title', 'Directions'),
+                    label: Localization().getStringEx('', 'Directions'),
                     hint: Localization().getStringEx('panel.explore.button.directions.hint', ''),
                     textStyle: canDirections ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
                     backgroundColor: Colors.white,
@@ -1426,6 +1560,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         }
       }
     }
+    exploreTypes.add(ExploreMapType.CampusDestination);
     return exploreTypes;
   }
 
@@ -1486,6 +1621,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       case ExploreMapType.MTDStops:            return Localization().getStringEx('panel.explore.button.mtd_stops.title', 'MTD Stops');
       case ExploreMapType.MyLocations:         return Localization().getStringEx('panel.explore.button.my_locations.title', 'My Locations');
       case ExploreMapType.MentalHealth:        return Localization().getStringEx('panel.explore.button.mental_health.title', 'Find a Therapist');
+      case ExploreMapType.CampusDestination:   return Localization().getStringEx('', 'Campus Destinations');
       case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
       default:                              return null;
     }
@@ -1502,6 +1638,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       case ExploreMapType.MTDStops:            return Localization().getStringEx('panel.explore.button.mtd_stops.hint', '');
       case ExploreMapType.MyLocations:         return Localization().getStringEx('panel.explore.button.my_locations.hint', '');
       case ExploreMapType.MentalHealth:        return Localization().getStringEx('panel.explore.button.mental_health.hint', '');
+      case ExploreMapType.CampusDestination:   return Localization().getStringEx('', '');
       case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
       default:                              return null;
     }
@@ -1767,6 +1904,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       case ExploreMapType.MTDStops: return Localization().getStringEx('panel.explore.state.online.empty.mtd_stops', 'No MTD stop locations available.');
       case ExploreMapType.MyLocations: return Localization().getStringEx('panel.explore.state.online.empty.my_locations', 'No saved locations available.');
       case ExploreMapType.MentalHealth: return Localization().getStringEx('panel.explore.state.online.empty.mental_health', 'No therapist locations are available.');
+      case ExploreMapType.CampusDestination: return Localization().getStringEx('', 'No campus destinations are available.');
       case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.online.empty.state_farm', 'No State Farm Wayfinding available.');
       default:  return null;
     }
@@ -1783,6 +1921,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       case ExploreMapType.MTDStops: return Localization().getStringEx('panel.explore.state.failed.mtd_stops', 'Failed to load MTD stop locations.');
       case ExploreMapType.MyLocations: return Localization().getStringEx('panel.explore.state.failed.my_locations', 'Failed to load saved locations.');
       case ExploreMapType.MentalHealth: return Localization().getStringEx('panel.explore.state.failed.mental_health', 'Failed to load therapist locations.');
+      case ExploreMapType.CampusDestination: return Localization().getStringEx('', 'Failed to load campus destination locations.');
       case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.failed.state_farm', 'Failed to load State Farm Wayfinding.');
       default:  return null;
     }
@@ -1866,6 +2005,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         case ExploreMapType.MTDStops: return _loadMTDStops();
         case ExploreMapType.MyLocations: return _loadMyLocations();
         case ExploreMapType.MentalHealth: return _loadMentalHealthBuildings();
+        case ExploreMapType.CampusDestination: return _loadMentalHealthBuildings();
         case ExploreMapType.StateFarmWayfinding: break;
         default: break;
       }
@@ -2033,7 +2173,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   String? get _currentMapStyle {
     if (_mapStyles != null) {
-      if ((_selectedMapType == ExploreMapType.Buildings) || (_selectedMapType == ExploreMapType.MentalHealth)) {
+      if ((_selectedMapType == ExploreMapType.Buildings) || (_selectedMapType == ExploreMapType.MentalHealth) || (_selectedMapType == ExploreMapType.CampusDestination)) {
         return JsonUtils.encode(_mapStyles![_mapStylesExplorePoiKey]);
       }
       else if (_selectedMapType == ExploreMapType.MTDStops) {
@@ -2375,6 +2515,9 @@ ExploreMapType? exploreMapItemFromString(String? value) {
   else if (value == 'mentalHealth') {
     return ExploreMapType.MentalHealth;
   }
+  else if (value == 'campusDestination') {
+    return ExploreMapType.CampusDestination;
+  }
   else if (value == 'stateFarmWayfinding') {
     return ExploreMapType.StateFarmWayfinding;
   }
@@ -2394,6 +2537,7 @@ String? exploreMapTypeToString(ExploreMapType? value) {
     case ExploreMapType.MTDStops:            return 'mtdStops';
     case ExploreMapType.MyLocations:         return 'myLocations';
     case ExploreMapType.MentalHealth:        return 'mentalHealth';
+    case ExploreMapType.CampusDestination:   return 'campusDestination';
     case ExploreMapType.StateFarmWayfinding: return 'stateFarmWayfinding';
     default: return null;
   }

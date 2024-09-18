@@ -28,9 +28,9 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.4
   intl: ^0.19.0
-  http: ^0.13.3
-  flutter_widget_from_html: ^0.9.1
-  geolocator: ^8.0.0
+  http: ^1.2.2
+  flutter_widget_from_html: ^0.15.2
+  geolocator: ^12.0.0
   url_launcher: ^6.0.10
   xml: ^6.3.0
   sprintf: ^7.0.0
@@ -41,12 +41,12 @@ dependencies:
   path_provider: ^2.0.4
   share: ^2.0.4
   qr_flutter: ^4.0.0
-  webview_flutter: ^2.0.13
+  webview_flutter: ^4.9.0
   app_settings: ^5.1.1
   currency_text_input_formatter: ^2.1.5
   flutter_multi_formatter: ^2.4.1
-  pinch_zoom: ^1.0.0
-  uuid: ^3.0.5
+  pinch_zoom: ^2.0.0
+  uuid: ^4.5.0
   expandable_page_view: ^1.0.10
   package_info: ^2.0.2
   device_calendar: ^4.3.2
@@ -58,14 +58,14 @@ dependencies:
   confetti: ^0.7.0
   flutter_colorpicker: ^1.1.0
   in_app_review: ^2.0.4
-  speech_to_text: ^6.1.1
+  speech_to_text: ^7.0.0
   visibility_detector: ^0.4.0+2
   table_calendar: ^3.0.9
   flutter_beep: ^1.0.0
   flutter_pdfview: ^1.3.2
-  fl_chart: ^0.68.0
+  fl_chart: ^0.69.0
   font_awesome_flutter: '>= 4.7.0' # comment if published plugin is used
-  record: ^4.4.4
+  record: ^5.1.2
 
   rokwire_plugin:
     # When depending on this package from a real application you should use:
@@ -109,9 +109,9 @@ dev_dependencies:
     sdk: flutter
 
 # comment the override below if published plugin is used
-dependency_overrides:
-  font_awesome_flutter:
-    path: plugin/plugins/font_awesome_flutter
+#dependency_overrides:
+#  font_awesome_flutter:
+#    path: plugin/plugins/font_awesome_flutter
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
