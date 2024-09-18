@@ -5,51 +5,49 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
-## [6.1.8] - 2024-08-28
-### Changed
-- Acknowledged unknown laundry room appliance status [#4311](https://github.com/rokwire/illinois-app/issues/4311).
-- Hide Laundries from Map panel [#4312](https://github.com/rokwire/illinois-app/issues/4312).
-- Rename "All Events" to "Events" in Map panel [#4312](https://github.com/rokwire/illinois-app/issues/4312).
-- Assistant Feedback UI [#4322](https://github.com/rokwire/illinois-app/issues/4322).
-
-## [6.1.7] - 2024-08-22
-### Changed
-- Upgraded Flutter to 3.24.0 [#4302](https://github.com/rokwire/illinois-app/issues/4302).
-- Upgraded outdated Flutter plugins [#4302](https://github.com/rokwire/illinois-app/issues/4302).
 ### Fixed
-- Fixed GoogleMap scrolling and zooming on iOS [#4306](https://github.com/rokwire/illinois-app/issues/4306).
-### Added
-- Created search analytics event [#4305](https://github.com/rokwire/illinois-app/issues/4305).
+- Fixed wellness resources button title alignment [#4376](https://github.com/rokwire/illinois-app/issues/4376).
 
-## [6.1.6] - 2024-08-08
-### Added
-- Added My Stored Data in Profile [#4264](https://github.com/rokwire/illinois-app/issues/4264).
-
-## [6.1.5] - 2024-08-06
+## [6.0.46] - 2024-09-17
 ### Changed
-- Mark completed surveys [#4243](https://github.com/rokwire/illinois-app/issues/4243).
+- Cleaned up switching to "Radio Stations" feature [#4029](https://github.com/rokwire/illinois-app/issues/4029).
+- Extended radio analytics notifications [#4029](https://github.com/rokwire/illinois-app/issues/4029).
+- Updated QRCodePanel descriptions [#4362](https://github.com/rokwire/illinois-app/issues/4362).
 
-## [6.1.4] - 2024-07-30
+## [6.0.45] - 2024-09-16
+### Fixed
+- Fixed assistant microphone activity on iOS [#4364](https://github.com/rokwire/illinois-app/issues/4364).
+- Fixed AthleticsTeamPanel coaching staff heading textStyle [#4358](https://github.com/rokwire/illinois-app/issues/4358).
+- Fixed AthleticsTeamPanel news and schedule heading padding [#4359](https://github.com/rokwire/illinois-app/issues/4359).
+### Changed
+- "MTD Destinations" renamed to "My Locations" [#4361](https://github.com/rokwire/illinois-app/issues/4361).
+- Analytics features updates [#4029](https://github.com/rokwire/illinois-app/issues/4029).
+- Do not log analytics target feature in select event if such does not exist [#4029](https://github.com/rokwire/illinois-app/issues/4029).
+
+## [6.0.44] - 2024-09-13
+### Changed
+- Set half height to canvas course card in favorites widget [#4346](https://github.com/rokwire/illinois-app/issues/4346).
+
+## [6.0.43] - 2024-09-12
+### Fixed
+- Fixed Wallet panel presentation [#4348](https://github.com/rokwire/illinois-app/issues/4348).
+- Fixed parameters passed to members/multi-update API call of Groups BB [#4268](https://github.com/rokwire/illinois-app/issues/4268).
+### Changed
+- Changed empty results message in buildings search [#4350](https://github.com/rokwire/illinois-app/issues/4350).
+- Hide completion number under My Canvas Courses [#4346](https://github.com/rokwire/illinois-app/issues/4346).
+- Hide Healthy Illini Podcast [#4347](https://github.com/rokwire/illinois-app/issues/4347).
+
+## [6.0.42] - 2024-09-11
+### Changed
+- Make "Add Illini Cash" functionality available for not logged in users [#4342](https://github.com/rokwire/illinois-app/issues/4342).
+- Wallet does not pre-load history transactions [#4341](https://github.com/rokwire/illinois-app/issues/4341).
+
+## [6.0.41] - 2024-09-09
+### Changed
+- Set background color for Career Explorer in Skills Self-Evaluation [#4331](https://github.com/rokwire/illinois-app/issues/4331).
 ### Added
-- Show survey end time, if exists [#4243](https://github.com/rokwire/illinois-app/issues/4243).
-### Changed
-- Show user survey result, if exists [#4243](https://github.com/rokwire/illinois-app/issues/4243).
-
-## [6.1.3] - 2024-07-26
-### Changed
-- Minor fixes in Public Surveys UI [#4243](https://github.com/rokwire/illinois-app/issues/4243).
-
-## [6.1.2] - 2024-07-25
-### Changed
-- Updated Public Surveys UI / round 1 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
-
-## [6.1.1] - 2024-07-24
-- N/A
-
-## [6.1.0] - 2024-07-22
-### Added
-- Created Public Surveys UI / round 0 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
+- Share Skill Self-Evaluation feature [#4332](https://github.com/rokwire/illinois-app/issues/4332).
+- Added search buildings fature [#4290](https://github.com/rokwire/illinois-app/issues/4290).
 
 ## [6.0.40] - 2024-09-05
 ### Changed
@@ -68,7 +66,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [6.0.37] - 2024-08-28
 ### Fixed
-- Android: crash on startup [#4320](https://github.com/rokwire/illinois-app/issues/4320).
+- Fixed GoogleMap scrolling and zooming on iOS [#4306](https://github.com/rokwire/illinois-app/issues/4306).
+### Changed
+- Acknowledged unknown laundry room appliance status [#4311](https://github.com/rokwire/illinois-app/issues/4311).
+- Hide Laundries from Map panel [#4312](https://github.com/rokwire/illinois-app/issues/4312).
+- Rename "All Events" to "Events" in Map panel [#4312](https://github.com/rokwire/illinois-app/issues/4312).
+- Assistant Feedback UI [#4322](https://github.com/rokwire/illinois-app/issues/4322).
 
 ## [6.0.36] - 2024-08-15
 ### Changed

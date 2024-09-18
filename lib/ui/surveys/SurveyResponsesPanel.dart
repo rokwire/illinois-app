@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/survey.dart';
@@ -24,17 +25,18 @@ import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/widget_builders/survey.dart';
 import 'package:rokwire_plugin/ui/widgets/scroll_pager.dart';
 
-class SurveyResponsesPanel extends StatefulWidget {
+class Event2SurveyResponsesPanel extends StatefulWidget with AnalyticsInfo {
   final String? surveyId;
   final String? eventName;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  SurveyResponsesPanel({Key? key, this.surveyId, this.eventName}) : super(key: key);
+  Event2SurveyResponsesPanel({Key? key, this.surveyId, this.eventName, this.analyticsFeature}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _SurveyResponsesPanelState();
+  State<StatefulWidget> createState() => _Event2SurveyResponsesPanelState();
 }
 
-class _SurveyResponsesPanelState extends State<SurveyResponsesPanel>  {
+class _Event2SurveyResponsesPanelState extends State<Event2SurveyResponsesPanel>  {
 
   List<SurveyResponse> _surveyResponses = [];
 
@@ -119,12 +121,10 @@ class _SurveyResponsesPanelState extends State<SurveyResponsesPanel>  {
     setState(() {});
   }
 
-  Survey? get _survey => _surveyResponses.isNotEmpty ? _surveyResponses.first.survey : null;
-
   // HeaderBar
 
   PreferredSizeWidget get _headerBar => HeaderBar(
-    title: Localization().getStringEx('panel.survey.responses.header.title', '{{survey_name}} Survey Responses').replaceAll('{{survey_name}}', widget.eventName ?? _survey?.title ?? ''),
+    title: Localization().getStringEx('panel.event2.survey.responses.header.title', '{{event_name}} Survey Responses').replaceAll('{{event_name}}', widget.eventName ?? 'Event'),
     onLeading: _onHeaderBarBack,
   );
 

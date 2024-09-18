@@ -276,7 +276,7 @@ class WellnessRegularResourceButton extends StatelessWidget {
 
   Widget _buildInterior() {
     return InkWell(onTap: onTap, child:
-      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
         FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16)),
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(vertical: 17), child:

@@ -17,6 +17,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -25,9 +26,11 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class CanvasCourseCollaborationsPanel extends StatefulWidget {
+class CanvasCourseCollaborationsPanel extends StatefulWidget with AnalyticsInfo {
   final int courseId;
-  CanvasCourseCollaborationsPanel({required this.courseId});
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
+  CanvasCourseCollaborationsPanel({required this.courseId, this.analyticsFeature});
 
   @override
   _CanvasCourseCollaborationsPanelState createState() => _CanvasCourseCollaborationsPanelState();

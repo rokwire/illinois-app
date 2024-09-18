@@ -18,6 +18,7 @@ import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/wellness/WellnessToDo.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -33,8 +34,10 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/scroll_pager.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class WellnessToDoHomeContentWidget extends StatefulWidget {
-  WellnessToDoHomeContentWidget();
+class WellnessToDoHomeContentWidget extends StatefulWidget with AnalyticsInfo {
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
+  WellnessToDoHomeContentWidget({super.key, this.analyticsFeature});
 
   @override
   State<WellnessToDoHomeContentWidget> createState() => _WellnessToDoHomeContentWidgetState();
@@ -320,7 +323,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         if (CollectionUtils.isNotEmpty(items)) {
           contentList.add(_buildSectionWidget(key));
           for (WellnessToDoItem item in items!) {
-            contentList.add(Padding(padding: EdgeInsets.only(top: 10), child: _ToDoItemCard(item: item)));
+            contentList.add(Padding(padding: EdgeInsets.only(top: 10), child: _ToDoItemCard(item: item, analyticsFeature: widget.analyticsFeature,)));
           }
         }
       }
@@ -478,8 +481,9 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       return;
     }
     if (item.reminderDateTime != null) {
-      Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(item: item, optionalFieldsExpanded: true)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+        WellnessToDoItemDetailPanel(item: item, optionalFieldsExpanded: true, analyticsFeature: widget.analyticsFeature,)
+      ));
     } else {
       AppAlert.showCustomDialog(context: context, contentPadding: EdgeInsets.zero, contentWidget: _ToDoItemReminderDialog(item: item));
     }
@@ -487,12 +491,12 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   void _onTapManageCategories() {
     Analytics().logSelect(target: "Manage Categories", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessManageToDoCategoriesPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessManageToDoCategoriesPanel(analyticsFeature: widget.analyticsFeature,)));
   }
 
   void _onTapAddItem() {
     Analytics().logSelect(target: "Add Item", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(analyticsFeature: widget.analyticsFeature,)));
   }
 
   void _onTapCalendarInfo() {
@@ -819,7 +823,8 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
 class _ToDoItemCard extends StatefulWidget {
   final WellnessToDoItem item;
-  _ToDoItemCard({required this.item});
+  final AnalyticsFeature? analyticsFeature;
+  _ToDoItemCard({required this.item, this.analyticsFeature});
 
   @override
   State<_ToDoItemCard> createState() => _ToDoItemCardState();
@@ -892,7 +897,7 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
 
   void _onTapEdit(WellnessToDoItem item) {
     Analytics().logSelect(target: "Edit Item", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(item: item)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(item: item, analyticsFeature: widget.analyticsFeature,)));
   }
 
   void _playCheckingOffSound(){

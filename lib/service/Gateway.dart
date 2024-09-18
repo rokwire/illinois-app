@@ -24,8 +24,22 @@ class Gateway /* with Service */ {
   Future<List<Building>?> loadBuildings() async {
     if (StringUtils.isNotEmpty(Config().gatewayUrl)) {
       Response? response = await Network().get("${Config().gatewayUrl}/wayfinding/buildings", auth: Auth2(), headers: externalAuthorizationHeader);
-      return (response?.statusCode == 200) ? Building.listFromJson( JsonUtils.decodeList(response?.body)) : null;
+      return (response?.statusCode == 200) ? Building.listFromJson(JsonUtils.decodeList(response?.body)) : null;
     }
     return null;
   }
+
+  Future<List<Building>?> searchBuildings({required String text}) async {
+    if (StringUtils.isNotEmpty(Config().gatewayUrl)) {
+      String requestUrl = UrlUtils.buildWithQueryParameters("${Config().gatewayUrl}/wayfinding/searchbuildings", {
+        'name': text,
+        'v': '2'
+      });
+      Response? response = await Network().get(requestUrl, auth: Auth2(), headers: externalAuthorizationHeader);
+      return (response?.statusCode == 200) ? Building.listFromJsonMap(JsonUtils.decodeMap(response?.body)) : null;
+    }
+    return null;
+  }
+
+
 }

@@ -47,6 +47,7 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.occupation_list.header.title', 'Skills Self-Evaluation & Career Explorer')),
+      backgroundColor: Styles().colors.background,
       body: Column(children: [
         _buildHeader(),
         Expanded(

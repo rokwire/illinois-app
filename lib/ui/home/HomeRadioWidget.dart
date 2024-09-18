@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -19,46 +20,58 @@ class HomeRadioWidget extends StatelessWidget {
 
   static Widget handle(RadioStation radioStation, {Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: stationTitle(radioStation),
+      title: _radioStationTitle(radioStation),
     );
 
-  String get title => stationTitle(radioStation);
-
-  static String stationTitle(RadioStation radioStation) {
-    switch(radioStation) {
-      case RadioStation.will: return Localization().getStringEx('widget.home.radio.will.title', 'WILL News & Talk (NPR)');
-      case RadioStation.willfm: return Localization().getStringEx('widget.home.radio.willfm.title', 'WILL Classical & More');
-      case RadioStation.willhd: return Localization().getStringEx('widget.home.radio.willhd.title', 'Illinois Soul 101.1 FM');
-      case RadioStation.wpgufm: return Localization().getStringEx('widget.home.radio.wpgufm.title', 'WPGU 107.1 FM');
-    }
-  }
+  static String stationTitle(RadioStation radioStation) =>
+    _radioStationTitle(radioStation);
 
   @override
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: favoriteId,
-      title: title,
+      title: stationTitle(radioStation),
       titleIconKey: 'radio',
       childPadding: HomeSlantWidget.defaultChildPadding,
-      child: _isEnabled ? _RadioControl(radioStation, borderRadius: BorderRadius.all(Radius.circular(6)),) : HomeMessageCard(
-        message: Localization().getStringEx('widget.home.radio.disabled.message', 'WPGU 107.1 FM is not enabled.'),
-        margin: EdgeInsets.only(top: 8, bottom: 16),
-      ),
+      child: _isEnabled ?
+        _RadioControl(radioStation,
+          borderRadius: BorderRadius.all(Radius.circular(6)),
+          analyticsHost: this.runtimeType.toString(),
+        ) :
+        HomeMessageCard(
+          message: Localization().getStringEx('widget.home.radio.disabled.message', 'WPGU 107.1 FM is not enabled.'),
+          margin: EdgeInsets.only(top: 8, bottom: 16),
+        ),
     );
   }
 
   bool get _isEnabled => RadioPlayer().isStationEnabled(radioStation);
+}
 
-  static void showPopup(BuildContext context, RadioStation radioStation) {
+class RadioPopupWidget extends StatelessWidget with AnalyticsInfo {
+  final RadioStation radioStation;
+
+  RadioPopupWidget(this.radioStation, { super.key });
+
+  @override
+  Map<String, dynamic>? get analyticsPageAttributes =>
+    _radioStationAnalyticsAttributes(radioStation);
+
+  @override
+  AnalyticsFeature? get analyticsFeature =>
+    AnalyticsFeature.Radio;
+
+  static void show(BuildContext context, RadioStation radioStation) =>
     showDialog(context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return _buildPopup(context, radioStation);
-      },
+        barrierDismissible: true,
+        builder: (BuildContext context) => RadioPopupWidget(radioStation)
     );
-  }
 
-  static Widget _buildPopup(BuildContext context, RadioStation radioStation) {
-    return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
+  static String stationTitle(RadioStation radioStation) =>
+    _radioStationTitle(radioStation);
+
+  @override
+  Widget build(BuildContext context) =>
+    ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
       Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
         Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
           Container(color: Styles().colors.fillColorPrimary, child:
@@ -66,11 +79,11 @@ class HomeRadioWidget extends StatelessWidget {
               Expanded(child:
                 Padding(padding: EdgeInsets.all(8), child:
                   Center(child:
-                    Text(HomeRadioWidget.stationTitle(radioStation), style: Styles().textStyles.getTextStyle("widget.dialog.message.regular")),
+                    Text(_radioStationTitle(radioStation), style: Styles().textStyles.getTextStyle("widget.dialog.message.regular")),
                   ),
                 ),
               ),
-              Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), button: true, child:
+              Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), button: true, child:
                 InkWell(onTap : () => _onClosePopup(context, radioStation), child:
                   Padding(padding: EdgeInsets.all(16), child:
                     Styles().images.getImage('close-circle-white', excludeFromSemantics: true),
@@ -79,14 +92,25 @@ class HomeRadioWidget extends StatelessWidget {
               ),
             ],),
           ),
-          _RadioControl(radioStation, borderRadius: BorderRadius.vertical(bottom: Radius.circular(6))),
+          _RadioControl(radioStation,
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(6)),
+            analyticsHost: this.runtimeType.toString(),
+            onInitState: _didInitRadioControl,
+          ),
         ],),
       ),
     );
+
+  void _didInitRadioControl() {
+    Analytics().logPageWidget(this);
   }
 
-  static void _onClosePopup(BuildContext context, RadioStation radioStation) {
-    Analytics().logSelect(target: 'Close', source: 'HomeRadioWidget(${radioStation.toString()})');
+  void _onClosePopup(BuildContext context, RadioStation radioStation) {
+    Analytics().logSelect(
+      target: 'Close',
+      source: runtimeType.toString(),
+      attributes: analyticsPageAttributes,
+    );
     Navigator.of(context).pop();
   }
 }
@@ -96,8 +120,16 @@ class _RadioControl extends StatefulWidget {
   final RadioStation radioStation;
   final BorderRadius borderRadius;
 
+  final void Function()? onInitState;
+  final String? analyticsHost;
 
-  const _RadioControl(this.radioStation, {Key? key, required this.borderRadius}) : super(key: key);
+
+  const _RadioControl(this.radioStation, {
+    Key? key,
+    required this.borderRadius,
+    this.onInitState,
+    this.analyticsHost
+  }) : super(key: key);
 
   @override
   State<_RadioControl> createState() => _RadioControlState();
@@ -112,6 +144,7 @@ class _RadioControlState extends State<_RadioControl> implements NotificationsLi
       RadioPlayer.notifyPlayerStateChanged,
     ]);
 
+    widget.onInitState?.call();
     super.initState();
   }
 
@@ -160,10 +193,6 @@ class _RadioControlState extends State<_RadioControl> implements NotificationsLi
         case ProcessingState.buffering:
           buttonTitle = Localization().getStringEx('widget.home.radio.button.buffering.title', 'Buffering');
           progress = true;
-          break;
-
-          buttonTitle = Localization().getStringEx('widget.home.radio.button.play.title', 'Tune In');
-          iconKey = 'play-circle-large';
           break;
 
         case ProcessingState.completed:
@@ -230,7 +259,11 @@ class _RadioControlState extends State<_RadioControl> implements NotificationsLi
 
 
   void _onTapPlayPause() {
-    Analytics().logSelect(target: 'Play/Pause', source: 'HomeRadioWidget');
+    Analytics().logSelect(
+      target: RadioPlayer().isStationPlaying(widget.radioStation) ? 'Pause' : 'Play',
+      source: widget.analyticsHost ?? this.runtimeType.toString(),
+      attributes: _radioStationAnalyticsAttributes(widget.radioStation),
+    );
     RadioPlayer().toggleStationPlayPause(widget.radioStation);
   }
 
@@ -246,4 +279,17 @@ class _RadioControlState extends State<_RadioControl> implements NotificationsLi
       }
     }
   }
-} 
+}
+
+String _radioStationTitle(RadioStation radioStation) {
+  switch(radioStation) {
+    case RadioStation.will: return Localization().getStringEx('widget.home.radio.will.title', 'WILL News & Talk (NPR)');
+    case RadioStation.willfm: return Localization().getStringEx('widget.home.radio.willfm.title', 'WILL Classical & More');
+    case RadioStation.willhd: return Localization().getStringEx('widget.home.radio.willhd.title', 'Illinois Soul 101.1 FM');
+    case RadioStation.wpgufm: return Localization().getStringEx('widget.home.radio.wpgufm.title', 'WPGU 107.1 FM');
+  }
+}
+
+Map<String, dynamic> _radioStationAnalyticsAttributes(RadioStation radioStation) => <String, dynamic>{
+  Analytics.LogAttributeRadioStation: _radioStationTitle(radioStation),
+};

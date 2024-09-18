@@ -303,7 +303,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       case News.favoriteKeyName: return _loadFavoriteNews;
       case LaundryRoom.favoriteKeyName: return _laundryAvailable ? _loadFavoriteLaundries : _loadNOP;
       case MTDStop.favoriteKeyName: return _loadFavoriteMTDStops;
-      case ExplorePOI.favoriteKeyName: return _loadFavoriteMTDDestinations;
+      case ExplorePOI.favoriteKeyName: return _loadFavoriteLocations;
       case GuideFavorite.favoriteKeyName: return _loadFavoriteGuideItems;
       case Appointment.favoriteKeyName: return _loadFavoriteAppointments;
     }
@@ -330,7 +330,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   Future<List<Favorite>?> _loadFavoriteMTDStops(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? ListUtils.reversed(MTD().stopsByIds(favoriteIds)) : null;
 
-  Future<List<Favorite>?> _loadFavoriteMTDDestinations(LinkedHashSet<String>? favoriteIds) async =>
+  Future<List<Favorite>?> _loadFavoriteLocations(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? ListUtils.reversed(ExplorePOI.listFromString(favoriteIds)) : null;
 
   Future<List<Favorite>?> _loadFavoriteLaundries(LinkedHashSet<String>? favoriteIds) async =>
@@ -406,7 +406,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       case News.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.news', 'My Big 10 News');
       case LaundryRoom.favoriteKeyName:   return Localization().getStringEx('panel.saved.label.laundry', 'My Laundry');
       case MTDStop.favoriteKeyName:       return Localization().getStringEx('panel.saved.label.mtd_stops', 'My Bus Stops');
-      case ExplorePOI.favoriteKeyName:    return Localization().getStringEx('panel.saved.label.mtd_destinations', 'My Destinations');
+      case ExplorePOI.favoriteKeyName:    return Localization().getStringEx('panel.saved.label.my_locations', 'My Locations');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.saved.label.campus_guide', 'My Campus Guide');
       case Appointment.favoriteKeyName:   return Localization().getStringEx('panel.saved.label.appointments', 'MyMcKinley Appointments');
     }

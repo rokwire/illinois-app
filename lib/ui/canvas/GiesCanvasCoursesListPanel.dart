@@ -15,27 +15,32 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesContentWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class GiesCanvasCoursesListPanel extends StatefulWidget {
+class GiesCanvasCoursesListPanel extends StatelessWidget with AnalyticsInfo {
   GiesCanvasCoursesListPanel();
 
   @override
-  _GiesCanvasCoursesListPanelState createState() => _GiesCanvasCoursesListPanelState();
-}
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.AcademicsGiesCanvasCourses;
 
-class _GiesCanvasCoursesListPanelState extends State<GiesCanvasCoursesListPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: HeaderBar(title: Localization().getStringEx('panel.gies_canvas_courses.header.title', 'My Gies Canvas Courses')),
-        body: SingleChildScrollView(
-            child: Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child: GiesCanvasCoursesContentWidget())),
+        body: _scaffoldContent,
         backgroundColor: Styles().colors.white,
         bottomNavigationBar: uiuc.TabBar());
   }
+
+  Widget get _scaffoldContent =>
+    SingleChildScrollView(child:
+      Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+        GiesCanvasCoursesContentWidget()
+      )
+    );
 }

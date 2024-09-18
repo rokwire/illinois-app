@@ -19,6 +19,7 @@ import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
@@ -30,9 +31,11 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class CanvasCourseAnnouncementsPanel extends StatefulWidget {
+class CanvasCourseAnnouncementsPanel extends StatefulWidget with AnalyticsInfo {
   final int courseId;
-  CanvasCourseAnnouncementsPanel({required this.courseId});
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
+  CanvasCourseAnnouncementsPanel({required this.courseId, this.analyticsFeature});
 
   @override
   _CanvasCourseAnnouncementsPanelState createState() => _CanvasCourseAnnouncementsPanelState();
@@ -200,7 +203,8 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
 
   void _onTapAnnouncement(CanvasDiscussionTopic announcement) {
     Analytics().logSelect(target: "Canvas Course -> Announcement");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasAnnouncementDetailPanel(announcement: announcement)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+      CanvasAnnouncementDetailPanel(announcement: announcement, analyticsFeature: widget.analyticsFeature,)));
   }
 
   Widget _buildCourseDropDownWidget() {

@@ -504,7 +504,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
         case ExploreMapType.StudentCourse: return _loadStudentCourses();
         case ExploreMapType.Appointments: return _loadAppointments();
         case ExploreMapType.MTDStops: return _loadMTDStops();
-        case ExploreMapType.MTDDestinations: return _loadMTDDestinations();
+        case ExploreMapType.MyLocations: return _loadMyLocations();
         case ExploreMapType.MentalHealth: return Wellness().loadMentalHealthBuildings();
         case ExploreMapType.StateFarmWayfinding: break;
         default: break;
@@ -550,25 +550,25 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     }
   }
 
-  List<Explore>? _loadMTDDestinations() {
+  List<Explore>? _loadMyLocations() {
     return ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName)) ?? <Explore>[];
   }
 
   // Favorites
 
   void _onFavoritesChanged() {
-    if (_mapType == ExploreMapType.MTDDestinations) {
-      _refreshMTDDestinations();
+    if (_mapType == ExploreMapType.MyLocations) {
+      _refreshMyLocations();
     }
     else {
       setStateIfMounted(() {});
     }
   }
 
-  // MTD Destinations
+  // My Locations
 
-  void _refreshMTDDestinations() {
-    List<Explore>? explores = _loadMTDDestinations();
+  void _refreshMyLocations() {
+    List<Explore>? explores = _loadMyLocations();
     if (!DeepCollectionEquality().equals(_explores, explores) && mounted) {
       _buildMapContentData(explores, pinnedExplore: _pinnedMapExplore, updateCamera: false).then((_){
         if (mounted) {
