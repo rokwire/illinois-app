@@ -505,6 +505,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       initialChildSize: 0.1,
       minChildSize: 0.1,
       maxChildSize: 0.6,
+      snap: true,
       builder: (BuildContext context, ScrollController scrollController) {
         return Container(
           decoration: BoxDecoration(
@@ -597,32 +598,24 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     );
   }
 
-  // Inside _ExploreMapPanelState
-
   Widget _buildDestinationCard(Map<String, String> destination) {
-    return Card(
+    return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: ListTile(
-        leading: Container(
-          width: 50.0,
-          height: 50.0,
-          color: Colors.grey[300], // Placeholder for image
-          child: Icon(Icons.image, color: Colors.grey),
-        ),
+        contentPadding: EdgeInsets.zero,
         title: Text(destination['name'] ?? ''),
         subtitle: Text(destination['address'] ?? ''),
+        trailing: Container(
+          width: 50.0,
+          height: 50.0,
+          child: Icon(Icons.image, color: Colors.grey),
+        ),
         onTap: () {
-          // Handle destination selection
+
         },
       ),
     );
   }
-
-
-
-
-
-
 
   void _onMapCameraIdle() {
     debugPrint('ExploreMap camera idle' );
