@@ -1933,7 +1933,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     } else {
       bool eventModified = (event != widget.event);
       if (eventModified) {
-        result = await Events2().updateEvent(event);
+        result = await Events2().updateEvent(event, initialGroupIds: _initialGroupIds);
       }
       else {
         result = event;

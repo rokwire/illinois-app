@@ -1177,7 +1177,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
             _eventProcessing = true;
           });
 
-          Events2().deleteEvent(_eventId!).then((result) {
+          Events2().deleteEvent(eventId: _eventId!, groupIds: widget.event?.groupIds).then((result) {
             if (mounted) {
               setState(() {
                 _eventProcessing = false;

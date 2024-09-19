@@ -688,8 +688,8 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
 
   void _onTapRemoveGroupEvent() {
     Analytics().logSelect(target: 'Remove Group Event');
-    Events2().deleteGroupEvent(eventId: _event.id!, groupId: widget.group!.id!).then((bool value) {
-      if (value) {
+    Events2().deleteEvent(eventId: _event.id!, groupIds:_event.groupIds).then((result) {
+      if (result == true) {
         Navigator.of(context).pop();
       } else {
         AppAlert.showDialogResult(context, Localization().getStringEx('widget.event2.card.detail.group.delete_event.delete.failed.message', 'Failed to remove the event from group page.'));

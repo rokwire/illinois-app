@@ -606,9 +606,9 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   void _deleteEvent(){
     if(_event != null) {
-      Events2().deleteGroupEvent(eventId: _event!.id!, groupId: widget.groupId!)
-        .then((bool value) {
-          if (value) {
+      Events2().deleteEvent(eventId: _event!.id!, groupIds: {widget.groupId!})
+        .then((result) {
+          if (result == true) {
             Navigator.of(context).pop();
           }
           else {
