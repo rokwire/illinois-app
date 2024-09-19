@@ -2431,7 +2431,7 @@
     "panel.wellness.appointments.home.upcoming.list.empty.msg": "Actualmente no tiene citas próximas vinculadas dentro de la aplicación de Illinois. Las nuevas citas realizadas a través de <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> pueden tardar hasta 20 minutos para aparecer en la aplicación {{app_title}}.",
     "panel.wellness.appointments.home.past.list.empty.msg": "No tiene citas pasadas recientes vinculadas dentro de la aplicación de Illinois.",
     "panel.wellness.appointments.home.past_appointments.header.label": "Citas pasadas recientes",
-    "panel.wellness.appointments.home.past_appointments.footer.description": "<a href='{{mckinley url}}'>Visite {{mckinley_url_label}} para ver un historial completo de citas anteriores.</a>&nbsp;<img src='asset:{{external_links icon}}' alt= ''/>",
+    "panel.wellness.appointments.home.past_appointments.footer.description": "View a full history of past appointments at {{mckinley_url_label}}.",
     "panel.wellness.appointments.home.display.nothing.msg": "No hay nada que mostrar ya que ha elegido no mostrar citas pasadas o futuras.",
     "panel.wellness.appointments.home.display.settings.on.label": "Mostrar mis citas",
     "panel.wellness.appointments.home.display.settings.off.label": "No mostrar mis citas",
