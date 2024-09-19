@@ -239,7 +239,13 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
       ),
     );
 
-  void _showRescheduleAppointmentPopup() {
+  void _showRescheduleAppointmentPopup() =>
+      showDialog(
+      context: context,
+      builder: _buildRescheduleAppointmentPopup,
+    );
+
+  Widget _buildRescheduleAppointmentPopup(BuildContext context) {
     final String urlLabelMacro = '{{mckinley_url_label}}';
     final String urlMacro = '{{mckinley_url}}';
     final String externalLinkIconMacro = '{{external_link_icon}}';
@@ -250,34 +256,30 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
     rescheduleContentHtml = rescheduleContentHtml.replaceAll(urlLabelMacro, Config().saferMcKinleyUrlLabel ?? '');
     rescheduleContentHtml = rescheduleContentHtml.replaceAll(externalLinkIconMacro, 'images/external-link.png');
     rescheduleContentHtml = rescheduleContentHtml.replaceAll(phoneMacro, Config().saferMcKinleyPhone ?? '');
-    AppAlert.showCustomDialog(
-        context: context,
-        contentPadding: EdgeInsets.all(0),
-        contentWidget: Container(
-            decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)),
-            child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
-              Padding(
-                  padding: EdgeInsets.all(30),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-                    Styles().images.getImage('university-logo') ?? Container(),
-                    Padding(
-                        padding: EdgeInsets.only(top: 20),
-                        child:
-                        HtmlWidget(
-                            rescheduleContentHtml,
-                            onTapUrl : (url) {_onTapSaferMcKinleyUrl(url); return true;},
-                            textStyle:  Styles().textStyles.getTextStyle("widget.message.small"),
-                            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorPrimary)} : null
-                        )
-                    )
-                  ])
-              ),
-              Positioned.fill(child: Align(
-                  alignment: Alignment.topRight,
-                  child: InkWell(
-                      onTap: _onTapCloseReschedulePopup,
-                      child: Padding(padding: EdgeInsets.all(16), child: Styles().images.getImage('close-circle', excludeFromSemantics: true)))))
-            ])));
+
+
+    return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
+      Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), backgroundColor: Styles().colors.white, child:
+        Column(mainAxisSize: MainAxisSize.min, children: [
+          Align(alignment: Alignment.centerRight, child:
+            InkWell(onTap: _onTapCloseReschedulePopup, child:
+              Padding(padding: EdgeInsets.all(16), child:
+                Styles().images.getImage('close-circle', excludeFromSemantics: true),
+              )
+            )
+          ),
+          Styles().images.getImage('university-logo') ?? Container(),
+          Padding(padding: EdgeInsets.all(24), child:
+            HtmlWidget(
+              rescheduleContentHtml,
+              onTapUrl : (url) {_onTapSaferMcKinleyUrl(url); return true;},
+              textStyle:  Styles().textStyles.getTextStyle("widget.message.small"),
+              customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorPrimary)} : null
+            )
+          )
+        ])
+      ),
+    );
   }
 
   Future<void> _onPullToRefresh() async {
