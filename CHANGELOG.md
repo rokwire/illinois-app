@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed wellness resources button title alignment [#4376](https://github.com/rokwire/illinois-app/issues/4376).
+- Fixed presentation of MyMcKinley appointment popup.
+### Changed
+- Set LTR tout image overlay in ExploreBuildingDetailPanel [#4378](https://github.com/rokwire/illinois-app/issues/4378).
 
 ## [6.0.46] - 2024-09-17
 ### Changed

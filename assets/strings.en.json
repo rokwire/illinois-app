@@ -2433,7 +2433,7 @@
     "panel.wellness.appointments.home.upcoming.list.empty.msg": "You currently have no upcoming appointments linked within the Illinois app. New appointments made via <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> may take up to 20 minutes to appear in the {{app_title}} app.",
     "panel.wellness.appointments.home.past.list.empty.msg": "You don't have recent past appointments linked within the Illinois app.",
     "panel.wellness.appointments.home.past_appointments.header.label": "Recent Past Appointments",
-    "panel.wellness.appointments.home.past_appointments.footer.description": "<a href='{{mckinley_url}}'>Visit {{mckinley_url_label}} to view a full history of past appointments.</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>",
+    "panel.wellness.appointments.home.past_appointments.footer.description": "View a full history of past appointments at {{mckinley_url_label}}.",
     "panel.wellness.appointments.home.display.nothing.msg": "There is nothing to display as you have chosen not to display any past or future appointments.",
     "panel.wellness.appointments.home.display.settings.on.label": "Display My Appointments",
     "panel.wellness.appointments.home.display.settings.off.label": "Don't Display My Appointments",
