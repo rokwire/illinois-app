@@ -315,7 +315,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _loadEvents() {
-    setState(() {
+    setStateIfMounted(() {
       _updatingEvents = true;
     });
     Events2().loadGroupEvents(groupId: _groupId, limit: 3).then((Events2ListResult? eventsResult) {
@@ -336,6 +336,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         });
       }
     });
+  }
+
+  void _clearEvents() {
+    _allEventsCount = 0;
+    _groupEvents = null;
   }
 
   // Posts & Direct Messages
@@ -736,6 +741,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       setStateIfMounted(() {});
     }
     else if (name == Groups.notifyGroupEventsUpdated) {
+      _clearEvents();
       _loadEvents();
     }
     else if (name == Groups.notifyGroupStatsUpdated) {
