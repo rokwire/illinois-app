@@ -66,6 +66,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:timezone/timezone.dart';
 
+import 'CampusDestinationBottomSheet.dart';
+
 enum ExploreMapType { Events2, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MyLocations, MentalHealth, StateFarmWayfinding, CampusDestination }
 
 class ExploreMapPanel extends StatefulWidget {
@@ -398,7 +400,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
           ),
           _buildExploreTypesDropDownContainer(),
           if (_selectedMapType == ExploreMapType.CampusDestination)
-            _buildCampusDestinationBottomSheet(),
+            CampusDestinationBottomSheet(),
         ]),
       ),
     ]);
@@ -496,125 +498,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   void _onMapCameraMove(CameraPosition cameraPosition) {
     debugPrint('ExploreMap camera position: lat: ${cameraPosition.target.latitude} lng: ${cameraPosition.target.longitude} zoom: ${cameraPosition.zoom}' );
     _lastCameraPosition = cameraPosition;
-  }
-
-  // Inside _ExploreMapPanelState
-
-  Widget _buildCampusDestinationBottomSheet() {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.1,
-      minChildSize: 0.1,
-      maxChildSize: 0.6,
-      snap: true,
-      builder: (BuildContext context, ScrollController scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 10.0,
-              ),
-            ],
-          ),
-          child: ListView(
-            controller: scrollController,
-            children: [
-              _buildBottomSheetHeader(),
-              ..._campusDestinations.map((destination) {
-                return _buildDestinationCard(destination);
-              }).toList(),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-
-
-  // Inside _ExploreMapPanelState
-
-  Widget _buildBottomSheetHeader() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min, // Add this line
-        children: [
-          // Title and Close Button
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Campus Destinations',
-                style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              IconButton(
-                icon: Icon(Icons.close),
-                onPressed: () {
-                  // Implement collapse functionality if needed
-                },
-              ),
-            ],
-          ),
-          // Filter Buttons
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _buildFilterButton('Open Now'),
-                _buildFilterButton('Near Me'),
-                _buildFilterButton('Photo Spots'),
-                _buildFilterButton('Donor Gift'),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-
-  Widget _buildFilterButton(String label) {
-    return Padding(
-      padding: EdgeInsets.only(right: 8.0),
-      child: ElevatedButton(
-        onPressed: () {
-          // Implement filter functionality
-        },
-        child: Text(label),
-        style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.blue,
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDestinationCard(Map<String, String> destination) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: ListTile(
-        contentPadding: EdgeInsets.zero,
-        title: Text(destination['name'] ?? ''),
-        subtitle: Text(destination['address'] ?? ''),
-        trailing: Container(
-          width: 50.0,
-          height: 50.0,
-          child: Icon(Icons.image, color: Colors.grey),
-        ),
-        onTap: () {
-
-        },
-      ),
-    );
   }
 
   void _onMapCameraIdle() {
