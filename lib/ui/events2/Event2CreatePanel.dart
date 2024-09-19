@@ -1649,7 +1649,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     String? eventId = widget.event?.id;
     if (eventId != null) {
       _loadingEventGroups = true;
-      Groups().loadUserGroupsHavingEventEx(eventId).then((dynamic result) {
+      Groups().loadGroupsByIds(groupIds: widget.event!.groupIds).then((dynamic result) {
         if (mounted) {
           setState(() {
             _loadingEventGroups = false;
