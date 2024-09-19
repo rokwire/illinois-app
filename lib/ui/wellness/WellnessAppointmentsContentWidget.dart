@@ -25,7 +25,6 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/appointments/AppointmentCard.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -143,7 +142,7 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
         child:
         HtmlWidget(
             "<div style=text-align:center> $emptyUpcommingContentHtml </div>",
-            onTapUrl : (url) {_onTapMcKinleyUrl(url); return true;},
+            onTapUrl : (url) {_onTapSaferMcKinleyUrl(url); return true;},
             textStyle:  Styles().textStyles.getTextStyle("widget.title.medium"),
             customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorPrimary)} : null
         )
@@ -185,23 +184,14 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
   }
 
   Widget _buildPastAppointmentsDescription() {
-    final String urlLabelMacro = '{{mckinley_url_label}}';
-    final String urlMacro = '{{mckinley_url}}';
-    final String externalLinkIconMacro = '{{external_link_icon}}';
-    String descriptionHtml = Localization().getStringEx("panel.wellness.appointments.home.past_appointments.footer.description",
-        "<a href='{{mckinley_url}}'>Visit {{mckinley_url_label}} to view a full history of past appointments.</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>");
-    descriptionHtml = descriptionHtml.replaceAll(urlMacro, Config().saferMcKinleyUrl ?? '');
-    descriptionHtml = descriptionHtml.replaceAll(urlLabelMacro, Config().saferMcKinleyUrlLabel ?? '');
-    descriptionHtml = descriptionHtml.replaceAll(externalLinkIconMacro, 'images/external-link.png');
-    return Padding(
-        padding: EdgeInsets.only(left: 20, right: 20, top: 16),
-        child:
-        HtmlWidget(
-            "<div style=text-align:center> $descriptionHtml </div>",
-            onTapUrl : (url) {_onTapMcKinleyUrl(url); return true;},
-            textStyle: Styles().textStyles.getTextStyle("widget.description.regular"),
-            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorPrimary)} : null
-        )
+    String descriptionText = Localization().getStringEx("panel.wellness.appointments.home.past_appointments.footer.description",
+      "View a full history of past appointments at {{mckinley_url_label}}.").
+        replaceAll('{{mckinley_url_label}}', Config().saferMcKinleyUrlLabel ?? '');
+    return Padding(padding: EdgeInsets.only(top: 8), child:
+      _buildLinkDetail(descriptionText,
+        iconKey: 'external-link',
+        onTap: () => _onTapSaferMcKinleyUrl(Config().saferMcKinleyUrl)
+      ),
     );
   }
 
@@ -230,15 +220,24 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
     String buttonTitle = _appointmentsCanDisplay
         ? Localization().getStringEx('panel.wellness.appointments.home.display.settings.off.label', "Don't Display My Appointments")
         : Localization().getStringEx('panel.wellness.appointments.home.display.settings.on.label', 'Display My Appointments');
-    return Padding(
-        padding: EdgeInsets.only(bottom: 16),
-        child: InkWell(
-            onTap: _onTapDisplaySettings,
-            child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: [
-              Padding(padding: EdgeInsets.only(right: 5), child: Styles().images.getImage('settings', excludeFromSemantics: true)),
-              LinkButton(title: buttonTitle, padding: EdgeInsets.zero)
-            ])));
+    return _buildLinkDetail(buttonTitle, iconKey: 'settings', onTap: _onTapDisplaySettings);
   }
+
+  Widget _buildLinkDetail(String? text, { String? iconKey, void Function()? onTap, String? semanticsLabel, String? semanticsHint, }) =>
+    Semantics(label: semanticsLabel ?? text, hint: semanticsHint, button: true, child:
+      InkWell(onTap: onTap, child:
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          if (iconKey != null)
+            Padding(padding: EdgeInsets.only(right: 5, top: 12, bottom: 12), child:
+              Styles().images.getImage(iconKey, excludeFromSemantics: true)),
+          Expanded(child:
+            Padding(padding: EdgeInsets.only(top: 8), child:
+              Text(text ?? '', style: Styles().textStyles.getTextStyle('widget.button.title.medium.underline'), semanticsLabel: "",)
+            )
+          )
+        ])
+      ),
+    );
 
   void _showRescheduleAppointmentPopup() {
     final String urlLabelMacro = '{{mckinley_url_label}}';
@@ -266,7 +265,7 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
                         child:
                         HtmlWidget(
                             rescheduleContentHtml,
-                            onTapUrl : (url) {_onTapMcKinleyUrl(url); return true;},
+                            onTapUrl : (url) {_onTapSaferMcKinleyUrl(url); return true;},
                             textStyle:  Styles().textStyles.getTextStyle("widget.message.small"),
                             customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorPrimary)} : null
                         )
@@ -290,8 +289,8 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
     Navigator.of(context).pop();
   }
 
-  void _onTapMcKinleyUrl(String? url) async {
-    Analytics().logSelect(target: 'McKinley Url');
+  void _onTapSaferMcKinleyUrl(String? url) async {
+    Analytics().logSelect(target: Config().saferMcKinleyUrlLabel ?? 'Url: $url');
     if (StringUtils.isNotEmpty(url)) {
       Uri? uri = Uri.tryParse(url!);
       if ((uri != null) && (await canLaunchUrl(uri))) {

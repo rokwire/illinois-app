@@ -48,7 +48,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsContactsContentW
       RibbonButton(
           backgroundColor: Styles().colors.white,
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-          rightIconKey: "external-link-medium",
+          rightIcon: Styles().images.getImage('external-link', size: 20),
           borderRadius: borderRadius,
           label: label,
           onTap: () => onTap?.call()
