@@ -2306,9 +2306,9 @@ _Event2Visibility? _event2VisibilityFromAuthorizationContext(Event2Authorization
   if (authorizationContext == null) {
     return _Event2Visibility.public;
   } else {
-    if (authorizationContext.isGroupMember) {
+    if (authorizationContext.isGroupMembersOnly) {
       return _Event2Visibility.group_member;
-    } else if (authorizationContext.isRegisteredUser) {
+    } else if (authorizationContext.isGuestListOnly) {
       return _Event2Visibility.registered_user;
     } else {
       return _Event2Visibility.public;
