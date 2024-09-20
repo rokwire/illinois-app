@@ -2261,7 +2261,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       location: _constructLocation(),
       onlineDetails: _onlineDetails,
 
-      grouping: null, // TBD
+      grouping: widget.event?.grouping,
       attributes: _attributes,
       authorizationContext: authorizationContext,
       context: event2Context,
