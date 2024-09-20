@@ -5,11 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.0.47] - 2024-09-19
 ### Fixed
 - Fixed wellness resources button title alignment [#4376](https://github.com/rokwire/illinois-app/issues/4376).
 - Fixed presentation of MyMcKinley appointment popup.
 ### Changed
 - Set LTR tout image overlay in ExploreBuildingDetailPanel [#4378](https://github.com/rokwire/illinois-app/issues/4378).
+- Text updates in WellnessAppointmentsPanel [#4380](https://github.com/rokwire/illinois-app/issues/4380).
 
 ## [6.0.46] - 2024-09-17
 ### Changed
