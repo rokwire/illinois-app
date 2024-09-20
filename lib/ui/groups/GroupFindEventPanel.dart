@@ -272,11 +272,11 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
               hint: Localization().getStringEx('panel.find_event.button.clear.hint', ''),
               button: true,
               excludeSemantics: true,
-              child: Padding(
-                padding: EdgeInsets.all(12),
-                child: GestureDetector(
-                  onTap: _onTapClear,
-                  child: Styles().images.getImage('close-circle'),
+              child: GestureDetector(
+                onTap: _onTapClear,
+                child: Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Styles().images.getImage('close'),
                 ),
               )
           ),
@@ -285,10 +285,10 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
             hint: Localization().getStringEx('panel.find_event.button.search.hint', ''),
             button: true,
             excludeSemantics: true,
-            child: Padding(
-              padding: EdgeInsets.all(12),
-              child: GestureDetector(
-                onTap: _onTapSearch,
+            child: GestureDetector(
+              onTap: _onTapSearch,
+              child: Padding(
+                padding: EdgeInsets.all(12),
                 child: Styles().images.getImage('search', excludeFromSemantics: true),
               ),
             ),

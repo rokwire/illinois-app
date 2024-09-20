@@ -89,7 +89,7 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
       _buildSearchTextField()
     ),
     if (_canClear)
-      _buildSearchImageButton('close-circle',
+      _buildSearchImageButton('close',
         label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
         hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
         onTap: _onTapClear,
