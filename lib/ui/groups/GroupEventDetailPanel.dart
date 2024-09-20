@@ -606,9 +606,9 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   void _deleteEvent(){
     if(_event != null) {
-      Groups().deleteEventForGroupV3(eventId: _event?.id, groupId: widget.groupId)
-        .then((bool value) {
-          if (value) {
+      Events2().deleteEvent(eventId: _event!.id!, groupIds: {widget.groupId!})
+        .then((result) {
+          if (result == true) {
             Navigator.of(context).pop();
           }
           else {
@@ -753,7 +753,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   bool get isFavorite => Auth2().isFavorite(_event);
 
-  bool get _isPrivateGroupEvent => _event?.private ?? false;
+  bool get _isPrivateGroupEvent => (_event?.isPrivate == true);
 
   @override
   void onNotification(String name, param) {

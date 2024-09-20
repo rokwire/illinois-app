@@ -20,7 +20,6 @@ import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/events2.dart';
-import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -689,8 +688,8 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
 
   void _onTapRemoveGroupEvent() {
     Analytics().logSelect(target: 'Remove Group Event');
-    Groups().deleteEventForGroupV3(eventId: _event.id, groupId: widget.group?.id).then((bool value) {
-      if (value) {
+    Events2().deleteEvent(eventId: _event.id!, groupIds:_event.groupIds).then((result) {
+      if (result == true) {
         Navigator.of(context).pop();
       } else {
         AppAlert.showDialogResult(context, Localization().getStringEx('widget.event2.card.detail.group.delete_event.delete.failed.message', 'Failed to remove the event from group page.'));
@@ -751,25 +750,25 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
   @override
   Widget build(BuildContext context) {
     if (_loadingEvents) {
-      return _buildContnet(LinkedEvents2PagerContentStatus.loading, contentWidget: _progressContent);
+      return _buildContent(LinkedEvents2PagerContentStatus.loading, contentWidget: _progressContent);
     }
     else if (_events == null) {
-      return _buildContnet(LinkedEvents2PagerContentStatus.error, contentWidget: _buildMessageContent(
+      return _buildContent(LinkedEvents2PagerContentStatus.error, contentWidget: _buildMessageContent(
         title: Localization().getStringEx('panel.events2.home.message.failed.title', 'Failed'),
         message: _eventsErrorText ?? Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred')
       ));
     }
     else if (_events?.length == 0) {
-      return _buildContnet(LinkedEvents2PagerContentStatus.empty, contentWidget: _buildMessageContent(
+      return _buildContent(LinkedEvents2PagerContentStatus.empty, contentWidget: _buildMessageContent(
         message: Localization().getStringEx('widget.home.event2_feed.text.empty.description', 'There are no events available.')
       ));
     }
     else {
-      return _buildContnet(LinkedEvents2PagerContentStatus.content, contentWidget: _eventsPager);
+      return _buildContent(LinkedEvents2PagerContentStatus.content, contentWidget: _eventsPager);
     }
   }
 
-  Widget _buildContnet(LinkedEvents2PagerContentStatus state, { required Widget contentWidget }) =>
+  Widget _buildContent(LinkedEvents2PagerContentStatus state, { required Widget contentWidget }) =>
     (widget.contentBuilder != null) ? widget.contentBuilder!(state, child: contentWidget) : contentWidget;
 
   Widget get _eventsPager {

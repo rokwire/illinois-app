@@ -500,7 +500,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     setState(() {
       _manualInputProgress = true;
     });
-    Events2().attendEvent(eventId, personIdentifier: Event2PersonIdentifier(accountId: "", exteralId: netId)).then((result) {
+    Events2().attendEvent(eventId, personIdentifier: Event2PersonIdentifier(accountId: "", externalId: netId)).then((result) {
       if (mounted) {
         setState(() {
           _manualInputProgress = false;
@@ -612,7 +612,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     if (_isInternalRegisterationEvent) {
       Events2().loadEventPerson(uin: uin).then((Event2PersonIdentifier? personIdentifier) {
         if (mounted) {
-          String? netId = personIdentifier?.exteralId;
+          String? netId = personIdentifier?.externalId;
           if (netId != null) {
             if (_isAttendeeNetIdAttended(netId)) {
               setState(() {
