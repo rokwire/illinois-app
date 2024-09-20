@@ -108,10 +108,10 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
                       hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
                       button: true,
                       excludeSemantics: true,
-                      child: Padding(
-                        padding: EdgeInsets.all(12),
-                        child: GestureDetector(
-                          onTap: _onTapClear,
+                      child: GestureDetector(
+                        onTap: _onTapClear,
+                        child: Padding(
+                          padding: EdgeInsets.all(12),
                           child: Styles().images.getImage('close-circle', excludeFromSemantics: true),
                         ),
                       )
@@ -121,10 +121,10 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
                       hint: Localization().getStringEx('panel.search.button.search.hint', ''),
                       button: true,
                       excludeSemantics: true,
-                      child: Padding(
-                        padding: EdgeInsets.all(12),
-                        child: GestureDetector(
-                          onTap: _onTapSearch,
+                      child: GestureDetector(
+                        onTap: _onTapSearch,
+                        child: Padding(
+                          padding: EdgeInsets.all(12),
                           child: Styles().images.getImage('search', excludeFromSemantics: true),
                         ),
                       ),

@@ -173,12 +173,10 @@ class _GroupTagsState extends State<GroupTagsPanel> {
             hint: Localization().getStringEx("panel.group.tags.search.cancel.hint", "clear the search filter"),
             button: true,
             excludeSemantics: true,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14),
-              child: GestureDetector(
-                onTap: () {
-                  _onTapCancelSearch();
-                },
+            child: GestureDetector(
+              onTap: _onTapCancelSearch,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 14),
                 child: Styles().images.getImage('close-circle', excludeFromSemantics: true),
               ),
             ),

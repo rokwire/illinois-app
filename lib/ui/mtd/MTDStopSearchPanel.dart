@@ -117,8 +117,8 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
           Semantics(button: true, excludeSemantics: true,
               label: Localization().getStringEx('panel.mtd_stops.search.clear.button.title', 'Clear'),
               hint: Localization().getStringEx('panel.mtd_stops.search.clear.button.hint', ''),
-              child: Padding(padding: EdgeInsets.all(16), child:
-                GestureDetector(onTap: _onTapClear, child:
+              child: GestureDetector(onTap: _onTapClear, child:
+                Padding(padding: EdgeInsets.all(16), child:
                   Styles().images.getImage('close-circle', excludeFromSemantics: true)
                 ),
               )

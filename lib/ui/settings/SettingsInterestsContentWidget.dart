@@ -258,12 +258,10 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
             hint: Localization().getStringEx("panel.settings.manage_interests.search.cancel.hint", "clear the search filter"),
             button: true,
             excludeSemantics: true,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14),
-              child: GestureDetector(
-                onTap: () {
-                  _onCancelSearchTap();
-                },
+            child: GestureDetector(
+              onTap: _onCancelSearchTap,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 14),
                 child: Styles().images.getImage('close-circle', excludeFromSemantics: true),
               ),
             ),
@@ -274,9 +272,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
               button: true,
               excludeSemantics: true,
               child: GestureDetector(
-                onTap: () {
-                  _onSearchTap();
-                },
+                onTap: _onSearchTap,
                 child: Styles().images.getImage('search', excludeFromSemantics: true),
               ))
         ],
@@ -284,7 +280,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
     );
   }
 
-  void _onSearchTap() async {
+  void _onSearchTap() {
     Analytics().logSelect(target: "Search");
     setState(() {
       _tagSearchMode = true;
