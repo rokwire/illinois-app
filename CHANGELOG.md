@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Use "close" image everywhere in search edits instead of "close-circle" [#4384](https://github.com/rokwire/illinois-app/issues/4384).
+### Fixed
+- Show sub-events for group members [#4283](https://github.com/rokwire/illinois-app/issues/4283).
 
 ## [6.0.47] - 2024-09-19
 ### Fixed
