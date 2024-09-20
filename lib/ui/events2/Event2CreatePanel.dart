@@ -1620,7 +1620,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       ],) : null;
     }
     else {
-      return widget.isUpdate ? Row(children: [
+      return (widget.isUpdate && CollectionUtils.isNotEmpty(widget.event?.groupIds)) ? Row(children: [
         Expanded(child:
           Text(Localization().getStringEx('panel.event2.create.groups.load.failed.msg', 'Failed to load event groups'), style: Styles().textStyles.getTextStyle("panel.settings.error.text.small"),),
         ),
@@ -1650,13 +1650,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     if (eventId != null) {
       _loadingEventGroups = true;
       Groups().loadGroupsByIds(groupIds: widget.event!.groupIds).then((dynamic result) {
-        if (mounted) {
-          setState(() {
+          setStateIfMounted(() {
             _loadingEventGroups = false;
             _eventGroups = JsonUtils.listTypedValue<Group>(result);
             _initialGroupIds = Group.listToSetIds(_eventGroups) ?? <String>{};
           });
-        }
       });
     }
     else {
