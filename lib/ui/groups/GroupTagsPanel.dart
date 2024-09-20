@@ -177,7 +177,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
               onTap: _onTapCancelSearch,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 14),
-                child: Styles().images.getImage('close-circle', excludeFromSemantics: true),
+                child: Styles().images.getImage('close', excludeFromSemantics: true),
               ),
             ),
           ),

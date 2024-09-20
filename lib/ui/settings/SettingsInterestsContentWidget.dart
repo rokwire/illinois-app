@@ -262,7 +262,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
               onTap: _onCancelSearchTap,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 14),
-                child: Styles().images.getImage('close-circle', excludeFromSemantics: true),
+                child: Styles().images.getImage('close', excludeFromSemantics: true),
               ),
             ),
           ),

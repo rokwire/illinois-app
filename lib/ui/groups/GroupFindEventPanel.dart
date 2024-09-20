@@ -276,7 +276,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
                 onTap: _onTapClear,
                 child: Padding(
                   padding: EdgeInsets.all(12),
-                  child: Styles().images.getImage('close-circle'),
+                  child: Styles().images.getImage('close'),
                 ),
               )
           ),

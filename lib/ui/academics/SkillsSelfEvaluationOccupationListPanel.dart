@@ -185,7 +185,7 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
                     _searchTerm = null;
                     _filterOccupationList();
                   });
-                }, icon: Styles().images.getImage('close-circle', excludeFromSemantics: true) ?? Container()),
+                }, icon: Styles().images.getImage('close', excludeFromSemantics: true) ?? Container()),
               ),
               IconButton(onPressed: () => setState(() {
                 _searchTerm = _searchController.text;

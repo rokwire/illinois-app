@@ -138,7 +138,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
                         onTap: _onTapClear,
                         child: Padding(
                           padding: EdgeInsets.all(12),
-                          child: Styles().images.getImage('close-circle', excludeFromSemantics: true),
+                          child: Styles().images.getImage('close', excludeFromSemantics: true),
                       ),
                     )
                 ),
