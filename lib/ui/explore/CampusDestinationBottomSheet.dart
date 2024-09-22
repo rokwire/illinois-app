@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/model/places.dart';
+import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class CampusDestinationBottomSheet extends StatefulWidget {
@@ -284,7 +286,15 @@ class _CampusDestinationBottomSheetState
     );
   }
 
-  void _onDestinationTap(Map<String, String> destination) {
+  void _onDestinationTap(Map<String, String> destination) async {
+    PlacesService placesService = PlacesService();
+
+    List<Place>? places = await placesService.getAllPlaces();
+    await placesService.updatePlaceVisited("a6f2a3d5-2ce6-4fbe-a3f6-bf3c7696da3d", true);
+
+    // Print out the data you get back from getAllPlaces()
+    print(places);
+
     setState(() {
       _selectedDestination = destination;
     });
