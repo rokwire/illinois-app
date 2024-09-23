@@ -353,7 +353,7 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: MTDStop.favoriteKeyName);
       }
     }
-    else if (code == 'my_mtd_destinations') {
+    else if (code == 'my_locations') {
       if (title) {
         return HomeFavoritesWidget.titleFromKey(favoriteKey: ExplorePOI.favoriteKeyName);
       } else if (handle) {
@@ -598,6 +598,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       _contentType = _homeContentTypeFromString(Storage().homeContentType) ?? HomeContentType.favorites;
     }
 
+    Analytics().logPageWidget(_contentWidget);
+
     _availableSystemCodes = JsonUtils.setStringsValue(FlexUI()['home.system']) ?? <String>{};
     _availableSystemCodes?.remove('tout'); // Tout widget embedded statically here, do not show it as part of favorites
 
@@ -648,11 +650,11 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
                   HomeToutWidget(key: _toutKey, contentType: _contentType, updateController: _updateController,),
 
                   Visibility(visible: (_contentType == HomeContentType.favorites), maintainState: true, child:
-                    HomeFavoritesContentWidget(key: _favoritesKey, availableSystemCodes: _availableSystemCodes, updateController: _updateController,),
+                    _buildContentWidget(HomeContentType.favorites),
                   ),
 
                   Visibility(visible: (_contentType == HomeContentType.browse), maintainState: true, child:
-                    BrowseContentWidget(key: _browseKey),
+                    _buildContentWidget(HomeContentType.browse),
                   ),
                 ],),
               ),
@@ -665,6 +667,15 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       bottomNavigationBar: null,
     );
   }
+
+  Widget _buildContentWidget(HomeContentType contentType) {
+    switch(contentType) {
+      case HomeContentType.favorites: return HomeFavoritesContentWidget(key: _favoritesKey, availableSystemCodes: _availableSystemCodes, updateController: _updateController,);
+      case HomeContentType.browse: return BrowseContentWidget(key: _browseKey);
+    }
+  }
+
+  Widget get _contentWidget => _buildContentWidget(_contentType);
 
   Widget get _topShaddow => Container(height: HomeToutWidget.triangleHeight, decoration: BoxDecoration(
     // color: Styles().colors.fillColorPrimaryTransparent03,
@@ -683,6 +694,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       setState(() {
         Storage().homeContentType = _homeContentTypeToString(_contentType = contentType);
       });
+      Analytics().logPageWidget(_contentWidget);
     }
   }
 }

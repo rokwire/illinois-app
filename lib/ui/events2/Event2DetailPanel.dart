@@ -35,7 +35,6 @@ import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/auth2.dart' as pluginAuth;
-import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -53,12 +52,14 @@ class Event2DetailPanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
   final Position? userLocation;
   final Event2Selector2? eventSelector;
-  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.group, this.userLocation, this.eventSelector});
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
+  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.group, this.userLocation, this.eventSelector, this.analyticsFeature});
   
   @override
   State<StatefulWidget> createState() => _Event2DetailPanelState();
 
-  // AnalyticsPageAttributes
+  // AnalyticsInfo
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes => event?.analyticsAttributes;
@@ -71,7 +72,6 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
   bool? _hasSurveyResponse;
   Event2PersonsResult? _persons;
   Event2? _superEvent;
-  Set<String>? _groupIds;
 
   List<Event2>? _linkedEvents;
   bool _linkedEventsLoading = false;
@@ -436,7 +436,8 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     _detailSpacerWidget,
   ];
 
-  String get _privacyStatus => (_event?.private != true)
+  String get _privacyStatus =>
+      (_event?.isPublic == true)
     ? Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event')
     : (_eventProcessing
       ? '...'
@@ -942,6 +943,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       userLocation: _userLocation,
       eventSelector:  widget.eventSelector,
       superEvent: (_event?.isSuperEvent == true) ? _event : null,
+      analyticsFeature: widget.analyticsFeature,
     )));
   }
 
@@ -954,6 +956,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
       Navigator.of(context).push(CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: _superEvent,
         userLocation: _userLocation,
         eventSelector:  widget.eventSelector,
+        analyticsFeature: widget.analyticsFeature,
       )));
     }
   }
@@ -1030,7 +1033,8 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     Analytics().logSelect(target: "Follow up survey");
     Survey displaySurvey = Survey.fromOther(_survey!);
     displaySurvey.replaceKey('event_name', _event?.name);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: displaySurvey, onComplete: _onCompleteSurvey)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+      SurveyPanel(survey: displaySurvey, onComplete: _onCompleteSurvey, analyticsFeature: widget.analyticsFeature,)));
   }
 
   void _onLogIn(){
@@ -1052,7 +1056,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   void _onPromote(){
     Analytics().logSelect(target: "Promote Event", attributes: _event?.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromEvent(_event)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromEvent(_event, analyticsFeature: widget.analyticsFeature,)));
   }
 
   void _onContactEmail(String? email){
@@ -1090,22 +1094,25 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   void _onSettingEditEvent(){
     Analytics().logSelect(target: "Edit event");
-    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel(event: _event, survey: _survey,))).then((Event2SetupSurveyParam? result) {
-      if (result != null) {
-        setStateIfMounted(() {
-          if (result.event != null) {
-            _event = result.event;
+    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) =>
+      Event2CreatePanel(event: _event, survey: _survey)))
+        .then((Event2SetupSurveyParam? result) {
+          if (result != null) {
+            setStateIfMounted(() {
+              if (result.event != null) {
+                _event = result.event;
+              }
+              _survey = result.survey;
+            });
           }
-          _survey = result.survey;
         });
-      }
-    });
   }
 
   void _onSettingEventRegistration(){
     Analytics().logSelect(target: "Event Registration");
     Navigator.push<dynamic>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(
       event: _event,
+      analyticsFeature: widget.analyticsFeature,
     ))).then((dynamic event) {
       if (event is Event2) {
           setStateIfMounted(() {
@@ -1135,6 +1142,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         event: _event,
         survey: _survey,
       ),
+      analyticsFeature: widget.analyticsFeature,
     ).then((Event2SetupSurveyParam? surveyParam) {
       if (surveyParam != null) {
         setStateIfMounted(() {
@@ -1152,6 +1160,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
     Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => Event2SurveyResponsesPanel(
       surveyId: _survey?.id,
       eventName: _event?.name,
+      analyticsFeature: widget.analyticsFeature,
     )));
   }
 
@@ -1168,7 +1177,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
             _eventProcessing = true;
           });
 
-          Events2().deleteEvent(_eventId!).then((result) {
+          Events2().deleteEvent(eventId: _eventId!, groupIds: widget.event?.groupIds).then((result) {
             if (mounted) {
               setState(() {
                 _eventProcessing = false;
@@ -1189,7 +1198,8 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   void _onTapTakeAttendance() {
     Analytics().logSelect(target: 'Take Attendance');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2AttendanceTakerPanel(_event)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+      Event2AttendanceTakerPanel(_event, analyticsFeature: widget.analyticsFeature,)));
   }
 
   //loading
@@ -1256,12 +1266,6 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         futures.add(Events2().loadEvent(_event?.grouping?.superEventId ?? ''));
       }
 
-      // We need to know whether event belongs to a group only for the provacy status text
-      int? groupIdsIndex = ((_event?.private == true) && (widget.group == null)) ? futures.length : null;
-      if (groupIdsIndex != null) {
-        futures.add(Groups().loadUserGroupsHavingEvent(eventId));
-      }
-
       if (futures.isNotEmpty) {
         setState(() {
           _eventProcessing = true;
@@ -1272,7 +1276,6 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
         Event2PersonsResult? persons = ((peopleIndex != null) && (peopleIndex < results.length) && (results[peopleIndex] is Event2PersonsResult)) ? results[peopleIndex] : null;
         Events2ListResult? linkedEventsResult = ((linkedEventsIndex != null) && (linkedEventsIndex < results.length) && (results[linkedEventsIndex] is Events2ListResult)) ? results[linkedEventsIndex] : null;
         Event2? superEvent = ((superEventIndex != null) && (superEventIndex < results.length) && (results[superEventIndex] is Event2)) ? results[superEventIndex] : null;
-        Set<String>? groupIds = ((groupIdsIndex != null) && (groupIdsIndex < results.length) && (results[groupIdsIndex] is Set<String>)) ? JsonUtils.setStringsValue(results[groupIdsIndex])  : null;
 
         // Handle searching for survey responses if the event survey was just loaded
         if ((_event?.hasSurvey == true) && (surveyResponseIndex == null) && (survey?.id != null)) {
@@ -1300,9 +1303,6 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
           }
           if (superEvent != null) {
             _superEvent = superEvent;
-          }
-          if (groupIds != null) {
-            _groupIds = groupIds;
           }
         });
       }
@@ -1346,19 +1346,12 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
             futures.add(Events2().loadEvent(event.grouping?.superEventId ?? ''));
           }
 
-          // We need to know whether event belongs to a group only for the provacy status text
-          int? groupIdsIndex = ((_event?.private == true) && (widget.group == null)) ? futures.length : null;
-          if (groupIdsIndex != null) {
-            futures.add(Groups().loadUserGroupsHavingEvent(eventId));
-          }
-
           if (futures.isNotEmpty) {
             List<dynamic> results = await Future.wait(futures);
             Survey? survey = ((surveyIndex != null) && (surveyIndex < results.length) && (results[surveyIndex] is Survey)) ? results[surveyIndex] : null;
             Event2PersonsResult? persons = ((peopleIndex != null) && (peopleIndex < results.length) && (results[peopleIndex] is Event2PersonsResult)) ? results[peopleIndex] : null;
             Events2ListResult? linkedEventsResult = ((linkedEventsIndex != null) && (linkedEventsIndex < results.length) && (results[linkedEventsIndex] is Events2ListResult)) ? results[linkedEventsIndex] : null;
             Event2? superEvent = ((superEventIndex != null) && (superEventIndex < results.length) && (results[superEventIndex] is Event2)) ? results[superEventIndex] : null;
-            Set<String>? groupIds = ((groupIdsIndex != null) && (groupIdsIndex < results.length) && (results[groupIdsIndex] is Set<String>)) ? JsonUtils.setStringsValue(results[groupIdsIndex])  : null;
 
             // Handle searching for existing survey responses
             String? surveyId = survey?.id;
@@ -1390,9 +1383,6 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
               }
               if (superEvent != null) {
                 _superEvent = superEvent;
-              }
-              if (groupIds != null) {
-                _groupIds = groupIds;
               }
             });
           }
@@ -1472,7 +1462,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   String? get _eventId => widget.event?.id ?? widget.eventId;
 
-  bool get _isGroupEvent => ((widget.group != null) || (_groupIds?.isNotEmpty == true));
+  bool get _isGroupEvent => (widget.event?.isGroupEvent == true);
 }
 
 abstract class Event2Selector2State<T extends StatefulWidget> extends State<T> {

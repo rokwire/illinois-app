@@ -492,8 +492,7 @@
     "widget.wellness.ring.card.heading.large": {"font_family": "bold", "size": 18.0, "color": "fillColorSecondary"},
     "widget.wellness.ring.card.title.large": {"font_family": "regular", "size": 32.0, "color": "fillColorPrimary"},
 
-    "widget.canvas.card.title.regular": {"font_family": "extra_bold", "size": 18.0, "color": "black"},
-    "widget.canvas.card.grade.score": {"font_family": "bold", "size": 16.0},
+    "widget.canvas.card.title.regular": {"font_family": "bold", "size": 18.0, "color": "fillColorPrimary", "height": 1.22},
 
     "widget.settings.dialog.button.title.enabled": {"font_family": "bold", "size": 16.0, "color": "white"},
     "widget.settings.dialog.button.title.disabled": {"font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
@@ -1090,8 +1089,7 @@
     "pause-filled-blue": {"src": "images/pause-filled-blue.png", "type": "flutter.asset", "size": 32},
     "pause-empty-blue": {"src": "images/pause-empty-blue.png", "type": "flutter.asset", "size": 32},
 
-    "external-link-small": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "wrong size"},
-    "external-link-medium": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 20, "todo": "wrong size"},
+    "external-link": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "wrong size"},
 
     "default-profile-photo": {"src": "images/default-profile-photo.png", "type": "flutter.asset"}
   }

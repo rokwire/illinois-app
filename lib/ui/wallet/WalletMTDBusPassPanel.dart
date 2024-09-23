@@ -86,14 +86,16 @@ class WalletMTDBusPassPanel extends StatelessWidget {
         Positioned.fill(child:
           SafeArea(child:
             Align(alignment: Alignment.bottomCenter, child:
-              Padding(padding: EdgeInsets.only(bottom: 10), child:
                 Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
-                  InkWell(onTap: () => _onClose(context), child: Styles().images.getImage('close-circle-white-large', excludeFromSemantics: true)),
+                  InkWell(onTap: () => _onClose(context), child:
+                    Padding(padding: EdgeInsets.only(bottom: 10), child:
+                      Styles().images.getImage('close-circle-white-large', excludeFromSemantics: true)
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
       ],),
     );
 

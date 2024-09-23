@@ -6,6 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
@@ -23,7 +24,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/academics/AcademicsAppointmentsContentWidget.dart';
+import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
@@ -573,7 +574,7 @@ class _BrowseEntry extends StatelessWidget {
       case "academics.gies_canvas_courses":   _onTapGiesCanvasCourses(context); break;
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
       case "academics.due_date_catalog":      _onTapDueDateCatalog(context); break;
-      case "academics.appointments":          _onTapAcademicsAppointments(context); break;
+      case "academics.appointments":          _onTapAppointments(context, analyticsFeature: AnalyticsFeature.AcademicsAppointments); break;
       case "academics.my_illini":             _onTapAcademicsMyIllini(context); break;
 
       case "app_help.video_tutorials":       _onTapVideoTutorials(context); break;
@@ -581,7 +582,7 @@ class _BrowseEntry extends StatelessWidget {
       case "app_help.review":                _onTapReview(context); break;
       case "app_help.faqs":                  _onTapFAQs(context); break;
 
-      case "appointments.appointments":       _onTapAcademicsAppointments(context); break;
+      case "appointments.appointments":       _onTapAppointments(context, analyticsFeature: AnalyticsFeature.Appointments); break;
 
       case "athletics.my_game_day":          _onTapMyGameDay(context); break;
       case "athletics.sport_events":         _onTapSportEvents(context); break;
@@ -600,7 +601,7 @@ class _BrowseEntry extends StatelessWidget {
 
       case "mtd.all_mtd_stops":              _onTapMTDStops(context); break;
       case "mtd.my_mtd_stops":               _onTapMyMTDStops(context); break;
-      case "mtd.my_mtd_destinations":        _onTapMyMTDDestinations(context); break;
+      case "mtd.my_locations":               _onTapMyLocations(context); break;
 
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
       case "campus_guide.campus_safety_resources": _onTapCampusSafetyResources(context); break;
@@ -662,12 +663,12 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapGiesChecklist(BuildContext context) {
     Analytics().logSelect(target: "Gies Checklist");
-    CheckListPanel.present(context, contentKey: CheckList.giesOnboarding);
+    CheckListPanel.present(context, contentKey: CheckList.giesOnboarding, analyticsFeature: AnalyticsFeature.AcademicsGiesChecklist);
   }
 
   void _onTapNewStudentChecklist(BuildContext context) {
     Analytics().logSelect(target: "New Student Checklist");
-    CheckListPanel.present(context, contentKey: CheckList.uiucOnboarding);
+    CheckListPanel.present(context, contentKey: CheckList.uiucOnboarding, analyticsFeature: AnalyticsFeature.AcademicsChecklist);
   }
 
   void _onTapSkillSelfEvaluation(BuildContext context) {
@@ -706,6 +707,7 @@ class _BrowseEntry extends StatelessWidget {
       contentList: Guide().remindersList,
       contentTitle: Localization().getStringEx('panel.guide_list.label.campus_reminders.section', 'Campus Reminders'),
       contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_reminders.empty", "There are no active Campus Reminders."),
+      analyticsFeature: AnalyticsFeature.AcademicsCampusReminders,
     )));
   }
 
@@ -903,8 +905,8 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   void _onTapRadioStation(BuildContext context, RadioStation radioStation) {
-    Analytics().logSelect(target: "Radio Station (${radioStation.toString()})");
-    HomeRadioWidget.showPopup(context, radioStation);
+    Analytics().logSelect(target: "Radio Station: ${RadioPopupWidget.stationTitle(radioStation)}");
+    RadioPopupWidget.show(context, radioStation);
   }
 
   void _onTapAllGroups(BuildContext context) {
@@ -957,8 +959,8 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.my,)));
   }
 
-  void _onTapMyMTDDestinations(BuildContext context) {
-    Analytics().logSelect(target: "My Destinations");
+  void _onTapMyLocations(BuildContext context) {
+    Analytics().logSelect(target: "My Locations");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [ExplorePOI.favoriteKeyName]); } ));
   }
 
@@ -982,9 +984,9 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.appointments); } ));
   }
 
-  void _onTapAcademicsAppointments(BuildContext context) {
+  void _onTapAppointments(BuildContext context, { AnalyticsFeature? analyticsFeature }) {
     Analytics().logSelect(target: "Appointments");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentsListPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentsListPanel(analyticsFeature: analyticsFeature,)));
   }
 
   void _onTapAcademicsMyIllini(BuildContext context) {

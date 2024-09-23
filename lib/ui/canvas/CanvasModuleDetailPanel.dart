@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
@@ -28,10 +29,12 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CanvasModuleDetailPanel extends StatefulWidget {
+class CanvasModuleDetailPanel extends StatefulWidget with AnalyticsInfo {
   final int courseId;
   final CanvasModule module;
-  CanvasModuleDetailPanel({required this.courseId, required this.module});
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
+  CanvasModuleDetailPanel({required this.courseId, required this.module, this.analyticsFeature});
 
   @override
   _CanvasModuleDetailPanelState createState() => _CanvasModuleDetailPanelState();
@@ -167,7 +170,7 @@ class _CanvasModuleDetailPanelState extends State<CanvasModuleDetailPanel> {
     String? url = item.htmlUrl;
     if (StringUtils.isNotEmpty(url)) {
       if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsFeature: widget.analyticsFeature,)));
       } else {
         Uri? uri = Uri.tryParse(url!);
         if (uri != null) {

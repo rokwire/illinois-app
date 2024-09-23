@@ -32,7 +32,7 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RootHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.info.header.title', 'Skills Self-Evaluation'), leading: RootHeaderBarLeading.Back,),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.info.header.title', 'Skills Self-Evaluation & Career Explorer'), leading: RootHeaderBarLeading.Back,),
       body: SingleChildScrollView(child: Padding(padding: const EdgeInsets.all(24.0), child: content == null ? _buildUnavailableMessage() : _buildContent(context))),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),

@@ -11,7 +11,6 @@ import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/events2.dart';
-import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -124,7 +123,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel> implements Notific
         _extendingEvents = false;
       });
 
-      Groups().loadEventsV3(widget.group?.id, limit: _eventsPageLength).then((Events2ListResult? eventsResult) {
+      Events2().loadGroupEvents(groupId: widget.group?.id, limit: _eventsPageLength).then((Events2ListResult? eventsResult) {
         List<Event2>? events = eventsResult?.events;
 
         setStateIfMounted(() {
@@ -163,7 +162,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel> implements Notific
         _extendingEvents = true;
       });
 
-      Events2ListResult? listResult = await Groups().loadEventsV3(widget.group?.id, offset: _events?.length ?? 0, limit: _eventsPageLength);
+      Events2ListResult? listResult = await Events2().loadGroupEvents(groupId: widget.group?.id, offset: _events?.length ?? 0, limit: _eventsPageLength);
       List<Event2>? events = listResult?.events;
       int? totalCount = listResult?.totalCount;
 

@@ -226,6 +226,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   bool get _hasOptions => _canLeaveGroup || _canDeleteGroup || _canCreatePost|| _canCreateMessage || _canReportAbuse;
 
+  String? get _groupId => _group?.id;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -313,29 +315,32 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _loadEvents() {
-    setState(() {
+    setStateIfMounted(() {
       _updatingEvents = true;
     });
-    Groups().loadEventsV3(_group?.id, limit: 3).then((Events2ListResult? eventsResult) {
-      if (mounted) {
-        setState(() {
-          _allEventsCount = eventsResult?.totalCount ?? 0;
-          _groupEvents = eventsResult?.events;
-          _updatingEvents = false;
-        });
-      }
+    Events2().loadGroupEvents(groupId: _groupId, limit: 3).then((Events2ListResult? eventsResult) {
+      setStateIfMounted(() {
+        _allEventsCount = eventsResult?.totalCount ?? 0;
+        _groupEvents = eventsResult?.events;
+        _updatingEvents = false;
+      });
     });
   }
 
   void _refreshEvents() {
-    Groups().loadEventsV3(_group?.id, limit: 3).then((Events2ListResult? eventsResult) {
-      if (mounted && (eventsResult != null)) {
-        setState(() {
+    Events2().loadGroupEvents(groupId: _groupId, limit: 3).then((Events2ListResult? eventsResult) {
+      if (eventsResult != null) {
+        setStateIfMounted(() {
           _allEventsCount = eventsResult.totalCount ?? 0;
           _groupEvents = eventsResult.events;
         });
       }
     });
+  }
+
+  void _clearEvents() {
+    _allEventsCount = 0;
+    _groupEvents = null;
   }
 
   // Posts & Direct Messages
@@ -344,7 +349,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   /// Loads group post by id (if exists) and redirects to Post detail panel
   ///
   void _redirectToGroupPostIfExists() {
-    if ((_group?.id != null) && (_postId != null)) {
+    if ((_groupId != null) && (_postId != null)) {
       _increaseProgress();
       Groups().loadGroupPost(groupId: _group!.id, postId: _postId!).then((post) {
         _postId = null; // Clear _postId in order not to redirect on the next group load.
@@ -603,10 +608,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Future<void> _loadPolls() async {
-    String? groupId = _group?.id;
-    if (StringUtils.isNotEmpty(groupId) && _group!.currentUserIsMemberOrAdmin) {
+    if (StringUtils.isNotEmpty(_groupId) && _group!.currentUserIsMemberOrAdmin) {
       _setPollsLoading(true);
-      Polls().getGroupPolls(groupIds: {groupId!})!.then((result) {
+      Polls().getGroupPolls(groupIds: {_groupId!})!.then((result) {
         _groupPolls = (result != null) ? result.polls : null;
         _setPollsLoading(false);
       });
@@ -683,7 +687,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Future<bool> _deleteGroup() {
     _setConfirmationLoading(true);
-    return Groups().deleteGroup(_group?.id).whenComplete(() {
+    return Groups().deleteGroup(_groupId).whenComplete(() {
       _setConfirmationLoading(false);
     });
   }
@@ -737,6 +741,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       setStateIfMounted(() {});
     }
     else if (name == Groups.notifyGroupEventsUpdated) {
+      _clearEvents();
       _loadEvents();
     }
     else if (name == Groups.notifyGroupStatsUpdated) {
@@ -1951,7 +1956,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapNotifications() {
     Analytics().logSelect(target: "Notifications", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMemberNotificationsPanel(groupId: _group?.id, memberId: _group?.currentMember?.id)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMemberNotificationsPanel(groupId: _groupId, memberId: _group?.currentMember?.id)));
   }
 
   void _onTapReportAbuse({required GroupPostReportAbuseOptions options}) {
@@ -2393,7 +2398,7 @@ class GroupEventSelector2 extends Event2Selector2 {
       state.setSelectorState((){
         state.bindingInProgress = true;
       });
-      Groups().linkEventToGroup(groupId: group.id, eventId: event.id).then((bool result) {
+      Events2().linkEventToGroup(event: event, groupId: group.id!).then((bool result) {
         if (state.mounted) {
           state.setSelectorState((){
             state.bindingInProgress = false;

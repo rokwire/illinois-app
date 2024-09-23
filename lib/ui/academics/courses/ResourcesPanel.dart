@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/ui/academics/courses/EssentialSkillsCoachWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -6,7 +7,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 
-class ResourcesPanel extends StatefulWidget {
+class ResourcesPanel extends StatefulWidget with AnalyticsInfo {
   final List<Content> contentItems;
   final ReferenceType? initialReferenceType;
   final Color? color;
@@ -16,7 +17,9 @@ class ResourcesPanel extends StatefulWidget {
   final Widget? moduleIcon;
   final String moduleName;
 
-  const ResourcesPanel({required this.contentItems, this.initialReferenceType, required this.color, required this.unitNumber, required this.unitName, this.moduleIcon, required this.moduleName});
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
+  const ResourcesPanel({required this.contentItems, this.initialReferenceType, required this.color, required this.unitNumber, required this.unitName, this.moduleIcon, required this.moduleName, this.analyticsFeature});
 
   @override
   State<ResourcesPanel> createState() => _ResourcesPanelState();

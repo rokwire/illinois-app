@@ -27,6 +27,7 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/assistant/AssistantHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
@@ -133,7 +134,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyMapStudentCoursesNotification,
       FirebaseMessaging.notifyMapAppointmentsNotification,
       FirebaseMessaging.notifyMapMtdStopsNotification,
-      FirebaseMessaging.notifyMapMtdDestinationsNotification,
+      FirebaseMessaging.notifyMapMyLocationsNotification,
       FirebaseMessaging.notifyMapMentalHealthNotification,
       FirebaseMessaging.notifyMapStateFarmWayfindingNotification,
       FirebaseMessaging.notifyAcademicsNotification,
@@ -210,6 +211,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       HomeFavoritesPanel.notifySelect,
       BrowsePanel.notifySelect,
       ExploreMapPanel.notifySelect,
+      SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation,
     ]);
 
     _tabs = _getTabs();
@@ -366,8 +368,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyMapMtdStopsNotification) {
       _onFirebaseMapNotification(ExploreMapType.MTDStops);
     }
-    else if (name == FirebaseMessaging.notifyMapMtdDestinationsNotification) {
-      _onFirebaseMapNotification(ExploreMapType.MTDDestinations);
+    else if (name == FirebaseMessaging.notifyMapMyLocationsNotification) {
+      _onFirebaseMapNotification(ExploreMapType.MyLocations);
     }
     else if (name == FirebaseMessaging.notifyMapMentalHealthNotification) {
       _onFirebaseMapNotification(ExploreMapType.MentalHealth);
@@ -543,6 +545,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
+    }
+    else if (name == SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation) {
+      _onFirebaseAcademicsNotification(AcademicsContent.skills_self_evaluation);
     }
 
   }
@@ -1180,32 +1185,18 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onFirebaseAcademicsNotification(AcademicsContent content) {
-    int? academicsIndex = _getIndexByRootTab(RootTab.Academics);
-    if (academicsIndex != null) {
-      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-      int? lastTabIndex = _currentTabIndex;
-      _selectTab(academicsIndex);
-      if ((lastTabIndex != academicsIndex) && !AcademicsHomePanel.hasState) {
-        Widget? academicsWidget = _panels[RootTab.Academics];
-        AcademicsHomePanel? academicsPanel = (academicsWidget is AcademicsHomePanel) ? academicsWidget : null;
-        academicsPanel?.params[AcademicsHomePanel.contentItemKey] = content;
-      }
+    if (AcademicsHomePanel.hasState) {
       NotificationService().notify(AcademicsHomePanel.notifySelectContent, content);
+    } else {
+      AcademicsHomePanel.push(context, content);
     }
   }
 
   void _onFirebaseWellnessNotification(WellnessContent content) {
-    int? wellnessIndex = _getIndexByRootTab(RootTab.Wellness);
-    if (wellnessIndex != null) {
-      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-      int? lastTabIndex = _currentTabIndex;
-      _selectTab(wellnessIndex);
-      if ((lastTabIndex != wellnessIndex) && !WellnessHomePanel.hasState) {
-        Widget? wellnessWidget = _panels[RootTab.Wellness];
-        WellnessHomePanel? wellnessPanel = (wellnessWidget is WellnessHomePanel) ? wellnessWidget : null;
-        wellnessPanel?.params[WellnessHomePanel.contentItemKey] = content;
-      }
+    if (WellnessHomePanel.hasState) {
       NotificationService().notify(WellnessHomePanel.notifySelectContent, content);
+    } else {
+      WellnessHomePanel.push(context, content);
     }
   }
 }

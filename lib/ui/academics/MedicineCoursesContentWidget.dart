@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -28,11 +29,14 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class MedicineCoursesContentWidget extends StatefulWidget {
+class MedicineCoursesContentWidget extends StatefulWidget with AnalyticsInfo {
   MedicineCoursesContentWidget();
 
   @override
   _MedicineCoursesContentWidgetState createState() => _MedicineCoursesContentWidgetState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.AcademicsMedicineCourses;
 }
 
 class _MedicineCoursesContentWidgetState extends State<MedicineCoursesContentWidget> implements NotificationsListener {
@@ -113,7 +117,8 @@ class _MedicineCoursesContentWidgetState extends State<MedicineCoursesContentWid
 
   void _onTapCourse(int courseId) {
     Analytics().logSelect(target: 'Canvas Course');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseHomePanel(courseId: courseId)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+      CanvasCourseHomePanel(courseId: courseId, analyticsFeature: widget.analyticsFeature,)));
   }
 
   void _updateCourses() {
