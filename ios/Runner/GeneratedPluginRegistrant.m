@@ -72,6 +72,12 @@
 @import flutter_exif_rotation;
 #endif
 
+#if __has_include(<flutter_file_dialog/FlutterFileDialogPlugin.h>)
+#import <flutter_file_dialog/FlutterFileDialogPlugin.h>
+#else
+@import flutter_file_dialog;
+#endif
+
 #if __has_include(<flutter_local_notifications/FlutterLocalNotificationsPlugin.h>)
 #import <flutter_local_notifications/FlutterLocalNotificationsPlugin.h>
 #else
@@ -248,6 +254,7 @@
   [SwiftFlutterBarcodeScannerPlugin registerWithRegistrar:[registry registrarForPlugin:@"SwiftFlutterBarcodeScannerPlugin"]];
   [FlutterBeepPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterBeepPlugin"]];
   [FlutterExifRotationPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterExifRotationPlugin"]];
+  [FlutterFileDialogPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterFileDialogPlugin"]];
   [FlutterLocalNotificationsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterLocalNotificationsPlugin"]];
   [FlutterPasskeyPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterPasskeyPlugin"]];
   [FLTPDFViewFlutterPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPDFViewFlutterPlugin"]];

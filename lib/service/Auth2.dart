@@ -453,4 +453,35 @@ class Auth2 extends rokwire.Auth2 {
     }
     return authVoiceRecord;
   }
+
+  // Admin
+
+  Future<dynamic> filterAccountsBy({List<String>? netIds, List<String>? accountIds}) async {
+    if (Config().coreUrl == null) {
+      String msg = 'Failed to filter accounts - missing url.';
+      print(msg);
+      return msg;
+    }
+    Map<String, dynamic> filter = {};
+    if (CollectionUtils.isNotEmpty(netIds)) {
+      filter['external_ids.net_id'] = netIds;
+    }
+    if (CollectionUtils.isNotEmpty(accountIds)) {
+      filter['id'] = accountIds;
+    }
+    String? postBody = filter.isNotEmpty ? JsonUtils.encode(filter) : null;
+    Map<String, String> headers = {'Content-Type': 'application/json'};
+    String url = "${Config().coreUrl}/admin/application/filter/accounts";
+    Response? response = await Network().post(url, auth: Auth2(), headers: headers, body: postBody);
+    String? responseBody = response?.body;
+    int? responseCode = response?.statusCode;
+    if (responseCode == 200) {
+      List<dynamic>? responseJson = JsonUtils.decodeList(responseBody);
+      return Auth2Account.listFromJson(responseJson);
+    } else {
+      String msg = 'Failed to filter accounts. Reason: $responseCode, $responseBody';
+      print(msg);
+      return msg;
+    }
+  }
 }

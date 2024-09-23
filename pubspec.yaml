@@ -66,6 +66,8 @@ dependencies:
   fl_chart: ^0.68.0
 #  font_awesome_flutter: '>= 4.7.0' # comment if published plugin is used
   record: ^5.1.2
+  csv: ^6.0.0
+  flutter_file_dialog: ^3.0.1
 
   # Below are the plugins imported alongside web integration
   universal_io: ^2.2.2

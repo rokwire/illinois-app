@@ -71,6 +71,11 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin flutter_exif_rotation, io.flutter.plugins.flutterexifrotation.FlutterExifRotationPlugin", e);
     }
     try {
+      flutterEngine.getPlugins().add(new com.kineapps.flutter_file_dialog.FlutterFileDialogPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin flutter_file_dialog, com.kineapps.flutter_file_dialog.FlutterFileDialogPlugin", e);
+    }
+    try {
       flutterEngine.getPlugins().add(new com.dexterous.flutterlocalnotifications.FlutterLocalNotificationsPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin flutter_local_notifications, com.dexterous.flutterlocalnotifications.FlutterLocalNotificationsPlugin", e);

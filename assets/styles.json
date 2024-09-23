@@ -873,7 +873,7 @@
     "help": {"src": "images/icon-info-orange.png", "type": "flutter.asset", "weight": "solid", "color": "fillColorSecondary", "size": 20},
     "radio":  {"src": "0xf58f", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 20},
     "info": {"src": "images/icon-info-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
-    "edit": {"src": "0xf044", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 20},
+    "edit": {"src": "0xf044", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 16},
     "trash": {"src": "0xf2ed", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 20},
     "feedback": {"src": "images/icon-feedback.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "posts": {"src": "0xf27a", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 20},
@@ -934,7 +934,8 @@
     "mobile": {"src": "0xf3ce", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 32},
     "shield-halved": {"src": "0xf3ed", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 32},
 
-    "clock": {"src": "f017", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
+    "clock": {"src": "0xf017", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
+    "download": {"src": "0xf019", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 16},
 
     "star-filled": {"src": "images/icon-star-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "star-partially-filled": {"src": "0xf5c0", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 19},
