@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -24,7 +25,11 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class CanvasFeedbackPanel extends StatefulWidget {
+class CanvasFeedbackPanel extends StatefulWidget with AnalyticsInfo {
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
+  CanvasFeedbackPanel({super.key, this.analyticsFeature});
+
   @override
   _CanvasFeedbackPanelState createState() => _CanvasFeedbackPanelState();
 }

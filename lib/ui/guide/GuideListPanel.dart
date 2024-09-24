@@ -38,14 +38,17 @@ class GuideListPanel extends StatefulWidget with AnalyticsInfo {
   final String? contentTitle;
   final String? contentEmptyMessage;
   final String favoriteKey;
+  final AnalyticsFeature? _analyticsFeature;
 
-  GuideListPanel({ this.guide, this.category, this.section, this.contentList, this.contentTitle, this.contentEmptyMessage, this.favoriteKey = GuideFavorite.favoriteKeyName});
+  GuideListPanel({ this.guide, this.category, this.section, this.contentList, this.contentTitle, this.contentEmptyMessage, this.favoriteKey = GuideFavorite.favoriteKeyName, AnalyticsFeature? analyticsFeature}) :
+    _analyticsFeature = analyticsFeature;
 
   @override
   _GuideListPanelState createState() => _GuideListPanelState();
 
   @override
   AnalyticsFeature? get analyticsFeature =>
+    _analyticsFeature ??
     AnalyticsFeature.fromName(guide) ??
     AnalyticsFeature.fromName(Guide().listContentType(contentList));
 
@@ -161,7 +164,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
         for (Map<String, dynamic> guideEntry in _guideItems!) {
           cardsList.add(
             Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
-              GuideEntryCard(guideEntry, favoriteKey: widget.favoriteKey,)
+              GuideEntryCard(guideEntry, favoriteKey: widget.favoriteKey, analyticsFeature: widget._analyticsFeature,)
             )
           );
         }

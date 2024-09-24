@@ -134,11 +134,11 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
                     hint: Localization().getStringEx('panel.groups_search.button.clear.hint', ''),
                     button: true,
                     excludeSemantics: true,
-                    child: Padding(
-                      padding: EdgeInsets.all(12),
-                      child: GestureDetector(
+                    child: GestureDetector(
                         onTap: _onTapClear,
-                        child: Styles().images.getImage('close-circle', excludeFromSemantics: true),
+                        child: Padding(
+                          padding: EdgeInsets.all(12),
+                          child: Styles().images.getImage('close', excludeFromSemantics: true),
                       ),
                     )
                 ),
@@ -147,11 +147,11 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
                   hint: Localization().getStringEx('panel.groups_search.button.search.hint', ''),
                   button: true,
                   excludeSemantics: true,
-                  child: Padding(
-                    padding: EdgeInsets.all(12),
-                    child: GestureDetector(
+                  child: GestureDetector(
                       onTap: _onTapSearch,
-                      child: Styles().images.getImage('search', excludeFromSemantics: true),
+                      child: Padding(
+                        padding: EdgeInsets.all(12),
+                        child: Styles().images.getImage('search', excludeFromSemantics: true),
                     ),
                   ),
                 ),

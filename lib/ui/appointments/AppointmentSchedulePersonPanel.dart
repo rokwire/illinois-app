@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Appointment.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/ui/appointments/AppointmentSchedulePanel.dart';
@@ -28,12 +29,13 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 //import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
-class AppointmentSchedulePersonPanel extends StatefulWidget {
+class AppointmentSchedulePersonPanel extends StatefulWidget with AnalyticsInfo {
 
   final AppointmentScheduleParam? scheduleParam;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
   final void Function(BuildContext context, Appointment? appointment)? onFinish;
 
-  AppointmentSchedulePersonPanel({Key? key, this.scheduleParam, this.onFinish}) : super(key: key);
+  AppointmentSchedulePersonPanel({Key? key, this.scheduleParam, this.analyticsFeature, this.onFinish }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AppointmentSchedulePersonPanelState();
@@ -105,6 +107,7 @@ class _AppointmentSchedulePersonPanelState extends State<AppointmentSchedulePers
       scheduleParam: AppointmentScheduleParam.fromOther(widget.scheduleParam,
         person: person
       ),
+      analyticsFeature: widget.analyticsFeature,
       onFinish: widget.onFinish,
     )));
   }

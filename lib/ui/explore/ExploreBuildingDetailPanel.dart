@@ -28,7 +28,7 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
         SliverToutHeaderBar(
           flexImageUrl:  building.imageURL,
           flexRightToLeftTriangleColor: Styles().colors.background,
-          flexLeftToRightTriangleColor: Colors.transparent,
+          flexLeftToRightTriangleColor: Styles().colors.fillColorSecondaryTransparent05,
         ),
         SliverList(delegate:
           SliverChildListDelegate([

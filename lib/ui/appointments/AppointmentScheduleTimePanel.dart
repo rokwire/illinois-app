@@ -18,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/ext/Appointment.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/ui/appointments/AppointmentSchedulePanel.dart';
@@ -34,12 +35,13 @@ import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:timezone/timezone.dart';
 
-class AppointmentScheduleTimePanel extends StatefulWidget {
+class AppointmentScheduleTimePanel extends StatefulWidget with AnalyticsInfo {
   final AppointmentScheduleParam scheduleParam;
   final Appointment? sourceAppointment;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
   final void Function(BuildContext context, Appointment? appointment)? onFinish;
 
-  AppointmentScheduleTimePanel({Key? key, required this.scheduleParam, this.sourceAppointment, this.onFinish}) : super(key: key);
+  AppointmentScheduleTimePanel({super.key, required this.scheduleParam, this.sourceAppointment, this.analyticsFeature, this.onFinish });
 
   @override
   State<StatefulWidget> createState() => _AppointmentScheduleTimePanelState();
@@ -347,6 +349,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
             timeSlot: _selectedSlot,
           ),
           sourceAppointment: widget.sourceAppointment,
+          analyticsFeature: widget.analyticsFeature,
           onFinish: widget.onFinish,
         ),));
       }
@@ -357,8 +360,9 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
             answers: (_questions != null) ? <AppointmentAnswer>[] : null,
           ),
           sourceAppointment: widget.sourceAppointment,
+          analyticsFeature: widget.analyticsFeature,
           onFinish: widget.onFinish,
-        ),));
+        )));
       }
     }
     else {
