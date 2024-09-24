@@ -11,32 +11,51 @@ class CampusDestinationBottomSheet extends StatefulWidget {
 
 class _CampusDestinationBottomSheetState
     extends State<CampusDestinationBottomSheet> {
-  final List<Map<String, String>> _campusDestinations = [
-    {
-      'name':
-      'Doris Kelley Christopher Illinois Extension Center Building Fund',
-      'address': '123 Main St, Urbana, IL',
-      'image':
-      'images/appointment-detail-inperson-tout.png', // Placeholder image path
-    },
-    {
-      'name': 'Krannert Center for the Performing Arts',
-      'address': '500 S Goodwin Ave, Urbana, IL',
-      'image': 'images/appointment-detail-inperson-tout.png',
-    },
-    {
-      'name': 'Krannert Center for the Performing Arts',
-      'address': '500 S Goodwin Ave, Urbana, IL',
-      'image': 'images/appointment-detail-inperson-tout.png',
-    },
-    // Add more destinations as needed
+  List<Place> _campusDestinations = [];  // Updated to use Place model
+
+  // Fallback default campus destinations in the `Place` model
+  final List<Place> _defaultCampusDestinations = [
+    Place(
+      name: 'Doris Kelley Christopher Illinois Extension Center Building Fund',
+      address: '123 Main St, Urbana, IL',
+      imageUrls: ['https://picsum.photos/200'], // Placeholder image
+    ),
+    Place(
+      name: 'Krannert Center for the Performing Arts',
+      address: '500 S Goodwin Ave, Urbana, IL',
+      imageUrls: ['https://picsum.photos/200'], // Placeholder image
+    ),
+    // Add more default destinations if needed
   ];
 
   // List of selected filters
   final Set<String> _selectedFilters = {};
 
   // Currently selected destination
-  Map<String, String>? _selectedDestination;
+  Place? _selectedDestination;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCampusDestinations();
+  }
+
+  Future<void> _loadCampusDestinations() async {
+    PlacesService placesService = PlacesService();
+
+    List<Place>? places = await placesService.getAllPlaces();
+
+    if (places == null || places.isEmpty) {
+      print("No places retrieved from service, using default destinations.");
+      setState(() {
+        _campusDestinations = _defaultCampusDestinations;
+      });
+    } else {
+      setState(() {
+        _campusDestinations = places;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,8 +83,8 @@ class _CampusDestinationBottomSheetState
             children: _selectedDestination == null
                 ? [
               _buildBottomSheetHeader(),
-              ..._campusDestinations.map((destination) {
-                return _buildDestinationCard(destination);
+              ..._campusDestinations.map((place) {
+                return _buildDestinationCard(place);
               }).toList(),
             ]
                 : [
@@ -74,7 +93,7 @@ class _CampusDestinationBottomSheetState
               Container(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
-                  'This is a placeholder blurb about the destination.',
+                  _selectedDestination?.description ?? 'No description available',
                   style: TextStyle(fontSize: 16.0),
                 ),
               ),
@@ -85,22 +104,9 @@ class _CampusDestinationBottomSheetState
     );
   }
 
-  List<Map<String, String>> _filteredDestinations() {
-    if (_selectedFilters.isEmpty) {
-      return _campusDestinations;
-    }
-    return _campusDestinations.where((destination) {
-      // Implement your filter logic here
-      // For example, if 'Open Now' is selected, filter destinations that are open now
-      // Since we don't have actual data, we'll return all destinations
-      return true;
-    }).toList();
-  }
-
   Widget _buildBottomSheetHeader() {
     return Container(
-      padding:
-      EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -147,8 +153,7 @@ class _CampusDestinationBottomSheetState
 
   Widget _buildSelectedDestinationHeader() {
     return Container(
-      padding:
-      EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -183,7 +188,7 @@ class _CampusDestinationBottomSheetState
               // Destination Name
               Expanded(
                 child: Text(
-                  _selectedDestination?['name'] ?? '',
+                  _selectedDestination?.name ?? '',
                   style: TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
@@ -195,9 +200,9 @@ class _CampusDestinationBottomSheetState
               Container(
                 width: 100.0,
                 height: 100.0,
-                child: _selectedDestination?['image'] != null
-                    ? Image.asset(
-                  _selectedDestination!['image']!,
+                child: _selectedDestination?.imageUrls?.isNotEmpty ?? false
+                    ? Image.network(
+                  _selectedDestination!.imageUrls!.first,
                   fit: BoxFit.cover,
                 )
                     : Icon(Icons.image, color: Colors.grey),
@@ -211,7 +216,7 @@ class _CampusDestinationBottomSheetState
               Icon(Icons.location_on, size: 16.0, color: Colors.grey),
               SizedBox(width: 4.0),
               Text(
-                _selectedDestination?['address'] ?? '',
+                _selectedDestination?.address ?? 'No address available',
                 style: TextStyle(color: Colors.grey[600]),
               ),
             ],
@@ -248,33 +253,32 @@ class _CampusDestinationBottomSheetState
     );
   }
 
-  Widget _buildDestinationCard(Map<String, String> destination) {
+  Widget _buildDestinationCard(Place place) {
     return Container(
-      margin:
-      EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Column(
         children: [
           ListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(destination['name'] ?? ''),
+            title: Text(place.name ?? 'Unknown Name'),
             subtitle: Row(
               children: [
                 Icon(Icons.location_pin),
-                Text(destination['address'] ?? ''),
+                Text(place.address ?? 'No address available'),
               ],
             ),
             trailing: Container(
               width: 50.0,
               height: 50.0,
-              child: destination['image'] != null
-                  ? Image.asset(
-                destination['image']!,
+              child: place.imageUrls?.isNotEmpty ?? false
+                  ? Image.network(
+                place.imageUrls!.first,
                 fit: BoxFit.cover,
               )
                   : Icon(Icons.image, color: Colors.grey),
             ),
             onTap: () {
-              _onDestinationTap(destination);
+              _onDestinationTap(place);
             },
           ),
           SizedBox(
@@ -286,17 +290,9 @@ class _CampusDestinationBottomSheetState
     );
   }
 
-  void _onDestinationTap(Map<String, String> destination) async {
-    PlacesService placesService = PlacesService();
-
-    List<Place>? places = await placesService.getAllPlaces();
-    await placesService.updatePlaceVisited("a6f2a3d5-2ce6-4fbe-a3f6-bf3c7696da3d", true);
-
-    // Print out the data you get back from getAllPlaces()
-    print(places);
-
+  void _onDestinationTap(Place place) {
     setState(() {
-      _selectedDestination = destination;
+      _selectedDestination = place;
     });
   }
 }
