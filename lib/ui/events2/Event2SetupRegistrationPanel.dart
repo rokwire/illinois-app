@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
@@ -20,11 +21,12 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class Event2SetupRegistrationPanel extends StatefulWidget {
+class Event2SetupRegistrationPanel extends StatefulWidget with AnalyticsInfo {
   final Event2? event;
   final Event2RegistrationDetails? _registrationDetails;
-  
-  Event2SetupRegistrationPanel({super.key, this.event, Event2RegistrationDetails? registrationDetails}) :
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
+  Event2SetupRegistrationPanel({super.key, this.event, Event2RegistrationDetails? registrationDetails, this.analyticsFeature}) :
     _registrationDetails = registrationDetails;
 
   Event2RegistrationDetails? get registrationDetails => _registrationDetails ?? event?.registrationDetails;

@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Upgraded url_launcher plugin to resolve build issue on Xcode 16.
+- Survey Card widgets color explicitly set to be white [#4385](https://github.com/rokwire/illinois-app/issues/4385).
 
 ## [6.1.8] - 2024-08-28
 ### Changed
@@ -50,6 +53,72 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [6.1.0] - 2024-07-22
 ### Added
 - Created Public Surveys UI / round 0 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
+
+## [6.0.48] - 2024-09-20
+### Changed
+- Use "close" image everywhere in search edits instead of "close-circle" [#4384](https://github.com/rokwire/illinois-app/issues/4384).
+### Fixed
+- Show sub-events for group members [#4283](https://github.com/rokwire/illinois-app/issues/4283).
+
+## [6.0.47] - 2024-09-19
+### Fixed
+- Fixed wellness resources button title alignment [#4376](https://github.com/rokwire/illinois-app/issues/4376).
+- Fixed presentation of MyMcKinley appointment popup.
+### Changed
+- Set LTR tout image overlay in ExploreBuildingDetailPanel [#4378](https://github.com/rokwire/illinois-app/issues/4378).
+- Text updates in WellnessAppointmentsPanel [#4380](https://github.com/rokwire/illinois-app/issues/4380).
+
+## [6.0.46] - 2024-09-17
+### Changed
+- Cleaned up switching to "Radio Stations" feature [#4029](https://github.com/rokwire/illinois-app/issues/4029).
+- Extended radio analytics notifications [#4029](https://github.com/rokwire/illinois-app/issues/4029).
+- Updated QRCodePanel descriptions [#4362](https://github.com/rokwire/illinois-app/issues/4362).
+
+## [6.0.45] - 2024-09-16
+### Fixed
+- Fixed assistant microphone activity on iOS [#4364](https://github.com/rokwire/illinois-app/issues/4364).
+- Fixed AthleticsTeamPanel coaching staff heading textStyle [#4358](https://github.com/rokwire/illinois-app/issues/4358).
+- Fixed AthleticsTeamPanel news and schedule heading padding [#4359](https://github.com/rokwire/illinois-app/issues/4359).
+### Changed
+- "MTD Destinations" renamed to "My Locations" [#4361](https://github.com/rokwire/illinois-app/issues/4361).
+- Analytics features updates [#4029](https://github.com/rokwire/illinois-app/issues/4029).
+- Do not log analytics target feature in select event if such does not exist [#4029](https://github.com/rokwire/illinois-app/issues/4029).
+
+## [6.0.44] - 2024-09-13
+### Changed
+- Set half height to canvas course card in favorites widget [#4346](https://github.com/rokwire/illinois-app/issues/4346).
+
+## [6.0.43] - 2024-09-12
+### Fixed
+- Fixed Wallet panel presentation [#4348](https://github.com/rokwire/illinois-app/issues/4348).
+- Fixed parameters passed to members/multi-update API call of Groups BB [#4268](https://github.com/rokwire/illinois-app/issues/4268).
+### Changed
+- Changed empty results message in buildings search [#4350](https://github.com/rokwire/illinois-app/issues/4350).
+- Hide completion number under My Canvas Courses [#4346](https://github.com/rokwire/illinois-app/issues/4346).
+- Hide Healthy Illini Podcast [#4347](https://github.com/rokwire/illinois-app/issues/4347).
+
+## [6.0.42] - 2024-09-11
+### Changed
+- Make "Add Illini Cash" functionality available for not logged in users [#4342](https://github.com/rokwire/illinois-app/issues/4342).
+- Wallet does not pre-load history transactions [#4341](https://github.com/rokwire/illinois-app/issues/4341).
+
+## [6.0.41] - 2024-09-09
+### Changed
+- Set background color for Career Explorer in Skills Self-Evaluation [#4331](https://github.com/rokwire/illinois-app/issues/4331).
+### Added
+- Share Skill Self-Evaluation feature [#4332](https://github.com/rokwire/illinois-app/issues/4332).
+- Added search buildings fature [#4290](https://github.com/rokwire/illinois-app/issues/4290).
+
+## [6.0.40] - 2024-09-05
+### Changed
+- Skill Self-Evaluation UI enhancements [#4331](https://github.com/rokwire/illinois-app/issues/4331).
+
+## [6.0.39] - 2024-09-04
+### Fixed
+- Do not preload radio station streams on startup [#4326](https://github.com/rokwire/illinois-app/issues/4326).
+### Changed
+- Enable plying radio station streams on iOS while the app is in background [#4326](https://github.com/rokwire/illinois-app/issues/4326).
+- WellnessToDoItemDetail hide Location and WorkDays fields [#3265](https://github.com/rokwire/illinois-app/issues/3265).
 
 ## [6.0.38] - 2024-08-29
 ### Fixed

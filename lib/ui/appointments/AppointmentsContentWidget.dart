@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
@@ -34,14 +35,17 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class AcademicsAppointmentsContentWidget extends StatefulWidget {
-  AcademicsAppointmentsContentWidget();
+class AppointmentsContentWidget extends StatefulWidget with AnalyticsInfo {
+
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+  AppointmentsContentWidget({super.key, this.analyticsFeature});
 
   @override
-  State<AcademicsAppointmentsContentWidget> createState() => _AcademicsAppointmentsContentWidgetState();
+  State<AppointmentsContentWidget> createState() => _AppointmentsContentWidgetState();
+
 }
 
-class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmentsContentWidget> implements NotificationsListener {
+class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> implements NotificationsListener {
 
   List<AppointmentProvider>? _providers;
   bool _isLoadingProviders = false;
@@ -252,7 +256,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
           String? appointmentId = appointment.id;
           GlobalKey? appointmentKey = (appointmentId != null) ? (_upcomingAppointmentKeys[appointmentId] ??= GlobalKey()) : null;
           contentList.add(Padding(padding: EdgeInsets.only(bottom: 16), child:
-            AppointmentCard(key: appointmentKey, appointment: appointment)
+            AppointmentCard(key: appointmentKey, appointment: appointment, analyticsFeature: widget.analyticsFeature,)
           ));
         }
       }
@@ -269,7 +273,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
       else {
         for (Appointment appointment in _pastAppointments!) {
           contentList.add(Padding(padding: EdgeInsets.only(top: 16), child:
-            AppointmentCard(appointment: appointment)
+            AppointmentCard(appointment: appointment, analyticsFeature: widget.analyticsFeature,)
           ));
         }
       }
@@ -402,7 +406,8 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
       scheduleParam: AppointmentScheduleParam(
         provider: _selectedProvider,
       ),
-      onFinish: (BuildContext context, Appointment? appointment) => _didScheduleAppointment(context, appointment)
+      analyticsFeature: widget.analyticsFeature,
+      onFinish: (BuildContext context, Appointment? appointment) => _didScheduleAppointment(context, appointment),
     )));
   }
 
@@ -432,14 +437,16 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
   }
 }
 
-class AppointmentsListPanel extends StatelessWidget {
-  AppointmentsListPanel();
+class AppointmentsListPanel extends StatelessWidget with AnalyticsInfo {
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
+  AppointmentsListPanel({super.key, this.analyticsFeature });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.academics.appointments.home.header.title', 'Appointments')),
-      body: Padding(padding: EdgeInsets.all(16), child: AcademicsAppointmentsContentWidget()),
+      body: Padding(padding: EdgeInsets.all(16), child: AppointmentsContentWidget(analyticsFeature: analyticsFeature,)),
       backgroundColor: Styles().colors.white,
       bottomNavigationBar: uiuc.TabBar()
     );

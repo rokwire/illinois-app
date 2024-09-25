@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/surveys/SurveyPanel.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
@@ -262,7 +263,14 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   }
 
   void _onTapTakeScreener() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().healthScreenerSurveyID, tabBar: uiuc.TabBar(), offlineWidget: _buildOfflineWidget(),)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+      SurveyPanel(
+        survey: Config().healthScreenerSurveyID,
+        tabBar: uiuc.TabBar(),
+        offlineWidget: _buildOfflineWidget(),
+        analyticsFeature: AnalyticsFeature.WellnessHealthScreener,
+      )
+    ));
   }
 
   void _onTapClearHistoryConfirm() {

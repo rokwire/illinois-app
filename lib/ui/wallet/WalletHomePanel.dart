@@ -15,6 +15,7 @@
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -35,19 +36,43 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 enum WalletContentType { illiniId, illiniIdFaqs, busPass, mealPlan, illiniCash, addIlliniCash }
 
-class WalletHomePanel extends StatefulWidget {
+class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
   final WalletContentType? contentType;
+  final List<WalletContentType>? contentTypes;
 
-  WalletHomePanel._({this.contentType});
+  static Set<WalletContentType> requireOidcContentTypes = {
+    WalletContentType.illiniId,
+    WalletContentType.busPass,
+    WalletContentType.mealPlan,
+    WalletContentType.illiniCash,
+  };
+
+  static Map<WalletContentType, AnalyticsFeature> contentAnalyticsFeatures = {
+    WalletContentType.illiniId:   AnalyticsFeature.WalletIlliniID,
+    WalletContentType.busPass:    AnalyticsFeature.WalletBusPass,
+    WalletContentType.mealPlan:   AnalyticsFeature.WalletMealPlan,
+    WalletContentType.illiniCash: AnalyticsFeature.WalletIlliniCash,
+    // Everything not mentioned here would go as AnalyticsFeature.Wallet
+  };
+
+  WalletHomePanel._({this.contentType, this.contentTypes});
 
   @override
   _WalletHomePanelState createState() => _WalletHomePanelState();
 
+  @override
+  AnalyticsFeature? get analyticsFeature => contentAnalyticsFeatures[contentType];
+
   static void present(BuildContext context, { WalletContentType? contentType }) {
-    if (Connectivity().isOffline) {
+    List<WalletContentType> contentTypes = buildContentTypes();
+    if ((contentType != null) && !contentTypes.contains(contentType)) {
+      AppAlert.showMessage(context, Localization().getStringEx('panel.wallet.not_available.content_type.label', '{{content_type}} is not available.').
+        replaceAll('{{content_type}}', _walletContentTypeToDisplayString(contentType) ?? Localization().getStringEx('panel.wallet.header.title', 'Wallet')));
+    }
+    else if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.wallet.offline.label', 'The Wallet is not available while offline.'));
     }
-    else if (!Auth2().isOidcLoggedIn) {
+    else if (!Auth2().isOidcLoggedIn && requireOidcContentTypes.contains(getTargetContentType(contentType: contentType, contentTypes: contentTypes))) {
       AppAlert.showMessage(context, Localization().getStringEx('panel.wallet.logged_out.label', 'To access the Wallet, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.'));
     }
     else {
@@ -64,9 +89,44 @@ class WalletHomePanel extends StatefulWidget {
           constraints: BoxConstraints(maxHeight: height, minHeight: height),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
           builder: (context) {
-            return WalletHomePanel._(contentType: contentType,);
+            return WalletHomePanel._(contentType: contentType, contentTypes: contentTypes);
           });
     }
+  }
+
+  static List<WalletContentType> buildContentTypes() {
+    List<WalletContentType> contentTypes = <WalletContentType>[];
+    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['wallet']);
+    if (contentCodes != null) {
+      for (String code in contentCodes) {
+        WalletContentType? value = _walletContentTypeFromString(code);
+        if (value != null) {
+          contentTypes.add(value);
+        }
+      }
+    }
+    return contentTypes;
+  }
+
+  static WalletContentType? getTargetContentType({ WalletContentType? contentType, List<WalletContentType>? contentTypes}) {
+    WalletContentType? resultContentType = null;
+
+    if ((contentType != null) && ((contentTypes == null) || contentTypes.contains(contentType))) {
+      resultContentType = contentType;
+    }
+
+    if (resultContentType == null) {
+      WalletContentType? lastContentType = Storage()._contentType;
+      if ((lastContentType != null) && ((contentTypes == null) || contentTypes.contains(lastContentType))) {
+        resultContentType = lastContentType;
+      }
+    }
+
+    if ((resultContentType == null) && (contentTypes != null) && contentTypes.isNotEmpty) {
+      resultContentType = contentTypes.first;
+    }
+
+    return resultContentType;
   }
 }
 
@@ -84,20 +144,10 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
       FlexUI.notifyChanged
     ]);
 
-    _contentTypes = _buildContentTypes();
-
-    WalletContentType? selectedContentType = widget.contentType;
-    if ((selectedContentType != null) && _contentTypes.contains(selectedContentType)) {
-      Storage()._contentType = _selectedContentType = selectedContentType;
-    }
-    else {
-      selectedContentType = Storage()._contentType;
-      if ((selectedContentType == null) || !_contentTypes.contains(selectedContentType)) {
-        selectedContentType = _contentTypes.isNotEmpty ? _contentTypes.first : null;
-      }
-      if (selectedContentType != null) {
-        _selectedContentType = selectedContentType;
-      }
+    _contentTypes = widget.contentTypes ?? WalletHomePanel.buildContentTypes();
+    _selectedContentType = WalletHomePanel.getTargetContentType(contentType: widget.contentType, contentTypes: _contentTypes);
+    if ((widget.contentType != null) && (widget.contentType == _selectedContentType)) {
+      Storage()._contentType = _selectedContentType;
     }
   }
 
@@ -182,13 +232,14 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
   }
 
   Widget? get _contentPage {
-    switch(_selectedContentType!) {
+    switch(_selectedContentType) {
       case WalletContentType.illiniId:      return WalletICardContentWidget(key: _contentPageKey);
       case WalletContentType.illiniIdFaqs:  return WalletICardFaqsContentWidget(key: _contentPageKey);
       case WalletContentType.busPass:       return WalletMTDBusPassContentWidget(key: _contentPageKey, expandHeight: false, canClose: false,);
       case WalletContentType.mealPlan:      return WalletMealPlanContentWidget(key: _contentPageKey, headerHeight: 82,);
       case WalletContentType.illiniCash:    return WalletIlliniCashContentWidget(key: _contentPageKey, headerHeight: 88);
       case WalletContentType.addIlliniCash: return WalletAddIlliniCashContentWidget(key: _contentPageKey, topOffset: 82, hasCancel: false,);
+      default: return null;
     }
   }
 
@@ -234,22 +285,8 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
     );
   }
 
-  List<WalletContentType> _buildContentTypes() {
-    List<WalletContentType> contentTypes = <WalletContentType>[];
-    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['wallet']);
-    if (contentCodes != null) {
-      for (String code in contentCodes) {
-        WalletContentType? value = _walletContentTypeFromString(code);
-        if (value != null) {
-          contentTypes.add(value);
-        }
-      }
-    }
-    return contentTypes;
-  }
-
   void _updateContentTypes() {
-    List<WalletContentType> contentTypes = _buildContentTypes();
+    List<WalletContentType> contentTypes = WalletHomePanel.buildContentTypes();
     if (!DeepCollectionEquality().equals(_contentTypes, contentTypes) && mounted) {
       setState(() {
         _contentTypes = contentTypes;
@@ -263,10 +300,17 @@ class _WalletHomePanelState extends State<WalletHomePanel> implements Notificati
 
   void _onTapDropdownItem(WalletContentType contentType) {
     Analytics().logSelect(target: _walletContentTypeToDisplayString(contentType), source: widget.runtimeType.toString());
-    setState(() {
-      Storage()._contentType = _selectedContentType = contentType;
-      _contentValuesVisible = !_contentValuesVisible;
-    });
+    if (!Auth2().isOidcLoggedIn && WalletHomePanel.requireOidcContentTypes.contains(contentType)) {
+      AppAlert.showMessage(context, Localization().getStringEx('panel.wallet.logged_out.content_type.label', 'To access {{content_type}}, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.').
+        replaceAll('{{content_type}}', _walletContentTypeToDisplayString(contentType) ?? Localization().getStringEx('panel.wallet.header.title', 'Wallet')));
+    }
+    else {
+      setState(() {
+        Storage()._contentType = _selectedContentType = contentType;
+        _contentValuesVisible = false;
+      });
+      Analytics().logPageWidget(_contentPage);
+    }
   }
 
   void _onTapContentSwitch() {

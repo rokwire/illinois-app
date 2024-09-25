@@ -62,9 +62,9 @@
 	<string>Your bluetooth will be used for the maps to scan for nearby beacons.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>Your bluetooth will be used for the maps to scan for nearby beacons.</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>Save favorite events</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Save favorite events</string>
+	<key>NSCalendarsUsageDescription</key>
 	<string>Save favorite events</string>
 	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
 	<string>Save favorite events</string>
@@ -96,6 +96,7 @@
 	<string>Cookies will be used to enhance your experience and improve our marketing efforts.</string>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>audio</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>

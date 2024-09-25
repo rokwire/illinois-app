@@ -21,6 +21,7 @@ import 'package:geolocator/geolocator.dart' as Core;
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Appointment.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Config.dart';
@@ -44,12 +45,13 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class AppointmentDetailPanel extends StatefulWidget {
+class AppointmentDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Appointment? appointment;
   final String? appointmentId;
   final Core.Position? initialLocationData;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  AppointmentDetailPanel({this.appointment, this.appointmentId, this.initialLocationData});
+  AppointmentDetailPanel({this.appointment, this.appointmentId, this.initialLocationData, this.analyticsFeature});
 
   @override
   _AppointmentDetailPanelState createState() => _AppointmentDetailPanelState();
@@ -585,6 +587,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleTimePanel(
           scheduleParam: scheduleParam,
           sourceAppointment: _appointment,
+          analyticsFeature: widget.analyticsFeature,
           onFinish: (BuildContext context, Appointment? appointment) {
             if (appointment != null) {
               setStateIfMounted(() {
