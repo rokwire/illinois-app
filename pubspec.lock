@@ -695,37 +695,47 @@ packages:
   google_maps_flutter:
     dependency: "direct main"
     description:
-      path: "../_flutter/packages-rokwire/packages/google_maps_flutter/google_maps_flutter"
-      relative: true
-    source: path
+      path: "packages/google_maps_flutter/google_maps_flutter"
+      ref: "google_maps_flutter/add-poi-tap-callback-2.9.0"
+      resolved-ref: bbc04e0e6fe0c702cf129f31dabf44061977eeaf
+      url: "https://github.com/rokwire/packages.git"
+    source: git
     version: "2.9.0"
   google_maps_flutter_android:
     dependency: transitive
     description:
-      path: "../_flutter/packages-rokwire/packages/google_maps_flutter/google_maps_flutter_android"
-      relative: true
-    source: path
+      path: "packages/google_maps_flutter/google_maps_flutter_android"
+      ref: "google_maps_flutter/add-poi-tap-callback-2.9.0"
+      resolved-ref: bbc04e0e6fe0c702cf129f31dabf44061977eeaf
+      url: "https://github.com/rokwire/packages.git"
+    source: git
     version: "2.13.0"
   google_maps_flutter_ios:
     dependency: transitive
     description:
-      path: "../_flutter/packages-rokwire/packages/google_maps_flutter/google_maps_flutter_ios"
-      relative: true
-    source: path
+      path: "packages/google_maps_flutter/google_maps_flutter_ios"
+      ref: "google_maps_flutter/add-poi-tap-callback-2.9.0"
+      resolved-ref: bbc04e0e6fe0c702cf129f31dabf44061977eeaf
+      url: "https://github.com/rokwire/packages.git"
+    source: git
     version: "2.12.0"
   google_maps_flutter_platform_interface:
     dependency: transitive
     description:
-      path: "../_flutter/packages-rokwire/packages/google_maps_flutter/google_maps_flutter_platform_interface"
-      relative: true
-    source: path
+      path: "packages/google_maps_flutter/google_maps_flutter_platform_interface"
+      ref: "google_maps_flutter/add-poi-tap-callback-2.9.0"
+      resolved-ref: bbc04e0e6fe0c702cf129f31dabf44061977eeaf
+      url: "https://github.com/rokwire/packages.git"
+    source: git
     version: "2.9.0"
   google_maps_flutter_web:
     dependency: transitive
     description:
-      path: "../_flutter/packages-rokwire/packages/google_maps_flutter/google_maps_flutter_web"
-      relative: true
-    source: path
+      path: "packages/google_maps_flutter/google_maps_flutter_web"
+      ref: "google_maps_flutter/add-poi-tap-callback-2.9.0"
+      resolved-ref: bbc04e0e6fe0c702cf129f31dabf44061977eeaf
+      url: "https://github.com/rokwire/packages.git"
+    source: git
     version: "0.5.10"
   html:
     dependency: transitive

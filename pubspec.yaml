@@ -77,11 +77,11 @@ dependencies:
 
   # google_maps_flutter: ^2.2.5
   google_maps_flutter:
-   path: ../_flutter/packages-rokwire/packages/google_maps_flutter/google_maps_flutter
-#   git:
-#     url: https://github.com/rokwire/packages.git
-#    path: packages/google_maps_flutter/google_maps_flutter
-#     ref: google_maps_flutter/add-poi-click-callback-60695
+#  path: ../_flutter/packages-rokwire/packages/google_maps_flutter/google_maps_flutter
+    git:
+      url: https://github.com/rokwire/packages.git
+      path: packages/google_maps_flutter/google_maps_flutter
+      ref: google_maps_flutter/add-poi-tap-callback-2.9.0
 
 # google_maps_flutter:
 #   git:
@@ -90,15 +90,6 @@ dependencies:
 #     ref: google_maps_flutter-v2.2.5
 
 
-# google_maps_flutter:
-#   git:
-#     url: https://github.com/riccardo-runci/google_maps_flutter.git
-#     ref: main
-# google_maps_flutter_platform_interface:
-#     git:
-#      url: https://github.com/riccardo-runci/google_maps_flutter_platform_interface.git
-#      ref: main
-       
 # Uncomment this when weekday_selector plugin gets compatible with Flutter 3.22.2
 # weekday_selector: ^1.1.0
   weekday_selector:
