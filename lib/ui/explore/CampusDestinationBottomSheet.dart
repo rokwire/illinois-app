@@ -11,21 +11,27 @@ class CampusDestinationBottomSheet extends StatefulWidget {
 
 class _CampusDestinationBottomSheetState
     extends State<CampusDestinationBottomSheet> {
-  List<Place> _campusDestinations = [];  // Updated to use Place model
+  List<Place> _campusDestinations = [];
+  final DraggableScrollableController _controller = DraggableScrollableController();
 
   // Fallback default campus destinations in the `Place` model
   final List<Place> _defaultCampusDestinations = [
     Place(
       name: 'Doris Kelley Christopher Illinois Extension Center Building Fund',
       address: '123 Main St, Urbana, IL',
-      imageUrls: ['https://picsum.photos/200'], // Placeholder image
+      imageUrls: ['https://picsum.photos/75'],
+      id: '123',
+      latitude: 1.0,
+      longitude: 1.0,
     ),
     Place(
       name: 'Krannert Center for the Performing Arts',
       address: '500 S Goodwin Ave, Urbana, IL',
-      imageUrls: ['https://picsum.photos/200'], // Placeholder image
+      imageUrls: ['https://picsum.photos/75'],
+      id: '1234',
+      latitude: 1.0,
+      longitude: 1.0,
     ),
-    // Add more default destinations if needed
   ];
 
   // List of selected filters
@@ -65,12 +71,12 @@ class _CampusDestinationBottomSheetState
       maxChildSize: 0.95,
       snap: true,
       snapSizes: [0.2, 0.5, 0.95],
+      controller: _controller,
       builder: (BuildContext context, ScrollController scrollController) {
         return Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius:
-            BorderRadius.vertical(top: Radius.circular(16.0)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)),
             boxShadow: [
               BoxShadow(
                 color: Colors.black26,
@@ -89,7 +95,6 @@ class _CampusDestinationBottomSheetState
             ]
                 : [
               _buildSelectedDestinationHeader(),
-              // Blurb placeholder
               Container(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
@@ -112,11 +117,11 @@ class _CampusDestinationBottomSheetState
         children: [
           // Drag Handle
           Container(
-            width: 80.0,
+            width: 88.0,
             height: 4.0,
-            margin: EdgeInsets.only(bottom: 8.0),
+            margin: EdgeInsets.only(bottom: 8.0, top: 8.0),
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: Color(0xFFA6A6A6),
               borderRadius: BorderRadius.circular(2.0),
             ),
           ),
@@ -125,10 +130,11 @@ class _CampusDestinationBottomSheetState
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Campus Destinations',
+                'Campus Contributions',
                 style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
+                    fontFamily: Styles().fontFamilies.bold,
+                    fontSize: 22.0,
+                    color: Styles().colors.fillColorPrimary
                 ),
               ),
             ],
@@ -145,6 +151,11 @@ class _CampusDestinationBottomSheetState
                 _buildFilterButton('Donor Gift'),
               ],
             ),
+          ),
+          SizedBox(height: 8,),
+          Divider(
+            color: Styles().colors.surfaceAccent,
+            thickness: 2,
           ),
         ],
       ),
@@ -213,7 +224,7 @@ class _CampusDestinationBottomSheetState
           // Destination Address
           Row(
             children: [
-              Icon(Icons.location_on, size: 16.0, color: Colors.grey),
+              Icon(Icons.location_pin, size: 15.0, color: Styles().colors.iconColor),
               SizedBox(width: 4.0),
               Text(
                 _selectedDestination?.address ?? 'No address available',
@@ -240,13 +251,14 @@ class _CampusDestinationBottomSheetState
             }
           });
         },
-        child: Text(label),
+        child: Text(label, selectionColor: Styles().colors.fillColorPrimary,
+          style: TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies.regular,),),
         style: ElevatedButton.styleFrom(
-          foregroundColor: isSelected ? Colors.white : Colors.blue,
-          backgroundColor: isSelected ? Colors.blue : Colors.white,
-          side: BorderSide(color: Colors.blue),
+          foregroundColor: isSelected ? Colors.white : Styles().colors.fillColorPrimary,
+          backgroundColor: isSelected ? Styles().colors.fillColorPrimary : Colors.white,
+          side: BorderSide(color: Styles().colors.surfaceAccent),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
+            borderRadius: BorderRadius.circular(24.0),
           ),
         ),
       ),
@@ -254,38 +266,71 @@ class _CampusDestinationBottomSheetState
   }
 
   Widget _buildDestinationCard(Place place) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Column(
-        children: [
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(place.name ?? 'Unknown Name'),
-            subtitle: Row(
-              children: [
-                Icon(Icons.location_pin),
-                Text(place.address ?? 'No address available'),
-              ],
+    return GestureDetector(
+      onTap: () => _onDestinationTap(place),
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 75.0, // Set a fixed height for the content
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          place.name ?? 'Unknown Name',
+                          style: TextStyle(
+                            fontFamily: Styles().fontFamilies.bold,
+                            fontSize: 16,
+                            color: Styles().colors.fillColorPrimary,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(Icons.location_pin, size: 15.0, color: Styles().colors.iconColor),
+                            SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                place.address ?? 'No address available',
+                                style: TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies.medium),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Container(
+                    width: 75.0,
+                    height: 75.0,
+                    child: place.imageUrls?.isNotEmpty ?? false
+                        ? Image.network(
+                      place.imageUrls!.first,
+                      fit: BoxFit.cover,
+                      width: 75.0,
+                      height: 75.0,
+                    )
+                        : Icon(Icons.image, color: Colors.grey, size: 75.0),
+                  ),
+                ],
+              ),
             ),
-            trailing: Container(
-              width: 50.0,
-              height: 50.0,
-              child: place.imageUrls?.isNotEmpty ?? false
-                  ? Image.network(
-                place.imageUrls!.first,
-                fit: BoxFit.cover,
-              )
-                  : Icon(Icons.image, color: Colors.grey),
+            SizedBox(height: 8),
+            Divider(
+              color: Styles().colors.surfaceAccent,
+              thickness: 2,
             ),
-            onTap: () {
-              _onDestinationTap(place);
-            },
-          ),
-          SizedBox(
-            height: 4,
-          ),
-          Divider()
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -294,5 +339,6 @@ class _CampusDestinationBottomSheetState
     setState(() {
       _selectedDestination = place;
     });
+    _controller.animateTo(0.5, duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 }
