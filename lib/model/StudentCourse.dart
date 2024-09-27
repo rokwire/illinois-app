@@ -371,6 +371,17 @@ class Building with Explore {
     return jsonList;
   }
 
+  static List<Building>? listFromJsonMap(Map<String, dynamic>? jsonMap) {
+    List<Building>? values;
+    if (jsonMap != null) {
+      values = <Building>[];
+      for (dynamic jsonEntry in jsonMap.values) {
+        ListUtils.add(values, Building.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return values;
+  }
+
   static Building? findInList(List<Building>? values, { String? id, String? number }) {
     if (values != null) {
       for (Building value in values) {

@@ -324,6 +324,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAttributeGuideCategory          = "guide_category";
   static const String   LogAttributeGuideSection           = "guide_section";
   static const String   LogAttributeLocation               = "location";
+  static const String   LogAttributeRadioStation           = "radio_station";
 
   static const String   LogAnonymousUin                    = 'UINxxxxxx';
   static const String   LogAnonymousFirstName              = 'FirstNameXXXXXX';
@@ -830,8 +831,11 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       LogEventName          : LogSelectEventName,
       LogSelectTargetName   : target,
       LogSelectSourceName   : source,
-      LogSelectFeatureName  : feature?.name,
     };
+
+    if (feature != null) {
+      event[LogSelectFeatureName] = feature.name;
+    }
 
     // Add optional attribute, if applied
     if (attributes != null) {
