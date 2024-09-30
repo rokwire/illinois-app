@@ -148,7 +148,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   CameraPosition? _lastCameraPosition;
   double? _lastMarkersUpdateZoom;
   CameraUpdate? _targetCameraUpdate;
-  String? _targetMapStyle, _lastMapStyle;
   Set<dynamic>? _exploreMarkerGroups;
   Set<Marker>? _targetMarkers;
   bool _markersProgress = false;
@@ -446,6 +445,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         myLocationButtonEnabled: _userLocationEnabled,
         mapToolbarEnabled: Storage().debugMapShowLevels ?? false,
         markers: _targetMarkers ?? const <Marker>{},
+        style: _currentMapStyle,
         indoorViewEnabled: true,
       //trafficEnabled: true,
         // This fixes #4306. The gestureRecognizers parameter is needed because of PopScopeFix wrapper in RootPanel,
@@ -462,12 +462,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   void _onMapCreated(GoogleMapController controller) async {
     debugPrint('ExploreMap created' );
     _mapController = controller;
-
-    if (_targetMapStyle != _lastMapStyle) {
-      _mapController?.setMapStyle(_lastMapStyle = _targetMapStyle).catchError((e) {
-        debugPrint(e.toString());
-      });
-    }
 
     if (_targetCameraUpdate != null) {
       if (Platform.isAndroid) {
@@ -1232,7 +1226,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       _itemsDropDownValuesVisible = false;
     });
     if (lastExploreType != item) {
-      _targetMapStyle = _currentMapStyle;
       _initExplores();
     }
   }
@@ -2026,7 +2019,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   void _initMapStyles() {
     rootBundle.loadString(_mapStylesAssetName).then((String value) {
       _mapStyles = JsonUtils.decodeMap(value);
-      _targetMapStyle = _currentMapStyle;
     }).catchError((_){
     });
   }
