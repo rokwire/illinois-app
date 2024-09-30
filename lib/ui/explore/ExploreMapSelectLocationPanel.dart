@@ -81,7 +81,6 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   CameraPosition? _lastCameraPosition;
   double? _lastMarkersUpdateZoom;
   CameraUpdate? _targetCameraUpdate;
-  String? _targetMapStyle, _lastMapStyle;
   Set<dynamic>? _exploreMarkerGroups;
   Set<Marker>? _targetMarkers;
   bool _markersProgress = false;
@@ -205,12 +204,6 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   void _onMapCreated(GoogleMapController controller) async {
     debugPrint('ExploreMap created' );
     _mapController = controller;
-
-    if (_targetMapStyle != _lastMapStyle) {
-      _mapController?.setMapStyle(_lastMapStyle = _targetMapStyle).catchError((e) {
-        debugPrint(e.toString());
-      });
-    }
 
     if (_targetCameraUpdate != null) {
       if (Platform.isAndroid) {
