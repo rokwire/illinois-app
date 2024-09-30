@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Upgraded url_launcher plugin to resolve build issue on Xcode 16.
 - Survey Card widgets color explicitly set to be white [#4385](https://github.com/rokwire/illinois-app/issues/4385).
+- Skills Self-Evaluation Pop-Up Text Update [#4391](https://github.com/rokwire/illinois-app/issues/4391).
 
 ## [6.1.8] - 2024-08-28
 ### Changed

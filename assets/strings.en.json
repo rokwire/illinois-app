@@ -3169,7 +3169,7 @@
     "panel.skills_self_evaluation.get_started.description.list": "\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience",
     "panel.skills_self_evaluation.get_started.body.save.description": "Your results will be saved for you to compare with future results.",
     "panel.skills_self_evaluation.get_started.body.dont_save.description": "Your results will not be saved for you to compare with future results.",
-    "panel.skills_self_evaluation.get_started.body.save.dialog": "Your results will be saved for you to compare with future results.\n\nNo data from this assessment will be shared with other people or systems or stored outside of your Illinois app account.",
+    "panel.skills_self_evaluation.get_started.body.save.dialog": "Your results will be saved for you to compare with future results.\n\nNo personally identifiable data from this assessment will be shared with other people or systems or stored outside of your Illinois app account.",
     "panel.skills_self_evaluation.get_started.body.dont_save.label": "Don't Save My Results",
     "panel.skills_self_evaluation.get_started.body.save.label": "Save My Results",
     "panel.skills_self_evaluation.get_started.body.share.label": "Share this feature",

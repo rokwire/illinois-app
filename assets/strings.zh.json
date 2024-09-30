@@ -3149,7 +3149,7 @@
 	"panel.skills_self_evaluation.get_started.description.list": "\t\t\u2022 自我管理\n\t\t\u2022 創新\n\t\t\u2022 合作\n\t\t\u2022 社會參與\n\t\t\u2022 情緒恢復力",
 	"panel.skills_self_evaluation.get_started.body.save.description": "您的结果将被保存，以便您未来可以比较结果。",
 	"panel.skills_self_evaluation.get_started.body.dont_save.description": "您的结果将不会被保存，即未来无法比较结果。",
-	"panel.skills_self_evaluation.get_started.body.save.dialog": "您的结果将被保存，以便您未来可以比较结果。\n\n此评估的任何数据皆不会与其他人或系统共享，也不会存储在您的Illinois应用程序帐户之外。",
+	"panel.skills_self_evaluation.get_started.body.save.dialog": "Your results will be saved for you to compare with future results.\n\nNo personally identifiable data from this assessment will be shared with other people or systems or stored outside of your Illinois app account.",
 	"panel.skills_self_evaluation.get_started.body.dont_save.label": "不要保存我的结果",
 	"panel.skills_self_evaluation.get_started.body.save.label": "保存我的結果",
 	"panel.skills_self_evaluation.get_started.body.share.label": "分享此功能",

@@ -170,16 +170,18 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
     return <Widget>[
       RibbonButton(
         leftIconKey: "info",
-        label: saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.description", "Your results will be saved for you to revisit or compare to future results.") :
-                Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
-        textStyle: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title'),
+        label: saveEnabled ?
+          Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.description", "Your results will be saved for you to compare with future results.") :
+          Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
+        textStyle: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
         backgroundColor: Colors.transparent,
         onTap: _onTapSavedResultsInfo,
       ),
       RibbonButton(
         leftIconKey: "settings",
-        label: saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.label", "Don't Save My Results") :
-                Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.label", "Save My Results"),
+        label: saveEnabled ?
+          Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.label", "Don't Save My Results") :
+          Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.label", "Save My Results"),
         textStyle: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
         backgroundColor: Colors.transparent,
         onTap: _onTapSettings,
@@ -276,10 +278,9 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
 
   void _onTapSavedResultsInfo() {
     bool saveEnabled = Storage().assessmentsSaveResultsMap?['bessi'] != false;
-    Widget textWidget = Text(
-      saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.dialog",
-        "Your results will be saved for you to compare to future results.\n\nNo data from this assessment will be shared with other people or systems or stored outside of your Illinois app account.") :
-          Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
+    Widget textWidget = Text(saveEnabled ?
+      Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.dialog", "Your results will be saved for you to compare with future results.\n\nNo personally identifiable data from this assessment will be shared with other people or systems or stored outside of your Illinois app account.") :
+      Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
       style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
       textAlign: TextAlign.center,
     );
