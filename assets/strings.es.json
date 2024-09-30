@@ -3164,7 +3164,7 @@
     "panel.skills_self_evaluation.get_started.description.list": "\t\t\u2022 autogestión\n\t\t\u2022 innovación\n\t\t\u2022 cooperación\n\t\t\u2022 compromiso social\n\t\t\u2022 resiliencia emocional",
     "panel.skills_self_evaluation.get_started.body.save.description": "Sus resultados se guardarán para que pueda revisarlos con resultados futuros.",
     "panel.skills_self_evaluation.get_started.body.dont_save.description": "Sus resultados no se guardarán para que los compare con resultados futuros.",
-    "panel.skills_self_evaluation.get_started.body.save.dialog": "Sus resultados se guardarán para que los compare con resultados futuros.\n\nNingún dato de esta evaluación se compartirá con otras personas o sistemas ni se almacenará fuera de su cuenta de la aplicación de Illinois.",
+    "panel.skills_self_evaluation.get_started.body.save.dialog": "Your results will be saved for you to compare with future results.\n\nNo personally identifiable data from this assessment will be shared with other people or systems or stored outside of your Illinois app account.",
     "panel.skills_self_evaluation.get_started.body.dont_save.label": "No guardar mis resultados",
     "panel.skills_self_evaluation.get_started.body.save.label": "Guardar mis resultados",
     "panel.skills_self_evaluation.get_started.body.share.label": "Comparte esta característica",
