@@ -763,7 +763,10 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
       ),
     );
     if (markerImageBytes != null) {
-      return BitmapDescriptor.fromBytes(markerImageBytes);
+      return BitmapDescriptor.bytes(markerImageBytes,
+        imagePixelRatio: MediaQuery.of(context).devicePixelRatio,
+        width: imageSize, height: imageSize,
+      );
     }
     else if (backColor != null) {
       return BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(backColor).toDouble());
@@ -781,7 +784,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
       if (explore is MTDStop) {
         String markerAsset = 'images/map-marker-mtd-stop.png';
         markerIcon = _markerIconCache[markerAsset] ??
-          (_markerIconCache[markerAsset] = await BitmapDescriptor.fromAssetImage(imageConfiguration, markerAsset));
+          (_markerIconCache[markerAsset] = await BitmapDescriptor.asset(imageConfiguration, markerAsset));
         markerAnchor = Offset(0.5, 0.5);
       }
       else {
