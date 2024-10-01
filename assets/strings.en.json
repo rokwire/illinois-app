@@ -320,6 +320,8 @@
     "panel.browse.section.radio_stations.description": "Listen to Illinois Public Media and student-run WPGU.",
     "panel.browse.section.recent.title": "Recently Viewed",
     "panel.browse.section.recent.description": "Revisit your recent app activity.",
+    "panel.browse.section.safety.title": "Safety",
+    "panel.browse.section.safety.description": "Explore resources to get home safely, prepare for emergencies, and protect yourself and others.",
     "panel.browse.section.surveys.title": "Surveys",
     "panel.browse.section.surveys.description": "Participate in surveys available to you.",
     "panel.browse.section.state_farm_center.title": "State Farm Center",
@@ -402,6 +404,10 @@
     "panel.browse.entry.polls.recent_polls.title": "View Polls",
 
     "panel.browse.entry.recent.recent_items.title": "Recently Viewed",
+
+    "panel.browse.entry.safety.safewalk_request.title": "Request a SafeWalk",
+    "panel.browse.entry.safety.saferides.title": "SafeRides (MTD)",
+    "panel.browse.entry.safety.safety_resources.title": "Safety Resources",
 
     "panel.browse.entry.surveys.public_surveys.title": "Surveys",
 

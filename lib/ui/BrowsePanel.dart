@@ -35,6 +35,7 @@ import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
+import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
@@ -638,6 +639,10 @@ class _BrowseEntry extends StatelessWidget {
 
       case "recent.recent_items":            _onTapRecentItems(context); break;
 
+      case "safety.safewalk_request":        _onTapSafewalkRequest(context); break;
+      case "safety.saferides":               _onTapSafeRides(context); break;
+      case "safety.safety_resources":        _onTapSafetyResources(context); break;
+
       case "surveys.public_surveys":         _onTapPublicSurveys(context); break;
 
       case "state_farm_center.parking":      _onTapParking(context); break;
@@ -1010,6 +1015,28 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapRecentItems(BuildContext context) {
     Analytics().logSelect(target: "Recent Items");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => HomeRecentItemsPanel()));
+  }
+
+  void _onTapSafewalkRequest(BuildContext context) {
+    Analytics().logSelect(target: "Request a SafeWalk");
+  }
+
+  void _onTapSafeRides(BuildContext context) {
+    Analytics().logSelect(target: "SafeRides (MTD)");
+    Map<String, dynamic>? safeRidesGuideEntry = Guide().entryById(Config().safeRidesGuideId);
+    if (safeRidesGuideEntry != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntry: safeRidesGuideEntry)));
+    }
+  }
+
+  void _onTapSafetyResources(BuildContext context) {
+    Analytics().logSelect(target: "Safety Resources");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
+      contentList: Guide().safetyResourcesList,
+      contentTitle: Localization().getStringEx('panel.guide_list.label.campus_safety_resources.section', 'Safety Resources'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_safety_resources.empty", "There are no active Campus Safety Resources."),
+      favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
+    )));
   }
 
   void _onTapPublicSurveys(BuildContext context) {
