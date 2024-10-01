@@ -47,6 +47,7 @@ import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/widgets/StoriedSightsBottomSheet.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -66,7 +67,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:timezone/timezone.dart';
 
-enum ExploreMapType { Events2, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MyLocations, MentalHealth, StateFarmWayfinding }
+enum ExploreMapType { Events2, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MyLocations, MentalHealth, StateFarmWayfinding, StoriedSights }
 
 class ExploreMapPanel extends StatefulWidget {
   static const String notifySelect = "edu.illinois.rokwire.explore.map.select";
@@ -390,7 +391,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
               ]),
             ),
           ]),
-          _buildExploreTypesDropDownContainer()
+          _buildExploreTypesDropDownContainer(),
+          if (_selectedMapType == ExploreMapType.StoriedSights)
+            StoriedSightsBottomSheet(),
         ]),
       )
     ]);
@@ -1423,6 +1426,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         }
       }
     }
+    exploreTypes.add(ExploreMapType.StoriedSights);
     return exploreTypes;
   }
 
@@ -1483,6 +1487,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       case ExploreMapType.MTDStops:            return Localization().getStringEx('panel.explore.button.mtd_stops.title', 'MTD Stops');
       case ExploreMapType.MyLocations:         return Localization().getStringEx('panel.explore.button.my_locations.title', 'My Locations');
       case ExploreMapType.MentalHealth:        return Localization().getStringEx('panel.explore.button.mental_health.title', 'Find a Therapist');
+      case ExploreMapType.StoriedSights:       return Localization().getStringEx('', 'Storied Sights');
       case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
       default:                              return null;
     }
@@ -1499,6 +1504,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       case ExploreMapType.MTDStops:            return Localization().getStringEx('panel.explore.button.mtd_stops.hint', '');
       case ExploreMapType.MyLocations:         return Localization().getStringEx('panel.explore.button.my_locations.hint', '');
       case ExploreMapType.MentalHealth:        return Localization().getStringEx('panel.explore.button.mental_health.hint', '');
+      case ExploreMapType.StoriedSights:       return Localization().getStringEx('', '');
       case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
       default:                              return null;
     }
@@ -1764,6 +1770,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       case ExploreMapType.MTDStops: return Localization().getStringEx('panel.explore.state.online.empty.mtd_stops', 'No MTD stop locations available.');
       case ExploreMapType.MyLocations: return Localization().getStringEx('panel.explore.state.online.empty.my_locations', 'No saved locations available.');
       case ExploreMapType.MentalHealth: return Localization().getStringEx('panel.explore.state.online.empty.mental_health', 'No therapist locations are available.');
+      case ExploreMapType.StoriedSights: return Localization().getStringEx('', 'No storied sights are available.');
       case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.online.empty.state_farm', 'No State Farm Wayfinding available.');
       default:  return null;
     }
@@ -1780,6 +1787,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       case ExploreMapType.MTDStops: return Localization().getStringEx('panel.explore.state.failed.mtd_stops', 'Failed to load MTD stop locations.');
       case ExploreMapType.MyLocations: return Localization().getStringEx('panel.explore.state.failed.my_locations', 'Failed to load saved locations.');
       case ExploreMapType.MentalHealth: return Localization().getStringEx('panel.explore.state.failed.mental_health', 'Failed to load therapist locations.');
+      case ExploreMapType.StoriedSights: return Localization().getStringEx('', 'Failed to load storied sights.');
       case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.failed.state_farm', 'Failed to load State Farm Wayfinding.');
       default:  return null;
     }
@@ -1863,6 +1871,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         case ExploreMapType.MTDStops: return _loadMTDStops();
         case ExploreMapType.MyLocations: return _loadMyLocations();
         case ExploreMapType.MentalHealth: return _loadMentalHealthBuildings();
+        case ExploreMapType.StoriedSights: return _loadMentalHealthBuildings();
         case ExploreMapType.StateFarmWayfinding: break;
         default: break;
       }
@@ -2030,7 +2039,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   String? get _currentMapStyle {
     if (_mapStyles != null) {
-      if ((_selectedMapType == ExploreMapType.Buildings) || (_selectedMapType == ExploreMapType.MentalHealth)) {
+      if ((_selectedMapType == ExploreMapType.Buildings) || (_selectedMapType == ExploreMapType.MentalHealth) || (_selectedMapType == ExploreMapType.StoriedSights)) {
         return JsonUtils.encode(_mapStyles![_mapStylesExplorePoiKey]);
       }
       else if (_selectedMapType == ExploreMapType.MTDStops) {
@@ -2372,6 +2381,9 @@ ExploreMapType? exploreMapItemFromString(String? value) {
   else if (value == 'mentalHealth') {
     return ExploreMapType.MentalHealth;
   }
+  else if (value == 'storiedSights') {
+    return ExploreMapType.StoriedSights;
+  }
   else if (value == 'stateFarmWayfinding') {
     return ExploreMapType.StateFarmWayfinding;
   }
@@ -2391,6 +2403,7 @@ String? exploreMapTypeToString(ExploreMapType? value) {
     case ExploreMapType.MTDStops:            return 'mtdStops';
     case ExploreMapType.MyLocations:         return 'myLocations';
     case ExploreMapType.MentalHealth:        return 'mentalHealth';
+    case ExploreMapType.StoriedSights:       return 'storiedSights';
     case ExploreMapType.StateFarmWayfinding: return 'stateFarmWayfinding';
     default: return null;
   }
