@@ -71,11 +71,11 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.2,
-      minChildSize: 0.2,
+      initialChildSize: 0.25,
+      minChildSize: 0.25,
       maxChildSize: 0.95,
       snap: true,
-      snapSizes: [0.2, 0.5, 0.95],
+      snapSizes: [0.25, 0.5, 0.95],
       controller: _controller,
       builder: (BuildContext context, ScrollController scrollController) {
         return Container(
