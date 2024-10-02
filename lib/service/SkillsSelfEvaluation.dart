@@ -40,6 +40,7 @@ class SkillsSelfEvaluation with Service implements NotificationsListener {
       DeepLink.notifyUri,
     ]);
     _deepLinkUrisCache = <Uri>[];
+    super.createService();
   }
 
   @override

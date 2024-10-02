@@ -21,6 +21,8 @@ import 'package:rokwire_plugin/service/service.dart';
 
 class DeepLink extends rokwire.DeepLink {
 
+  static String get notifyUri  => rokwire.DeepLink.notifyUri;
+
   String? _appScheme;
   
   // Singletone Factory
