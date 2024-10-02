@@ -27,6 +27,7 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/assistant/AssistantHomePanel.dart';
@@ -35,6 +36,7 @@ import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
+import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
@@ -198,6 +200,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Groups.notifyGroupDetail,
       Appointments.notifyAppointmentDetail,
       Canvas.notifyCanvasEventDetail,
+      SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation,
+      Gateway.notifyBuildingDetail,
       Guide.notifyGuide,
       Guide.notifyGuideDetail,
       Guide.notifyGuideList,
@@ -211,7 +215,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       HomeFavoritesPanel.notifySelect,
       BrowsePanel.notifySelect,
       ExploreMapPanel.notifySelect,
-      SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation,
     ]);
 
     _tabs = _getTabs();
@@ -297,6 +300,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Canvas.notifyCanvasEventDetail) {
       _onCanvasEventDetail(param);
+    }
+    else if (name == SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation) {
+      _onFirebaseAcademicsNotification(AcademicsContent.skills_self_evaluation);
+    }
+    else if (name == Gateway.notifyBuildingDetail) {
+      _onGatewayBuildingDetail(param);
     }
     else if (name == Localization.notifyStringsUpdated) {
       if (mounted) {
@@ -545,9 +554,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
-    }
-    else if (name == SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation) {
-      _onFirebaseAcademicsNotification(AcademicsContent.skills_self_evaluation);
     }
 
   }
@@ -872,6 +878,15 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       if (eventIdValue != null) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCalendarEventDetailPanel(eventId: eventIdValue)));
       }
+    }
+  }
+
+  Future<void> _onGatewayBuildingDetail(Map<String, dynamic>? content) async {
+    String? buildingNumber = (content != null) ? JsonUtils.stringValue(content['building_number']) : null;
+    if (StringUtils.isNotEmpty(buildingNumber)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+        ExploreBuildingDetailPanel(buildingNumber: buildingNumber)
+      ));
     }
   }
 
