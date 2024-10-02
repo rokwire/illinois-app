@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Survey Card widgets color explicitly set to be white [#4385](https://github.com/rokwire/illinois-app/issues/4385).
 - Skills Self-Evaluation Pop-Up Text Update [#4391](https://github.com/rokwire/illinois-app/issues/4391).
 - Share this event button title Updated [#4397](https://github.com/rokwire/illinois-app/issues/4397).
+### Added
+- Added share functionality for campus buildings [#4396](https://github.com/rokwire/illinois-app/issues/4396).
 
 ## [6.0.48] - 2024-09-20
 ### Changed
