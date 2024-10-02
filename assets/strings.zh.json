@@ -1197,7 +1197,9 @@
 	"panel.explore_detail.label.ask_dietician": "向营养师提问",
 	"panel.explore_detail.label.ask_dietician_descr": "键入您的问题:",
 
+	"panel.explore_building_detail.message.failed": "Failed to load location details",
 	"panel.explore_building_detail.detail.fllor_plan_and_amenities": "Floor Plans & Amenities",
+	"panel.explore_building_detail.detail.share": "Share This Location",
 
 	"panel.search_building.header.title": "Search",
 	"panel.search_building.result.error.label": "Failed to search buildings",
@@ -1446,7 +1448,7 @@
 	"panel.event2.detail.general.add_to_calendar.title": "加入日历",
 	"panel.event2.detail.general.add_to_calendar.succeeded.message": "Added to Calendar",
 	"panel.event2.detail.general.add_to_calendar.failed.message": "Failed to add to Calendar",
-	"panel.event2.detail.general.promote.title": "Share this event",
+	"panel.event2.detail.general.promote.title": "Share This Event",
 	"panel.event2.detail.general.super_event.abbreviation.title": "Multi",
 	"panel.event2.detail.general.recurrence.abbreviation.title": "重复",
 	"panel.event2.detail.general.super_event.list.title": "多个活动",
