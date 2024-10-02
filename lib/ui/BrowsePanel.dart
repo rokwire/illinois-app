@@ -51,6 +51,7 @@ import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
+import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/surveys/PublicSurveysPanel.dart';
 import 'package:illinois/ui/wallet/WalletHomePanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
@@ -1019,6 +1020,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapSafewalkRequest(BuildContext context) {
     Analytics().logSelect(target: "Request a SafeWalk");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SafetyHomePanel()));
   }
 
   void _onTapSafeRides(BuildContext context) {

@@ -3273,6 +3273,19 @@
 	"panel.essential_skills_coach.video.header.title": "Video",
 	"panel.essential_skills_coach.video.error.message": "Failed to load video. Please try again later.",
 
+	"panel.safety.header.title": "Safety",
+	"panel.safety.content_type.safe_walk_request.label": "Request a SafeWalk",
+	"panel.safety.content_type.safe_rides.label": "SafeRides (MTD)",
+	"panel.safety.content_type.safety_resources.label": "Safety Resources",
+
+	"panel.safewalks_request.header.title": "SafeWalks",
+	"panel.safewalks_request.button.more.hint": "Show more",
+ "panel.safewalks_request.sub_title1.text": "Trust your instincts.",
+ "panel.safewalks_request.sub_title2.text": "You never have to walk alone.",
+ "panel.safewalks_request.info1.text": "Request a student patrol officer to walk with you.",
+ "panel.safewalks_request.info2.text": "Please give at least 15 minutes' notice.",
+ "panel.safewalks_request.info3.text": "Available 9:00 p.m. to 2:30 a.m.",
+
 	"panel.home_canvas_course.header.title": "課程",
 	"panel.home_canvas_course.load.failed.error.msg": "無法加載課程. 請稍後再試.",
 	"panel.home_canvas_course.button.assignments.title": "作業",
