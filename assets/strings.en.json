@@ -1450,7 +1450,7 @@
     "panel.event2.detail.general.add_to_calendar.title": "Add to Calendar",
     "panel.event2.detail.general.add_to_calendar.succeeded.message": "Added to Calendar",
     "panel.event2.detail.general.add_to_calendar.failed.message": "Failed to add to calendar.",
-    "panel.event2.detail.general.promote.title": "Share this event",
+    "panel.event2.detail.general.promote.title": "Share This Event",
     "panel.event2.detail.general.super_event.abbreviation.title": "Multi",
     "panel.event2.detail.general.recurrence.abbreviation.title": "Repeats",
     "panel.event2.detail.general.super_event.list.title": "Multiple events",

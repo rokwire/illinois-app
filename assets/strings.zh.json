@@ -1436,7 +1436,7 @@
 	"panel.event2.detail.general.add_to_calendar.title": "加入日历",
 	"panel.event2.detail.general.add_to_calendar.succeeded.message": "Added to Calendar",
 	"panel.event2.detail.general.add_to_calendar.failed.message": "Failed to add to Calendar",
-	"panel.event2.detail.general.promote.title": "Share this event",
+	"panel.event2.detail.general.promote.title": "Share This Event",
 	"panel.event2.detail.general.super_event.abbreviation.title": "Multi",
 	"panel.event2.detail.general.recurrence.abbreviation.title": "重复",
 	"panel.event2.detail.general.super_event.list.title": "多个活动",
