@@ -25,6 +25,7 @@ import 'package:neom/ui/events2/Event2Widgets.dart';
 import 'package:neom/ui/explore/ExploreMapPanel.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:neom/ui/widgets/TextTabBar.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -379,7 +380,7 @@ class Event2HomePanel extends StatefulWidget {
   }
 }
 
-class _Event2HomePanelState extends State<Event2HomePanel> implements NotificationsListener {
+class _Event2HomePanelState extends State<Event2HomePanel> with TickerProviderStateMixin implements NotificationsListener {
 
   List<Event2>? _events;
   bool? _lastPageLoadedAll;
@@ -404,6 +405,13 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   Position? _currentLocation;
 
   ScrollController _scrollController = ScrollController();
+  late TabController _tabController;
+  int _selectedTab = 0;
+
+  final List<String> _tabNames = [
+    Localization().getStringEx('panel.events2.content_type.all', 'All Events'),
+    Localization().getStringEx('panel.events2.content_type.my', 'My Events'),
+  ];
 
   @override
   void initState() {
@@ -417,8 +425,6 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       Events2.notifyChanged,
       Events2.notifyUpdated,
     ]);
-
-    _scrollController.addListener(_scrollListener);
 
     if ((widget.timeFilter != null) && ((widget.timeFilter != Event2TimeFilter.customRange) || ((widget.customStartTime != null) && (widget.customEndTime != null)))) {
       _timeFilter = widget.timeFilter ?? Event2TimeFilter.upcoming;
@@ -435,6 +441,13 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     _attributes = widget.attributes ?? Storage().events2Attributes ?? <String, dynamic>{};
     _sortType = widget.sortType ?? event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
 
+    _scrollController.addListener(_scrollListener);
+    if (_types.contains(Event2TypeFilter.favorite) && _types.length == 1) {
+      _selectedTab = 1;
+    }
+    _tabController = TabController(length: 2, initialIndex: _selectedTab, vsync: this);
+    _tabController.addListener(_onTabChanged);
+
     _initLocationServicesStatus().then((_) {
       _ensureCurrentLocation();
       _reload();
@@ -444,6 +457,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   @override
   void dispose() {
+    _tabController.removeListener(_onTabChanged);
+    _tabController.dispose();
+    _scrollController.dispose();
     NotificationService().unsubscribe(this);
     super.dispose();
   }
@@ -499,15 +515,28 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   }
 
   Widget _buildPanelContent() {
+    List<Widget> tabs = _tabNames.map((e) => TextTabButton(title: e)).toList();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      TextTabBar(tabs: tabs, controller: _tabController, isScrollable: false, onTap: (index){_onTabChanged();}),
       _buildCommandBar(),
-      Expanded(child:
-        RefreshIndicator(onRefresh: _onRefresh, child:
-          SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
-            _buildEventsContent(),
-          )
-        )
-      )
+      Expanded(
+        child: TabBarView(
+          controller: _tabController,
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            RefreshIndicator(onRefresh: _onRefresh, child:
+              SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
+                _buildEventsContent(),
+              )
+            ),
+                RefreshIndicator(onRefresh: _onRefresh, child:
+              SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
+                _buildEventsContent(),
+              )
+            ),
+          ],
+        ),
+      ),
     ],);
   }
 
@@ -1099,6 +1128,20 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     } else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, userLocation: _currentLocation, eventSelector: widget.eventSelector,)));
     }
+  }
+
+  void _onTabChanged({bool manual = true}) {
+    if (!_tabController.indexIsChanging && _selectedTab != _tabController.index) {
+      setState(() {
+        _selectedTab = _tabController.index;
+        if (_selectedTab == 0) {
+          _types.remove(Event2TypeFilter.favorite);
+        } else {
+          _types.add(Event2TypeFilter.favorite);
+        }
+      });
+    }
+    _scrollController.animateTo(0, duration: Duration(milliseconds: 500), curve: Curves.linear);
   }
 }
 

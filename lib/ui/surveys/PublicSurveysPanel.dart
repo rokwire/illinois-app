@@ -8,8 +8,8 @@ import 'package:neom/service/Analytics.dart';
 import 'package:neom/ui/surveys/PublicSurveyCard.dart';
 import 'package:neom/ui/surveys/SurveyPanel.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
-import 'package:neom/ui/widgets/RibbonButton.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:neom/ui/widgets/TextTabBar.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -30,10 +30,9 @@ class PublicSurveysPanel extends StatefulWidget {
 
 enum _DataActivity { init, refresh, extend }
 
-class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements NotificationsListener  {
+class _PublicSurveysPanelState extends State<PublicSurveysPanel> with TickerProviderStateMixin implements NotificationsListener  {
 
   late PublicSurveysContentType _selectedContentType;
-  bool _contentTypeDropdownExpanded = false;
 
   List<Survey>? _contentList;
   bool? _lastPageLoaded;
@@ -41,9 +40,15 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
   Set<String> _activitySurveyIds = <String>{};
 
   static const int _contentPageLength = 16;
-  final Color _dropdownShadowColor = Color(0x99000000);
 
   ScrollController _scrollController = ScrollController();
+  late TabController _tabController;
+  int _selectedTab = 0;
+
+  final List<String> _tabNames = [
+    Localization().getStringEx('panel.public_surveys.content_type.all', 'All Surveys'),
+    Localization().getStringEx('panel.public_surveys.content_type.completed', 'Completed Surveys'),
+  ];
 
   @override
   void initState() {
@@ -53,12 +58,22 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
     ]);
     _selectedContentType = widget.selectedType;
     _scrollController.addListener(_scrollListener);
+
+    if (widget.selectedType == PublicSurveysContentType.completed) {
+      _selectedTab = 1;
+    }
+    _tabController = TabController(length: 2, initialIndex: _selectedTab, vsync: this);
+    _tabController.addListener(_onTabChanged);
+
     _init();
     super.initState();
   }
 
   @override
   void dispose() {
+    _tabController.removeListener(_onTabChanged);
+    _tabController.dispose();
+    _scrollController.dispose();
     NotificationService().unsubscribe(this);
     super.dispose();
   }
@@ -78,15 +93,22 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
     bottomNavigationBar: uiuc.TabBar(),
   );
 
-  Widget get _scaffoldContent => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-    _contentTypeDropdownWidget,
-    Expanded(child:
-        Stack(alignment: Alignment.topCenter, children: <Widget>[
-          _panelContent,
-          _dropdownListContainer,
-        ])
-    )
-  ],);
+  Widget get _scaffoldContent {
+    List<Widget> tabs = _tabNames.map((e) => TextTabButton(title: e)).toList();
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      TextTabBar(tabs: tabs, controller: _tabController, isScrollable: false, onTap: (index){_onTabChanged();}),
+      Expanded(
+        child: TabBarView(
+          controller: _tabController,
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            _panelContent,
+            _panelContent,
+          ],
+        ),
+      ),
+    ],);
+  }
 
   Widget get _panelContent =>
     RefreshIndicator(onRefresh: _onRefresh, child:
@@ -161,48 +183,6 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
     Align(alignment: Alignment.center, child:
       SizedBox(width: 24, height: 24, child:
         CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),),),),);
-
-  Widget get _contentTypeDropdownWidget => Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child: RibbonButton(
-    progress: (_dataActivity == _DataActivity.refresh),
-    textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-    backgroundColor: Styles().colors.surface,
-    borderRadius: BorderRadius.all(Radius.circular(5)),
-    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-    rightIconKey: (_contentTypeDropdownExpanded == true) ? 'chevron-up' : 'chevron-down',
-    label: publicSurveysContentTypeDisplayName(_selectedContentType),
-    onTap: _onContentTypeDropdown,
-  ));
-
-  Widget get _dropdownListContainer => Visibility(visible: _contentTypeDropdownExpanded, child:
-    Stack(children: [
-      InkWell(onTap: _onTapDropdownListShaddow, child:
-        Container(color: _dropdownShadowColor),
-      ),
-      _dropdownListWidget
-  ]));
-
-  Widget get _dropdownListWidget {
-    List<Widget> dropdownList = <Widget>[];
-    dropdownList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (PublicSurveysContentType type in PublicSurveysContentType.values) {
-      if ((_selectedContentType != type)) {
-        dropdownList.add(_dropdownListItem(type));
-      }
-    }
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-      SingleChildScrollView(child:
-        Column(children: dropdownList)
-      )
-    );
-  }
-
-  Widget _dropdownListItem(PublicSurveysContentType contentType) => RibbonButton(
-    backgroundColor: Styles().colors.surface,
-    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-    rightIconKey: null,
-    label: publicSurveysContentTypeDisplayName(contentType),
-    onTap: () => _onDropdownListItem(contentType)
-  );
 
   double get _screenHeight => MediaQuery.of(context).size.height;
 
@@ -316,38 +296,14 @@ class _PublicSurveysPanelState extends State<PublicSurveysPanel> implements Noti
     }
   }
 
-  void _onContentTypeDropdown() {
-    setState(() {
-      _contentTypeDropdownExpanded = !_contentTypeDropdownExpanded;
-    });
-  }
-
-  void _onTapDropdownListShaddow() {
-    setState(() {
-      _contentTypeDropdownExpanded = false;
-    });
-  }
-
-  void _onDropdownListItem(PublicSurveysContentType contentType) {
-    if (_selectedContentType != contentType) {
+  void _onTabChanged({bool manual = true}) {
+    if (!_tabController.indexIsChanging && _selectedTab != _tabController.index) {
       setState(() {
-        _selectedContentType = contentType;
-        _contentTypeDropdownExpanded = false;
+        _selectedTab = _tabController.index;
+        _selectedContentType = _selectedTab == 0 ? PublicSurveysContentType.all : PublicSurveysContentType.completed;
         _dataActivity = null;
       });
-      _init();
     }
-    else {
-      setState(() {
-        _contentTypeDropdownExpanded = false;
-      });
-    }
-  }
-}
-
-String publicSurveysContentTypeDisplayName(PublicSurveysContentType value) {
-  switch(value) {
-    case PublicSurveysContentType.all: return Localization().getStringEx('panel.public_surveys.content_type.all', 'All Surveys');
-    case PublicSurveysContentType.completed: return Localization().getStringEx('panel.public_surveys.content_type.completed', 'Completed Surveys');
+    _scrollController.animateTo(0, duration: Duration(milliseconds: 500), curve: Curves.linear);
   }
 }

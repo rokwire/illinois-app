@@ -12,8 +12,10 @@ class FavoriteStarIcon extends StatelessWidget {
   final bool? selected;
   final FavoriteIconStyle style;
   final EdgeInsetsGeometry padding;
+  final double? size;
+  final Color? color;
 
-  FavoriteStarIcon({Key? key, this.selected, required this.style, this.padding = const EdgeInsets.all(16) }) : super(key: key);
+  FavoriteStarIcon({Key? key, this.selected, required this.style, this.padding = const EdgeInsets.all(16), this.size, this.color }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +48,7 @@ class FavoriteStarIcon extends StatelessWidget {
       }
     }
     
-    return Styles().images.getImage(imageKey ?? 'star-outline-gray', excludeFromSemantics: true);
+    return Styles().images.getImage(imageKey ?? 'star-outline-gray', excludeFromSemantics: true, size: size, color: color);
   }
 }
 
@@ -76,4 +78,3 @@ class FavoriteButton extends StatelessWidget {
     toggleFavorite();
   }
 }
-

@@ -12,7 +12,7 @@
 			"home.connect": ["phone_or_email"],
 			"home.app_help": ["faqs", "feedback", "review"],
 
-			"browse": ["groups", "events", "inbox", "surveys"],
+			"browse": ["groups", "messages", "surveys", "events"],
 			"browse.events": ["event_feed", "my_events"],
 			"browse.groups": ["all_groups", "my_groups"],
 			"browse.inbox": ["all_notifications", "unread_notifications"],
@@ -66,7 +66,8 @@
 
 				"browse.events" 							: ["debug"],
 				"browse.groups" 							: ["debug"],
-				"browse.inbox" 								: ["debug"]
+				"browse.inbox" 								: ["debug"],
+				"browse.messages" 							: ["debug"]
 			},
 			"groups": {
 				"home.twitter.account.canvas"             : ["${config.settings.groups.canvas}", "AND", ["NOT", "${config.settings.groups.gies}"]],

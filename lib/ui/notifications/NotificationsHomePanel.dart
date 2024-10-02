@@ -20,7 +20,7 @@ import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/FirebaseMessaging.dart';
 import 'package:neom/ui/notifications/NotificationsInboxPage.dart';
 import 'package:neom/ui/settings/SettingsHomeContentPanel.dart';
-import 'package:neom/ui/widgets/RibbonButton.dart';
+import 'package:neom/ui/widgets/TextTabBar.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:neom/ext/InboxMessage.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -138,18 +138,21 @@ class NotificationsHomePanel extends StatefulWidget {
   _NotificationsHomePanelState createState() => _NotificationsHomePanelState();
 }
 
-class _NotificationsHomePanelState extends State<NotificationsHomePanel> implements NotificationsListener {
+class _NotificationsHomePanelState extends State<NotificationsHomePanel> with TickerProviderStateMixin implements NotificationsListener {
   late NotificationsContent? _selectedContent;
   static NotificationsContent? _lastSelectedContent;
-  bool _contentValuesVisible = false;
 
   final GlobalKey _allContentKey = GlobalKey();
   final GlobalKey _unreadContentKey = GlobalKey();
   final GlobalKey _sheetHeaderKey = GlobalKey();
-  final GlobalKey _contentDropDownKey = GlobalKey();
-  double _contentWidgetHeight = 300; // default value
 
-  static final double _defaultPadding = 16;
+  late TabController _tabController;
+  int _selectedTab = 0;
+
+  final List<String> _tabNames = [
+    Localization().getStringEx('panel.settings.notifications.content.notifications.all.label', 'All Notifications'),
+    Localization().getStringEx('panel.settings.notifications.content.notifications.unread.label', 'Unread Notifications'),
+  ];
 
   @override
   void initState() {
@@ -165,15 +168,20 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
       _selectedContent = _initialSelectedContent;
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _evalContentWidgetHeight();
-    });
+    _tabController = TabController(length: 2, initialIndex: _selectedTab, vsync: this);
+    _tabController.addListener(_onTabChanged);
+    if (_selectedContent == NotificationsContent.unread) {
+      _selectedTab = 1;
+    }
 
     super.initState();
   }
 
   @override
   void dispose() {
+    _tabController.removeListener(_onTabChanged);
+    _tabController.dispose();
+
     NotificationService().unsubscribe(this);
     super.dispose();
   }
@@ -230,122 +238,28 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
   }
 
   Widget _buildPage(BuildContext context) {
-    return Column(children: <Widget>[
-      Expanded(child:
-        SingleChildScrollView(physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null), child:
-          _buildContent()
-        )
-      )
-    ]);
-  }
+    // return Column(children: <Widget>[
+    //   Expanded(child:
+    //     SingleChildScrollView(physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null), child:
+    //       _buildContent()
+    //     )
+    //   )
+    // ]);
 
-  Widget _buildContent() {
-    return Semantics(container: true, child: Container(color: Styles().colors.background, child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(key: _contentDropDownKey, padding: EdgeInsets.only(left: _defaultPadding, top: _defaultPadding, right: _defaultPadding), child:
-          Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), focused: true, container: true, child:
-          RibbonButton(
-            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-            backgroundColor: Styles().colors.gradientColorPrimary,
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-            rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-            label: _getContentItemName(_selectedContent),
-            onTap: _changeSettingsContentValuesVisibility
-          )
-        )),
-        Container(height: _contentWidgetHeight, child:
-          Stack(children: [
-            Padding(padding: EdgeInsets.all(_defaultPadding), child: _contentWidget),
-            _buildContentValuesContainer()
-          ])
-        )
-      ])
-    ));
-  }
-
-  Widget _buildContentValuesContainer() {
-    return Visibility(visible: _contentValuesVisible, child:
-      Positioned.fill(child:
-        Stack(children: <Widget>[
-          _buildContentDismissLayer(),
-          _buildContentValuesWidget()
-        ])
-      )
-    );
-  }
-
-  Widget _buildContentDismissLayer() {
-    return Positioned.fill(
-        child: BlockSemantics(
-            child: Semantics(excludeSemantics: true, child:
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _contentValuesVisible = false;
-                  });
-                },
-                child: Container(color: Styles().colors.blackTransparent06)))));
-  }
-
-  Widget _buildContentValuesWidget() {
-    List<Widget> contentList = <Widget>[];
-    contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
-    for (NotificationsContent contentItem in NotificationsContent.values) {
-      if (_isContentItemEnabled(contentItem) && (_selectedContent != contentItem)) {
-        contentList.add(_buildContentItem(contentItem));
-      }
-    }
-    return Padding(padding: EdgeInsets.symmetric(horizontal: _defaultPadding), child: SingleChildScrollView(child: Column(children: contentList)));
-  }
-
-  Widget _buildContentItem(NotificationsContent contentItem) {
-    return RibbonButton(
-        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-        backgroundColor: Styles().colors.gradientColorPrimary,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        rightIconKey: null,
-        label: _getContentItemName(contentItem),
-        onTap: () => _onTapContentItem(contentItem));
-  }
-
-  void _onTapContentItem(NotificationsContent contentItem) {
-    Analytics().logSelect(target: contentItem.toString(), source: widget.runtimeType.toString());
-    _selectedContent = _lastSelectedContent = contentItem;
-    _changeSettingsContentValuesVisibility();
-  }
-
-  void _changeSettingsContentValuesVisibility() {
-    _contentValuesVisible = !_contentValuesVisible;
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  void _evalContentWidgetHeight() {
-    double takenHeight = 0;
-    try {
-      MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
-      takenHeight += mediaQuery.viewPadding.top + mediaQuery.viewInsets.top + 16;
-
-      final RenderObject? contentDropDownRenderBox = _contentDropDownKey.currentContext?.findRenderObject();
-      if ((contentDropDownRenderBox is RenderBox) && contentDropDownRenderBox.hasSize) {
-        takenHeight += contentDropDownRenderBox.size.height;
-      }
-
-      final RenderObject? sheetHeaderRenderBox = _sheetHeaderKey.currentContext?.findRenderObject();
-      if ((sheetHeaderRenderBox is RenderBox) && sheetHeaderRenderBox.hasSize) {
-        takenHeight += sheetHeaderRenderBox.size.height;
-      }
-    } on Exception catch (e) {
-      print(e.toString());
-    }
-
-    if (mounted) {
-      setState(() {
-        _contentWidgetHeight = MediaQuery.of(context).size.height - takenHeight + _defaultPadding;
-      });
-    }
+    List<Widget> tabs = _tabNames.map((e) => TextTabButton(title: e)).toList();
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      TextTabBar(tabs: tabs, controller: _tabController, isScrollable: false, onTap: (index){_onTabChanged();}),
+      Expanded(
+        child: TabBarView(
+          controller: _tabController,
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            NotificationsInboxPage(key: _allContentKey, onTapBanner: _onTapPausedBanner,),
+            NotificationsInboxPage(unread: true, key: _unreadContentKey, onTapBanner: _onTapPausedBanner),
+          ],
+        ),
+      ),
+    ],);
   }
 
   void _onTapClose() {
@@ -360,23 +274,16 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> impleme
     }
   }
 
+  void _onTabChanged({bool manual = true}) {
+    if (!_tabController.indexIsChanging && _selectedTab != _tabController.index) {
+      setState(() {
+        _selectedTab = _tabController.index;
+        _selectedContent = (_selectedTab == 0) ? NotificationsContent.all : NotificationsContent.unread;
+      });
+    }
+  }
+
   // Utilities
-
-  Widget? get _contentWidget {
-    switch (_selectedContent) {
-      case NotificationsContent.all: return NotificationsInboxPage(key: _allContentKey, onTapBanner: _onTapPausedBanner,);
-      case NotificationsContent.unread: return NotificationsInboxPage(unread: true, key: _unreadContentKey, onTapBanner: _onTapPausedBanner);
-      default: return null;
-    }
-  }
-
-  String? _getContentItemName(NotificationsContent? content) {
-    switch (content) {
-      case NotificationsContent.all: return Localization().getStringEx('panel.settings.notifications.content.notifications.all.label', 'All Notifications');
-      case NotificationsContent.unread: return Localization().getStringEx('panel.settings.notifications.content.notifications.unread.label', 'Unread Notifications');
-      default: return null;
-    }
-  }
 
   bool _isContentItemEnabled(NotificationsContent? contentItem) {
     switch (contentItem) {

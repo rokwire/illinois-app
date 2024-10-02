@@ -114,7 +114,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             leading: HeaderBackButton(),
             title: Text(
               Localization().getStringEx('panel.group.detail.post.header.title', 'Post'),
-              style:  Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),),
+              style:  Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat.light"),),
             centerTitle: false),
         backgroundColor: Styles().colors.background,
         bottomNavigationBar: uiuc.TabBar(),

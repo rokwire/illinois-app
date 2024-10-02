@@ -58,9 +58,9 @@ class WalletAddIlliniCashPanel extends StatelessWidget {
         Expanded(child:
           CustomScrollView(slivers: <Widget>[
             SliverHeaderBar(
-              leadingIconKey: 'chevron-left-white',
+              leadingIconKey: 'caret-left',
               title: Localization().getStringEx("panel.settings.add_illini_cash.header.title", "Add Illini Cash"),
-              textStyle: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),
+              textStyle: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat.light"),
             ),
             SliverList(delegate: SliverChildListDelegate([
               WalletAddIlliniCashContentWidget(),

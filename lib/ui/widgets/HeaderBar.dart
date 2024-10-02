@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/RadioPlayer.dart';
+import 'package:neom/ui/messages/MessagesHomePanel.dart';
 import 'package:neom/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:neom/ui/notifications/NotificationsHomePanel.dart';
 import 'package:neom/ui/profile/ProfileHomePanel.dart';
@@ -30,7 +31,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class HeaderBar extends rokwire.HeaderBar {
 
-  static const String defaultLeadingIconKey = 'chevron-left-white';
+  static const String defaultLeadingIconKey = 'caret-left';
 
   HeaderBar({super.key,
     super.sortKey,
@@ -39,10 +40,12 @@ class HeaderBar extends rokwire.HeaderBar {
     String? leadingLabel,
     String? leadingHint,
     String? leadingIconKey = defaultLeadingIconKey,
+    double? leadingWidth,
     void Function()? onLeading,
     
     Widget? titleWidget,
     String? title,
+    double? titleSpacing = 0,
     TextStyle? textStyle,
     Color? textColor,
     String? fontFamily,
@@ -59,10 +62,12 @@ class HeaderBar extends rokwire.HeaderBar {
     leadingLabel: leadingLabel ?? Localization().getStringEx('headerbar.back.title', 'Back'),
     leadingHint: leadingHint ?? Localization().getStringEx('headerbar.back.hint', ''),
     leadingIconKey: leadingIconKey,
+    leadingWidth: leadingWidth,
     onLeading: onLeading,
 
     titleWidget: titleWidget,
     title: title,
+    titleSpacing: titleSpacing,
     textStyle: textStyle,
     textColor: textColor ?? Styles().colors.surface,
     fontFamily: fontFamily ?? Styles().fontFamilies.extraBold,
@@ -84,7 +89,7 @@ class HeaderBar extends rokwire.HeaderBar {
 
 class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
 
-  static const String defaultLeadingIconKey = 'chevron-left-white';
+  static const String defaultLeadingIconKey = 'caret-left';
 
   SliverToutHeaderBar({
     super.key,
@@ -105,7 +110,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     double? flexLeftToRightTriangleHeight = 53,
 
     Widget? leadingWidget,
-    double? leadingWidth = 9 * kToolbarHeight / 7,
+    double? leadingWidth,
     String? leadingLabel,
     String? leadingHint,
     EdgeInsetsGeometry leadingPadding = const EdgeInsets.all(8 + kToolbarHeight / 7),
@@ -116,6 +121,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
 
     Widget? titleWidget,
     String? title,
+    double? titleSpacing = 0,
     TextStyle? textStyle,
     Color? textColor,
     String? fontFamily,
@@ -151,6 +157,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
 
     titleWidget: titleWidget,
     title: title,
+    titleSpacing: titleSpacing,
     textStyle: textStyle,
     textColor: textColor ?? Styles().colors.surface,
     fontFamily: fontFamily ?? Styles().fontFamilies.extraBold,
@@ -179,6 +186,7 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     bool floating = false,
     double? elevation = 0,
     double toolbarHeight = kToolbarHeight,
+    double? expandedHeight,
     Color? backgroundColor,
 
     Widget? leadingWidget,
@@ -190,6 +198,7 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     
     Widget? titleWidget,
     String? title,
+    double? titleSpacing = 0,
     TextStyle? textStyle,
     Color? textColor,
     String? fontFamily,
@@ -199,12 +208,15 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     TextAlign? textAlign,
 
     List<Widget>? actions,
+    Widget? flexibleSpace,
+    PreferredSizeWidget? bottom,
   }) : super(
     
     pinned: pinned,
     floating: floating,
     elevation: elevation,
     toolbarHeight: toolbarHeight,
+    expandedHeight: expandedHeight,
     backgroundColor: backgroundColor ?? Styles().colors.fillColorPrimaryVariant,
 
     leadingWidget: leadingWidget,
@@ -216,6 +228,7 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
 
     titleWidget: titleWidget,
     title: title,
+    titleSpacing: titleSpacing,
     textStyle: textStyle,
     textColor: textColor ?? Styles().colors.surface,
     fontFamily: fontFamily ?? Styles().fontFamilies.extraBold,
@@ -225,6 +238,8 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     textAlign: textAlign,
 
     actions: actions,
+    flexibleSpace: flexibleSpace,
+    bottom: bottom,
   );
 
   @override
@@ -239,10 +254,11 @@ enum RootHeaderBarLeading { Home, Back }
 class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
 
   final String? title;
+  final double? titleSpacing;
   final RootHeaderBarLeading leading;
   final void Function()? onSettings;
 
-  RootHeaderBar({Key? key, this.title, this.leading = RootHeaderBarLeading.Home, this.onSettings}) : super(key: key);
+  RootHeaderBar({Key? key, this.title, this.titleSpacing = 0, this.leading = RootHeaderBarLeading.Home, this.onSettings}) : super(key: key);
 
   @override
   State<RootHeaderBar> createState() => _RootHeaderBarState();
@@ -295,6 +311,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
   Widget build(BuildContext context) => AppBar(
     backgroundColor: Styles().colors.fillColorPrimaryVariant,
     leading: _buildHeaderLeading(),
+    titleSpacing: widget.titleSpacing,
     title: _buildHeaderTitle(),
     actions: _buildHeaderActions(),
   );
@@ -316,7 +333,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 
   Widget _buildHeaderBackButton() {
     return Semantics(label: Localization().getStringEx('headerbar.back.title', 'Back'), hint: Localization().getStringEx('headerbar.back.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapBack()));
+      IconButton(icon: Styles().images.getImage('caret-left', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapBack()));
   }
 
   Widget _buildHeaderTitle() {
@@ -339,17 +356,32 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
   List<Widget> _buildHeaderActions() {
     return <Widget>[
       _buildHeaderPersonalInfoButton(),
+      _buildHeaderMessagesButton(),
       _buildHeaderNotificationsButton(),
       _buildHeaderSettingsButton()
     ];
   }
 
   Widget _buildHeaderSettingsButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
-//    IconButton(icon: Styles().images.getImage('images/settings-white.png', excludeFromSemantics: true) ?? Container(), onPressed: () => onTapSettings())
-      InkWell(onTap: () => _onTapSettings(), child:
-        Padding(padding: EdgeInsets.only(top: 16, bottom: 16, right: 16, left: 6), child:
-          Styles().images.getImage('settings-white', excludeFromSemantics: true, color: Styles().colors.iconPrimary),
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
+      //    IconButton(icon: Styles().images.getImage('images/settings-white.png', excludeFromSemantics: true) ?? Container(), onPressed: () => onTapSettings())
+        InkWell(onTap: _onTapSettings, child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8), child:
+            Styles().images.getImage('settings-header', excludeFromSemantics: true),
+          )
+        )
+      ),
+    );
+  }
+
+  Widget _buildHeaderMessagesButton() {
+    //TODO: add unread messages count using Social BB (see notifications button below)
+    return Semantics(label: Localization().getStringEx('headerbar.messages.title', 'Messages'), hint: Localization().getStringEx('headerbar.messages.hint', ''), button: true, excludeSemantics: true, child:
+      InkWell(onTap: _onTapMessages, child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8), child:
+          Styles().images.getImage('messages-header', excludeFromSemantics: true),
         )
       )
     );
@@ -359,10 +391,10 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
     int unreadMsgsCount = Inbox().unreadMessagesCount;
     return Semantics(label: Localization().getStringEx('headerbar.notifications.title', 'Notifications'), hint: Localization().getStringEx('headerbar.notifications.hint', ''), button: true, excludeSemantics: true, child:
 //    IconButton(icon: Styles().images.getImage('images/notifications-white.png', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapNotifications())
-      InkWell(onTap: () => _onTapNotifications(), child:
-        Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 2), child:
+      InkWell(onTap: _onTapNotifications, child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
           Stack(alignment: Alignment.topRight, children: [
-            Center(child: Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Styles().images.getImage('notification-white', excludeFromSemantics: true, color: Styles().colors.iconPrimary))),
+            Center(child: Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Styles().images.getImage('notification-header', excludeFromSemantics: true))),
             Opacity(opacity: (unreadMsgsCount > 0) ? 1 : 0, child:
               Align(alignment: Alignment.topRight, child: Container(padding: EdgeInsets.all(4), decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.red), child:
                 Text(unreadMsgsCount.toString(), style: Styles().textStyles.getTextStyle("widget.title.light.tiny")))))
@@ -377,15 +409,15 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 //    IconButton(icon: Styles().images.getImage('images/person-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations())
       InkWell(onTap: () => _onTapPersonalInformation(), child:
         CollectionUtils.isNotEmpty(Auth2().authPicture) ?
-          Padding(padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8), child:
             Container(width: 20, height: 20, decoration:
               BoxDecoration(shape: BoxShape.circle, color: Colors.white, image:
                 DecorationImage( fit: BoxFit.cover, image: Image.memory(Auth2().authPicture!).image)
               )
             )
           ) :
-          Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 6), child:
-            Styles().images.getImage('person-circle-white', excludeFromSemantics: true, color: Styles().colors.iconPrimary),
+          Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8), child:
+            Styles().images.getImage('person-circle-header', excludeFromSemantics: true, color: Styles().colors.iconPrimary),
           ),
       )
     );
@@ -413,6 +445,14 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
     }
     else {
       SettingsHomeContentPanel.present(context);
+    }
+  }
+
+  void _onTapMessages() {
+    String? currentRouteName = ModalRoute.of(context)?.settings.name;
+    if (currentRouteName != MessagesHomePanel.routeName) {
+      Analytics().logSelect(target: "Messages");
+      MessagesHomePanel.present(context);
     }
   }
 

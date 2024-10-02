@@ -63,9 +63,9 @@ class WalletMealPlanPanel extends StatelessWidget {
   Widget _buildScaffoldBody() => CustomScrollView(
     slivers: <Widget>[
       SliverHeaderBar(
-        leadingIconKey: 'chevron-left-white',
+        leadingIconKey: 'caret-left',
         title: Localization().getStringEx('panel.settings.meal_plan.label.title','University Housing Meal Plan'),
-        textStyle:  Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),
+        textStyle:  Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat.light"),
       ),
       SliverList(
         delegate: SliverChildListDelegate([

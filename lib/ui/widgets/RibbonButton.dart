@@ -16,10 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart' as rokwire;
-import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class RibbonButton extends rokwire.RibbonButton {
   RibbonButton({

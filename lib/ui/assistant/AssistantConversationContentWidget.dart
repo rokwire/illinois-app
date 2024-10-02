@@ -231,7 +231,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                 ? message.example
                                     ? Styles().colors.background
                                     : Styles().colors.blueAccent
-                                : Styles().colors.white,
+                                : Styles().colors.surface,
                             borderRadius: BorderRadius.circular(16.0),
                             child: InkWell(
                                 onTap: message.example
@@ -265,7 +265,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                                           visible: (message.isNegativeFeedbackMessage == true),
                                                           child: Padding(
                                                               padding: EdgeInsets.only(right: 6),
-                                                              child: Icon(Icons.thumb_down, size: 18, color: Styles().colors.white)))),
+                                                              child: Icon(Icons.thumb_down, size: 18, color: Styles().colors.surface)))),
                                                   TextSpan(
                                                       text: answer,
                                                       style: message.user
@@ -312,7 +312,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                         icon: Icon(message.feedback == MessageFeedback.good ? Icons.thumb_up : Icons.thumb_up_outlined,
                             size: feedbackIconSize,
                             color:
-                                message.feedbackExplanation == null ? Styles().colors.fillColorPrimary : Styles().colors.disabledTextColor),
+                                message.feedbackExplanation == null ? Styles().colors.fillColorPrimary : Styles().colors.textDisabled),
                         iconSize: feedbackIconSize,
                         splashRadius: feedbackIconSize))),
                     MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Dislike"), selected: message.feedback == MessageFeedback.bad,
@@ -500,7 +500,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         child: Material(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(22), side: BorderSide(color: Styles().colors.fillColorSecondary, width: 1)),
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
             child: InkWell(
                 onTap: () => _onTapSourceLink(source),
                 borderRadius: BorderRadius.circular(22),
@@ -534,7 +534,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     return Padding(
         padding: padding,
         child: Material(
-            color: Styles().colors.white,
+            color: Styles().colors.surface,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10), side: BorderSide(color: Styles().colors.mediumGray2, width: 1)),
             child: InkWell(
@@ -606,7 +606,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       return MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Send"), enabled: enabled,
           child: IconButton(
             splashRadius: 24,
-            icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor, semanticLabel: "",),
+            icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.textDisabled, semanticLabel: "",),
             onPressed: enabled
                 ? () {
               _submitMessage(_inputController.text);

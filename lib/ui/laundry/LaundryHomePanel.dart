@@ -74,7 +74,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> {
         hint: Localization().getStringEx('headerbar.back.hint', ''),
         button: true,
         child: IconButton(
-          icon: Styles().images.getImage('images/chevron-left-white.png', excludeFromSemantics: true),
+          icon: Styles().images.getImage('images/caret-left.png', excludeFromSemantics: true),
           onPressed: _onTapBack)
         ),
       actions: <Widget>[

@@ -138,7 +138,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
   List<Widget> _buildInfoContent() {
     return <Widget>[
       IconButton(
-        icon: Semantics(label: "Back", child: Styles().images.getImage('chevron-left-white', excludeFromSemantics: true)),
+        icon: Semantics(label: "Back", child: Styles().images.getImage('caret-left', excludeFromSemantics: true)),
         onPressed: ()=>setState((){_showInfo = false;}),
       ),
       Padding(

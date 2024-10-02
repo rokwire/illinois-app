@@ -334,7 +334,7 @@ class HeaderBackButton extends StatelessWidget {
       button: true,
       excludeSemantics: true,
       child: IconButton(
-          icon: Styles().images.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(),
+          icon: Styles().images.getImage('caret-left', excludeFromSemantics: true) ?? Container(),
           onPressed: (){
             Analytics().logSelect(target: "Back");
             Navigator.pop(context);
@@ -797,7 +797,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(color: color, borderRadius: BorderRadius.all(Radius.circular(2))),
         child: Text(text,
-          style: Styles().textStyles.getTextStyle("widget.heading.extra_small"))));
+          style: Styles().textStyles.getTextStyle("widget.heading.dark.extra_small"))));
   }
 
   Widget _buildHeadingWrapLabel(String text) {
@@ -810,8 +810,13 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
   Widget _buildTitle() {
     return Row(children: [
       Expanded(child:
-        Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
-          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'))
+        Padding(padding: const EdgeInsets.symmetric(vertical: 8), child:
+          Text(
+            widget.group?.title?.toUpperCase() ?? "",
+            overflow: TextOverflow.ellipsis,
+            maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10,
+            style: Styles().textStyles.getTextStyle('widget.group.card.title.medium.fat'),
+          )
         )
       )
     ]);
@@ -821,11 +826,14 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
     List<String>? displayList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group?.attributes, usage: ContentAttributeUsage.category);
     return (displayList?.isNotEmpty ?? false) ? Row(children: [
       Expanded(child:
-        Text(displayList?.join(', ') ?? '',
-            overflow: TextOverflow.ellipsis,
-            maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
-            style: Styles().textStyles.getTextStyle("widget.card.title.small.fat")
-        )
+        RichText(
+          text: TextSpan(children:<InlineSpan>[
+            TextSpan(text: Localization().getStringEx('widget.group_card.categories.prefix', 'GROUP: '), style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat'),),
+            TextSpan(text: displayList?.join(', ').toUpperCase() ?? '', style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'),),
+          ]),
+          overflow: TextOverflow.ellipsis,
+          maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
+        ),
       )
     ]) : Container();
   }
@@ -846,10 +854,10 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
       }
     }
 
-    int pendigCount = (widget.group?.currentUserIsAdmin == true) ? (_groupStats?.pendingCount ?? 0) : 0;
-    if (pendigCount > 0) {
+    int pendingCount = (widget.group?.currentUserIsAdmin == true) ? (_groupStats?.pendingCount ?? 0) : 0;
+    if (pendingCount > 0) {
       String pendingTitle = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s"), ['']);
-      propertiesList.add(_buildProperty(pendingTitle, pendigCount.toString()));
+      propertiesList.add(_buildProperty(pendingTitle, pendingCount.toString()));
     }
 
     return propertiesList.isNotEmpty ?
@@ -872,7 +880,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
   }
 
   Widget _buildImage() {
-    double maxImageWidgth = 150;
+    double maxImageWidth = 150;
     String? imageUrl = widget.group?.imageURL;
     return
       StringUtils.isEmpty(imageUrl) ? Container() :
@@ -892,7 +900,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
               child: Container(
                 padding: EdgeInsets.only(left: 8),
                 child: Container(
-                  constraints: BoxConstraints(maxWidth: maxImageWidgth),
+                  constraints: BoxConstraints(maxWidth: maxImageWidth),
                   // width: _smallImageSize,
                   height: _smallImageSize,
                   child: Image.network(imageUrl!, excludeFromSemantics: true,
@@ -902,13 +910,13 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
   }
 
 
-    Widget _buildUpdateTime() {
+  Widget _buildUpdateTime() {
     return Container(
         child: Text(
           _timeUpdatedText,
           maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
           overflow: TextOverflow.ellipsis,
-          style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
+          style: Styles().textStyles.getTextStyle("widget.card.detail.tiny")
     ));
   }
 
@@ -944,7 +952,7 @@ class _GroupCardState extends State<GroupCard> implements NotificationsListener 
     }
     return Visibility(visible: StringUtils.isNotEmpty(membersLabel), child:
       Text(membersLabel, style:
-        Styles().textStyles.getTextStyle("widget.card.detail.small.regular")
+        Styles().textStyles.getTextStyle("widget.card.detail.tiny")
       ),
     );
   }

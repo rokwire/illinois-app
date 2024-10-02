@@ -80,7 +80,7 @@ class _LaundrySubmittedIssuePanelState extends State<LaundrySubmittedIssuePanel>
         contentWeight: 0.5,
         borderColor: Styles().colors.fillColorPrimary,
         onTap: _onTapBack,
-        leftIcon: Styles().images.getImage('chevron-left-white', excludeFromSemantics: true));
+        leftIcon: Styles().images.getImage('caret-left', excludeFromSemantics: true));
   }
 
   void _onTapBack() {
