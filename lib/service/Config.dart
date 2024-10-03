@@ -55,6 +55,13 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get saferMcKinley => JsonUtils.mapValue(safer['mckinley']) ?? {};
   Map<String, dynamic> get saferWellness => JsonUtils.mapValue(safer['wellness']) ?? {};
 
+  Map<String, dynamic> get safety => JsonUtils.mapValue(content['safety']) ?? {};
+  Map<String, dynamic> get safeRides => JsonUtils.mapValue(safety['safeRides']) ?? {};
+  Map<String, dynamic> get safeWalk  => JsonUtils.mapValue(safety['safeWalk']) ?? {};
+  String? get safeRidesGuideId       => JsonUtils.stringValue(safeRides['guide_id']);
+  String? get safeWalkPhoneNumber    => JsonUtils.stringValue(safeWalk['phone_number']);
+  String? get safeWalkTextNumber     => JsonUtils.stringValue(safeWalk['text_number']);
+
   Map<String, dynamic> get stateFarm => JsonUtils.mapValue(content['state_farm']) ?? {};
   Map<String, dynamic> get stateFarmWayfinding => JsonUtils.mapValue(stateFarm['wayfinding']) ?? {};
 
@@ -98,7 +105,6 @@ class Config extends rokwire.Config {
   String? get crisisHelpUrl          => JsonUtils.stringValue(otherUniversityServices['crisis_help_url']);
   String? get privacyPolicyUrl       => JsonUtils.stringValue(otherUniversityServices['privacy_policy_url']);
   String? get privacyPolicyGuideId   => JsonUtils.stringValue(otherUniversityServices['privacy_policy_guide_id']);
-  String? get safeRidesGuideId       => JsonUtils.stringValue(otherUniversityServices['saferides_guide_id']);
   String? get padaapiUrl             => JsonUtils.stringValue(otherUniversityServices['padaapi_url']);
   String? get canvasUrl              => JsonUtils.stringValue(otherUniversityServices['canvas_url']);
   String? get canvasZoomMeetingUrl   => JsonUtils.stringValue(otherUniversityServices['canvas_zoom_meeting_url']);
