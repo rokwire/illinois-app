@@ -163,7 +163,7 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
     Analytics().logSelect(target: title, source: widget.runtimeType.toString());
 
     String? id = Guide().entryId(guideItem);
-    String? url = "${Guide().guideDetailUrl}?guide_id=$id&analytics_feature=${AnalyticsFeature.WellnessMentalHealth}";
+    String? url = Guide().detailUrl(id, analyticsFeature: AnalyticsFeature.WellnessMentalHealth);
     if (DeepLink().isAppUrl(url)) {
       DeepLink().launchUrl(url);
     }

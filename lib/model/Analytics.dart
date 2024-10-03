@@ -165,6 +165,9 @@ class AnalyticsFeature {
     priority.hashCode ^
     DeepCollectionEquality().hash(key);
 
+  @override
+  String toString() => name;
+
   static AnalyticsFeature? fromClass(dynamic classInstance) {
     AnalyticsFeature? feature;
     if (classInstance is AnalyticsInfo) {

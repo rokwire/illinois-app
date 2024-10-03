@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -707,8 +708,12 @@ class Guide with Service implements NotificationsListener {
   /////////////////////////
   // DeepLinks
 
-  String get guideDetailUrl => '${DeepLink().appUrl}/guide_detail';
-  String get guideListUrl => '${DeepLink().appUrl}/guide_list';
+  String get listBaseUrl => '${DeepLink().appUrl}/guide_list';
+
+  String get detailBaseUrl => '${DeepLink().appUrl}/guide_detail';
+
+  String detailUrl(String? guideId, {AnalyticsFeature? analyticsFeature}) =>
+    "$detailBaseUrl?guide_id=$guideId" + ((analyticsFeature != null) ? "&analytics_feature=$analyticsFeature" : "");
 
   String? detailIdFromUrl(String? url) {
     return (url != null) ? detailIdFromUri(Uri.tryParse(url)) : null;

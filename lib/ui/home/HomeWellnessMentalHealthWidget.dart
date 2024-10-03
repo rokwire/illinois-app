@@ -257,7 +257,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
     Analytics().logSelect(target: "Mental Health Resource: '$title'" , source: widget.runtimeType.toString());
 
     String? id = Guide().entryId(resourceItem);
-    String? url = "${Guide().guideDetailUrl}?guide_id=$id";
+    String? url = Guide().detailUrl(id);
     if (DeepLink().isAppUrl(url)) {
       DeepLink().launchUrl(url);
     }
