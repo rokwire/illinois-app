@@ -70,7 +70,11 @@ class _SafetyHomePanelState extends State<SafetyHomePanel>  {
       ),
       Expanded(child:
         Stack(children: [
-          _contentPage ?? Container(),
+          SingleChildScrollView(child:
+            Padding(padding: EdgeInsets.only(bottom: 16), child:
+              _contentPage
+            ),
+          ),
           _dropdownContainer
         ]),
       )
