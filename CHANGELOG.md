@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Add existing event to group [#4379](https://github.com/rokwire/illinois-app/issues/4379).
 
 ## [6.0.49] - 2024-10-02
 ### Changed
