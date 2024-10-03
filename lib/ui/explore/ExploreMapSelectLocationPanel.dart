@@ -506,7 +506,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
         case ExploreMapType.MTDStops: return _loadMTDStops();
         case ExploreMapType.MyLocations: return _loadMyLocations();
         case ExploreMapType.MentalHealth: return Wellness().loadMentalHealthBuildings();
-        case ExploreMapType.StoriedSights: return Wellness().loadMentalHealthBuildings();
+        case ExploreMapType.StoriedSites: return Wellness().loadMentalHealthBuildings();
         case ExploreMapType.StateFarmWayfinding: break;
         default: break;
       }

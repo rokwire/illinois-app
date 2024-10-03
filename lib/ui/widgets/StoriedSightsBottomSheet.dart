@@ -48,7 +48,16 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
       controller: _controller,
       builder: (BuildContext context, ScrollController scrollController) {
         return Container(
-          decoration: _buildBoxDecoration(),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 10.0,
+              ),
+            ],
+          ),
           child: ListView(
             controller: scrollController,
             children: _selectedDestination == null
@@ -78,19 +87,6 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
         ),
       ),
     ];
-  }
-
-  BoxDecoration _buildBoxDecoration() {
-    return BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black26,
-          blurRadius: 10.0,
-        ),
-      ],
-    );
   }
 
   Widget _buildBottomSheetHeader() {
@@ -170,7 +166,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
           ),
         ),
         SizedBox(height: 8),
-        _buildAddressRow(),
+        _buildAddressRow(_selectedDestination?.address),
         SizedBox(height: 8),
         _buildShareLocationRow(),
         SizedBox(height: 16),
@@ -179,14 +175,14 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
     );
   }
 
-  Widget _buildAddressRow() {
+  Widget _buildAddressRow(String? address) {
     return Row(
       children: [
         Icon(Icons.location_pin, size: 15.0, color: Styles().colors.iconColor),
         SizedBox(width: 4),
         Expanded(
           child: Text(
-            _selectedDestination?.address ?? 'No address available',
+            address ?? 'No address available',
             style: TextStyle(
               fontSize: 14,
               color: Styles().colors.textSurface,
@@ -283,23 +279,19 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
         margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Column(
           children: [
-            _buildDestinationRow(place),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: _buildDestinationDetailsCard(place)),
+                SizedBox(width: 16),
+                _buildDestinationThumbnail(place),
+              ],
+            ),
             SizedBox(height: 8),
             Divider(color: Styles().colors.surfaceAccent, thickness: 2),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildDestinationRow(places_model.Place place) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(child: _buildDestinationDetailsCard(place)),
-        SizedBox(width: 16),
-        _buildDestinationThumbnail(place),
-      ],
     );
   }
 
@@ -317,25 +309,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
           ),
         ),
         SizedBox(height: 4),
-        Row(
-          children: [
-            Icon(Icons.location_pin, size: 15.0, color: Styles().colors.iconColor),
-            SizedBox(width: 4),
-            Expanded(
-              child: Text(
-                place.address ?? 'No address available',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Styles().colors.textSurface,
-                  decoration: TextDecoration.underline,
-                  decorationColor: Styles().colors.fillColorSecondary,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
+        _buildAddressRow(place.address),
       ],
     );
   }
@@ -420,7 +394,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'Storied Sights',
+          'Storied Sites',
           style: TextStyle(
             fontFamily: Styles().fontFamilies.bold,
             fontSize: 22.0,
