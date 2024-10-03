@@ -71,7 +71,7 @@ class DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
         title: Guide().entryListTitle(guideEntryData, stripHtmlTags: true),
         internalEventId: guide.id,
         startDate: Guide().reminderDate(guideEntryData),
-        deepLinkUrl: "${Guide().guideDetailUrl}?guide_id=${guide.id}"
+        deepLinkUrl: Guide().detailUrl(guide.id)
       ) : null;
   }
 
