@@ -70,7 +70,7 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: RootHeaderBar(
-        title: Localization().getStringEx('panel.skills_self_evaluation.results.header.title', 'Skills Self-Evaluation'),
+        title: Localization().getStringEx('panel.skills_self_evaluation.results.header.title', 'Skills Self-Evaluation & Career Explorer'),
         leading: RootHeaderBarLeading.Back,
       ),
       body: RefreshIndicator(

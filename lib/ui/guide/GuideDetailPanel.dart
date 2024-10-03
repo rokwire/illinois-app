@@ -86,16 +86,26 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> {
   }
 }
 
-class GuideDetailWidget extends StatefulWidget {
+class GuideDetailWidget extends StatefulWidget with AnalyticsInfo {
   final String? favoriteKey;
   final String? guideEntryId;
   final Map<String, dynamic>? guideEntry;
-  final AnalyticsFeature? analyticsFeature;
+  final AnalyticsFeature? _analyticsFeature;
   final Color? headingColor;
-  GuideDetailWidget({Key? key, this.guideEntryId, this.guideEntry, this.favoriteKey, this.headingColor, this.analyticsFeature }) : super(key: key);
+
+  GuideDetailWidget({super.key, this.guideEntryId, this.guideEntry, this.favoriteKey, this.headingColor, AnalyticsFeature? analyticsFeature }) :
+    _analyticsFeature = analyticsFeature;
 
   @override
   State<StatefulWidget> createState() => _GuideDetailWidgetState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature =>
+    _analyticsFeature ??
+    AnalyticsFeature.fromName(Guide().entryContentType(_theGuideEntry)) ??
+    AnalyticsFeature.fromName(Guide().entryGuide(_theGuideEntry));
+
+  Map<String, dynamic>? get _theGuideEntry => Guide().entryById(guideEntryId) ?? guideEntry;
 }
 
 class _GuideDetailWidgetState extends State<GuideDetailWidget> implements NotificationsListener {
@@ -555,6 +565,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
           Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
             url: url,
             analyticsSource: Guide().entryAnalyticsAttributes(_guideEntry),
+            analyticsFeature: widget.analyticsFeature,
           )));
         } else {
           Uri? uri = Uri.tryParse(url!);

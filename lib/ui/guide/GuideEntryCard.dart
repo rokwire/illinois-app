@@ -3,6 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/FlexUI.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -20,7 +21,9 @@ import 'package:url_launcher/url_launcher.dart';
 class GuideEntryCard extends StatefulWidget {
   final String? favoriteKey;
   final Map<String, dynamic>? guideEntry;
-  GuideEntryCard(this.guideEntry, { this.favoriteKey = GuideFavorite.favoriteKeyName });
+  final AnalyticsFeature ? analyticsFeature;
+
+  GuideEntryCard(this.guideEntry, { this.favoriteKey = GuideFavorite.favoriteKeyName, this.analyticsFeature });
 
   _GuideEntryCardState createState() => _GuideEntryCardState();
 }
@@ -146,7 +149,11 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
 
   void _onTapEntry() {
     Analytics().logSelect(target: "Guide Entry: $guideEntryId");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: guideEntryId, favoriteKey: widget.favoriteKey,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(
+      guideEntryId: guideEntryId,
+      favoriteKey: widget.favoriteKey,
+      analyticsFeature: widget.analyticsFeature,
+    )));
   }
 
   String? get guideEntryId {

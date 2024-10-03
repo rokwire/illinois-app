@@ -18,6 +18,7 @@ import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/Canvas.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Canvas.dart';
@@ -29,9 +30,11 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class CanvasCourseModulesPanel extends StatefulWidget {
+class CanvasCourseModulesPanel extends StatefulWidget with AnalyticsInfo {
   final int courseId;
-  CanvasCourseModulesPanel({required this.courseId});
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
+  CanvasCourseModulesPanel({required this.courseId, this.analyticsFeature});
 
   @override
   _CanvasCourseModulesPanelState createState() => _CanvasCourseModulesPanelState();
@@ -170,7 +173,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
 
   void _onTapModule(CanvasModule module) {
     Analytics().logSelect(target: 'Canvas Module');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasModuleDetailPanel(courseId: widget.courseId, module: module)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasModuleDetailPanel(courseId: widget.courseId, module: module, analyticsFeature: widget.analyticsFeature,)));
   }
 
   Widget _buildCourseDropDownWidget() {

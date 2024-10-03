@@ -163,7 +163,7 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
     Analytics().logSelect(target: title, source: widget.runtimeType.toString());
 
     String? id = Guide().entryId(guideItem);
-    String? url = "${Guide().guideDetailUrl}?guide_id=$id&analytics_feature=${AnalyticsFeature.Wellness}";
+    String? url = Guide().detailUrl(id, analyticsFeature: AnalyticsFeature.WellnessMentalHealth);
     if (DeepLink().isAppUrl(url)) {
       DeepLink().launchUrl(url);
     }
@@ -213,16 +213,16 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
     String? videoUrl = Config().wellnessMentalHealthVideoUrl;
     if (StringUtils.isNotEmpty(videoUrl)) {
       String title = Localization().getStringEx('panel.wellness.sections.mental_health.video.title', 'Mental Health');
-      _video = Video(
-          videoUrl: videoUrl, ccUrl: Config().wellnessMentalHealthCcUrl, thumbUrl: Config().wellnessMentalHealthThumbUrl, title: title);
+      _video = Video(videoUrl: videoUrl, ccUrl: Config().wellnessMentalHealthCcUrl, thumbUrl: Config().wellnessMentalHealthThumbUrl, title: title);
     }
   }
 
   void _onTapVideo() {
     if (_video != null) {
-      Analytics().logSelect(
-          target: 'Mental Health Video', source: widget.runtimeType.toString(), attributes: _video!.analyticsAttributes);
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AppHelpVideoTutorialPanel(videoTutorial: _video!)));
+      Analytics().logSelect(target: 'Mental Health Video', source: widget.runtimeType.toString(), attributes: _video!.analyticsAttributes);
+      Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+        AppHelpVideoTutorialPanel(videoTutorial: _video!, analyticsFeature: AnalyticsFeature.WellnessMentalHealth,)
+      ));
     }
   }
 }

@@ -6,6 +6,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_beep/flutter_beep.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:neom/ext/Event2.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/ui/events2/Event2CreatePanel.dart';
@@ -20,11 +21,12 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:universal_io/io.dart';
 
-class Event2AttendanceTakerPanel extends StatelessWidget {
+class Event2AttendanceTakerPanel extends StatelessWidget with AnalyticsInfo {
   final Event2? event;
   final StreamController<String> _updateController = StreamController.broadcast();
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  Event2AttendanceTakerPanel(this.event, {Key? key}) : super(key: key);
+  Event2AttendanceTakerPanel(this.event, {super.key, this.analyticsFeature});
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -498,7 +500,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     setState(() {
       _manualInputProgress = true;
     });
-    Events2().attendEvent(eventId, personIdentifier: Event2PersonIdentifier(accountId: "", exteralId: netId)).then((result) {
+    Events2().attendEvent(eventId, personIdentifier: Event2PersonIdentifier(accountId: "", externalId: netId)).then((result) {
       if (mounted) {
         setState(() {
           _manualInputProgress = false;
@@ -610,7 +612,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     if (_isInternalRegisterationEvent) {
       Events2().loadEventPerson(uin: uin).then((Event2PersonIdentifier? personIdentifier) {
         if (mounted) {
-          String? netId = personIdentifier?.exteralId;
+          String? netId = personIdentifier?.externalId;
           if (netId != null) {
             if (_isAttendeeNetIdAttended(netId)) {
               setState(() {

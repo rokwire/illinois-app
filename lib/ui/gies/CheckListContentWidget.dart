@@ -18,6 +18,7 @@ import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/CheckList.dart';
@@ -35,18 +36,18 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
-class CheckListContentWidget extends StatefulWidget{
+class CheckListContentWidget extends StatefulWidget with AnalyticsInfo {
   static final TextStyle? _regularText = Styles().textStyles.getTextStyle("widget.title.medium");
   static final TextStyle? _boldText =  Styles().textStyles.getTextStyle("widget.title.medium.fat");
 
   final String contentKey;
   final bool panelDisplay;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  const CheckListContentWidget({Key? key, required this.contentKey, this.panelDisplay = false}) : super(key: key);
+  const CheckListContentWidget({Key? key, required this.contentKey, this.analyticsFeature, this.panelDisplay = false}) : super(key: key);
   
   @override
   State<StatefulWidget> createState() => _CheckListContentWidgetState();
-
 }
 
 class _CheckListContentWidgetState extends State<CheckListContentWidget> implements NotificationsListener{
@@ -214,7 +215,7 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
         CheckList(widget.contentKey).pushPage(CheckList(widget.contentKey).getPage(id: pageId));
       }
       else if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsFeature: widget.analyticsFeature,)));
       } else {
         if (uri != null) {
           launchUrl(uri);

@@ -27,6 +27,8 @@ import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Appointments.dart';
 import 'package:neom/service/Canvas.dart';
 import 'package:neom/service/Config.dart';
+import 'package:neom/service/Gateway.dart';
+import 'package:neom/service/SkillsSelfEvaluation.dart';
 import 'package:neom/ui/academics/AcademicsHomePanel.dart';
 import 'package:neom/ui/assistant/AssistantHomePanel.dart';
 import 'package:neom/ui/athletics/AthleticsRosterListPanel.dart';
@@ -34,6 +36,7 @@ import 'package:neom/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:neom/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:neom/ui/events2/Event2DetailPanel.dart';
 import 'package:neom/ui/events2/Event2HomePanel.dart';
+import 'package:neom/ui/explore/ExploreBuildingDetailPanel.dart';
 import 'package:neom/ui/guide/CampusGuidePanel.dart';
 import 'package:neom/ui/guide/GuideListPanel.dart';
 import 'package:neom/ui/explore/ExploreMapPanel.dart';
@@ -133,7 +136,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyMapStudentCoursesNotification,
       FirebaseMessaging.notifyMapAppointmentsNotification,
       FirebaseMessaging.notifyMapMtdStopsNotification,
-      FirebaseMessaging.notifyMapMtdDestinationsNotification,
+      FirebaseMessaging.notifyMapMyLocationsNotification,
       FirebaseMessaging.notifyMapMentalHealthNotification,
       FirebaseMessaging.notifyMapStateFarmWayfindingNotification,
       FirebaseMessaging.notifyAcademicsNotification,
@@ -196,6 +199,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Groups.notifyGroupDetail,
       Appointments.notifyAppointmentDetail,
       Canvas.notifyCanvasEventDetail,
+      SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation,
+      Gateway.notifyBuildingDetail,
       Guide.notifyGuide,
       Guide.notifyGuideDetail,
       Guide.notifyGuideList,
@@ -295,6 +300,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == Canvas.notifyCanvasEventDetail) {
       _onCanvasEventDetail(param);
     }
+    else if (name == SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation) {
+      _onFirebaseAcademicsNotification(AcademicsContent.skills_self_evaluation);
+    }
+    else if (name == Gateway.notifyBuildingDetail) {
+      _onGatewayBuildingDetail(param);
+    }
     else if (name == Localization.notifyStringsUpdated) {
       if (mounted) {
         setState(() { });
@@ -365,8 +376,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyMapMtdStopsNotification) {
       _onFirebaseMapNotification(ExploreMapType.MTDStops);
     }
-    else if (name == FirebaseMessaging.notifyMapMtdDestinationsNotification) {
-      _onFirebaseMapNotification(ExploreMapType.MTDDestinations);
+    else if (name == FirebaseMessaging.notifyMapMyLocationsNotification) {
+      _onFirebaseMapNotification(ExploreMapType.MyLocations);
     }
     else if (name == FirebaseMessaging.notifyMapMentalHealthNotification) {
       _onFirebaseMapNotification(ExploreMapType.MentalHealth);
@@ -870,6 +881,15 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
+  Future<void> _onGatewayBuildingDetail(Map<String, dynamic>? content) async {
+    String? buildingNumber = (content != null) ? JsonUtils.stringValue(content['building_number']) : null;
+    if (StringUtils.isNotEmpty(buildingNumber)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+        ExploreBuildingDetailPanel(buildingNumber: buildingNumber)
+      ));
+    }
+  }
+
   void _showAthleticsGameDetail(Map<String, dynamic>? athleticsGameDetails) {
     if (athleticsGameDetails == null) {
       return;
@@ -1180,32 +1200,18 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onFirebaseAcademicsNotification(AcademicsContent content) {
-    int? academicsIndex = _getIndexByRootTab(RootTab.Academics);
-    if (academicsIndex != null) {
-      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-      int? lastTabIndex = _currentTabIndex;
-      _selectTab(academicsIndex);
-      if ((lastTabIndex != academicsIndex) && !AcademicsHomePanel.hasState) {
-        Widget? academicsWidget = _panels[RootTab.Academics];
-        AcademicsHomePanel? academicsPanel = (academicsWidget is AcademicsHomePanel) ? academicsWidget : null;
-        academicsPanel?.params[AcademicsHomePanel.contentItemKey] = content;
-      }
+    if (AcademicsHomePanel.hasState) {
       NotificationService().notify(AcademicsHomePanel.notifySelectContent, content);
+    } else {
+      AcademicsHomePanel.push(context, content);
     }
   }
 
   void _onFirebaseWellnessNotification(WellnessContent content) {
-    int? wellnessIndex = _getIndexByRootTab(RootTab.Wellness);
-    if (wellnessIndex != null) {
-      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-      int? lastTabIndex = _currentTabIndex;
-      _selectTab(wellnessIndex);
-      if ((lastTabIndex != wellnessIndex) && !WellnessHomePanel.hasState) {
-        Widget? wellnessWidget = _panels[RootTab.Wellness];
-        WellnessHomePanel? wellnessPanel = (wellnessWidget is WellnessHomePanel) ? wellnessWidget : null;
-        wellnessPanel?.params[WellnessHomePanel.contentItemKey] = content;
-      }
+    if (WellnessHomePanel.hasState) {
       NotificationService().notify(WellnessHomePanel.notifySelectContent, content);
+    } else {
+      WellnessHomePanel.push(context, content);
     }
   }
 }

@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/Canvas.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Canvas.dart';
@@ -27,10 +28,12 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CanvasFileSystemEntitiesListPanel extends StatefulWidget {
+class CanvasFileSystemEntitiesListPanel extends StatefulWidget with AnalyticsInfo {
   final int? courseId;
   final int? folderId;
-  CanvasFileSystemEntitiesListPanel({this.courseId, this.folderId});
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
+  CanvasFileSystemEntitiesListPanel({this.courseId, this.folderId, this.analyticsFeature});
 
   @override
   _CanvasFileSystemEntitiesListPanelState createState() => _CanvasFileSystemEntitiesListPanelState();
@@ -135,7 +138,7 @@ class _CanvasFileSystemEntitiesListPanelState extends State<CanvasFileSystemEnti
         }
       }
     } else {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasFileSystemEntitiesListPanel(folderId: entity.entityId)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasFileSystemEntitiesListPanel(folderId: entity.entityId, analyticsFeature: widget.analyticsFeature,)));
     }
   }
 

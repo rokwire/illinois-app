@@ -224,6 +224,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       Padding(
                           padding: EdgeInsets.only(left: 16, right: 16, bottom: 32),
                           child: ListView.separated(
+                              padding: EdgeInsets.zero,
                               shrinkWrap: true,
                               separatorBuilder: (context, index) => Divider(color: Colors.transparent, height: 20),
                               itemCount: (_games != null ? _games!.length : 0),
@@ -250,7 +251,10 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
               Stack(alignment: Alignment.topCenter, children: <Widget>[
                 Column(children: <Widget>[
                   Container(color: Styles().colors.fillColorPrimary, height: 40),
-                  Styles().images.getImage('slant-dark', excludeFromSemantics: true) ?? Container()
+                  Container(
+                      height: 112,
+                      width: double.infinity,
+                      child: Styles().images.getImage('slant-dark', fit: BoxFit.fill, excludeFromSemantics: true))
                 ]),
                 Column(children: <Widget>[
                   Container(
@@ -339,7 +343,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                         child: Padding(
                             padding: EdgeInsets.only(left: 16, top: 16),
                             child: Text(Localization().getStringEx("panel.athletics_team.label.coaching_staff.title", 'Coaching Staff'),
-                                style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat")))),
+                                style: Styles().textStyles.getTextStyle("widget.title.large")))),
                     Padding(
                         padding: EdgeInsets.only(left: 16, top: 52, bottom: 32),
                         child: SingleChildScrollView(
@@ -409,6 +413,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
   Widget _buildNewsList() {
     return CollectionUtils.isNotEmpty(_teamNews)
         ? ListView.separated(
+            padding: EdgeInsets.zero,
             shrinkWrap: true,
             separatorBuilder: (context, index) => Divider(color: Colors.transparent, height: 30),
             itemCount: _teamNews!.length,

@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/Canvas.dart';
 import 'package:neom/ui/WebPanel.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
@@ -26,9 +27,11 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CanvasAccountNotificationDetailPanel extends StatefulWidget {
+class CanvasAccountNotificationDetailPanel extends StatefulWidget with AnalyticsInfo {
   final CanvasAccountNotification notification;
-  CanvasAccountNotificationDetailPanel({required this.notification});
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
+  CanvasAccountNotificationDetailPanel({required this.notification, this.analyticsFeature});
 
   @override
   _CanvasAccountNotificationDetailPanelState createState() => _CanvasAccountNotificationDetailPanelState();
@@ -86,7 +89,7 @@ class _CanvasAccountNotificationDetailPanelState extends State<CanvasAccountNoti
   void _onTapLink(String? url) {
     if (StringUtils.isNotEmpty(url)) {
       if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsFeature: widget.analyticsFeature,)));
       } else {
         Uri? uri = Uri.tryParse(url!);
         if (uri != null) {

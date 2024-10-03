@@ -23,7 +23,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:intl/intl.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 extension GroupExt on Group {
@@ -278,7 +277,18 @@ extension GroupSettingsExt on GroupSettings{
   }
 }
 
-extension MemberExt on Member{
-    static List<String>? extractMemberIds(List<Member>? members) => CollectionUtils.isNotEmpty(members)? List.generate(members!.length, (index) => members[index].id??"") : null;
+extension MemberExt on Member {
+  static List<String>? extractUserIds(List<Member>? members) {
+    List<String>? userIds;
+    if (members != null) {
+      userIds = <String>[];
+      for (Member member in members) {
+        if (member.userId != null) {
+          userIds.add(member.userId!);
+        }
+      }
+    }
+    return userIds;
+  }
 }
 

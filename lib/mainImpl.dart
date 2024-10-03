@@ -46,7 +46,6 @@ import 'package:neom/ui/widgets/FlexContent.dart';
 
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/device_calendar.dart';
-import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -66,6 +65,7 @@ import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
+import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 final AppExitListener appExitListener = AppExitListener();

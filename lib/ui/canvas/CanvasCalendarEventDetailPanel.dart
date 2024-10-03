@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/Canvas.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/Analytics.dart';
@@ -27,9 +28,11 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class CanvasCalendarEventDetailPanel extends StatefulWidget {
+class CanvasCalendarEventDetailPanel extends StatefulWidget with AnalyticsInfo {
   final int eventId;
-  CanvasCalendarEventDetailPanel({required this.eventId});
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
+  CanvasCalendarEventDetailPanel({required this.eventId, this.analyticsFeature});
 
   @override
   _CanvasCalendarEventDetailPanelState createState() => _CanvasCalendarEventDetailPanelState();

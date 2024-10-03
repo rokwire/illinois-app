@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/ui/events2/Event2CreatePanel.dart';
@@ -29,10 +30,11 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Event2AttendanceDetailPanel extends StatefulWidget {
+class Event2AttendanceDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Event2? event;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  Event2AttendanceDetailPanel({Key? key, this.event}) : super(key: key);
+  Event2AttendanceDetailPanel({Key? key, this.event, this.analyticsFeature}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _Event2AttendanceDetailPanelState();

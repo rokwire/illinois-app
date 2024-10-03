@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/wellness/WellnessToDo.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Wellness.dart';
@@ -27,9 +28,11 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class WellnessManageToDoCategoriesPanel extends StatefulWidget {
+class WellnessManageToDoCategoriesPanel extends StatefulWidget with AnalyticsInfo {
   final WellnessToDoCategory? category;
-  WellnessManageToDoCategoriesPanel({this.category});
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
+  WellnessManageToDoCategoriesPanel({this.category, this.analyticsFeature});
 
   @override
   State<WellnessManageToDoCategoriesPanel> createState() => _WellnessManageToDoCategoriesPanelState();

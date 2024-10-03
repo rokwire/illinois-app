@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:neom/ui/events2/Event2CreatePanel.dart';
@@ -17,11 +18,12 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
-class Event2SetupAttendancePanel extends StatefulWidget {
+class Event2SetupAttendancePanel extends StatefulWidget with AnalyticsInfo {
   final Event2? event;
   final Event2AttendanceDetails? _attendanceDetails;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  Event2SetupAttendancePanel({ super.key, this.event, Event2AttendanceDetails? attendanceDetails, Event2RegistrationDetails? registrationDetails }) :
+  Event2SetupAttendancePanel({ super.key, this.event, Event2AttendanceDetails? attendanceDetails, Event2RegistrationDetails? registrationDetails, this.analyticsFeature }) :
     _attendanceDetails = attendanceDetails;
 
   String? get eventId => event?.id;

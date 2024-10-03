@@ -27,13 +27,11 @@ import 'package:neom/ui/widgets/HeaderBar.dart';
 
 class CheckListPanel extends StatelessWidget with AnalyticsInfo {
   final String contentKey;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  const CheckListPanel({Key? key, required this.contentKey}) : super(key: key);
+  const CheckListPanel({Key? key, required this.contentKey, this.analyticsFeature}) : super(key: key);
 
-  @override
-  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Academics;
-
-  static void present(BuildContext context, { required String contentKey }) {
+  static void present(BuildContext context, { required String contentKey, AnalyticsFeature? analyticsFeature }) {
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, _offlineMessage(contentKey));
     }
@@ -41,7 +39,7 @@ class CheckListPanel extends StatelessWidget with AnalyticsInfo {
       AppAlert.showMessage(context, _loggedOutMessage(contentKey));
     }
     else {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => CheckListPanel(contentKey: contentKey,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => CheckListPanel(contentKey: contentKey, analyticsFeature: analyticsFeature,)));
     }
   }
 
@@ -69,7 +67,7 @@ class CheckListPanel extends StatelessWidget with AnalyticsInfo {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(title: _title),
-      body: CheckListContentWidget(contentKey: contentKey, panelDisplay: true,)
+      body: CheckListContentWidget(contentKey: contentKey, panelDisplay: true, analyticsFeature: analyticsFeature,)
     );
   }
 

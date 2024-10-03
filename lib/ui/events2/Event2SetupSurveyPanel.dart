@@ -19,6 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/ext/Event2.dart';
 import 'package:neom/ext/Survey.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/ui/surveys/SurveyPanel.dart';
 import 'package:neom/ui/events2/Event2CreatePanel.dart';
@@ -35,22 +36,24 @@ import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Event2SetupSurveyPanel extends StatefulWidget {
+class Event2SetupSurveyPanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'Event2SetupSurveyPanel';
 
   final Event2SetupSurveyParam surveyParam;
   final List<Survey>? surveysCache;
   final String? eventName;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  Event2SetupSurveyPanel({Key? key, required this.surveyParam, this.eventName, this.surveysCache}) : super(key: key);
+  Event2SetupSurveyPanel({Key? key, required this.surveyParam, this.eventName, this.surveysCache, this.analyticsFeature}) : super(key: key);
 
-  static Future<Event2SetupSurveyParam?> push(BuildContext context, {Key? key, required Event2SetupSurveyParam surveyParam, List<Survey>? surveysCache, String? eventName}) =>
+  static Future<Event2SetupSurveyParam?> push(BuildContext context, {Key? key, required Event2SetupSurveyParam surveyParam, List<Survey>? surveysCache, String? eventName, AnalyticsFeature? analyticsFeature}) =>
     Navigator.push<Event2SetupSurveyParam>(context, CupertinoPageRoute(
       settings: RouteSettings(name: routeName),
       builder: (context) => Event2SetupSurveyPanel(
         surveyParam: surveyParam,
         eventName: eventName,
         surveysCache: surveysCache,
+        analyticsFeature: analyticsFeature,
       ),
     ));
 

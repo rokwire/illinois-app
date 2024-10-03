@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Canvas.dart';
 import 'package:neom/ui/WebPanel.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
@@ -27,9 +28,11 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CanvasSyllabusHtmlPanel extends StatefulWidget {
+class CanvasSyllabusHtmlPanel extends StatefulWidget with AnalyticsInfo {
   final int? courseId;
-  CanvasSyllabusHtmlPanel({this.courseId});
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
+  CanvasSyllabusHtmlPanel({this.courseId, this.analyticsFeature});
 
   @override
   _CanvasSyllabusHtmlPanelState createState() => _CanvasSyllabusHtmlPanelState();
@@ -96,7 +99,7 @@ class _CanvasSyllabusHtmlPanelState extends State<CanvasSyllabusHtmlPanel> {
   void _onTapLink(String? url) {
     if (StringUtils.isNotEmpty(url)) {
       if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsFeature: widget.analyticsFeature,)));
       } else {
         Uri? uri = Uri.tryParse(url!);
         if (uri != null) {

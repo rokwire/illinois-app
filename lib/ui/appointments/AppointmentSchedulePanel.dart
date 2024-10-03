@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/Appointment.dart';
 import 'package:neom/ext/Appointment.dart';
 import 'package:neom/service/Analytics.dart';
@@ -27,13 +28,14 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 //import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 
-class AppointmentSchedulePanel extends StatefulWidget {
+class AppointmentSchedulePanel extends StatefulWidget with AnalyticsInfo {
 
   final AppointmentScheduleParam scheduleParam;
   final Appointment? sourceAppointment;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
   final void Function(BuildContext context, Appointment? appointment)? onFinish;
 
-  AppointmentSchedulePanel({ Key? key, required this.scheduleParam, this.sourceAppointment, this.onFinish }) : super(key: key);
+  AppointmentSchedulePanel({ super.key, required this.scheduleParam, this.sourceAppointment, this.analyticsFeature, this.onFinish });
 
   @override
   State<StatefulWidget> createState() => _AppointmentSchedulePanelState();

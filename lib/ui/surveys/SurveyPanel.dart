@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/ext/Survey.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/AppDateTime.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
@@ -19,15 +20,18 @@ import 'package:rokwire_plugin/ui/panels/survey_panel.dart' as rokwire;
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class SurveyPanel extends rokwire.SurveyPanel{
+
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
   SurveyPanel({required super.survey, super.surveyDataKey, super.inputEnabled, super.backgroundColor,
     super.dateTaken, super.showResult, super.onComplete, super.initPanelDepth, super.defaultResponses,
     super.summarizeResultRules, super.summarizeResultRulesWidget, super.headerBar, super.tabBar,
-    super.offlineWidget, super.textStyles});
+    super.offlineWidget, super.textStyles, this.analyticsFeature});
 
   factory SurveyPanel.defaultStyles({required dynamic survey, String? surveyDataKey, bool inputEnabled = true,
     DateTime? dateTaken, bool showResult = false, Function(dynamic)? onComplete, int initPanelDepth = 0, Map<String, dynamic>? defaultResponses,
     bool summarizeResultRules = false, Widget? summarizeResultRulesWidget, PreferredSizeWidget? headerBar, Widget? tabBar,
-    Widget? offlineWidget}) {
+    Widget? offlineWidget, AnalyticsFeature? analyticsFeature}) {
     return SurveyPanel(
       survey: survey,
       surveyDataKey: surveyDataKey,
@@ -42,6 +46,7 @@ class SurveyPanel extends rokwire.SurveyPanel{
       headerBar: headerBar,
       tabBar: tabBar,
       offlineWidget: offlineWidget,
+      analyticsFeature: analyticsFeature,
     );
   }
 

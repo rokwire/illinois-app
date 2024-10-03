@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/Canvas.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Canvas.dart';
@@ -27,7 +28,10 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:neom/utils/AppUtils.dart';
 
-class CanvasAccountNotificationsPanel extends StatefulWidget {
+class CanvasAccountNotificationsPanel extends StatefulWidget with AnalyticsInfo {
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
+  CanvasAccountNotificationsPanel({super.key, this.analyticsFeature});
 
   @override
   _CanvasAccountNotificationsPanelState createState() => _CanvasAccountNotificationsPanelState();
@@ -126,7 +130,7 @@ class _CanvasAccountNotificationsPanelState extends State<CanvasAccountNotificat
 
   void _onTapNotification(CanvasAccountNotification notification) {
     Analytics().logSelect(target: "Notification");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasAccountNotificationDetailPanel(notification: notification)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasAccountNotificationDetailPanel(notification: notification, analyticsFeature: widget.analyticsFeature,)));
   }
 
   void _loadNotifications() {

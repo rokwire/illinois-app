@@ -1,9 +1,9 @@
 import 'dart:collection';
 
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -708,8 +708,12 @@ class Guide with Service implements NotificationsListener {
   /////////////////////////
   // DeepLinks
 
-  String get guideDetailUrl => '${DeepLink().appUrl}/guide_detail';
-  String get guideListUrl => '${DeepLink().appUrl}/guide_list';
+  String get listBaseUrl => '${DeepLink().appUrl}/guide_list';
+
+  String get detailBaseUrl => '${DeepLink().appUrl}/guide_detail';
+
+  String detailUrl(String? guideId, {AnalyticsFeature? analyticsFeature}) =>
+    "$detailBaseUrl?guide_id=$guideId" + ((analyticsFeature != null) ? "&analytics_feature=$analyticsFeature" : "");
 
   String? detailIdFromUrl(String? url) {
     return (url != null) ? detailIdFromUri(Uri.tryParse(url)) : null;
@@ -786,221 +790,6 @@ class Guide with Service implements NotificationsListener {
       }
     }
   }
-
-  /*static Future<void> _convertFile(String contentFileName, String sourceFileName) async {
-    Directory? appDocDir = kIsWeb ? null : await getApplicationDocumentsDirectory();
-
-    String? sourceFilePath = (appDocDir != null) ? join(appDocDir.path, sourceFileName) : null;
-    File? sourceFile = (sourceFilePath != null) ? File(sourceFilePath) : null;
-    String? sourceString = await sourceFile?.exists() ? await sourceFile.readAsString() : null;
-    List<dynamic> sourceList = JsonUtils.decodeList(sourceString);
-    
-    List<dynamic> contentList = _convertContent(sourceList);
-    String contentString = JsonUtils.encode(contentList, /*prettify: true*/);
-    if (contentString != null) {
-      String contentFilePath = join(appDocDir.path, contentFileName);
-      File contentFile = File(contentFilePath);
-      await contentFile.writeAsString(contentString, flush: true);
-    }
-  }
-
-  static List<dynamic> _convertContent(List<dynamic> sourceList) {
-    List<dynamic> contentList;
-    if (sourceList != null) {
-      contentList = <dynamic>[];
-      for (dynamic sourceEntry in sourceList) {
-        dynamic contentEntry = _convertContentEntry(sourceEntry);
-        if (contentEntry != null) {
-          contentList.add(contentEntry);
-        }
-      }
-    }
-    return contentList;
-  }
-
-  static Map<String, dynamic> _convertContentEntry(Map<String, dynamic> sourceEntry) {
-    Map<String, dynamic> contentEntry = Map<String, dynamic>();
-
-    // ID
-    dynamic sourceValue = sourceEntry['id'];
-    if (sourceValue != null) {
-      contentEntry['content_id'] = sourceValue;
-    }
-
-    // Shared Fields
-    for (String key in ['guide', 'category', 'section', 'list_title', 'list_description', 'detail_title', 'detail_description', 'image', 'sub_details_title', 'sub_details_description']) {
-      dynamic sourceValue = sourceEntry[key];
-      if (sourceValue != null) {
-        contentEntry[key] = sourceValue;
-      }
-    }
-
-    // Features
-    List<dynamic> features = <dynamic>[];
-    String sourceFeaturesString = JsonUtils.stringValue(sourceEntry['features']);
-    if (sourceFeaturesString != null) {
-      List<String> sourceFeatures = sourceFeaturesString.split(RegExp('[;,\n]'));
-      for (String sourceFeature in sourceFeatures) {
-        sourceFeature = sourceFeature.trim();
-        if (sourceFeature.isNotEmpty) {
-          features.add(sourceFeature.toLowerCase().replaceAll(' ', '-'));
-        }
-      }
-    }
-    if (features.isNotEmpty) {
-      contentEntry['features'] = features;
-    }
-
-    // Links
-    List<dynamic> contentLinks = <dynamic>[];
-
-    String phoneLinksString = JsonUtils.stringValue(sourceEntry['phone_links']);
-    if (phoneLinksString != null) {
-      List<String> phoneLinks = phoneLinksString.split(RegExp('[;,\n ]'));
-      for (String phoneLink in phoneLinks) {
-        if (phoneLink.isNotEmpty) {
-          contentLinks.add({ "text": phoneLink, "icon": "https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp", "url": "tel:+1-$phoneLink" });
-        }
-      }
-    }
-    String emailLinksString = JsonUtils.stringValue(sourceEntry['email_links']);
-    if (emailLinksString != null) {
-      List<String> emailLinks = emailLinksString.split(RegExp('[;,\n ]'));
-      for (String emailLink in emailLinks) {
-        if (emailLink.isNotEmpty) {
-          contentLinks.add({ "text": emailLink, "icon": "https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp", "url": "mailto:$emailLink" });
-        }
-      }
-    }
-    String webLinksString = JsonUtils.stringValue(sourceEntry['web_links']);
-    if (webLinksString != null) {
-      List<String> webLinks = webLinksString.split(RegExp('[;,\n ]'));
-      for (String webLink in webLinks) {
-        if (webLink.isNotEmpty) {
-          contentLinks.add({ "text": webLink, "icon": "https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp", "url": webLink });
-        }
-      }
-    }
-    String locationLinkString = JsonUtils.stringValue(sourceEntry['location_links']);
-    if (locationLinkString != null) {
-      List<String> locationItems = locationLinkString.split(RegExp('[\n]'));
-      String locationTitle = locationLinkString;
-      for (String locationItem in locationItems) {
-        if (locationItem.isNotEmpty) {
-          locationTitle = locationItem;
-          break;
-        }
-      }
-      contentLinks.add({ "text": locationLinkString, "icon": "https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp", "location": { "location": { "latitude": 0.00, "longitude": 0.00}, "title": locationTitle } });
-
-    }
-    
-    if (contentLinks.isNotEmpty) {
-      contentEntry['links'] = contentLinks;
-    }
-
-    // Buttons
-    String buttonText = JsonUtils.stringValue(sourceEntry['button_text']);
-    String buttonUrl = JsonUtils.stringValue(sourceEntry['button_link']);
-    if ((buttonText != null) && (0 < buttonText.length) || (buttonUrl != null) && (0 < buttonUrl.length)) {
-      contentEntry['buttons'] = [{ "text": buttonText, "url": buttonUrl }];
-    }
-
-    // Sub Details
-    List<dynamic> subDetails = <dynamic>[];
-    for (int index = 1; index <= 5; index++) {
-      
-      Map<String, dynamic> subDetail = <String, dynamic>{};
-      String sectionTitle = JsonUtils.stringValue(sourceEntry['sub_details_section${index}_title'])?.replaceAll('\n', '');
-      if (sectionTitle != null) {
-        subDetail['section'] = sectionTitle;
-      }
-
-      Map<String, dynamic> sectionEntry = <String, dynamic>{};
-      
-      String sectionHeading = JsonUtils.stringValue(sourceEntry['sub_details_section${index}_headings'])?.replaceAll('\n', '');
-      if (sectionHeading != null) {
-        sectionEntry['heading'] = sectionHeading;
-      }
-
-      List<dynamic> numbers = <dynamic>[];
-      String sectionNumbersString = JsonUtils.stringValue(sourceEntry['sub_details_section${index}_numbers']);
-      if (sectionNumbersString != null) {
-        List<String> sectionNumers = sectionNumbersString.split(RegExp('[;\n]'));
-        if (sectionNumers.length < 2) {
-          sectionNumers = _splitByCommas(sectionNumbersString);
-        }
-        for (String sectionNumer in sectionNumers) {
-          sectionNumer = sectionNumer.trim();
-          if (sectionNumer.isNotEmpty) {
-            numbers.add(sectionNumer);
-          }
-        }
-      }
-      if (numbers.isNotEmpty) {
-        sectionEntry['numbers'] = numbers;
-      }
-
-      List<dynamic> bullets = <dynamic>[];
-      String sectionBulletsString = JsonUtils.stringValue(sourceEntry['sub_details_section${index}_bullets']);
-      if (sectionBulletsString != null) {
-        List<String> sectionBullets = sectionBulletsString.split(RegExp('[;\n]'));
-        if (sectionBullets.length < 2) {
-          sectionBullets = _splitByCommas(sectionBulletsString);
-        }
-        for (String sectionBullet in sectionBullets) {
-          sectionBullet = sectionBullet.trim();
-          if (sectionBullet.isNotEmpty) {
-            bullets.add(sectionBullet);
-          }
-        }
-      }
-      if (bullets.isNotEmpty) {
-        sectionEntry['bullets'] = bullets;
-      }
-
-      if (sectionEntry.isNotEmpty) {
-        subDetail['entries'] = [ sectionEntry ];
-      }
-
-      if (subDetail.isNotEmpty) {
-        subDetails.add(subDetail);
-      }
-    }
-    if (subDetails.isNotEmpty) {
-      contentEntry['sub_details'] = subDetails;
-    }
-
-    // Related
-    List<dynamic> relatedList = <dynamic>[];
-    String relatedString = JsonUtils.stringValue(sourceEntry['related']);
-    if (relatedString != null) {
-      List<String> related = relatedString.split(RegExp('[;,\n ]'));
-      for (String relatedEntry in related) {
-        relatedEntry = relatedEntry.trim();
-        if (relatedEntry.isNotEmpty) {
-          relatedList.add(relatedEntry);
-        }
-      }
-    }
-    if (relatedList.isNotEmpty) {
-      contentEntry['related'] = relatedList;
-    }
-    
-    return contentEntry;
-  }
-
-  static List<String> _splitByCommas(String source) {
-    List<String> result = <String>[];
-    int pos, index = 0;
-    while (0 <= (pos = source.indexOf(RegExp(r",[^ ]|,$"), index))) {
-      result.add(source.substring(index, pos));
-      index = pos + 1;
-    }
-    result.add(source.substring(index));
-    return result;
-  }*/
-
 }
 
 class GuideSection {

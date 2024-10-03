@@ -150,7 +150,7 @@ extension ExploreExt on Explore {
       return Localization().getStringEx('panel.explore.item.appointments.name', 'Appointment Locations', language: language);
     }
     else if (exploresType == "explorepoi") {
-      return Localization().getStringEx('panel.explore.item.pois.name', 'MTD Destinations', language: language);
+      return Localization().getStringEx('panel.explore.item.my_locations.name', 'My Locations', language: language);
     }
     else {
       return Localization().getStringEx('panel.explore.item.unknown.name', 'Explores');
@@ -433,7 +433,7 @@ extension ExploreMap on Explore {
       return sprintf(Localization().getStringEx('panel.explore.item.courses.count', '%s Course Locations'), [count]);
     }
     else if (this is ExplorePOI) {
-      return sprintf(Localization().getStringEx('panel.explore.item.pois.count', '%s MTD Destinations'), [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.my_locations.count', '%s Saved Locations'), [count]);
     }
     else if (this is Building) {
       return sprintf(Localization().getStringEx('panel.explore.item.buildings.count', '%s Buildings'), [count]);

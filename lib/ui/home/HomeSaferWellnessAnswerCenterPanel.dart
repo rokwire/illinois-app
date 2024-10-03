@@ -94,6 +94,6 @@ class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget {
   }
 
   void _launchGuideDeepLink(String guideId) {
-    DeepLink().launchUrl('${Guide().guideDetailUrl}?guide_id=$guideId');
+    DeepLink().launchUrl(Guide().detailUrl(guideId));
   }
 }

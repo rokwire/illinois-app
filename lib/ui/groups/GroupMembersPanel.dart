@@ -389,7 +389,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     _increaseProgress();
     Groups().loadMembers(groupId: widget.groupId, statuses: [GroupMemberStatus.pending]).then((members) {
       if(CollectionUtils.isNotEmpty(members)){
-        List<String>? pendingUserIds = MemberExt.extractMemberIds(members);
+        List<String>? pendingUserIds = MemberExt.extractUserIds(members);
         Groups().acceptMembershipMulti(group: _group, ids: pendingUserIds).then((success){
           if(success){
             Log.d("Successfully approved all");

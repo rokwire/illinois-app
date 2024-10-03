@@ -14,14 +14,18 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
+import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/service/Occupations.dart';
 import 'package:neom/ui/surveys/SurveyPanel.dart';
 import 'package:neom/ui/academics/SkillsSelfEvaluationInfoPanel.dart';
 import 'package:neom/ui/academics/SkillsSelfEvaluationResultsPanel.dart';
 import 'package:neom/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/ui/widgets/InfoPopup.dart';
 import 'package:neom/ui/widgets/AccessWidgets.dart';
+import 'package:neom/ui/widgets/QrCodePanel.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -34,12 +38,15 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class SkillsSelfEvaluation extends StatefulWidget {
+class SkillsSelfEvaluation extends StatefulWidget with AnalyticsInfo {
 
   SkillsSelfEvaluation();
 
   @override
   _SkillsSelfEvaluationState createState() => _SkillsSelfEvaluationState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.AcademicsSkillsSelfEvaluation;
 
   static Future<Map<String, Map<String, dynamic>>?> loadContentItems(List<String> categories) async {
     Map<String, Map<String, dynamic>>? result;
@@ -117,7 +124,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
       padding: EdgeInsets.only(top: 32, bottom: 32),
       child: Padding(padding: EdgeInsets.only(left: 24, right: 8), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Flexible(child: Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.section.title', 'Skills Self Evaluation'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.header'), textAlign: TextAlign.left,)),
+          Flexible(child: Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.section.title', 'Skills Self-Evaluation & Career Explorer'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.header'), textAlign: TextAlign.left,)),
           IconButton(
             icon: Styles().images.getImage('more-white', excludeFromSemantics: true) ?? Container(),
             tooltip: Localization().getStringEx('panel.skills_self_evaluation.button.more.hint', 'Show more'),
@@ -125,7 +132,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
             padding: EdgeInsets.zero,
           ),
         ]),
-        Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.time.description', '5 Minutes'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.time.description'), textAlign: TextAlign.left,),
+        Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.time.description', '10 Minutes'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.time.description'), textAlign: TextAlign.left,),
         Padding(padding: EdgeInsets.only(top: 24), child: _buildDescription()),
         Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
           label: Localization().getStringEx("panel.skills_self_evaluation.get_started.button.label", 'Get Started'),
@@ -163,19 +170,28 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
     return <Widget>[
       RibbonButton(
         leftIconKey: "info",
-        label: saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.description", "Your results will be saved for you to revisit or compare to future results.") :
-                Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
-        textStyle: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title'),
+        label: saveEnabled ?
+          Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.description", "Your results will be saved for you to compare with future results.") :
+          Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
+        textStyle: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
         backgroundColor: Colors.transparent,
         onTap: _onTapSavedResultsInfo,
       ),
       RibbonButton(
         leftIconKey: "settings",
-        label: saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.label", "Don't Save My Results") :
-                Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.label", "Save My Results"),
+        label: saveEnabled ?
+          Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.label", "Don't Save My Results") :
+          Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.label", "Save My Results"),
         textStyle: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
         backgroundColor: Colors.transparent,
         onTap: _onTapSettings,
+      ),
+      RibbonButton(
+        leftIconKey: "share",
+        label: Localization().getStringEx('panel.skills_self_evaluation.get_started.body.share.label', 'Share this feature'),
+        textStyle: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
+        backgroundColor: Colors.transparent,
+        onTap: _onTapShare,
       ),
     ];
   }
@@ -247,16 +263,24 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   void _onTapStartEvaluation() {
     Future? result = AccessDialog.show(context: context, resource: 'academics.skills_self_evaluation');
     if (Config().bessiSurveyID != null && result == null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _gotoResults, offlineWidget: _buildOfflineWidget(), tabBar: uiuc.TabBar(),)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+        SurveyPanel(
+          survey: Config().bessiSurveyID,
+          onComplete: _gotoResults,
+          offlineWidget: _buildOfflineWidget(),
+          tabBar: uiuc.TabBar(),
+          headerBar: HeaderBar(title: Localization().getStringEx( "panel.skills_self_evaluation.survey.title", "Skills Self-Evaluation & Career Explorer",)),
+          analyticsFeature: widget.analyticsFeature,
+        )
+      ));
     }
   }
 
   void _onTapSavedResultsInfo() {
     bool saveEnabled = Storage().assessmentsSaveResultsMap?['bessi'] != false;
-    Widget textWidget = Text(
-      saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.dialog",
-        "Your results will be saved for you to compare to future results.\n\nNo data from this assessment will be shared with other people or systems or stored outside of your Illinois app account.") :
-          Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
+    Widget textWidget = Text(saveEnabled ?
+      Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.dialog", "Your results will be saved for you to compare with future results.\n\nNo personally identifiable data from this assessment will be shared with other people or systems or stored outside of your Illinois app account.") :
+      Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
       style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
       textAlign: TextAlign.center,
     );
@@ -271,6 +295,13 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
 
   void _onTapSettings() {
     SettingsHomeContentPanel.present(context, content: SettingsContent.assessments);
+  }
+
+  void _onTapShare() {
+    Analytics().logSelect(target: 'Share Skills Self-Evaluation');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+      QrCodePanel.skillsSelfEvaluation(analyticsFeature: widget.analyticsFeature,)
+    ));
   }
 
   Widget _buildOfflineWidget() {

@@ -72,7 +72,7 @@ class HomeFavoritesWidget extends StatefulWidget {
       case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.news', 'My Big 10 News');
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.laundry', 'My Laundry');
       case MTDStop.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.mtd_stops', 'My Bus Stops');
-      case ExplorePOI.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.mtd_destinations', 'My Destinations');
+      case ExplorePOI.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.my_locations', 'My Locations');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.campus_guide', 'My Campus Guide');
       case Appointment.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.appointments', 'MyMcKinley Appointments');
     }
@@ -92,7 +92,7 @@ class HomeFavoritesWidget extends StatefulWidget {
       case News.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.news", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Big 10 News</b></a> for quick access here."); break;
       case LaundryRoom.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.laundry", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Laundry Locations</b></a> for quick access here."); break;
       case MTDStop.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.mtd_stops", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Bus Stops</b></a> for quick access here."); break;
-      case ExplorePOI.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.mtd_destinations", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>My Destinations</b></a> for quick access here."); break;
+      case ExplorePOI.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.locations", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>My Locations</b></a> for quick access here."); break;
       case GuideFavorite.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.campus_guide", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Campus Guide</b></a> for quick access here."); break;
       case Appointment.favoriteKeyName:
         message = (Storage().appointmentsCanDisplay != true) ?
@@ -445,7 +445,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
         case News.favoriteKeyName: return _loadFavoriteNews(favoriteIds);
         case LaundryRoom.favoriteKeyName: return _loadFavoriteLaundries(favoriteIds);
         case MTDStop.favoriteKeyName: return _loadFavoriteMTDStops(favoriteIds);
-        case ExplorePOI.favoriteKeyName: return _loadFavoriteMTDDestinations(favoriteIds);
+        case ExplorePOI.favoriteKeyName: return _loadFavoriteLocations(favoriteIds);
         case GuideFavorite.favoriteKeyName: return _loadFavoriteGuideItems(favoriteIds);
         case Appointment.favoriteKeyName: return _loadFavoriteAppointments(favoriteIds);
       }
@@ -474,7 +474,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   Future<List<Favorite>?> _loadFavoriteMTDStops(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? ListUtils.reversed(MTD().stopsByIds(favoriteIds)) : null;
 
-  Future<List<Favorite>?> _loadFavoriteMTDDestinations(LinkedHashSet<String>? favoriteIds) async =>
+  Future<List<Favorite>?> _loadFavoriteLocations(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? ListUtils.reversed(ExplorePOI.listFromString(favoriteIds)) : null;
 
   Future<List<Favorite>?> _loadFavoriteGuideItems(LinkedHashSet<String>? favoriteIds) async {
@@ -579,7 +579,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.news', 'My Big 10 News is not available while offline.');
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.laundry', 'My Laundry are not available while offline.');
       case MTDStop.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.mtd_stops', 'My Bus Stops are not available while offline.');
-      case ExplorePOI.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.mtd_destinations', 'My Destinations are not available while offline.');
+      case ExplorePOI.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.locations', 'My Locations are not available while offline.');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.campus_guide', 'My Campus Guide are not available while offline.');
       case Appointment.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.appointments', 'MyMcKinley Appointments are not available while offline.');
     }
@@ -595,7 +595,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.news', 'Tap to view all favorite athletics news');
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.laundry', 'Tap to view all favorite laundries');
       case MTDStop.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.mtd_stops', 'Tap to view all favorite bus stops');
-      case ExplorePOI.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.mtd_destinations', 'Tap to view all favorite destinations');
+      case ExplorePOI.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.locations', 'Tap to view all favorite locations');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.campus_guide', 'Tap to view all favorite campus guide articles');
       case Appointment.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.appointments', 'Tap to view all favorite appointments');
     }

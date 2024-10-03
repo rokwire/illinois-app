@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/survey.dart';
@@ -24,11 +25,12 @@ import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/widget_builders/survey.dart';
 import 'package:rokwire_plugin/ui/widgets/scroll_pager.dart';
 
-class SurveyResponsesPanel extends StatefulWidget {
+class SurveyResponsesPanel extends StatefulWidget with AnalyticsInfo {
   final String? surveyId;
   final String? eventName;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  SurveyResponsesPanel({Key? key, this.surveyId, this.eventName}) : super(key: key);
+  SurveyResponsesPanel({Key? key, this.surveyId, this.eventName, this.analyticsFeature}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _SurveyResponsesPanelState();

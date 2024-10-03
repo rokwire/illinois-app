@@ -46,7 +46,8 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.occupation_list.header.title', 'Skills Self-Evaluation')),
+      appBar: HeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.occupation_list.header.title', 'Skills Self-Evaluation & Career Explorer')),
+      backgroundColor: Styles().colors.background,
       body: Column(children: [
         _buildHeader(),
         Expanded(
@@ -185,7 +186,7 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
                     _searchTerm = null;
                     _filterOccupationList();
                   });
-                }, icon: Styles().images.getImage('close-circle', excludeFromSemantics: true) ?? Container()),
+                }, icon: Styles().images.getImage('close', excludeFromSemantics: true) ?? Container()),
               ),
               IconButton(onPressed: _onTapSearch,
               icon: Styles().images.getImage('search', excludeFromSemantics: true) ?? Container()),
@@ -279,6 +280,7 @@ class OccupationListTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
       child: Card(
+        color: Styles().colors.white,
         child: InkWell(
           onTap: () {
             Navigator.push(

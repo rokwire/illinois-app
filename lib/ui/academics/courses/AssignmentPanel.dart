@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart' as html;
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/CustomCourses.dart';
 import 'package:neom/service/AppDateTime.dart';
 import 'package:neom/service/CustomCourses.dart';
@@ -17,7 +18,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
-class AssignmentPanel extends StatefulWidget {
+class AssignmentPanel extends StatefulWidget with AnalyticsInfo {
   final Content content;
   final UserContentReference contentReference;
   final Color? color;
@@ -33,10 +34,13 @@ class AssignmentPanel extends StatefulWidget {
   final int unitNumber;
   final String unitName;
   final int activityNumber;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
   AssignmentPanel({required this.content, required this.contentReference, required this.color, required this.colorAccent,
     this.helpContent, required this.preview, required this.current, this.courseDayStart, this.courseDayFinalNotification,
-    this.moduleIcon, required this.moduleName, required this.unitNumber, required this.unitName, required this.activityNumber});
+    this.moduleIcon, required this.moduleName, required this.unitNumber, required this.unitName, required this.activityNumber,
+    this.analyticsFeature,
+  });
 
   @override
   State<AssignmentPanel> createState() => _AssignmentPanelState();
@@ -130,6 +134,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> implements Notificati
               unitName: widget.unitName,
               moduleIcon: widget.moduleIcon,
               moduleName: widget.moduleName,
+              analyticsFeature: widget.analyticsFeature,
             ))),
           ),
         )

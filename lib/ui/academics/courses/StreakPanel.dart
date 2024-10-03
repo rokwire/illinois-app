@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -11,12 +12,13 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class StreakPanel extends StatefulWidget {
+class StreakPanel extends StatefulWidget with AnalyticsInfo {
   final UserCourse userCourse;
   final CourseConfig? courseConfig;
   final DateTime? firstScheduleItemCompleted;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  const StreakPanel({required this.userCourse, this.courseConfig, this.firstScheduleItemCompleted});
+  const StreakPanel({required this.userCourse, this.courseConfig, this.firstScheduleItemCompleted, this.analyticsFeature});
 
   @override
   State<StreakPanel> createState() => _StreakPanelState();

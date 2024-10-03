@@ -1,9 +1,13 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:neom/model/Analytics.dart';
+import 'package:neom/model/StudentCourse.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Config.dart';
+import 'package:neom/service/Gateway.dart';
 import 'package:neom/service/NativeCommunicator.dart';
+import 'package:neom/service/SkillsSelfEvaluation.dart';
 import 'package:neom/ui/events2/Event2HomePanel.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
 import 'package:neom/utils/AppUtils.dart';
@@ -19,7 +23,7 @@ import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:share/share.dart';
 
-class QrCodePanel extends StatefulWidget { //TBD localize
+class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
   //final Event2? event;
   //const Event2QrCodePanel({required this.event});
 
@@ -32,6 +36,8 @@ class QrCodePanel extends StatefulWidget { //TBD localize
   final String? title;
   final String? description;
 
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+
   const QrCodePanel({Key? key,
     required this.deepLinkUrl,
 
@@ -41,36 +47,63 @@ class QrCodePanel extends StatefulWidget { //TBD localize
 
     this.title,
     this.description,
+
+    this.analyticsFeature,
   });
 
-  factory QrCodePanel.fromEvent(Event2? event, {Key? key}) => QrCodePanel(
+  factory QrCodePanel.fromEvent(Event2? event, {Key? key, AnalyticsFeature? analyticsFeature }) => QrCodePanel(
     key: key,
     deepLinkUrl: Events2.eventDetailUrl(event),
       saveFileName: 'event - ${event?.name}',
       saveWatermarkText: event?.name,
       saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.event.title', 'Share this event'),
-    description: Localization().getStringEx('panel.qr_code.event.description', 'Invite others to view this event by sharing a link or the QR code after saving it to your photo library.'),
+    description: Localization().getStringEx('panel.qr_code.event.description', 'Want to invite other Illinois app users to view this event? Use one of the sharing options below.'),
+    analyticsFeature: analyticsFeature,
   );
 
-  factory QrCodePanel.fromEventFilterParam(Event2FilterParam filterParam, {Key? key}) => QrCodePanel(
+  factory QrCodePanel.fromEventFilterParam(Event2FilterParam filterParam, {Key? key, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
     key: key,
     deepLinkUrl: Events2.eventsQueryUrl(filterParam.toUriParams()),
       saveFileName: "events ${DateFormat('yyyy-MM-dd HH.mm.ss').format(DateTime.now())}",
       saveWatermarkText: filterParam.buildDescription().map((span) => span.toPlainText()).join(),
       saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 32, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.event_query.title', 'Share this event set'),
-    description: Localization().getStringEx('panel.qr_code.event_query.description', 'Invite others to view this set of filtered events by sharing a link or the QR code after saving it to your photo library.'),
+    description: Localization().getStringEx('panel.qr_code.event_query.description', 'Want to invite other Illinois app users to view this set of filtered events? Use one of the sharing options below.'),
+    analyticsFeature: analyticsFeature,
   );
 
-  factory QrCodePanel.fromGroup(Group? group, {Key? key}) => QrCodePanel(
+  factory QrCodePanel.fromGroup(Group? group, {Key? key, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
     key: key,
     deepLinkUrl: '${Groups().groupDetailUrl}?group_id=${group?.id}',
       saveFileName: 'group - ${group?.title}',
       saveWatermarkText: group?.title,
       saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.group.title', 'Share this group'),
-    description: Localization().getStringEx('panel.qr_code.group.description.label', 'Invite others to join this group by sharing a link or the QR code after saving it to your photo library.'),
+    description: Localization().getStringEx('panel.qr_code.group.description.label', 'Want to invite other Illinois app users to view this group? Use one of the sharing options below.'),
+    analyticsFeature: analyticsFeature,
+  );
+
+  factory QrCodePanel.skillsSelfEvaluation({Key? key, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
+    key: key,
+    deepLinkUrl: SkillsSelfEvaluation.skillsSelfEvaluationUrl,
+    saveFileName: 'skills self-evaluation',
+    saveWatermarkText: 'Skills Self-Evaluation',
+    saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
+    title: Localization().getStringEx('panel.qr_code.feature.title', 'Share this feature'),
+    description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),
+    analyticsFeature: analyticsFeature,
+  );
+
+  factory QrCodePanel.fromBuilding(Building? building, {Key? key, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
+    key: key,
+    deepLinkUrl: '${Gateway.buildingDetailUrl}?building_number=${building?.number}',
+      saveFileName: 'Location - ${building?.name}',
+      saveWatermarkText: building?.name,
+      saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
+    title: Localization().getStringEx('panel.qr_code.building.title', 'Share this location'),
+    description: Localization().getStringEx('panel.qr_code.building.description.label', 'Want to invite other Illinois app users to view this location? Use one of the sharing options below.'),
+    analyticsFeature: analyticsFeature,
   );
 
   @override

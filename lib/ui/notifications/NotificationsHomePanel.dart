@@ -87,7 +87,7 @@ class NotificationsHomePanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeMapStudentCourses,
       FirebaseMessaging.payloadTypeMapAppointments,
       FirebaseMessaging.payloadTypeMapMtdStops,
-      FirebaseMessaging.payloadTypeMapMtdDestinations,
+      FirebaseMessaging.payloadTypeMapMyLocations,
       FirebaseMessaging.payloadTypeMapMentalHealth,
       FirebaseMessaging.payloadTypeMapStateFarmWayfinding,
       FirebaseMessaging.payloadTypeAcademics,

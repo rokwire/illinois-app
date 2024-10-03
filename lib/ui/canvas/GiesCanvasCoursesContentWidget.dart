@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/cupertino.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/Canvas.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
@@ -28,11 +29,14 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class GiesCanvasCoursesContentWidget extends StatefulWidget {
+class GiesCanvasCoursesContentWidget extends StatefulWidget with AnalyticsInfo {
   GiesCanvasCoursesContentWidget();
 
   @override
   _GiesCanvasCoursesContentWidgetState createState() => _GiesCanvasCoursesContentWidgetState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.AcademicsGiesCanvasCourses;
 }
 
 class _GiesCanvasCoursesContentWidgetState extends State<GiesCanvasCoursesContentWidget> implements NotificationsListener {
@@ -121,7 +125,8 @@ class _GiesCanvasCoursesContentWidgetState extends State<GiesCanvasCoursesConten
 
   void _onTapCourse(int courseId) {
     Analytics().logSelect(target: 'Canvas Course');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseHomePanel(courseId: courseId)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+      CanvasCourseHomePanel(courseId: courseId, analyticsFeature: widget.analyticsFeature,)));
   }
 
   void _updateCourses() {

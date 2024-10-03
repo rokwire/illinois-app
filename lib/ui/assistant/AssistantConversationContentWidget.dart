@@ -277,9 +277,15 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                                 visible: (message.feedbackResponseType == FeedbackResponseType.positive),
                                                 child: _buildFeedbackResponseDisclaimer())
                                           ])),
-                                          Visibility(visible: isNegativeFeedbackFormVisible, child: Align(alignment: Alignment.centerRight, child: Padding(padding: EdgeInsets.only(left: 16, top: 8, right: 8, bottom: 16), child:
-                                            GestureDetector(onTap: () => _onTapCloseNegativeFeedbackForm(message), child: Styles().images.getImage('close-circle', excludeFromSemantics: true))
-                                          )))
+                                          Visibility(visible: isNegativeFeedbackFormVisible, child:
+                                            Align(alignment: Alignment.centerRight, child:
+                                              GestureDetector(onTap: () => _onTapCloseNegativeFeedbackForm(message), child:
+                                                Padding(padding: EdgeInsets.only(left: 16, top: 8, right: 8, bottom: 16), child:
+                                                  Styles().images.getImage('close-circle', excludeFromSemantics: true)
+                                                )
+                                              )
+                                            )
+                                          )
                                     ])))))))
               ])),
       _buildFeedbackAndSourcesExpandedWidget(message)

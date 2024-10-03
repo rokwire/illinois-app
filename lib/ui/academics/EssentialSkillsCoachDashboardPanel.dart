@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/ext/CustomCourses.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/CustomCourses.dart';
 import 'package:neom/service/AppDateTime.dart';
 import 'package:neom/service/Auth2.dart';
@@ -26,11 +27,14 @@ import 'package:sprintf/sprintf.dart';
 
 enum EssentialSkillsCoachTab { coach, history }
 
-class EssentialSkillsCoachDashboardPanel extends StatefulWidget {
+class EssentialSkillsCoachDashboardPanel extends StatefulWidget with AnalyticsInfo {
   EssentialSkillsCoachDashboardPanel();
 
   @override
   State<EssentialSkillsCoachDashboardPanel> createState() => _EssentialSkillsCoachDashboardPanelState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.AcademicsEssentialSkillsCoach;
 }
 
 class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoachDashboardPanel> implements NotificationsListener {
@@ -215,6 +219,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
             userCourse: _userCourse!,
             courseConfig: _courseConfig,
             firstScheduleItemCompleted: UserUnit.firstScheduleItemCompletionFromList(_userCourseUnits ?? []),
+            analyticsFeature: widget.analyticsFeature,
           )));
         } : null,
         child: Row(
@@ -347,6 +352,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                                   unitName: userUnit.unit?.name ?? "",
                                   moduleIcon: _selectedModuleIcon,
                                   moduleName: _selectedModule?.name ?? '',
+                                  analyticsFeature: widget.analyticsFeature,
                               )));
                             } : null,
                             child: Styles().images.getImage('closed-book'),
@@ -512,6 +518,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                 unitNumber: unitNumber,
                 unitName: userUnit.unit?.name ?? '',
                 activityNumber: activityNumber,
+                analyticsFeature: widget.analyticsFeature,
               ))).then((result) => _handleProgressUpdate(result, userUnit, unitNumber, userContentReference, activityNumber));
               break;
             case ReferenceType.video:
@@ -751,6 +758,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                     activityNumber: activityNumber,
                     pauses: earnedPause ? _userCourse?.pauses : null,
                     color: _selectedModulePrimaryColor,
+                    analyticsFeature: widget.analyticsFeature,
                   )));
             }
           }

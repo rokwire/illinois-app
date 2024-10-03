@@ -1,43 +1,73 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neom/ext/Explore.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/StudentCourse.dart';
 import 'package:neom/service/Analytics.dart';
+import 'package:neom/service/Gateway.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:neom/ui/widgets/QrCodePanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class ExploreBuildingDetailPanel extends StatelessWidget {
-  final Building building;
+class ExploreBuildingDetailPanel extends StatefulWidget {
+  final Building? building;
+  final String? buildingNumber;
 
-  ExploreBuildingDetailPanel({Key? key, required this.building}) : super(key: key);
+  ExploreBuildingDetailPanel({Key? key, this.building, this.buildingNumber}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _ExploreBuildingDetailPanelState();
+}
+
+class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel> {
+
+  Building? _building;
+  bool _loadingBuilding = false;
+
+  @override
+  void initState() {
+    if (widget.building != null) {
+      _building = widget.building;
+    }
+    else if (widget.buildingNumber != null) {
+      _loadingBuilding = true;
+      Gateway().loadBuilding(buildingNumber: widget.buildingNumber).then((Building? building){
+        if (mounted) {
+          setState(() {
+            _loadingBuilding = false;
+            _building = building;
+          });
+        }
+      });
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) =>
     Scaffold(
-      body: _buildContent(context),
+      body: _buildScaffoldContent(),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar()
     );
 
-  Widget _buildContent(BuildContext context) => Column(children: <Widget>[
+  Widget _buildScaffoldContent() => Column(children: <Widget>[
     Expanded(child:
       CustomScrollView(slivers: <Widget>[
         SliverToutHeaderBar(
-          flexImageUrl:  building.imageURL,
+          flexImageUrl: (_building != null) ? _building?.imageURL : null,
+          flexWidget: (_building == null) ? Container(color: Styles().colors.background,) : null,
           flexRightToLeftTriangleColor: Styles().colors.background,
-          flexLeftToRightTriangleColor: Colors.transparent,
+          flexLeftToRightTriangleColor: Styles().colors.fillColorSecondaryTransparent05,
         ),
         SliverList(delegate:
           SliverChildListDelegate([
             Padding(padding: EdgeInsets.all(16), child:
-              Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                _buildTitle(),
-                _buildLocation(),
-                // _buildFloorPlansAndAmenities(),
-              ])
+              _buildPanelContent()
             ),
           ], addSemanticIndexes:false)
         ),
@@ -45,11 +75,31 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
     ),
   ]);
 
+  Widget _buildPanelContent() {
+    if (_building != null) {
+      return _buildBuildingContent();
+    }
+    else if (_loadingBuilding == true) {
+      return _buildLoadingContent();
+    }
+    else {
+      return _buildErrorContent();
+    }
+  }
+
+  Widget _buildBuildingContent() =>
+    Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+      _buildTitle(),
+      _buildLocation(),
+      _buildShare(),
+      // _buildFloorPlansAndAmenities(),
+    ]);
+
   Widget _buildTitle() =>
     Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
       Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         Expanded(child:
-          Text(building.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.large.fat")),
+          Text(_building?.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.large.fat")),
         ),
       ],),
     );
@@ -63,11 +113,28 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
               Styles().images.getImage('location', excludeFromSemantics: true),
             ),
             Expanded(child:
-              Text(building.fullAddress ?? '', style: Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline")
+              Text(_building?.fullAddress ?? '', style:
+                Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline")
               ),
             )
           ],),
         ),
+      ),
+    );
+
+  Widget _buildShare() =>
+    InkWell(onTap: _onShare, child:
+      Padding(padding: EdgeInsets.symmetric(vertical: 10, ), child:
+        Row(children: [
+          Padding(padding: EdgeInsets.only(right: 6), child:
+            Styles().images.getImage('share', excludeFromSemantics: true),
+          ),
+          Expanded(child:
+            Text(Localization().getStringEx('panel.explore_building_detail.detail.share', 'Share This Location'), style:
+              Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline")
+            ),
+          )
+        ],),
       ),
     );
 
@@ -90,12 +157,35 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
       ),
     );
 
+  Widget _buildLoadingContent() => Center(child:
+    Padding(padding: EdgeInsets.zero, child:
+      SizedBox(width: 32, height: 32, child: _loadingBuilding ?
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3, ) : null
+      )
+    ),
+  );
+
+  Widget _buildErrorContent() => Center(child:
+    Padding(padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 64), child:
+        Text(Localization().getStringEx('panel.explore_building_detail.message.failed', 'Failed to load location details'), style: Styles().textStyles.getTextStyle("widget.message.large"), textAlign: TextAlign.center,)
+    ),
+  );
+
   bool _canLocation() =>
-    StringUtils.isNotEmpty(building.fullAddress);
+    StringUtils.isNotEmpty(_building?.fullAddress);
 
   void _onLocation() {
     Analytics().logSelect(target: "Location Directions");
-    building.launchDirections();
+    _building?.launchDirections();
+  }
+
+  void _onShare() {
+    Analytics().logSelect(target: "Share This Location");
+    if (_building != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+        QrCodePanel.fromBuilding(_building, analyticsFeature: AnalyticsFeature.Map,)
+      ));
+    }
   }
 
   bool _canFloorPlansAndAmenities() =>

@@ -19,6 +19,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:neom/model/Video.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/NativeCommunicator.dart';
@@ -30,10 +31,11 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:video_player/video_player.dart';
 
-class AppHelpVideoTutorialPanel extends StatefulWidget {
+class AppHelpVideoTutorialPanel extends StatefulWidget with AnalyticsInfo {
   final Video videoTutorial;
+  final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  AppHelpVideoTutorialPanel({required this.videoTutorial});
+  AppHelpVideoTutorialPanel({required this.videoTutorial, this.analyticsFeature});
 
   @override
   State<AppHelpVideoTutorialPanel> createState() => _AppHelpVideoTutorialPanelState();
