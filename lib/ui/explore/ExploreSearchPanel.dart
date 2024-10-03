@@ -16,17 +16,17 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Analytics.dart';
+import 'package:neom/model/Analytics.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/explore.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/ui/explore/ExploreCard.dart';
+import 'package:neom/service/Analytics.dart';
+import 'package:neom/ui/explore/ExploreDetailPanel.dart';
+import 'package:neom/ui/widgets/HeaderBar.dart';
+import 'package:neom/ui/widgets/TabBar.dart' as uiuc;
+import 'package:neom/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';

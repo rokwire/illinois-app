@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:neom/service/AppDateTime.dart';
+import 'package:neom/service/Assistant.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/Questionnaire.dart';
 import 'package:neom/service/SpeechToText.dart';
@@ -132,7 +133,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       // StudentCourses(),
       // Appointments(),
       // MTD(),
-      SpeechToText(),
+      // SpeechToText(),
       // Assistant(),
       // MobileAccess(),
     ]);

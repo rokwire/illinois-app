@@ -19,7 +19,7 @@ import 'package:rokwire_plugin/ui/panels/survey_creation_panel.dart';
 import 'package:rokwire_plugin/ui/panels/survey_panel.dart' as rokwire;
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class SurveyPanel extends rokwire.SurveyPanel{
+class SurveyPanel extends rokwire.SurveyPanel with AnalyticsInfo {
 
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 

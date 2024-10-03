@@ -809,38 +809,34 @@ packages:
   google_maps_flutter_android:
     dependency: transitive
     description:
-      path: "packages/google_maps_flutter/google_maps_flutter_android"
-      ref: "google_maps_flutter/add-poi-tap-callback-2.9.0"
-      resolved-ref: bbc04e0e6fe0c702cf129f31dabf44061977eeaf
-      url: "https://github.com/rokwire/packages.git"
-    source: git
-    version: "2.13.0"
+      name: google_maps_flutter_android
+      sha256: "10cf27bee8c560f8e69992b3a0f27ddf1d7acbea622ddb13ef3f587848a73f26"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.14.7"
   google_maps_flutter_ios:
     dependency: transitive
     description:
-      path: "packages/google_maps_flutter/google_maps_flutter_ios"
-      ref: "google_maps_flutter/add-poi-tap-callback-2.9.0"
-      resolved-ref: bbc04e0e6fe0c702cf129f31dabf44061977eeaf
-      url: "https://github.com/rokwire/packages.git"
-    source: git
-    version: "2.12.0"
+      name: google_maps_flutter_ios
+      sha256: "3a484846fc56f15e47e3de1f5ea80a7ff2b31721d2faa88f390f3b3cf580c953"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.13.0"
   google_maps_flutter_platform_interface:
     dependency: transitive
     description:
-      path: "packages/google_maps_flutter/google_maps_flutter_platform_interface"
-      ref: "google_maps_flutter/add-poi-tap-callback-2.9.0"
-      resolved-ref: bbc04e0e6fe0c702cf129f31dabf44061977eeaf
-      url: "https://github.com/rokwire/packages.git"
-    source: git
-    version: "2.9.0"
+      name: google_maps_flutter_platform_interface
+      sha256: faf05935c2714445ae23ca16af523beba7bd5418c4c74798d67144f562df3e87
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.9.3"
   google_maps_flutter_web:
     dependency: transitive
     description:
-      path: "packages/google_maps_flutter/google_maps_flutter_web"
-      ref: "google_maps_flutter/add-poi-tap-callback-2.9.0"
-      resolved-ref: bbc04e0e6fe0c702cf129f31dabf44061977eeaf
-      url: "https://github.com/rokwire/packages.git"
-    source: git
+      name: google_maps_flutter_web
+      sha256: ff39211bd25d7fad125d19f757eba85bd154460907cd4d135e07e3d0f98a4130
+      url: "https://pub.dev"
+    source: hosted
     version: "0.5.10"
   html:
     dependency: transitive
@@ -978,14 +974,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.7"
-  js_wrapping:
-    dependency: transitive
-    description:
-      name: js_wrapping
-      sha256: e385980f7c76a8c1c9a560dfb623b890975841542471eade630b2871d243851c
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.7.4"
   json_annotation:
     dependency: transitive
     description:

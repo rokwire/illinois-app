@@ -175,7 +175,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   }
 
   Widget _buildMapView() {
-    return Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.disabledTextColor, width: 1)), child:
+    return Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.textDisabled, width: 1)), child:
       GoogleMap(
         key: _mapKey,
         initialCameraPosition: _lastCameraPosition ?? _defaultCameraPosition,
@@ -183,7 +183,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
         onCameraIdle: _onMapCameraIdle,
         onCameraMove: _onMapCameraMove,
         onTap: _onMapTap,
-        onPoiTap: _onMapPoiTap,
+        // onPoiTap: _onMapPoiTap,
         myLocationEnabled: _userLocationEnabled,
         myLocationButtonEnabled: _userLocationEnabled,
         mapToolbarEnabled: Storage().debugMapShowLevels ?? false,
@@ -252,19 +252,19 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     }
   }
 
-  void _onMapPoiTap(PointOfInterest poi) {
-    debugPrint('ExploreMap POI tap' );
-    MTDStop? mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: poi.position.latitude, longitude: poi.position.longitude), locationThresholdDistance: 25 /*in meters*/);
-    if (mtdStop != null) {
-      _selectMapExplore(mtdStop);
-    }
-    else if (_selectedMapExplore != null) {
-      _selectMapExplore(null);
-    }
-    else {
-      _selectMapExplore(ExplorePOI(placeId: poi.placeId, name: poi.name, location: ExploreLocation(latitude: poi.position.latitude, longitude: poi.position.longitude)));
-    }
-  }
+  // void _onMapPoiTap(PointOfInterest poi) {
+  //   debugPrint('ExploreMap POI tap' );
+  //   MTDStop? mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: poi.position.latitude, longitude: poi.position.longitude), locationThresholdDistance: 25 /*in meters*/);
+  //   if (mtdStop != null) {
+  //     _selectMapExplore(mtdStop);
+  //   }
+  //   else if (_selectedMapExplore != null) {
+  //     _selectMapExplore(null);
+  //   }
+  //   else {
+  //     _selectMapExplore(ExplorePOI(placeId: poi.placeId, name: poi.name, location: ExploreLocation(latitude: poi.position.latitude, longitude: poi.position.longitude)));
+  //   }
+  // }
 
   void _onTapMarker(dynamic origin) {
     _selectMapExplore(origin);
