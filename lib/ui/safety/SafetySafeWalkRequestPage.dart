@@ -15,6 +15,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -185,11 +186,127 @@ class SafetySafeWalkRequestCard extends StatefulWidget {
 
 class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
   @override
-  Widget build(BuildContext context) => Container(decoration: _cardDecoration, height: 256,);
+  Widget build(BuildContext context) =>
+    Container(decoration: _cardDecoration, padding: EdgeInsets.all(16), child:
+      Column(children: [
+        Row(children: [
+          Padding(padding: EdgeInsets.only(right: 8), child:
+            _detailIconSpacer,
+          ),
+          Expanded(child:
+            Text(Localization().getStringEx('widget.safewalks_request.origin.title', 'Current Location'), style: _titleTextStyle,),
+          ),
+        ],),
+
+        Row(children: [
+          Padding(padding: EdgeInsets.only(right: 8), child:
+            Styles().images.getImage('person', size: _detailIconSize) ?? _detailIconSpacer,
+          ),
+          Expanded(child:
+            RibbonButton(
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+              backgroundColor: Styles().colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+              rightIconKey: 'chevron-down', // 'chevron-up'
+              label: '',
+              onTap: _onTapOrigin
+            ),
+          ),
+        ],),
+
+        Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          Padding(padding: EdgeInsets.only(left: _detailIconSize / 2, right: _detailIconSize / 2 + 7), child:
+            CustomPaint(size: Size(1, 16 + MediaQuery.of(context).textScaler.scale(_titleTextStyle?.fontSize ?? 18)), painter:
+              _VerticalDashedLinePainter(dashColor: Styles().colors.fillColorPrimary),
+            )
+          ),
+          Expanded(child:
+            Text(Localization().getStringEx('widget.safewalks_request.destination.title', 'Destination'), style: _titleTextStyle,),
+          ),
+        ],),
+
+        Row(children: [
+          Padding(padding: EdgeInsets.only(right: 8), child:
+            Styles().images.getImage('location', size: _detailIconSize) ?? _detailIconSpacer,
+          ),
+          Expanded(child:
+            RibbonButton(
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+              backgroundColor: Styles().colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+              rightIconKey: 'chevron-down', // 'chevron-up'
+              label: '',
+              onTap: _onTapDestination
+            ),
+          ),
+        ],),
+
+        Padding(padding: EdgeInsets.only(top: 24, bottom: 8), child:
+          Row(children: [
+            Padding(padding: EdgeInsets.only(right: 8), child:
+              _detailIconSpacer,
+            ),
+            Expanded(child:
+              Center(child:
+                RoundedButton(
+                  label: Localization().getStringEx('widget.safewalks_request.start.title', 'Start with a Text'),
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  leftIcon: Styles().images.getImage('paper-plane'),
+                  leftIconPadding: EdgeInsets.only(left: 12, right: 8),
+                  rightIconPadding: EdgeInsets.only(left: 16),
+                  contentWeight: -1,
+                  onTap: _onTapSend,
+                )
+              )
+            ),
+          ],),
+        )
+      ],)
+    );
 
   BoxDecoration get _cardDecoration => BoxDecoration(
     color: Styles().colors.background,
     border: Border.all(color: Styles().colors.mediumGray2, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(16))
   );
+
+  TextStyle? get _titleTextStyle => Styles().textStyles.getTextStyle('widget.title.medium.fat');
+
+  double get _detailIconSize => 18;
+  Widget get _detailIconSpacer => SizedBox(width: _detailIconSize, height: _detailIconSize,);
+
+  void _onTapOrigin() {
+    Analytics().logSelect(target: 'Current Location');
+  }
+
+  void _onTapDestination() {
+    Analytics().logSelect(target: 'Destination');
+  }
+
+  void _onTapSend() {
+    Analytics().logSelect(target: 'Start with a Text');
+  }
+}
+
+class _VerticalDashedLinePainter extends CustomPainter {
+  final double dashHeight;
+  final double dashSpace;
+  final Color dashColor;
+
+  _VerticalDashedLinePainter({this.dashHeight = 5, this.dashSpace = 3, this.dashColor = Colors.black});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = dashColor
+      ..strokeWidth = size.width;
+    for (double startY = 0; startY < size.height; startY += dashHeight + dashSpace) {
+      canvas.drawLine(Offset(0, startY), Offset(0, startY + dashHeight), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
