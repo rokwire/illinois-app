@@ -11,6 +11,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -47,13 +48,13 @@ class SafetySafeWalkRequestPage extends StatelessWidget with SafetyHomeContentPa
       ),
       Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(Localization().getStringEx('panel.safewalks_request.sub_title1.text', 'Trust your instincts.'), style: _subTitleTextStyle,),
-          Text(Localization().getStringEx('panel.safewalks_request.sub_title2.text', 'You never have to walk alone.'), style: _subTitleTextStyle,),
+          Text(_subTitle1Text, style: _subTitleTextStyle,),
+          Text(_subTitle2Text, style: _subTitleTextStyle,),
           Container(height: 12,),
-          Text(Localization().getStringEx('panel.safewalks_request.info1.text', 'Request a student patrol officer to walk with you.'), style: _infoTextStyle,),
-          Text(Localization().getStringEx('panel.safewalks_request.info2.text', 'Please give at least 15 minutes\' notice.'), style: _infoTextStyle,),
+          Text(_info1Text, style: _infoTextStyle,),
+          Text(_info2Text, style: _infoTextStyle,),
           Container(height: 6,),
-          Text(Localization().getStringEx('panel.safewalks_request.info3.text', 'Available 9:00 p.m. to 2:30 a.m.'), style: _infoTextStyle,),
+          Text(_info3Text, style: _infoTextStyle,),
         ])
       ),
       Stack(children: [
@@ -73,10 +74,6 @@ class SafetySafeWalkRequestPage extends StatelessWidget with SafetyHomeContentPa
       ],),
     ],)
   );
-
-  TextStyle? get _titleTextStyle => Styles().textStyles.getTextStyle('widget.heading.extra2_large.extra_fat');
-  TextStyle? get _subTitleTextStyle => Styles().textStyles.getTextStyle('panel.safewalks_request.sub_title');
-  TextStyle? get _infoTextStyle => Styles().textStyles.getTextStyle('panel.safewalks_request.info');
 
   Widget _detailsLayer(BuildContext context) => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16,), child:
     Column( children: [
@@ -117,9 +114,32 @@ class SafetySafeWalkRequestPage extends StatelessWidget with SafetyHomeContentPa
 
   Widget get _detailIconSpacer => SizedBox(width: 18, height: 18,);
 
+  TextStyle? get _titleTextStyle => Styles().textStyles.getTextStyle('widget.heading.extra2_large.extra_fat');
+  TextStyle? get _subTitleTextStyle => Styles().textStyles.getTextStyle('panel.safewalks_request.sub_title');
+  TextStyle? get _infoTextStyle => Styles().textStyles.getTextStyle('panel.safewalks_request.info');
+
+  static const String _safeWalkStartTimeMacro = '{{safewalk_start_time}}';
+  static const String _safeWalkEndTimeMacro = '{{safewalk_end_time}}';
   static const String _safeWalkPhoneNumberMacro = '{{safewalk_phone_number}}';
   static const String _safeRidesUrlMacro = '{{saferides_url}}';
   static const String _externalLinkMacro = '{{external_link_icon}}';
+
+  String get _subTitle1Text =>
+    Localization().getStringEx('panel.safewalks_request.sub_title1.text', 'Trust your instincts.');
+
+  String get _subTitle2Text =>
+    Localization().getStringEx('panel.safewalks_request.sub_title2.text', 'You never have to walk alone.');
+
+  String get _info1Text =>
+    Localization().getStringEx('panel.safewalks_request.info1.text', 'Request a student patrol officer to walk with you.');
+
+  String get _info2Text =>
+    Localization().getStringEx('panel.safewalks_request.info2.text', 'Please give at least 15 minutes\' notice.');
+
+  String get _info3Text =>
+    Localization().getStringEx('panel.safewalks_request.info3.text', 'Available $_safeWalkStartTimeMacro to $_safeWalkEndTimeMacro')
+      .replaceAll(_safeWalkStartTimeMacro, Config().safeWalkStartTime ?? '')
+      .replaceAll(_safeWalkEndTimeMacro, Config().safeWalkEndTime ?? '');
 
   String get _phoneDetailHtml =>
     Localization().getStringEx('panel.safewalks_request.detail.phone.html', 'You can also schedule a walk by calling <a href=\'tel:$_safeWalkPhoneNumberMacro\'>$_safeWalkPhoneNumberMacro</a>.')
