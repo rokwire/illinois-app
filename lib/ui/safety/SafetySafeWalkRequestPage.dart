@@ -1,19 +1,23 @@
 
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/explore/ExploreMapPanel.dart';
+import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
-import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -187,6 +191,9 @@ class SafetySafeWalkRequestCard extends StatefulWidget {
 }
 
 class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
+  dynamic _originLocation, _destinationLocation;
+  bool _originProgress = false, _destinationProgress = false;
+
   @override
   Widget build(BuildContext context) =>
     Container(decoration: _cardDecoration, padding: EdgeInsets.all(16), child:
@@ -206,7 +213,8 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
           ),
           Expanded(child:
             _dropdownButton(
-              text: null,
+              text: _locationDescription(_originLocation),
+              progress: _originProgress,
               items: _originDropDownItems,
               onChanged: _onTapOriginLocationType,
             ),
@@ -230,7 +238,8 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
           ),
           Expanded(child:
             _dropdownButton(
-              text: null,
+              text: _locationDescription(_destinationLocation),
+              progress: _destinationProgress,
               items: _destinationDropDownItems,
               onChanged: _onTapDestinationLocationType,
             ),
@@ -260,7 +269,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
       ],)
     );
 
-  Widget _dropdownButton({ String? text, required List<DropdownMenuItem<_SafeWalkLocationType>> items, void Function(_SafeWalkLocationType?)? onChanged }) =>
+  Widget _dropdownButton({ String? text, bool? progress, required List<DropdownMenuItem<_SafeWalkLocationType>> items, void Function(_SafeWalkLocationType?)? onChanged }) =>
     Container(decoration: _dropdownButtonDecoration, child:
       Padding(padding: EdgeInsets.only(left: 12, right: 8, top: 2, bottom: 2), child:
         DropdownButtonHideUnderline(child:
@@ -268,13 +277,21 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
             icon: Styles().images.getImage('chevron-down'),
             isExpanded: true,
             style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-            hint: Text(text ?? '', style: _dropDownItemTextStyle,),
+            hint: _dropdownButtonHint(text: text, progress: progress),
             items: items,
             onChanged: onChanged,
           ),
         ),
       ),
     );
+
+  Widget? _dropdownButtonHint({String? text, bool? progress}) => (progress == true) ?
+    Center(child:
+      SizedBox(width: 18, height: 18, child:
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,)
+      )
+    ):
+    Text(text ?? '', style: _dropDownItemTextStyle,);
 
   Widget _dropDownItemWidget({String? title, Widget? icon}) =>
     Semantics(label: title, excludeSemantics: true, container:true, child:
@@ -329,12 +346,115 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
   double get _detailIconSize => 18;
   Widget get _detailIconSpacer => SizedBox(width: _detailIconSize, height: _detailIconSize,);
 
-  void _onTapOriginLocationType(_SafeWalkLocationType? value) {
-    Analytics().logSelect(target: "Origin: ${_safeWalkLocationTypeToDisplayString(value)}");
+  void _updateOriginProgress(bool value) => setState((){
+    _originProgress = value;
+  });
+
+  void _updateDestinationProgress(bool value) => setState((){
+    _destinationProgress = value;
+  });
+
+  Future<dynamic> _provideLocation(_SafeWalkLocationType? locationType, { dynamic locationValue, void Function(bool)? updateProgress }) async {
+    if (locationType == _SafeWalkLocationType.current) {
+      return _provideCurrentLocation(updateProgress: updateProgress);
+    }
+    else if (locationType == _SafeWalkLocationType.map) {
+      return _provideMapLocation(locationValue, updateProgress: updateProgress);
+    }
+    else if (locationType == _SafeWalkLocationType.saved) {
+      return _provideSavedLocation();
+    }
   }
 
-  void _onTapDestinationLocationType(_SafeWalkLocationType? value) {
-    Analytics().logSelect(target: "Destination: ${_safeWalkLocationTypeToDisplayString(value)}");
+  Future<dynamic> _provideCurrentLocation({ void Function(bool)? updateProgress }) async {
+    updateProgress?.call(true);
+    LocationServicesStatus? status = await LocationServices().status;
+    if ((status == LocationServicesStatus.serviceDisabled) && mounted) {
+      status = await LocationServices().requestService();
+    }
+    if ((status == LocationServicesStatus.permissionNotDetermined) && mounted) {
+      status = await LocationServices().requestPermission();
+    }
+    if (mounted) {
+      if (status == LocationServicesStatus.permissionAllowed) {
+        Position? position = await LocationServices().location;
+        updateProgress?.call(false);
+        return position;
+      }
+      else {
+        updateProgress?.call(false);
+        if (status == LocationServicesStatus.permissionNotDetermined) {
+          ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.service_disabled.title', 'Location Services not enabled.'));
+        }
+        else if (status == LocationServicesStatus.permissionDenied) {
+          ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.service_denied.title', 'Location Services access denied.'));
+        }
+        else {
+          ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.service_not_available.title', 'Location Services not available.'));
+        }
+      }
+    }
+
+  }
+
+  Future<dynamic> _provideMapLocation(dynamic location, { void Function(bool)? updateProgress }) async =>
+    Navigator.push<Explore>(context, CupertinoPageRoute(builder: (context) => ExploreMapSelectLocationPanel(
+      mapType: ExploreMapType.Buildings,
+      selectedExplore: _locationExplore(location),
+    )));
+
+  Future<dynamic> _provideSavedLocation() async {
+
+  }
+
+  String? _locationDescription(dynamic location) {
+    if (location is Position) {
+      return "[${location.latitude.toStringAsFixed(6)}, ${location.longitude.toStringAsFixed(6)}]";
+    }
+    else if (location is Explore) {
+      return location.exploreTitle;
+    }
+    else {
+      return null;
+    }
+  }
+
+  Explore? _locationExplore(dynamic location) {
+    if (location is Explore) {
+      return location;
+    }
+    else if (location is Position) {
+      return ExplorePOI(location: ExploreLocation(
+        name: Localization().getStringEx('panel.explore.item.location.name', 'Location'),
+        latitude: location.latitude,
+        longitude: location.longitude,
+      ));
+    }
+    else {
+      return null;
+    }
+  }
+
+  void _onTapOriginLocationType(_SafeWalkLocationType? locationType) {
+    Analytics().logSelect(target: "Origin: ${_safeWalkLocationTypeToDisplayString(locationType)}");
+    _provideLocation(locationType, locationValue: _originLocation, updateProgress: _updateOriginProgress).then((result){
+      if ((result != null) && mounted) {
+        setState(() {
+          _originLocation = result;
+        });
+      }
+    });
+  }
+
+  void _onTapDestinationLocationType(_SafeWalkLocationType? locationType) {
+    Analytics().logSelect(target: "Destination: ${_safeWalkLocationTypeToDisplayString(locationType)}");
+    _provideLocation(locationType, locationValue: _destinationLocation, updateProgress: _updateDestinationProgress).then((result){
+      if ((result != null) && mounted) {
+        setState(() {
+          _destinationLocation = result;
+        });
+      }
+    });
   }
 
   void _onTapSend() {
@@ -359,7 +479,6 @@ Widget? _safeWalkLocationTypeDisplayIcon(_SafeWalkLocationType? locationType) {
     default: return null;
   }
 }
-
 
 class _VerticalDashedLinePainter extends CustomPainter {
   final double dashHeight;

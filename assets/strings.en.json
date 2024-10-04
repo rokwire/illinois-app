@@ -3319,6 +3319,9 @@
     "widget.safewalks_request.location.current.title": "Use My Location",
     "widget.safewalks_request.location.map.title": "Search Maps",
     "widget.safewalks_request.location.saved.title": "View Saved Locations",
+    "widget.safewalks_request.message.service_disabled.title": "Location Services not enabled.",
+    "widget.safewalks_request.message.service_denied.title": "Location Services access denied.",
+    "widget.safewalks_request.message.service_not_available.title": "Location Services not available.",
 
     "panel.home_canvas_course.header.title": "Course",
     "panel.home_canvas_course.load.failed.error.msg": "Failed to load course. Please try again later.",
