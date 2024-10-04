@@ -68,8 +68,9 @@ class SavedPanel extends StatefulWidget with AnalyticsInfo {
   ];
 
   final List<String> favoriteCategories;
+  final void Function(Favorite favorite)? onTapFavorite;
 
-  SavedPanel({this.favoriteCategories = allFavoriteCategories});
+  SavedPanel({this.favoriteCategories = allFavoriteCategories, this.onTapFavorite});
 
   @override
   _SavedPanelState createState() => _SavedPanelState();
@@ -222,8 +223,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       for (String favoriteCategory in widget.favoriteCategories) {
         contentList.add(_SavedItemsList(headingTitle: _favoriteCategoryTitle(favoriteCategory),
           headingIconKey: _favoriteCategoryIconKey(favoriteCategory),
-          items: _favorites[favoriteCategory])
-        );
+          items: _favorites[favoriteCategory],
+          onTapFavorite: widget.onTapFavorite,
+        ),);
       }
       padding = EdgeInsets.zero;
     }
@@ -233,7 +235,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       if (0 < (favorites?.length ?? 0)) {
         for (int index = 0; index < favorites!.length; index++) {
           contentList.add(Padding(padding: EdgeInsets.only(top: (0 < index) ? 8 : 0), child:
-            _SavedItem(favorites[index])
+            _SavedItem(favorites[index], onTap: widget.onTapFavorite,)
           ));
         }
         contentList.add(LinkButton(
@@ -463,9 +465,10 @@ class _SavedItemsList extends StatefulWidget {
   final String? headingIconKey;
   final String slantImageKey;
   final Color? slantColor;
+  final void Function(Favorite favorite)? onTapFavorite;
 
   // ignore: unused_element
-  _SavedItemsList({this.items, this.limit = 3, this.headingTitle, this.headingIconKey, this.slantImageKey = 'slant-dark', this.slantColor});
+  _SavedItemsList({this.items, this.limit = 3, this.headingTitle, this.headingIconKey, this.slantImageKey = 'slant-dark', this.slantColor, this.onTapFavorite});
 
   _SavedItemsListState createState() => _SavedItemsListState();
 }
@@ -502,7 +505,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       int itemsCount = widget.items!.length;
       int visibleCount = (((widget.limit <= 0) || _showAll) ? itemsCount : min(widget.limit, itemsCount));
       for (int i = 0; i < visibleCount; i++) {
-        widgets.add(_SavedItem(widget.items![i]));
+        widgets.add(_SavedItem(widget.items![i], onTap: widget.onTapFavorite,));
         if (i < (visibleCount - 1)) {
           widgets.add(Container(height: 12,));
         }
@@ -530,8 +533,9 @@ class _SavedItemsListState extends State<_SavedItemsList>{
 
 class _SavedItem extends StatelessWidget {
   final Favorite favorite;
+  final void Function(Favorite favorite)? onTap;
   
-  _SavedItem(this.favorite, {Key ? key}) : super(key: key);
+  _SavedItem(this.favorite, { this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -600,6 +604,11 @@ class _SavedItem extends StatelessWidget {
 
   void _onTapFavorite(BuildContext context) {
     Analytics().logSelect(target: favorite.favoriteTitle);
-    favorite.favoriteLaunchDetail(context);
+    if (onTap != null) {
+      onTap?.call(favorite);
+    }
+    else {
+      favorite.favoriteLaunchDetail(context);
+    }
   }
 }

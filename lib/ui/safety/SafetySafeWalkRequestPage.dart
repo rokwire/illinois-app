@@ -4,16 +4,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Guide.dart';
+import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -400,12 +403,16 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
   Future<dynamic> _provideMapLocation(dynamic location, { void Function(bool)? updateProgress }) async =>
     Navigator.push<Explore>(context, CupertinoPageRoute(builder: (context) => ExploreMapSelectLocationPanel(
       mapType: ExploreMapType.Buildings,
-      selectedExplore: _locationExplore(location),
+      /*selectedExplore: _locationExplore(location),*/
     )));
 
-  Future<dynamic> _provideSavedLocation() async {
-
-  }
+  Future<dynamic> _provideSavedLocation() async =>
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel(
+      favoriteCategories: [ExplorePOI.favoriteKeyName],
+      onTapFavorite: (Favorite favorite) {
+        Navigator.pop(context, favorite);
+      },
+    )));
 
   String? _locationDescription(dynamic location) {
     if (location is Position) {
@@ -414,12 +421,15 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
     else if (location is Explore) {
       return location.exploreTitle;
     }
+    else if (location is Favorite) {
+      return location.favoriteTitle;
+    }
     else {
       return null;
     }
   }
 
-  Explore? _locationExplore(dynamic location) {
+  /*Explore? _locationExplore(dynamic location) {
     if (location is Explore) {
       return location;
     }
@@ -433,7 +443,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
     else {
       return null;
     }
-  }
+  }*/
 
   void _onTapOriginLocationType(_SafeWalkLocationType? locationType) {
     Analytics().logSelect(target: "Origin: ${_safeWalkLocationTypeToDisplayString(locationType)}");
