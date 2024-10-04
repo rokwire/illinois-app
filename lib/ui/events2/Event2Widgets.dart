@@ -688,7 +688,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
 
   void _onTapRemoveGroupEvent() {
     Analytics().logSelect(target: 'Remove Group Event');
-    Events2().deleteEvent(eventId: _event.id!, groupIds:_event.groupIds).then((result) {
+    Events2().linkEventToGroup(event: _event, groupId: widget.group!.id!, link: false).then((result) {
       if (result == true) {
         Navigator.of(context).pop();
       } else {
