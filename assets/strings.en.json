@@ -3316,6 +3316,9 @@
     "widget.safewalks_request.origin.title": "Current Location",
     "widget.safewalks_request.destination.title": "Destination",
     "widget.safewalks_request.start.title": "Start with a Text",
+    "widget.safewalks_request.location.current.title": "Use My Location",
+    "widget.safewalks_request.location.map.title": "Search Maps",
+    "widget.safewalks_request.location.saved.title": "View Saved Locations",
 
     "panel.home_canvas_course.header.title": "Course",
     "panel.home_canvas_course.load.failed.error.msg": "Failed to load course. Please try again later.",

@@ -20,6 +20,8 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+enum _SafeWalkLocationType { current, map, saved }
+
 class SafetySafeWalkRequestPage extends StatelessWidget with SafetyHomeContentPage {
 
   @override
@@ -203,14 +205,10 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
             Styles().images.getImage('person', size: _detailIconSize) ?? _detailIconSpacer,
           ),
           Expanded(child:
-            RibbonButton(
-              textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-              backgroundColor: Styles().colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(5)),
-              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-              rightIconKey: 'chevron-down', // 'chevron-up'
-              label: '',
-              onTap: _onTapOrigin
+            _dropdownButton(
+              text: null,
+              items: _originDropDownItems,
+              onChanged: _onTapOriginLocationType,
             ),
           ),
         ],),
@@ -231,14 +229,10 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
             Styles().images.getImage('location', size: _detailIconSize) ?? _detailIconSpacer,
           ),
           Expanded(child:
-            RibbonButton(
-              textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-              backgroundColor: Styles().colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(5)),
-              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-              rightIconKey: 'chevron-down', // 'chevron-up'
-              label: '',
-              onTap: _onTapDestination
+            _dropdownButton(
+              text: null,
+              items: _destinationDropDownItems,
+              onChanged: _onTapDestinationLocationType,
             ),
           ),
         ],),
@@ -266,29 +260,106 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
       ],)
     );
 
+  Widget _dropdownButton({ String? text, required List<DropdownMenuItem<_SafeWalkLocationType>> items, void Function(_SafeWalkLocationType?)? onChanged }) =>
+    Container(decoration: _dropdownButtonDecoration, child:
+      Padding(padding: EdgeInsets.only(left: 12, right: 8, top: 2, bottom: 2), child:
+        DropdownButtonHideUnderline(child:
+          DropdownButton<_SafeWalkLocationType>(
+            icon: Styles().images.getImage('chevron-down'),
+            isExpanded: true,
+            style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+            hint: Text(text ?? '', style: _dropDownItemTextStyle,),
+            items: items,
+            onChanged: onChanged,
+          ),
+        ),
+      ),
+    );
+
+  Widget _dropDownItemWidget({String? title, Widget? icon}) =>
+    Semantics(label: title, excludeSemantics: true, container:true, child:
+      Row(children: [
+        Padding(padding: EdgeInsets.only(right: 8), child:
+          icon ?? _detailIconSpacer,
+        ),
+        Expanded(child:
+          Text(title ?? '', style: _dropDownItemTextStyle,),
+        ),
+      ],)
+    );
+
   BoxDecoration get _cardDecoration => BoxDecoration(
     color: Styles().colors.background,
     border: Border.all(color: Styles().colors.mediumGray2, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(16))
   );
 
+  BoxDecoration get _dropdownButtonDecoration => BoxDecoration(
+    color: Styles().colors.surface,
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    borderRadius: BorderRadius.all(Radius.circular(5))
+  );
+
+  List<DropdownMenuItem<_SafeWalkLocationType>> get _originDropDownItems => _locationTypeDropDownWidgets(<_SafeWalkLocationType>[
+    _SafeWalkLocationType.current,
+    _SafeWalkLocationType.map,
+    _SafeWalkLocationType.saved,
+  ]);
+
+  List<DropdownMenuItem<_SafeWalkLocationType>> get _destinationDropDownItems => _locationTypeDropDownWidgets(<_SafeWalkLocationType>[
+    _SafeWalkLocationType.map,
+    _SafeWalkLocationType.saved,
+  ]);
+
+  List<DropdownMenuItem<_SafeWalkLocationType>> _locationTypeDropDownWidgets(List<_SafeWalkLocationType> locationTypes) =>
+    locationTypes.map(_locationTypeDropDownItem).toList();
+
+  DropdownMenuItem<_SafeWalkLocationType> _locationTypeDropDownItem(_SafeWalkLocationType locationType) =>
+    DropdownMenuItem<_SafeWalkLocationType>(value: locationType, child: _locationTypeDropDownWidget(locationType));
+
+  Widget _locationTypeDropDownWidget(_SafeWalkLocationType locationType) =>
+    _dropDownItemWidget(
+      title: _safeWalkLocationTypeToDisplayString(locationType),
+      icon: _safeWalkLocationTypeDisplayIcon(locationType),
+    );
+
   TextStyle? get _titleTextStyle => Styles().textStyles.getTextStyle('widget.title.medium.fat');
+  TextStyle? get _dropDownItemTextStyle => Styles().textStyles.getTextStyle('widget.title.medium.semi_fat');
 
   double get _detailIconSize => 18;
   Widget get _detailIconSpacer => SizedBox(width: _detailIconSize, height: _detailIconSize,);
 
-  void _onTapOrigin() {
-    Analytics().logSelect(target: 'Current Location');
+  void _onTapOriginLocationType(_SafeWalkLocationType? value) {
+    Analytics().logSelect(target: "Origin: ${_safeWalkLocationTypeToDisplayString(value)}");
   }
 
-  void _onTapDestination() {
-    Analytics().logSelect(target: 'Destination');
+  void _onTapDestinationLocationType(_SafeWalkLocationType? value) {
+    Analytics().logSelect(target: "Destination: ${_safeWalkLocationTypeToDisplayString(value)}");
   }
 
   void _onTapSend() {
     Analytics().logSelect(target: 'Start with a Text');
   }
 }
+
+String? _safeWalkLocationTypeToDisplayString(_SafeWalkLocationType? locationType) {
+  switch (locationType) {
+    case _SafeWalkLocationType.current: return Localization().getStringEx('widget.safewalks_request.location.current.title', 'Use My Location');
+    case _SafeWalkLocationType.map: return Localization().getStringEx('widget.safewalks_request.location.map.title', 'Search Maps');
+    case _SafeWalkLocationType.saved: return Localization().getStringEx('widget.safewalks_request.location.saved.title', 'View Saved Locations');
+    default: return null;
+  }
+}
+
+Widget? _safeWalkLocationTypeDisplayIcon(_SafeWalkLocationType? locationType) {
+  switch (locationType) {
+    case _SafeWalkLocationType.current: return Styles().images.getImage('location', color: Styles().colors.fillColorPrimary);
+    case _SafeWalkLocationType.map: return Styles().images.getImage('search', color: Styles().colors.fillColorPrimary);
+    case _SafeWalkLocationType.saved: return Styles().images.getImage('star-filled', color: Styles().colors.fillColorPrimary);
+    default: return null;
+  }
+}
+
 
 class _VerticalDashedLinePainter extends CustomPainter {
   final double dashHeight;
