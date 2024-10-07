@@ -130,6 +130,7 @@ class SafetySafeWalkRequestPage extends StatelessWidget with SafetyHomeContentPa
 
   static const String _safeWalkStartTimeMacro = '{{safewalk_start_time}}';
   static const String _safeWalkEndTimeMacro = '{{safewalk_end_time}}';
+  static const String _safeWalkOrderIntervalMacro = '{{safewalk_order_interval}}';
   static const String _safeWalkPhoneNumberMacro = '{{safewalk_phone_number}}';
   static const String _safeRidesUrlMacro = '{{saferides_url}}';
   static const String _externalLinkMacro = '{{external_link_icon}}';
@@ -144,12 +145,13 @@ class SafetySafeWalkRequestPage extends StatelessWidget with SafetyHomeContentPa
     Localization().getStringEx('panel.safewalks_request.info1.text', 'Request a student patrol officer to walk with you.');
 
   String get _info2Text =>
-    Localization().getStringEx('panel.safewalks_request.info2.text', 'Please give at least 15 minutes\' notice.');
+    Localization().getStringEx('panel.safewalks_request.info2.text', 'Please give at least $_safeWalkOrderIntervalMacro minutes\' notice.')
+        .replaceAll(_safeWalkOrderIntervalMacro, Config().safeWalkOrderInterval ?? '15');
 
   String get _info3Text =>
     Localization().getStringEx('panel.safewalks_request.info3.text', 'Available $_safeWalkStartTimeMacro to $_safeWalkEndTimeMacro')
-      .replaceAll(_safeWalkStartTimeMacro, Config().safeWalkStartTime ?? '')
-      .replaceAll(_safeWalkEndTimeMacro, Config().safeWalkEndTime ?? '');
+      .replaceAll(_safeWalkStartTimeMacro, Config().safeWalkStartTime ?? '9:00 p.m.')
+      .replaceAll(_safeWalkEndTimeMacro, Config().safeWalkEndTime ?? '2:30 a.m.');
 
   String get _phoneDetailHtml =>
     Localization().getStringEx('panel.safewalks_request.detail.phone.html', 'You can also schedule a walk by calling <a href=\'tel:$_safeWalkPhoneNumberMacro\'>$_safeWalkPhoneNumberMacro</a>.')
