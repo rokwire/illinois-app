@@ -612,7 +612,7 @@ class _Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> im
 
   List<Widget>? get _promoteButton => <Widget>[
     InkWell(onTap: _onPromote, child:
-       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.promote.title', 'Share this event'), 'share', underlined: true)),
+       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.promote.title', 'Share This Event'), 'share', underlined: true)),
     _detailSpacerWidget
   ];
 

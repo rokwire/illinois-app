@@ -9,7 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Upgraded url_launcher plugin to resolve build issue on Xcode 16.
 - Survey Card widgets color explicitly set to be white [#4385](https://github.com/rokwire/illinois-app/issues/4385).
 - Skills Self-Evaluation Pop-Up Text Update [#4391](https://github.com/rokwire/illinois-app/issues/4391).
+- Share this event button title Updated [#4397](https://github.com/rokwire/illinois-app/issues/4397).
 - Acknowledged GoogleMaps plugin upgrade [#4302](https://github.com/rokwire/illinois-app/issues/4302).
+### Added
+- Added share functionality for campus buildings [#4396](https://github.com/rokwire/illinois-app/issues/4396).
+- Added guide detail url builder.
+- Created ExploreMessagePopup.
 
 ## [6.1.8] - 2024-08-28
 ### Changed
@@ -55,6 +60,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [6.1.0] - 2024-07-22
 ### Added
 - Created Public Surveys UI / round 0 [#4243](https://github.com/rokwire/illinois-app/issues/4243).
+
+## [6.0.50] - 2024-10-03
+### Fixed
+- Add existing event to group [#4379](https://github.com/rokwire/illinois-app/issues/4379).
+
+## [6.0.49] - 2024-10-02
+### Changed
+- Upgraded url_launcher plugin to resolve build issue on Xcode 16.
+- Survey Card widgets color explicitly set to be white [#4385](https://github.com/rokwire/illinois-app/issues/4385).
+- Skills Self-Evaluation Pop-Up Text Update [#4391](https://github.com/rokwire/illinois-app/issues/4391).
+- Share this event button title Updated [#4397](https://github.com/rokwire/illinois-app/issues/4397).
+### Added
+- Added share functionality for campus buildings [#4396](https://github.com/rokwire/illinois-app/issues/4396).
 
 ## [6.0.48] - 2024-09-20
 ### Changed
