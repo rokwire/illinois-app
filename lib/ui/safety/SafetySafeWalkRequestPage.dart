@@ -18,6 +18,7 @@ import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
@@ -33,6 +34,12 @@ import 'package:url_launcher/url_launcher.dart';
 enum _SafeWalkLocationType { current, map, saved }
 
 class SafetySafeWalkRequestPage extends StatelessWidget with SafetyHomeContentPage {
+
+  final Map<String, dynamic>? origin;
+  final Map<String, dynamic>? destination;
+  final GlobalKey<_SafetySafeWalkRequestCardState> _safeWalksCardKey = GlobalKey();
+
+  SafetySafeWalkRequestPage({super.key, this.origin, this.destination});
 
   @override
   Widget build(BuildContext context) => Column(children: [
@@ -82,7 +89,7 @@ class SafetySafeWalkRequestPage extends StatelessWidget with SafetyHomeContentPa
           ],)
         ),
         Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
-          SafetySafeWalkRequestCard(),
+          SafetySafeWalkRequestCard(key: _safeWalksCardKey, origin: origin, destination: destination,),
         ),
       ],),
     ],)
@@ -219,7 +226,12 @@ class SafetySafeWalkRequestPage extends StatelessWidget with SafetyHomeContentPa
 
   void _onTapShareSafeWalks(BuildContext context) {
     Analytics().logSelect(target: 'Share SafeWalks');
-    Navigator.pop(context);
+    _SafetySafeWalkRequestCardState? cardState = _safeWalksCardKey.currentState;
+    if (cardState != null) {
+      Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) =>
+        QrCodePanel.fromSafeWalk(origin: cardState.originExploreLocation, destination: cardState.destinationExploreLocation, analyticsFeature: AnalyticsFeature.Safety,)
+      ));
+    }
   }
 
   void _onTapCampusResources(BuildContext context) {
@@ -237,8 +249,10 @@ class SafetySafeWalkRequestCard extends StatefulWidget {
 
   final Widget? headerWidget;
   final Color? backgroundColor;
+  final Map<String, dynamic>? origin;
+  final Map<String, dynamic>? destination;
 
-  SafetySafeWalkRequestCard({super.key, this.headerWidget, this.backgroundColor});
+  SafetySafeWalkRequestCard({super.key, this.headerWidget, this.backgroundColor, this.origin, this.destination});
 
   @override
   State<StatefulWidget> createState() => _SafetySafeWalkRequestCardState();
@@ -251,6 +265,13 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
 
   dynamic _originLocation, _destinationLocation;
   bool _originProgress = false, _destinationProgress = false;
+
+  @override
+  void initState() {
+    _originLocation = _locationFromJson(widget.origin);
+    _destinationLocation = _locationFromJson(widget.destination);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) =>
@@ -526,21 +547,33 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
     }
   }
 
-  /*Explore? _locationExplore(dynamic location) {
-    if (location is Explore) {
-      return location;
+  Map<String, dynamic>? get originExploreLocation => _locationToJson(_originLocation);
+  Map<String, dynamic>? get destinationExploreLocation => _locationToJson(_destinationLocation);
+
+  Map<String, dynamic>? _locationToJson(dynamic location) {
+    if (location is Position) {
+      return location.toJson();
     }
-    else if (location is Position) {
-      return ExplorePOI(location: ExploreLocation(
-        name: Localization().getStringEx('panel.explore.item.location.name', 'Location'),
-        latitude: location.latitude,
-        longitude: location.longitude,
-      ));
+    else if (location is Explore) {
+      return location.exploreLocation?.toJson();
     }
     else {
       return null;
     }
-  }*/
+  }
+
+  dynamic _locationFromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    else if ((json['latitude'] != null) && (json['longitude'] != null) && (json['timestamp'] != null)) {
+      return Position.fromMap(json);
+    }
+    else {
+      ExploreLocation? location = ExploreLocation.fromJson(json);
+      return (location != null) ? ExplorePOI(name: location.building ?? location.name, location: location) : null;
+    }
+  }
 
   void _onTapOriginLocationType(_SafeWalkLocationType? locationType) {
     Analytics().logSelect(target: "Origin: ${_safeWalkLocationTypeToDisplayString(locationType)}");

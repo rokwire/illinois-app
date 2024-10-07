@@ -17,8 +17,10 @@ enum SafetyContentType { safeWalkRequest, safeRides, safetyResources }
 
 class SafetyHomePanel extends StatefulWidget {
   final SafetyContentType? contentType;
+  final Map<String, dynamic>? safeWalkRequestOrigin;
+  final Map<String, dynamic>? safeWalkRequestDestination;
 
-  SafetyHomePanel({ super.key, this.contentType });
+  SafetyHomePanel({ super.key, this.contentType, this.safeWalkRequestOrigin, this. safeWalkRequestDestination});
 
   @override
   State<StatefulWidget> createState() => _SafetyHomePanelState();
@@ -85,7 +87,7 @@ class _SafetyHomePanelState extends State<SafetyHomePanel>  {
 
   Widget? get _contentPage {
     if (_selectedContentType == SafetyContentType.safeWalkRequest) {
-      return SafetySafeWalkRequestPage();
+      return SafetySafeWalkRequestPage(origin: widget.safeWalkRequestOrigin, destination: widget.safeWalkRequestDestination,);
     }
     else {
       return null;

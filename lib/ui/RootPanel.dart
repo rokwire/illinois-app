@@ -28,6 +28,7 @@ import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Gateway.dart';
+import 'package:illinois/service/Safety.dart';
 import 'package:illinois/service/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/assistant/AssistantHomePanel.dart';
@@ -42,6 +43,7 @@ import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/polls/PollDetailPanel.dart';
+import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
@@ -201,6 +203,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Canvas.notifyCanvasEventDetail,
       SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation,
       Gateway.notifyBuildingDetail,
+      Safety.notifySafeWalkDetail,
       Guide.notifyGuide,
       Guide.notifyGuideDetail,
       Guide.notifyGuideList,
@@ -305,6 +308,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Gateway.notifyBuildingDetail) {
       _onGatewayBuildingDetail(param);
+    }
+    else if (name == Safety.notifySafeWalkDetail) {
+      _onSafetySafeWalkDetail(param);
     }
     else if (name == Localization.notifyStringsUpdated) {
       if (mounted) {
@@ -884,6 +890,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         ExploreBuildingDetailPanel(buildingNumber: buildingNumber)
       ));
     }
+  }
+
+  Future<void> _onSafetySafeWalkDetail(Map<String, dynamic>? content) async {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+      SafetyHomePanel(
+        contentType: SafetyContentType.safeWalkRequest,
+        safeWalkRequestOrigin: (content != null) ? JsonUtils.decodeMap(content['origin']) : null,
+        safeWalkRequestDestination: (content != null) ? JsonUtils.decodeMap(content['destination']) : null,
+      )
+    ));
   }
 
   void _showAthleticsGameDetail(Map<String, dynamic>? athleticsGameDetails) {
