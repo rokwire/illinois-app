@@ -162,7 +162,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   checked: isSportEventFavorite,
                                   child: GestureDetector(
                                       child: Container(padding: EdgeInsets.only(right: 24, left: 10, bottom: 20, top: 20),
-                                        child: Styles().images.getImage(isSportEventFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true
+                                        child: Styles().images.getImage(isSportEventFavorite ? 'star-filled' : 'star-outline-secondary', excludeFromSemantics: true
                                       )),
                                       onTap: _onTapSwitchFavorite),
                                 ),

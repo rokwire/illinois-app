@@ -5,7 +5,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:neom/model/Analytics.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Auth2.dart';
 import 'package:neom/service/Config.dart';

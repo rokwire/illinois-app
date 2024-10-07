@@ -29,21 +29,21 @@ class FavoriteStarIcon extends StatelessWidget {
     if (style == FavoriteIconStyle.SlantHeader) {
       switch (selected) {
         case true:  imageKey = 'star-filled'; break;
-        case false: imageKey = 'star-outline-gray'; break;
+        case false: imageKey = 'star-outline-secondary'; break;
         default:    imageKey = 'star-partially-filled'; break;
       }
     }
     else if (style == FavoriteIconStyle.Handle) {
       switch (selected) {
         case true:  imageKey = 'star-filled'; break;
-        case false: imageKey = 'star-white'; break;
+        case false: imageKey = 'star-outline-secondary'; break;
         default:    imageKey = 'star-partially-filled'; break;
       }
     }
     else if (style == FavoriteIconStyle.Button) {
       switch (selected) {
         case true:  imageKey = 'star-filled'; break;
-        case false: imageKey = 'star-white'; break;
+        case false: imageKey = 'star-outline-secondary'; break;
         default:    imageKey = 'star-partially-filled'; break;
       }
     }
@@ -57,15 +57,16 @@ class FavoriteButton extends StatelessWidget {
   final Favorite? favorite;
   final FavoriteIconStyle style;
   final EdgeInsetsGeometry padding;
+  final double? size;
 
-  FavoriteButton({Key? key, this.favorite, required this.style, this.padding = const EdgeInsets.all(16)}) :
+  FavoriteButton({Key? key, this.favorite, required this.style, this.padding = const EdgeInsets.all(16), this.size}) :
     super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
       InkWell(onTap: () => onFavorite(context), child:
-        FavoriteStarIcon(selected: isFavorite, style: style, padding: padding,)
+        FavoriteStarIcon(selected: isFavorite, style: style, padding: padding, size: size, color: Styles().colors.fillColorSecondaryVariant,)
       ),
     );
   }

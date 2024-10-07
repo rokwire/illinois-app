@@ -18,16 +18,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:neom/ui/profile/ProfileLoginCodePanel.dart';
 import 'package:neom/ui/profile/ProfileLoginPasskeyPanel.dart';
 import 'package:rokwire_plugin/service/onboarding.dart' as rokwire;
-import 'package:neom/ui/onboarding/OnboardingLoginPhoneConfirmPanel.dart';
 import 'package:neom/ui/onboarding/OnboardingGetStartedPanel.dart';
 import 'package:neom/ui/onboarding/OnboardingAuthLocationPanel.dart';
-import 'package:neom/ui/onboarding/OnboardingLoginNetIdPanel.dart';
-import 'package:neom/ui/onboarding/OnboardingLoginPhonePanel.dart';
 import 'package:neom/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
 import 'package:neom/ui/onboarding/OnboardingPrivacyStatementPanel.dart';
 import 'package:neom/ui/onboarding/OnboardingRolesPanel.dart';
-import 'package:neom/ui/onboarding/OnboardingSportPrefsPanel.dart';
-import 'package:neom/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
 import 'package:neom/ui/settings/SettingsPrivacyPanel.dart';
 
 class Onboarding extends rokwire.Onboarding  {

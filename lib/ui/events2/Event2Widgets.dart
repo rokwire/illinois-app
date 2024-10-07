@@ -37,9 +37,11 @@ class Event2FilterCommandButton extends StatelessWidget {
 
   final String? leftIconKey;
   final EdgeInsetsGeometry leftIconPadding;
+  final Color? leftIconColor;
 
   final String? rightIconKey;
   final EdgeInsetsGeometry rightIconPadding;
+  final Color? rightIconColor;
 
   final EdgeInsetsGeometry contentPadding;
   final Decoration? contentDecoration;
@@ -51,9 +53,11 @@ class Event2FilterCommandButton extends StatelessWidget {
     this.titleTextStyleKey = 'widget.button.title.regular',
     this.leftIconKey,
     this.leftIconPadding = const EdgeInsets.only(right: 6),
+    this.leftIconColor,
     
     this.rightIconKey,
     this.rightIconPadding = const EdgeInsets.only(left: 3),
+    this.rightIconColor,
 
     this.contentPadding = const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
     this.contentDecoration,
@@ -65,7 +69,7 @@ class Event2FilterCommandButton extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> contentList = <Widget>[];
 
-    Widget? leftIconWidget = (leftIconKey != null) ? Styles().images.getImage(leftIconKey) : null;
+    Widget? leftIconWidget = (leftIconKey != null) ? Styles().images.getImage(leftIconKey, color: leftIconColor) : null;
     if (leftIconWidget != null) {
       contentList.add(
         Padding(padding: leftIconPadding, child: leftIconWidget,)
@@ -78,7 +82,7 @@ class Event2FilterCommandButton extends StatelessWidget {
       );
     }
 
-    Widget? rightIconWidget = (rightIconKey != null) ? Styles().images.getImage(rightIconKey) : null;
+    Widget? rightIconWidget = (rightIconKey != null) ? Styles().images.getImage(rightIconKey, color: rightIconColor) : null;
     if (rightIconWidget != null) {
       contentList.add(
         Padding(padding: rightIconPadding, child: rightIconWidget,)
@@ -447,7 +451,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     ]);
 
   Widget get _categoriesContentWidget =>
-    Text(widget.displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles.getTextStyle("common.title.secondary"));
+    Text(widget.displayCategories?.join(', ').toUpperCase() ?? '', style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'),);
 
   /*Widget get _groupingBadgeWidget {
     String? badgeLabel;
@@ -478,7 +482,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
           button: true,
           child: InkWell(onTap: _onFavorite,
             child: Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
-              child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true,)
+              child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-secondary', excludeFromSemantics: true,)
             )
           ),
         ),
@@ -506,7 +510,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     ],) : Container();
 
   Widget get _titleContentWidget =>
-    Text(_event.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.dark.medium.fat'), maxLines: 2, overflow: TextOverflow.ellipsis);
+    Text(_event.name?.toUpperCase() ?? '', style: Styles().textStyles.getTextStyle('widget.event.card.title.medium.fat'), maxLines: 2, overflow: TextOverflow.ellipsis);
 
   Widget get _detailsWidget {
     List<Widget> detailWidgets = <Widget>[

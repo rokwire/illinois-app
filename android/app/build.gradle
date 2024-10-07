@@ -243,7 +243,7 @@ dependencies {
     //Zxing
     implementation 'com.google.zxing:core:3.3.0' //Use zxing 3.3.0 because we have minSdk < 24
 
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
 
     // Origo and mobile keys SDK
     debugImplementation name: '../../libs/hid-origo/android/origo-sdk-debug', version: '1.10.0', ext: 'aar'

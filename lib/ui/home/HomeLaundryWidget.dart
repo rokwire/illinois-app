@@ -322,7 +322,7 @@ class _LaundryRoomCardState extends State<LaundryRoomCard> implements Notificati
                             button: true,
                             excludeSemantics: true,
                             child:
-                              Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)))),
+                              Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-secondary', excludeFromSemantics: true)))),
                           )
                         ],
                       )

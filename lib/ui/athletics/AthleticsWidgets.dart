@@ -182,7 +182,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> implements Noti
                                             excludeSemantics: true,
                                             child: Padding(
                                                 padding: EdgeInsets.only(right: 24, top: 24, left: 24, bottom: 8),
-                                                child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray',
+                                                child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-secondary',
                                                     excludeFromSemantics: true)))))
                               ])),
                           Padding(

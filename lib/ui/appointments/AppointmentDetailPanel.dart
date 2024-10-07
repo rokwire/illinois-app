@@ -211,7 +211,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
           GestureDetector(behavior: HitTestBehavior.opaque, onTap: _onFavorite, child:
             Container(padding: EdgeInsets.only(left: 8, top: 16, bottom: 12), child:
               Semantics(label: semanticsTitle, hint: semanticsHint, button: true, child:
-                Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
+                Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-secondary', excludeFromSemantics: true)
               )
             )
           )

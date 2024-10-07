@@ -89,44 +89,45 @@ class Event2HomePanel extends StatefulWidget {
         eventSelector: eventSelector,
       )));
     }
-    else if (Storage().events2Attributes != null) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(eventSelector: eventSelector,)));
-    }
+    // else if (Storage().events2Attributes != null) {
+    //   Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(eventSelector: eventSelector,)));
+    // }
     else {
-      getLocationServicesStatus().then((LocationServicesStatus? status) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
-          title: Localization().getStringEx('panel.events2.home.attributes.launch.header.title', 'Events'),
-          bgImageKey: 'event-filters-background',
-          descriptionBuilder: _buildOnboardingDescription,
-          sectionTitleTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.highlight'),
-          sectionDescriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.small.thin.highlight'),
-          sectionRequiredMarkTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.extra_fat.highlight'),
-          applyBuilder: _buildOnboardingApply,
-          continueTitle: Localization().getStringEx('panel.events2.home.attributes.launch.continue.title', 'Set Up Later'),
-          continueTextStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.underline.highlight'),
-          contentAttributes: buildContentAttributesV1(status: status),
-          sortType: ContentAttributesSortType.native,
-          scope: Events2.contentAttributesScope,
-          filtersMode: true,
-        ))).then((result) {
-          Map<String, dynamic>? selection = JsonUtils.mapValue(result);
-          if (selection != null) {
-            
-            List<Event2TypeFilter>? typesList = event2TypeFilterListFromSelection(selection[eventTypeContentAttributeId]);
-            Storage().events2Types = event2TypeFilterListToStringList(typesList) ;
-
-            Map<String, dynamic> attributes = Map<String, dynamic>.from(selection);
-            attributes.remove(eventTypeContentAttributeId);
-            Storage().events2Attributes = attributes;
-
-            Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(
-              types: (typesList != null) ? LinkedHashSet<Event2TypeFilter>.from(typesList) : null,
-              attributes: attributes,
-              eventSelector: eventSelector,
-            )));
-          }
-        });
-      });
+      // getLocationServicesStatus().then((LocationServicesStatus? status) {
+      //   Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
+      //     title: Localization().getStringEx('panel.events2.home.attributes.launch.header.title', 'Events'),
+      //     bgImageKey: 'event-filters-background',
+      //     descriptionBuilder: _buildOnboardingDescription,
+      //     sectionTitleTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.highlight'),
+      //     sectionDescriptionTextStyle: Styles().textStyles.getTextStyle('widget.item.small.thin.highlight'),
+      //     sectionRequiredMarkTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.extra_fat.highlight'),
+      //     applyBuilder: _buildOnboardingApply,
+      //     continueTitle: Localization().getStringEx('panel.events2.home.attributes.launch.continue.title', 'Set Up Later'),
+      //     continueTextStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.underline.highlight'),
+      //     contentAttributes: buildContentAttributesV1(status: status),
+      //     sortType: ContentAttributesSortType.native,
+      //     scope: Events2.contentAttributesScope,
+      //     filtersMode: true,
+      //   ))).then((result) {
+      //     Map<String, dynamic>? selection = JsonUtils.mapValue(result);
+      //     if (selection != null) {
+      //
+      //       List<Event2TypeFilter>? typesList = event2TypeFilterListFromSelection(selection[eventTypeContentAttributeId]);
+      //       Storage().events2Types = event2TypeFilterListToStringList(typesList) ;
+      //
+      //       Map<String, dynamic> attributes = Map<String, dynamic>.from(selection);
+      //       attributes.remove(eventTypeContentAttributeId);
+      //       Storage().events2Attributes = attributes;
+      //
+      //       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(
+      //         types: (typesList != null) ? LinkedHashSet<Event2TypeFilter>.from(typesList) : null,
+      //         attributes: attributes,
+      //         eventSelector: eventSelector,
+      //       )));
+      //     }
+      //   });
+      // });
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(eventSelector: eventSelector,)));
     }
   }
 
@@ -529,7 +530,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with TickerProviderSt
                 _buildEventsContent(),
               )
             ),
-                RefreshIndicator(onRefresh: _onRefresh, child:
+            RefreshIndicator(onRefresh: _onRefresh, child:
               SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
                 _buildEventsContent(),
               )
@@ -541,20 +542,13 @@ class _Event2HomePanelState extends State<Event2HomePanel> with TickerProviderSt
   }
 
   Widget _buildCommandBar() {
-    return Container(decoration: _commandBarDecoration, child:
-      Padding(padding: EdgeInsets.only(top: 8), child:
-        Column(children: [
-          _buildCommandButtons(),
-          _buildContentDescription(),
-        ],)
-      ),
+    return Padding(padding: EdgeInsets.only(top: 8), child:
+      Column(children: [
+        _buildCommandButtons(),
+        _buildContentDescription(),
+      ],)
     );
   }
-
-  Decoration get _commandBarDecoration => BoxDecoration(
-    color: Styles().colors.surface,
-    border: Border.all(color: Styles().colors.disabledTextColor, width: 1)
-  );
 
   Widget _buildCommandButtons() {
     return Row(children: [
@@ -563,8 +557,15 @@ class _Event2HomePanelState extends State<Event2HomePanel> with TickerProviderSt
         Event2FilterCommandButton(
           title: Localization().getStringEx('panel.events2.home.bar.button.filter.title', 'Filter'),
           leftIconKey: 'filters',
-          rightIconKey: 'chevron-right',
+          rightIconKey: 'caret-right',
+          rightIconColor: Styles().colors.textDark,
+          rightIconPadding: const EdgeInsets.only(left: 8, right: 2),
           onTap: _onFilters,
+          contentDecoration: BoxDecoration(
+            color: Styles().colors.buttonColorVariarnt,
+            border: Border.all(color: Styles().colors.textDisabled, width: 1),
+            borderRadius: BorderRadius.circular(16),
+          ),
         ),
         _sortButton,
 
@@ -607,7 +608,12 @@ class _Event2HomePanelState extends State<Event2HomePanel> with TickerProviderSt
           dropdownStyleData: DropdownStyleData(width: _sortDropdownWidth),
           customButton: Event2FilterCommandButton(
             title: Localization().getStringEx('panel.events2.home.bar.button.sort.title', 'Sort'),
-            leftIconKey: 'sort'
+            leftIconKey: 'sort',
+            contentDecoration: BoxDecoration(
+              color: Styles().colors.buttonColorVariarnt,
+              border: Border.all(color: Styles().colors.textDisabled, width: 1),
+              borderRadius: BorderRadius.circular(16),
+            ),
           ),
           isExpanded: false,
           items: _buildSortDropdownItems(),
@@ -666,12 +672,13 @@ class _Event2HomePanelState extends State<Event2HomePanel> with TickerProviderSt
   }
 
   Widget _buildContentDescription() {
-    TextStyle? boldStyle = Styles().textStyles.getTextStyle("widget.card.title.tiny.fat");
-    TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
+    TextStyle? boldStyle = Styles().textStyles.getTextStyle("widget.card.title.light.tiny.fat");
+    TextStyle? boldStyleVariant = Styles().textStyles.getTextStyle("widget.card.title.light.tiny.fat.variant");
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.light.small.regular");
     List<InlineSpan> descriptionList = _currentFilterParam.buildDescription(boldStyle: boldStyle, regularStyle: regularStyle);
 
     if (descriptionList.isNotEmpty) {
-      descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filter.label.title', 'Filter: ') , style: boldStyle,));
+      descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filter.label.title', 'Filter: ') , style: boldStyleVariant,));
     }
 
     if ((1 < (_events?.length ?? 0)) || _loadingEvents || _refreshingEvents) {
@@ -681,7 +688,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with TickerProviderSt
           descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
         }
 
-        descriptionList.add(TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.sort.label.title', 'Sort: ') , style: boldStyle,));
+        descriptionList.add(TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.sort.label.title', 'Sort: ') , style: boldStyleVariant,));
         descriptionList.add(TextSpan(text: sortStatus, style: regularStyle,),);
       }
     }
@@ -691,48 +698,41 @@ class _Event2HomePanelState extends State<Event2HomePanel> with TickerProviderSt
         descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
       }
 
-      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.events.label.title', 'Events: ') , style: boldStyle,));
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.events.label.title', 'Events: ') , style: boldStyleVariant,));
       descriptionList.add(TextSpan(text: _totalEventsCount?.toString(), style: regularStyle,),);
     }
 
     if (descriptionList.isNotEmpty) {
       descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
       return Padding(padding: EdgeInsets.only(top: 12), child:
-        Container(decoration: _contentDescriptionDecoration, child:
-          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Expanded(child:
-              Padding(padding: EdgeInsets.only(left: 12, top: 16, bottom: 16), child:
-                RichText(text: TextSpan(style: regularStyle, children: descriptionList)),
-              ),
+        Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Expanded(child:
+            Padding(padding: EdgeInsets.only(left: 12, top: 16, bottom: 16), child:
+              RichText(text: TextSpan(style: regularStyle, children: descriptionList)),
             ),
-            Visibility(visible: _canShareFilters, child:
-              Event2ImageCommandButton(Styles().images.getImage('share'),
-                label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
-                hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
-                contentPadding: EdgeInsets.only(left: 16, right: _canClearFilters ? (8 + 2) : 16, top: 12, bottom: 12),
-                onTap: _onShareFilters
-              ),
+          ),
+          Visibility(visible: _canShareFilters, child:
+            Event2ImageCommandButton(Styles().images.getImage('share'),
+              label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
+              hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
+              contentPadding: EdgeInsets.only(left: 16, right: _canClearFilters ? (8 + 2) : 16, top: 12, bottom: 12),
+              onTap: _onShareFilters
             ),
-            Visibility(visible: _canClearFilters, child:
-              Event2ImageCommandButton(Styles().images.getImage('close'), // size: 14
-                label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
-                hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
-                contentPadding: EdgeInsets.only(left: 8 + 2, right: 16 + 2, top: 12, bottom: 12),
-                onTap: _onClearFilters
-              ),
+          ),
+          Visibility(visible: _canClearFilters, child:
+            Event2ImageCommandButton(Styles().images.getImage('close'), // size: 14
+              label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
+              hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
+              contentPadding: EdgeInsets.only(left: 8 + 2, right: 16 + 2, top: 12, bottom: 12),
+              onTap: _onClearFilters
             ),
-          ],)
-      ));
+          ),
+        ],));
     }
     else {
       return Container(height: 12);
     }
   }
-
-  Decoration get _contentDescriptionDecoration => BoxDecoration(
-    color: Styles().colors.surface,
-    border: Border(top: BorderSide(color: Styles().colors.disabledTextColor, width: 1))
-  );
 
   Widget _buildEventsContent() {
     if (_loadingEvents || _loadingLocationServicesStatus) {

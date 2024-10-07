@@ -148,7 +148,7 @@ extension FavoriteExt on Favorite {
   }
 
   Widget? favoriteStarIcon({required bool selected}) {
-    return Styles().images.getImage(selected ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true);
+    return Styles().images.getImage(selected ? 'star-filled' : 'star-outline-secondary', excludeFromSemantics: true);
   }
 
   Color? get favoriteHeaderColor {

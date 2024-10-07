@@ -276,7 +276,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                       right: 16, top: 12, left: 24, bottom: 5),
                       child: Styles().images.getImage(isFavorite
                           ? 'star-filled'
-                          : 'star-outline-gray',
+                          : 'star-outline-secondary',
                         excludeFromSemantics: true,)
                       ))
                   )),)))

@@ -72,7 +72,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
 
     bool isFavorite = Auth2().isFavorite(widget.appointment);
     bool canFavorite = Auth2().canFavorite && widget.appointment.isUpcoming;
-    String favImageKey = isFavorite ? 'star-filled' : 'star-outline-gray';
+    String favImageKey = isFavorite ? 'star-filled' : 'star-outline-secondary';
     String semanticsFavLabel = isFavorite ?
       Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') :
       Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites');

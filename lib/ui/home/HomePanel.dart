@@ -824,7 +824,7 @@ class _HomeContentTab extends StatelessWidget {
 
   Widget? get _icon {
     switch (contentType) {
-      case HomeContentType.favorites: return Styles().images.getImage(selected ? 'star-filled' : 'star-outline-gray');
+      case HomeContentType.favorites: return Styles().images.getImage(selected ? 'star-filled' : 'star-outline-secondary');
       case HomeContentType.browse: return Styles().images.getImage(selected ? 'browse-filled' : 'browse-outline-gray');
     }
   }
