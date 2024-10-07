@@ -17,11 +17,11 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class HomeSafewalkRequestWidget extends StatelessWidget {
+class HomeSafeWalkRequestWidget extends StatelessWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
 
-  HomeSafewalkRequestWidget({super.key, this.favoriteId, this.updateController});
+  HomeSafeWalkRequestWidget({super.key, this.favoriteId, this.updateController});
 
   static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,

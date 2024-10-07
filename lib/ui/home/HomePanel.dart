@@ -48,7 +48,8 @@ import 'package:illinois/ui/home/HomeLaundryWidget.dart';
 import 'package:illinois/ui/home/HomePublicSurveysWidget.dart';
 import 'package:illinois/ui/home/HomeRecentPollsWidget.dart';
 import 'package:illinois/ui/home/HomeResearchProjectsWidget.dart';
-import 'package:illinois/ui/home/HomeSafewalkRequestWidget.dart';
+import 'package:illinois/ui/home/HomeSafeRidesWidget.dart';
+import 'package:illinois/ui/home/HomeSafeWalkRequestWidget.dart';
 import 'package:illinois/ui/home/HomeStateFarmCenterWidget.dart';
 import 'package:illinois/ui/home/HomeStudentCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
@@ -521,15 +522,21 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
 
     else if (code == 'safewalk_request') {
       if (title) {
-        return HomeSafewalkRequestWidget.title;
+        return HomeSafeWalkRequestWidget.title;
       } else if (handle) {
-        return HomeSafewalkRequestWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+        return HomeSafeWalkRequestWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
-        return HomeSafewalkRequestWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+        return HomeSafeWalkRequestWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'saferides') {
-
+      if (title) {
+        return HomeSafeRidesRequestWidget.title;
+      } else if (handle) {
+        return HomeSafeRidesRequestWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeSafeRidesRequestWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
     }
     else if (code == 'safety_resources') {
       if (title) {

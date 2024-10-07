@@ -3603,6 +3603,8 @@
     "widget.home.safety.safewalk_request.title": "SafeWalks",
     "widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information bellow.",
 
+    "widget.home.safety.saferides.title": "SafeRides",
+
     "widget.home.safer.label.title": "Acceso a Edificios",
     "widget.home.safer.text.empty.description": "Toca la \u2606 en los elementos de Acceso a Edificios para encontrarlos rápidamente aquí.",
     "widget.home.safer.button.building_access.title": "Acceso a Edificios",
