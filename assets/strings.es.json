@@ -3303,6 +3303,9 @@
     "panel.safewalks_request.detail.phone.html": "You can also schedule a walk by calling <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a>.",
     "panel.safewalks_request.detail.saferides.html": "Looking for a ride instead? The Champaign-Urbana Mass Transit District offers limited <a href='{{saferides_url}}'>SafeRides</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> at night.",
     "panel.safewalks_request.detail.settings.text": "My Location Settings",
+    "panel.safewalks_request.command.about.text": "About SafeWalks",
+   	"panel.safewalks_request.command.share.text": "Share SafeWalks",
+   	"panel.safewalks_request.command.safety_resources.text": "Safety Resources",
 
     "widget.safewalks_request.origin.title": "Current Location",
     "widget.safewalks_request.destination.title": "Destination",

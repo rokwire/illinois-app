@@ -15,8 +15,10 @@ import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
+import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
@@ -34,14 +36,14 @@ class SafetySafeWalkRequestPage extends StatelessWidget with SafetyHomeContentPa
 
   @override
   Widget build(BuildContext context) => Column(children: [
-    _mainLayer,
+    _mainLayer(context),
     _detailsLayer(context),
   ],);
 
   @override
   Color get safetyPageBackgroundColor => Styles().colors.fillColorPrimaryVariant;
   
-  Widget get _mainLayer => Container(color: safetyPageBackgroundColor, child:
+  Widget _mainLayer(BuildContext context) => Container(color: safetyPageBackgroundColor, child:
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(padding: EdgeInsets.only(left: 16, top: 32), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -50,7 +52,7 @@ class SafetySafeWalkRequestPage extends StatelessWidget with SafetyHomeContentPa
               Text(Localization().getStringEx('panel.safewalks_request.header.title', 'SafeWalks'), style: _titleTextStyle,)
             ),
           ),
-          InkWell(onTap: _onTapMore, child:
+          InkWell(onTap: () => _onTapOptions(context), child:
             Padding(padding: EdgeInsets.all(16), child:
               Styles().images.getImage('more-white', excludeFromSemantics: true)
             )
@@ -163,8 +165,22 @@ class SafetySafeWalkRequestPage extends StatelessWidget with SafetyHomeContentPa
       .replaceAll(_safeRidesUrlMacro, Guide().detailUrl(Config().safeRidesGuideId, analyticsFeature: AnalyticsFeature.Safety))
       .replaceAll(_externalLinkMacro, 'images/external-link.png');
 
-  void _onTapMore() {
-
+  void _onTapOptions(BuildContext context) {
+    Analytics().logSelect(target: 'SafeWalks Options');
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      isScrollControlled: true,
+      isDismissible: true,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (context) => Container(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
+        Column(mainAxisSize: MainAxisSize.min, children: [
+          RibbonButton(label: Localization().getStringEx('panel.safewalks_request.command.about.text', 'About SafeWalks'), rightIconKey: 'external-link', onTap: () => _onTapAboutSafeWalks(context)),
+          RibbonButton(label: Localization().getStringEx('panel.safewalks_request.command.share.text', 'Share SafeWalks'), onTap: () => _onTapShareSafeWalks(context)),
+          RibbonButton(label: Localization().getStringEx('panel.safewalks_request.command.safety_resources.text', 'Safety Resources'), onTap: () => _onTapCampusResources(context))
+        ])
+      ),
+    );
   }
 
   void _onTapLocationSettings(BuildContext context) {
@@ -188,6 +204,32 @@ class SafetySafeWalkRequestPage extends StatelessWidget with SafetyHomeContentPa
         }
       }
     }
+  }
+
+  void _onTapAboutSafeWalks(BuildContext context) {
+    Analytics().logSelect(target: 'About SafeWalks');
+    Navigator.pop(context);
+
+    String? aboutUrl = Config().safeWalkAboutUrl;
+    Uri? aboutUri = (aboutUrl != null) ? Uri.tryParse(aboutUrl) : null;
+    if (aboutUri != null) {
+      launchUrl(aboutUri);
+    }
+  }
+
+  void _onTapShareSafeWalks(BuildContext context) {
+    Analytics().logSelect(target: 'Share SafeWalks');
+    Navigator.pop(context);
+  }
+
+  void _onTapCampusResources(BuildContext context) {
+    Analytics().logSelect(target: 'Campus Resources');
+    Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
+      contentList: Guide().safetyResourcesList,
+      contentTitle: Localization().getStringEx('panel.guide_list.label.campus_safety_resources.section', 'Safety Resources'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_safety_resources.empty", "There are no active Campus Safety Resources."),
+      favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
+    )));
   }
 }
 
