@@ -28,6 +28,7 @@ import 'package:neom/service/Appointments.dart';
 import 'package:neom/service/Canvas.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/service/Gateway.dart';
+import 'package:neom/service/Safety.dart';
 import 'package:neom/service/SkillsSelfEvaluation.dart';
 import 'package:neom/ui/academics/AcademicsHomePanel.dart';
 import 'package:neom/ui/assistant/AssistantHomePanel.dart';
@@ -42,6 +43,7 @@ import 'package:neom/ui/guide/GuideListPanel.dart';
 import 'package:neom/ui/explore/ExploreMapPanel.dart';
 import 'package:neom/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:neom/ui/polls/PollDetailPanel.dart';
+import 'package:neom/ui/safety/SafetyHomePanel.dart';
 import 'package:neom/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:neom/ui/notifications/NotificationsHomePanel.dart';
 import 'package:neom/ui/profile/ProfileHomePanel.dart';
@@ -201,6 +203,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Canvas.notifyCanvasEventDetail,
       SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation,
       Gateway.notifyBuildingDetail,
+      Safety.notifySafeWalkDetail,
       Guide.notifyGuide,
       Guide.notifyGuideDetail,
       Guide.notifyGuideList,
@@ -305,6 +308,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Gateway.notifyBuildingDetail) {
       _onGatewayBuildingDetail(param);
+    }
+    else if (name == Safety.notifySafeWalkDetail) {
+      _onSafetySafeWalkDetail(param);
     }
     else if (name == Localization.notifyStringsUpdated) {
       if (mounted) {
@@ -888,6 +894,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         ExploreBuildingDetailPanel(buildingNumber: buildingNumber)
       ));
     }
+  }
+
+  Future<void> _onSafetySafeWalkDetail(Map<String, dynamic>? content) async {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+      SafetyHomePanel(
+        contentType: SafetyContentType.safeWalkRequest,
+        safeWalkRequestOrigin: (content != null) ? JsonUtils.decodeMap(content['origin']) : null,
+        safeWalkRequestDestination: (content != null) ? JsonUtils.decodeMap(content['destination']) : null,
+      )
+    ));
   }
 
   void _showAthleticsGameDetail(Map<String, dynamic>? athleticsGameDetails) {

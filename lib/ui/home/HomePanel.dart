@@ -48,6 +48,8 @@ import 'package:neom/ui/home/HomeLaundryWidget.dart';
 import 'package:neom/ui/home/HomePublicSurveysWidget.dart';
 import 'package:neom/ui/home/HomeRecentPollsWidget.dart';
 import 'package:neom/ui/home/HomeResearchProjectsWidget.dart';
+import 'package:neom/ui/home/HomeSafeRidesWidget.dart';
+import 'package:neom/ui/home/HomeSafeWalkRequestWidget.dart';
 import 'package:neom/ui/home/HomeStateFarmCenterWidget.dart';
 import 'package:neom/ui/home/HomeStudentCoursesWidget.dart';
 import 'package:neom/ui/home/HomeToutWidget.dart';
@@ -518,6 +520,34 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
       }
     }
 
+    else if (code == 'safewalk_request') {
+      if (title) {
+        return HomeSafeWalkRequestWidget.title;
+      } else if (handle) {
+        return HomeSafeWalkRequestWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeSafeWalkRequestWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+    else if (code == 'saferides') {
+      if (title) {
+        return HomeSafeRidesRequestWidget.title;
+      } else if (handle) {
+        return HomeSafeRidesRequestWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeSafeRidesRequestWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+    else if (code == 'safety_resources') {
+      if (title) {
+        return HomeCampusSafetyResourcesWidget.title;
+      } else if (handle) {
+        return HomeCampusSafetyResourcesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeCampusSafetyResourcesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+
     else if (code == 'wellness_resources') {
       if (title) {
         return HomeWellnessResourcesWidget.title;
@@ -772,7 +802,7 @@ class _HomeContentTab extends StatelessWidget {
   final HomeContentType contentType;
   final bool selected;
   _HomeContentTab(this.contentType, { this.selected = false });
-
+  
   @override
   Widget build(BuildContext context) => InkWell(onTap: _onTap, child:
     Container(
@@ -783,7 +813,7 @@ class _HomeContentTab extends StatelessWidget {
           _iconWidget,
           _textWidget,
         ],)
-      ),
+      ), 
     ),
   );
 

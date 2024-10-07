@@ -805,31 +805,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   void _showMessagePopup(String? message) {
     if ((message != null) && message.isNotEmpty) {
-      showDialog(context: context, builder: (context) => AlertDialog(contentPadding: EdgeInsets.zero, content: 
-        Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.circular(10.0)), child:
-          Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
-            Padding(padding: EdgeInsets.all(30), child:
-              Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-                Styles().images.getImage('university-logo') ?? Container(),
-                Padding(padding: EdgeInsets.only(top: 20), child:
-                  Text(message, textAlign: TextAlign.center, style:
-                    Styles().textStyles.getTextStyle("widget.detail.small")
-                  )
-                )
-              ])
-            ),
-            Positioned.fill(child:
-              Align(alignment: Alignment.topRight, child:
-                InkWell(onTap: () => _onCloseMessagePopup(message), child:
-                  Padding(padding: EdgeInsets.all(16), child:
-                    Styles().images.getImage("close-circle")
-                  )
-                )
-              )
-            )
-          ])
-        )
-      ));
+      ExploreMessagePopup.show(context, message);
     }
   }
 
@@ -838,11 +814,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       message: message,
       showPopupStorageKey: showPopupStorageKey,
     ));
-  }
-
-  void _onCloseMessagePopup(String message) {
-    Analytics().logSelect(target: 'Close $message');
-    Navigator.of(context).pop();
   }
 
   Widget _buildBuildingsHeaderBar() => Row(mainAxisAlignment: MainAxisAlignment.end, children: [
@@ -2397,4 +2368,45 @@ String? exploreMapTypeToString(ExploreMapType? value) {
 class ExploreMapSearchEventsParam {
   final String searchText;
   ExploreMapSearchEventsParam(this.searchText);
+}
+
+class ExploreMessagePopup extends StatelessWidget {
+  final String message;
+  ExploreMessagePopup({super.key, required this.message});
+
+  static Future<void> show(BuildContext context, String message) =>
+    showDialog(context: context, builder: (context) => ExploreMessagePopup(message: message));
+
+  @override
+  Widget build(BuildContext context) =>
+    AlertDialog(contentPadding: EdgeInsets.zero, content:
+      Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.circular(10.0)), child:
+        Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
+          Padding(padding: EdgeInsets.all(30), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
+              Styles().images.getImage('university-logo') ?? Container(),
+              Padding(padding: EdgeInsets.only(top: 20), child:
+                Text(message, textAlign: TextAlign.center, style:
+                  Styles().textStyles.getTextStyle("widget.detail.small")
+                )
+              )
+            ])
+          ),
+          Positioned.fill(child:
+            Align(alignment: Alignment.topRight, child:
+              InkWell(onTap: () => _onClose(context, message), child:
+                Padding(padding: EdgeInsets.all(16), child:
+                  Styles().images.getImage("close-circle")
+                )
+              )
+            )
+          )
+        ])
+      )
+    );
+
+  void _onClose(BuildContext context, String message) {
+    Analytics().logAlert(text: message, selection: 'Close');
+    Navigator.of(context).pop();
+  }
 }

@@ -11,6 +11,7 @@ import 'package:rokwire_plugin/model/group.dart';
 import 'package:neom/ext/Group.dart';
 import 'package:neom/service/Analytics.dart';
 import 'package:rokwire_plugin/service/events2.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -46,6 +47,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel> implements Notific
   void initState() {
     NotificationService().subscribe(this, [
       Events2.notifyUpdated,
+      Groups.notifyGroupEventsUpdated,
     ]);
     _scrollController.addListener(_scrollListener);
     _load();
@@ -63,6 +65,10 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel> implements Notific
   void onNotification(String name, dynamic param) {
     if (name == Events2.notifyUpdated) {
       _updateEventIfNeeded(param);
+    } else if (name == Groups.notifyGroupEventsUpdated) {
+      if ((param is String) && (param == widget.group!.id)) {
+        _reload();
+      }
     }
   }
 
@@ -182,6 +188,27 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel> implements Notific
           _extendingEvents = false;
         });
       }
+    }
+  }
+
+  void _reload() {
+    if (!_loadingEvents && !_extendingEvents) {
+      setStateIfMounted(() {
+        _loadingEvents = true;
+        _extendingEvents = false;
+      });
+      int limit = _events?.length ?? 0;
+      Events2().loadGroupEvents(groupId: widget.group!.id!, offset: 0, limit: limit).then((result) {
+        Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
+        List<Event2>? events = listResult?.events;
+
+        setStateIfMounted(() {
+          _events = (events != null) ? List<Event2>.from(events) : null;
+          _totalEventsCount = listResult?.totalCount;
+          _lastPageLoadedAll = (events != null) ? (events.length >= limit) : null;
+          _loadingEvents = false;
+        });
+      });
     }
   }
 

@@ -63,6 +63,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Radio                          = AnalyticsFeature("Radio Stations", key: "Radio");
   static const AnalyticsFeature   Recent                         = AnalyticsFeature("Recent");
   static const AnalyticsFeature   ResearchProject                = AnalyticsFeature("Research at Illinois", key: "ResearchProject", priority: 1);
+  static const AnalyticsFeature   Safety                         = AnalyticsFeature("Safety");
   static const AnalyticsFeature   Settings                       = AnalyticsFeature("Settings", priority: -1);
   static const AnalyticsFeature   StateFarmCenter                = AnalyticsFeature("StateFarm Center", key: {"StateFarm", "Parking", "StadiumPoll"});
 

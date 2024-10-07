@@ -2423,7 +2423,7 @@ class GroupEventSelector2 extends Event2Selector2 {
       state.setSelectorState((){
         state.bindingInProgress = true;
       });
-      Events2().linkEventToGroup(event: event, groupId: group.id!).then((bool result) {
+      Events2().linkEventToGroup(event: event, groupId: group.id!, link: true).then((bool result) {
         if (state.mounted) {
           state.setSelectorState((){
             state.bindingInProgress = false;

@@ -319,6 +319,8 @@
     "panel.browse.section.radio_stations.description": "Listen to Illinois Public Media and student-run WPGU.",
     "panel.browse.section.recent.title": "Recently Viewed",
     "panel.browse.section.recent.description": "Revisit your recent app activity.",
+    "panel.browse.section.safety.title": "Safety",
+    "panel.browse.section.safety.description": "Explore resources to get home safely, prepare for emergencies, and protect yourself and others.",
     "panel.browse.section.surveys.title": "Surveys",
     "panel.browse.section.surveys.description": "Participate in surveys available to you.",
     "panel.browse.section.state_farm_center.title": "State Farm Center",
@@ -400,6 +402,10 @@
     "panel.browse.entry.polls.recent_polls.title": "Ver encuestas",
 
     "panel.browse.entry.recent.recent_items.title": "Visto recientemente",
+
+    "panel.browse.entry.safety.safewalk_request.title": "Request a SafeWalk",
+    "panel.browse.entry.safety.saferides.title": "SafeRides (MTD)",
+    "panel.browse.entry.safety.safety_resources.title": "Safety Resources",
 
     "panel.browse.entry.surveys.public_surveys.title": "Surveys",
 
@@ -3281,6 +3287,40 @@
     "panel.essential_skills_coach.video.header.title": "Video",
     "panel.essential_skills_coach.video.error.message": "Failed to load video. Please try again later.",
 
+    "panel.safety.header.title": "Safety",
+    "panel.safety.content_type.safe_walk_request.label": "Request a SafeWalk",
+    "panel.safety.content_type.safe_rides.label": "SafeRides (MTD)",
+    "panel.safety.content_type.safety_resources.label": "Safety Resources",
+
+    "panel.safewalks_request.header.title": "SafeWalks",
+    "panel.safewalks_request.button.more.hint": "Show more",
+    "panel.safewalks_request.sub_title1.text": "Trust your instincts.",
+    "panel.safewalks_request.sub_title2.text": "You never have to walk alone.",
+    "panel.safewalks_request.info1.text": "Request a student patrol officer to walk with you.",
+    "panel.safewalks_request.info2.text": "Please give at least {{safewalk_order_interval}} minutes' notice.",
+    "panel.safewalks_request.info3.text": "Available {{safewalk_start_time}} to {{safewalk_end_time}}.",
+    "panel.safewalks_request.detail.phone.html": "You can also schedule a walk by calling <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a>.",
+    "panel.safewalks_request.detail.saferides.html": "Looking for a ride instead? The Champaign-Urbana Mass Transit District offers limited <a href='{{saferides_url}}'>SafeRides</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> at night.",
+    "panel.safewalks_request.detail.settings.text": "My Location Settings",
+    "panel.safewalks_request.command.about.text": "About SafeWalks",
+   	"panel.safewalks_request.command.share.text": "Share SafeWalks",
+   	"panel.safewalks_request.command.safety_resources.text": "Safety Resources",
+
+    "widget.safewalks_request.origin.title": "Current Location",
+    "widget.safewalks_request.destination.title": "Destination",
+    "widget.safewalks_request.start.title": "Start with a Text",
+    "widget.safewalks_request.location.current.title": "Use My Location",
+    "widget.safewalks_request.location.map.title": "Search Maps",
+    "widget.safewalks_request.location.saved.title": "View Saved Locations",
+    "widget.safewalks_request.message.service_disabled.title": "Location Services not enabled.",
+    "widget.safewalks_request.message.service_denied.title": "Location Services access denied.",
+    "widget.safewalks_request.message.service_not_available.title": "Location Services not available.",
+    "widget.safewalks_request.message.missing.origin.title": "Please select your current location.",
+    "widget.safewalks_request.message.missing.destination.title": "Please select your destination.",
+    "widget.safewalks_request.message.sms.text": "Hi, my name is {{safewalk_user_name}} and I'd like to request a SafeWalk.\n\nMy Current Location:\n{{safewalk_origin}}\n\nMy Destination:\n{{safewalk_destination}}",
+    "widget.safewalks_request.unknown.user.text": "Anonimous User",
+    "widget.safewalks_request.unknown.location.text": "Unknwon",
+
     "panel.home_canvas_course.header.title": "Curso",
     "panel.home_canvas_course.load.failed.error.msg": "No se ha podido cargar el curso. Vuelve a intentarlo más tarde.",
     "panel.home_canvas_course.button.assignments.title": "Tareas",
@@ -3561,6 +3601,11 @@
     "widget.home.campus_guide_highlights.text.empty.description": "Toque \u2606 en los elementos de <a href='{{local_url}}'><b>Destacados de la guía del campus</b></a> para acceder rápidamente aquí.",
     "widget.home.campus_guide_highlights.button.all.title": "Ver todo",
     "widget.home.campus_guide_highlights.button.all.hint": "Toca para ver todos los momentos destacados",
+
+    "widget.home.safety.safewalk_request.title": "SafeWalks",
+    "widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information bellow.",
+
+    "widget.home.safety.saferides.title": "SafeRides",
 
     "widget.home.safer.label.title": "Acceso a Edificios",
     "widget.home.safer.text.empty.description": "Toca la \u2606 en los elementos de Acceso a Edificios para encontrarlos rápidamente aquí.",

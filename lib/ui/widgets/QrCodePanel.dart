@@ -7,6 +7,7 @@ import 'package:neom/service/Analytics.dart';
 import 'package:neom/service/Config.dart';
 import 'package:neom/service/Gateway.dart';
 import 'package:neom/service/NativeCommunicator.dart';
+import 'package:neom/service/Safety.dart';
 import 'package:neom/service/SkillsSelfEvaluation.dart';
 import 'package:neom/ui/events2/Event2HomePanel.dart';
 import 'package:neom/ui/widgets/HeaderBar.dart';
@@ -98,11 +99,25 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
   factory QrCodePanel.fromBuilding(Building? building, {Key? key, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
     key: key,
     deepLinkUrl: '${Gateway.buildingDetailUrl}?building_number=${building?.number}',
-      saveFileName: 'Location - ${building?.name}',
-      saveWatermarkText: building?.name,
-      saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
+    saveFileName: 'Location - ${building?.name}',
+    saveWatermarkText: building?.name,
+    saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.building.title', 'Share this location'),
     description: Localization().getStringEx('panel.qr_code.building.description.label', 'Want to invite other Illinois app users to view this location? Use one of the sharing options below.'),
+    analyticsFeature: analyticsFeature,
+  );
+
+  factory QrCodePanel.fromSafeWalk({ Key? key, Map<String, dynamic>? origin, Map<String, dynamic>? destination, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
+    key: key,
+    deepLinkUrl: Safety.safeWalkDetailUrl({
+      'origin': (origin != null) ? JsonUtils.encode(origin) : null,
+      'destination': (destination != null) ? JsonUtils.encode(destination) : null,
+    }),
+    saveFileName: 'SafeWalks ${DateTimeUtils.localDateTimeToString(DateTime.now())}',
+    saveWatermarkText: Localization().getStringEx('panel.safewalks_request.header.title', 'SafeWalks'),
+    saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
+    title: Localization().getStringEx('panel.qr_code.feature.title', 'Share this feature'),
+    description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),
     analyticsFeature: analyticsFeature,
   );
 
