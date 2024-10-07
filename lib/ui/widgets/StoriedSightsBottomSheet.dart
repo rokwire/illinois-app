@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/places.dart' as places_model;
 import 'package:rokwire_plugin/service/places.dart';
@@ -13,9 +14,12 @@ class StoriedSightsBottomSheet extends StatefulWidget {
 class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
   List<places_model.Place> _storiedSights = [];
   final DraggableScrollableController _controller = DraggableScrollableController();
-  final List<places_model.Place> _defaultCampusDestinations = _getDefaultCampusDestinations();
   final Set<String> _selectedFilters = {};
   places_model.Place? _selectedDestination;
+
+  Map<String, List<DateTime>> _placeCheckInDates = {};
+  Map<String, bool> _isHistoryExpanded = {};
+  Map<String, DateTime?> _lastCheckInDate = {};
 
   @override
   void initState() {
@@ -28,7 +32,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
     List<places_model.Place>? places = await placesService.getAllPlaces();
     if (places == null || places.isEmpty) {
       setState(() {
-        _storiedSights = _defaultCampusDestinations;
+        _storiedSights = [];
       });
     } else {
       setState(() {
@@ -74,6 +78,218 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
       _buildBottomSheetHeader(),
       ..._storiedSights.map((place) => _buildDestinationCard(place)).toList(),
     ];
+  }
+
+  // Method to handle check-in action
+  void _handleCheckIn() async {
+    if (_selectedDestination != null) {
+      String placeId = _selectedDestination!.id;
+      DateTime now = DateTime.now();
+
+      setState(() {
+        if (_selectedDestination!.userData == null) {
+          _selectedDestination!.userData = places_model.UserPlace(
+            id: placeId,
+            visited: [now],
+          );
+        } else {
+          _selectedDestination!.userData!.visited ??= [];
+          _selectedDestination!.userData!.visited!.add(now);
+        }
+
+
+        _placeCheckInDates[placeId] ??= [];
+        _placeCheckInDates[placeId]!.add(now);
+        _placeCheckInDates[placeId]!.sort((a, b) => b.compareTo(a));
+        _lastCheckInDate[placeId] = _placeCheckInDates[placeId]!.first;
+      });
+
+      PlacesService placesService = PlacesService();
+      try {
+        places_model.UserPlace? updatedPlace = await placesService.updatePlaceVisited(placeId, true);
+        if (updatedPlace == null) {
+
+          setState(() {
+            _selectedDestination!.userData!.visited!.remove(now);
+            _placeCheckInDates[placeId]!.remove(now);
+            if (_placeCheckInDates[placeId]!.isEmpty) {
+              _lastCheckInDate[placeId] = null;
+            } else {
+              _lastCheckInDate[placeId] = _placeCheckInDates[placeId]!.first;
+            }
+          });
+
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Check-in failed. Please try again.')),
+          );
+        }
+      } catch (e) {
+
+        setState(() {
+          _selectedDestination!.userData!.visited!.remove(now);
+          _placeCheckInDates[placeId]!.remove(now);
+          if (_placeCheckInDates[placeId]!.isEmpty) {
+            _lastCheckInDate[placeId] = null;
+          } else {
+            _lastCheckInDate[placeId] = _placeCheckInDates[placeId]!.first;
+          }
+        });
+
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Check-in failed due to an error.')),
+        );
+      }
+    }
+  }
+
+  void _clearCheckInDate(DateTime date) async {
+    if (_selectedDestination != null) {
+      String placeId = _selectedDestination!.id;
+
+
+      setState(() {
+        _placeCheckInDates[placeId]?.remove(date);
+        _selectedDestination!.userData?.visited?.remove(date);
+
+        if (_placeCheckInDates[placeId]?.isEmpty ?? true) {
+          _lastCheckInDate[placeId] = null;
+          _isHistoryExpanded[placeId] = false;
+        } else {
+          _placeCheckInDates[placeId]?.sort((a, b) => b.compareTo(a));
+          _lastCheckInDate[placeId] = _placeCheckInDates[placeId]?.first;
+        }
+      });
+
+      PlacesService placesService = PlacesService();
+      try {
+        bool success = await placesService.deleteVisitedPlace(placeId, date.toUtc());
+        if (!success) {
+          setState(() {
+            _placeCheckInDates[placeId]?.add(date);
+            _selectedDestination!.userData?.visited?.add(date);
+            _placeCheckInDates[placeId]?.sort((a, b) => b.compareTo(a));
+            _lastCheckInDate[placeId] = _placeCheckInDates[placeId]?.first;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to clear check-in date. Please try again.')),
+          );
+        }
+      } catch (e) {
+
+        setState(() {
+          _placeCheckInDates[placeId]?.add(date);
+          _selectedDestination!.userData?.visited?.add(date);
+          _placeCheckInDates[placeId]?.sort((a, b) => b.compareTo(a));
+          _lastCheckInDate[placeId] = _placeCheckInDates[placeId]?.first;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('An error occurred while clearing the check-in date.')),
+        );
+      }
+    }
+  }
+
+  Widget _buildCheckInButton() {
+    if (_selectedDestination == null) return Container();
+
+    List<DateTime>? visitedDates = _selectedDestination!.userData?.visited?.whereType<DateTime>().toList();
+    bool isCheckedInToday = false;
+
+    if (visitedDates != null && visitedDates.isNotEmpty) {
+      visitedDates.sort((a, b) => b.compareTo(a));
+      DateTime lastCheckInDate = visitedDates.first;
+
+      DateTime now = DateTime.now();
+      isCheckedInToday = lastCheckInDate.year == now.year &&
+          lastCheckInDate.month == now.month &&
+          lastCheckInDate.day == now.day;
+    }
+
+    return SmallRoundedButton(
+      label: isCheckedInToday ? 'Checked In' : 'Check in',
+      textStyle: TextStyle(
+        fontSize: 16,
+        fontFamily: Styles().fontFamilies.bold,
+        color: Styles().colors.fillColorPrimary,
+      ),
+      rightIcon: const SizedBox(),
+      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 48),
+      onTap: isCheckedInToday ? (){} : _handleCheckIn,
+    );
+  }
+
+  // Widget to display previous check-ins
+  Widget _buildCheckInHistory() {
+    if (_selectedDestination == null) return Container();
+
+    String placeId = _selectedDestination!.id;
+    List<DateTime>? visitedDates = _selectedDestination!.userData?.visited?.whereType<DateTime>().toList();
+    if (visitedDates == null || visitedDates.isEmpty) return Container();
+
+    visitedDates.sort((a, b) => b.compareTo(a));
+    DateTime lastCheckInDate = visitedDates.first;
+    String formattedLastDate = DateFormat('MMMM d, yyyy').format(lastCheckInDate);
+
+    bool isExpanded = _isHistoryExpanded[placeId] ?? false;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _isHistoryExpanded[placeId] = !isExpanded;
+            });
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'You last checked in on $formattedLastDate',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Styles().colors.fillColorSecondary,
+                ),
+              ),
+              Icon(
+                isExpanded ? Icons.expand_less : Icons.expand_more,
+                color: Styles().colors.fillColorSecondary,
+              ),
+            ],
+          ),
+        ),
+        if (isExpanded)
+          Column(
+            children: visitedDates.map((date) {
+              String formattedDate = DateFormat('MMMM d, yyyy').format(date);
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    formattedDate,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  TextButton(
+                    onPressed: () => _clearCheckInDate(date),
+                    child: Text(
+                      'Clear',
+                      style: TextStyle(
+                        color: Styles().colors.fillColorPrimary,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }).toList(),
+          ),
+      ],
+    );
   }
 
   List<Widget> _buildSelectedDestinationView() {
@@ -133,6 +349,8 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildDestinationHeader(),
+        SizedBox(height: 16),
+        _buildCheckInHistory(),
         SizedBox(height: 16),
         Divider(color: Styles().colors.mediumGray2, thickness: 2),
         SizedBox(height: 16),
@@ -221,20 +439,6 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildCheckInButton() {
-    return SmallRoundedButton(
-      label: 'Check-in',
-      textStyle: TextStyle(
-        fontSize: 16,
-        fontFamily: Styles().fontFamilies.bold,
-        color: Styles().colors.fillColorPrimary,
-      ),
-      rightIcon: const SizedBox(),
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 48),
-      onTap: () {},
     );
   }
 
@@ -416,32 +620,33 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
     );
   }
 
-  static List<places_model.Place> _getDefaultCampusDestinations() {
-    return [
-      places_model.Place(
-        id: '123',
-        name: 'Doris Kelley Christopher Illinois Extension Center',
-        address: '904 W. Nevada St, Urbana, IL 61801',
-        images: [
-          places_model.Image(imageUrl: 'https://picsum.photos/100'),
-          places_model.Image(imageUrl: 'https://picsum.photos/200'),
-          places_model.Image(imageUrl: 'https://picsum.photos/300'),
-        ],
-        latitude: 1.0,
-        longitude: 1.0,
-      ),
-      places_model.Place(
-        id: '1234',
-        name: 'Krannert Center for the Performing Arts',
-        address: '500 S Goodwin Ave, Urbana, IL',
-        images: [
-          places_model.Image(imageUrl: 'https://picsum.photos/101'),
-          places_model.Image(imageUrl: 'https://picsum.photos/201'),
-          places_model.Image(imageUrl: 'https://picsum.photos/301'),
-        ],
-        latitude: 1.0,
-        longitude: 1.0,
-      ),
-    ];
-  }
+//For testing
+// static List<places_model.Place> _getDefaultCampusDestinations() {
+//   return [
+//     places_model.Place(
+//       id: '123',
+//       name: 'Doris Kelley Christopher Illinois Extension Center',
+//       address: '904 W. Nevada St, Urbana, IL 61801',
+//       images: [
+//         places_model.Image(imageUrl: 'https://picsum.photos/100'),
+//         places_model.Image(imageUrl: 'https://picsum.photos/200'),
+//         places_model.Image(imageUrl: 'https://picsum.photos/300'),
+//       ],
+//       latitude: 1.0,
+//       longitude: 1.0,
+//     ),
+//     places_model.Place(
+//       id: '1234',
+//       name: 'Krannert Center for the Performing Arts',
+//       address: '500 S Goodwin Ave, Urbana, IL',
+//       images: [
+//         places_model.Image(imageUrl: 'https://picsum.photos/101'),
+//         places_model.Image(imageUrl: 'https://picsum.photos/201'),
+//         places_model.Image(imageUrl: 'https://picsum.photos/301'),
+//       ],
+//       latitude: 1.0,
+//       longitude: 1.0,
+//     ),
+//   ];
+// }
 }
