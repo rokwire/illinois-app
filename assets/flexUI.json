@@ -14,6 +14,7 @@
 				"state_farm_center", "app_help", "video_tutorials",
 				"gies_checklist", "new_student_checklist", "safer", "student_courses", "canvas_courses",
 				"campus_highlights", "campus_safety_resources",
+				"safewalk_request", "saferides", "safety_resources",
 				"recent_items", "public_surveys", "my_news", "my_appointments", "my_mtd_stops", "my_locations"
 			],
 			"home.system": ["tout", "welcome_video", "welcome_message", "emergency", "voter_registration", "connect"],

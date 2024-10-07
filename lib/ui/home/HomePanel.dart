@@ -48,6 +48,7 @@ import 'package:illinois/ui/home/HomeLaundryWidget.dart';
 import 'package:illinois/ui/home/HomePublicSurveysWidget.dart';
 import 'package:illinois/ui/home/HomeRecentPollsWidget.dart';
 import 'package:illinois/ui/home/HomeResearchProjectsWidget.dart';
+import 'package:illinois/ui/home/HomeSafewalkRequestWidget.dart';
 import 'package:illinois/ui/home/HomeStateFarmCenterWidget.dart';
 import 'package:illinois/ui/home/HomeStudentCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
@@ -515,6 +516,28 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeFavoritesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position, favoriteKey: GuideFavorite.favoriteKeyName, );
       } else {
         return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: GuideFavorite.favoriteKeyName, );
+      }
+    }
+
+    else if (code == 'safewalk_request') {
+      if (title) {
+        return HomeSafewalkRequestWidget.title;
+      } else if (handle) {
+        return HomeSafewalkRequestWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeSafewalkRequestWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+    else if (code == 'saferides') {
+
+    }
+    else if (code == 'safety_resources') {
+      if (title) {
+        return HomeCampusSafetyResourcesWidget.title;
+      } else if (handle) {
+        return HomeCampusSafetyResourcesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeCampusSafetyResourcesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
 

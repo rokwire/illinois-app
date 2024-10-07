@@ -192,6 +192,12 @@ class SafetySafeWalkRequestPage extends StatelessWidget with SafetyHomeContentPa
 }
 
 class SafetySafeWalkRequestCard extends StatefulWidget {
+
+  final Widget? headerWidget;
+  final Color? backgroundColor;
+
+  SafetySafeWalkRequestCard({super.key, this.headerWidget, this.backgroundColor});
+
   @override
   State<StatefulWidget> createState() => _SafetySafeWalkRequestCardState();
 }
@@ -208,6 +214,10 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
   Widget build(BuildContext context) =>
     Container(decoration: _cardDecoration, padding: EdgeInsets.all(16), child:
       Column(children: [
+
+        if (widget.headerWidget != null)
+          widget.headerWidget ?? Container(),
+
         Row(children: [
           Padding(padding: EdgeInsets.only(right: 8), child:
             _detailIconSpacer,
@@ -319,7 +329,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
     );
 
   BoxDecoration get _cardDecoration => BoxDecoration(
-    color: Styles().colors.background,
+    color: widget.backgroundColor ?? Styles().colors.background,
     border: Border.all(color: Styles().colors.mediumGray2, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(16))
   );
