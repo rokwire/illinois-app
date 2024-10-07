@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added share functionality for campus buildings [#4396](https://github.com/rokwire/illinois-app/issues/4396).
 - Added guide detail url builder.
 - Created ExploreMessagePopup.
+- Add SafeWalks feature and navigation, TBD Quick Actions [#4363](https://github.com/rokwire/illinois-app/issues/4363).
 
 ## [6.1.8] - 2024-08-28
 ### Changed

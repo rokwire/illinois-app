@@ -31,6 +31,7 @@ import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/service/Questionnaire.dart';
+import 'package:illinois/service/Safety.dart';
 import 'package:illinois/service/SkillsSelfEvaluation.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/DeepLink.dart';
@@ -156,6 +157,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       MobileAccess(),
       SkillsSelfEvaluation(),
       Gateway(),
+      Safety(),
     ]);
 
     ServiceError? serviceError = await illinois.Services().init();

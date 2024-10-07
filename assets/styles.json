@@ -130,6 +130,8 @@
 
     "widget.heading.huge": { "font_family": "regular", "size": 32.0, "color": "white"},
     "widget.heading.huge.extra_fat": { "font_family": "extra_bold", "size": 32.0, "color": "white"},
+    "widget.heading.extra2_large": { "font_family": "regular", "size": 28.0, "color": "white"},
+    "widget.heading.extra2_large.extra_fat": { "font_family": "extra_bold", "size": 28.0, "color": "white"},
     "widget.heading.extra_large": { "font_family": "regular", "size": 24.0, "color": "white"},
     "widget.heading.extra_large.fat": { "font_family": "bold", "size": 24.0, "color": "white"},
     "widget.heading.large": { "font_family": "regular", "size": 20.0, "color": "white"},
@@ -714,6 +716,10 @@
     "panel.essential_skills_coach.content.title":  {"font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant"},
     "panel.essential_skills_coach.results.table.header": {"font_family": "regular", "size": 12.0, "color": "fillColorPrimary"},
 
+    "panel.safewalks_request.title" : { "font_family": "extra_bold", "size": 28.0, "color": "white"},
+    "panel.safewalks_request.sub_title" : { "font_family": "bold", "size": 18.0, "color": "deepOrange", "height": 1.00 },
+    "panel.safewalks_request.info" : {"font_family": "regular", "size": 16.0, "color": "white", "height": 1.00 },
+
     "panel.wellness_appointments.button.title.underline":  {"extends": "widget.button.title.regular.thin.underline", "decoration_color":  "fillColorPrimary"},
     "panel.wellness_appointments.title.large":  {"extends": "widget.title.medium_large.extra_fat", "color": "blackTransparent06"},
 
@@ -820,6 +826,8 @@
     "close": {"src": "images/close-orange-small.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14},
     "settings": {"src": "images/icon-settings.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "wrong size"},
     "external-link": {"src": "0xf08e", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 15},
+    "paper-plane": {"src": "0xf1d8", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
+    "person-walking": {"src": "0xf554", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "web": {"src": "0xf08e", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 15, "todo":  "same as external-link"},
     "share": {"src": "0xf1e0", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "notification": {"src": "images/notifications-blue.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "color issue, size issue"},
