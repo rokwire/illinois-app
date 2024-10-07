@@ -3322,6 +3322,11 @@
     "widget.safewalks_request.message.service_disabled.title": "Location Services not enabled.",
     "widget.safewalks_request.message.service_denied.title": "Location Services access denied.",
     "widget.safewalks_request.message.service_not_available.title": "Location Services not available.",
+    "widget.safewalks_request.message.missing.origin.title": "Please select your current location.",
+    "widget.safewalks_request.message.missing.destination.title": "Please select your destination.",
+    "widget.safewalks_request.message.sms.text": "Hi, my name is {{safewalk_user_name}} and I'd like to request a SafeWalk.\n\nMy Current Location:\n{{safewalk_origin}}\n\nMy Destination:\n{{safewalk_destination}}",
+    "widget.safewalks_request.unknown.user.text": "Anonimous User",
+    "widget.safewalks_request.unknown.location.text": "Unknwon",
 
     "panel.home_canvas_course.header.title": "Course",
     "panel.home_canvas_course.load.failed.error.msg": "Failed to load course. Please try again later.",

@@ -3288,6 +3288,7 @@
 	"panel.safewalks_request.detail.phone.html": "You can also schedule a walk by calling <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a>.",
 	"panel.safewalks_request.detail.saferides.html": "Looking for a ride instead? The Champaign-Urbana Mass Transit District offers limited <a href='{{saferides_url}}'>SafeRides</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> at night.",
 	"panel.safewalks_request.detail.settings.text": "My Location Settings",
+	"panel.safewalks_request.message.text": "Hi, my name is {{safewalk_user_name}} and I'd like to request a SafeWalk.\n\nMy Current Location:\n{{safewalk_origin}}\n\nMy Destination:\n{{safewalk_destination}}",
 
 	"widget.safewalks_request.origin.title": "Current Location",
 	"widget.safewalks_request.destination.title": "Destination",
@@ -3296,8 +3297,12 @@
 	"widget.safewalks_request.location.map.title": "Search Maps",
 	"widget.safewalks_request.location.saved.title": "View Saved Locations",
 	"widget.safewalks_request.message.service_disabled.title": "Location Services not enabled.",
- "widget.safewalks_request.message.service_denied.title": "Location Services access denied.",
- "widget.safewalks_request.message.service_not_available.title": "Location Services not available.",
+ 	"widget.safewalks_request.message.service_denied.title": "Location Services access denied.",
+	"widget.safewalks_request.message.missing.origin.title": "Please select your current location.",
+ "widget.safewalks_request.message.missing.destination.title": "Please select your destination.",
+	"widget.safewalks_request.message.sms.text": "Hi, my name is {{safewalk_user_name}} and I'd like to request a SafeWalk.\n\nMy Current Location:\n{{safewalk_origin}}\n\nMy Destination:\n{{safewalk_destination}}",
+	"widget.safewalks_request.unknown.user.text": "Anonymous User",
+	"widget.safewalks_request.unknown.location.text": "Unknwon",
 
 	"panel.home_canvas_course.header.title": "課程",
 	"panel.home_canvas_course.load.failed.error.msg": "無法加載課程. 請稍後再試.",

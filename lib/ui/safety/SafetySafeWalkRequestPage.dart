@@ -8,6 +8,7 @@ import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/SavedPanel.dart';
@@ -196,6 +197,10 @@ class SafetySafeWalkRequestCard extends StatefulWidget {
 }
 
 class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
+  static const String _safeWalkUserNameMacro = '{{safewalk_user_name}}';
+  static const String _safeWalkOriginMacro = '{{safewalk_origin}}';
+  static const String _safeWalkDestinationMacro = '{{safewalk_destination}}';
+
   dynamic _originLocation, _destinationLocation;
   bool _originProgress = false, _destinationProgress = false;
 
@@ -218,7 +223,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
           ),
           Expanded(child:
             _dropdownButton(
-              text: _locationDescription(_originLocation),
+              text: _locationShortDescription(_originLocation),
               progress: _originProgress,
               items: _originDropDownItems,
               onChanged: _onTapOriginLocationType,
@@ -243,7 +248,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
           ),
           Expanded(child:
             _dropdownButton(
-              text: _locationDescription(_destinationLocation),
+              text: _locationShortDescription(_destinationLocation),
               progress: _destinationProgress,
               items: _destinationDropDownItems,
               onChanged: _onTapDestinationLocationType,
@@ -260,12 +265,15 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
               Center(child:
                 RoundedButton(
                   label: Localization().getStringEx('widget.safewalks_request.start.title', 'Start with a Text'),
+                  //textStyle: _sendEnabled ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
+                  //borderColor: _sendEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
                   padding: EdgeInsets.symmetric(vertical: 8),
-                  leftIcon: Styles().images.getImage('paper-plane'),
+                  leftIcon: Styles().images.getImage('paper-plane'), //, color: _sendEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent),
                   leftIconPadding: EdgeInsets.only(left: 12, right: 8),
                   rightIconPadding: EdgeInsets.only(left: 16),
                   contentWeight: -1,
                   onTap: _onTapSend,
+
                 )
               )
             ),
@@ -416,12 +424,47 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
       },
     )));
 
-  String? _locationDescription(dynamic location) {
+  String? _locationShortDescription(dynamic location) {
     if (location is Position) {
       return "[${location.latitude.toStringAsFixed(6)}, ${location.longitude.toStringAsFixed(6)}]";
     }
     else if (location is Explore) {
       return location.exploreTitle;
+    }
+    else if (location is Favorite) {
+      return location.favoriteTitle;
+    }
+    else {
+      return null;
+    }
+  }
+
+  String? _locationLongDescription(dynamic location) {
+    if (location is Position) {
+      return "Map [${location.latitude.toStringAsFixed(6)}, ${location.longitude.toStringAsFixed(6)}]";
+    }
+    else if (location is Explore) {
+      String? name = location.exploreLocation?.building ?? location.exploreTitle;
+      String? address;
+      if (StringUtils.isNotEmpty(location.exploreLocation?.address) &&
+        StringUtils.isNotEmpty(location.exploreLocation?.city) &&
+        StringUtils.isNotEmpty(location.exploreLocation?.state) &&
+        StringUtils.isNotEmpty(location.exploreLocation?.zip))
+      {
+        address = "${location.exploreLocation?.address}\n${location.exploreLocation?.city}, ${location.exploreLocation?.state} ${location.exploreLocation?.zip}";
+      }
+      else if (StringUtils.isNotEmpty(location.exploreLocation?.description)) {
+        address = location.exploreLocation?.description;
+      }
+      else if ((location.exploreLocation?.longitude != null) && (location.exploreLocation?.longitude != null)) {
+        address = "Map [${location.exploreLocation?.latitude?.toStringAsFixed(6)}, ${location.exploreLocation?.longitude?.toStringAsFixed(6)}]";
+      }
+      if (StringUtils.isNotEmpty(address)) {
+        return StringUtils.isNotEmpty(name) ? "$name\n$address" : address;  
+      }
+      else {
+        return name;
+      }
     }
     else if (location is Favorite) {
       return location.favoriteTitle;
@@ -469,8 +512,27 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
     });
   }
 
+  //bool get _sendEnabled => (_originLocation != null) && (_destinationLocation != null);
+
   void _onTapSend() {
     Analytics().logSelect(target: 'Start with a Text');
+    if (_originLocation == null) {
+      ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.missing.origin.title', 'Please select your current location.'));
+    }
+    else if (_destinationLocation == null) {
+      ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.missing.destination.title', 'Please select your destination.'));
+    }
+    else  {
+      String message = Localization().getStringEx('panel.safewalks_request.message.text', 'Hi, my name is $_safeWalkUserNameMacro and I\'d like to request a SafeWalk.\n\nMy Current Location:\n$_safeWalkOriginMacro\n\nMy Destination:\n$_safeWalkDestinationMacro')
+        .replaceAll(_safeWalkUserNameMacro, Auth2().account?.authType?.uiucUser?.firstName ?? Auth2().profile?.firstName ?? Localization().getStringEx('widget.safewalks_request.unknown.user.text', 'Anonymous User'))
+        .replaceAll(_safeWalkOriginMacro, _locationLongDescription(_originLocation) ?? Localization().getStringEx('widget.safewalks_request.unknown.location.text', 'Unknwon'))
+        .replaceAll(_safeWalkDestinationMacro, _locationLongDescription(_destinationLocation) ?? Localization().getStringEx('widget.safewalks_request.unknown.location.text', 'Unknwon'));
+      String url = "sms:${Config().safeWalkTextNumber}?body=" + Uri.encodeComponent(message);
+      Uri? uri = Uri.tryParse(url);
+      if (uri != null) {
+        launchUrl(uri);
+      }
+    }
   }
 }
 
@@ -497,6 +559,7 @@ class _VerticalDashedLinePainter extends CustomPainter {
   final double dashSpace;
   final Color dashColor;
 
+  // ignore: unused_element
   _VerticalDashedLinePainter({this.dashHeight = 5, this.dashSpace = 3, this.dashColor = Colors.black});
 
   @override
