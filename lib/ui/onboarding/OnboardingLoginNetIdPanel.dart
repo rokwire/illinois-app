@@ -218,38 +218,24 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
   void _onLoginTapped() {
     Analytics().logSelect(target: 'Log in with NetID');
     if (_progress != true) {
-      setState(() {
-        _progress = true;
-        print('TESTDEBUGLOGUIUCWEB: progress: true, call: authenticateWithOidc');
-      });
+      setState(() { _progress = true; });
       Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
-        print('TESTDEBUGLOGUIUCWEB: authenticateWithOidc, result: $result');
         if (mounted) {
-          print('TESTDEBUGLOGUIUCWEB: authenticateWithOidc, mounted: true');
           if (result == Auth2OidcAuthenticateResult.succeeded) {
             FlexUI().update().then((_) {
               if (mounted) {
-                setState(() {
-                  _progress = false;
-                  print('TESTDEBUGLOGUIUCWEB: progress: false, call: _onContinue');
-                });
+                setState(() { _progress = false; });
                 _onContinue();
               }
             });
           }
           else if (result == Auth2OidcAuthenticateResult.failed) {
-            setState(() {
-              _progress = false;
-              print('TESTDEBUGLOGUIUCWEB: progress: false, call: showDialog: _buildDialogWidget');
-            });
+            setState(() { _progress = false; });
             showDialog(context: context, builder: (context) => _buildDialogWidget(context));
           }
           else {
             // login canceled
-            setState(() {
-              _progress = false;
-              print('TESTDEBUGLOGUIUCWEB: progress: false, ....');
-            });
+            setState(() { _progress = false; });
           }
         }
       });
