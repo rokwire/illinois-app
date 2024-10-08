@@ -29,7 +29,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
   }
 
   Future<void> _loadCampusDestinations() async {
-    PlacesService placesService = PlacesService();
+    Places placesService = Places();
     List<places_model.Place>? places = await placesService.getAllPlaces();
     setStateIfMounted((){
       _storiedSights = places ?? [];
@@ -99,7 +99,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
         _lastCheckInDate[placeId] = _placeCheckInDates[placeId]!.first;
       });
 
-      PlacesService placesService = PlacesService();
+      Places placesService = Places();
       try {
         places_model.UserPlace? updatedPlace = await placesService.updatePlaceVisited(placeId, true);
         if (mounted && (updatedPlace == null)) {
@@ -158,7 +158,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
         }
       });
 
-      PlacesService placesService = PlacesService();
+      Places placesService = Places();
       try {
         bool success = await placesService.deleteVisitedPlace(placeId, date.toUtc());
         if (mounted && !success) {
