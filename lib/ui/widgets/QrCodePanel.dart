@@ -114,7 +114,7 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
       'destination': (destination != null) ? JsonUtils.encode(destination) : null,
     }),
     saveFileName: 'SafeWalks ${DateTimeUtils.localDateTimeToString(DateTime.now())}',
-    saveWatermarkText: Localization().getStringEx('panel.safewalks_request.header.title', 'SafeWalks'),
+    saveWatermarkText: Localization().getStringEx('model.safety.safewalks.title', 'SafeWalks'),
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.feature.title', 'Share this feature'),
     description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),
