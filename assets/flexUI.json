@@ -77,7 +77,7 @@
 			"polls.features": ["authentication", "netid_login"],
 
 			"explore.list": ["events", "dining"],
-			"explore.map":  ["events2", "dining", "laundry", "student_courses", "buildings", "mental_health", "appointments", "mtd_stops", "my_locations", "state_farm_wayfinding"],
+			"explore.map":  ["events2", "dining", "laundry", "student_courses", "buildings", "mental_health", "appointments", "mtd_stops", "my_locations", "state_farm_wayfinding", "storied_sites"],
 	
 			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
 	

@@ -72,6 +72,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyMapMtdStopsNotification                    = '$notifyBase.map.mtd_stops';
   static const String notifyMapMyLocationsNotification                 = '$notifyBase.map.my_locations';
   static const String notifyMapMentalHealthNotification                = '$notifyBase.map.mental_health';
+  static const String notifyMapStoriedSitesNotification                = '$notifyBase.map.storied_sites';
   static const String notifyMapStateFarmWayfindingNotification         = '$notifyBase.map.state_farm_wayfinding';
   static const String notifyAcademicsNotification                      = "$notifyBase.academics";
   static const String notifyAcademicsAppointmentsNotification          = "$notifyBase.academics.appointments";
