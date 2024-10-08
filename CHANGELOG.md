@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Acknowledged GoogleMaps plugin upgrade [#4302](https://github.com/rokwire/illinois-app/issues/4302).
 ### Added
-- Add SafeWalks feature and navigation, TBD Quick Actions [#4363](https://github.com/rokwire/illinois-app/issues/4363).
+- Added SafeWalks feature and navigation, TBD Quick Actions [#4363](https://github.com/rokwire/illinois-app/issues/4363).
+- Added SafeWalks Quick Actions [#4363](https://github.com/rokwire/illinois-app/issues/4363).
 - Added guide detail url builder.
 - Created ExploreMessagePopup.
 

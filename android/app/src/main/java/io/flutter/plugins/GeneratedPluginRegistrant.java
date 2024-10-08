@@ -141,6 +141,11 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin path_provider_android, io.flutter.plugins.pathprovider.PathProviderPlugin", e);
     }
     try {
+      flutterEngine.getPlugins().add(new io.flutter.plugins.quickactions.QuickActionsPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin quick_actions_android, io.flutter.plugins.quickactions.QuickActionsPlugin", e);
+    }
+    try {
       flutterEngine.getPlugins().add(new com.llfbandit.record.RecordPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin record_android, com.llfbandit.record.RecordPlugin", e);

@@ -1177,6 +1177,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.0"
+  quick_actions:
+    dependency: "direct main"
+    description:
+      name: quick_actions
+      sha256: "2c1d9a91f3218b4e987a7e1e95ba0415b7f48a2cb3ffacc027a1e3d3c117223f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.8"
+  quick_actions_android:
+    dependency: transitive
+    description:
+      name: quick_actions_android
+      sha256: "926e50d6f879287b34d21934e6c9457f0d851f554179f2a9e8136c4acd1b7062"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.18"
+  quick_actions_ios:
+    dependency: transitive
+    description:
+      name: quick_actions_ios
+      sha256: "402596dea62a1028960b93f7651ec22be0e2a91e4fbf92a1c62d3b95f8ff95a5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
+  quick_actions_platform_interface:
+    dependency: transitive
+    description:
+      name: quick_actions_platform_interface
+      sha256: "81a1e40c519bb3cacfec38b3008b13cef665a75bd270da94f40091b57f0f9236"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.6"
   record:
     dependency: "direct main"
     description:
@@ -1759,5 +1791,5 @@ packages:
     source: hosted
     version: "6.5.0"
 sdks:
-  dart: ">=3.4.0 <4.0.0"
-  flutter: ">=3.22.0"
+  dart: ">=3.5.0 <4.0.0"
+  flutter: ">=3.24.0"
