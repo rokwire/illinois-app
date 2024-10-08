@@ -1187,7 +1187,9 @@
     "panel.explore_detail.label.ask_dietician": "Consulta con un Dietista",
     "panel.explore_detail.label.ask_dietician_descr": "Escribe tu pregunta para nuestros dietistas:",
 
+    "panel.explore_building_detail.message.failed": "Failed to load location details",
     "panel.explore_building_detail.detail.fllor_plan_and_amenities": "Floor Plans & Amenities",
+    "panel.explore_building_detail.detail.share": "Share This Location",
 
     "panel.search_building.header.title": "Search",
     "panel.search_building.result.error.label": "Failed to search buildings.",
@@ -1449,7 +1451,7 @@
     "panel.event2.detail.general.add_to_calendar.title": "Agregar al Calendario",
     "panel.event2.detail.general.add_to_calendar.succeeded.message": "Added to Calendar",
     "panel.event2.detail.general.add_to_calendar.failed.message": "Failed to add to Calendar",
-    "panel.event2.detail.general.promote.title": "Share this event",
+    "panel.event2.detail.general.promote.title": "Share This Event",
     "panel.event2.detail.general.super_event.abbreviation.title": "Múltiple",
     "panel.event2.detail.general.recurrence.abbreviation.title": "Se repite",
     "panel.event2.detail.general.super_event.list.title": "Eventos múltiples",

@@ -5,10 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [6.0.50] - 2024-10-03
+### Fixed
+- Add existing event to group [#4379](https://github.com/rokwire/illinois-app/issues/4379).
+
+## [6.0.49] - 2024-10-02
 ### Changed
 - Upgraded url_launcher plugin to resolve build issue on Xcode 16.
 - Survey Card widgets color explicitly set to be white [#4385](https://github.com/rokwire/illinois-app/issues/4385).
 - Skills Self-Evaluation Pop-Up Text Update [#4391](https://github.com/rokwire/illinois-app/issues/4391).
+- Share this event button title Updated [#4397](https://github.com/rokwire/illinois-app/issues/4397).
+### Added
+- Added share functionality for campus buildings [#4396](https://github.com/rokwire/illinois-app/issues/4396).
 
 ## [6.0.48] - 2024-09-20
 ### Changed

@@ -27,6 +27,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/service/CheckList.dart';
+import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/service/Questionnaire.dart';
@@ -154,6 +155,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       Assistant(),
       MobileAccess(),
       SkillsSelfEvaluation(),
+      Gateway(),
     ]);
 
     ServiceError? serviceError = await illinois.Services().init();
