@@ -209,11 +209,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
 
     return SmallRoundedButton(
       label: isCheckedInToday ? 'Checked In' : 'Check in',
-      textStyle: TextStyle(
-        fontSize: 16,
-        fontFamily: Styles().fontFamilies.bold,
-        color: Styles().colors.fillColorPrimary,
-      ),
+      textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
       rightIcon: const SizedBox(),
       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 48),
       onTap: isCheckedInToday ? (){} : _handleCheckIn,
@@ -248,11 +244,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
             children: [
               Text(
                 'You last checked in on $formattedLastDate',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Styles().colors.fillColorSecondary,
-                ),
+                style: Styles().textStyles.getTextStyle("widget.label.small.fat"),
               ),
               Icon(
                 isExpanded ? Icons.expand_less : Icons.expand_more,
@@ -270,16 +262,15 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
                 children: [
                   Text(
                     formattedDate,
-                    style: TextStyle(fontSize: 16),
+                    style: Styles().textStyles.getTextStyle("widget.card.detail.small.medium"),
                   ),
                   TextButton(
                     onPressed: () => _clearCheckInDate(date),
                     child: Text(
                       'Clear',
-                      style: TextStyle(
-                        color: Styles().colors.fillColorPrimary,
-                        fontSize: 16,
-                      ),
+                      style: Styles().textStyles.getTextStyle("widget.title.small.semi_fat")?.apply(
+                          decoration: TextDecoration.underline,
+                          decorationColor: Styles().colors.fillColorSecondary),
                     ),
                   ),
                 ],
@@ -297,7 +288,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
         padding: const EdgeInsets.all(16.0),
         child: Text(
           _selectedDestination?.description ?? 'No description available',
-          style: TextStyle(fontSize: 16.0),
+          style: Styles().textStyles.getTextStyle("widget.description.regular"),
         ),
       ),
     ];
@@ -375,11 +366,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
       children: [
         Text(
           _selectedDestination?.name ?? '',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Styles().colors.fillColorPrimary,
-          ),
+          style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
         ),
         SizedBox(height: 8),
         _buildAddressRow(_selectedDestination?.address),
@@ -394,17 +381,15 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
   Widget _buildAddressRow(String? address) {
     return Row(
       children: [
-        Icon(Icons.location_pin, size: 15.0, color: Styles().colors.iconColor),
+        //Icon(Icons.location_pin, size: 15.0, color: Styles().colors.iconColor),
+        Styles().images.getImage('location', size: 15.0) ?? const SizedBox(),
         SizedBox(width: 4),
         Expanded(
           child: Text(
             address ?? 'No address available',
-            style: TextStyle(
-              fontSize: 14,
-              color: Styles().colors.textSurface,
-              decoration: TextDecoration.underline,
-              decorationColor: Styles().colors.fillColorSecondary,
-            ),
+            style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
+                decoration: TextDecoration.underline,
+                decorationColor: Styles().colors.fillColorSecondary),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -425,12 +410,9 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
           Expanded(
             child: Text(
               'Share this location',
-              style: TextStyle(
-                fontSize: 14,
-                color: Styles().colors.textSurface,
-                decoration: TextDecoration.underline,
-                decorationColor: Styles().colors.fillColorSecondary,
-              ),
+              style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
+                  decoration: TextDecoration.underline,
+                  decorationColor: Styles().colors.fillColorSecondary),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -504,11 +486,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
       children: [
         Text(
           place.name ?? 'Unknown Name',
-          style: TextStyle(
-            fontFamily: Styles().fontFamilies.bold,
-            fontSize: 16,
-            color: Styles().colors.fillColorPrimary,
-          ),
+          style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
         ),
         SizedBox(height: 4),
         _buildAddressRow(place.address),
@@ -555,11 +533,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
           });
         },
         child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            fontFamily: Styles().fontFamilies.regular,
-          ),
+          label, style: Styles().textStyles.getTextStyle("widget.button.title.small")
         ),
         style: ElevatedButton.styleFrom(
           foregroundColor:
@@ -597,11 +571,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
       children: [
         Text(
           'Storied Sites',
-          style: TextStyle(
-            fontFamily: Styles().fontFamilies.bold,
-            fontSize: 22.0,
-            color: Styles().colors.fillColorPrimary,
-          ),
+          style: Styles().textStyles.getTextStyle("widget.title.medium_large.fat"),
         ),
       ],
     );
