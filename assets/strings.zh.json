@@ -4164,6 +4164,7 @@
 	"model.public_survey.label.detail.ends.2": "Ends on {{end_date}}",
 
 	"model.safety.safewalks.title": "SafeWalks",
+	"model.safety.safewalks.request.action.text": "Request a SafeWalk",
 
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",
