@@ -3,6 +3,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/places.dart' as places_model;
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -116,7 +117,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
 
 
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Check-in failed. Please try again.')),
+            SnackBar(content: Text(Localization().getStringEx('', 'Check-in failed. Please try again.'))),
           );
         }
       } catch (e) {
@@ -133,7 +134,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
 
 
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Check-in failed due to an error.')),
+            SnackBar(content: Text(Localization().getStringEx('', 'Check-in failed due to an error.'))),
           );
         }
       }
@@ -170,7 +171,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
           });
 
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to clear check-in date. Please try again.')),
+            SnackBar(content: Text(Localization().getStringEx('', 'Failed to clear check-in date. Please try again.'))),
           );
         }
       } catch (e) {
@@ -184,7 +185,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
           });
 
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('An error occurred while clearing the check-in date.')),
+            SnackBar(content: Text(Localization().getStringEx('', 'An error occurred while clearing the check-in date.'))),
           );
         }
       }
@@ -208,7 +209,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
     }
 
     return SmallRoundedButton(
-      label: isCheckedInToday ? 'Checked In' : 'Check in',
+      label: isCheckedInToday ? Localization().getStringEx('', 'Checked in') : Localization().getStringEx('', 'Check In'),
       textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
       rightIcon: const SizedBox(),
       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 48),
@@ -243,7 +244,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'You last checked in on $formattedLastDate',
+                Localization().getStringEx('', 'You last checked in on $formattedLastDate'),
                 style: Styles().textStyles.getTextStyle("widget.label.small.fat"),
               ),
               Icon(
@@ -287,7 +288,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
       Padding(
         padding: const EdgeInsets.all(16.0),
         child: Text(
-          _selectedDestination?.description ?? 'No description available',
+          _selectedDestination?.description ?? Localization().getStringEx('', 'No description available'),
           style: Styles().textStyles.getTextStyle("widget.description.regular"),
         ),
       ),
@@ -386,7 +387,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
         SizedBox(width: 4),
         Expanded(
           child: Text(
-            address ?? 'No address available',
+            address ?? Localization().getStringEx('', 'No address available'),
             style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
                 decoration: TextDecoration.underline,
                 decorationColor: Styles().colors.fillColorSecondary),
@@ -409,7 +410,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
           SizedBox(width: 4.0),
           Expanded(
             child: Text(
-              'Share this location',
+              Localization().getStringEx('', 'Share this location'),
               style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
                   decoration: TextDecoration.underline,
                   decorationColor: Styles().colors.fillColorSecondary),
@@ -485,7 +486,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          place.name ?? 'Unknown Name',
+          place.name ?? Localization().getStringEx('', 'Unknown Name'),
           style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
         ),
         SizedBox(height: 4),
@@ -509,6 +510,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
+          // TODO: Change how the filters are working and set them up
           _buildFilterButton('Open Now'),
           _buildFilterButton('Near Me'),
           _buildFilterButton('Photo Spots'),
@@ -570,7 +572,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'Storied Sites',
+          Localization().getStringEx('', 'Storied Sites'),
           style: Styles().textStyles.getTextStyle("widget.title.medium_large.fat"),
         ),
       ],
