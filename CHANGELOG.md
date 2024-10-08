@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Added SafeWalks Quick Actions [#4363](https://github.com/rokwire/illinois-app/issues/4363).
+### Added
+- Preserve SafeWalk location selection when the app is awaken from background [#4363](https://github.com/rokwire/illinois-app/issues/4363).
 
 ## [6.1.9] - 2024-10-07
 ### Changed
