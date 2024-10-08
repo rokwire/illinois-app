@@ -233,7 +233,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     quickActions.setShortcutItems(<ShortcutItem>[
       ShortcutItem(
         type: Safety.safeWalkRequestAction,
-        localizedTitle: Localization().getStringEx('model.safety.safewalks.title', 'SafeWalks'),
+        localizedTitle: Localization().getStringEx('model.safety.safewalks.request.action.text', 'Request a SafeWalk'),
         icon: Platform.isAndroid ? 'paper_plane' : 'paper-plane',
       ),
   ]);
