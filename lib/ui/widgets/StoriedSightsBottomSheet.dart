@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/places.dart' as places_model;
@@ -30,15 +31,9 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
   Future<void> _loadCampusDestinations() async {
     PlacesService placesService = PlacesService();
     List<places_model.Place>? places = await placesService.getAllPlaces();
-    if (places == null || places.isEmpty) {
-      setState(() {
-        _storiedSights = [];
-      });
-    } else {
-      setState(() {
-        _storiedSights = places;
-      });
-    }
+    setStateIfMounted((){
+      _storiedSights = places ?? [];
+    });
   }
 
   @override
@@ -107,7 +102,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
       PlacesService placesService = PlacesService();
       try {
         places_model.UserPlace? updatedPlace = await placesService.updatePlaceVisited(placeId, true);
-        if (updatedPlace == null) {
+        if (mounted && (updatedPlace == null)) {
 
           setState(() {
             _selectedDestination!.userData!.visited!.remove(now);
@@ -125,21 +120,22 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
           );
         }
       } catch (e) {
+        if (mounted) {
+          setState(() {
+            _selectedDestination!.userData!.visited!.remove(now);
+            _placeCheckInDates[placeId]!.remove(now);
+            if (_placeCheckInDates[placeId]!.isEmpty) {
+              _lastCheckInDate[placeId] = null;
+            } else {
+              _lastCheckInDate[placeId] = _placeCheckInDates[placeId]!.first;
+            }
+          });
 
-        setState(() {
-          _selectedDestination!.userData!.visited!.remove(now);
-          _placeCheckInDates[placeId]!.remove(now);
-          if (_placeCheckInDates[placeId]!.isEmpty) {
-            _lastCheckInDate[placeId] = null;
-          } else {
-            _lastCheckInDate[placeId] = _placeCheckInDates[placeId]!.first;
-          }
-        });
 
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Check-in failed due to an error.')),
-        );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Check-in failed due to an error.')),
+          );
+        }
       }
     }
   }
@@ -165,7 +161,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
       PlacesService placesService = PlacesService();
       try {
         bool success = await placesService.deleteVisitedPlace(placeId, date.toUtc());
-        if (!success) {
+        if (mounted && !success) {
           setState(() {
             _placeCheckInDates[placeId]?.add(date);
             _selectedDestination!.userData?.visited?.add(date);
@@ -179,16 +175,18 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
         }
       } catch (e) {
 
-        setState(() {
-          _placeCheckInDates[placeId]?.add(date);
-          _selectedDestination!.userData?.visited?.add(date);
-          _placeCheckInDates[placeId]?.sort((a, b) => b.compareTo(a));
-          _lastCheckInDate[placeId] = _placeCheckInDates[placeId]?.first;
-        });
+        if (mounted) {
+          setState(() {
+            _placeCheckInDates[placeId]?.add(date);
+            _selectedDestination!.userData?.visited?.add(date);
+            _placeCheckInDates[placeId]?.sort((a, b) => b.compareTo(a));
+            _lastCheckInDate[placeId] = _placeCheckInDates[placeId]?.first;
+          });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('An error occurred while clearing the check-in date.')),
-        );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('An error occurred while clearing the check-in date.')),
+          );
+        }
       }
     }
   }
