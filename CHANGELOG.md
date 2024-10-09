@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Extended error handling for SafeWalks SMS sending [#4363](https://github.com/rokwire/illinois-app/issues/4363).
+### Changed
+- Use "Unauthenticated User" instead of "Anonymous User" [#4363](https://github.com/rokwire/illinois-app/issues/4363).
 
 ## [6.1.10] - 2024-10-08
 ### Added
