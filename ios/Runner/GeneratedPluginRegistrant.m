@@ -161,6 +161,7 @@
 #else
 @import permission_handler_apple;
 #endif
+
 #if __has_include(<quick_actions_ios/QuickActionsPlugin.h>)
 #import <quick_actions_ios/QuickActionsPlugin.h>
 #else
