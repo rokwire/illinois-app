@@ -33,13 +33,27 @@ import 'package:url_launcher/url_launcher.dart';
 
 enum _SafeWalkLocationType { current, map, saved }
 
-class SafetySafeWalkRequestPage extends StatelessWidget with SafetyHomeContentPage {
+class SafetySafeWalkRequestPage extends StatefulWidget with SafetyHomeContentPage {
 
   final Map<String, dynamic>? origin;
   final Map<String, dynamic>? destination;
-  final GlobalKey<_SafetySafeWalkRequestCardState> _safeWalksCardKey = GlobalKey();
 
   SafetySafeWalkRequestPage({super.key, this.origin, this.destination});
+
+  // StatefulWidget
+
+  @override
+  State<StatefulWidget> createState() => _SafetySafeWalkRequestPageState();
+
+  // SafetyHomeContentPage
+
+  @override
+  Color get safetyPageBackgroundColor => Styles().colors.fillColorPrimaryVariant;
+}
+
+class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
+
+  final GlobalKey<_SafetySafeWalkRequestCardState> _safeWalksCardKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) => Column(children: [
@@ -47,10 +61,7 @@ class SafetySafeWalkRequestPage extends StatelessWidget with SafetyHomeContentPa
     _detailsLayer(context),
   ],);
 
-  @override
-  Color get safetyPageBackgroundColor => Styles().colors.fillColorPrimaryVariant;
-  
-  Widget _mainLayer(BuildContext context) => Container(color: safetyPageBackgroundColor, child:
+  Widget _mainLayer(BuildContext context) => Container(color: widget.safetyPageBackgroundColor, child:
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(padding: EdgeInsets.only(left: 16, top: 32), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -89,7 +100,7 @@ class SafetySafeWalkRequestPage extends StatelessWidget with SafetyHomeContentPa
           ],)
         ),
         Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
-          SafetySafeWalkRequestCard(key: _safeWalksCardKey, origin: origin, destination: destination,),
+          SafetySafeWalkRequestCard(key: _safeWalksCardKey, origin: widget.origin, destination: widget.destination,),
         ),
       ],),
     ],)

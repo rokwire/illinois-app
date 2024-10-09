@@ -7,6 +7,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class Safety with Service implements NotificationsListener {
 
   static const String notifySafeWalkDetail = "edu.illinois.rokwire.safety.safewalk.detail";
+  static const String safeWalkRequestAction = "edu.illinois.rokwire.safety.safewalk.request";
 
   List<Uri>? _deepLinkUrisCache;
 
