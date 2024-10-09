@@ -137,7 +137,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   Future<ClosedCaptionFile> _loadClosedCaptions(String? closedCaptionsUrl) async {
     String? fileContents;
     if (StringUtils.isNotEmpty(closedCaptionsUrl)) {
-      Response? response = await Network().get(closedCaptionsUrl);
+      Response? response = await Network().get(closedCaptionsUrl, headers: Network.corsWebHeaders());
       int? responseCode = response?.statusCode;
       if (responseCode == 200) {
         fileContents = response?.body;
