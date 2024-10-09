@@ -46,6 +46,7 @@
 		<string>canvas-student</string>
 		<string>https</string>
 		<string>http</string>
+		<string>sms</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
