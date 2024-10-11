@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
@@ -21,13 +22,52 @@ import 'package:neom/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+class HomeGroupsSectionWidget extends StatefulWidget {
+  final String? favoriteId;
+  final StreamController<String>? updateController;
+
+  const HomeGroupsSectionWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+      HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+        title: StringUtils.capitalize(title),
+      );
+
+  static String get title => Localization().getStringEx('widget.home.groups.label.header.title', 'GROUPS');
+
+  @override
+  State<StatefulWidget> createState() => _HomeGroupsSectionWidgetState();
+}
+
+class _HomeGroupsSectionWidgetState extends State<HomeGroupsSectionWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return HomeBannerWidget(favoriteId: widget.favoriteId,
+      title: HomeGroupsSectionWidget.title,
+      bannerImageKey: 'banner-groups',
+      child: _widgetContent,
+      childPadding: const EdgeInsets.only(top: 24.0, bottom: 12.0),
+    );
+  }
+
+  Widget get _widgetContent {
+    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName());
+    return Column(children: [
+      if (favorites?.contains('my_groups') ?? false)
+        HomeGroupsWidget(contentType: GroupsContentType.my, updateController: widget.updateController,),
+      if (favorites?.contains('my_groups') ?? false)
+        Container(height: 16),
+      if (favorites?.contains('all_groups') ?? false)
+        HomeGroupsWidget(contentType: GroupsContentType.all, updateController: widget.updateController,),
+    ],);
+  }
+}
 
 class HomeGroupsWidget extends StatefulWidget {
-  final String? favoriteId;
   final StreamController<String>? updateController;
   final GroupsContentType contentType;
 
-  const HomeGroupsWidget({Key? key, required this.contentType, this.favoriteId, this.updateController}) : super(key: key);
+  const HomeGroupsWidget({Key? key, required this.contentType, this.updateController}) : super(key: key);
 
   static Widget handle({required GroupsContentType contentType, Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
@@ -40,8 +80,8 @@ class HomeGroupsWidget extends StatefulWidget {
 
   static String titleForContentType(GroupsContentType contentType) {
     switch(contentType) {
-      case GroupsContentType.my: return Localization().getStringEx('widget.home.groups.my.label.header.title', 'My Groups');
-      case GroupsContentType.all: return Localization().getStringEx('widget.home.groups.all.label.header.title', 'All Groups');
+      case GroupsContentType.my: return Localization().getStringEx('widget.home.groups.my.label.header.title', 'MY GROUPS');
+      case GroupsContentType.all: return Localization().getStringEx('widget.home.groups.all.label.header.title', 'ALL GROUPS');
     }
   }
 
@@ -165,9 +205,8 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeBannerSubsectionWidget(
       title: widget._title,
-      titleIconKey: 'groups',
       child: CollectionUtils.isEmpty(_groups) ? _buildEmpty() : _buildContent(),
     );
   }

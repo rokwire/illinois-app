@@ -165,12 +165,12 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   Widget _buildSheet(BuildContext context) {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
     return Column(children: [
-        Container(color: Styles().colors.gradientColorPrimary, child:
+        Container(color: Styles().colors.backgroundAccent, child:
           Row(children: [
             Expanded(child:
               _DebugContainer(child:
                 Padding(padding: EdgeInsets.only(left: 16), child:
-                  Text(Localization().getStringEx('panel.settings.home.header.settings.label', 'Settings'), style: Styles().textStyles.getTextStyle("widget.sheet.title.regular"))
+                  Text(Localization().getStringEx('panel.settings.home.header.settings.label', 'SETTINGS'), style: Styles().textStyles.getTextStyle("widget.title.light.large.fat"))
                 )
               ),
             ),
@@ -186,14 +186,12 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
             Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
               InkWell(onTap : _onTapClose, child:
                 Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-                  Styles().images.getImage('close-circle', excludeFromSemantics: true),
+                  Styles().images.getImage('close-circle-white', excludeFromSemantics: true),
                 ),
               ),
             ),
-
           ],),
         ),
-        Container(color: Styles().colors.surfaceAccent, height: 1,),
         Expanded(child:
           _buildPage(context),
         )

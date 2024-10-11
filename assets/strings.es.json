@@ -158,7 +158,7 @@
 
     "panel.home.header.title": "Home",
     "panel.home.header.favorites.title": "Favoritas",
-    "panel.home.header.editing.title": "Personalizar",
+    "panel.home.header.editing.title": "PERSONALIZAR",
     "panel.home.connect.not_logged_in.title": "Connect to Illinois",
     "panel.home.connect.not_logged_in.netid.description.part_1": "¿Eres un/a ",
     "panel.home.connect.not_logged_in.netid.description.part_2": "estudiante universitario/a",
@@ -169,11 +169,11 @@
     "panel.home.connect.not_logged_in.phone_or_email.description.part_1": "¿No tienes un NetID? ",
     "panel.home.connect.not_logged_in.phone_or_email.description.part_2": "Verifica tu número de teléfono o inicia sesión por correo electrónico.",
     "panel.home.connect.not_logged_in.phone_or_email.title": "Continuar",
-    "panel.home.edit.favorites.header.title": "Favoritos actuales",
+    "panel.home.edit.favorites.header.title": "FAVORITOS ACTUALES",
     "panel.home.edit.favorites.header.description": "Toque, <b>mantenga presionado</b> y arrastre un elemento para reordenar sus favoritos. Para eliminar un elemento de Favoritos, toque la estrella.",
     "panel.home.edit.favorites.unstar.link.button": "Desmarcar todo",
     "panel.home.edit.favorites.confirmation.dialog.msg": "¿Está seguro de que desea ELIMINAR todos los elementos de sus favoritos? Los artículos siempre se pueden volver a agregar más tarde.",
-    "panel.home.edit.unused.header.title": "Otros artículos a favoritos",
+    "panel.home.edit.unused.header.title": "OTROS ARTICULOS A FAVORITOS",
     "panel.home.edit.unused.header.description": "Toque la estrella para agregar cualquiera de los siguientes elementos a Favoritos.",
     "panel.home.edit.unused.star.link.button": "Estrella todo",
     "panel.label.offline.phone_or_email": "Característica no disponible cuando está fuera de línea.",
@@ -1795,7 +1795,7 @@
     "widget.laundry.room.status.online.text": "En línea",
     "widget.laundry.room.status.offline.text": "Desconectada",
 
-    "panel.settings.home.header.settings.label": "Ajustes",
+    "panel.settings.home.header.settings.label": "AJUSTES",
     "panel.settings.home.settings.sections.food_filter.label": "Mi Filtro de Comida",
     "panel.settings.home.settings.sections.sports.label": "Mis Equipos Deportivos",
     "panel.settings.home.settings.sections.calendar.label": "Configuración de Mi Calendario",
@@ -1876,12 +1876,12 @@
     "panel.settings.profile.content.who_are_you.label": "Quién eres tú",
     "panel.settings.profile.content.privacy.label": "Configuración de privacidad de mi aplicación",
     "panel.settings.profile.content.login.label": "Sign In/Sign Out",
-    "panel.settings.profile.header.profile.label": "Perfil",
+    "panel.settings.profile.header.profile.label": "PERFIL",
 
     "panel.settings.notifications.content.notifications.all.label": "Todas las notificaciones",
     "panel.settings.notifications.content.notifications.unread.label": "Notificaciones no leídas",
     "panel.settings.notifications.content.preferences.label": "Mis preferencias de notificación",
-    "panel.settings.notifications.header.inbox.label": "Notificaciones",
+    "panel.settings.notifications.header.inbox.label": "NOTIFICACIONES",
 
     "panel.settings.home.calendar.settings.prompt.label": "Indicar cuando se guardan los eventos o las citas en el calendario",
     "panel.settings.home.calendar.on_campus.location_services.required.label": "requiere servicios de localización",
@@ -3557,7 +3557,7 @@
     "widget.home.recent_items.button.clear_all.hint":"Tap to clear all items",
     "widget.home.recent_items.prompt.clear_all.text":"Are you sure you want to CLEAR your browsing history>",
 
-    "widget.home.public_surveys.label.header.title":"Surveys",
+    "widget.home.public_surveys.label.header.title":"SURVEYS",
     "widget.home.public_surveys.label.description.failed": "Failed to load surveys.",
     "widget.home.public_surveys.label.description.offline": "Surveys are not available while offline",
     "widget.home.public_surveys.label.description.empty": "There are no available surveys at the moment.",
@@ -3565,17 +3565,21 @@
     "widget.home.public_surveys.button.all.title":"View All",
     "widget.home.public_surveys.button.all.hint":"Tap to view all surveys",
 
-    "widget.home.event2_feed.label.header.title":"Todos los Eventos",
+    "widget.home.events.label.header.title": "EVENTOS",
+
+    "widget.home.event2_feed.label.header.title":"TODOS LOS EVENTOS",
     "widget.home.event2_feed.text.empty.description": "There are no events available.",
     "widget.home.event2_feed.text.offline.description": "Events are not available while offline.",
     "widget.home.event2_feed.button.all.title":"Ver Todos",
     "widget.home.event2_feed.button.all.hint":"Toca para ver todos los eventos",
 
-    "widget.home.my_events2.label.header.title":"My Events",
+    "widget.home.my_events2.label.header.title":"MY EVENTS",
     "widget.home.my_events2.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events Feed</b></a> for quick access here.",
 
-    "widget.home.groups.my.label.header.title":"Mis grupos",
-    "widget.home.groups.all.label.header.title":"Todos los grupos",
+    "widget.home.groups.label.header.title":"GRUPOS",
+
+    "widget.home.groups.my.label.header.title":"MIS GRUPOS",
+    "widget.home.groups.all.label.header.title":"TODOS LOS GRUPOS",
     "widget.home.groups.my.text.empty.description": "Aún no has creado ningún grupo.",
     "widget.home.groups.all.text.empty.description": "No se pudieron cargar los grupos.",
     "widget.home.groups.button.all.title":"Ver todo",
@@ -3601,6 +3605,8 @@
     "widget.home.campus_guide_highlights.text.empty.description": "Toque \u2606 en los elementos de <a href='{{local_url}}'><b>Destacados de la guía del campus</b></a> para acceder rápidamente aquí.",
     "widget.home.campus_guide_highlights.button.all.title": "Ver todo",
     "widget.home.campus_guide_highlights.button.all.hint": "Toca para ver todos los momentos destacados",
+
+    "widget.home.messages.label.header.title": "MESSAGES",
 
     "widget.home.safety.safewalk_request.title": "SafeWalks",
     "widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information bellow.",
@@ -3685,6 +3691,8 @@
     "widget.home.recent_polls.text.logged_out": "Recent Polls are not available while not signed in.",
     "widget.home.recent_polls.button.all.title": "Ver todo",
     "widget.home.recent_polls.button.all.hint": "Toca para ver todas las encuestas",
+
+    "widget.home.inbox.text.title": "NOTIFICACIONES",
 
     "widget.home.inbox.text.all.title": "Todas las notificaciones",
     "widget.home.inbox.text.unread.title": "Notificaciones no leídas",

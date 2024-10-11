@@ -272,10 +272,12 @@ class _BrowseSection extends StatelessWidget {
   //   return Localization().getString('panel.browse.section.$sectionId.description')?.replaceAll('{{app_title}}', appTitle) ?? '';
   // }
 
-  List<String>? get _favoriteCodes => JsonUtils.listStringsValue(FlexUI()['browse.$sectionId']);
+  static List<String>? favoritesFromCode(String code) {
+    return JsonUtils.listStringsValue(FlexUI()['browse.$code']);
+  }
 
   bool get _hasFavoriteContent {
-    for (String code in _favoriteCodes ?? []) {
+    for (String code in favoritesFromCode(sectionId) ?? []) {
       HomeFavorite? entryFavorite = _favorite(code);
       if (entryFavorite != null) {
         return true;
@@ -286,7 +288,7 @@ class _BrowseSection extends StatelessWidget {
 
   bool? get _isSectionFavorite {
     int favCount = 0, unfavCount = 0, totalCount = 0;
-    for (String code in _favoriteCodes ?? []) {
+    for (String code in favoritesFromCode(sectionId) ?? []) {
       HomeFavorite? entryFavorite = _favorite(code);
       if (entryFavorite != null) {
         totalCount++;
@@ -334,7 +336,7 @@ class _BrowseSection extends StatelessWidget {
   List<Favorite> get _sectionFavorites {
     List<Favorite> favorites = <Favorite>[];
 
-    for (String favoriteCode in _favoriteCodes ?? []) {
+    for (String favoriteCode in favoritesFromCode(sectionId) ?? []) {
       if (_homeRootEntriesCodes?.contains(favoriteCode) ?? false) {
         favorites.add(HomeFavorite(favoriteCode));
       }

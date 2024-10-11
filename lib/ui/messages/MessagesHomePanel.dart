@@ -119,47 +119,25 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with TickerProvid
     return _buildSheet(context);
   }
 
-  /*Widget _buildScaffold(BuildContext context) {
-    return Scaffold(
-      appBar: _DebugContainer(child:
-        RootHeaderBar(title: Localization().getStringEx('panel.messages.home.header.messages.label', 'Messages'), onMessages: _onTapDebug,),
-      ),
-      body: _buildPage(),
-      backgroundColor: Styles().colors.background,
-      bottomNavigationBar: uiuc.TabBar()
-    );
-  }*/
-
   Widget _buildSheet(BuildContext context) {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
     return Column(children: [
-        Container(color: Styles().colors.gradientColorPrimary, child:
+        Container(color: Styles().colors.backgroundAccent, child:
           Row(children: [
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16), child:
-                Text(Localization().getStringEx('panel.messages.home.header.messages.label', 'Messages'), style: Styles().textStyles.getTextStyle("widget.sheet.title.regular"))
+                Text(Localization().getStringEx('panel.messages.home.header.messages.label', 'MESSAGES'), style: Styles().textStyles.getTextStyle("widget.title.light.large.fat"))
               ),
             ),
-            // Visibility(visible: (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)), child:
-            //   Semantics(label: "debug", child:
-            //     InkWell(onTap : _onTapDebug, child:
-            //       Container(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
-            //         Styles().images.getImage('bug', excludeFromSemantics: true),
-            //       ),
-            //     ),
-            //   )
-            // ),
             Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
               InkWell(onTap : _onTapClose, child:
                 Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-                  Styles().images.getImage('close-circle', excludeFromSemantics: true),
+                  Styles().images.getImage('close-circle-white', excludeFromSemantics: true),
                 ),
               ),
             ),
-
           ],),
         ),
-        Container(color: Styles().colors.surfaceAccent, height: 1,),
         Expanded(child:
           _buildPage(context),
         )

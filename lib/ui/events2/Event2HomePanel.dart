@@ -562,7 +562,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with TickerProviderSt
           rightIconPadding: const EdgeInsets.only(left: 8, right: 2),
           onTap: _onFilters,
           contentDecoration: BoxDecoration(
-            color: Styles().colors.buttonColorVariarnt,
+            color: Styles().colors.buttonColorVariant,
             border: Border.all(color: Styles().colors.textDisabled, width: 1),
             borderRadius: BorderRadius.circular(16),
           ),
@@ -610,7 +610,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with TickerProviderSt
             title: Localization().getStringEx('panel.events2.home.bar.button.sort.title', 'Sort'),
             leftIconKey: 'sort',
             contentDecoration: BoxDecoration(
-              color: Styles().colors.buttonColorVariarnt,
+              color: Styles().colors.buttonColorVariant,
               border: Border.all(color: Styles().colors.textDisabled, width: 1),
               borderRadius: BorderRadius.circular(16),
             ),

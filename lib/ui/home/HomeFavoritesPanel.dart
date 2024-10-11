@@ -136,7 +136,7 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
     // Build Favorite codes before start listening for Auth2UserPrefs.notifyFavoritesChanged
     // because _buildFavoriteCodes may fire such.
     _systemCodes = JsonUtils.listStringsValue(FlexUI()['home.system']);
-    _availableCodes = JsonUtils.setStringsValue(FlexUI()['home']) ?? <String>{};
+    _availableCodes = _getAvailableHomeSections(JsonUtils.setStringsValue(FlexUI()['home'])) ?? <String>{};
     _favoriteCodes = _buildFavoriteCodes();
 
     super.initState();
@@ -212,10 +212,10 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
     }
   }
 
-  GlobalKey _widgetKey(String code) => _widgetKeys[code] ??= GlobalKey();
+  GlobalKey _widgetKey(String code) => _widgetKeys[HomePanel.sectionFromCode(code)] ??= GlobalKey();
 
   void _updateContentCodes() {
-    Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home']);
+    Set<String>? availableCodes = _getAvailableHomeSections(JsonUtils.setStringsValue(FlexUI()['home']));
     bool availableCodesChanged = (availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes);
 
     List<String>? systemCodes = JsonUtils.listStringsValue(FlexUI()['home.system']);
@@ -233,12 +233,25 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
     }
   }
 
+  Set<String>? _getAvailableHomeSections(Set<String>? availableCodes) {
+    Set<String>? availableSections;
+    if (availableCodes != null) {
+      availableSections = {};
+      for(String code in availableCodes) {
+        availableSections.add(HomePanel.sectionFromCode(code));
+      }
+    }
+    return availableSections;
+  }
+
   List<String>? _buildFavoriteCodes() {
     LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName());
     if (homeFavorites == null) {
       homeFavorites = _initDefaultFavorites();
     }
-    return (homeFavorites != null) ? List.from(homeFavorites) : null;
+
+    Set<String>? updatedFavorites = _getAvailableHomeSections(homeFavorites);
+    return (updatedFavorites != null) ? List.from(updatedFavorites) : null;
   }
 
   void _updateFavoriteCodes() {

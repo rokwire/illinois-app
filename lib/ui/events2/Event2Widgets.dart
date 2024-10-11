@@ -764,7 +764,7 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
     }
     else if (_events?.length == 0) {
       return _buildContent(LinkedEvents2PagerContentStatus.empty, contentWidget: _buildMessageContent(
-        message: Localization().getStringEx('widget.home.event2_feed.text.empty.description', 'There are no events available.')
+        message: Localization().getStringEx('widget.home.events.text.empty.description', 'There are no events available.')
       ));
     }
     else {

@@ -49,6 +49,47 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+class HomeEvent2SectionWidget extends StatefulWidget {
+  final String? favoriteId;
+  final StreamController<String>? updateController;
+
+  const HomeEvent2SectionWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+      HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+        title: StringUtils.capitalize(title),
+      );
+
+  static String get title => Localization().getStringEx('widget.home.events.label.header.title', 'EVENTS');
+
+  @override
+  State<StatefulWidget> createState() => _HomeEvent2SectionWidgetState();
+}
+
+class _HomeEvent2SectionWidgetState extends State<HomeEvent2SectionWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return HomeBannerWidget(favoriteId: widget.favoriteId,
+      title: HomeEvent2SectionWidget.title,
+      bannerImageKey: 'banner-events',
+      child: _widgetContent,
+      childPadding: const EdgeInsets.only(top: 24.0, bottom: 12.0),
+    );
+  }
+
+  Widget get _widgetContent {
+    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName());
+    return Column(children: [
+      if (favorites?.contains('event_feed') ?? false)
+        HomeEvent2FeedWidget(updateController: widget.updateController,),
+      if (favorites?.contains('event_feed') ?? false)
+        Container(height: 16),
+      if (favorites?.contains('my_events') ?? false)
+        HomeMyEvents2Widget(updateController: widget.updateController,),
+    ],);
+  }
+}
+
 abstract class HomeEvent2Widget extends StatefulWidget {
 
   final String? favoriteId;
@@ -66,21 +107,14 @@ abstract class HomeEvent2Widget extends StatefulWidget {
 
 class HomeEvent2FeedWidget extends HomeEvent2Widget {
 
-  HomeEvent2FeedWidget({super.key, super.favoriteId, super.updateController});
-
-  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: title,
-    );
-
-  static String get title => Localization().getStringEx('widget.home.event2_feed.label.header.title', 'All Events');
+  HomeEvent2FeedWidget({super.updateController});
 
   @override
-  String get _title => title;
+  String get _title => Localization().getStringEx('widget.home.event2_feed.label.header.title', 'ALL EVENTS');
 
   @override
   Widget _emptyContentWidget(BuildContext context) => HomeMessageCard(
-    message: Localization().getStringEx('widget.home.event2_feed.text.empty.description', 'There are no events available.')
+    message: Localization().getStringEx('widget.home.events.text.empty.description', 'There are no events available.')
   );
 
   @override
@@ -93,14 +127,14 @@ class HomeMyEvents2Widget extends HomeEvent2Widget {
   static const String localEventFeedHost = 'event2_feed';
   static const String localUrlMacro = '{{local_url}}';
 
-  HomeMyEvents2Widget({super.key, super.favoriteId, super.updateController});
+  HomeMyEvents2Widget({super.updateController});
 
-  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: title,
-    );
+  // static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+  //   HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  //     title: title,
+  //   );
 
-  static String get title => Localization().getStringEx('widget.home.my_events2.label.header.title', 'My Events');
+  static String get title => Localization().getStringEx('widget.home.my_events2.label.header.title', 'MY EVENTS');
 
   @override
   String get _title => title;
@@ -259,9 +293,8 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
   @override
   Widget build(BuildContext context) {
     return VisibilityDetector(key: _visibilityDetectorKey, onVisibilityChanged: _onVisibilityChanged, child:
-      HomeSlantWidget(favoriteId: widget.favoriteId,
+      HomeBannerSubsectionWidget(
         title: widget._title,
-        titleIconKey: 'events',
         child: _buildContent(),
       )
     );
@@ -271,7 +304,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
     if (Connectivity().isOffline) {
       return HomeMessageCard(
         title: Localization().getStringEx("common.message.offline", "You appear to be offline"),
-        message: Localization().getStringEx("widget.home.event2_feed.text.offline.description", "Events are not available while offline."),
+        message: Localization().getStringEx("widget.home.events.text.offline.description", "Events are not available while offline."),
       );
     }
     else if (_loadingEvents || _loadingLocationServicesStatus) {
@@ -364,8 +397,8 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
           return (_events?.length ?? 0) ~/ _cardsPerPage + 1;
         },
         centerWidget: LinkButton(
-          title: Localization().getStringEx('widget.home.event2_feed.button.all.title', 'View All'),
-          hint: Localization().getStringEx('widget.home.event2_feed.button.all.hint', 'Tap to view all events'),
+          title: Localization().getStringEx('widget.home.events.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.events.button.all.hint', 'Tap to view all events'),
           textStyle: Styles().textStyles.getTextStyle('widget.description.regular.light.underline'),
           onTap: _onTapViewAll,
         ),

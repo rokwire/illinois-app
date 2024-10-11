@@ -27,10 +27,8 @@ class PublicSurveyCard extends StatelessWidget {
 
   Widget get _contentWidget =>
     Container(decoration: contentDecoration, child:
-      ClipRRect(borderRadius: contentBorderRadius, child:
-        Padding(padding: _contentPadding, child:
-          _displayContentWidget,
-        )
+      Padding(padding: _contentPadding, child:
+        _displayContentWidget,
       ),
     );
 
@@ -137,11 +135,8 @@ class PublicSurveyCard extends StatelessWidget {
 
   static Decoration get contentDecoration => BoxDecoration(
     color: Styles().colors.surface,
-    borderRadius: contentBorderRadius,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]
   );
-
-  static BorderRadiusGeometry get contentBorderRadius => BorderRadius.all(Radius.circular(8));
 }
 

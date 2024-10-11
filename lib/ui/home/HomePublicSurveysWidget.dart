@@ -32,10 +32,10 @@ class HomePublicSurveysWidget extends StatefulWidget {
 
   static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: title,
+      title: StringUtils.capitalize(title),
     );
 
-  static String get title => Localization().getStringEx('widget.home.public_surveys.label.header.title', 'Surveys');
+  static String get title => Localization().getStringEx('widget.home.public_surveys.label.header.title', 'SURVEYS');
 
   @override
   State<StatefulWidget> createState() => _HomePublicSurveysWidgetState();
@@ -120,10 +120,11 @@ class _HomePublicSurveysWidgetState extends State<HomePublicSurveysWidget> imple
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeBannerWidget(favoriteId: widget.favoriteId,
       title: HomePublicSurveysWidget.title,
-      titleIconKey: 'survey',
+      bannerImageKey: 'banner-surveys',
       child: _widgetContent,
+      childPadding: const EdgeInsets.only(top: 24.0, bottom: 12.0),
     );
   }
 
@@ -392,13 +393,11 @@ class PublicSurveyPageProgressCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
     Container(decoration: PublicSurveyCard.contentDecoration, child:
-      ClipRRect(borderRadius: PublicSurveyCard.contentBorderRadius, child:
-        Padding(padding: const EdgeInsets.all(16), child:
-          Center(child:
-            SizedBox(height: 21, width: 21, child:
-              CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorPrimary, )
-            ),
-          )
+      Padding(padding: const EdgeInsets.all(16), child:
+        Center(child:
+          SizedBox(height: 21, width: 21, child:
+            CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorPrimary, )
+          ),
         )
       ),
     );

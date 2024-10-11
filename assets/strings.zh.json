@@ -3542,7 +3542,7 @@
 	"widget.home.recent_items.button.clear_all.hint":"Tap to clear all items",
 	"widget.home.recent_items.prompt.clear_all.text":"Are you sure you want to CLEAR your browsing history?",
 
-	"widget.home.public_surveys.label.header.title":"Surveys",
+	"widget.home.public_surveys.label.header.title":"SURVEYS",
 	"widget.home.public_surveys.label.description.failed": "Failed to load surveys.",
 	"widget.home.public_surveys.label.description.offline": "Surveys are not available while offline",
 	"widget.home.public_surveys.label.description.empty": "There are no available surveys at the moment.",
@@ -3550,14 +3550,18 @@
 	"widget.home.public_surveys.button.all.title":"View All",
 	"widget.home.public_surveys.button.all.hint":"Tap to view all surveys",
 
-	"widget.home.event2_feed.label.header.title":"All Events",
+	"widget.home.events.label.header.title": "EVENTS",
+
+	"widget.home.event2_feed.label.header.title":"ALL EVENTS",
 	"widget.home.event2_feed.text.empty.description": "There are no events available.",
  	"widget.home.event2_feed.text.offline.description": "Events are not available while offline.",
 	"widget.home.event2_feed.button.all.title":"检视全部",
 	"widget.home.event2_feed.button.all.hint":"点击以活动",
 
-	"widget.home.my_events2.label.header.title":"My Events",
+	"widget.home.my_events2.label.header.title":"MY EVENTS",
 	"widget.home.my_events2.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events Feed</b></a> for quick access here.",
+
+	"widget.home.groups.label.header.title":"GROUPS",
 
 	"widget.home.groups.my.label.header.title":"我的群組",
 	"widget.home.groups.all.label.header.title":"所有群組",
@@ -3586,6 +3590,8 @@
 	"widget.home.campus_guide_highlights.text.empty.description": "點按<a href='{{local_url}}'><b>校園指南要點</b></a>中項目上的 \u2606 可在此處快速訪問。",
 	"widget.home.campus_guide_highlights.button.all.title": "查看全部",
 	"widget.home.campus_guide_highlights.button.all.hint": "點擊查看所有亮點",
+
+	"widget.home.messages.label.header.title": "MESSAGES",
 
 	"widget.home.safety.safewalk_request.title": "SafeWalks",
 	"widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information bellow.",
@@ -3670,6 +3676,8 @@
 	"widget.home.recent_polls.text.logged_out": "Recent Polls are not available while not signed in.",
 	"widget.home.recent_polls.button.all.title": "查看全部",
 	"widget.home.recent_polls.button.all.hint": "點按即可查看所有民意調查",
+
+	"widget.home.inbox.text.title": "NOTIFICATIONS",
 
 	"widget.home.inbox.text.all.title": "所有通知",
 	"widget.home.inbox.text.unread.title": "未讀通知",

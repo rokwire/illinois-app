@@ -131,11 +131,11 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
     return Padding(
       padding: MediaQuery.of(context).viewInsets,
       child: Column(children: [
-        Container(color: Styles().colors.gradientColorPrimary, child:
+        Container(color: Styles().colors.backgroundAccent, child:
           Row(children: [
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16), child:
-                Text(Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),)
+                Text(Localization().getStringEx('panel.settings.profile.header.profile.label', 'PROFILE'), style: Styles().textStyles.getTextStyle("widget.title.light.large.fat"),)
               )
             ),
             // Visibility(visible: (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)), child:
@@ -150,14 +150,12 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> implements Notifica
             Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
               InkWell(onTap : _onTapClose, child:
                 Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-                  Styles().images.getImage('close-circle', excludeFromSemantics: true),
+                  Styles().images.getImage('close-circle-white', excludeFromSemantics: true),
                 ),
               ),
             ),
-
           ],),
         ),
-        Container(color: Styles().colors.surfaceAccent, height: 1,),
         Expanded(child:
           _buildPage(context),
         )

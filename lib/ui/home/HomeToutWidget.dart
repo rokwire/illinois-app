@@ -71,7 +71,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   @override
   Widget build(BuildContext context) {
     String? imageUrl = _imageUrl;
-    String? title2 = _firstName;
+    String? title2 = _fullName;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       (imageUrl != null) ? _buildImageWidget(imageUrl) : Container(),
       Visibility(visible: (widget.contentType == HomeContentType.favorites), child:
@@ -80,7 +80,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16, top: 16), child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(_title1 ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.medium.fat")),
+                  Text(_title1 ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.regular")),
                   Visibility(visible: StringUtils.isNotEmpty(title2), child:
                     Row(children: [
                       Text(title2 ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat")),
@@ -100,11 +100,11 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
               Padding(padding: EdgeInsets.only(top: 16, bottom: 16, left: 8, right: 16), child:
                 Row(mainAxisSize: MainAxisSize.min, children: [
                   Padding(padding: EdgeInsets.only(right: 4), child:
-                    Styles().images.getImage('edit-white', size: 14, excludeFromSemantics: true) ?? Container(),
+                    Styles().images.getImage('edit-secondary', size: 14, excludeFromSemantics: true) ?? Container(),
                   ),
 
                   Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
-                    style: Styles().textStyles.getTextStyle("widget.home_tout.button.underline.title"))
+                    style: Styles().textStyles.getTextStyle("widget.title.light.little"))
                 ],),
               ),
             ),
@@ -167,7 +167,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   String? get _title1 {
     if (_dayPart != null) {
       String greeting = AppDateTimeUtils.getDayPartGreeting(dayPart: _dayPart);
-      if (_firstName?.isNotEmpty ?? false) {
+      if (_fullName?.isNotEmpty ?? false) {
         return "$greeting,";
       }
       else {
@@ -179,8 +179,8 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
     }
   }
 
-  String? get _firstName {
-    return Auth2().account?.authType?.uiucUser?.firstName ?? Auth2().profile?.firstName;
+  String? get _fullName {
+    return Auth2().profile?.fullName;
   }
 
   bool _shouldUpdateImage({DayPart? dayPart}) {

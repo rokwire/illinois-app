@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased - NEOM U
 ### Changed
 - Update Events UI [#15](https://github.com/rokmetro/neom-app/issues/15)
+- Update main feed UI [#16](https://github.com/rokmetro/neom-app/issues/16)
 
 ## [0.4.7] = 2024-10-02
 ### Changed

@@ -5,17 +5,27 @@
 			"tabbar.default": "favorites",
 
 			"home": [
-				"all_groups", "my_groups", "event_feed", "my_events",
-				"all_notifications", "unread_notifications", "public_surveys"
+				"all_groups", "my_groups", "event_feed", "my_events", "public_surveys"
 			],
 			"home.system": ["tout", "connect"],
 			"home.connect": ["phone_or_email"],
 			"home.app_help": ["faqs", "feedback", "review"],
 
+			"home.groups": ["all_groups", "my_groups"],
+			"home.events": ["event_feed", "my_events"],
+			"home.surveys": ["public_surveys"],
+
+			"home.all_groups": ["groups"],
+			"home.my_groups": ["groups"],
+			"home.event_feed": ["events"],
+			"home.my_events": ["events"],
+			"home.public_surveys": ["surveys"],
+			"home.all_notifications": ["inbox"],
+			"home.unread_notifications": ["inbox"],
+
 			"browse": ["groups", "messages", "surveys", "events"],
 			"browse.events": ["event_feed", "my_events"],
 			"browse.groups": ["all_groups", "my_groups"],
-			"browse.inbox": ["all_notifications", "unread_notifications"],
 			"browse.surveys": ["public_surveys"],
 
 			"settings": ["contact", "favorites", "notifications"],
@@ -175,7 +185,7 @@
 	"defaults": {
 		"favorites": {
 			"content": {
-				"home": ["event_feed", "my_groups", "public_surveys"]
+				"home": ["all_groups", "my_groups", "event_feed", "my_events", "public_surveys"]
 			},
 			"rules": {
 			}

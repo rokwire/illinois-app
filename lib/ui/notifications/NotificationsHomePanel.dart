@@ -213,24 +213,22 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with Ti
   Widget _buildSheet(BuildContext context) {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
     return Column(children: [
-      Container(color: Styles().colors.gradientColorPrimary, child:
+      Container(color: Styles().colors.backgroundAccent, child:
         Row(key: _sheetHeaderKey, children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:
-              Semantics(container: true, header: true, child: Text(Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'Notifications'), style:  Styles().textStyles.getTextStyle("widget.sheet.title.regular"),))
+              Semantics(container: true, header: true, child: Text(Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'NOTIFICATIONS'), style:  Styles().textStyles.getTextStyle("widget.title.light.large.fat"),))
             )
           ),
           Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), container: true, button: true, child:
             InkWell(onTap : _onTapClose, child:
               Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-              Styles().images.getImage('close-circle', excludeFromSemantics: true),
+                Styles().images.getImage('close-circle-white', excludeFromSemantics: true),
               ),
             ),
           ),
-
         ],),
       ),
-      Container(color: Styles().colors.surfaceAccent, height: 1,),
       Expanded(child:
         _buildPage(context),
       )
