@@ -180,7 +180,7 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
 
   String get _safeRidesDetailHtml =>
     Localization().getStringEx('panel.safewalks_request.detail.saferides.html', 'Looking for a ride instead? The Champaign-Urbana Mass Transit District offers limited <a href=\'$_safeRidesUrlMacro\'>SafeRides</a>&nbsp;<img src=\'asset:$_externalLinkMacro\' alt=\'\'/> at night..')
-      .replaceAll(_safeRidesUrlMacro, Guide().detailUrl(Config().safeRidesGuideId, analyticsFeature: AnalyticsFeature.Safety))
+      .replaceAll(_safeRidesUrlMacro, Config().safeRidesAboutUrl ?? '')
       .replaceAll(_externalLinkMacro, 'images/external-link.png');
 
   void _onTapOptions(BuildContext context) {
