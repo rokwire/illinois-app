@@ -65,11 +65,7 @@ class _DiningCardState extends State<DiningCard> implements NotificationsListene
     Explore? explore = widget.dining;
     String title = widget.dining?.title ?? "";
     String workTime = ((explore is Dining) ? explore.displayWorkTime : null) ?? "";
-    String interests = "";
-    interests = interests.isNotEmpty ? interests.replaceRange(0, 0, Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:')) : "";
-    String eventType = explore?.typeDisplayString??"";
-
-    return "$title, $workTime, $interests, $eventType";
+    return "$title, $workTime";
   }
 
   @override

@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 
-import 'package:illinois/ext/Event.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Game.dart';
@@ -31,7 +30,6 @@ import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -74,10 +72,7 @@ extension FavoriteExt on Favorite {
   }
   
   String? get favoriteDetailText {
-    if (this is Event) {
-      return (this as Event).displayDateTime;
-    }
-    else if (this is Event2) {
+    if (this is Event2) {
       return (this as Event2).shortDisplayDateAndTime;
     }
     else if (this is Dining) {
@@ -118,10 +113,7 @@ extension FavoriteExt on Favorite {
   }
 
   Widget? get favoriteDetailIcon {
-    if (this is Event) {
-      return Styles().images.getImage('events', excludeFromSemantics: true);
-    }
-    else if (this is Event2) {
+    if (this is Event2) {
       return Styles().images.getImage('events', excludeFromSemantics: true);
     }
     else if (this is Dining) {
