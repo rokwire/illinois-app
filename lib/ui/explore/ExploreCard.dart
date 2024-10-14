@@ -35,7 +35,6 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/model/Dining.dart';
@@ -46,19 +45,20 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class ExploreCard extends StatefulWidget {
-  final GestureTapCallback? onTap;
   final Explore? explore;
   final Core.Position? locationData;
+  final GestureTapCallback? onTap;
   final bool showTopBorder;
-  final bool hideInterests;
   final bool? showSmallImage;
-  final String? source;
   final double horizontalPadding;
   final BoxBorder? border;
 
-  ExploreCard(
-      {Key? key, this.onTap, this.explore, this.locationData, this.showTopBorder = false, this.showSmallImage = true, this.hideInterests = false, this.source, this.horizontalPadding=16, this.border})
-      : super(key: key);
+  ExploreCard({super.key, this.explore, this.locationData, this.onTap,
+    this.showTopBorder = false,
+    this.showSmallImage = true,
+    this.horizontalPadding = 16,
+    this.border
+  });
 
   @override
   _ExploreCardState createState() => _ExploreCardState();
@@ -98,7 +98,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     String workTime = ((explore is Dining) ? explore.displayWorkTime : null) ?? "";
     int? eventConvergeScore = (explore is Event) ? explore.convergeScore : null;
     String convergeScore = ((eventConvergeScore != null) ? (eventConvergeScore.toString() + '%') : null) ?? "";
-    String interests = ((explore is Event) ? _getInterestsLabelValue() : null) ?? "";
+    String interests = "";
     interests = interests.isNotEmpty ? interests.replaceRange(0, 0, Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:')) : "";
     String eventType = explore?.typeDisplayString??"";
 
@@ -110,7 +110,6 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     bool isEvent2 = (widget.explore is Event2);
     bool isGame = (widget.explore is Game);
     String imageUrl = StringUtils.ensureNotEmpty(widget.explore?.exploreImageUrl);
-    String interestsLabelValue = _getInterestsLabelValue();
 
     return Semantics(label: semanticLabel, button: true, child:
       GestureDetector(behavior: HitTestBehavior.opaque, onTap: widget.onTap, child:
@@ -147,29 +146,6 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                       ),
                     ],),
                     _explorePaymentTypes(),
-                    _buildConvergeButton(),
-                    Visibility(visible: _showInterests(), child:
-                      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                        Container(height: 1, color: Styles().colors.surfaceAccent,),
-                        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-                          Row(children: <Widget>[
-                            Flexible(flex: 8, child:
-                              Container(width: double.infinity, child:
-                                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                                  Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'), style:Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat')),
-                                  Text(StringUtils.ensureNotEmpty(interestsLabelValue), style:Styles().textStyles.getTextStyle("widget.explore.card.detail.small"))
-                                ],),
-                              ),
-                            ),
-                            Flexible(flex: 2, child:
-                              Container(width: double.infinity, alignment: Alignment.centerRight, child:
-                                ExploreConvergeDetailItem(eventConvergeScore: _getConvergeScore(), eventConvergeUrl: _getConvergeUrl(),)
-                              ),
-                            )
-                          ],),
-                        )
-                      ],),
-                    ),
                   ]),
                 )
               ],),),
@@ -179,49 +155,6 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
         ],),
       ),
     );
-  }
-
-  bool _showInterests() {
-    String interestsLabelValue = _getInterestsLabelValue();
-    return (widget.explore is Event) && StringUtils.isNotEmpty(interestsLabelValue);
-  }
-
-  bool _hasConvergeUrl() {
-    return StringUtils.isNotEmpty(_getConvergeUrl());
-  }
-
-  bool _hasConvergeScore() {
-    return (_getConvergeScore() != null) && (_getConvergeScore()! > 0);
-  }
-
-  bool _hasConvergeContent() {
-    return _hasConvergeScore() || _hasConvergeUrl();
-  }
-
-  Widget _buildConvergeButton() {
-    if(_showInterests() || !_hasConvergeContent())
-      return Container();
-
-    return Container( width: double.infinity, child:Column(
-      children:<Widget>[
-         _divider(),
-        Padding (padding: EdgeInsets.only(left: 16, top: 10), child:
-          ExploreConvergeDetailButton(eventConvergeScore: _getConvergeScore(), eventConvergeUrl: _getConvergeUrl(),)
-        )
-      ]
-    ));
-  }
-
-  int? _getConvergeScore() {
-    Event? event = (widget.explore is Event) ? (widget.explore as Event) : null;
-    int? eventConvergeScore = (event != null) ? event.convergeScore : null;
-    return eventConvergeScore;
-  }
-
-  String? _getConvergeUrl() {
-    Event? event = (widget.explore is Event) ? (widget.explore as Event) : null;
-    String? eventConvergeUrl = (event != null) ? event.convergeUrl : null;
-    return eventConvergeUrl;
   }
 
   Widget _exploreTop() {
@@ -500,11 +433,6 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   Widget _topBorder() {
     return widget.showTopBorder? Container(height: 7,color: widget.explore?.uiColor) : Container();
   }
-
-  String _getInterestsLabelValue() {
-    return (!widget.hideInterests && (widget.explore is Event)) ? (widget.explore as Event).displayInterests : "";
-  }
-
 
   void _onTapExploreCardStar() {
     Analytics().logSelect(target: "Favorite: ${widget.explore?.exploreTitle}");

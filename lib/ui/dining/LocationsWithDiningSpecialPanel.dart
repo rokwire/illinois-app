@@ -171,7 +171,6 @@ class _LocationsWithDiningSpecialPanelState extends State<LocationsWithDiningSpe
             explore: dining,
             onTap: () => _onDiningTap(dining!),
             locationData: widget.locationData,
-            hideInterests: true,
             showTopBorder: true)
         );
       }

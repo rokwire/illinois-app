@@ -21,7 +21,7 @@ import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
-import 'package:illinois/ui/explore/ExplorePanel.dart';
+import 'package:illinois/ui/dining/DiningHomePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
@@ -217,14 +217,11 @@ extension FavoriteExt on Favorite {
   static void launchHome(BuildContext context, { String? key }) {
     // Work in lowercase as key can come from an URL
     String? lowerCaseKey = key?.toLowerCase();
-    if (lowerCaseKey == Event.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
-    }
-    else if (lowerCaseKey == Event2.favoriteKeyName.toLowerCase()) {
+    if (lowerCaseKey == Event2.favoriteKeyName.toLowerCase()) {
       Event2HomePanel.present(context);
     }
     else if (lowerCaseKey == Dining.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Dining); } ));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) { return DiningHomePanel(); } ));
     }
     else if (lowerCaseKey == Game.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsContentPanel(content: AthleticsContent.events)));
