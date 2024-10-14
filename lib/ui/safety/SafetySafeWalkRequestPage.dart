@@ -662,7 +662,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
 String? _safeWalkLocationTypeToDisplayString(_SafeWalkLocationType? locationType) {
   switch (locationType) {
     case _SafeWalkLocationType.current: return Localization().getStringEx('widget.safewalks_request.location.current.title', 'Use My Location');
-    case _SafeWalkLocationType.map: return Localization().getStringEx('widget.safewalks_request.location.map.title', 'Search Maps');
+    case _SafeWalkLocationType.map: return Localization().getStringEx('widget.safewalks_request.location.map.title', 'Search Map');
     case _SafeWalkLocationType.saved: return Localization().getStringEx('widget.safewalks_request.location.saved.title', 'View Saved Locations');
     default: return null;
   }
