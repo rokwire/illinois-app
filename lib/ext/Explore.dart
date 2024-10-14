@@ -24,9 +24,7 @@ import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
-import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/sport/Game.dart';
-import 'package:illinois/ext/Event.dart';
 import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/LaundryRoom.dart';
 import 'package:illinois/ext/Game.dart';
@@ -186,42 +184,18 @@ extension ExploreExt on Explore {
     return feature;
   }
 
-  String? get typeDisplayString {
-    if (this is Event) {
-      return (this as Event).typeDisplayString;
-    } else if (this is Game) {
-      return (this as Game).typeDisplayString;
-    }
-    else {
-      return null;
-    }
-  }
-
   bool get isFavorite {
-    if (this is Favorite) {
-      return (this is Event)
-        ? (this as Event).isFavorite
-        : Auth2().isFavorite(this as Favorite);
-    }
-    return false;
+    return (this is Favorite) ? Auth2().isFavorite(this as Favorite) : false;
   }
 
   void toggleFavorite() {
     if (this is Favorite) {
-      if (this is Event) {
-        (this as Event).toggleFavorite();
-      }
-      else {
-        Auth2().prefs?.toggleFavorite(this as Favorite);
-      }
+      Auth2().prefs?.toggleFavorite(this as Favorite);
     }
   }
 
   Map<String, dynamic>? get analyticsAttributes {
-    if (this is Event) {
-      return (this as Event).analyticsAttributes;
-    }
-    else if (this is Event2) {
+    if (this is Event2) {
       return (this as Event2).analyticsAttributes;
     }
     else if (this is Dining) {
@@ -243,10 +217,7 @@ extension ExploreExt on Explore {
       feature = (this as AnalyticsInfo).analyticsFeature;
     }
     if (feature == null) {
-      if (this is Event) {
-        feature = (this as Event).isGameEvent ? AnalyticsFeature.Athletics : AnalyticsFeature.Events;
-      }
-      else if (this is Event2) {
+      if (this is Event2) {
         feature = (this as Event2).isSportEvent ? AnalyticsFeature.Athletics : AnalyticsFeature.Events;
       }
       else {
@@ -265,10 +236,7 @@ extension ExploreExt on Explore {
     // StudentCourse eventColor       E54B30
     // ExplorePOI    accentColor3     5182CF
 
-    if (this is Event) {
-      return (this as Event).uiColor;
-    }
-    else if (this is Event2) {
+    if (this is Event2) {
       return (this as Event2).uiColor;
     }
     else if (this is Dining) {
@@ -298,10 +266,7 @@ extension ExploreExt on Explore {
   }
 
   String? get exploreImageUrl {
-    if (this is Event) {
-      return (this as Event).eventImageUrl;
-    }
-    else if (this is Event2) {
+    if (this is Event2) {
       return (this as Event2).displayImageUrl;
     }
     else {
@@ -376,10 +341,7 @@ extension ExploreMap on Explore {
   }
 
   String? get mapMarkerSnippet {
-    if (this is Event) {
-      return (this as Event).displayDate;
-    }
-    else if (this is Event2) {
+    if (this is Event2) {
       return (this as Event2).shortDisplayDateAndTime;
     }
     else if (this is Dining) {
@@ -417,7 +379,7 @@ extension ExploreMap on Explore {
   }
 
   String? getMapGroupMarkerTitle(int count) {
-    if ((this is Event) || (this is Event2)) {
+    if (this is Event2) {
       return sprintf(Localization().getStringEx('panel.explore.item.events.count', '%s Events'), [count]);
     }
     else if (this is Dining) {

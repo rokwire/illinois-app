@@ -42,12 +42,10 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/model/Dining.dart';
-import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -56,7 +54,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 class SavedPanel extends StatefulWidget with AnalyticsInfo {
 
   static const List<String> allFavoriteCategories = <String>[
-    Event.favoriteKeyName,
     Event2.favoriteKeyName,
     Dining.favoriteKeyName,
     Game.favoriteKeyName,
@@ -78,7 +75,7 @@ class SavedPanel extends StatefulWidget with AnalyticsInfo {
   @override
   AnalyticsFeature? get analyticsFeature {
     String? favoriteCategory = (favoriteCategories.length == 1) ? favoriteCategories.first : null;
-    if ((favoriteCategory == Event.favoriteKeyName) || (favoriteCategory == Event2.favoriteKeyName)) {
+    if (favoriteCategory == Event2.favoriteKeyName) {
       return AnalyticsFeature.Events;
     }
     else if (favoriteCategory == Dining.favoriteKeyName) {
@@ -298,7 +295,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   Future<List<Favorite>?> Function(LinkedHashSet<String>?) _favoriteCategoryLoader(String favoriteCategory) {
     switch(favoriteCategory) {
-      case Event.favoriteKeyName: return _loadFavoriteEvents;
       case Event2.favoriteKeyName: return _loadFavoriteEvents2;
       case Dining.favoriteKeyName: return _loadFavoriteDinings;
       case Game.favoriteKeyName: return _loadFavoriteGames;
@@ -313,9 +309,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   Future<List<Favorite>?> _loadNOP(LinkedHashSet<String>? favoriteIds) async => null;
-
-  Future<List<Favorite>?> _loadFavoriteEvents(LinkedHashSet<String>? favoriteIds) async =>
-    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Events().loadEventsByIds(favoriteIds), favoriteIds) : null;
 
   Future<List<Favorite>?> _loadFavoriteEvents2(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Events2().loadEventsByIds(eventIds: favoriteIds?.toList()), favoriteIds) : null;
@@ -401,7 +394,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   String? _favoriteCategoryTitle(String favoriteCategory) {
     switch(favoriteCategory) {
-      case Event.favoriteKeyName:         return Localization().getStringEx('panel.saved.label.events', 'My Events');
       case Event2.favoriteKeyName:        return Localization().getStringEx('panel.saved.label.events2', 'My Events');
       case Dining.favoriteKeyName:        return Localization().getStringEx('panel.saved.label.dining', "My Dining Locations");
       case Game.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.athletics', 'My Big 10 Events');
@@ -417,7 +409,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   String? _favoriteCategoryIconKey(String favoriteCategory) {
     switch(favoriteCategory) {
-      case Event.favoriteKeyName:         return 'events';
       case Event2.favoriteKeyName:        return 'events';
       case Dining.favoriteKeyName:        return 'dining';
       case Game.favoriteKeyName:          return 'athletics';
