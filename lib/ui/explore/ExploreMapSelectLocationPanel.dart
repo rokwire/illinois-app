@@ -392,17 +392,33 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     _selectMapExplore(null);
   }
 
-  Widget? _buildSelectExplore(BuildContext context, { Explore? explore }) =>
+  Widget? _buildSelectExplore(BuildContext context, ExploreSelectLocationContext selectContext, { Explore? explore }) {
+    switch (selectContext) {
+      case ExploreSelectLocationContext.card: return _buildSelectCardExplore(context, explore: explore);
+      case ExploreSelectLocationContext.detail: return _buildSelectDetailExplore(context, explore: explore);
+    }
+  }
+
+  Widget? _buildSelectDetailExplore(BuildContext context, { Explore? explore }) =>
     Padding(padding: EdgeInsets.only(top: 32), child:
       RoundedButton(
-        label: Localization().getStringEx('panel.map.select.button.select.title', 'Select'),
-        hint: Localization().getStringEx('panel.map.select.button.select.hint', ''),
-        //textStyle: _sendEnabled ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
-        //borderColor: _sendEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+        label: Localization().getStringEx('panel.map.select.button.select.location.title', 'Select this Location'),
+        hint: Localization().getStringEx('panel.map.select.button.select.location.hint', ''),
+        //textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         contentWeight: 0.5,
         onTap: () => _onTapSelectExploreLocation(context, explore: explore),
       )
+    );
+
+  Widget? _buildSelectCardExplore(BuildContext context, { Explore? explore }) =>
+    RoundedButton(
+      label: Localization().getStringEx('panel.map.select.button.select.title', 'Select'),
+      hint: Localization().getStringEx('panel.map.select.button.select.hint', ''),
+      textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      contentWeight: -1,
+      onTap: () => _onTapSelectExploreLocation(context, explore: explore),
     );
 
   void _onTapSelectExploreLocation(BuildContext context, { Explore? explore }) {

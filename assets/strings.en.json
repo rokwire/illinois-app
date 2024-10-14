@@ -496,6 +496,8 @@
     "panel.map.select.header.title": "Select Location",
     "panel.map.select.button.select.title": "Select",
     "panel.map.select.button.select.hint": "",
+    "panel.map.select.button.select.location.title": "Select this Location",
+    "panel.map.select.button.select.location.hint": "",
 
     "panel.academics.header.title": "Academics",
     "panel.academics.section.events.label": "Speakers & Seminars",

@@ -602,4 +602,5 @@ extension ExplorePOIExt on ExplorePOI {
   Color? get uiColor => Styles().colors.accentColor3;
 }
 
-typedef ExploreSelectLocationBuilder = Widget? Function(BuildContext context, { Explore? explore } );
+enum ExploreSelectLocationContext { card, detail }
+typedef ExploreSelectLocationBuilder = Widget? Function(BuildContext context, ExploreSelectLocationContext selectContext, { Explore? explore } );
