@@ -384,10 +384,12 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   void _onTapMapExploreDetail() {
     Analytics().logSelect(target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details');
     if (_selectedMapExplore is Explore) {
-      (_selectedMapExplore as Explore).exploreLaunchDetail(context);
+      (_selectedMapExplore as Explore).exploreLaunchDetail(context, selectLocationBuilder: _buildSelectExplore);
     }
     else if (_selectedMapExplore is List<Explore>) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore, exploreMapType: _mapType, selectLocationBuilder: _buildSelectExplore,),));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(
+        explores: _selectedMapExplore, exploreMapType: _mapType, selectLocationBuilder: _buildSelectExplore,
+      ),));
     }
     _selectMapExplore(null);
   }
@@ -406,7 +408,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
         hint: Localization().getStringEx('panel.map.select.button.select.location.hint', ''),
         //textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        contentWeight: 0.5,
+        contentWeight: 0.67,
         onTap: () => _onTapSelectExploreLocation(context, explore: explore),
       )
     );
