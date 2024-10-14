@@ -18,7 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
-import 'package:illinois/ext/Event.dart';
 import 'package:illinois/ext/Game.dart';
 import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/model/StudentCourse.dart';
@@ -38,7 +37,6 @@ import 'package:illinois/service/Sports.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/model/Dining.dart';
-import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -48,11 +46,8 @@ class ExploreCard extends StatefulWidget {
   final Explore? explore;
   final Core.Position? locationData;
   final GestureTapCallback? onTap;
-  final double horizontalPadding;
 
-  ExploreCard({super.key, this.explore, this.locationData, this.onTap,
-    this.horizontalPadding = 16,
-  });
+  ExploreCard({super.key, this.explore, this.locationData, this.onTap,});
 
   @override
   _ExploreCardState createState() => _ExploreCardState();
@@ -90,13 +85,11 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     String? time = _getExploreTimeDisplayString();
     String locationText = widget.explore?.getShortDisplayLocation(widget.locationData) ?? "";
     String workTime = ((explore is Dining) ? explore.displayWorkTime : null) ?? "";
-    int? eventConvergeScore = (explore is Event) ? explore.convergeScore : null;
-    String convergeScore = ((eventConvergeScore != null) ? (eventConvergeScore.toString() + '%') : null) ?? "";
     String interests = "";
     interests = interests.isNotEmpty ? interests.replaceRange(0, 0, Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:')) : "";
     String eventType = explore?.typeDisplayString??"";
 
-    return "$category, $title, $time, $locationText, $workTime, $convergeScore, $interests, $eventType";
+    return "$category, $title, $time, $locationText, $workTime, $interests, $eventType";
   }
 
   @override
@@ -108,7 +101,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     return Semantics(label: semanticLabel, button: true, child:
       GestureDetector(behavior: HitTestBehavior.opaque, onTap: widget.onTap, child:
         Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-          Padding(padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding), child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
             Stack(alignment: Alignment.topCenter, children: [
             Container(
               decoration: BoxDecoration(
@@ -131,7 +124,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                         ],)
                       ),
                       Visibility(visible: StringUtils.isNotEmpty(imageUrl), child:
-                        Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 4), child:
+                        Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: _hasPaymentTypes ? 12 : 16), child:
                           SizedBox(width: _smallImageSize, height: _smallImageSize, child:
                             InkWell(onTap: () => _onTapCardImage(imageUrl), 
                               child: Image.network(imageUrl, excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders)),
@@ -278,14 +271,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     void Function()? onLocationTap;
 
     Explore? explore = widget.explore;
-    if (explore is Event ) {//For Events we show Two Locati
-      if (explore.displayAsInPerson) {
-        locationText = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
-      } else if (!explore.displayAsVirtual) { // displayAsInPerson == false && displayAsVirtual == false
-        locationText = explore.getShortDisplayLocation(widget.locationData);
-      }
-    }
-    else if (explore is Event2 ) {//For Events we show Two Locati
+    if (explore is Event2 ) {//For Events we show Two Locati
       if (explore.isInPerson) {
         locationText = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
       }
@@ -324,8 +310,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   Widget? _exploreOnlineDetail() {
-    if (((widget.explore is Event) && ((widget.explore as Event).displayAsVirtual)) ||
-        (widget.explore is Event2) && ((widget.explore as Event2).isOnline)) {
+    if ((widget.explore is Event2) && ((widget.explore as Event2).isOnline)) {
         return Semantics(label: Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event"), child:Padding(
           padding: _detailPadding,
           child: Row(
@@ -369,6 +354,12 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     return null;
   }
 
+  bool get _hasPaymentTypes {
+    Dining? dining = (widget.explore is Dining) ? (widget.explore as Dining) : null;
+    List<PaymentType>? paymentTypes = dining?.paymentTypes;
+    return ((paymentTypes != null) && (0 < paymentTypes.length));
+  }
+
   Widget _explorePaymentTypes() {
     List<Widget>? details;
     Dining? dining = (widget.explore is Dining) ? (widget.explore as Dining) : null;
@@ -401,9 +392,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 
   String? _getExploreTimeDisplayString() {
     Explore? explore = widget.explore;
-    if (explore is Event) {
-      return explore.timeDisplayString;
-    } else if (explore is Event2) {
+    if (explore is Event2) {
       return explore.shortDisplayDateAndTime;
     } else if (explore is Game) {
       return explore.displayTime;
@@ -451,9 +440,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   String? get _exploreCategory {
-    if (widget.explore is Event) {
-      return (widget.explore as Event).category;
-    } else if (widget.explore is Event2) {
+    if (widget.explore is Event2) {
       return Events2().displaySelectedContentAttributeLabelsFromSelection((widget.explore as Event2).attributes, usage: ContentAttributeUsage.category)?.join(', ');
     } else if (widget.explore is Game) {
       return Events2.sportEventCategory;

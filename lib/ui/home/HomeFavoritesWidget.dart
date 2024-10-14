@@ -28,7 +28,6 @@ import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
-import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
@@ -277,14 +276,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   Widget _buildItemCard(Favorite? item) {
     //Custom layout for super events before release
-    if (item is Event && item.isComposite) {
-      return ExploreCard(
-        explore: item,
-        horizontalPadding: 0,
-        onTap:() => _onTapItem(item)
-      );
-    }
-    else if (item is MTDStop) {
+    if (item is MTDStop) {
       return MTDStopScheduleCard(
         stop: item,
         onTap: () => _onTapItem(item),
