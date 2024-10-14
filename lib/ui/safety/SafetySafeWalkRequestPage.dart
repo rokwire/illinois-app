@@ -496,7 +496,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
 
   Future<dynamic> _provideMapLocation(dynamic location, { void Function(bool)? updateProgress }) async =>
     ExploreMapSelectLocationPanel.push(context,
-      mapType: ExploreMapType.MTDStops, //TMP: ExploreMapType.Buildings,
+      mapType: ExploreMapType.Buildings,
       /*selectedExplore: _locationExplore(location),*/
     );
 
