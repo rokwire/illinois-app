@@ -52,6 +52,17 @@ class ExploreMapSelectLocationPanel extends StatefulWidget {
   
   @override
   State<StatefulWidget> createState() => _ExploreMapSelectLocationPanelState();
+
+  static final String routeName = "ExploreMapSelectLocationPanel";
+
+  static Future<Explore?> push(BuildContext context, { ExploreMapType? mapType, Explore? selectedExplore}) =>
+    Navigator.push<Explore>(context, CupertinoPageRoute(
+      settings: RouteSettings(name: routeName),
+      builder: (context) => ExploreMapSelectLocationPanel(
+        mapType: mapType,
+        selectedExplore: selectedExplore,
+      ),
+    ));
 }
 
 class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocationPanel>
@@ -373,12 +384,33 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   void _onTapMapExploreDetail() {
     Analytics().logSelect(target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details');
     if (_selectedMapExplore is Explore) {
-        (_selectedMapExplore as Explore).exploreLaunchDetail(context);
+      (_selectedMapExplore as Explore).exploreLaunchDetail(context);
     }
     else if (_selectedMapExplore is List<Explore>) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore, exploreMapType: _mapType,),));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore, exploreMapType: _mapType, selectLocationBuilder: _buildSelectExplore,),));
     }
     _selectMapExplore(null);
+  }
+
+  Widget? _buildSelectExplore(BuildContext context, { Explore? explore }) =>
+    Padding(padding: EdgeInsets.only(top: 32), child:
+      RoundedButton(
+        label: Localization().getStringEx('panel.map.select.button.select.title', 'Select'),
+        hint: Localization().getStringEx('panel.map.select.button.select.hint', ''),
+        //textStyle: _sendEnabled ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
+        //borderColor: _sendEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        contentWeight: 0.5,
+        onTap: () => _onTapSelectExploreLocation(context, explore: explore),
+      )
+    );
+
+  void _onTapSelectExploreLocation(BuildContext context, { Explore? explore }) {
+    Analytics().logSelect(target: 'Select');
+    Navigator.of(context).popUntil((Route route) => (route.settings.name == ExploreMapSelectLocationPanel.routeName));
+    if (explore != null) {
+      Navigator.pop(context, explore);
+    }
   }
 
   void _onTapMapClear() {

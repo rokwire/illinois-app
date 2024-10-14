@@ -495,10 +495,10 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
   }
 
   Future<dynamic> _provideMapLocation(dynamic location, { void Function(bool)? updateProgress }) async =>
-    Navigator.push<Explore>(context, CupertinoPageRoute(builder: (context) => ExploreMapSelectLocationPanel(
-      mapType: ExploreMapType.Buildings,
+    ExploreMapSelectLocationPanel.push(context,
+      mapType: ExploreMapType.MTDStops, //TMP: ExploreMapType.Buildings,
       /*selectedExplore: _locationExplore(location),*/
-    )));
+    );
 
   Future<dynamic> _provideSavedLocation() async =>
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel(

@@ -310,7 +310,10 @@ extension ExploreExt on Explore {
 
   }
 
-  void exploreLaunchDetail(BuildContext context, { Core.Position? initialLocationData }) {
+  void exploreLaunchDetail(BuildContext context, { Core.Position? initialLocationData, ExploreSelectLocationBuilder? selectLocationBuilder }) {
+    // NB: selectLocationBuilder parameter is acknowledged only in ExploreBuildingDetailPanel for now.
+    // Acknowledge it in other detail panels when other types of explores need to get selectable.
+
     Route? route;
     if (this is Event2) {
         Event2 event2 = (this as Event2);
@@ -330,7 +333,7 @@ extension ExploreExt on Explore {
       route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: this as Game),);
     }
     else if (this is Building) {
-      route = CupertinoPageRoute(builder: (context) => ExploreBuildingDetailPanel(building: this as Building),);
+      route = CupertinoPageRoute(builder: (context) => ExploreBuildingDetailPanel(building: this as Building, selectLocationBuilder: selectLocationBuilder,),);
     }
     else if (this is WellnessBuilding) {
       route = CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as WellnessBuilding).guideId, analyticsFeature: AnalyticsFeature.Wellness,),);
@@ -636,3 +639,5 @@ extension ExploreLocationMap on ExploreLocation {
 extension ExplorePOIExt on ExplorePOI {
   Color? get uiColor => Styles().colors.accentColor3;
 }
+
+typedef ExploreSelectLocationBuilder = Widget? Function(BuildContext context, { Explore? explore } );

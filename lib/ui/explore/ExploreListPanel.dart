@@ -44,8 +44,9 @@ class ExploreListPanel extends StatefulWidget with AnalyticsInfo {
   final List<Explore>? explores;
   final ExploreMapType? exploreMapType;
   final Position? initialLocationData;
+  final ExploreSelectLocationBuilder? selectLocationBuilder;
 
-  ExploreListPanel({this.explores, this.exploreMapType, this.initialLocationData});
+  ExploreListPanel({ this.explores, this.exploreMapType, this.initialLocationData, this.selectLocationBuilder });
 
   @override
   _ExploreListPanelState createState() =>
@@ -149,7 +150,7 @@ class _ExploreListPanelState extends State<ExploreListPanel> implements Notifica
 
   void _onTapExplore(Explore explore) {
     Analytics().logSelect(target: explore.exploreTitle);
-    explore.exploreLaunchDetail(context, initialLocationData: widget.initialLocationData,);
+    explore.exploreLaunchDetail(context, initialLocationData: widget.initialLocationData, selectLocationBuilder: widget.selectLocationBuilder);
   }
 
   void _onTapMTDStop(MTDStop? stop) {

@@ -1227,9 +1227,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Event2CreatePanel.hideKeyboard(context);
     ExploreLocation? location = _constructLocation();
 
-    Navigator.push<Explore>(context, CupertinoPageRoute(builder: (context) => ExploreMapSelectLocationPanel(
+    ExploreMapSelectLocationPanel.push(context,
       selectedExplore: (location != null) ? ExplorePOI(location: location) : null,
-    ))).then((Explore? explore) {
+    ).then((Explore? explore) {
       if ((explore != null) && mounted) {
         _locationBuildingController.text = (explore.exploreTitle ?? explore.exploreLocation?.building ?? explore.exploreLocation?.name ?? '').replaceAll('\n', ' ');
         _locationAddressController.text = explore.exploreLocation?.fullAddress ?? explore.exploreLocation?.buildDisplayAddress() ?? explore.exploreLocation?.description ?? '';
