@@ -142,7 +142,7 @@ class _ExploreListPanelState extends State<ExploreListPanel> implements Notifica
     }
     else {
       return Padding(padding: EdgeInsets.only(top: 16, bottom: isLast ? 16 : 0), child:
-        ExploreCard(explore: explore, onTap: () => _onTapExplore(explore), locationData: widget.initialLocationData, showTopBorder: true),
+        ExploreCard(explore: explore, locationData: widget.initialLocationData, onTap: () => _onTapExplore(explore)),
       );
     }
   }

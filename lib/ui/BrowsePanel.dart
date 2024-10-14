@@ -31,7 +31,7 @@ import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
-import 'package:illinois/ui/explore/ExplorePanel.dart';
+import 'package:illinois/ui/dining/DiningHomePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
@@ -859,12 +859,12 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapDiningsAll(BuildContext context) {
     Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Dining) ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DiningHomePanel() ));
   }
 
   void _onTapDiningsOpen(BuildContext context) {
     Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining Open Now");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Dining, initialFilter: ExploreFilter(type: ExploreFilterType.work_time, selectedIndexes: {1}))));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DiningHomePanel(initialFilter: DiningFilter(type: DiningFilterType.work_time, selectedIndexes: {1}))));
   }
 
   void _onTapLaundry(BuildContext context) {
@@ -897,11 +897,6 @@ class _BrowseEntry extends StatelessWidget {
     Analytics().logSelect(target: "My Events");
     Event2HomePanel.present(context, types: LinkedHashSet<Event2TypeFilter>.from([Event2TypeFilter.favorite]));
   }
-
-  /*void _onTapSuggestedEvents(BuildContext context) {
-    Analytics().logSelect(target: "Suggested Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
-  }*/
 
   void _onTapTwitter(BuildContext context) {
     Analytics().logSelect(target: "Twitter");

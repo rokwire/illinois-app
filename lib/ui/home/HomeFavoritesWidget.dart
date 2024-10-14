@@ -28,7 +28,6 @@ import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsContentPanel.dart';
-import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
@@ -37,10 +36,8 @@ import 'package:illinois/ui/appointments/AppointmentCard.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -65,7 +62,6 @@ class HomeFavoritesWidget extends StatefulWidget {
   
   static String? titleFromKey({required String favoriteKey}) {
     switch(favoriteKey) {
-      case Event.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.events', 'My Events');
       case Event2.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.events2', 'My Events');
       case Dining.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.dining', 'My Dining Locations');
       case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.athletics', 'My Big 10 Events');
@@ -85,7 +81,6 @@ class HomeFavoritesWidget extends StatefulWidget {
   static String? emptyMessageHtml(String key) {
     String? message;
     switch(key) {
-      case Event.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.events", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Events</b></a> for quick access here."); break;
       case Event2.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.events2", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Events Feed</b></a> for quick access here."); break;
       case Dining.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.dining", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Dining</b></a> for quick access here."); break;
       case Game.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.athletics", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Big 10 Events</b></a> for quick access here."); break;
@@ -105,7 +100,6 @@ class HomeFavoritesWidget extends StatefulWidget {
 
   static Color? linkColor(String key) {
     switch(key) {
-      case Event.favoriteKeyName: return Styles().colors.eventColor;
       case Event2.favoriteKeyName: return Styles().colors.eventColor;
       case Dining.favoriteKeyName: return Styles().colors.diningColor;
       case Game.favoriteKeyName: return Styles().colors.fillColorPrimary;
@@ -277,16 +271,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   Widget _buildItemCard(Favorite? item) {
     //Custom layout for super events before release
-    if (item is Event && item.isComposite) {
-      return ExploreCard(
-        explore: item,
-        showTopBorder: true,
-        horizontalPadding: 0,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        onTap:() => _onTapItem(item)
-      );
-    }
-    else if (item is MTDStop) {
+    if (item is MTDStop) {
       return MTDStopScheduleCard(
         stop: item,
         onTap: () => _onTapItem(item),
@@ -437,7 +422,6 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   Future<List<Favorite>?> _loadFavorites(LinkedHashSet<String>? favoriteIds) async {
     if (CollectionUtils.isNotEmpty(favoriteIds)) {
       switch(widget.favoriteKey) {
-        case Event.favoriteKeyName: return _loadFavoriteEvents(favoriteIds);
         case Event2.favoriteKeyName: return _loadFavoriteEvents2(favoriteIds);
         case Dining.favoriteKeyName: return _loadFavoriteDinings(favoriteIds);
         case Game.favoriteKeyName: return _loadFavoriteGames(favoriteIds);
@@ -451,9 +435,6 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     }
     return null;
   }
-
-  Future<List<Favorite>?> _loadFavoriteEvents(LinkedHashSet<String>? favoriteIds) async =>
-    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Events().loadEventsByIds(favoriteIds), favoriteIds) : null;
 
   Future<List<Favorite>?> _loadFavoriteEvents2(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Events2().loadEventsList(Events2Query(ids: favoriteIds)), favoriteIds) : null;
@@ -555,7 +536,6 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   String? get headingIconKey {
     switch(widget.favoriteKey) {
-      case Event.favoriteKeyName: return 'calendar';
       case Event2.favoriteKeyName: return 'calendar';
       case Dining.favoriteKeyName: return 'dining';
       case Game.favoriteKeyName: return 'athletics';
@@ -571,7 +551,6 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   String? get _offlineMessage {
     switch(widget.favoriteKey) {
-      case Event.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.events', 'My Events are not available while offline.');
       case Event2.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.events2', 'My Events are not available while offline.');
       case Dining.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.dining', 'My Dining Locations are not available while offline.');
       case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.athletics', 'My Big 10 Events is not available while offline');
@@ -587,7 +566,6 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   String? get _viewAllHint {
     switch(widget.favoriteKey) {
-      case Event.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.events', 'Tap to view all favorite events');
       case Event2.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.events', 'Tap to view all favorite events');
       case Dining.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.dining', 'Tap to view all favorite dinings');
       case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.athletics', 'Tap to view all favorite athletics events');
