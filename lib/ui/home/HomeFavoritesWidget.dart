@@ -280,9 +280,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     if (item is Event && item.isComposite) {
       return ExploreCard(
         explore: item,
-        showTopBorder: true,
         horizontalPadding: 0,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         onTap:() => _onTapItem(item)
       );
     }

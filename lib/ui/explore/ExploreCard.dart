@@ -48,16 +48,10 @@ class ExploreCard extends StatefulWidget {
   final Explore? explore;
   final Core.Position? locationData;
   final GestureTapCallback? onTap;
-  final bool showTopBorder;
-  final bool? showSmallImage;
   final double horizontalPadding;
-  final BoxBorder? border;
 
   ExploreCard({super.key, this.explore, this.locationData, this.onTap,
-    this.showTopBorder = false,
-    this.showSmallImage = true,
     this.horizontalPadding = 16,
-    this.border
   });
 
   @override
@@ -119,8 +113,8 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
+                //border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                 borderRadius: BorderRadius.all(Radius.circular(4)),
-                border: widget.border,
                 boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
               ),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -136,7 +130,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                           _exploreDetails(),
                         ],)
                       ),
-                      Visibility(visible: ((widget.showSmallImage ?? false) && StringUtils.isNotEmpty(imageUrl)), child:
+                      Visibility(visible: StringUtils.isNotEmpty(imageUrl), child:
                         Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 4), child:
                           SizedBox(width: _smallImageSize, height: _smallImageSize, child:
                             InkWell(onTap: () => _onTapCardImage(imageUrl), 
@@ -431,7 +425,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   Widget _topBorder() {
-    return widget.showTopBorder? Container(height: 7,color: widget.explore?.uiColor) : Container();
+    return Container(height: 7, color: widget.explore?.uiColor);
   }
 
   void _onTapExploreCardStar() {

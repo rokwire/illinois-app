@@ -18,6 +18,7 @@ import 'package:flutter/semantics.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/MTD.dart';
+import 'package:illinois/ui/dining/DiningCard.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -37,7 +38,6 @@ import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:rokwire_plugin/model/explore.dart';
-import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -320,11 +320,11 @@ class _DiningHomePanelState extends State<DiningHomePanel> implements Notificati
       }
     }
 
-    int realIndex = _hasDiningSpecials ? index -1 : index;
-    Explore? explore = _dinings![realIndex];
+    int realIndex = _hasDiningSpecials ? index - 1 : index;
+    Dining? dining = _dinings![realIndex];
 
     return Padding(padding: EdgeInsets.only(top: 16), child:
-      ExploreCard(explore: explore, showTopBorder: true, onTap: () => _onExploreTap(explore))
+      DiningCard(dining, onTap: () => _onTapDining(dining))
     );
   }
 
@@ -448,7 +448,7 @@ class _DiningHomePanelState extends State<DiningHomePanel> implements Notificati
 
   //Click listeners
 
-  void _onExploreTap(Explore explore) {
+  void _onTapDining(Explore explore) {
     Analytics().logSelect(target: explore.exploreTitle);
 
     Navigator.push(context, CupertinoPageRoute(builder: (context) =>
