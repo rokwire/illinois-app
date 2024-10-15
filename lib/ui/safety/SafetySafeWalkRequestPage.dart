@@ -655,8 +655,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
           .replaceAll(_safeWalkDestinationUrlMacro, await _locationUrl(_destinationLocation) ?? '')
           .replaceAll(_safeWalkDirectionsUrlMacro, await _directionsUrl(origin: _originLocation, destination: _destinationLocation) ?? '');
 
-        //TMP: Config().safeWalkTextNumber
-        String url = "sms:888789787?body=" + Uri.encodeComponent(message);
+        String url = "sms:${Config().safeWalkTextNumber}?body=" + Uri.encodeComponent(message);
         Uri? uri = Uri.tryParse(url);
         if (uri == null) {
           ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.internal.error.title', 'Unable to send text message, internal error occured.'));
