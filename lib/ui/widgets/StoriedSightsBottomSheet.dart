@@ -1,23 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/ext/Explore.dart';
 import 'package:intl/intl.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/places.dart' as places_model;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class StoriedSightsBottomSheet extends StatefulWidget {
+  final List<places_model.Place> places;
+  final Function(places_model.Place) onPlaceSelected; // Add this line
+
+  StoriedSightsBottomSheet({Key? key, required this.places, required this.onPlaceSelected}) : super(key: key);
+
   @override
-  _StoriedSightsBottomSheetState createState() =>
-      _StoriedSightsBottomSheetState();
+  StoriedSightsBottomSheetState createState() => StoriedSightsBottomSheetState();
 }
 
-class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
+
+class StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
   List<places_model.Place> _storiedSights = [];
   final DraggableScrollableController _controller = DraggableScrollableController();
   final Set<String> _selectedFilters = {};
   places_model.Place? _selectedDestination;
+  List<places_model.Place> _allPlaces = [];
+  Set<String> _availableTags = {};
 
   Map<String, List<DateTime>> _placeCheckInDates = {};
   Map<String, bool> _isHistoryExpanded = {};
@@ -26,16 +34,19 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
   @override
   void initState() {
     super.initState();
-    _loadCampusDestinations();
+    _allPlaces = widget.places;
+    _collectAvailableTags();
+    _storiedSights = List.from(_allPlaces);
   }
 
-  Future<void> _loadCampusDestinations() async {
-    Places placesService = Places();
-    List<places_model.Place>? places = await placesService.getAllPlaces();
-    setStateIfMounted((){
-      _storiedSights = places ?? [];
-    });
+  void _collectAvailableTags() {
+    for (places_model.Place place in _allPlaces) {
+      if (place.tags != null) {
+        _availableTags.addAll(place.tags!);
+      }
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -115,10 +126,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
             }
           });
 
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(Localization().getStringEx('', 'Check-in failed. Please try again.'))),
-          );
+          AppToast.showMessage(Localization().getStringEx('', 'Check-in failed. Please try again.'));
         }
       } catch (e) {
         if (mounted) {
@@ -132,13 +140,14 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
             }
           });
 
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(Localization().getStringEx('', 'Check-in failed due to an error.'))),
-          );
+          AppToast.showMessage(Localization().getStringEx('', 'Check-in failed due to an error.'));
         }
       }
     }
+  }
+
+  void _handleCheckedIn() async {
+    AppToast.showMessage(Localization().getStringEx('', 'You can only check in once per day.'));
   }
 
   void _clearCheckInDate(DateTime date) async {
@@ -170,9 +179,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
             _lastCheckInDate[placeId] = _placeCheckInDates[placeId]?.first;
           });
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(Localization().getStringEx('', 'Failed to clear check-in date. Please try again.'))),
-          );
+          AppToast.showMessage(Localization().getStringEx('', 'Failed to clear check-in date. Please try again.'));
         }
       } catch (e) {
 
@@ -184,9 +191,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
             _lastCheckInDate[placeId] = _placeCheckInDates[placeId]?.first;
           });
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(Localization().getStringEx('', 'An error occurred while clearing the check-in date.'))),
-          );
+          AppToast.showMessage(Localization().getStringEx('', 'An error occurred while clearing the check-in date.'));
         }
       }
     }
@@ -213,11 +218,10 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
       textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
       rightIcon: const SizedBox(),
       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 48),
-      onTap: isCheckedInToday ? (){} : _handleCheckIn,
+      onTap: isCheckedInToday ? _handleCheckedIn : _handleCheckIn,
     );
   }
 
-  // Widget to display previous check-ins
   Widget _buildCheckInHistory() {
     if (_selectedDestination == null) return Container();
 
@@ -302,9 +306,15 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
         mainAxisSize: MainAxisSize.min,
         children: [
           _buildDragHandle(),
-          _buildTitle(),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: _buildTitle(),
+          ),
           SizedBox(height: 8),
-          _buildFilterButtons(),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: _buildFilterButtons(),
+          ),
           SizedBox(height: 8),
           Divider(color: Styles().colors.surfaceAccent, thickness: 2),
         ],
@@ -370,7 +380,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
           style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
         ),
         SizedBox(height: 8),
-        _buildAddressRow(_selectedDestination?.address),
+        _buildAddressRow(_selectedDestination),
         SizedBox(height: 8),
         _buildShareLocationRow(),
         SizedBox(height: 16),
@@ -379,20 +389,22 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
     );
   }
 
-  Widget _buildAddressRow(String? address) {
+  Widget _buildAddressRow(places_model.Place? place) {
     return Row(
       children: [
-        //Icon(Icons.location_pin, size: 15.0, color: Styles().colors.iconColor),
         Styles().images.getImage('location', size: 15.0) ?? const SizedBox(),
         SizedBox(width: 4),
         Expanded(
-          child: Text(
-            address ?? Localization().getStringEx('', 'No address available'),
-            style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
-                decoration: TextDecoration.underline,
-                decorationColor: Styles().colors.fillColorSecondary),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+          child: GestureDetector(
+            onTap: () => place?.launchDirections(),
+            child: Text(
+              place?.address ?? Localization().getStringEx('', 'No address available'),
+              style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
+                  decoration: TextDecoration.underline,
+                  decorationColor: Styles().colors.fillColorSecondary),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ),
       ],
@@ -400,15 +412,20 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
   }
 
   Widget _buildShareLocationRow() {
-    return GestureDetector(
-      onTap: () {
-        // Placeholder for share functionality
-      },
-      child: Row(
-        children: [
-          Icon(Icons.share, size: 15.0, color: Styles().colors.iconColor),
-          SizedBox(width: 4.0),
-          Expanded(
+    return Row(
+      children: [
+        GestureDetector(
+          onTap: () {
+            // Placeholder for share functionality
+          },
+          child: Icon(Icons.share, size: 15.0, color: Styles().colors.iconColor),
+        ),
+        SizedBox(width: 4.0),
+        Expanded(
+          child: GestureDetector(
+            onTap: () {
+              // Placeholder for share functionality
+            },
             child: Text(
               Localization().getStringEx('', 'Share this location'),
               style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular")?.apply(
@@ -418,8 +435,8 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -459,7 +476,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
 
   Widget _buildDestinationCard(places_model.Place place) {
     return GestureDetector(
-      onTap: () => _onDestinationTap(place),
+      onTap: () => selectPlace(place),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Column(
@@ -490,7 +507,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
           style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
         ),
         SizedBox(height: 4),
-        _buildAddressRow(place.address),
+        _buildAddressRow(place),
       ],
     );
   }
@@ -509,13 +526,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: [
-          // TODO: Change how the filters are working and set them up
-          _buildFilterButton('Open Now'),
-          _buildFilterButton('Near Me'),
-          _buildFilterButton('Photo Spots'),
-          _buildFilterButton('Donor Gift'),
-        ],
+        children: _availableTags.map((tag) => _buildFilterButton(tag)).toList(),
       ),
     );
   }
@@ -532,27 +543,46 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
             } else {
               _selectedFilters.add(label);
             }
+            _applyFilters();
           });
         },
-        child: Text(
-          label, style: Styles().textStyles.getTextStyle("widget.button.title.small")
-        ),
         style: ElevatedButton.styleFrom(
-          foregroundColor:
-          isSelected ? Colors.white : Styles().colors.fillColorPrimary,
-          backgroundColor:
-          isSelected ? Styles().colors.fillColorPrimary : Colors.white,
+          foregroundColor: isSelected ? Colors.white : Styles().colors.fillColorPrimary,
+          backgroundColor: isSelected ? Styles().colors.fillColorPrimary : Colors.white,
           side: BorderSide(
-            color: isSelected
-                ? Styles().colors.fillColorPrimary
-                : Styles().colors.surfaceAccent,
+            color: isSelected ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24.0),
           ),
         ),
+        child: Text(
+          label,
+          style: Styles().textStyles.getTextStyle("widget.button.title.small")?.apply(
+            color: isSelected ? Colors.white : Styles().colors.fillColorPrimary,
+          ),
+        ),
       ),
     );
+  }
+
+  void _applyFilters() {
+    if (_selectedFilters.isEmpty) {
+      // No filters selected; show all places
+      setState(() {
+        _storiedSights = List.from(_allPlaces);
+      });
+    } else {
+      // Filter places by selected tags (logical OR)
+      setState(() {
+        _storiedSights = _allPlaces.where((place) {
+          if (place.tags == null || place.tags!.isEmpty) {
+            return false;
+          }
+          return place.tags!.any((tag) => _selectedFilters.contains(tag));
+        }).toList();
+      });
+    }
   }
 
   Widget _buildDragHandle() {
@@ -579,7 +609,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
     );
   }
 
-  void _onDestinationTap(places_model.Place place) {
+  void selectPlace(places_model.Place place) {
     setState(() {
       _selectedDestination = place;
     });
@@ -588,6 +618,7 @@ class _StoriedSightsBottomSheetState extends State<StoriedSightsBottomSheet> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
+    widget.onPlaceSelected(place); // Call the callback here
   }
 
 //For testing

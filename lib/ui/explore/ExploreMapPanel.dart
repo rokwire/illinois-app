@@ -54,18 +54,21 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/model/places.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:timezone/timezone.dart';
+import 'package:rokwire_plugin/model/places.dart' as places_model;
 
 enum ExploreMapType { Events2, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MyLocations, MentalHealth, StateFarmWayfinding, StoriedSites }
 
@@ -129,6 +132,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   final GlobalKey _mapContainerKey = GlobalKey();
   final GlobalKey _mapExploreBarKey = GlobalKey();
+  final GlobalKey<StoriedSightsBottomSheetState> _storiedSightsKey = GlobalKey<StoriedSightsBottomSheetState>();
   final String _mapStylesAssetName = 'assets/map.styles.json';
   final String _mapStylesExplorePoiKey = 'explore-poi';
   final String _mapStylesMtdStopKey = 'mtd-stop';
@@ -392,8 +396,17 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
             ),
           ]),
           _buildExploreTypesDropDownContainer(),
-          if (_selectedMapType == ExploreMapType.StoriedSites)
-            StoriedSightsBottomSheet(),
+          if (_selectedMapType == ExploreMapType.StoriedSites && _explores != null)
+            StoriedSightsBottomSheet(
+              key: _storiedSightsKey,
+              places: _explores?.whereType<Place>().toList() ?? [],
+              onPlaceSelected: (places_model.Place place) {
+                // Wrap the Place in a PlaceExploreAdapter and call _centerMapOnExplore
+                _centerMapOnExplore(place);
+                // Optionally, you might also want to select the place on the map
+                _selectMapExplore(place);
+              },
+            ),
         ]),
       )
     ]);
@@ -534,7 +547,35 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   void _onTapMarker(dynamic origin) {
-    _selectMapExplore(origin);
+    if (_selectedMapType == ExploreMapType.StoriedSites && (origin is List<Explore> || origin is Place)) {
+      if(origin is Place){
+        _storiedSightsKey.currentState?.selectPlace(origin);
+        //_centerMapOnExplore(origin);
+      }
+
+    } else {
+      _selectMapExplore(origin);
+    }
+  }
+
+  void _centerMapOnExplore(dynamic explore) {
+    LatLng? targetPosition;
+
+    if (explore is Explore) {
+      targetPosition = explore.exploreLocation?.exploreLocationMapCoordinate;
+    } else if (explore is List<Explore> && explore.isNotEmpty) {
+      targetPosition = ExploreMap.centerOfList(explore);
+    }
+
+    if (targetPosition != null && _mapController != null) {
+      CameraUpdate cameraUpdate = CameraUpdate.newLatLng(targetPosition);
+      _mapController!.moveCamera(cameraUpdate);
+
+      double devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
+      double offset = 300 / devicePixelRatio;
+
+      _mapController!.moveCamera(CameraUpdate.scrollBy(0, offset));
+    }
   }
 
   // Map Explore Bar
@@ -1873,7 +1914,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         case ExploreMapType.MTDStops: return _loadMTDStops();
         case ExploreMapType.MyLocations: return _loadMyLocations();
         case ExploreMapType.MentalHealth: return _loadMentalHealthBuildings();
-        case ExploreMapType.StoriedSites: return _loadMentalHealthBuildings();
+        case ExploreMapType.StoriedSites: return _loadPlaces();
         case ExploreMapType.StateFarmWayfinding: break;
         default: break;
       }
@@ -1902,6 +1943,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   Future<List<Explore>?> _loadMentalHealthBuildings() async {
     return await Wellness().loadMentalHealthBuildings();
+  }
+
+  Future<List<Explore>?> _loadPlaces() async {
+    return await Places().getAllPlaces();
   }
 
   Future<List<Explore>?> _loadMTDStops() async {
