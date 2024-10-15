@@ -348,19 +348,18 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
 
         Padding(padding: EdgeInsets.only(top: 24, bottom: 8), child:
           Row(children: [
-            Padding(padding: EdgeInsets.only(right: 8), child:
-              _detailIconSpacer,
-            ),
+            //Padding(padding: EdgeInsets.only(right: 8), child: _detailIconSpacer,),
             Expanded(child:
               Center(child:
                 RoundedButton(
                   label: Localization().getStringEx('widget.safewalks_request.start.title', 'Start with a Text'),
                   //textStyle: _sendEnabled ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
                   //borderColor: _sendEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.fat"),
                   padding: EdgeInsets.symmetric(vertical: 8),
                   leftIcon: Styles().images.getImage('paper-plane'), //, color: _sendEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent),
-                  leftIconPadding: EdgeInsets.only(left: 12, right: 8),
-                  rightIconPadding: EdgeInsets.only(left: 16),
+                  leftIconPadding: EdgeInsets.symmetric(horizontal: 12),
+                  rightIconPadding: EdgeInsets.only(left: 24),
                   contentWeight: -1,
                   progress: _sendProgress,
                   onTap: _onTapSend,
@@ -393,7 +392,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
       SizedBox(width: 18, height: 18, child:
         CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,)
       )
-    ):
+    ) :
     Text(text ?? '', style: _dropDownItemTextStyle,);
 
   Widget _dropDownItemWidget({String? title, Widget? icon}) =>
@@ -443,7 +442,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
       icon: _safeWalkLocationTypeDisplayIcon(locationType),
     );
 
-  TextStyle? get _titleTextStyle => Styles().textStyles.getTextStyle('widget.title.medium.fat');
+  TextStyle? get _titleTextStyle => Styles().textStyles.getTextStyle('widget.title.small.fat');
   TextStyle? get _dropDownItemTextStyle => Styles().textStyles.getTextStyle('widget.title.medium.semi_fat');
 
   double get _detailIconSize => 18;
