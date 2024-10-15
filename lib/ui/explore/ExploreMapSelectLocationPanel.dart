@@ -410,15 +410,13 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   }
 
   Widget? _buildSelectDetailExplore(BuildContext context, { Explore? explore }) =>
-    Padding(padding: EdgeInsets.only(top: 32), child:
-      RoundedButton(
-        label: Localization().getStringEx('panel.map.select.button.select.location.title', 'Select this Location'),
-        hint: Localization().getStringEx('panel.map.select.button.select.location.hint', ''),
-        //textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        contentWeight: 0.67,
-        onTap: () => _onTapSelectExploreLocation(context, explore: explore),
-      )
+    RoundedButton(
+      label: Localization().getStringEx('panel.map.select.button.select.location.title', 'Select this Location'),
+      hint: Localization().getStringEx('panel.map.select.button.select.location.hint', ''),
+      //textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      contentWeight: 0.67,
+      onTap: () => _onTapSelectExploreLocation(context, explore: explore),
     );
 
   Widget? _buildSelectCardExplore(BuildContext context, { Explore? explore }) =>
@@ -426,7 +424,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
       label: Localization().getStringEx('panel.map.select.button.select.title', 'Select'),
       hint: Localization().getStringEx('panel.map.select.button.select.hint', ''),
       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       contentWeight: -1,
       onTap: () => _onTapSelectExploreLocation(context, explore: explore),
     );

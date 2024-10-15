@@ -159,8 +159,11 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
       ),
     );
 
-  Widget _buildSelectLocation() =>
-    widget.selectLocationBuilder?.call(context, ExploreSelectLocationContext.detail, explore: _building) ?? Container();
+  Widget _buildSelectLocation() {
+    Widget? selectorWidget = widget.selectLocationBuilder?.call(context, ExploreSelectLocationContext.detail, explore: _building);
+    return (selectorWidget != null) ? Padding(padding: EdgeInsets.only(top: 32), child: selectorWidget) : Container();
+  }
+
 
   Widget _buildLoadingContent() => Center(child:
     Padding(padding: EdgeInsets.zero, child:
