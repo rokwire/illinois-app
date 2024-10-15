@@ -263,7 +263,10 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       Stack(
         alignment: Alignment.topCenter,
         children: <Widget>[
-          Styles().images.getImage("slant-dark") ?? Container(),
+          Container(
+            height: 112,
+            width: double.infinity,
+            child: Styles().images.getImage("slant-dark", fit: BoxFit.fill, excludeFromSemantics: true) ?? Container()),
           Padding( padding: EdgeInsets.symmetric(horizontal: 16),
               child: pollsContent,
           )]);
