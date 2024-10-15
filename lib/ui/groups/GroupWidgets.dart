@@ -2275,9 +2275,10 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
                 Expanded( child:
                 Padding( padding: EdgeInsets.symmetric(horizontal: 5),
                   child: Text(option, style: useCustomColor? Styles().textStyles.getTextStyle('widget.group.card.poll.option_variant')  : Styles().textStyles.getTextStyle('widget.group.card.poll.option')),)),
-                Visibility( visible: didVote,
+                //TBD Do we need this icon and is it the correct icon resource?  Erase if not needed
+               /* Visibility( visible: didVote,
                     child:Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage('check-circle-outline-gray'))
-                ),
+                ),*/
               ],),)
               ),
             ],)
