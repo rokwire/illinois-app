@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Explore.dart';
@@ -20,6 +22,7 @@ import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
@@ -272,7 +275,10 @@ class SafetySafeWalkRequestCard extends StatefulWidget {
 class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
   static const String _safeWalkUserNameMacro = '{{safewalk_user_name}}';
   static const String _safeWalkOriginMacro = '{{safewalk_origin}}';
+  static const String _safeWalkOriginUrlMacro = '{{safewalk_origin_url}}';
   static const String _safeWalkDestinationMacro = '{{safewalk_destination}}';
+  static const String _safeWalkDestinationUrlMacro = '{{safewalk_destination_url}}';
+  static const String _safeWalkDirectionsUrlMacro = '{{safewalk_directions_url}}';
 
   dynamic _originLocation, _destinationLocation;
   bool _originProgress = false, _destinationProgress = false, _sendProgress = false;
@@ -558,6 +564,24 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
     }
   }
 
+  Future<String?> _locationUrl(dynamic location) =>
+    GeoMapUtils.locationUrl(_locationUrlSource(location));
+
+  Future<String?> _directionsUrl({dynamic origin, dynamic destination}) =>
+    GeoMapUtils.directionsUrl(origin: _locationUrlSource(origin), destination: _locationUrlSource(destination), travelMode: 'walking');
+
+  dynamic _locationUrlSource(dynamic location) {
+    if (location is Position) {
+      return LatLng(location.latitude, location.longitude);
+    }
+    else if (location is Explore) {
+      return location.exploreLocation?.exploreLocationMapCoordinate ?? location.exploreLocation?.displayAddress;
+    }
+    else {
+      return null;
+    }
+  }
+
   Map<String, dynamic>? get originExploreLocation => _locationToJson(_originLocation);
   Map<String, dynamic>? get destinationExploreLocation => _locationToJson(_destinationLocation);
 
@@ -623,12 +647,16 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
         ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.missing.recipient.title', 'Unable to send text message, recipient number is not available.'));
       }
       else {
-        String message = Localization().getStringEx('panel.safewalks_request.message.text', 'Hi, my name is $_safeWalkUserNameMacro and I\'d like to request a SafeWalk.\n\nMy Current Location:\n$_safeWalkOriginMacro\n\nMy Destination:\n$_safeWalkDestinationMacro')
+        String message = Localization().getStringEx('widget.safewalks_request.message.sms.text', 'Hi, my name is $_safeWalkUserNameMacro and I\'d like to request a SafeWalk.\n\nMy Current Location:\n$_safeWalkOriginMacro\n$_safeWalkOriginUrlMacro\n\nMy Destination:\n$_safeWalkDestinationMacro\n$_safeWalkDestinationUrlMacro\n\nMy Route:\n$_safeWalkDirectionsUrlMacro')
           .replaceAll(_safeWalkUserNameMacro, Auth2().account?.authType?.uiucUser?.firstName ?? Auth2().profile?.firstName ?? Localization().getStringEx('widget.safewalks_request.unknown.user.text', 'Unauthenticated User'))
           .replaceAll(_safeWalkOriginMacro, _locationLongDescription(_originLocation) ?? Localization().getStringEx('widget.safewalks_request.unknown.location.text', 'Unknwon'))
-          .replaceAll(_safeWalkDestinationMacro, _locationLongDescription(_destinationLocation) ?? Localization().getStringEx('widget.safewalks_request.unknown.location.text', 'Unknwon'));
+          .replaceAll(_safeWalkOriginUrlMacro, await _locationUrl(_originLocation) ?? '')
+          .replaceAll(_safeWalkDestinationMacro, _locationLongDescription(_destinationLocation) ?? Localization().getStringEx('widget.safewalks_request.unknown.location.text', 'Unknwon'))
+          .replaceAll(_safeWalkDestinationUrlMacro, await _locationUrl(_destinationLocation) ?? '')
+          .replaceAll(_safeWalkDirectionsUrlMacro, await _directionsUrl(origin: _originLocation, destination: _destinationLocation) ?? '');
 
-        String url = "sms:${Config().safeWalkTextNumber}?body=" + Uri.encodeComponent(message);
+        //TMP: Config().safeWalkTextNumber
+        String url = "sms:888789787?body=" + Uri.encodeComponent(message);
         Uri? uri = Uri.tryParse(url);
         if (uri == null) {
           ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.internal.error.title', 'Unable to send text message, internal error occured.'));

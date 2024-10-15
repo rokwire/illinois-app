@@ -81,14 +81,13 @@ class GeoMapUtils {
 
   static Future<bool> launchDirections({ dynamic origin, dynamic destination, String? travelMode }) async {
 
-    Uri? googleMapsUri = Uri.tryParse(_googleMapsUrl(origin: origin, destination: destination, travelMode: travelMode));
-
+    Uri? googleMapsUri = Uri.tryParse(_googleMapsDirectionsUrl(origin: origin, destination: destination, travelMode: travelMode));
     if ((googleMapsUri != null) && await canLaunchUrl(googleMapsUri) && await launchUrl(googleMapsUri, mode: LaunchMode.externalApplication)) {
       debugPrint("Map directions: $googleMapsUri");
       return true;
     }
 
-    Uri? wazeMapsUri = Uri.tryParse(_wazeMapsUrl(origin: origin, destination: destination, travelMode: travelMode));
+    Uri? wazeMapsUri = Uri.tryParse(_wazeMapsDirectionsUrl(origin: origin, destination: destination, travelMode: travelMode));
     if ((wazeMapsUri != null) && await canLaunchUrl(wazeMapsUri) && await launchUrl(wazeMapsUri, mode: LaunchMode.externalApplication)) {
       debugPrint("Map directions: $wazeMapsUri");
       return true;
@@ -97,7 +96,24 @@ class GeoMapUtils {
     return false;
   }
 
-  static String _googleMapsUrl({ dynamic origin, dynamic destination, String? travelMode }) {
+  static Future<String?> directionsUrl({ dynamic origin, dynamic destination, String? travelMode }) async {
+
+    String? googleMapsUrl = _googleMapsDirectionsUrl(origin: origin, destination: destination, travelMode: travelMode);
+    Uri? googleMapsUri = Uri.tryParse(googleMapsUrl);
+    if ((googleMapsUri != null) && await canLaunchUrl(googleMapsUri)) {
+      return googleMapsUrl;
+    }
+
+    String? wazeMapsUrl = _wazeMapsDirectionsUrl(origin: origin, destination: destination, travelMode: travelMode);
+    Uri? wazeMapsUri = Uri.tryParse(wazeMapsUrl);
+    if ((wazeMapsUri != null) && await canLaunchUrl(wazeMapsUri)) {
+      return wazeMapsUrl;
+    }
+
+    return null;
+  }
+
+  static String _googleMapsDirectionsUrl({ dynamic origin, dynamic destination, String? travelMode }) {
     // https://developers.google.com/maps/documentation/urls/get-started#directions-action
 
     String url = "https://www.google.com/maps/dir/?api=1"; //TBD: app config
@@ -121,7 +137,7 @@ class GeoMapUtils {
     return url;
   }
 
-  static String _wazeMapsUrl({ dynamic origin, dynamic destination, String? travelMode }) {
+  static String _wazeMapsDirectionsUrl({ dynamic origin, dynamic destination, String? travelMode }) {
     // https://developers.google.com/waze/deeplinks
     String url = "https://waze.com/ul?navigate=yes"; //TBD: app config
     if (destination is LatLng) {
@@ -129,6 +145,67 @@ class GeoMapUtils {
     }
     else if (destination != null) {
       url += "&q=${Uri.encodeComponent(destination.toString())}";
+    }
+    return url;
+  }
+
+  static Future<bool> launchLocation(dynamic position) async {
+
+    Uri? googleMapsUri = Uri.tryParse(_googleMapsLocationUrl(position));
+
+    if ((googleMapsUri != null) && await canLaunchUrl(googleMapsUri) && await launchUrl(googleMapsUri, mode: LaunchMode.externalApplication)) {
+      debugPrint("Map directions: $googleMapsUri");
+      return true;
+    }
+
+    Uri? wazeMapsUri = Uri.tryParse(_wazeMapsLocationUrl(position));
+    if ((wazeMapsUri != null) && await canLaunchUrl(wazeMapsUri) && await launchUrl(wazeMapsUri, mode: LaunchMode.externalApplication)) {
+      debugPrint("Map directions: $wazeMapsUri");
+      return true;
+    }
+
+    return false;
+  }
+
+  static Future<String?> locationUrl(dynamic position) async {
+
+    String? googleMapsUrl = _googleMapsLocationUrl(position);
+    Uri? googleMapsUri = Uri.tryParse(googleMapsUrl);
+    if ((googleMapsUri != null) && await canLaunchUrl(googleMapsUri)) {
+      return googleMapsUrl;
+    }
+
+    String? wazeMapsUrl = _wazeMapsLocationUrl(position);
+    Uri? wazeMapsUri = Uri.tryParse(wazeMapsUrl);
+    if ((wazeMapsUri != null) && await canLaunchUrl(wazeMapsUri) && await launchUrl(wazeMapsUri, mode: LaunchMode.externalApplication)) {
+      return wazeMapsUrl;
+    }
+
+    return null;
+  }
+
+  static String _googleMapsLocationUrl(dynamic position) {
+    // https://developers.google.com/maps/documentation/urls/get-started#search-action
+
+    String url = "https://www.google.com/maps/search/?api=1"; //TBD: app config
+    if (position is LatLng) {
+      url += "&query=${position.latitude.toStringAsFixed(6)},${position.longitude.toStringAsFixed(6)}";
+    }
+    else if (position != null) {
+      url += "&query=${Uri.encodeComponent(position.toString())}";
+    }
+
+    return url;
+  }
+
+  static String _wazeMapsLocationUrl(dynamic position) {
+    // https://developers.google.com/waze/deeplinks
+    String url = "https://waze.com/ul"; //TBD: app config
+    if (position is LatLng) {
+      url += "?ll=${position.latitude.toStringAsFixed(6)},${position.longitude.toStringAsFixed(6)}";
+    }
+    else if (position != null) {
+      url += "&q=${Uri.encodeComponent(position.toString())}";
     }
     return url;
   }
