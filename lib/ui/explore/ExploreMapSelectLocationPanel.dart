@@ -424,7 +424,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
       label: Localization().getStringEx('panel.map.select.button.select.title', 'Select'),
       hint: Localization().getStringEx('panel.map.select.button.select.hint', ''),
       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       contentWeight: -1,
       onTap: () => _onTapSelectExploreLocation(context, explore: explore),
     );
