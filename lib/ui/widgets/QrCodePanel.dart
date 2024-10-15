@@ -13,6 +13,7 @@ import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/events2.dart';
@@ -126,7 +127,7 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
 }
 
 class _QrCodePanelState extends State<QrCodePanel> {
-  static final int _imageSize = 1024;
+  static final double _imageSize = 1024;
   Uint8List? _qrCodeBytes;
 
   @override
@@ -140,12 +141,21 @@ class _QrCodePanelState extends State<QrCodePanel> {
   }
 
   Future<Uint8List?> _loadQrImageBytes() async {
-    return await NativeCommunicator().getBarcodeImageData({
-      'content': _promotionUrl,
-      'format': 'qrCode',
-      'width': _imageSize,
-      'height': _imageSize,
-    });
+    Uint8List? imageBytes;
+    if (kIsWeb) {
+      ByteData? qrPainterImage = await QrPainter(data: _promotionUrl, version: QrVersions.auto).toImageData(_imageSize);
+      debugPrint('_loadQrImageBytes: qrPainterImage: ${qrPainterImage?.toString()}');
+      imageBytes = qrPainterImage?.buffer.asUint8List();
+      debugPrint('_loadQrImageBytes: imageBytes: ${imageBytes?.toString()}');
+    } else {
+      imageBytes = await NativeCommunicator().getBarcodeImageData({
+        'content': _promotionUrl,
+        'format': 'qrCode',
+        'width': _imageSize,
+        'height': _imageSize,
+      });
+    }
+    return imageBytes;
   }
 
   Future<void> _saveQrCode() async {
@@ -155,8 +165,8 @@ class _QrCodePanelState extends State<QrCodePanel> {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.qr_code.alert.no_qr_code.msg", "There is no QR Code"));
     } else {
       Uint8List? updatedImageBytes = await ImageUtils.applyLabelOverImage(_qrCodeBytes, widget.saveWatermarkText,
-        width: _imageSize.toDouble(),
-        height: _imageSize.toDouble(),
+        width: _imageSize,
+        height: _imageSize,
         textStyle: widget.saveWatermarkStyle,
       );
       bool result = (updatedImageBytes != null);
