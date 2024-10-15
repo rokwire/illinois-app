@@ -263,7 +263,10 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       Stack(
         alignment: Alignment.topCenter,
         children: <Widget>[
-          Styles().images.getImage("slant-dark") ?? Container(),
+          Container(
+            height: 112,
+            width: double.infinity,
+            child: Styles().images.getImage("slant-dark", fit: BoxFit.fill, excludeFromSemantics: true) ?? Container()),
           Padding( padding: EdgeInsets.symmetric(horizontal: 16),
               child: pollsContent,
           )]);
@@ -951,9 +954,10 @@ class _PollCardState extends State<PollCard> {
                       Expanded( child:
                       Padding( padding: EdgeInsets.symmetric(horizontal: 5),
                         child: Text(option, style: useCustomColor? Styles().textStyles.getTextStyle("panel.polls.home.check.accent") : Styles().textStyles.getTextStyle("panel.polls.home.check")),)),
-                        Visibility( visible: didVote,
-                        child: Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage('check-circle-outline-gray', excludeFromSemantics: true))
-                      ),
+                      //TBD Do we need this icon and is it the correct icon resource?  Erase if not needed
+                      /*Visibility( visible: didVote,
+                          child: Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage('check-circle-outline-gray', excludeFromSemantics: true))
+                        ),*/
                     ],),)
               ),
             ],)
