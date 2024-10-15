@@ -129,8 +129,10 @@ $ flutter build apk --no-tree-shake-icons --flavor IllinoisTst -t lib/mainTest.d
 $ flutter build ios --no-tree-shake-icons --flavor IllinoisProd -t lib/mainProd.dart
 $ flutter build ios --no-tree-shake-icons --flavor IllinoisDev -t lib/mainDev.dart
 $ flutter build ios --no-tree-shake-icons --flavor IllinoisTst -t lib/mainTest.dart
+
+$ flutter build web --web-renderer html --no-tree-shake-icons
 ```
-NB: Product environments: Prod/Dev/Test
+NB: Product environments (Android and iOS): Prod/Dev/Test. Do not set target and flavor for the web app
 ```
 --flavor IllinoisProd -t lib/mainProd.dart
 --flavor IllinoisDev -t lib/mainDev.dart
