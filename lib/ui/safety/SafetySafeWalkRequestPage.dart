@@ -379,6 +379,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
             icon: Styles().images.getImage('chevron-down'),
             isExpanded: true,
             style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+            dropdownColor: Styles().colors.surface,
             hint: _dropdownButtonHint(text: text, progress: progress),
             items: items,
             onChanged: onChanged,
@@ -404,7 +405,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
         Expanded(child:
           Text(title ?? '', style: _dropDownItemTextStyle,),
         ),
-      ],)
+      ],),
     );
 
   BoxDecoration get _cardDecoration => BoxDecoration(
